@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE & Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Personal documents (keep in docs/ but don't track originals)
+docs/*.docx
+docs/*.pdf
+
+# Build artifacts
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# Temp files
+*.tmp
+*.bak
+*.log

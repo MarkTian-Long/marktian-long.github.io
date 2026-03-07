@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>刘洋 · AI 产品经理</title>
+    <meta name="description" content="刘洋 - AI产品经理，2年+经验，专注AI产品设计与落地，相信技术创造真实价值。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- ECharts for radar chart -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-logo">
+                <span class="logo-text">刘洋</span>
+                <span class="logo-dot">·</span>
+                <span class="logo-sub">AI PM</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about" class="nav-link">关于我</a></li>
+                <li><a href="#cases" class="nav-link">产品案例</a></li>
+                <li><a href="#tools" class="nav-link">AI 工具箱</a></li>
+                <li><a href="#contact" class="nav-link">联系我</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+            <div class="hero-glow glow-1"></div>
+            <div class="hero-glow glow-2"></div>
+            <div class="hero-glow glow-3"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge reveal">
+                <span class="badge-dot"></span>
+                <span>开放求职中 · AI 产品经理</span>
+            </div>
+            <h1 class="hero-title reveal delay-1">
+                你好，我是<span class="grad-text"> 刘洋</span>
+            </h1>
+            <p class="hero-sub reveal delay-2">
+                AI 产品经理 · 2年+ 经验<br />
+                从用户洞察到 AI 落地，相信技术创造真实价值
+            </p>
+            <div class="hero-tags reveal delay-3">
+                <span class="tag">🤖 AI 产品设计</span>
+                <span class="tag">📊 数据驱动决策</span>
+                <span class="tag">🚀 0→1 产品落地</span>
+                <span class="tag">🔬 用户研究</span>
+            </div>
+            <div class="hero-actions reveal delay-4">
+                <a href="#cases" class="btn btn-primary">查看案例 →</a>
+                <a href="#tools" class="btn btn-ghost">体验 AI 工具</a>
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section class="section about-section" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">About</span>
+                <h2 class="section-title">关于我</h2>
+                <p class="section-desc">用产品思维理解 AI，用 AI 能力放大产品价值</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-left reveal">
+                    <div class="about-card glass-card">
+                        <div class="about-avatar">
+                            <div class="avatar-inner">LY</div>
+                            <div class="avatar-ring"></div>
+                        </div>
+                        <div class="about-info">
+                            <h3>刘洋</h3>
+                            <p class="about-role">AI 产品经理</p>
+                            <div class="about-stats">
+                                <div class="stat-item">
+                                    <span class="stat-num">2+</span>
+                                    <span class="stat-label">years 经验</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-num">5+</span>
+                                    <span class="stat-label">AI 产品项目</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-num">3</span>
+                                    <span class="stat-label">行业领域</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="about-philosophy">
+                            <div class="philosophy-quote">
+                                <span class="quote-mark">"</span>
+                                好的 AI 产品不是让用户感受到技术，而是让用户忘记它的存在。
+                                <span class="quote-mark">"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-right reveal delay-1">
+                    <div class="skills-title">核心能力</div>
+                    <div id="radarChart" class="radar-chart"></div>
+                    <div class="skills-tags">
+                        <span class="skill-tag">PRD 编写</span>
+                        <span class="skill-tag">竞品分析</span>
+                        <span class="skill-tag">A/B 测试</span>
+                        <span class="skill-tag">SQL 数据分析</span>
+                        <span class="skill-tag">用户访谈</span>
+                        <span class="skill-tag">Prompt Engineering</span>
+                        <span class="skill-tag">AI 模型评估</span>
+                        <span class="skill-tag">原型设计</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CASES ========== -->
+    <section class="section cases-section" id="cases">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Case Studies</span>
+                <h2 class="section-title">产品案例</h2>
+                <p class="section-desc">真实项目经历，完整产品思维链路</p>
+            </div>
+            <!-- Cases will be rendered by JS -->
+            <div class="cases-grid" id="casesGrid"></div>
+            <div class="cases-more reveal">
+                <p class="cases-note">📌 以上为脱敏展示，详细案例可面谈获取</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TOOLS ========== -->
+    <section class="section tools-section" id="tools">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">AI Toolbox</span>
+                <h2 class="section-title">AI 工具箱</h2>
+                <p class="section-desc">我亲手设计并构建的 AI 小工具，你也可以免费使用</p>
+            </div>
+
+            <!-- Tool Tabs -->
+            <div class="tool-tabs reveal">
+                <button class="tool-tab active" id="tab-interview" onclick="switchTool('interview')">
+                    💬 面试题练习器
+                </button>
+                <button class="tool-tab" id="tab-tracker" onclick="switchTool('tracker')">
+                    📋 求职 Dashboard
+                </button>
+                <!-- More tabs can be added here -->
+            </div>
+
+            <!-- Interview Prep Tool -->
+            <div class="tool-panel active" id="panel-interview">
+                <div class="interview-tool glass-card reveal">
+                    <div class="tool-header">
+                        <div class="tool-title-area">
+                            <h3 class="tool-title">🎯 AI PM 面试题练习器</h3>
+                            <p class="tool-desc">覆盖产品设计、AI专题、数据分析、行为面试4大类别</p>
+                        </div>
+                        <div class="tool-progress-area">
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="60" height="60" viewBox="0 0 60 60">
+                                    <circle class="progress-ring-bg" cx="30" cy="30" r="24" />
+                                    <circle class="progress-ring-fill" id="progressRingFill" cx="30" cy="30" r="24" />
+                                </svg>
+                                <span class="progress-ring-label" id="progressLabel">0%</span>
+                            </div>
+                            <span class="progress-text" id="progressText">未开始</span>
+                        </div>
+                    </div>
+
+                    <!-- Category Select -->
+                    <div class="category-select" id="categorySelect">
+                        <div class="category-title">选择练习类别</div>
+                        <div class="category-grid">
+                            <button class="category-btn active" data-cat="all" onclick="selectCategory(this, 'all')">
+                                🌐 全部题目
+                            </button>
+                            <button class="category-btn" data-cat="design" onclick="selectCategory(this, 'design')">
+                                🎨 产品设计
+                            </button>
+                            <button class="category-btn" data-cat="ai" onclick="selectCategory(this, 'ai')">
+                                🤖 AI 专题
+                            </button>
+                            <button class="category-btn" data-cat="data" onclick="selectCategory(this, 'data')">
+                                📊 数据分析
+                            </button>
+                            <button class="category-btn" data-cat="behavior" onclick="selectCategory(this, 'behavior')">
+                                💼 行为面试
+                            </button>
+                        </div>
+                        <button class="btn btn-primary start-btn" id="startBtn" onclick="startPractice()">
+                            开始练习 →
+                        </button>
+                    </div>
+
+                    <!-- Question Area -->
+                    <div class="question-area hidden" id="questionArea">
+                        <div class="question-meta">
+                            <span class="q-category" id="qCategory">产品设计</span>
+                            <span class="q-difficulty" id="qDifficulty">★★★</span>
+                            <div class="timer-box">
+                                <span class="timer-icon">⏱</span>
+                                <span class="timer-display" id="timerDisplay">00:00</span>
+                            </div>
+                        </div>
+                        <div class="question-number" id="questionNumber">第 1 题 / 共 10 题</div>
+                        <div class="question-text" id="questionText">
+                            请稍候...
+                        </div>
+                        <div class="answer-area hidden" id="answerArea">
+                            <div class="answer-label">💡 参考答点</div>
+                            <div class="answer-text" id="answerText"></div>
+                            <div class="self-rate">
+                                <div class="rate-label">自我评估：</div>
+                                <div class="rate-stars" id="rateStars">
+                                    <button class="star-btn" onclick="rateSelf(1)">★</button>
+                                    <button class="star-btn" onclick="rateSelf(2)">★</button>
+                                    <button class="star-btn" onclick="rateSelf(3)">★</button>
+                                    <button class="star-btn" onclick="rateSelf(4)">★</button>
+                                    <button class="star-btn" onclick="rateSelf(5)">★</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-actions">
+                            <button class="btn btn-ghost" onclick="showAnswer()" id="showAnswerBtn">查看答点</button>
+                            <button class="btn btn-primary hidden" onclick="nextQuestion()" id="nextBtn">
+                                下一题 →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div class="result-area hidden" id="resultArea">
+                        <div class="result-icon">🎉</div>
+                        <h3 class="result-title">练习完成！</h3>
+                        <div class="result-stats">
+                            <div class="result-stat">
+                                <span class="result-stat-num" id="resultTotal">-</span>
+                                <span class="result-stat-label">完成题数</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="result-stat-num" id="resultAvg">-</span>
+                                <span class="result-stat-label">平均自评分</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="result-stat-num" id="resultTime">-</span>
+                                <span class="result-stat-label">总用时</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="restartPractice()">再来一轮</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Tracker Tool (embedded dashboard) -->
+            <div class="tool-panel hidden" id="panel-tracker">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">📋 求职追踪 Dashboard · 数据本地保存，刷新不丢失</span>
+                        <a href="tools/dashboard/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗
+                            独立窗口打开</a>
+                    </div>
+                    <iframe id="dashboardFrame" src="tools/dashboard/index.html" class="dashboard-iframe"
+                        title="求职追踪 Dashboard" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section class="section contact-section" id="contact">
+        <div class="container">
+            <div class="contact-card glass-card reveal">
+                <div class="contact-glow"></div>
+                <div class="contact-content">
+                    <h2 class="contact-title">一起聊聊 AI 产品</h2>
+                    <p class="contact-sub">
+                        欢迎HR、猎头、同行交流，或者只是想聊聊 AI 产品的未来
+                    </p>
+                    <div class="contact-links">
+                        <!-- 修改为你的实际联系方式 -->
+                        <a href="mailto:your@email.com" class="contact-link" id="contact-email">
+                            <span class="contact-icon">📧</span>
+                            <span>your@email.com</span>
+                        </a>
+                        <a href="#" class="contact-link" id="contact-wechat">
+                            <span class="contact-icon">💬</span>
+                            <span>微信：your_wechat</span>
+                        </a>
+                        <a href="#" class="contact-link" id="contact-linkedin">
+                            <span class="contact-icon">🔗</span>
+                            <span>LinkedIn</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 刘洋 · AI 产品经理 · 用产品思维构建这个网站</p>
+            <p class="footer-sub">Made with ❤️ and a lot of AI</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/interview.js"></script>
+    <script src="assets/js/tracker.js"></script>
+</body>
+
+</html>

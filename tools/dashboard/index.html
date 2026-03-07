@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘洋 · 求职追踪 Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --border: #e5e5ea;
+    --text: #1d1d1f;
+    --text-sec: #6e6e73;
+    --blue: #0071e3;
+    --green: #30d158;
+    --orange: #ff9f0a;
+    --red: #ff453a;
+    --purple: #bf5af2;
+    --gray: #8e8e93;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; }
+  .header p { font-size: 14px; color: var(--text-sec); margin-top: 2px; }
+  .header-right { text-align: right; font-size: 13px; color: var(--text-sec); }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 18px 16px;
+    border: 1px solid var(--border);
+  }
+  .stat-card .label { font-size: 12px; color: var(--text-sec); margin-bottom: 8px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-card .sub { font-size: 12px; color: var(--text-sec); margin-top: 4px; }
+  .v-blue { color: var(--blue); }
+  .v-green { color: var(--green); }
+  .v-orange { color: var(--orange); }
+  .v-red { color: var(--red); }
+  .v-purple { color: var(--purple); }
+
+  /* Main layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h2 { font-size: 15px; font-weight: 600; }
+  .card-body { padding: 0; }
+
+  /* Add button */
+  .btn-add {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-add:hover { background: #0077ed; }
+
+  /* Table */
+  .job-table { width: 100%; border-collapse: collapse; }
+  .job-table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-sec);
+    padding: 10px 16px;
+    background: #fafafa;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .job-table td {
+    padding: 13px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .job-table tr:last-child td { border-bottom: none; }
+  .job-table tr:hover td { background: #fafafa; }
+
+  .company { font-weight: 600; font-size: 14px; }
+  .role { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+
+  /* Status badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge.applied    { background: #e8f4fd; color: #0071e3; }
+  .badge.applied .badge-dot { background: #0071e3; }
+  .badge.interview  { background: #fff3e0; color: #e65100; }
+  .badge.interview .badge-dot { background: #ff9f0a; }
+  .badge.hr         { background: #f3e8ff; color: #7c3aed; }
+  .badge.hr .badge-dot { background: #bf5af2; }
+  .badge.offer      { background: #e8f5e9; color: #1b5e20; }
+  .badge.offer .badge-dot { background: #30d158; }
+  .badge.rejected   { background: #fce8e8; color: #c62828; }
+  .badge.rejected .badge-dot { background: #ff453a; }
+  .badge.pending    { background: #f0f0f0; color: #6e6e73; }
+  .badge.pending .badge-dot { background: #8e8e93; }
+  .badge.written    { background: #e8f4fd; color: #0071e3; }
+  .badge.written .badge-dot { background: #0071e3; }
+  .badge.technical  { background: #fff8e1; color: #f57f17; }
+  .badge.technical .badge-dot { background: #ff9f0a; }
+  .badge.final      { background: #f3e8ff; color: #7c3aed; }
+  .badge.final .badge-dot { background: #bf5af2; }
+
+  /* Priority */
+  .priority { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .p-high   { background: var(--red); }
+  .p-mid    { background: var(--orange); }
+  .p-low    { background: var(--gray); }
+
+  /* Action link */
+  .action-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+    margin-right: 4px;
+  }
+  .action-btn:hover { background: var(--bg); }
+  .action-btn.del { color: var(--red); }
+
+  /* Right column */
+  .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Todo list */
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-cb { margin-top: 2px; cursor: pointer; accent-color: var(--blue); width: 15px; height: 15px; flex-shrink: 0; }
+  .todo-text { flex: 1; line-height: 1.4; }
+  .todo-text .todo-company { font-weight: 600; }
+  .todo-text .todo-desc { color: var(--text-sec); font-size: 12px; }
+  .todo-date { font-size: 11px; color: var(--text-sec); white-space: nowrap; }
+  .done .todo-text { text-decoration: line-through; opacity: 0.5; }
+
+  /* Notes */
+  .notes-area {
+    width: 100%;
+    border: none;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    color: var(--text);
+    background: transparent;
+    outline: none;
+    line-height: 1.6;
+    min-height: 130px;
+  }
+
+  /* Funnel */
+  .funnel-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+    font-size: 13px;
+  }
+  .funnel-row:last-child { border-bottom: none; }
+  .funnel-label { width: 72px; color: var(--text-sec); font-size: 12px; flex-shrink: 0; }
+  .funnel-bar-wrap { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .funnel-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .funnel-count { width: 20px; text-align: right; font-weight: 600; font-size: 13px; flex-shrink: 0; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 12px; color: var(--text-sec); font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--blue);
+    background: #fff;
+  }
+  .modal-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .btn-cancel {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 18px;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .btn-submit {
+    background: var(--blue); color: #fff; border: none;
+    border-radius: 8px; padding: 8px 18px;
+    font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  .btn-submit:hover { background: #0077ed; }
+
+  /* Search bar */
+  .search-bar {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    width: 180px;
+    color: var(--text);
+  }
+  .search-bar:focus { border-color: var(--blue); }
+
+  .filter-wrap { display: flex; gap: 8px; align-items: center; }
+
+  select.filter-select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--card);
+    cursor: pointer;
+  }
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .main-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>求职追踪 Dashboard</h1>
+    <p>刘洋 · AI 产品经理 · <span id="updateTime"></span></p>
+  </div>
+  <div class="header-right">
+    <div id="currentDate" style="font-size:15px;font-weight:600;color:var(--text)"></div>
+    <div>持续更新中</div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-row" id="statsRow">
+  <div class="stat-card">
+    <div class="label">总投递</div>
+    <div class="value v-blue" id="s-total">0</div>
+    <div class="sub">家公司</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">进行中</div>
+    <div class="value v-orange" id="s-active">0</div>
+    <div class="sub">笔试/面试阶段</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Offer</div>
+    <div class="value v-green" id="s-offer">0</div>
+    <div class="sub">已获 Offer</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">淘汰</div>
+    <div class="value v-red" id="s-rej">0</div>
+    <div class="sub">未通过</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">面试转化</div>
+    <div class="value v-purple" id="s-rate">0%</div>
+    <div class="sub">投递→面试率</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main-grid">
+  <!-- Left: Job list -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h2>投递记录</h2>
+        <div class="filter-wrap">
+          <input class="search-bar" type="text" id="searchInput" placeholder="搜索公司/岗位..." oninput="renderTable()">
+          <select class="filter-select" id="filterStatus" onchange="renderTable()">
+            <option value="">全部状态</option>
+            <option value="applied">已投递</option>
+            <option value="written">笔试</option>
+            <option value="interview">一面</option>
+            <option value="hr">HR 面</option>
+            <option value="final">终面</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">淘汰</option>
+            <option value="pending">待反馈</option>
+          </select>
+          <button class="btn-add" onclick="openModal()">+ 添加</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <table class="job-table">
+          <thead>
+            <tr>
+              <th>优先级</th>
+              <th>公司 / 岗位</th>
+              <th>渠道</th>
+              <th>投递日期</th>
+              <th>状态</th>
+              <th>下次跟进</th>
+              <th>备注</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="jobTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="right-col">
+    <!-- Funnel -->
+    <div class="card">
+      <div class="card-header"><h2>进展漏斗</h2></div>
+      <div class="card-body" id="funnelBody"></div>
+    </div>
+
+    <!-- Todo -->
+    <div class="card">
+      <div class="card-header">
+        <h2>待办事项</h2>
+        <button class="btn-add" onclick="addTodo()">+ 添加</button>
+      </div>
+      <div class="card-body" id="todoBody"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="card">
+      <div class="card-header"><h2>求职笔记</h2></div>
+      <div class="card-body">
+        <textarea class="notes-area" id="notesArea" placeholder="记录求职心得、面试复盘、市场观察..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modalTitle">添加投递记录</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>公司名称 *</label>
+        <input type="text" id="f-company" placeholder="如：字节跳动">
+      </div>
+      <div class="form-group">
+        <label>岗位名称 *</label>
+        <input type="text" id="f-role" placeholder="如：AI 产品经理">
+      </div>
+      <div class="form-group">
+        <label>投递渠道</label>
+        <select id="f-channel">
+          <option>Boss直聘</option>
+          <option>内推</option>
+          <option>官网</option>
+          <option>猎头</option>
+          <option>领英</option>
+          <option>脉脉</option>
+          <option>拉勾</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>优先级</label>
+        <select id="f-priority">
+          <option value="high">高</option>
+          <option value="mid" selected>中</option>
+          <option value="low">低</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>投递日期</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select id="f-status">
+          <option value="applied">已投递</option>
+          <option value="pending">待反馈</option>
+          <option value="written">笔试</option>
+          <option value="interview">一面</option>
+          <option value="hr">HR 面</option>
+          <option value="final">终面</option>
+          <option value="offer">Offer</option>
+          <option value="rejected">淘汰</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>下次跟进日期</label>
+        <input type="date" id="f-followup">
+      </div>
+      <div class="form-group">
+        <label>薪资范围 (K)</label>
+        <input type="text" id="f-salary" placeholder="如：25-35K">
+      </div>
+      <div class="form-group full">
+        <label>备注</label>
+        <input type="text" id="f-note" placeholder="面试官姓名、关注点、注意事项...">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModalDirect()">取消</button>
+      <button class="btn-submit" onclick="saveJob()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Data ----
+let jobs = JSON.parse(localStorage.getItem('jobs') || '[]');
+let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+let notes = localStorage.getItem('notes') || '';
+let editingId = null;
+
+// Default sample data
+if (jobs.length === 0) {
+  jobs = [
+    { id: 1, company: '某 AI 独角兽', role: 'AI 产品经理', channel: 'Boss直聘', priority: 'high', date: '2026-02-20', status: 'interview', followup: '2026-03-10', salary: '30-40K', note: '已完成一面，等待二面通知' },
+    { id: 2, company: '头部金融科技公司', role: 'LLM 产品经理', channel: '内推', priority: 'high', date: '2026-02-25', status: 'hr', followup: '2026-03-08', salary: '28-38K', note: 'HR 面已过，等终面' },
+    { id: 3, company: '某大厂 AI 事业部', role: '智能产品经理', channel: '官网', priority: 'mid', date: '2026-03-01', status: 'applied', followup: '', salary: '25-35K', note: '' },
+    { id: 4, company: '证券头部券商', role: 'AI 产品经理', channel: '猎头', priority: 'mid', date: '2026-02-18', status: 'rejected', followup: '', salary: '20-30K', note: '背景不完全匹配' },
+    { id: 5, company: '金融 SaaS 创业公司', role: 'AI PM (RAG 方向)', channel: '脉脉', priority: 'high', date: '2026-03-03', status: 'written', followup: '2026-03-09', salary: '25-35K', note: '笔试题涉及 RAG 架构设计' },
+  ];
+  saveData();
+}
+
+if (todos.length === 0) {
+  todos = [
+    { id: 1, company: '某 AI 独角兽', desc: '准备二面 STAR 故事，重点准备 RAG 架构设计经验', date: '2026-03-10', done: false },
+    { id: 2, company: '金融 SaaS 创业公司', desc: '完成笔试，重点：产品设计题+技术原理题', date: '2026-03-09', done: false },
+    { id: 3, company: '通用', desc: '更新竞品分析：调研 3 家目标公司最新 AI 产品动态', date: '2026-03-08', done: false },
+    { id: 4, company: '通用', desc: '复习反问面试官的问题清单', date: '2026-03-07', done: true },
+  ];
+  saveData();
+}
+
+if (notes) {
+  document.getElementById('notesArea').value = notes;
+}
+
+function saveData() {
+  localStorage.setItem('jobs', JSON.stringify(jobs));
+  localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+// ---- Date ----
+const now = new Date();
+document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+document.getElementById('updateTime').textContent = '更新于 ' + now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+document.getElementById('f-date').value = now.toISOString().split('T')[0];
+
+// ---- Status config ----
+const statusConfig = {
+  applied:   { label: '已投递', cls: 'applied' },
+  pending:   { label: '待反馈', cls: 'pending' },
+  written:   { label: '笔试',   cls: 'written' },
+  interview: { label: '一面',   cls: 'interview' },
+  hr:        { label: 'HR 面',  cls: 'hr' },
+  final:     { label: '终面',   cls: 'final' },
+  offer:     { label: 'Offer',  cls: 'offer' },
+  rejected:  { label: '淘汰',   cls: 'rejected' },
+};
+
+const priorityConfig = {
+  high: { label: '高', cls: 'p-high' },
+  mid:  { label: '中', cls: 'p-mid' },
+  low:  { label: '低', cls: 'p-low' },
+};
+
+// ---- Render Table ----
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filterStatus = document.getElementById('filterStatus').value;
+
+  let filtered = jobs.filter(j => {
+    const matchSearch = !search || j.company.toLowerCase().includes(search) || j.role.toLowerCase().includes(search);
+    const matchStatus = !filterStatus || j.status === filterStatus;
+    return matchSearch && matchStatus;
+  });
+
+  // Sort: priority high first, then by date desc
+  const pOrder = { high: 0, mid: 1, low: 2 };
+  filtered.sort((a, b) => pOrder[a.priority] - pOrder[b.priority] || new Date(b.date) - new Date(a.date));
+
+  const tbody = document.getElementById('jobTableBody');
+  tbody.innerHTML = '';
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-sec)">暂无记录</td></tr>';
+    return;
+  }
+
+  filtered.forEach(j => {
+    const s = statusConfig[j.status] || statusConfig.applied;
+    const p = priorityConfig[j.priority] || priorityConfig.mid;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="priority ${p.cls}" title="${p.label}"></span></td>
+      <td>
+        <div class="company">${j.company}</div>
+        <div class="role">${j.role} ${j.salary ? '· ' + j.salary : ''}</div>
+      </td>
+      <td style="color:var(--text-sec)">${j.channel}</td>
+      <td style="color:var(--text-sec);white-space:nowrap">${j.date}</td>
+      <td><span class="badge ${s.cls}"><span class="badge-dot"></span>${s.label}</span></td>
+      <td style="color:var(--text-sec);white-space:nowrap">${j.followup || '-'}</td>
+      <td style="color:var(--text-sec);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${j.note}">${j.note || '-'}</td>
+      <td>
+        <button class="action-btn" onclick="editJob(${j.id})">编辑</button>
+        <button class="action-btn del" onclick="deleteJob(${j.id})">删除</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ---- Stats ----
+function renderStats() {
+  const total = jobs.length;
+  const active = jobs.filter(j => ['written','interview','hr','final'].includes(j.status)).length;
+  const offer = jobs.filter(j => j.status === 'offer').length;
+  const rej = jobs.filter(j => j.status === 'rejected').length;
+  const interviewed = jobs.filter(j => ['written','interview','hr','final','offer','rejected'].includes(j.status)).length;
+  const rate = total > 0 ? Math.round(interviewed / total * 100) : 0;
+
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-active').textContent = active;
+  document.getElementById('s-offer').textContent = offer;
+  document.getElementById('s-rej').textContent = rej;
+  document.getElementById('s-rate').textContent = rate + '%';
+}
+
+// ---- Funnel ----
+function renderFunnel() {
+  const stages = [
+    { key: 'applied',   label: '已投递' },
+    { key: 'written',   label: '笔试' },
+    { key: 'interview', label: '一面' },
+    { key: 'hr',        label: 'HR 面' },
+    { key: 'final',     label: '终面' },
+    { key: 'offer',     label: 'Offer' },
+  ];
+  const colors = ['#0071e3','#5ac8fa','#ff9f0a','#bf5af2','#ff453a','#30d158'];
+  const total = jobs.length || 1;
+  const body = document.getElementById('funnelBody');
+  body.innerHTML = '';
+
+  stages.forEach((s, i) => {
+    const count = jobs.filter(j => j.status === s.key).length;
+    const pct = Math.round(count / total * 100);
+    const div = document.createElement('div');
+    div.className = 'funnel-row';
+    div.innerHTML = `
+      <div class="funnel-label">${s.label}</div>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar" style="width:${Math.max(pct,4)}%;background:${colors[i]}"></div>
+      </div>
+      <div class="funnel-count" style="color:${colors[i]}">${count}</div>
+    `;
+    body.appendChild(div);
+  });
+}
+
+// ---- Todo ----
+function renderTodo() {
+  const body = document.getElementById('todoBody');
+  body.innerHTML = '';
+  const sorted = [...todos].sort((a, b) => (a.done ? 1 : -1) || new Date(a.date) - new Date(b.date));
+  sorted.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'todo-item' + (t.done ? ' done' : '');
+    div.innerHTML = `
+      <input type="checkbox" class="todo-cb" ${t.done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
+      <div class="todo-text">
+        <div class="todo-company">${t.company}</div>
+        <div class="todo-desc">${t.desc}</div>
+      </div>
+      <div class="todo-date">${t.date}</div>
+    `;
+    body.appendChild(div);
+  });
+}
+
+function toggleTodo(id) {
+  const t = todos.find(t => t.id === id);
+  if (t) { t.done = !t.done; saveData(); renderTodo(); }
+}
+
+function addTodo() {
+  const company = prompt('公司/类别（如"通用"）:');
+  if (!company) return;
+  const desc = prompt('待办内容:');
+  if (!desc) return;
+  const date = prompt('截止日期 (如 2026-03-10):') || new Date().toISOString().split('T')[0];
+  todos.push({ id: Date.now(), company, desc, date, done: false });
+  saveData();
+  renderTodo();
+}
+
+// ---- Notes ----
+document.getElementById('notesArea').addEventListener('input', function() {
+  localStorage.setItem('notes', this.value);
+});
+
+// ---- Modal ----
+function openModal(id) {
+  editingId = id || null;
+  document.getElementById('modalTitle').textContent = id ? '编辑投递记录' : '添加投递记录';
+  if (id) {
+    const j = jobs.find(j => j.id === id);
+    document.getElementById('f-company').value = j.company;
+    document.getElementById('f-role').value = j.role;
+    document.getElementById('f-channel').value = j.channel;
+    document.getElementById('f-priority').value = j.priority;
+    document.getElementById('f-date').value = j.date;
+    document.getElementById('f-status').value = j.status;
+    document.getElementById('f-followup').value = j.followup;
+    document.getElementById('f-salary').value = j.salary;
+    document.getElementById('f-note').value = j.note;
+  } else {
+    document.getElementById('f-company').value = '';
+    document.getElementById('f-role').value = '';
+    document.getElementById('f-channel').value = 'Boss直聘';
+    document.getElementById('f-priority').value = 'mid';
+    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('f-status').value = 'applied';
+    document.getElementById('f-followup').value = '';
+    document.getElementById('f-salary').value = '';
+    document.getElementById('f-note').value = '';
+  }
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function saveJob() {
+  const company = document.getElementById('f-company').value.trim();
+  const role = document.getElementById('f-role').value.trim();
+  if (!company || !role) { alert('请填写公司名称和岗位名称'); return; }
+  const data = {
+    company, role,
+    channel:  document.getElementById('f-channel').value,
+    priority: document.getElementById('f-priority').value,
+    date:     document.getElementById('f-date').value,
+    status:   document.getElementById('f-status').value,
+    followup: document.getElementById('f-followup').value,
+    salary:   document.getElementById('f-salary').value,
+    note:     document.getElementById('f-note').value,
+  };
+  if (editingId) {
+    const idx = jobs.findIndex(j => j.id === editingId);
+    jobs[idx] = { ...jobs[idx], ...data };
+  } else {
+    jobs.push({ id: Date.now(), ...data });
+  }
+  saveData();
+  renderAll();
+  closeModalDirect();
+}
+
+function editJob(id) { openModal(id); }
+
+function deleteJob(id) {
+  if (!confirm('确认删除这条记录？')) return;
+  jobs = jobs.filter(j => j.id !== id);
+  saveData();
+  renderAll();
+}
+
+function renderAll() {
+  renderTable();
+  renderStats();
+  renderFunnel();
+  renderTodo();
+}
+
+renderAll();
+</script>
+</body>
+</html>
