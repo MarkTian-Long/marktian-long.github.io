@@ -25,8 +25,9 @@ qiuzhi/
 1. **index.html 是唯一入口**，所有页面内容通过锚点导航，不新增独立页面
 2. **静态资源统一放 `assets/`**，禁止在根目录放散落的 CSS/JS/图片
 3. **工具类页面放 `tools/<tool-name>/`**，通过 iframe 嵌入主页面
-4. **内容资料放 `content/`**，与代码分离，方便独立编辑和管理
-5. **个人文件放 `docs/`**，已在 `.gitignore` 中排除
+4. **每个工具必须有 `README.md`**，说明功能、数据来源和维护方式
+5. **内容资料放 `content/`**，与代码分离，方便独立编辑和管理
+6. **个人文件放 `docs/`**，已在 `.gitignore` 中排除
 
 ---
 
@@ -103,12 +104,33 @@ background: rgba(255, 255, 255, 0.04);
 
 ### 1. 创建工具目录
 
-```
+```text
 tools/
 └── <new-tool>/
+    ├── README.md     # 必须：工具说明文档
     ├── index.html    # 工具主页面（可独立运行）
     ├── style.css     # 工具私有样式（可选）
-    └── script.js     # 工具私有脚本（可选）
+    ├── script.js     # 工具私有脚本（可选）
+    └── data/         # 数据文件目录（可选，内容驱动型工具用）
+        └── *.json
+```
+
+### 2. 每个工具的 README.md 模板
+
+```markdown
+# 工具名称
+
+## 功能描述
+一句话说明这个工具做什么。
+
+## 数据来源
+说明数据从哪来、如何更新。
+
+## 文件结构
+列出本工具包含的文件及各自用途。
+
+## 维护指南
+如何添加新内容、修改配置等。
 ```
 
 ### 2. 在 index.html 中注册 Tab
@@ -146,7 +168,7 @@ tools/
 
 | 工具 | localStorage Key | 数据格式 |
 |------|------------------|----------|
-| 求职追踪 Dashboard | `jobs`, `todos`, `notes` | JSON Array / String |
+| 求职追踪 Dashboard | `qiuzhi_jobs_v1`, `qiuzhi_todos_v1`, `qiuzhi_notes_v1` | JSON Array / String |
 | 面试练习器 | （暂无持久化，未来可加）| - |
 
 ### 规则
@@ -154,6 +176,7 @@ tools/
 - Key 命名：`qiuzhi_<模块>_<版本>`（新工具遵守此格式）
 - 所有数据存 `localStorage`，不依赖后端
 - 敏感信息（手机号、身份证）**不得** 存入 localStorage
+- 有持久化需求的工具须提供导出/导入 JSON 备份功能，防止浏览器清缓存丢失数据
 
 ---
 

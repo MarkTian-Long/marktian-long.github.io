@@ -101,6 +101,23 @@
   }
   .btn-add:hover { background: #0077ed; }
 
+  /* Export button */
+  .btn-export {
+    background: var(--card);
+    color: var(--text-sec);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-export:hover { border-color: var(--blue); color: var(--blue); }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
   /* Table */
   .job-table { width: 100%; border-collapse: collapse; }
   .job-table th {
@@ -318,9 +335,14 @@
     <h1>求职追踪 Dashboard</h1>
     <p>刘洋 · AI 产品经理 · <span id="updateTime"></span></p>
   </div>
-  <div class="header-right">
-    <div id="currentDate" style="font-size:15px;font-weight:600;color:var(--text)"></div>
-    <div>持续更新中</div>
+  <div class="header-actions">
+    <button class="btn-export" onclick="exportBackup()">⬇ 导出备份</button>
+    <button class="btn-export" onclick="triggerImport()">⬆ 导入恢复</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBackup(event)">
+    <div class="header-right">
+      <div id="currentDate" style="font-size:15px;font-weight:600;color:var(--text)"></div>
+      <div>持续更新中</div>
+    </div>
   </div>
 </div>
 
@@ -496,9 +518,9 @@
 
 <script>
 // ---- Data ----
-let jobs = JSON.parse(localStorage.getItem('jobs') || '[]');
-let todos = JSON.parse(localStorage.getItem('todos') || '[]');
-let notes = localStorage.getItem('notes') || '';
+let jobs = JSON.parse(localStorage.getItem('qiuzhi_jobs_v1') || '[]');
+let todos = JSON.parse(localStorage.getItem('qiuzhi_todos_v1') || '[]');
+let notes = localStorage.getItem('qiuzhi_notes_v1') || '';
 let editingId = null;
 
 // Default sample data
@@ -528,8 +550,47 @@ if (notes) {
 }
 
 function saveData() {
-  localStorage.setItem('jobs', JSON.stringify(jobs));
-  localStorage.setItem('todos', JSON.stringify(todos));
+  localStorage.setItem('qiuzhi_jobs_v1', JSON.stringify(jobs));
+  localStorage.setItem('qiuzhi_todos_v1', JSON.stringify(todos));
+}
+
+function exportBackup() {
+  const date = new Date().toISOString().slice(0, 10);
+  const data = { exportedAt: new Date().toISOString(), jobs, todos, notes };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `qiuzhi_backup_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function triggerImport() {
+  document.getElementById('importInput').click();
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.jobs || !Array.isArray(data.jobs)) throw new Error('格式错误');
+      if (!confirm(`将导入 ${data.jobs.length} 条投递记录，当前数据将被覆盖，确认吗？`)) return;
+      jobs = data.jobs;
+      todos = data.todos || [];
+      notes = data.notes || '';
+      saveData();
+      localStorage.setItem('qiuzhi_notes_v1', notes);
+      document.getElementById('notesArea').value = notes;
+      renderAll();
+    } catch {
+      alert('文件格式不正确，请选择由本工具导出的备份文件。');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
 }
 
 // ---- Date ----
@@ -688,7 +749,7 @@ function addTodo() {
 
 // ---- Notes ----
 document.getElementById('notesArea').addEventListener('input', function() {
-  localStorage.setItem('notes', this.value);
+  localStorage.setItem('qiuzhi_notes_v1', this.value);
 });
 
 // ---- Modal ----

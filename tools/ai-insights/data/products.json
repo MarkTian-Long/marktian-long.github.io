@@ -1,0 +1,152 @@
+[
+  {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "company": "OpenAI",
+    "category": "通用大模型",
+    "logo": "🤖",
+    "tagline": "从对话工具到 AI 操作系统",
+    "description": "全球首个现象级 AI 对话产品，2 个月破亿用户。通过 RLHF 持续优化体验，从单一对话发展为 GPTs 生态平台 + Agent 执行系统。",
+    "highlights": [
+      "2亿+ MAU，史上增长最快消费级产品",
+      "GPTs 平台 UGC 生态，首周 300 万+ 创建",
+      "记忆 + Projects + Canvas，粘性持续提升"
+    ],
+    "pmInsights": [
+      "免费策略构建数据飞轮 → RLHF 持续优化的增长闭环",
+      "功能上线时机比功能本身更重要（记忆功能的克制设计）",
+      "从对话到 Agent，产品形态持续进化"
+    ],
+    "techStack": ["GPT-4o", "RLHF", "Tool Use", "RAG"],
+    "businessModel": "Freemium（免费 + Plus $20/月 + Enterprise）+ API",
+    "launchDate": "2022-11",
+    "trend": "up",
+    "stars": 5,
+    "detailLink": ""
+  },
+  {
+    "id": "midjourney",
+    "name": "Midjourney",
+    "company": "Midjourney Inc.",
+    "category": "AI 创作",
+    "logo": "🎨",
+    "tagline": "从创作工具到创意社区",
+    "description": "AI 图像生成标杆产品。以 Discord Bot 起步，靠美学调教和社区效应实现差异化。仅 ~40 人团队达到约 $1亿 ARR。",
+    "highlights": [
+      "Discord 社区 → 自来水增长，零冷启动成本",
+      "V5/V6 每次版本升级引发病毒传播",
+      "关闭免费试用后付费转化率提升"
+    ],
+    "pmInsights": [
+      "产品载体选择决定用户获取方式（Discord 反常识决策）",
+      "美学调教降低使用门槛 = Prompt Engineering 的产品价值",
+      "当 PMF 足够强时，免费策略不是必须的"
+    ],
+    "techStack": ["Diffusion Model", "图像生成", "Prompt 优化"],
+    "businessModel": "纯订阅制（$10/$30/$60/$120 月）",
+    "launchDate": "2022-03",
+    "trend": "up",
+    "stars": 5,
+    "detailLink": ""
+  },
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "company": "深度求索",
+    "category": "通用大模型",
+    "logo": "🔬",
+    "tagline": "极致性价比的大模型挑战者",
+    "description": "中国 AI 创业公司，以极低训练成本和开源策略快速崛起。DeepSeek-V3/R1 在多项基准测试中比肩 GPT-4 级别，但推理成本降低 90%+。",
+    "highlights": [
+      "训练成本仅为同级模型的 1/10",
+      "开源策略快速建立开发者生态",
+      "R1 在数学和编程推理上表现突出"
+    ],
+    "pmInsights": [
+      "成本是产品竞争力的核心维度之一",
+      "开源 vs 闭源的产品策略选择：不同阶段不同答案",
+      "技术突破可以重新定义市场格局"
+    ],
+    "techStack": ["MoE 架构", "开源模型", "RLHF"],
+    "businessModel": "开源 + API 计费（极低价格）",
+    "launchDate": "2024-01",
+    "trend": "up",
+    "stars": 4,
+    "detailLink": ""
+  },
+  {
+    "id": "claude",
+    "name": "Claude",
+    "company": "Anthropic",
+    "category": "通用大模型",
+    "logo": "🧠",
+    "tagline": "安全优先的 AI 助手",
+    "description": "Anthropic 旗舰产品，强调 AI 安全与对齐。Claude 3.5 Sonnet 在编程、推理、长文本理解上表现顶级，200K token 超长上下文窗口。",
+    "highlights": [
+      "200K 上下文窗口，长文档处理能力最强",
+      "Constitutional AI 安全训练方案",
+      "Artifacts 功能开创交互式代码/文档新范式"
+    ],
+    "pmInsights": [
+      "安全性不是限制，而是差异化卖点（Constitutional AI）",
+      "Artifacts 功能验证：AI 产品不只是对话，结果呈现方式同等重要",
+      "B2B 客户核心关注安全 + 可控，这是 Claude 的核心壁垒"
+    ],
+    "techStack": ["Constitutional AI", "超长上下文", "RLHF"],
+    "businessModel": "Freemium + API + Enterprise",
+    "launchDate": "2023-03",
+    "trend": "up",
+    "stars": 5,
+    "detailLink": ""
+  },
+  {
+    "id": "cursor",
+    "name": "Cursor",
+    "company": "Anysphere",
+    "category": "AI 开发工具",
+    "logo": "⌨️",
+    "tagline": "AI-native 代码编辑器",
+    "description": "基于 VS Code 的 AI 编程编辑器，将大模型深度集成到编码工作流。Tab 补全 + Chat 结合，开创了 AI IDE 品类。",
+    "highlights": [
+      "Cmd+K 代码编辑 + Tab 智能补全，极致开发体验",
+      "Codebase 理解能力：基于整个项目上下文回答",
+      "ARR 增速极快，开发者社区高度活跃"
+    ],
+    "pmInsights": [
+      "AI 产品的核心不是 AI 能力，而是把 AI 无缝融入用户已有工作流",
+      "基于成熟产品（VS Code）改造 vs 从零开发：复用生态降低迁移成本",
+      "订阅制 + 使用量模式的混合商业化"
+    ],
+    "techStack": ["GPT-4 / Claude 集成", "RAG 代码索引", "VS Code Fork"],
+    "businessModel": "Freemium（$20/月 Pro + Business）",
+    "launchDate": "2023-03",
+    "trend": "up",
+    "stars": 4,
+    "detailLink": ""
+  },
+  {
+    "id": "perplexity",
+    "name": "Perplexity AI",
+    "company": "Perplexity",
+    "category": "AI 搜索",
+    "logo": "🔍",
+    "tagline": "AI 原生搜索引擎",
+    "description": "重新定义搜索：不返回链接，直接给出带引用的结构化答案。对标 Google 搜索，用 AI 做信息整合而非信息检索。",
+    "highlights": [
+      "搜索结果直接引用来源，可验证可溯源",
+      "Pro Search 多步推理，复杂问题深度解答",
+      "月活过千万，广告 + 订阅双轨商业化"
+    ],
+    "pmInsights": [
+      "搜索产品的核心从「找到信息」变为「理解信息」",
+      "溯源设计在专业场景（金融/学术）中至关重要",
+      "AI 搜索 vs 传统搜索：不是替代，是体验升维"
+    ],
+    "techStack": ["RAG", "实时检索", "多模型调度"],
+    "businessModel": "Freemium（$20/月 Pro）+ 广告",
+    "launchDate": "2022-12",
+    "trend": "up",
+    "stars": 4,
+    "detailLink": ""
+  }
+]

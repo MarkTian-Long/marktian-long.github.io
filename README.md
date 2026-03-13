@@ -4,7 +4,9 @@
 
 ## 🚀 快速开始
 
-直接用浏览器打开 `index.html` 即可，无需任何构建工具或服务器。
+线上地址：**https://marktian-long.github.io**
+
+或者直接用浏览器打开 `index.html`，无需任何构建工具或服务器。
 
 ```bash
 # 或者用 VS Code Live Server / Python HTTP Server 启动
@@ -33,8 +35,12 @@ qiuzhi/
 │   └── images/                #   图片资源（暂为空）
 │
 ├── tools/                     # 🛠️ 嵌入式工具（每个工具独立目录）
-│   └── dashboard/
-│       └── index.html         #   求职追踪 Dashboard（完整独立页面）
+│   ├── dashboard/
+│   │   └── index.html         #   求职追踪 Dashboard（完整独立页面）
+│   ├── ai-insights/
+│   │   └── index.html         #   AI 产品洞察工具
+│   └── esop-extractor/
+│       └── index.html         #   ESOP 字段提取 Demo
 │
 ├── content/                   # 📝 Markdown 内容资料
 │   ├── case_analysis.md       #   AI 产品案例分析（ChatGPT + Midjourney）
@@ -51,10 +57,12 @@ qiuzhi/
 | 模块 | 位置 | 说明 |
 |------|------|------|
 | Hero 个人定位 | `index.html` | 一句话定位 + 求职状态 + CTA |
-| 关于我 | `index.html` | 雷达图 + 技能标签 + 产品观名言 |
-| 产品案例 | `index.html` + `assets/js/main.js` | 3 个脱敏案例卡片，数据在 JS 中维护 |
+| 关于我 | `index.html` | bio 文字介绍 + 技能标签 + 联系入口 |
+| 产品案例 | `index.html` + `assets/js/main.js` | 3 个脱敏案例卡片，支持展开详情 |
 | 面试练习器 | `assets/js/interview.js` | 20 题，4类别，计时 + 自评 + 进度环 |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 + 笔记 |
+| AI Insights | `tools/ai-insights/index.html` | AI 产品洞察展示 |
+| ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
 | 联系方式 | `index.html` | 邮件 / 微信 / LinkedIn |
 
 ## ✏️ 自定义指南
@@ -63,7 +71,6 @@ qiuzhi/
 
 - **联系方式**：`index.html` 搜索 `your@email.com`、`your_wechat`
 - **数字统计**：`index.html` 搜索 `stat-num`
-- **雷达图分数**：`assets/js/main.js` 中 `value: [88, 82, 85, 78, 84, 80]`
 
 ### 修改产品案例
 
@@ -76,7 +83,6 @@ qiuzhi/
 ## 🔧 技术栈
 
 - **HTML5** + **CSS3** + **Vanilla JS**（零依赖，纯前端）
-- **ECharts**（CDN，雷达图）
 - **Google Fonts - Inter**（字体）
 - **localStorage**（数据持久化）
 

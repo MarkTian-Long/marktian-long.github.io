@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 产品洞察 · 刘洋</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div>
+                <h1 class="header-title">🔭 AI 产品洞察</h1>
+                <p class="header-sub">AI PM 视角 · 深度拆解标杆产品的策略与设计</p>
+            </div>
+            <div class="header-meta">
+                <span class="header-badge">持续更新中</span>
+                <span class="header-count" id="productCount">-</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-cat="all" onclick="filterCategory(this, 'all')">🌐 全部</button>
+    </div>
+
+    <!-- Product Grid -->
+    <main class="product-grid" id="productGrid">
+        <div class="loading">加载中...</div>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay hidden" id="detailModal" onclick="closeDetail(event)">
+        <div class="modal-card" id="detailContent"></div>
+    </div>
+
+    <footer class="footer">
+        <p>📌 以上分析为个人观点，基于公开信息整理 · 刘洋 · AI 产品经理</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
