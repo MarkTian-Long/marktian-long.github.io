@@ -38,7 +38,12 @@ qiuzhi/
 │   ├── dashboard/
 │   │   └── index.html         #   求职追踪 Dashboard（完整独立页面）
 │   ├── ai-insights/
-│   │   └── index.html         #   AI 产品洞察工具
+│   │   ├── index.html         #   AI 产品拆解展示
+│   │   ├── script.js          #   数据加载 + 渲染逻辑
+│   │   ├── style.css          #   私有样式
+│   │   └── data/products.json #   AI 产品数据源
+│   ├── product-collector/
+│   │   └── index.html         #   AI 产品信息采集器（表单 → JSON）
 │   └── esop-extractor/
 │       └── index.html         #   ESOP 字段提取 Demo
 │
@@ -61,7 +66,8 @@ qiuzhi/
 | 产品案例 | `index.html` + `assets/js/main.js` | 3 个脱敏案例卡片，支持展开详情 |
 | 面试练习器 | `assets/js/interview.js` | 20 题，4类别，计时 + 自评 + 进度环 |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 + 笔记 |
-| AI Insights | `tools/ai-insights/index.html` | AI 产品洞察展示 |
+| AI 产品拆解 | `tools/ai-insights/index.html` | 9 款产品，四维拆解 + 关键数据 + 时间线 + 信息来源 |
+| 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → 实时 JSON 预览 → 一键复制 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
 | 联系方式 | `index.html` | 邮件 / 微信 / LinkedIn |
 

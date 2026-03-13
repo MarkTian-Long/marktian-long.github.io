@@ -14,21 +14,24 @@
 
 ## 目录结构（快速定位）
 ```
-index.html          # 主页面，所有区块都在这里
-assets/css/style.css    # 全局样式 + Design Tokens（CSS 变量）
-assets/js/main.js       # 导航、动画、案例数据
-assets/js/interview.js  # 面试练习器逻辑
-tools/dashboard/        # 求职追踪 Dashboard
-tools/ai-insights/      # AI 产品洞察工具
-content/                # Markdown 内容资料（不是代码）
-docs/                   # 个人文档（.gitignore 排除）
+index.html                      # 主页面，所有区块都在这里
+assets/css/style.css            # 全局样式 + Design Tokens（CSS 变量）
+assets/js/main.js               # 导航、动画、案例数据
+assets/js/interview.js          # 面试练习器逻辑
+tools/dashboard/                # 求职追踪 Dashboard
+tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
+tools/product-collector/        # AI 产品信息采集器（手动录入）
+content/                        # Markdown 内容资料（不是代码）
+docs/                           # 个人文档（.gitignore 排除）
+.claude/skills/                 # Claude skill 定义
 ```
 
 ## 已有工具模块
 | 工具 | 路径 | 功能 |
 |------|------|------|
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 |
-| AI Insights | `tools/ai-insights/index.html` | AI 产品洞察展示 |
+| AI 产品拆解 | `tools/ai-insights/index.html` | 产品卡片 + 七 Tab 深度拆解 |
+| 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
 
@@ -48,6 +51,7 @@ docs/                   # 个人文档（.gitignore 排除）
 - 修改代码前先读相关文件，不要靠猜
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
+- 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码

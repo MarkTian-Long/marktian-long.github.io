@@ -4,9 +4,10 @@
 
 ## 下次开工
 
-- [ ] AI Insights 工具内容填充（`tools/ai-insights/` 目录已有但内容空）
-  - 填充你对 AI 产品的分析洞察数据（`tools/ai-insights/data/products.json`）
-  - 验证工具页面能正常展示
+- [ ] 用 `/analyze-product` 补充更多产品条目（当前 9 条，建议扩充到 15+）
+  - 优先补充：Gemini、GitHub Copilot、Runway、Figma AI、Replit AI 等
+  - 执行方式：对话中输入 `/analyze-product 产品名`，Claude 联网采集后写入
+- [ ] 为现有 8 条旧数据补充 keyMetrics / timeline / sources 字段（目前只 ChatGPT 有示范数据）
 
 ## 代码质量（低优先级，空闲时处理）
 
