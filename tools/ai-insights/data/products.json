@@ -135,6 +135,28 @@
     "detailLink": "https://www.midjourney.com",
     "issue": 2,
     "oneLiner": "Midjourney 证明：当 PMF 足够强，免费增长不是必须的",
+    "keyMetrics": [
+      { "label": "年化营收 ARR", "value": "$5亿", "source": "Sacra", "date": "2025-05", "url": "https://sacra.com/c/midjourney/" },
+      { "label": "网站月访客 MAU", "value": "1,983万", "source": "DemandSage", "date": "2026-01", "url": "https://www.demandsage.com/midjourney-statistics/" },
+      { "label": "Discord 注册用户", "value": "2,100万", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/c/midjourney/" },
+      { "label": "首轮外部融资", "value": "$1.5亿 Series B，估值 $100亿", "source": "SalesTools AI", "date": "2025-10", "url": "https://salestools.io/en/report/midjourney-raises-150m-series-b" },
+      { "label": "团队规模", "value": "约107-163人", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/c/midjourney/" }
+    ],
+    "timeline": [
+      { "date": "2021-08", "event": "David Holz 创立 Midjourney", "type": "launch" },
+      { "date": "2022-03", "event": "公测发布，两个月内实现盈利，零外部融资", "type": "launch" },
+      { "date": "2022-12", "event": "年收入达 $5000 万，纯订阅制验证 PMF", "type": "milestone" },
+      { "date": "2023-03", "event": "关闭免费试用，付费转化率反而提升", "type": "milestone" },
+      { "date": "2023-07", "event": "V5.2 发布，画质和美学一致性大幅提升", "type": "feature" },
+      { "date": "2024-01", "event": "V6 发布，提示词理解和细节表现突破", "type": "feature" },
+      { "date": "2024-12", "event": "年收入达 $3 亿，ARR 超 $4 亿", "type": "milestone" },
+      { "date": "2025-10", "event": "首次对外融资：Series B $1.5亿，Lightspeed 领投，估值 $100 亿", "type": "funding" }
+    ],
+    "sources": [
+      { "title": "Midjourney revenue, funding & news", "url": "https://sacra.com/c/midjourney/", "date": "2025-06", "type": "report" },
+      { "title": "Midjourney Statistics 2026 (Active Users & Revenue)", "url": "https://www.demandsage.com/midjourney-statistics/", "date": "2026-01", "type": "report" },
+      { "title": "Midjourney Raises $150M in Series B at $10B Valuation", "url": "https://salestools.io/en/report/midjourney-raises-150m-series-b", "date": "2025-10-11", "type": "media" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Midjourney 是 AI 图像生成的标杆产品，以 Discord Bot 起步，靠极致的美学调教和社区效应实现差异化。仅约 40 人的团队达到约 1 亿美元 ARR，是 AI 领域效率最高的商业化案例之一。",
@@ -220,6 +242,27 @@
     "detailLink": "https://www.deepseek.com",
     "issue": 3,
     "oneLiner": "DeepSeek 重新定义了 AI 军备竞赛的规则：不是谁算力多，是谁算法省",
+    "keyMetrics": [
+      { "label": "月活跃用户 MAU", "value": "3,800万", "source": "DemandSage", "date": "2025-04", "url": "https://www.demandsage.com/deepseek-statistics/" },
+      { "label": "App 下载总量", "value": "5,720万次", "source": "Business of Apps", "date": "2025-05", "url": "https://www.businessofapps.com/data/deepseek-statistics/" },
+      { "label": "V3 训练成本", "value": "$557.6万", "source": "DeepSeek 技术报告 / CNBC", "date": "2025-01", "url": "https://www.cnbc.com/2025/01/31/deepseeks-hardware-spend-could-be-as-high-as-500-million-report.html" },
+      { "label": "年化营收估算", "value": "$2.2亿（API+企业服务）", "source": "Business of Apps", "date": "2025-06", "url": "https://www.businessofapps.com/data/deepseek-statistics/" },
+      { "label": "企业客户数", "value": "26,000+", "source": "SQ Magazine", "date": "2025-06", "url": "" }
+    ],
+    "timeline": [
+      { "date": "2023-07", "event": "深度求索由梁文锋（High-Flyer 对冲基金创始人）创立", "type": "launch" },
+      { "date": "2024-05", "event": "DeepSeek-V2 发布，MoE 架构大幅降低推理成本", "type": "feature" },
+      { "date": "2024-12", "event": "DeepSeek-V3（671B 参数）发布，训练成本仅 $557 万", "type": "milestone" },
+      { "date": "2025-01", "event": "DeepSeek-R1 发布，MIT 开源授权，数学推理比肩 o1", "type": "milestone" },
+      { "date": "2025-01", "event": "登顶美国 iOS 免费榜第一，Nvidia 单日股价跌 18%", "type": "milestone" },
+      { "date": "2025-05", "event": "DeepSeek-R1-0528 更新发布，推理能力进一步提升", "type": "feature" }
+    ],
+    "sources": [
+      { "title": "DeepSeek Revenue and Usage Statistics (2025)", "url": "https://www.businessofapps.com/data/deepseek-statistics/", "date": "2025-05", "type": "report" },
+      { "title": "DeepSeek AI Statistics 2026", "url": "https://www.demandsage.com/deepseek-statistics/", "date": "2025-04", "type": "report" },
+      { "title": "DeepSeek's hardware spend could be as high as $500M", "url": "https://www.cnbc.com/2025/01/31/deepseeks-hardware-spend-could-be-as-high-as-500-million-report.html", "date": "2025-01-31", "type": "media" },
+      { "title": "DeepSeek - Wikipedia", "url": "https://en.wikipedia.org/wiki/DeepSeek", "date": "2025-01", "type": "media" }
+    ],
     "tabs": {
       "overview": {
         "intro": "DeepSeek 是深度求索于 2024 年推出的系列大模型，以极低训练成本和开源策略快速崛起。DeepSeek-V3/R1 在多项基准测试中比肩 GPT-4 级别，但推理成本降低 90%+，彻底打破了「顶级模型必然昂贵」的行业认知。",
@@ -305,6 +348,30 @@
     "detailLink": "https://claude.ai",
     "issue": 4,
     "oneLiner": "Claude 证明了「安全」可以是差异化卖点，而不只是合规负担",
+    "keyMetrics": [
+      { "label": "月活跃用户 MAU", "value": "3,000万", "source": "DemandSage", "date": "2025-06", "url": "https://www.demandsage.com/claude-ai-statistics/" },
+      { "label": "Anthropic 年化营收", "value": "$140亿", "source": "DemandSage", "date": "2026-02", "url": "https://www.demandsage.com/claude-ai-statistics/" },
+      { "label": "Anthropic 估值", "value": "$3,800亿", "source": "Anthropic 官方", "date": "2026-02", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation" },
+      { "label": "最新融资轮次", "value": "Series G $300亿，估值 $3,800亿", "source": "Anthropic 官方", "date": "2026-02", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation" },
+      { "label": "SWE-bench 编程得分", "value": "77.2%（Claude Sonnet 4.5）", "source": "Anthropic 官方", "date": "2025-09", "url": "" }
+    ],
+    "timeline": [
+      { "date": "2021-01", "event": "Anthropic 由 Dario Amodei 等前 OpenAI 团队成员创立", "type": "launch" },
+      { "date": "2023-03", "event": "Claude 1.0 公开发布，首个面向公众的 Anthropic 产品", "type": "launch" },
+      { "date": "2023-11", "event": "Claude 2.1 发布，首次支持 200K token 超长上下文", "type": "feature" },
+      { "date": "2024-03", "event": "Claude 3 系列发布（Haiku/Sonnet/Opus），支持多模态", "type": "milestone" },
+      { "date": "2024-06", "event": "Claude 3.5 Sonnet 发布，编程和推理性能超越 Opus 3", "type": "milestone" },
+      { "date": "2025-03", "event": "Series E 融资 $35亿，估值 $615亿，Lightspeed 领投", "type": "funding" },
+      { "date": "2025-05", "event": "Claude 4 系列发布（Sonnet 4 + Opus 4）", "type": "milestone" },
+      { "date": "2025-09", "event": "Series F 融资 $130亿，估值 $1,830亿", "type": "funding" },
+      { "date": "2026-02", "event": "Series G 融资 $300亿，估值 $3,800亿", "type": "funding" }
+    ],
+    "sources": [
+      { "title": "Claude Statistics 2026: Active Users & Revenue", "url": "https://www.demandsage.com/claude-ai-statistics/", "date": "2026-02", "type": "report" },
+      { "title": "Amazon-backed Anthropic valued at $61.5B after latest round", "url": "https://www.cnbc.com/2025/03/03/amazon-backed-ai-firm-anthropic-valued-at-61point5-billion-after-latest-round.html", "date": "2025-03-03", "type": "media" },
+      { "title": "Anthropic raises Series F at $183B post-money valuation", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation", "date": "2025-09", "type": "official" },
+      { "title": "Claude Statistics 2026", "url": "https://backlinko.com/claude-users", "date": "2026-02", "type": "report" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Claude 是 Anthropic 的旗舰 AI 产品，强调 AI 安全与对齐。Claude 3.5 Sonnet 在编程、推理、长文本理解上表现顶级，200K token 超长上下文窗口是目前最强之一。其核心差异化是 Constitutional AI 训练方案和对企业客户的高度可控性。",
@@ -390,6 +457,30 @@
     "detailLink": "https://www.cursor.com",
     "issue": 5,
     "oneLiner": "Cursor 的本质不是更好的代码补全，是把 AI 无缝嵌入程序员已有的工作流",
+    "keyMetrics": [
+      { "label": "年化营收 ARR", "value": "$12亿", "source": "SaaStr / Sacra", "date": "2025-12", "url": "https://www.saastr.com/cursor-hit-1b-arr-in-17-months-the-fastest-b2b-to-scale-ever-and-its-not-even-close/" },
+      { "label": "公司估值", "value": "$293亿", "source": "CNBC", "date": "2025-11", "url": "https://www.cnbc.com/2025/11/13/cursor-ai-startup-funding-round-valuation.html" },
+      { "label": "付费用户数", "value": "72万", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/research/cursor-at-200m-arr/" },
+      { "label": "日活跃用户 DAU", "value": "100万+", "source": "TapTwiceDigital", "date": "2025-06", "url": "" },
+      { "label": "每日代码生成量", "value": "约10亿行", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/research/cursor-at-200m-arr/" }
+    ],
+    "timeline": [
+      { "date": "2022-01", "event": "Anysphere 由 MIT 学生 Michael Truell 等 4 人创立", "type": "launch" },
+      { "date": "2023-03", "event": "Cursor 编辑器正式公开发布", "type": "launch" },
+      { "date": "2023-10", "event": "种子轮 $800 万，OpenAI Startup Fund 领投", "type": "funding" },
+      { "date": "2024-08", "event": "Series A $6000 万，估值 $4亿", "type": "funding" },
+      { "date": "2024-12", "event": "Series B $1.05亿，估值 $25亿，Thrive Capital 领投", "type": "funding" },
+      { "date": "2025-03", "event": "ARR 突破 $2亿，增速史上最快 SaaS", "type": "milestone" },
+      { "date": "2025-06", "event": "Series C，估值 $99亿", "type": "funding" },
+      { "date": "2025-11", "event": "Series D $23亿，估值 $293亿，Accel+Coatue 领投，Nvidia/Google 参投", "type": "funding" },
+      { "date": "2025-12", "event": "ARR 达 $12亿，从 $0 到 $10亿 仅用 17 个月", "type": "milestone" }
+    ],
+    "sources": [
+      { "title": "AI startup Cursor raises $2.3B at $29.3B valuation", "url": "https://www.cnbc.com/2025/11/13/cursor-ai-startup-funding-round-valuation.html", "date": "2025-11-13", "type": "media" },
+      { "title": "Cursor Hit $1B ARR in 17 Months — The Fastest B2B SaaS Ever", "url": "https://www.saastr.com/cursor-hit-1b-arr-in-17-months-the-fastest-b2b-to-scale-ever-and-its-not-even-close/", "date": "2025-12", "type": "media" },
+      { "title": "Cursor at $200M ARR", "url": "https://sacra.com/research/cursor-at-200m-arr/", "date": "2025-03", "type": "report" },
+      { "title": "Anysphere - Wikipedia", "url": "https://en.wikipedia.org/wiki/Anysphere", "date": "2025-11", "type": "media" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Cursor 是基于 VS Code 的 AI 编程编辑器，将大模型深度集成到编码工作流中。它不是独立的 AI 工具，而是在程序员最熟悉的环境里提供 AI 能力，最大限度降低迁移成本。Tab 补全 + Chat + Composer 的组合，开创了 AI IDE 品类。",
@@ -475,6 +566,27 @@
     "detailLink": "https://www.notion.com/product/ai",
     "issue": 7,
     "oneLiner": "Notion AI 的核心洞察：AI 功能的最佳载体，是用户已经每天打开的那个工具",
+    "keyMetrics": [
+      { "label": "Notion 总用户数", "value": "1亿", "source": "CNBC / super.so", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
+      { "label": "Notion 年化营收 ARR", "value": "$5亿", "source": "CNBC", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
+      { "label": "付费客户数", "value": "400万", "source": "GetLatka", "date": "2025-06", "url": "" },
+      { "label": "AI 功能付费渗透率", "value": "50%+", "source": "CNBC", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
+      { "label": "公司估值", "value": "约 $1,000亿（Series K）", "source": "SaaStr", "date": "2025-09", "url": "" }
+    ],
+    "timeline": [
+      { "date": "2013-01", "event": "Notion 创立", "type": "launch" },
+      { "date": "2021-10", "event": "Series C $2.75亿，估值 $100亿，Coatue+Sequoia 领投", "type": "funding" },
+      { "date": "2022-11", "event": "发布 AI 功能预览，比 ChatGPT 发布早两周", "type": "feature" },
+      { "date": "2023-02", "event": "Notion AI 正式面向所有用户开放，$10/月 Add-on", "type": "launch" },
+      { "date": "2024-01", "event": "收入达 $4亿（同比增长 60%），AI 渗透率持续提升", "type": "milestone" },
+      { "date": "2025-09", "event": "ARR 突破 $5亿，同步发布 Notion AI Agent", "type": "milestone" },
+      { "date": "2025-09", "event": "Series K 完成，估值约 $1,000亿", "type": "funding" }
+    ],
+    "sources": [
+      { "title": "Notion launches AI agent as it crosses $500M in annual revenue", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html", "date": "2025-09-18", "type": "media" },
+      { "title": "Notion has 100 Million Users", "url": "https://super.so/blog/notion-stats", "date": "2025-06", "type": "report" },
+      { "title": "Notion revenue, valuation & funding", "url": "https://sacra.com/c/notion/", "date": "2025-09", "type": "report" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Notion AI 于 2023 年 2 月正式推出，将 AI 写作、总结、翻译、数据填充等能力直接内嵌到 Notion 的 Block 编辑器中。它不是一个新产品，而是现有产品的 AI 升级——这个定位决定了它极高的渗透速度和用户接受度。",
@@ -560,6 +672,27 @@
     "detailLink": "https://sora.com",
     "issue": 8,
     "oneLiner": "Sora 的意义不只是「视频更好看」，而是证明 AI 开始理解物理世界的运行规律",
+    "keyMetrics": [
+      { "label": "Plus 用户月可生成视频", "value": "50个（480p）", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
+      { "label": "Pro 用户月可生成视频", "value": "500个（1080p 优先）", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
+      { "label": "最长视频时长", "value": "60秒", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
+      { "label": "迪士尼战略投资", "value": "迪士尼向 OpenAI 投资 $10亿，获授权 200+ 迪士尼角色", "source": "OpenAI / 媒体报道", "date": "2025-12", "url": "" }
+    ],
+    "timeline": [
+      { "date": "2024-02", "event": "OpenAI 首次公开展示 Sora 视频生成效果，震动行业", "type": "launch" },
+      { "date": "2024-11", "event": "部分测试用户因不满不平等访问权限，在 HuggingFace 集体抗议泄露 API Key", "type": "milestone" },
+      { "date": "2024-12", "event": "Sora 正式向美国/加拿大 ChatGPT Plus/Pro 用户开放", "type": "launch" },
+      { "date": "2025-02", "event": "Sora 视频生成集成进 ChatGPT 聊天界面", "type": "feature" },
+      { "date": "2025-09", "event": "Sora 2 发布，推出 iOS App，音频同步与物理引擎全面升级", "type": "milestone" },
+      { "date": "2025-11", "event": "Sora 2 Android App 发布", "type": "feature" },
+      { "date": "2025-12", "event": "迪士尼向 OpenAI 投资 $10亿，Sora 2 开放 200+ 迪士尼角色生成", "type": "milestone" }
+    ],
+    "sources": [
+      { "title": "Sora is here", "url": "https://openai.com/index/sora-is-here/", "date": "2024-12-09", "type": "official" },
+      { "title": "Sora 2 is here", "url": "https://openai.com/index/sora-2/", "date": "2025-09-30", "type": "official" },
+      { "title": "OpenAI releases Sora, its AI video generation tool", "url": "https://www.cnbc.com/2024/12/09/openai-releases-sora-its-buzzy-ai-video-generation-tool.html", "date": "2024-12-09", "type": "media" },
+      { "title": "Sora (text-to-video model) - Wikipedia", "url": "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)", "date": "2025-09", "type": "media" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Sora 是 OpenAI 于 2024 年 2 月发布的文字转视频模型，能够根据文字描述生成最长 60 秒的高清视频。它的发布在创作领域引发了巨大震动——不只是因为生成质量高，更因为它对镜头运动、物理规律、场景连贯性的理解达到了新高度。",
@@ -645,6 +778,28 @@
     "detailLink": "https://www.perplexity.ai",
     "issue": 6,
     "oneLiner": "Perplexity 把搜索的核心从「找到信息」重新定义为「理解信息」",
+    "keyMetrics": [
+      { "label": "月活跃用户 MAU", "value": "4,500万", "source": "DemandSage", "date": "2026-01", "url": "https://www.demandsage.com/perplexity-ai-statistics/" },
+      { "label": "月查询量", "value": "7.8亿次", "source": "DemandSage", "date": "2025-07", "url": "https://www.demandsage.com/perplexity-ai-statistics/" },
+      { "label": "年化营收 ARR", "value": "$2亿", "source": "Sacra", "date": "2025-07", "url": "https://sacra.com/c/perplexity/" },
+      { "label": "公司估值", "value": "$212亿", "source": "Tracxn", "date": "2026-01", "url": "" },
+      { "label": "累计融资总额", "value": "$12.2亿（10轮）", "source": "Tracxn", "date": "2026-01", "url": "" }
+    ],
+    "timeline": [
+      { "date": "2022-08", "event": "Perplexity AI 创立，日查询量仅 3,000 次", "type": "launch" },
+      { "date": "2024-01", "event": "Series B，Nvidia 首次参投，估值约 $5亿", "type": "funding" },
+      { "date": "2024-08", "event": "Series C，SoftBank Vision Fund 首次参投", "type": "funding" },
+      { "date": "2024-12", "event": "Series D $5亿，估值 $90亿", "type": "funding" },
+      { "date": "2025-06", "event": "新一轮 $5亿融资，估值 $140亿，MAU 从 400万增至 2,200万（+450%）", "type": "funding" },
+      { "date": "2025-07", "event": "ARR 达 $1.5亿，月查询量 7.8亿次", "type": "milestone" },
+      { "date": "2025-09", "event": "新一轮 $2亿融资，估值 $200亿（TechCrunch 报道）", "type": "funding" }
+    ],
+    "sources": [
+      { "title": "Perplexity reportedly raised $200M at $20B valuation", "url": "https://techcrunch.com/2025/09/10/perplexity-reportedly-raised-200m-at-20b-valuation/", "date": "2025-09-10", "type": "media" },
+      { "title": "Perplexity AI Statistics 2026", "url": "https://www.demandsage.com/perplexity-ai-statistics/", "date": "2026-01", "type": "report" },
+      { "title": "Perplexity AI - Wikipedia", "url": "https://en.wikipedia.org/wiki/Perplexity_AI", "date": "2025-09", "type": "media" },
+      { "title": "Perplexity revenue, valuation & funding", "url": "https://sacra.com/c/perplexity/", "date": "2025-07", "type": "report" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Perplexity AI 是新一代 AI 搜索引擎，不返回链接列表，而是直接给出带引用来源的结构化答案。它重新定义了搜索体验：不是帮你找到信息在哪里，而是帮你直接理解信息。月活过千万，已成为 AI 搜索的标杆产品。",
@@ -730,6 +885,26 @@
     "detailLink": "https://claude.ai/code",
     "issue": 9,
     "oneLiner": "Claude Code 代表了 AI 编程的下一个形态：不是帮你写代码，而是替你执行工程任务",
+    "keyMetrics": [
+      { "label": "营收贡献（年化）", "value": "$5亿+（占 Anthropic 总营收主要部分）", "source": "Medium / 行业分析", "date": "2025-12", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
+      { "label": "用户增长", "value": "GA 后 6 个月增长 10x", "source": "Medium", "date": "2025-12", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
+      { "label": "营收增速", "value": "GA 后 2 个月内增长 5.5x", "source": "Medium", "date": "2025-07", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
+      { "label": "npm 版本更新数", "value": "2025年内发布 176 次更新", "source": "npm / GitHub", "date": "2025-12", "url": "https://www.npmjs.com/package/@anthropic-ai/claude-code" }
+    ],
+    "timeline": [
+      { "date": "2025-02", "event": "Claude Code 作为研究预览版发布（终端 CLI 工具）", "type": "launch" },
+      { "date": "2025-05", "event": "GA 正式发布，随 Claude 4 系列同步推出", "type": "launch" },
+      { "date": "2025-07", "event": "营收较 5 月增长 5.5x，成为 Anthropic 重要收入来源", "type": "milestone" },
+      { "date": "2025-08", "event": "Claude for Chrome 发布，可直接控制浏览器执行任务", "type": "feature" },
+      { "date": "2025-10", "event": "iOS App 发布；Anthropic 将 Claude Code 带到 Web 端", "type": "feature" },
+      { "date": "2025-12", "event": "年化营收突破 $10亿 run rate，6 个月内达成", "type": "milestone" },
+      { "date": "2026-01", "event": "Claude Cowork（GUI 版本）研究预览发布", "type": "feature" }
+    ],
+    "sources": [
+      { "title": "Anthropic brings Claude Code to the web", "url": "https://techcrunch.com/2025/10/20/anthropic-brings-claude-code-to-the-web/", "date": "2025-10-20", "type": "media" },
+      { "title": "The Evolution of Claude Code in 2025", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70", "date": "2025-12", "type": "media" },
+      { "title": "@anthropic-ai/claude-code on npm", "url": "https://www.npmjs.com/package/@anthropic-ai/claude-code", "date": "2025-12", "type": "official" }
+    ],
     "tabs": {
       "overview": {
         "intro": "Claude Code 是 Anthropic 于 2025 年推出的终端原生 AI 编程工具。它不是编辑器插件，而是直接在命令行环境中运行，能够读写文件、执行 shell 命令、操作 git 仓库，完成跨文件的复杂工程任务。它代表了与 Cursor 完全不同的 AI 编程路线——更深、更自主、更接近真实的工程工作流。",

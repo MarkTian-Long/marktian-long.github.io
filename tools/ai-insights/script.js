@@ -6,6 +6,12 @@
 let products = [];
 let currentFilter = 'all';
 
+function dataComplete(p) {
+    return p.keyMetrics && p.keyMetrics.length > 0
+        && p.timeline && p.timeline.length > 0
+        && p.sources && p.sources.length > 0;
+}
+
 const TREND_MAP = {
     up: { label: '📈 上升趋势', cls: 'trend-up' },
     stable: { label: '➡️ 稳定', cls: 'trend-stable' },
@@ -93,6 +99,7 @@ function renderGrid() {
         </div>
         <div class="card-footer">
           <span class="card-stars">${stars}</span>
+          ${dataComplete(p) ? '' : '<span class="card-incomplete">数据待补充</span>'}
           <span class="card-cta">查看拆解 →</span>
         </div>
       </div>
@@ -169,9 +176,9 @@ function renderTabs(p) {
             <button class="detail-tab-btn" onclick="switchTab(this, 'tech')">技术架构</button>
             <button class="detail-tab-btn" onclick="switchTab(this, 'competition')">竞品分析</button>
             <button class="detail-tab-btn" onclick="switchTab(this, 'insights')">启示总结</button>
-            ${hasMetrics ? `<button class="detail-tab-btn" onclick="switchTab(this, 'metrics')">关键数据</button>` : ''}
-            ${hasTimeline ? `<button class="detail-tab-btn" onclick="switchTab(this, 'timeline')">时间线</button>` : ''}
-            ${hasSources ? `<button class="detail-tab-btn" onclick="switchTab(this, 'sources')">信息来源</button>` : ''}
+            <button class="detail-tab-btn" onclick="switchTab(this, 'metrics')">关键数据</button>
+            <button class="detail-tab-btn" onclick="switchTab(this, 'timeline')">时间线</button>
+            <button class="detail-tab-btn" onclick="switchTab(this, 'sources')">信息来源</button>
         </div>
 
         <div id="tab-overview" class="detail-tab-panel active">
@@ -228,8 +235,8 @@ function renderTabs(p) {
             </div>` : ''}
         </div>
 
-        ${hasMetrics ? `
         <div id="tab-metrics" class="detail-tab-panel">
+            ${hasMetrics ? `
             <div class="metrics-grid">
                 ${p.keyMetrics.map(m => `
                 <div class="metric-card">
@@ -241,11 +248,11 @@ function renderTabs(p) {
                         ${m.url ? `<a href="${m.url}" target="_blank" rel="noopener" class="metric-link">↗</a>` : ''}
                     </div>
                 </div>`).join('')}
-            </div>
-        </div>` : ''}
+            </div>` : '<div class="tab-empty">📊 数据指标待补充</div>'}
+        </div>
 
-        ${hasTimeline ? `
         <div id="tab-timeline" class="detail-tab-panel">
+            ${hasTimeline ? `
             <div class="timeline">
                 ${p.timeline.map(node => `
                 <div class="timeline-node">
@@ -256,11 +263,11 @@ function renderTabs(p) {
                         <span class="timeline-badge timeline-badge--${node.type}">${TIMELINE_TYPE_LABEL[node.type] || node.type}</span>
                     </div>
                 </div>`).join('')}
-            </div>
-        </div>` : ''}
+            </div>` : '<div class="tab-empty">📅 产品时间线待补充</div>'}
+        </div>
 
-        ${hasSources ? `
         <div id="tab-sources" class="detail-tab-panel">
+            ${hasSources ? `
             <div class="sources-list">
                 ${p.sources.map(s => `
                 <div class="source-item">
@@ -271,8 +278,8 @@ function renderTabs(p) {
                     </div>
                     ${s.date ? `<div class="source-date">${s.date}</div>` : ''}
                 </div>`).join('')}
-            </div>
-        </div>` : ''}
+            </div>` : '<div class="tab-empty">🔗 信息来源待补充</div>'}
+        </div>
     `;
 }
 
