@@ -8,7 +8,30 @@
       "Bash(where:*)",
       "Bash(cmd.exe:*)",
       "Bash(powershell.exe:*)",
-      "Bash(export:*)"
+      "Bash(export:*)",
+      "WebSearch",
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git restore:*)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('tools/ai-insights/data/products.json','utf8'\\)\\); console.log\\('JSON valid'\\)\")",
+      "Bash(node -e \"const d = JSON.parse\\(require\\('fs'\\).readFileSync\\('tools/ai-insights/data/products.json','utf8'\\)\\); console.log\\('valid, total:', d.length, 'issues:', d.map\\(p=>p.issue\\).join\\(','\\)\\)\")",
+      "Bash(cd D:/CS/Coding/qiuzhi && npx serve . --listen 3000)",
+      "Bash(cd D:/CS/Coding/qiuzhi && node -e \"\nconst fs = require\\('fs'\\);\nconst path = require\\('path'\\);\n// 检查文件是否存在\nconst files = [\n  'tools/ai-insights/index.html',\n  'tools/ai-insights/style.css', \n  'tools/ai-insights/script.js',\n  'tools/ai-insights/data/products.json'\n];\nfiles.forEach\\(f => {\n  const exists = fs.existsSync\\(f\\);\n  const size = exists ? fs.statSync\\(f\\).size : 0;\n  console.log\\(exists ? '✓' : '✗', f, exists ? size+'b' : 'MISSING'\\);\n}\\);\n\")",
+      "Bash(cd D:/CS/Coding/qiuzhi && node -e \"\nconst d = JSON.parse\\(require\\('fs'\\).readFileSync\\('tools/ai-insights/data/products.json','utf8'\\)\\);\nconsole.log\\('products count:', d.length\\);\nd.forEach\\(p => console.log\\(p.issue, p.name, p.tabs ? 'has-tabs' : 'NO-TABS'\\)\\);\n\")",
+      "Bash(cd D:/CS/Coding/qiuzhi && python -m http.server 8080)",
+      "Bash(cd D:/CS/Coding/qiuzhi && node -e \"\nconst d = JSON.parse\\(require\\('fs'\\).readFileSync\\('tools/ai-insights/data/products.json','utf8'\\)\\);\nd.forEach\\(p => console.log\\(p.name, '| trend:', p.trend, '| detailLink:', p.detailLink || 'empty'\\)\\);\n\")",
+      "Bash(cd D:/CS/Coding/qiuzhi && node -e \"\nconst fs = require\\('fs'\\);\nconst data = JSON.parse\\(fs.readFileSync\\('tools/ai-insights/data/products.json','utf8'\\)\\);\n\nconst updates = {\n  'chatgpt':    { trend: 'up',     detailLink: 'https://chatgpt.com' },\n  'midjourney': { trend: 'up',     detailLink: 'https://www.midjourney.com' },\n  'deepseek':   { trend: 'up',     detailLink: 'https://www.deepseek.com' },\n  'claude':     { trend: 'up',     detailLink: 'https://claude.ai' },\n  'cursor':     { trend: 'up',     detailLink: 'https://www.cursor.com' },\n  'notion-ai':  { trend: 'stable', detailLink: 'https://www.notion.com/product/ai' },\n  'sora':       { trend: 'stable', detailLink: 'https://sora.com' },\n  'perplexity': { trend: 'up',     detailLink: 'https://www.perplexity.ai' },\n  'claude-code':{ trend: 'up',     detailLink: 'https://claude.ai/code' },\n};\n\ndata.forEach\\(p => {\n  if \\(updates[p.id]\\) {\n    p.trend = updates[p.id].trend;\n    p.detailLink = updates[p.id].detailLink;\n  }\n}\\);\n\nfs.writeFileSync\\('tools/ai-insights/data/products.json', JSON.stringify\\(data, null, 2\\)\\);\nconsole.log\\('done'\\);\ndata.forEach\\(p => console.log\\(p.name, '|', p.trend, '|', p.detailLink\\)\\);\n\")",
+      "Bash(gh pr:*)",
+      "Bash(cd \"D:/CS/Coding/qiuzhi\" && python -c \"print\\('ok'\\)\")",
+      "Bash(for dir:*)",
+      "Bash(grep -n \"\\\\.\\\\./\" /d/CS/Coding/qiuzhi/tools/*/index.html | head -5)",
+      "Bash(grep -n \"style=\\\\\".*#\\\\|style=\\\\\".*rgba\\\\|style=\\\\\".*rgb\\(\" /d/CS/Coding/qiuzhi/tools/*/index.html | head -20)",
+      "Bash(wc -l /d/CS/Coding/qiuzhi/assets/css/style.css /d/CS/Coding/qiuzhi/assets/js/*.js /d/CS/Coding/qiuzhi/tools/*/script.js 2>/dev/null | tail -20)",
+      "Bash(cd \"D:\\\\CS\\\\Coding\\\\qiuzhi\" && node -e \"const d=require\\('./tools/ai-insights/data/products.json'\\); console.log\\('Total products:', d.length\\); d.forEach\\(p=>console.log\\(p.id, '| keyMetrics:', p.keyMetrics?.length||0, '| timeline:', p.timeline?.length||0, '| sources:', p.sources?.length||0\\)\\)\")",
+      "Bash(cd \"D:\\\\CS\\\\Coding\\\\qiuzhi\" && node -e \"const d=require\\('./tools/ai-insights/data/products.json'\\); const p=d[1]; console.log\\(JSON.stringify\\(p, null, 2\\)\\)\" 2>&1 | head -60)",
+      "Bash(node -e \"const d = require\\('./tools/ai-insights/data/products.json'\\); console.log\\('产品数:', d.length\\); d.forEach\\(p => console.log\\(p.id, '| metrics:', \\(p.keyMetrics||[]\\).length, '| timeline:', \\(p.timeline||[]\\).length, '| sources:', \\(p.sources||[]\\).length\\)\\)\" 2>&1)"
     ]
   }
 }

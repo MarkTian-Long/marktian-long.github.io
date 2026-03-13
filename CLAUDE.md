@@ -21,6 +21,7 @@ assets/js/interview.js          # 面试练习器逻辑
 tools/dashboard/                # 求职追踪 Dashboard
 tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
 tools/product-collector/        # AI 产品信息采集器（手动录入）
+tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
 content/                        # Markdown 内容资料（不是代码）
 docs/                           # 个人文档（.gitignore 排除）
 .claude/skills/                 # Claude skill 定义
@@ -34,6 +35,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
+| 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 |
 
 ## 核心规范（必须遵守）
 - CSS 颜色/间距**必须用 CSS 变量**，禁止硬编码色值

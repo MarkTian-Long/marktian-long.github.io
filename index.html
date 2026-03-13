@@ -199,6 +199,9 @@
                 <button class="tool-tab hidden" id="tab-collector" data-dev onclick="switchTool('collector')">
                     🗂 产品信息采集
                 </button>
+                <button class="tool-tab" id="tab-radar" onclick="switchTool('radar')">
+                    🛰 前沿雷达
+                </button>
                 <!-- More tabs can be added here -->
             </div>
 
@@ -350,6 +353,17 @@
                     </div>
                     <iframe src="tools/product-collector/index.html" class="dashboard-iframe"
                         title="AI 产品信息采集器" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-radar">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">🛰 前沿雷达 · 信息源导航 + 精选 AI 工具</span>
+                        <a href="tools/radar/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/radar/index.html" class="dashboard-iframe"
+                        title="前沿雷达" loading="lazy"></iframe>
                 </div>
             </div>
         </div>

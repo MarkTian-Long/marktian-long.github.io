@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前沿雷达 · 刘洋</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-surface: #13131a;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-text: #e8e8f0;
+            --color-text-muted: #8888a0;
+            --color-accent: #6366f1;
+            --color-accent-light: rgba(99, 102, 241, 0.15);
+            --color-tag-bg: rgba(99, 102, 241, 0.12);
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .header-sub {
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            margin-top: 3px;
+        }
+
+        .header-badge {
+            font-size: 0.72rem;
+            background: var(--color-accent-light);
+            color: var(--color-accent);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Main */
+        .main {
+            padding: 24px 28px 48px;
+        }
+
+        /* Section */
+        .section { margin-bottom: 36px; }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-border);
+        }
+
+        /* ── 信息源：两列 ── */
+        .sources-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+
+        @media (max-width: 560px) {
+            .sources-grid { grid-template-columns: 1fr; }
+        }
+
+        .col-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        /* Source row — compact, link-styled */
+        .source-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            margin-bottom: 6px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.18s, background 0.18s;
+        }
+
+        .source-row:last-child { margin-bottom: 0; }
+
+        .source-row:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+            background: rgba(99, 102, 241, 0.06);
+        }
+
+        .source-row-left { flex: 1; min-width: 0; }
+
+        .source-row-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .source-row-desc {
+            font-size: 0.74rem;
+            color: var(--color-text-muted);
+            line-height: 1.45;
+            margin-top: 2px;
+        }
+
+        .source-tag {
+            font-size: 0.68rem;
+            color: var(--color-accent);
+            background: var(--color-tag-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-start;
+            margin-top: 1px;
+        }
+
+        .source-arrow {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            flex-shrink: 0;
+            align-self: center;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .source-row:hover .source-arrow { opacity: 1; }
+
+        /* ── 精选工具：横向宽卡片 ── */
+        .tools-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .tool-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.18s, background 0.18s;
+        }
+
+        .tool-row:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+            background: rgba(99, 102, 241, 0.06);
+        }
+
+        .tool-row-icon {
+            font-size: 1.3rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-tag-bg);
+            border-radius: var(--radius-sm);
+            flex-shrink: 0;
+        }
+
+        .tool-row-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-text);
+            width: 110px;
+            flex-shrink: 0;
+        }
+
+        .tool-row-usage {
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            line-height: 1.45;
+            flex: 1;
+        }
+
+        .tool-row-arrow {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .tool-row:hover .tool-row-arrow { opacity: 1; }
+
+        .footer {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1 class="header-title">🛰 前沿雷达</h1>
+            <p class="header-sub">我在追踪的信息源 + 日常在用的 AI 工具</p>
+        </div>
+        <span class="header-badge">持续维护中</span>
+    </header>
+
+    <main class="main">
+
+        <!-- 信息源 -->
+        <section class="section">
+            <h2 class="section-title">📡 信息源导航</h2>
+            <div class="sources-grid">
+
+                <!-- 英文 -->
+                <div>
+                    <div class="col-label">🌐 英文</div>
+
+                    <a class="source-row" href="https://simonwillison.net" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">Simon Willison's Blog</div>
+                            <div class="source-row-desc">AI 工具实践，每日更新，信息密度极高</div>
+                        </div>
+                        <span class="source-tag">技术博客</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://paulgraham.com/articles.html" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">Paul Graham Essays</div>
+                            <div class="source-row-desc">硅谷思维、创业与产品哲学</div>
+                        </div>
+                        <span class="source-tag">文章</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://www.deeplearning.ai/the-batch/" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">The Batch · deeplearning.ai</div>
+                            <div class="source-row-desc">Andrew Ng 主编，AI 领域权威周报</div>
+                        </div>
+                        <span class="source-tag">Newsletter</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://bensbites.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">Ben's Bites</div>
+                            <div class="source-row-desc">AI 产品与工具每日速递</div>
+                        </div>
+                        <span class="source-tag">Newsletter</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://news.ycombinator.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">Hacker News</div>
+                            <div class="source-row-desc">顶级技术讨论，信噪比高</div>
+                        </div>
+                        <span class="source-tag">社区</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://importai.substack.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">Import AI</div>
+                            <div class="source-row-desc">Jack Clark 主笔，AI 研究前沿追踪</div>
+                        </div>
+                        <span class="source-tag">Newsletter</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+                </div>
+
+                <!-- 中文 -->
+                <div>
+                    <div class="col-label">🇨🇳 中文</div>
+
+                    <a class="source-row" href="https://sspai.com/tag/AI" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">少数派 AI 频道</div>
+                            <div class="source-row-desc">高质量 AI 工具评测与深度文章</div>
+                        </div>
+                        <span class="source-tag">媒体</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://www.geekpark.net" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">极客公园</div>
+                            <div class="source-row-desc">国内 AI 产品动态，产品视角</div>
+                        </div>
+                        <span class="source-tag">媒体</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://www.latepost.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">晚点 LatePost</div>
+                            <div class="source-row-desc">深度科技报道，信源可靠</div>
+                        </div>
+                        <span class="source-tag">媒体</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://tzx.substack.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">投资实习所</div>
+                            <div class="source-row-desc">AI 行业分析与商业视角</div>
+                        </div>
+                        <span class="source-tag">Newsletter</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+
+                    <a class="source-row" href="https://www.guixingren.com" target="_blank" rel="noopener">
+                        <div class="source-row-left">
+                            <div class="source-row-name">硅星人</div>
+                            <div class="source-row-desc">硅谷 + 国内 AI 动态，中英桥接</div>
+                        </div>
+                        <span class="source-tag">媒体</span>
+                        <span class="source-arrow">↗</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 精选工具 -->
+        <section class="section">
+            <h2 class="section-title">🔧 精选工具</h2>
+            <div class="tools-list">
+
+                <a class="tool-row" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">🔍</div>
+                    <div class="tool-row-name">Perplexity</div>
+                    <div class="tool-row-usage">联网搜索 + 快速调研，替代 Google 的日常搜索工具</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+                <a class="tool-row" href="https://claude.ai" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">🤖</div>
+                    <div class="tool-row-name">Claude</div>
+                    <div class="tool-row-usage">长文档分析、写作、代码辅助，复杂任务首选</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+                <a class="tool-row" href="https://www.cursor.com" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">⚡</div>
+                    <div class="tool-row-name">Cursor</div>
+                    <div class="tool-row-usage">AI 辅助编程，日常开发必备，大幅提升编码效率</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+                <a class="tool-row" href="https://notebooklm.google.com" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">📚</div>
+                    <div class="tool-row-name">NotebookLM</div>
+                    <div class="tool-row-usage">多文档问答，读论文、研报、行业分析的神器</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+                <a class="tool-row" href="https://www.midjourney.com" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">🎨</div>
+                    <div class="tool-row-name">Midjourney</div>
+                    <div class="tool-row-usage">产品概念图、原型示意图生成，视觉呈现利器</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+                <a class="tool-row" href="https://lumalabs.ai" target="_blank" rel="noopener">
+                    <div class="tool-row-icon">🎬</div>
+                    <div class="tool-row-name">Luma AI</div>
+                    <div class="tool-row-usage">视频生成，用于产品演示素材与创意内容制作</div>
+                    <span class="tool-row-arrow">↗</span>
+                </a>
+
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>📌 个人精选，持续更新 · 刘洋 · AI 产品经理</p>
+        </footer>
+
+    </main>
+
+</body>
+
+</html>
