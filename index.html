@@ -184,6 +184,9 @@
                 <button class="tool-tab" id="tab-esop" onclick="switchTool('esop')">
                     📄 ESOP 提取 Demo
                 </button>
+                <button class="tool-tab" id="tab-insights" onclick="switchTool('insights')">
+                    🔭 AI 产品拆解周刊
+                </button>
                 <!-- More tabs can be added here -->
             </div>
 
@@ -313,6 +316,17 @@
                     </div>
                     <iframe src="tools/esop-extractor/index.html" class="dashboard-iframe"
                         title="ESOP 字段提取 Demo" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-insights">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">🔭 AI 产品拆解周刊 · 期号 + 四维深度拆解 · PM 视角洞察</span>
+                        <a href="tools/ai-insights/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/ai-insights/index.html" class="dashboard-iframe"
+                        title="AI 产品拆解周刊" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
