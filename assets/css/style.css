@@ -20,7 +20,10 @@
   --border-hover: rgba(79, 143, 255, 0.4);
 
   --grad-primary: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-  --grad-text: linear-gradient(135deg, #4f8fff 0%, #9b6dff 50%, #00d4ff 100%);
+  --grad-text: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 50%, var(--accent-cyan) 100%);
+
+  --accent-yellow: #f59e0b;
+  --accent-red: #ef4444;
 
   --shadow-glow: 0 0 40px rgba(79, 143, 255, 0.15);
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -699,7 +702,7 @@ button {
   padding: 32px;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+  cursor: default;
   transition: all var(--transition);
 }
 
@@ -769,6 +772,111 @@ button {
 .metric-label {
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+/* ── Case Detail Expand ── */
+.case-detail-btn {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.case-detail-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.case-detail-btn .btn-arrow {
+  transition: transform var(--transition);
+  font-style: normal;
+  display: inline-block;
+}
+
+.case-detail-btn.open .btn-arrow {
+  transform: rotate(180deg);
+}
+
+.case-detail-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.case-detail-body.open {
+  max-height: 800px;
+}
+
+.case-detail-inner {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.detail-section {
+  margin-bottom: 16px;
+}
+
+.detail-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.detail-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detail-points li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-left: 14px;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.detail-points li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+
+.detail-points li b {
+  color: var(--text-primary);
+}
+
+.detail-demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--accent-blue);
+  text-decoration: none;
+  border: 1px solid rgba(79,143,255,0.3);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.detail-demo-link:hover {
+  background: rgba(79,143,255,0.1);
 }
 
 .cases-note {
@@ -966,7 +1074,7 @@ button {
 
 .q-difficulty {
   font-size: 0.85rem;
-  color: #f59e0b;
+  color: var(--accent-yellow);
 }
 
 .timer-box {
@@ -1072,7 +1180,7 @@ button {
 
 .star-btn:hover,
 .star-btn.active {
-  color: #f59e0b;
+  color: var(--accent-yellow);
   transform: scale(1.2);
 }
 
@@ -1237,7 +1345,7 @@ button {
 
 .status-test {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--accent-yellow);
 }
 
 .status-interview {
@@ -1252,7 +1360,7 @@ button {
 
 .status-rejected {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--accent-red);
 }
 
 .tracker-delete {
@@ -1265,8 +1373,8 @@ button {
 }
 
 .tracker-delete:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-red);
+  background: rgba(239, 68, 68, 0.1); /* --accent-red */
 }
 
 /* Modal */
