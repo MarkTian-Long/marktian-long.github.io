@@ -52,8 +52,8 @@
                 你好，我是<span class="grad-text"> 刘洋</span>
             </h1>
             <p class="hero-sub reveal delay-2">
-                AI 产品经理 · 2年+ 经验<br />
-                从用户洞察到 AI 落地，相信技术创造真实价值
+                懂技术的 AI 产品经理<br />
+                计算机背景 · 主导过 RAG 产品从 0 到商业化落地
             </p>
             <div class="hero-tags reveal delay-3">
                 <span class="tag">🤖 AI 产品设计</span>
@@ -112,8 +112,8 @@
                             <a href="mailto:ly_tianlong@163.com" class="about-contact-link">
                                 <span>📧</span> ly_tianlong@163.com
                             </a>
-                            <a href="tel:18314856018" class="about-contact-link">
-                                <span>📱</span> 18314856018
+                            <a href="javascript:void(0)" class="about-contact-link" onclick="copyPhone()">
+                                <span>📱</span> <span id="phoneCopyText">点击复制手机号</span>
                             </a>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
 
             <!-- Tool Tabs -->
             <div class="tool-tabs reveal">
-                <button class="tool-tab active" id="tab-interview" onclick="switchTool('interview')">
+                <button class="tool-tab" id="tab-interview" onclick="switchTool('interview')">
                     💬 面试题练习器
                 </button>
                 <button class="tool-tab" id="tab-tracker" onclick="switchTool('tracker')">
@@ -184,14 +184,14 @@
                 <button class="tool-tab" id="tab-esop" onclick="switchTool('esop')">
                     📄 ESOP 提取 Demo
                 </button>
-                <button class="tool-tab" id="tab-insights" onclick="switchTool('insights')">
+                <button class="tool-tab active" id="tab-insights" onclick="switchTool('insights')">
                     🔭 AI 产品拆解
                 </button>
                 <!-- More tabs can be added here -->
             </div>
 
             <!-- Interview Prep Tool -->
-            <div class="tool-panel active" id="panel-interview">
+            <div class="tool-panel hidden" id="panel-interview">
                 <div class="interview-tool glass-card reveal">
                     <div class="tool-header">
                         <div class="tool-title-area">
@@ -319,7 +319,7 @@
                 </div>
             </div>
 
-            <div class="tool-panel hidden" id="panel-insights">
+            <div class="tool-panel active" id="panel-insights">
                 <div class="dashboard-wrapper reveal">
                     <div class="dashboard-topbar">
                         <span class="dashboard-label">🔭 AI 产品拆解 · 期号 + 四维深度拆解 · PM 视角洞察</span>
@@ -348,9 +348,9 @@
                             <span class="contact-icon">📧</span>
                             <span>ly_tianlong@163.com</span>
                         </a>
-                        <a href="tel:18314856018" class="contact-link" id="contact-wechat">
+                        <a href="javascript:void(0)" class="contact-link" id="contact-phone" onclick="copyPhone()">
                             <span class="contact-icon">📱</span>
-                            <span>18314856018</span>
+                            <span id="contactPhoneCopyText">点击复制手机号</span>
                         </a>
                         <a href="https://marktian-long.github.io" target="_blank" class="contact-link" id="contact-site">
                             <span class="contact-icon">🌐</span>
