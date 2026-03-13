@@ -43,52 +43,6 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// ---- SKILL RADAR CHART (ECharts) ----
-function initRadarChart() {
-  const dom = document.getElementById('radarChart');
-  if (!dom || typeof echarts === 'undefined') return;
-  const chart = echarts.init(dom, null, { renderer: 'svg' });
-  chart.setOption({
-    backgroundColor: 'transparent',
-    radar: {
-      indicator: [
-        { name: 'AI产品设计', max: 100 },
-        { name: '数据分析', max: 100 },
-        { name: '用户研究', max: 100 },
-        { name: '技术理解', max: 100 },
-        { name: '项目管理', max: 100 },
-        { name: '商业分析', max: 100 },
-      ],
-      shape: 'polygon',
-      splitNumber: 4,
-      axisName: { color: '#8a95b5', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)', width: 1 } },
-      splitArea: { areaStyle: { color: ['rgba(79,143,255,0.03)', 'rgba(79,143,255,0.06)'] } },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
-    },
-    series: [{
-      type: 'radar',
-      data: [{
-        value: [88, 82, 85, 78, 84, 80],
-        name: '能力评估',
-        areaStyle: {
-          color: {
-            type: 'radial',
-            x: 0.5, y: 0.5, r: 0.5,
-            colorStops: [
-              { offset: 0, color: 'rgba(79,143,255,0.55)' },
-              { offset: 1, color: 'rgba(155,109,255,0.2)' }
-            ]
-          }
-        },
-        lineStyle: { color: '#4f8fff', width: 2 },
-        itemStyle: { color: '#4f8fff', borderColor: '#fff', borderWidth: 2 },
-        symbolSize: 6,
-      }],
-    }],
-  });
-  window.addEventListener('resize', () => chart.resize());
-}
 
 // ---- CASE STUDIES DATA ----
 const casesData = [
@@ -240,7 +194,6 @@ function injectSvgDefs() {
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
   renderCases();
-  initRadarChart();
   injectSvgDefs();
   updateActiveNavLink();
 });
