@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESOP 数据提取器</title>
+  <style>
+    /* ===== CSS Variables (tool-private) ===== */
+    :root {
+      --bg:           #080c18;
+      --bg-sec:       #0d1224;
+      --card:         rgba(255,255,255,0.04);
+      --card-hover:   rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.08);
+      --border-hover: rgba(79,143,255,0.4);
+      --accent:       #4f8fff;
+      --accent-purple:#9b6dff;
+      --accent-cyan:  #00d4ff;
+      --grad:         linear-gradient(135deg, #4f8fff, #9b6dff);
+      --text:         #f0f4ff;
+      --text-sec:     #8a95b5;
+      --text-muted:   #4a5270;
+      --green:        #00e5a0;
+      --yellow:       #f59e0b;
+      --red:          #ef4444;
+      --radius-sm:    8px;
+      --radius-md:    16px;
+      --transition:   0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ===== Reset ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, 'PingFang SC', system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow: hidden;
+    }
+
+    /* ===== App Layout ===== */
+    #app {
+      display: grid;
+      grid-template-columns: 40fr 60fr;
+      height: 100vh;
+    }
+
+    /* ===== Panels ===== */
+    .panel-input,
+    .panel-output {
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .panel-input {
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg-sec);
+    }
+
+    .panel-output {
+      position: relative;
+      padding: 24px;
+      background: var(--bg);
+    }
+
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+
+    /* ===== Panel Header ===== */
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .panel-title span {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ===== Collapsible Section ===== */
+    .collapsible {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+
+    .collapsible:focus-within,
+    .collapsible:hover {
+      border-color: var(--border-hover);
+    }
+
+    .collapsible-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+      gap: 8px;
+    }
+
+    .collapsible-header:hover {
+      background: var(--card-hover);
+    }
+
+    .collapsible-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text-sec);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .collapsible-arrow {
+      color: var(--text-muted);
+      font-size: 10px;
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .collapsible.open .collapsible-arrow {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .collapsible.open .collapsible-body {
+      max-height: 3000px;
+    }
+
+    .collapsible-body-inner {
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ===== API Key Section ===== */
+    .key-label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: var(--text-sec);
+      font-size: 12px;
+    }
+
+    .key-input-wrap {
+      display: flex;
+      gap: 8px;
+    }
+
+    .key-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: monospace;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+
+    .key-input:focus { border-color: var(--accent); }
+    .key-input.error { border-color: var(--red); }
+
+    .key-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .key-hint a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .key-hint a:hover { text-decoration: underline; }
+
+    /* ===== Textarea ===== */
+    .input-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-sec);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .char-count {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .textarea-main {
+      width: 100%;
+      min-height: 260px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 13px;
+      font-family: Inter, 'PingFang SC', system-ui, sans-serif;
+      line-height: 1.7;
+      resize: vertical;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+
+    .textarea-main:focus { border-color: var(--accent); }
+    .textarea-main.error { border-color: var(--red); }
+    .textarea-main::placeholder { color: var(--text-muted); }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 14px;
+      transition: all var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      background: var(--card);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--card-hover);
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      width: 100%;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.88;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79,143,255,0.3);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-export {
+      background: var(--card);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0,212,255,0.25);
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    .btn-export:hover:not(:disabled) {
+      background: rgba(0,212,255,0.08);
+      border-color: var(--accent-cyan);
+    }
+
+    /* ===== Prompt Preview ===== */
+    .prompt-block {
+      margin-top: 10px;
+    }
+
+    .prompt-block-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .prompt-pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 11px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+      color: var(--text-sec);
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.55;
+    }
+
+    /* ===== Error Tip ===== */
+    .error-tip {
+      font-size: 11px;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-tip.visible { display: block; }
+
+    /* ===== Loading Overlay ===== */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8,12,24,0.82);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+      border-radius: 0;
+    }
+
+    .loading-overlay.hidden { display: none; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--text-sec);
+      font-size: 14px;
+    }
+
+    .loading-sub {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* ===== Output Placeholder ===== */
+    .output-placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px;
+    }
+
+    .output-placeholder.hidden { display: none; }
+
+    .placeholder-icon {
+      font-size: 48px;
+      opacity: 0.3;
+    }
+
+    .placeholder-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-sec);
+    }
+
+    .placeholder-desc {
+      font-size: 13px;
+      line-height: 1.7;
+      max-width: 300px;
+    }
+
+    /* ===== Output Content ===== */
+    .output-content { }
+    .output-content.hidden { display: none; }
+
+    /* ===== Result Header ===== */
+    .result-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .result-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .result-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .result-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stat-item strong {
+      color: var(--text-sec);
+    }
+
+    .warn-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ===== Tabs ===== */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 8px 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: -1px;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover { color: var(--text-sec); }
+
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tab-warn-dot {
+      color: var(--yellow);
+      font-size: 8px;
+      line-height: 1;
+    }
+
+    /* ===== Field Table ===== */
+    .field-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .field-table th {
+      text-align: left;
+      padding: 8px 10px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sec);
+    }
+
+    .field-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .field-table tr:hover td {
+      background: var(--card-hover);
+    }
+
+    .field-table tr:last-child td { border-bottom: none; }
+
+    .col-name  { width: 130px; color: var(--text-sec); font-weight: 500; }
+    .col-value { min-width: 120px; color: var(--text); }
+    .col-conf  { width: 90px; }
+    .col-src   { color: var(--text-muted); font-size: 11.5px; line-height: 1.5; }
+    .col-action{ width: 50px; text-align: center; }
+
+    .value-null { color: var(--text-muted); }
+
+    /* ===== Confidence Badge ===== */
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 20px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .conf-high {
+      background: rgba(0,229,160,0.12);
+      color: var(--green);
+      border: 1px solid rgba(0,229,160,0.25);
+    }
+
+    .conf-medium {
+      background: rgba(245,158,11,0.12);
+      color: var(--yellow);
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+
+    .conf-low {
+      background: rgba(239,68,68,0.12);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+
+    /* ===== Verified Tag ===== */
+    .verified-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: var(--green);
+      font-weight: 600;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ===== Edit Button ===== */
+    .btn-edit {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all var(--transition);
+    }
+
+    .btn-edit:hover {
+      border-color: var(--border-hover);
+      color: var(--accent);
+      background: rgba(79,143,255,0.08);
+    }
+
+    /* ===== Grantee Section ===== */
+    .grantee-section {
+      margin-bottom: 24px;
+    }
+
+    .grantee-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sec);
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .no-grantees {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ===== Table Wrapper (scroll) ===== */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,12,24,0.75);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal-card {
+      width: 480px;
+      max-width: 95vw;
+      background: #111827;
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .modal-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-sec);
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .modal-source-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      min-height: 44px;
+      font-style: italic;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 9px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color var(--transition);
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    .modal-input:focus { border-color: var(--accent); }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* ===== Utility ===== */
+    .hidden { display: none !important; }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ===== Save indicator in key section ===== */
+    .key-saved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--green);
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.2);
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+
+    /* ===== Icon dots for header ===== */
+    .section-icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--grad);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== App Layout ===== -->
+<div id="app">
+
+  <!-- ============ LEFT PANEL: INPUT ============ -->
+  <div class="panel-input">
+
+    <!-- Title -->
+    <div>
+      <div class="panel-title"><span>ESOP 数据提取器</span></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+        粘贴招股书原文 · AI 自动提取股权激励字段
+      </div>
+    </div>
+
+    <!-- API Key Section -->
+    <div class="collapsible" id="keySection">
+      <div class="collapsible-header" onclick="toggleCollapsible('keySection')">
+        <div class="collapsible-header-left">
+          <div class="section-icon"></div>
+          DeepSeek API Key
+          <span id="keySavedBadge" class="key-saved-badge hidden">✓ 已保存</span>
+        </div>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <label class="key-label">API Key</label>
+          <div class="key-input-wrap">
+            <input
+              type="password"
+              id="keyInput"
+              class="key-input"
+              placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+              autocomplete="off"
+              oninput="onKeyInput()"
+            />
+            <button class="btn btn-ghost" onclick="saveApiKey()">保存</button>
+          </div>
+          <div id="keyErrorTip" class="error-tip">请输入 API Key 后再开始提取</div>
+          <div class="key-hint">
+            DeepSeek API Key，可在
+            <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a>
+            获取。Key 仅保存在本地浏览器，不会上传服务器。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Text Input -->
+    <div>
+      <div class="input-label">
+        <span>招股书原文</span>
+        <span class="char-count" id="charCount">0 字</span>
+      </div>
+      <textarea
+        id="textInput"
+        class="textarea-main"
+        placeholder="将招股书相关章节文字粘贴到此处&#10;&#10;建议粘贴：股本结构、购股权计划、董事酬金等章节，效果更佳"
+        oninput="onTextInput()"
+      ></textarea>
+      <div id="textErrorTip" class="error-tip">请输入招股书原文后再开始提取</div>
+    </div>
+
+    <!-- Sample Button -->
+    <button class="btn btn-ghost" onclick="fillSampleText()" style="align-self:flex-start;">
+      📋 填入示例文本
+    </button>
+
+    <!-- Extract Button -->
+    <button class="btn btn-primary" id="extractBtn" onclick="startExtraction()">
+      🔍 开始提取
+    </button>
+
+    <div class="divider"></div>
+
+    <!-- Prompt Preview Section -->
+    <div class="collapsible" id="promptSection">
+      <div class="collapsible-header" onclick="toggleCollapsible('promptSection')">
+        <div class="collapsible-header-left">
+          <div class="section-icon"></div>
+          Prompt 结构预览
+        </div>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <div class="prompt-block">
+            <div class="prompt-block-title">System Prompt</div>
+            <pre class="prompt-pre" id="previewSystem"></pre>
+          </div>
+          <div class="prompt-block" style="margin-top:12px;">
+            <div class="prompt-block-title">User Prompt 模板</div>
+            <pre class="prompt-pre" id="previewUser"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-input -->
+
+
+  <!-- ============ RIGHT PANEL: OUTPUT ============ -->
+  <div class="panel-output" id="panelOutput">
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="loading-text">AI 正在分析招股书…</div>
+      <div class="loading-sub">通常需要 10-30 秒，请耐心等待</div>
+    </div>
+
+    <!-- Placeholder -->
+    <div class="output-placeholder" id="outputPlaceholder">
+      <div class="placeholder-icon">📄</div>
+      <div class="placeholder-title">等待提取</div>
+      <div class="placeholder-desc">
+        在左侧粘贴招股书原文，配置 API Key，<br />点击「开始提取」即可自动识别股权激励字段。
+      </div>
+    </div>
+
+    <!-- Result Content -->
+    <div class="output-content hidden" id="outputContent">
+
+      <!-- Result Header -->
+      <div class="result-header">
+        <div class="result-meta">
+          <div class="result-title">提取结果</div>
+          <div class="result-stats">
+            <span class="stat-item">提取时间：<strong id="statTime">—</strong></span>
+            <span class="stat-item">字段数：<strong id="statFields">—</strong></span>
+            <span id="statWarnWrap" class="hidden">
+              <span class="warn-badge" id="statWarn">⚠ 0 个低置信度</span>
+            </span>
+          </div>
+        </div>
+        <button class="btn btn-export" onclick="exportJSON()">⬇ 导出 JSON</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-basic" onclick="switchTab('basic')">
+          基本信息 <span class="tab-warn-dot hidden" id="dot-basic">●</span>
+        </button>
+        <button class="tab-btn" id="tab-plan" onclick="switchTab('plan')">
+          激励计划 <span class="tab-warn-dot hidden" id="dot-plan">●</span>
+        </button>
+        <button class="tab-btn" id="tab-grantees" onclick="switchTab('grantees')">
+          授予信息 <span class="tab-warn-dot hidden" id="dot-grantees">●</span>
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+      <div id="tabContent"></div>
+
+    </div><!-- /output-content -->
+
+  </div><!-- /panel-output -->
+
+</div><!-- /app -->
+
+
+<!-- ===== Edit Modal ===== -->
+<div class="modal-overlay hidden" id="editModal">
+  <div class="modal-card">
+    <div class="modal-title" id="modalTitle">编辑字段</div>
+    <div class="modal-subtitle" id="modalSubtitle">字段路径</div>
+
+    <label class="modal-label">原文来源（只读）</label>
+    <div class="modal-source-box" id="modalSource">—</div>
+
+    <label class="modal-label">修正后的值</label>
+    <input type="text" class="modal-input" id="modalValueInput" placeholder="输入修正值" />
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
+      <button class="btn btn-primary" style="width:auto;padding:8px 20px;" onclick="saveEdit()">
+        ✓ 保存并标记已校验
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ================================================================
+   CONSTANTS & PROMPTS
+================================================================ */
+
+const STORAGE_KEY_APIKEY = 'qiuzhi_esop_apikey';
+const STORAGE_KEY_RESULT = 'qiuzhi_esop_last_result';
+const DEEPSEEK_BASE_URL  = 'https://api.deepseek.com';
+const DEEPSEEK_MODEL     = 'deepseek-chat';
+
+/* ---- Field label maps ---- */
+const FIELD_LABELS_BASIC = {
+  tickerCode:         '股票代码',
+  industryCat:        '行业类别',
+  registeredLocation: '公司注册地',
+  listingBoard:       '上市板块',
+  securityType:       '证券类型',
+  founders:           '公司创始人',
+  listingDate:        '上市日期',
+  ipoPrice:           '上市发行价',
+  totalSharesAfter:   '发行后总股本',
+  totalSharesBefore:  '发行前总股本',
+  ipoMarketCap:       '首发市值（亿人民币）'
+};
+
+const FIELD_LABELS_PLAN = {
+  adoptionDate:       '采纳激励计划日期',
+  planName:           '激励计划名称',
+  reservedShares:     '预留ESOP股份数',
+  reservedShareRatio: '预留ESOP股比',
+  shareType:          '股份标的类型',
+  incentiveTool:      '激励工具',
+  grantedShares:      '授予股数',
+  grantedShareRatio:  '授予ESOP股比',
+  exercisePrice:      '行权价格',
+  grantDateFMV:       '授予日期普通股FMV'
+};
+
+const FIELD_LABELS_GRANTEE = {
+  name:               '姓名',
+  position:           '岗位',
+  hireDate:           '入职时间',
+  grantDate:          '授予日期',
+  incentiveTool:      '激励工具',
+  grantedShares:      '授予股数',
+  grantedShareRatio:  '授予ESOP股比',
+  vestingSchedule:    '归属安排',
+  holdingPlatform:    '持股平台',
+  cashComp:           '个人现金薪酬'
+};
+
+/* ---- System Prompt ---- */
+const SYSTEM_PROMPT = `你是一名专业的股权激励数据提取专家，专门处理港股和A股招股说明书（招股书/招股文件/Prospectus）。
+
+## 你的职责
+从用户提供的招股书原文片段中，精确提取股权激励相关字段，并以严格的 JSON 格式返回。
+
+## 招股书章节结构参考
+- 公司基本信息：通常分布在"公司概览"、"业务介绍"、"全球发售"、"股本结构"章节
+- 股权激励计划：通常在"股权架构"、"重要合约"、"董事、监事及高级管理人员"、附录章节
+- 授予信息（人员级别）：通常在"董事酬金及其他资料"、"向若干董事及高管授出期权"章节
+
+## 金融术语同义词映射（提取时需识别以下所有变体）
+- ESOP = 员工持股计划 = 股票期权计划 = 购股权计划 = 股份奖励计划 = 雇员股份激励计划
+- 行权价格 = 认购价 = 行使价 = 购股价 = 授予价格
+- 归属 = 归属安排 = 归属期 = 解锁条件 = 行权条件 = 解禁安排
+- 发行前总股本 = 上市前已发行股份 = 全球发售前已发行股份
+- FMV = 公允市值 = 每股公平价值 = 授予日公允价值
+- 首发市值 = IPO 市值 = 全球发售时市值 = 上市时估值
+- 授予日期 = 期权授出日期 = 股份授予日 = 授股日
+- 持股平台 = 员工持股平台 = 期权池载体 = 合伙企业
+- 激励工具 = 权益类型 = 股权激励类型（如：限制性股份、期权、RSU）
+- 发行价 = 全球发售价 = 上市发行价 = IPO 价格
+
+## 置信度定义
+- high：在原文中找到明确、精确的对应表述，数值或日期清晰
+- medium：找到相关表述，但存在一定歧义或需要推算
+- low：未找到明确依据，或字段语义模糊无法确认
+
+## 缺失字段处理规则
+- 若某字段在提供的文本中未出现，或无法确定，必须返回 null 值，不得猜测或捏造
+- 缺失字段的 confidence 固定为 "low"
+- 缺失字段的 source 返回 "未在提供的文本中找到相关内容"
+
+## 输出格式要求
+- 严格返回合法 JSON，不附加任何说明文字、markdown 代码块标记
+- 金额统一以原文币种表示，不换算
+- 日期统一为 YYYY-MM-DD 格式（如原文为"二零二四年三月十五日"，转换为"2024-03-15"）
+- 股数/股比保留原文精度，不做四舍五入`;
+
+/* ---- User Prompt Template ---- */
+const USER_PROMPT_TEMPLATE = `请从以下招股书原文中提取股权激励相关字段。
+
+## 原文内容
+{{TEXT}}
+
+## 需要提取的字段（严格按此 JSON schema 返回，直接返回JSON，不要有任何前缀或后缀）
+
+{
+  "companyBasic": {
+    "tickerCode":          { "value": null, "confidence": "low", "source": "" },
+    "industryCat":         { "value": null, "confidence": "low", "source": "" },
+    "registeredLocation":  { "value": null, "confidence": "low", "source": "" },
+    "listingBoard":        { "value": null, "confidence": "low", "source": "" },
+    "securityType":        { "value": null, "confidence": "low", "source": "" },
+    "founders":            { "value": null, "confidence": "low", "source": "" },
+    "listingDate":         { "value": null, "confidence": "low", "source": "" },
+    "ipoPrice":            { "value": null, "confidence": "low", "source": "" },
+    "totalSharesAfter":    { "value": null, "confidence": "low", "source": "" },
+    "totalSharesBefore":   { "value": null, "confidence": "low", "source": "" },
+    "ipoMarketCap":        { "value": null, "confidence": "low", "source": "" }
+  },
+  "esopPlan": {
+    "adoptionDate":        { "value": null, "confidence": "low", "source": "" },
+    "planName":            { "value": null, "confidence": "low", "source": "" },
+    "reservedShares":      { "value": null, "confidence": "low", "source": "" },
+    "reservedShareRatio":  { "value": null, "confidence": "low", "source": "" },
+    "shareType":           { "value": null, "confidence": "low", "source": "" },
+    "incentiveTool":       { "value": null, "confidence": "low", "source": "" },
+    "grantedShares":       { "value": null, "confidence": "low", "source": "" },
+    "grantedShareRatio":   { "value": null, "confidence": "low", "source": "" },
+    "exercisePrice":       { "value": null, "confidence": "low", "source": "" },
+    "grantDateFMV":        { "value": null, "confidence": "low", "source": "" }
+  },
+  "grantees": [
+    {
+      "name":              { "value": null, "confidence": "low", "source": "" },
+      "position":          { "value": null, "confidence": "low", "source": "" },
+      "hireDate":          { "value": null, "confidence": "low", "source": "" },
+      "grantDate":         { "value": null, "confidence": "low", "source": "" },
+      "incentiveTool":     { "value": null, "confidence": "low", "source": "" },
+      "grantedShares":     { "value": null, "confidence": "low", "source": "" },
+      "grantedShareRatio": { "value": null, "confidence": "low", "source": "" },
+      "vestingSchedule":   { "value": null, "confidence": "low", "source": "" },
+      "holdingPlatform":   { "value": null, "confidence": "low", "source": "" },
+      "cashComp":          { "value": null, "confidence": "low", "source": "" }
+    }
+  ]
+}
+
+注意：grantees 为数组，若有多名被授予人，每人单独一条记录；若无相关信息则返回空数组 []。`;
+
+/* ---- Sample Text ---- */
+// 故意使用港股术语变体（行使价、购股权计划），测试同义词映射
+const SAMPLE_TEXT = `某科技集团有限公司（股票代码：01234，香港联交所主板上市）
+全球发售招股说明书
+
+【公司概况】
+某科技集团有限公司（以下简称"本公司"）于开曼群岛注册成立，以控股公司形式运营，主要从事企业级人工智能软件研发与云服务业务，属于信息技术行业。
+
+本公司证券类型为普通股（H股），创始人为陈志远先生及王晓燕女士，二人合计控制发行后本公司约52.3%的已发行股份。
+
+【全球发售】
+本次全球发售发行价定为每股H股港币18.88元（以下简称"发售价"）。全球发售前本公司已发行股份总数为800,000,000股，全球发售后本公司已发行股份总数为1,000,000,000股，按发售价计算，本公司首次公开发售时市值约为人民币173亿元（按港元兑人民币汇率0.92换算）。
+
+本公司股份预计于二零二四年三月二十八日起在联交所主板正式买卖。
+
+【购股权计划】
+本公司董事会于二零二二年一月十日采纳一项购股权计划（以下简称"购股权计划"）。该计划获批准预留股份数目为80,000,000股，占全球发售前本公司已发行股份总数的10%，股份标的类型为普通股。激励工具类型为购股权（股份期权）。
+
+根据购股权计划，董事会已就以下人士授出购股权，行使价为每股港币15.50元，授出购股权的日期为二零二三年六月一日，授出日期每股普通股公平市值为港币13.20元。
+
+已授出购股权合计为60,000,000份，占全球发售前本公司已发行股份总数的7.5%。
+
+【向若干董事及高管授出购股权详情】
+
+1. 张伟先生（首席执行官CEO）
+入职日期：二零一八年五月十六日
+购股权授出日期：二零二三年六月一日
+激励工具：购股权
+已授出购股权数目：20,000,000份
+占全球发售前总股本：2.5%
+归属安排：自授出日起计第一年届满后，25%的购股权归属；其后每满一个季度（即3个月），额外6.25%的购股权归属，直至全部购股权归属为止，须持续受雇方可归属。
+持股平台：不适用（直接持有）
+年度现金薪酬：港币3,200,000元
+
+2. 李明先生（首席技术官CTO）
+入职日期：二零一九年十一月零三日
+购股权授出日期：二零二三年六月一日
+激励工具：购股权
+已授出购股权数目：15,000,000份
+占全球发售前总股本：1.875%
+归属安排：自授出日起计第一年届满后，25%的购股权归属；其后每满一个季度（即3个月），额外6.25%的购股权归属，直至全部购股权归属为止，须持续受雇方可归属。
+持股平台：不适用（直接持有）
+年度现金薪酬：港币2,600,000元`;
+
+
+/* ================================================================
+   STATE
+================================================================ */
+const state = {
+  apiKey:      '',
+  isLoading:   false,
+  result:      null,
+  activeTab:   'basic',
+  editingCell: null   // { section, key, granteeIndex }
+};
+
+
+/* ================================================================
+   INIT
+================================================================ */
+function init() {
+  // Fill prompt previews
+  document.getElementById('previewSystem').textContent = SYSTEM_PROMPT;
+  document.getElementById('previewUser').textContent   = USER_PROMPT_TEMPLATE;
+
+  // Load API key
+  const savedKey = localStorage.getItem(STORAGE_KEY_APIKEY) || '';
+  if (savedKey) {
+    state.apiKey = savedKey;
+    document.getElementById('keyInput').value = savedKey;
+    document.getElementById('keySavedBadge').classList.remove('hidden');
+    // Has key → keep collapsed
+  } else {
+    // No key → auto-open key section
+    openCollapsible('keySection');
+  }
+
+  // Load last result
+  const savedResult = localStorage.getItem(STORAGE_KEY_RESULT);
+  if (savedResult) {
+    try {
+      state.result = JSON.parse(savedResult);
+      renderOutput();
+    } catch (e) { /* ignore */ }
+  }
+}
+
+
+/* ================================================================
+   COLLAPSIBLE
+================================================================ */
+function toggleCollapsible(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function openCollapsible(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeCollapsible(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+
+/* ================================================================
+   API KEY
+================================================================ */
+function onKeyInput() {
+  const input = document.getElementById('keyInput');
+  input.classList.remove('error');
+  document.getElementById('keyErrorTip').classList.remove('visible');
+}
+
+function saveApiKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val) {
+    document.getElementById('keyInput').classList.add('error');
+    document.getElementById('keyErrorTip').classList.add('visible');
+    return;
+  }
+  state.apiKey = val;
+  localStorage.setItem(STORAGE_KEY_APIKEY, val);
+  document.getElementById('keySavedBadge').classList.remove('hidden');
+  closeCollapsible('keySection');
+}
+
+
+/* ================================================================
+   TEXT INPUT
+================================================================ */
+function onTextInput() {
+  const ta = document.getElementById('textInput');
+  ta.classList.remove('error');
+  document.getElementById('textErrorTip').classList.remove('visible');
+  document.getElementById('charCount').textContent = ta.value.length + ' 字';
+}
+
+function fillSampleText() {
+  const ta = document.getElementById('textInput');
+  ta.value = SAMPLE_TEXT;
+  onTextInput();
+}
+
+
+/* ================================================================
+   EXTRACTION
+================================================================ */
+async function startExtraction() {
+  // Read values
+  const keyVal  = document.getElementById('keyInput').value.trim();
+  const textVal = document.getElementById('textInput').value.trim();
+
+  let hasError = false;
+
+  // Validate key
+  if (!keyVal) {
+    document.getElementById('keyInput').classList.add('error');
+    document.getElementById('keyErrorTip').classList.add('visible');
+    openCollapsible('keySection');
+    hasError = true;
+  } else {
+    state.apiKey = keyVal;
+  }
+
+  // Validate text
+  if (!textVal) {
+    document.getElementById('textInput').classList.add('error');
+    document.getElementById('textErrorTip').classList.add('visible');
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  setLoading(true);
+
+  try {
+    const userPrompt = USER_PROMPT_TEMPLATE.replace('{{TEXT}}', textVal);
+    const raw = await callDeepSeek(userPrompt);
+    const parsed = parseAIResponse(raw);
+    const completed = completeResult(parsed);
+
+    state.result = completed;
+    state.result._meta = {
+      extractedAt: new Date().toISOString(),
+      inputLength: textVal.length
+    };
+
+    localStorage.setItem(STORAGE_KEY_RESULT, JSON.stringify(state.result));
+    renderOutput();
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function callDeepSeek(userPrompt) {
+  const resp = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${state.apiKey}`
+    },
+    body: JSON.stringify({
+      model: DEEPSEEK_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user',   content: userPrompt }
+      ],
+      temperature: 0.1
+    })
+  });
+
+  if (resp.status === 401) throw new Error('API Key 无效，请检查后重新保存');
+  if (resp.status === 429) throw new Error('请求频率过高，请稍后重试');
+  if (!resp.ok) throw new Error(`API 请求失败：HTTP ${resp.status}`);
+
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+function parseAIResponse(raw) {
+  // Strip markdown code block markers if present
+  let cleaned = raw.trim();
+  cleaned = cleaned.replace(/^```json\s*/i, '').replace(/^```\s*/i, '');
+  cleaned = cleaned.replace(/\s*```$/i, '');
+  cleaned = cleaned.trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const preview = cleaned.substring(0, 200);
+    throw new Error(`AI 返回格式异常，无法解析 JSON。\n原始内容（前200字）：\n${preview}`);
+  }
+}
+
+/** Ensure all expected keys exist in result, filling defaults for missing ones */
+function completeResult(data) {
+  const ensureField = (obj, key) => {
+    if (!obj[key] || typeof obj[key] !== 'object') {
+      obj[key] = { value: null, confidence: 'low', source: '未在提供的文本中找到相关内容' };
+    } else {
+      if (obj[key].value === undefined) obj[key].value = null;
+      if (!obj[key].confidence) obj[key].confidence = 'low';
+      if (obj[key].source === undefined) obj[key].source = '';
+    }
+  };
+
+  // companyBasic
+  if (!data.companyBasic || typeof data.companyBasic !== 'object') data.companyBasic = {};
+  Object.keys(FIELD_LABELS_BASIC).forEach(k => ensureField(data.companyBasic, k));
+
+  // esopPlan
+  if (!data.esopPlan || typeof data.esopPlan !== 'object') data.esopPlan = {};
+  Object.keys(FIELD_LABELS_PLAN).forEach(k => ensureField(data.esopPlan, k));
+
+  // grantees
+  if (!Array.isArray(data.grantees)) data.grantees = [];
+  data.grantees.forEach(g => {
+    Object.keys(FIELD_LABELS_GRANTEE).forEach(k => ensureField(g, k));
+  });
+
+  return data;
+}
+
+
+/* ================================================================
+   LOADING STATE
+================================================================ */
+function setLoading(on) {
+  state.isLoading = on;
+  const btn = document.getElementById('extractBtn');
+  const overlay = document.getElementById('loadingOverlay');
+
+  btn.disabled = on;
+  btn.textContent = on ? '⏳ 提取中...' : '🔍 开始提取';
+
+  if (on) {
+    overlay.classList.remove('hidden');
+  } else {
+    overlay.classList.add('hidden');
+  }
+}
+
+
+/* ================================================================
+   ERROR DISPLAY
+================================================================ */
+function showError(msg) {
+  // Show in output area
+  document.getElementById('outputPlaceholder').classList.add('hidden');
+  document.getElementById('outputContent').classList.add('hidden');
+
+  let errDiv = document.getElementById('errorDisplay');
+  if (!errDiv) {
+    errDiv = document.createElement('div');
+    errDiv.id = 'errorDisplay';
+    errDiv.style.cssText = `
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      color: var(--red);
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 13px;
+    `;
+    document.getElementById('panelOutput').appendChild(errDiv);
+  }
+
+  errDiv.style.display = 'block';
+  errDiv.textContent = '⚠ 提取失败\n\n' + msg;
+}
+
+function clearError() {
+  const errDiv = document.getElementById('errorDisplay');
+  if (errDiv) errDiv.style.display = 'none';
+}
+
+
+/* ================================================================
+   RENDER OUTPUT
+================================================================ */
+function renderOutput() {
+  clearError();
+
+  if (!state.result) return;
+
+  // Show content, hide placeholder
+  document.getElementById('outputPlaceholder').classList.add('hidden');
+  document.getElementById('outputContent').classList.remove('hidden');
+
+  // --- Stats ---
+  const meta = state.result._meta || {};
+  document.getElementById('statTime').textContent =
+    meta.extractedAt ? new Date(meta.extractedAt).toLocaleString('zh-CN') : '—';
+
+  // Count fields
+  const { fieldCount, lowCount } = countFields(state.result);
+  document.getElementById('statFields').textContent = fieldCount + ' 个';
+
+  const warnWrap = document.getElementById('statWarnWrap');
+  if (lowCount > 0) {
+    warnWrap.classList.remove('hidden');
+    document.getElementById('statWarn').textContent = `⚠ ${lowCount} 个低置信度`;
+  } else {
+    warnWrap.classList.add('hidden');
+  }
+
+  // --- Tab warning dots ---
+  updateTabDots();
+
+  // --- Render active tab ---
+  renderTab(state.activeTab);
+}
+
+function countFields(result) {
+  let total = 0;
+  let low   = 0;
+
+  const scan = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+    if ('value' in obj && 'confidence' in obj) {
+      total++;
+      if (obj.confidence === 'low' && obj.value !== null) low++;
+      return;
+    }
+    Object.values(obj).forEach(v => {
+      if (Array.isArray(v)) v.forEach(scan);
+      else scan(v);
+    });
+  };
+
+  scan(result.companyBasic);
+  scan(result.esopPlan);
+  if (Array.isArray(result.grantees)) result.grantees.forEach(scan);
+
+  return { fieldCount: total, lowCount: low };
+}
+
+function haslowWarning(obj) {
+  if (!obj) return false;
+  if ('value' in obj && 'confidence' in obj) {
+    return obj.confidence === 'low' && obj.value !== null;
+  }
+  return Object.values(obj).some(v => {
+    if (Array.isArray(v)) return v.some(haslowWarning);
+    return haslowWarning(v);
+  });
+}
+
+function updateTabDots() {
+  const r = state.result;
+  document.getElementById('dot-basic').classList.toggle(
+    'hidden', !haslowWarning(r.companyBasic));
+  document.getElementById('dot-plan').classList.toggle(
+    'hidden', !haslowWarning(r.esopPlan));
+
+  const granteeWarn = Array.isArray(r.grantees) && r.grantees.some(haslowWarning);
+  document.getElementById('dot-grantees').classList.toggle('hidden', !granteeWarn);
+}
+
+
+/* ================================================================
+   TABS
+================================================================ */
+function switchTab(tab) {
+  state.activeTab = tab;
+
+  // Update tab buttons
+  ['basic','plan','grantees'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  const container = document.getElementById('tabContent');
+
+  if (tab === 'basic') {
+    container.innerHTML = renderFieldTable(
+      state.result.companyBasic,
+      FIELD_LABELS_BASIC,
+      'companyBasic'
+    );
+  } else if (tab === 'plan') {
+    container.innerHTML = renderFieldTable(
+      state.result.esopPlan,
+      FIELD_LABELS_PLAN,
+      'esopPlan'
+    );
+  } else if (tab === 'grantees') {
+    container.innerHTML = renderGrantees();
+  }
+}
+
+/** Render a key-value section as a table */
+function renderFieldTable(section, labels, sectionKey, granteeIndex) {
+  let rows = '';
+  const keys = Object.keys(labels);
+
+  keys.forEach(key => {
+    const field = section[key] || { value: null, confidence: 'low', source: '' };
+    const label = labels[key] || key;
+
+    const displayVal   = fieldValueHTML(field, sectionKey, key, granteeIndex);
+    const badgeHTML    = confBadge(field.confidence);
+    const srcText      = (field.source || '').substring(0, 60) + ((field.source || '').length > 60 ? '…' : '');
+    const editDataAttr = granteeIndex !== undefined
+      ? `data-sec="${sectionKey}" data-key="${key}" data-gi="${granteeIndex}"`
+      : `data-sec="${sectionKey}" data-key="${key}"`;
+
+    rows += `
+      <tr>
+        <td class="col-name">${escapeHTML(label)}</td>
+        <td class="col-value">${displayVal}</td>
+        <td class="col-conf">${badgeHTML}</td>
+        <td class="col-src">${escapeHTML(srcText)}</td>
+        <td class="col-action">
+          <button class="btn-edit" ${editDataAttr} onclick="openEditModal(this)">编辑</button>
+        </td>
+      </tr>`;
+  });
+
+  return `
+    <div class="table-wrap">
+      <table class="field-table">
+        <thead>
+          <tr>
+            <th class="col-name">字段</th>
+            <th class="col-value">提取值</th>
+            <th class="col-conf">置信度</th>
+            <th class="col-src">原文来源</th>
+            <th class="col-action"></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function fieldValueHTML(field, sectionKey, key, granteeIndex) {
+  if (field.value === null || field.value === undefined || field.value === '') {
+    return '<span class="value-null">—</span>';
+  }
+
+  let html = escapeHTML(String(field.value));
+
+  if (field.manuallyVerified) {
+    html += '<span class="verified-tag">✓ 已校验</span>';
+  }
+
+  return html;
+}
+
+function confBadge(conf) {
+  if (conf === 'high')   return '<span class="conf-badge conf-high">高</span>';
+  if (conf === 'medium') return '<span class="conf-badge conf-medium">中</span>';
+  return '<span class="conf-badge conf-low">低·需核查</span>';
+}
+
+function renderGrantees() {
+  const grantees = state.result.grantees || [];
+
+  if (grantees.length === 0) {
+    return `<div class="no-grantees">未提取到授予人信息</div>`;
+  }
+
+  return grantees.map((g, i) => `
+    <div class="grantee-section">
+      <div class="grantee-title">被授予人 #${i + 1}</div>
+      ${renderFieldTable(g, FIELD_LABELS_GRANTEE, 'grantees', i)}
+    </div>
+  `).join('');
+}
+
+
+/* ================================================================
+   EDIT MODAL
+================================================================ */
+function openEditModal(btn) {
+  const sec = btn.dataset.sec;
+  const key = btn.dataset.key;
+  const gi  = btn.dataset.gi !== undefined ? parseInt(btn.dataset.gi) : undefined;
+
+  let field;
+  if (sec === 'grantees' && gi !== undefined) {
+    field = state.result.grantees[gi][key];
+    state.editingCell = { section: sec, key, granteeIndex: gi };
+  } else {
+    field = state.result[sec][key];
+    state.editingCell = { section: sec, key };
+  }
+
+  // Determine label
+  let labels = {};
+  if (sec === 'companyBasic') labels = FIELD_LABELS_BASIC;
+  else if (sec === 'esopPlan') labels = FIELD_LABELS_PLAN;
+  else labels = FIELD_LABELS_GRANTEE;
+
+  document.getElementById('modalTitle').textContent   = labels[key] || key;
+  document.getElementById('modalSubtitle').textContent = `${sec} → ${key}` + (gi !== undefined ? ` [${gi}]` : '');
+  document.getElementById('modalSource').textContent  = field.source || '无原文来源';
+  document.getElementById('modalValueInput').value    = field.value !== null ? String(field.value) : '';
+
+  document.getElementById('editModal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modalValueInput').focus(), 50);
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+  state.editingCell = null;
+}
+
+function saveEdit() {
+  if (!state.editingCell) return;
+
+  const newVal = document.getElementById('modalValueInput').value.trim();
+  const { section, key, granteeIndex } = state.editingCell;
+
+  let field;
+  if (section === 'grantees' && granteeIndex !== undefined) {
+    field = state.result.grantees[granteeIndex][key];
+  } else {
+    field = state.result[section][key];
+  }
+
+  field.value            = newVal === '' ? null : newVal;
+  field.manuallyVerified = true;
+  field.confidence       = 'high'; // Manual verification upgrades confidence
+
+  // Persist
+  localStorage.setItem(STORAGE_KEY_RESULT, JSON.stringify(state.result));
+
+  closeEditModal();
+  renderOutput();
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal();
+});
+
+// Keyboard shortcut: Escape to close modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeEditModal();
+});
+
+
+/* ================================================================
+   EXPORT
+================================================================ */
+function exportJSON() {
+  if (!state.result) return;
+
+  const payload = {
+    exportedAt:      new Date().toISOString(),
+    inputTextLength: state.result._meta?.inputLength || 0,
+    result:          state.result
+  };
+
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+
+  const ts = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+  const a  = document.createElement('a');
+  a.href     = url;
+  a.download = `esop_extraction_${ts}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+/* ================================================================
+   UTILITY
+================================================================ */
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+
+/* ================================================================
+   BOOT
+================================================================ */
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
