@@ -116,7 +116,10 @@ function showDetail(id) {
                 <div class="detail-name">${p.name}</div>
                 <div class="detail-company">${p.company} · ${stars}</div>
             </div>
-            ${p.issue ? `<div class="card-issue" style="margin-left:auto">#${String(p.issue).padStart(3, '0')}</div>` : ''}
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+                ${p.issue ? `<div class="card-issue">#${String(p.issue).padStart(3, '0')}</div>` : ''}
+                ${p.detailLink ? `<a href="${p.detailLink}" target="_blank" rel="noopener" class="detail-official-link">官网 ↗</a>` : ''}
+            </div>
         </div>
         <div class="detail-tagline">${p.tagline}</div>
         <div class="detail-meta">

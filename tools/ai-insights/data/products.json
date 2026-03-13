@@ -17,12 +17,17 @@
       "功能上线时机比功能本身更重要（记忆功能的克制设计）",
       "从对话到 Agent，产品形态持续进化"
     ],
-    "techStack": ["GPT-4o", "RLHF", "Tool Use", "RAG"],
+    "techStack": [
+      "GPT-4o",
+      "RLHF",
+      "Tool Use",
+      "RAG"
+    ],
     "businessModel": "Freemium（免费 + Plus $20/月 + Enterprise）+ API",
     "launchDate": "2022-11",
     "trend": "up",
     "stars": 5,
-    "detailLink": "",
+    "detailLink": "https://chatgpt.com",
     "issue": 1,
     "oneLiner": "ChatGPT 真正的护城河不是模型，是 2 亿用户的行为数据飞轮",
     "tabs": {
@@ -47,9 +52,27 @@
       "competition": {
         "summary": "ChatGPT 面临来自 Claude、Gemini、国内各大模型的竞争，但其核心优势在于品牌认知度和生态规模。",
         "table": [
-          { "type": "通用对话", "name": "Claude", "strength": "长文本/安全/编程", "scene": "专业写作、代码", "limit": "品牌认知度低于 ChatGPT" },
-          { "type": "通用对话", "name": "Gemini", "strength": "Google 生态集成", "scene": "搜索增强、办公", "limit": "对话体验不及 ChatGPT" },
-          { "type": "国产模型", "name": "文心一言", "strength": "中文优化、百度生态", "scene": "国内企业用户", "limit": "国际化能力弱" }
+          {
+            "type": "通用对话",
+            "name": "Claude",
+            "strength": "长文本/安全/编程",
+            "scene": "专业写作、代码",
+            "limit": "品牌认知度低于 ChatGPT"
+          },
+          {
+            "type": "通用对话",
+            "name": "Gemini",
+            "strength": "Google 生态集成",
+            "scene": "搜索增强、办公",
+            "limit": "对话体验不及 ChatGPT"
+          },
+          {
+            "type": "国产模型",
+            "name": "文心一言",
+            "strength": "中文优化、百度生态",
+            "scene": "国内企业用户",
+            "limit": "国际化能力弱"
+          }
         ]
       },
       "insights": {
@@ -80,12 +103,16 @@
       "美学调教降低使用门槛 = Prompt Engineering 的产品价值",
       "当 PMF 足够强时，免费策略不是必须的"
     ],
-    "techStack": ["Diffusion Model", "图像生成", "Prompt 优化"],
+    "techStack": [
+      "Diffusion Model",
+      "图像生成",
+      "Prompt 优化"
+    ],
     "businessModel": "纯订阅制（$10/$30/$60/$120 月）",
     "launchDate": "2022-03",
     "trend": "up",
     "stars": 5,
-    "detailLink": "",
+    "detailLink": "https://www.midjourney.com",
     "issue": 2,
     "oneLiner": "Midjourney 证明：当 PMF 足够强，免费增长不是必须的",
     "tabs": {
@@ -110,9 +137,27 @@
       "competition": {
         "summary": "图像生成赛道竞争激烈，但 Midjourney 通过品牌美学和社区形成了难以复制的护城河。",
         "table": [
-          { "type": "AI 图像生成", "name": "DALL·E 3", "strength": "ChatGPT 内置，用户基数大", "scene": "快速原型、插图", "limit": "美学风格不如 Midjourney" },
-          { "type": "开源图像生成", "name": "Stable Diffusion", "strength": "完全开源可自部署", "scene": "开发者、本地部署", "limit": "需要较高技术门槛" },
-          { "type": "设计工具", "name": "Adobe Firefly", "strength": "无版权风险、Adobe 生态", "scene": "商业设计、办公", "limit": "生成质量和自由度不及 MJ" }
+          {
+            "type": "AI 图像生成",
+            "name": "DALL·E 3",
+            "strength": "ChatGPT 内置，用户基数大",
+            "scene": "快速原型、插图",
+            "limit": "美学风格不如 Midjourney"
+          },
+          {
+            "type": "开源图像生成",
+            "name": "Stable Diffusion",
+            "strength": "完全开源可自部署",
+            "scene": "开发者、本地部署",
+            "limit": "需要较高技术门槛"
+          },
+          {
+            "type": "设计工具",
+            "name": "Adobe Firefly",
+            "strength": "无版权风险、Adobe 生态",
+            "scene": "商业设计、办公",
+            "limit": "生成质量和自由度不及 MJ"
+          }
         ]
       },
       "insights": {
@@ -143,12 +188,16 @@
       "开源 vs 闭源的产品策略选择：不同阶段不同答案",
       "技术突破可以重新定义市场格局"
     ],
-    "techStack": ["MoE 架构", "开源模型", "RLHF"],
+    "techStack": [
+      "MoE 架构",
+      "开源模型",
+      "RLHF"
+    ],
     "businessModel": "开源 + API 计费（极低价格）",
     "launchDate": "2024-01",
     "trend": "up",
     "stars": 4,
-    "detailLink": "",
+    "detailLink": "https://www.deepseek.com",
     "issue": 3,
     "oneLiner": "DeepSeek 重新定义了 AI 军备竞赛的规则：不是谁算力多，是谁算法省",
     "tabs": {
@@ -173,9 +222,27 @@
       "competition": {
         "summary": "DeepSeek 的出现对整个 AI 行业的定价体系形成了冲击，迫使 OpenAI 等公司加速降价。",
         "table": [
-          { "type": "顶级闭源模型", "name": "GPT-4o", "strength": "生态最完善、品牌最强", "scene": "企业级应用", "limit": "价格昂贵，中国访问受限" },
-          { "type": "顶级闭源模型", "name": "Claude 3.5", "strength": "长文本、编程、安全", "scene": "专业代码/文档", "limit": "同样价格较高" },
-          { "type": "国产开源模型", "name": "Qwen 2.5", "strength": "中文优化、阿里生态", "scene": "国内企业应用", "limit": "国际影响力不及 DeepSeek" }
+          {
+            "type": "顶级闭源模型",
+            "name": "GPT-4o",
+            "strength": "生态最完善、品牌最强",
+            "scene": "企业级应用",
+            "limit": "价格昂贵，中国访问受限"
+          },
+          {
+            "type": "顶级闭源模型",
+            "name": "Claude 3.5",
+            "strength": "长文本、编程、安全",
+            "scene": "专业代码/文档",
+            "limit": "同样价格较高"
+          },
+          {
+            "type": "国产开源模型",
+            "name": "Qwen 2.5",
+            "strength": "中文优化、阿里生态",
+            "scene": "国内企业应用",
+            "limit": "国际影响力不及 DeepSeek"
+          }
         ]
       },
       "insights": {
@@ -206,12 +273,16 @@
       "Artifacts 功能验证：AI 产品不只是对话，结果呈现方式同等重要",
       "B2B 客户核心关注安全 + 可控，这是 Claude 的核心壁垒"
     ],
-    "techStack": ["Constitutional AI", "超长上下文", "RLHF"],
+    "techStack": [
+      "Constitutional AI",
+      "超长上下文",
+      "RLHF"
+    ],
     "businessModel": "Freemium + API + Enterprise",
     "launchDate": "2023-03",
     "trend": "up",
     "stars": 5,
-    "detailLink": "",
+    "detailLink": "https://claude.ai",
     "issue": 4,
     "oneLiner": "Claude 证明了「安全」可以是差异化卖点，而不只是合规负担",
     "tabs": {
@@ -236,9 +307,27 @@
       "competition": {
         "summary": "Claude 在专业用户群体中口碑极好，但在消费者市场品牌认知度仍落后于 ChatGPT。",
         "table": [
-          { "type": "通用对话", "name": "ChatGPT", "strength": "品牌最强、生态最大", "scene": "通用消费者", "limit": "安全性不如 Claude" },
-          { "type": "企业 AI", "name": "Gemini for Workspace", "strength": "Google 办公套件集成", "scene": "Google 生态企业", "limit": "对话质量不及 Claude" },
-          { "type": "代码助手", "name": "GitHub Copilot", "strength": "IDE 深度集成", "scene": "日常编码", "limit": "不具备通用对话能力" }
+          {
+            "type": "通用对话",
+            "name": "ChatGPT",
+            "strength": "品牌最强、生态最大",
+            "scene": "通用消费者",
+            "limit": "安全性不如 Claude"
+          },
+          {
+            "type": "企业 AI",
+            "name": "Gemini for Workspace",
+            "strength": "Google 办公套件集成",
+            "scene": "Google 生态企业",
+            "limit": "对话质量不及 Claude"
+          },
+          {
+            "type": "代码助手",
+            "name": "GitHub Copilot",
+            "strength": "IDE 深度集成",
+            "scene": "日常编码",
+            "limit": "不具备通用对话能力"
+          }
         ]
       },
       "insights": {
@@ -269,12 +358,16 @@
       "基于成熟产品（VS Code）改造 vs 从零开发：复用生态降低迁移成本",
       "订阅制 + 使用量模式的混合商业化"
     ],
-    "techStack": ["GPT-4 / Claude 集成", "RAG 代码索引", "VS Code Fork"],
+    "techStack": [
+      "GPT-4 / Claude 集成",
+      "RAG 代码索引",
+      "VS Code Fork"
+    ],
     "businessModel": "Freemium（$20/月 Pro + Business）",
     "launchDate": "2023-03",
     "trend": "up",
     "stars": 4,
-    "detailLink": "",
+    "detailLink": "https://www.cursor.com",
     "issue": 5,
     "oneLiner": "Cursor 的本质不是更好的代码补全，是把 AI 无缝嵌入程序员已有的工作流",
     "tabs": {
@@ -299,9 +392,27 @@
       "competition": {
         "summary": "AI 编程助手赛道竞争激烈，但 Cursor 通过编辑器级深度集成建立了壁垒。",
         "table": [
-          { "type": "AI 代码补全", "name": "GitHub Copilot", "strength": "微软/GitHub 生态、品牌强", "scene": "日常代码补全", "limit": "编辑器集成深度不及 Cursor" },
-          { "type": "AI 编程助手", "name": "Windsurf", "strength": "Agentic 执行能力强", "scene": "复杂任务自动化", "limit": "用户基数小于 Cursor" },
-          { "type": "命令行工具", "name": "Claude Code", "strength": "终端原生、任务执行强", "scene": "复杂工程任务", "limit": "无 GUI，学习门槛高" }
+          {
+            "type": "AI 代码补全",
+            "name": "GitHub Copilot",
+            "strength": "微软/GitHub 生态、品牌强",
+            "scene": "日常代码补全",
+            "limit": "编辑器集成深度不及 Cursor"
+          },
+          {
+            "type": "AI 编程助手",
+            "name": "Windsurf",
+            "strength": "Agentic 执行能力强",
+            "scene": "复杂任务自动化",
+            "limit": "用户基数小于 Cursor"
+          },
+          {
+            "type": "命令行工具",
+            "name": "Claude Code",
+            "strength": "终端原生、任务执行强",
+            "scene": "复杂工程任务",
+            "limit": "无 GUI，学习门槛高"
+          }
         ]
       },
       "insights": {
@@ -332,12 +443,16 @@
       "Add-on 定价是降低付费决策成本的有效策略",
       "文档场景天然适合 AI：结构化内容 + 明确意图"
     ],
-    "techStack": ["GPT-4 API", "RAG", "Block Editor 集成"],
+    "techStack": [
+      "GPT-4 API",
+      "RAG",
+      "Block Editor 集成"
+    ],
     "businessModel": "Add-on（$10/月，叠加现有订阅）",
     "launchDate": "2023-02",
-    "trend": "up",
+    "trend": "stable",
     "stars": 4,
-    "detailLink": "",
+    "detailLink": "https://www.notion.com/product/ai",
     "issue": 7,
     "oneLiner": "Notion AI 的核心洞察：AI 功能的最佳载体，是用户已经每天打开的那个工具",
     "tabs": {
@@ -362,9 +477,27 @@
       "competition": {
         "summary": "AI 效率工具赛道竞争激烈，但 Notion AI 凭借原有用户基础和深度集成建立了先发优势。",
         "table": [
-          { "type": "AI 写作助手", "name": "Jasper", "strength": "营销内容生成专精", "scene": "市场营销团队", "limit": "独立工具，迁移成本高" },
-          { "type": "协作文档 AI", "name": "Coda AI", "strength": "公式 + AI 结合，自动化强", "scene": "运营流程管理", "limit": "用户规模远小于 Notion" },
-          { "type": "微软生态", "name": "Microsoft Copilot", "strength": "Office 全家桶深度集成", "scene": "企业 Office 用户", "limit": "个人/小团队体验笨重" }
+          {
+            "type": "AI 写作助手",
+            "name": "Jasper",
+            "strength": "营销内容生成专精",
+            "scene": "市场营销团队",
+            "limit": "独立工具，迁移成本高"
+          },
+          {
+            "type": "协作文档 AI",
+            "name": "Coda AI",
+            "strength": "公式 + AI 结合，自动化强",
+            "scene": "运营流程管理",
+            "limit": "用户规模远小于 Notion"
+          },
+          {
+            "type": "微软生态",
+            "name": "Microsoft Copilot",
+            "strength": "Office 全家桶深度集成",
+            "scene": "企业 Office 用户",
+            "limit": "个人/小团队体验笨重"
+          }
         ]
       },
       "insights": {
@@ -395,12 +528,16 @@
       "视频生成的核心壁垒是「世界模型」，而非单纯的生成质量",
       "创作工具类 AI 的商业化路径：从专业用户到大众普及"
     ],
-    "techStack": ["Diffusion Transformer", "世界模型", "时序一致性"],
+    "techStack": [
+      "Diffusion Transformer",
+      "世界模型",
+      "时序一致性"
+    ],
     "businessModel": "订阅制（Plus/Pro 用户可用）",
     "launchDate": "2024-02",
-    "trend": "up",
+    "trend": "stable",
     "stars": 5,
-    "detailLink": "",
+    "detailLink": "https://sora.com",
     "issue": 8,
     "oneLiner": "Sora 的意义不只是「视频更好看」，而是证明 AI 开始理解物理世界的运行规律",
     "tabs": {
@@ -425,9 +562,27 @@
       "competition": {
         "summary": "视频生成赛道竞争激烈，但 Sora 在视频长度和物理一致性上仍保持领先。",
         "table": [
-          { "type": "AI 视频生成", "name": "Runway Gen-3", "strength": "专业视频编辑集成，创作者生态好", "scene": "专业视频创作者", "limit": "视频长度和一致性不及 Sora" },
-          { "type": "AI 视频生成", "name": "Pika Labs", "strength": "易用性好，门槛低", "scene": "社交媒体内容创作", "limit": "生成质量有明显差距" },
-          { "type": "国产视频生成", "name": "可灵（快手）", "strength": "中文场景优化，国内可用", "scene": "国内创作者", "limit": "国际影响力和技术深度不及 Sora" }
+          {
+            "type": "AI 视频生成",
+            "name": "Runway Gen-3",
+            "strength": "专业视频编辑集成，创作者生态好",
+            "scene": "专业视频创作者",
+            "limit": "视频长度和一致性不及 Sora"
+          },
+          {
+            "type": "AI 视频生成",
+            "name": "Pika Labs",
+            "strength": "易用性好，门槛低",
+            "scene": "社交媒体内容创作",
+            "limit": "生成质量有明显差距"
+          },
+          {
+            "type": "国产视频生成",
+            "name": "可灵（快手）",
+            "strength": "中文场景优化，国内可用",
+            "scene": "国内创作者",
+            "limit": "国际影响力和技术深度不及 Sora"
+          }
         ]
       },
       "insights": {
@@ -458,12 +613,16 @@
       "溯源设计在专业场景（金融/学术）中至关重要",
       "AI 搜索 vs 传统搜索：不是替代，是体验升维"
     ],
-    "techStack": ["RAG", "实时检索", "多模型调度"],
+    "techStack": [
+      "RAG",
+      "实时检索",
+      "多模型调度"
+    ],
     "businessModel": "Freemium（$20/月 Pro）+ 广告",
     "launchDate": "2022-12",
     "trend": "up",
     "stars": 4,
-    "detailLink": "",
+    "detailLink": "https://www.perplexity.ai",
     "issue": 6,
     "oneLiner": "Perplexity 把搜索的核心从「找到信息」重新定义为「理解信息」",
     "tabs": {
@@ -488,9 +647,27 @@
       "competition": {
         "summary": "Perplexity 面临来自传统搜索引擎 AI 化和独立 AI 搜索产品的双重竞争。",
         "table": [
-          { "type": "传统搜索 AI 化", "name": "Google AI Overview", "strength": "搜索流量最大、SEO 生态", "scene": "日常搜索", "limit": "体验改进保守，不如 Perplexity 激进" },
-          { "type": "传统搜索 AI 化", "name": "Bing Copilot", "strength": "微软生态、Office 集成", "scene": "办公场景搜索", "limit": "用户习惯仍偏向 Google" },
-          { "type": "AI 对话", "name": "ChatGPT Search", "strength": "用户基数大", "scene": "通用问答搜索", "limit": "实时性和引用体验不及 Perplexity" }
+          {
+            "type": "传统搜索 AI 化",
+            "name": "Google AI Overview",
+            "strength": "搜索流量最大、SEO 生态",
+            "scene": "日常搜索",
+            "limit": "体验改进保守，不如 Perplexity 激进"
+          },
+          {
+            "type": "传统搜索 AI 化",
+            "name": "Bing Copilot",
+            "strength": "微软生态、Office 集成",
+            "scene": "办公场景搜索",
+            "limit": "用户习惯仍偏向 Google"
+          },
+          {
+            "type": "AI 对话",
+            "name": "ChatGPT Search",
+            "strength": "用户基数大",
+            "scene": "通用问答搜索",
+            "limit": "实时性和引用体验不及 Perplexity"
+          }
         ]
       },
       "insights": {
@@ -521,12 +698,16 @@
       "Agentic 编程是下一个范式——从「AI 辅助写代码」到「AI 执行工程任务」",
       "工具的信任建立需要时间：让 AI 直接执行命令是比代码补全更高的信任门槛"
     ],
-    "techStack": ["Claude 3.5/4", "Terminal 集成", "MCP 协议"],
+    "techStack": [
+      "Claude 3.5/4",
+      "Terminal 集成",
+      "MCP 协议"
+    ],
     "businessModel": "按 token 计费（调用 Claude API）",
     "launchDate": "2025-02",
     "trend": "up",
     "stars": 4,
-    "detailLink": "",
+    "detailLink": "https://claude.ai/code",
     "issue": 9,
     "oneLiner": "Claude Code 代表了 AI 编程的下一个形态：不是帮你写代码，而是替你执行工程任务",
     "tabs": {
@@ -551,9 +732,27 @@
       "competition": {
         "summary": "AI 编程助手赛道呈现 GUI 和终端两条路线并行，服务不同偏好的工程师群体。",
         "table": [
-          { "type": "GUI AI 编辑器", "name": "Cursor", "strength": "VS Code 生态、视觉反馈好", "scene": "日常编码、前端开发", "limit": "Agentic 深度不及 Claude Code" },
-          { "type": "终端 AI 工具", "name": "Aider", "strength": "开源、轻量、可自定义", "scene": "开源项目、本地部署", "limit": "模型能力受限于接入的 API" },
-          { "type": "云端 AI 开发", "name": "GitHub Copilot Workspace", "strength": "GitHub 生态深度集成", "scene": "Issue 到 PR 全流程", "limit": "仍在早期，能力较弱" }
+          {
+            "type": "GUI AI 编辑器",
+            "name": "Cursor",
+            "strength": "VS Code 生态、视觉反馈好",
+            "scene": "日常编码、前端开发",
+            "limit": "Agentic 深度不及 Claude Code"
+          },
+          {
+            "type": "终端 AI 工具",
+            "name": "Aider",
+            "strength": "开源、轻量、可自定义",
+            "scene": "开源项目、本地部署",
+            "limit": "模型能力受限于接入的 API"
+          },
+          {
+            "type": "云端 AI 开发",
+            "name": "GitHub Copilot Workspace",
+            "strength": "GitHub 生态深度集成",
+            "scene": "Issue 到 PR 全流程",
+            "limit": "仍在早期，能力较弱"
+          }
         ]
       },
       "insights": {
