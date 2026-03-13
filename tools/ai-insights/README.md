@@ -1,24 +1,44 @@
-# AI 产品洞察
+# AI 产品拆解
 
 ## 功能描述
 
-展示 AI 行业最新标杆产品的深度分析，从产品经理视角解读产品策略、技术选型和商业模式。体现作者对 AI 产品生态的持续关注与深度思考。
+AI PM 视角的产品深度拆解，每条记录包含期号、一句话核心洞察、四维拆解（产品概述 / 技术架构 / 竞品分析 / 启示总结）。体现作者对 AI 产品生态的持续关注与独立判断。
 
 ## 数据来源
 
-手动维护 `data/products.json`，每个产品条目包含：
+手动维护 `data/products.json`，每个产品条目包含以下字段：
+
+### 基础字段（原有）
 
 | 字段 | 说明 |
 | --- | --- |
+| `id` | 唯一标识符（英文小写） |
 | `name` / `company` | 产品名 / 公司 |
 | `category` | 分类（通用大模型 / AI 创作 / AI 搜索 等） |
-| `description` | 产品描述 |
-| `highlights` | 核心亮点（3 条） |
-| `pmInsights` | PM 视角洞察（3 条） |
-| `techStack` | 技术关键词 |
+| `logo` | emoji 图标 |
+| `tagline` | 一句话产品定位 |
+| `description` | 产品描述（fallback 用） |
+| `highlights` | 核心亮点数组（fallback 用） |
+| `pmInsights` | PM 视角洞察数组（fallback 用） |
+| `techStack` | 技术关键词数组 |
 | `businessModel` | 商业模式 |
-| `trend` | 趋势方向（up / stable / down） |
+| `launchDate` | 上线时间（YYYY-MM） |
+| `trend` | 趋势方向（`up` / `stable` / `down`） |
 | `stars` | 推荐等级（1-5） |
+| `detailLink` | 官网链接 |
+
+### 新增字段（四Tab拆解）
+
+| 字段 | 说明 |
+| --- | --- |
+| `issue` | 期号（整数，显示为 #001 格式） |
+| `oneLiner` | 一句话核心洞察（卡片正文展示） |
+| `tabs.overview` | 产品概述：`intro`（段落）+ `features`（数组） |
+| `tabs.tech` | 技术架构：`summary`（段落）+ `points`（数组） |
+| `tabs.competition` | 竞品分析：`summary`（段落）+ `table`（数组，含 type/name/strength/scene/limit） |
+| `tabs.insights` | 启示总结：`points`（数组）+ `myTake`（个人判断段落） |
+
+> `tabs` 字段不存在时，弹窗自动 fallback 到 `highlights` / `pmInsights` 的原有展示，向后兼容。
 
 ## 文件结构
 
@@ -29,14 +49,14 @@ tools/ai-insights/
 ├── style.css          ← 私有样式
 ├── script.js          ← 数据加载 + 渲染逻辑
 └── data/
-    └── products.json  ← AI 产品数据源
+    └── products.json  ← AI 产品数据源（当前 9 条）
 ```
 
 ## 维护指南
 
 ### 添加新产品
 
-编辑 `data/products.json`，在数组中追加新对象，格式参考现有条目。
+在 `data/products.json` 末尾追加新对象，`issue` 期号顺序递增，`tabs` 四个维度都填写。
 
 ### 修改已有产品
 
@@ -44,4 +64,4 @@ tools/ai-insights/
 
 ### 分类筛选
 
-页面自动从数据中提取所有 category 生成筛选按钮，无需手动配置。
+页面自动从数据中提取所有 `category` 生成筛选按钮，无需手动配置。
