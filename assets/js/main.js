@@ -196,6 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCases();
   injectSvgDefs();
   updateActiveNavLink();
+  // dev 模式：?dev=1 时显示私人工具 Tab
+  if (new URLSearchParams(location.search).get('dev') === '1') {
+    document.querySelectorAll('[data-dev]').forEach(el => el.classList.remove('hidden'));
+  }
 });
 
 // ---- COPY PHONE ----
