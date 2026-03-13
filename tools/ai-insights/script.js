@@ -82,17 +82,18 @@ function renderGrid() {
           <span class="card-logo">${p.logo}</span>
           <span class="card-trend ${trend.cls}">${trend.label}</span>
         </div>
+        ${p.issue ? `<div class="card-issue">#${String(p.issue).padStart(3, '0')}</div>` : ''}
         <div class="card-name">${p.name}</div>
         <div class="card-company">${p.company}</div>
         <div class="card-tagline">${p.tagline}</div>
-        <div class="card-desc">${p.description}</div>
+        <div class="${p.oneLiner ? 'card-one-liner' : 'card-desc'}">${p.oneLiner || p.description}</div>
         <div class="card-tags">
           <span class="card-category">${p.category}</span>
           ${p.techStack.slice(0, 3).map(t => `<span class="card-tag">${t}</span>`).join('')}
         </div>
         <div class="card-footer">
           <span class="card-stars">${stars}</span>
-          <span class="card-cta">查看分析 →</span>
+          <span class="card-cta">查看拆解 →</span>
         </div>
       </div>
     `;
@@ -106,60 +107,126 @@ function showDetail(id) {
 
     const trend = TREND_MAP[p.trend] || TREND_MAP.stable;
     const stars = '★'.repeat(p.stars) + '☆'.repeat(5 - p.stars);
-
     const content = document.getElementById('detailContent');
-    content.innerHTML = `
-    <div class="detail-header">
-      <span class="detail-logo">${p.logo}</span>
-      <div>
-        <div class="detail-name">${p.name}</div>
-        <div class="detail-company">${p.company} · ${stars}</div>
-      </div>
-    </div>
-    <div class="detail-tagline">${p.tagline}</div>
-    <div class="detail-desc">${p.description}</div>
 
-    <div class="detail-meta">
-      <div class="detail-meta-item">
-        <span class="detail-meta-label">分类</span>${p.category}
-      </div>
-      <div class="detail-meta-item">
-        <span class="detail-meta-label">商业模式</span>${p.businessModel}
-      </div>
-      <div class="detail-meta-item">
-        <span class="detail-meta-label">上线时间</span>${p.launchDate}
-      </div>
-      <div class="detail-meta-item">
-        <span class="detail-meta-label">趋势</span>${trend.label}
-      </div>
-    </div>
+    const headerHtml = `
+        <div class="detail-header">
+            <span class="detail-logo">${p.logo}</span>
+            <div>
+                <div class="detail-name">${p.name}</div>
+                <div class="detail-company">${p.company} · ${stars}</div>
+            </div>
+            ${p.issue ? `<div class="card-issue" style="margin-left:auto">#${String(p.issue).padStart(3, '0')}</div>` : ''}
+        </div>
+        <div class="detail-tagline">${p.tagline}</div>
+        <div class="detail-meta">
+            <div class="detail-meta-item"><span class="detail-meta-label">分类</span>${p.category}</div>
+            <div class="detail-meta-item"><span class="detail-meta-label">商业模式</span>${p.businessModel}</div>
+            <div class="detail-meta-item"><span class="detail-meta-label">上线时间</span>${p.launchDate}</div>
+            <div class="detail-meta-item"><span class="detail-meta-label">趋势</span>${trend.label}</div>
+        </div>
+    `;
 
-    <div class="detail-section">
-      <div class="detail-section-title">🔥 核心亮点</div>
-      <ul class="detail-list">
-        ${p.highlights.map(h => `<li>${h}</li>`).join('')}
-      </ul>
-    </div>
+    let bodyHtml;
+    if (p.tabs) {
+        bodyHtml = renderTabs(p);
+    } else {
+        // fallback: 原有展示
+        bodyHtml = `
+            <div class="detail-desc">${p.description}</div>
+            <div class="detail-section">
+                <div class="detail-section-title">🔥 核心亮点</div>
+                <ul class="detail-list">${p.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-section">
+                <div class="detail-section-title">💡 PM 视角洞察</div>
+                <ul class="detail-list insights">${p.pmInsights.map(i => `<li>${i}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-section">
+                <div class="detail-section-title">🛠 技术关键词</div>
+                <div class="card-tags" style="margin-top:8px">${p.techStack.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+            </div>
+        `;
+    }
 
-    <div class="detail-section">
-      <div class="detail-section-title">💡 PM 视角洞察</div>
-      <ul class="detail-list insights">
-        ${p.pmInsights.map(i => `<li>${i}</li>`).join('')}
-      </ul>
-    </div>
-
-    <div class="detail-section">
-      <div class="detail-section-title">🛠 技术关键词</div>
-      <div class="card-tags" style="margin-top:8px">
-        ${p.techStack.map(t => `<span class="card-tag">${t}</span>`).join('')}
-      </div>
-    </div>
-
-    <button class="detail-close" onclick="closeDetailDirect()">关闭</button>
-  `;
-
+    content.innerHTML = headerHtml + bodyHtml + `<button class="detail-close" onclick="closeDetailDirect()">关闭</button>`;
     document.getElementById('detailModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+}
+
+function renderTabs(p) {
+    const t = p.tabs;
+    return `
+        <div class="detail-tabs">
+            <button class="detail-tab-btn active" onclick="switchTab(this, 'overview')">产品概述</button>
+            <button class="detail-tab-btn" onclick="switchTab(this, 'tech')">技术架构</button>
+            <button class="detail-tab-btn" onclick="switchTab(this, 'competition')">竞品分析</button>
+            <button class="detail-tab-btn" onclick="switchTab(this, 'insights')">启示总结</button>
+        </div>
+
+        <div id="tab-overview" class="detail-tab-panel active">
+            <div class="detail-desc">${t.overview.intro}</div>
+            <div class="detail-section">
+                <div class="detail-section-title">🔥 核心功能</div>
+                <ul class="detail-list">${t.overview.features.map(f => `<li>${f}</li>`).join('')}</ul>
+            </div>
+        </div>
+
+        <div id="tab-tech" class="detail-tab-panel">
+            <div class="detail-desc">${t.tech.summary}</div>
+            <div class="detail-section">
+                <div class="detail-section-title">⚙️ 技术要点</div>
+                <ul class="detail-list">${t.tech.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+            </div>
+        </div>
+
+        <div id="tab-competition" class="detail-tab-panel">
+            ${t.competition.summary ? `<div class="detail-desc">${t.competition.summary}</div>` : ''}
+            ${t.competition.table && t.competition.table.length ? `
+            <table class="competition-table">
+                <thead>
+                    <tr>
+                        <th>产品类型</th>
+                        <th>代表产品</th>
+                        <th>核心能力</th>
+                        <th>适用场景</th>
+                        <th>局限性</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${t.competition.table.map(row => `
+                    <tr>
+                        <td>${row.type}</td>
+                        <td><strong>${row.name}</strong></td>
+                        <td>${row.strength}</td>
+                        <td>${row.scene}</td>
+                        <td>${row.limit}</td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>` : ''}
+        </div>
+
+        <div id="tab-insights" class="detail-tab-panel">
+            <div class="detail-section">
+                <div class="detail-section-title">💡 产品启示</div>
+                <ul class="detail-list insights">${t.insights.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+            </div>
+            ${t.insights.myTake ? `
+            <div class="my-take">
+                <div class="my-take-label">我的判断</div>
+                <div class="my-take-text">${t.insights.myTake}</div>
+            </div>` : ''}
+        </div>
+    `;
+}
+
+function switchTab(btn, tabId) {
+    // 切换按钮状态
+    btn.closest('.detail-tabs').querySelectorAll('.detail-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // 切换面板
+    document.querySelectorAll('.detail-tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
 }
 
 function closeDetail(e) {
