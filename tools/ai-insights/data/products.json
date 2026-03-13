@@ -30,6 +30,26 @@
     "detailLink": "https://chatgpt.com",
     "issue": 1,
     "oneLiner": "ChatGPT 真正的护城河不是模型，是 2 亿用户的行为数据飞轮",
+    "keyMetrics": [
+      { "label": "月活用户 MAU", "value": "2亿+", "source": "OpenAI 官方", "date": "2023-11", "url": "https://openai.com/blog/chatgpt-100-million" },
+      { "label": "破亿用户耗时", "value": "2个月", "source": "Reuters", "date": "2023-02", "url": "" },
+      { "label": "GPTs 创建数（首周）", "value": "300万+", "source": "OpenAI DevDay", "date": "2023-11", "url": "" },
+      { "label": "Plus 订阅价格", "value": "$20/月", "source": "OpenAI 官方定价", "date": "2023-02", "url": "https://openai.com/chatgpt/pricing" }
+    ],
+    "timeline": [
+      { "date": "2022-11", "event": "ChatGPT 正式发布，5天达100万用户", "type": "launch" },
+      { "date": "2023-02", "event": "2个月突破1亿MAU，史上最快消费级产品", "type": "milestone" },
+      { "date": "2023-03", "event": "ChatGPT Plus 正式推出，$20/月订阅", "type": "feature" },
+      { "date": "2023-11", "event": "GPTs 平台发布，首周300万+ 创建", "type": "feature" },
+      { "date": "2024-05", "event": "GPT-4o 发布，多模态能力全面升级", "type": "milestone" },
+      { "date": "2024-09", "event": "o1 推理模型发布，数学/代码推理大幅提升", "type": "feature" },
+      { "date": "2025-01", "event": "Operator 发布，AI Agent 执行真实世界任务", "type": "feature" }
+    ],
+    "sources": [
+      { "title": "ChatGPT Reaches 100 Million Users", "url": "https://www.reuters.com/technology/chatgpt-sets-record-fastest-growing-user-base-analyst-note-2023-02-01/", "date": "2023-02-01", "type": "media" },
+      { "title": "OpenAI DevDay 2023 Keynote", "url": "https://openai.com/blog/new-models-and-developer-products-announced-at-devday", "date": "2023-11-06", "type": "official" },
+      { "title": "OpenAI 2024 Annual Revenue Report", "url": "", "date": "2024-12", "type": "report" }
+    ],
     "tabs": {
       "overview": {
         "intro": "ChatGPT 是 OpenAI 于 2022 年 11 月发布的对话式 AI 产品，2 个月内突破 1 亿用户，成为史上增长最快的消费级产品。它的核心定位从「聊天机器人」持续进化，如今已是集对话、创作、代码、Agent 执行于一体的 AI 操作系统。",

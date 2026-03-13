@@ -159,12 +159,19 @@ function showDetail(id) {
 
 function renderTabs(p) {
     const t = p.tabs;
+    const hasMetrics = p.keyMetrics && p.keyMetrics.length > 0;
+    const hasTimeline = p.timeline && p.timeline.length > 0;
+    const hasSources = p.sources && p.sources.length > 0;
+
     return `
         <div class="detail-tabs">
             <button class="detail-tab-btn active" onclick="switchTab(this, 'overview')">产品概述</button>
             <button class="detail-tab-btn" onclick="switchTab(this, 'tech')">技术架构</button>
             <button class="detail-tab-btn" onclick="switchTab(this, 'competition')">竞品分析</button>
             <button class="detail-tab-btn" onclick="switchTab(this, 'insights')">启示总结</button>
+            ${hasMetrics ? `<button class="detail-tab-btn" onclick="switchTab(this, 'metrics')">关键数据</button>` : ''}
+            ${hasTimeline ? `<button class="detail-tab-btn" onclick="switchTab(this, 'timeline')">时间线</button>` : ''}
+            ${hasSources ? `<button class="detail-tab-btn" onclick="switchTab(this, 'sources')">信息来源</button>` : ''}
         </div>
 
         <div id="tab-overview" class="detail-tab-panel active">
@@ -220,8 +227,67 @@ function renderTabs(p) {
                 <div class="my-take-text">${t.insights.myTake}</div>
             </div>` : ''}
         </div>
+
+        ${hasMetrics ? `
+        <div id="tab-metrics" class="detail-tab-panel">
+            <div class="metrics-grid">
+                ${p.keyMetrics.map(m => `
+                <div class="metric-card">
+                    <div class="metric-value">${m.value}</div>
+                    <div class="metric-label">${m.label}</div>
+                    <div class="metric-meta">
+                        ${m.source ? `<span>${m.source}</span>` : ''}
+                        ${m.date ? `<span>${m.date}</span>` : ''}
+                        ${m.url ? `<a href="${m.url}" target="_blank" rel="noopener" class="metric-link">↗</a>` : ''}
+                    </div>
+                </div>`).join('')}
+            </div>
+        </div>` : ''}
+
+        ${hasTimeline ? `
+        <div id="tab-timeline" class="detail-tab-panel">
+            <div class="timeline">
+                ${p.timeline.map(node => `
+                <div class="timeline-node">
+                    <div class="timeline-dot timeline-dot--${node.type}"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">${node.date}</div>
+                        <div class="timeline-event">${node.event}</div>
+                        <span class="timeline-badge timeline-badge--${node.type}">${TIMELINE_TYPE_LABEL[node.type] || node.type}</span>
+                    </div>
+                </div>`).join('')}
+            </div>
+        </div>` : ''}
+
+        ${hasSources ? `
+        <div id="tab-sources" class="detail-tab-panel">
+            <div class="sources-list">
+                ${p.sources.map(s => `
+                <div class="source-item">
+                    <div class="source-main">
+                        <span class="source-badge source-badge--${s.type}">${SOURCE_TYPE_LABEL[s.type] || s.type}</span>
+                        ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener" class="source-title">${s.title}</a>`
+                                : `<span class="source-title source-title--nolink">${s.title}</span>`}
+                    </div>
+                    ${s.date ? `<div class="source-date">${s.date}</div>` : ''}
+                </div>`).join('')}
+            </div>
+        </div>` : ''}
     `;
 }
+
+const TIMELINE_TYPE_LABEL = {
+    launch: '发布',
+    milestone: '里程碑',
+    feature: '新功能',
+    funding: '融资',
+};
+
+const SOURCE_TYPE_LABEL = {
+    official: '官方',
+    media: '媒体',
+    report: '报告',
+};
 
 function switchTab(btn, tabId) {
     // 切换按钮状态

@@ -603,6 +603,200 @@ body {
     background: rgba(255,255,255,0.02);
 }
 
+/* ---- KEY METRICS GRID ---- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 4px;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 16px 14px;
+    text-align: center;
+    transition: border-color var(--transition);
+}
+
+.metric-card:hover {
+    border-color: var(--border-hover);
+}
+
+.metric-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+
+.metric-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.metric-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.metric-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.metric-link:hover {
+    text-decoration: underline;
+}
+
+/* ---- TIMELINE ---- */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-left: 20px;
+    border-left: 2px solid var(--border);
+    margin-top: 4px;
+}
+
+.timeline-node {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.timeline-node:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+    margin-left: -27px;
+    border: 2px solid var(--bg-secondary);
+}
+
+.timeline-dot--launch    { background: var(--accent-green); }
+.timeline-dot--milestone { background: var(--accent-blue); }
+.timeline-dot--feature   { background: var(--accent-purple); }
+.timeline-dot--funding   { background: var(--accent-amber); }
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.timeline-event {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+.timeline-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.timeline-badge--launch    { background: rgba(0,229,160,0.12);   color: var(--accent-green); }
+.timeline-badge--milestone { background: rgba(79,143,255,0.12);  color: var(--accent-blue); }
+.timeline-badge--feature   { background: rgba(155,109,255,0.12); color: var(--accent-purple); }
+.timeline-badge--funding   { background: rgba(245,158,11,0.12);  color: var(--accent-amber); }
+
+/* ---- SOURCES LIST ---- */
+.sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.source-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition);
+}
+
+.source-item:hover {
+    border-color: var(--border-hover);
+}
+
+.source-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.source-badge {
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.source-badge--official { background: rgba(79,143,255,0.12);  color: var(--accent-blue); }
+.source-badge--media    { background: rgba(155,109,255,0.12); color: var(--accent-purple); }
+.source-badge--report   { background: rgba(245,158,11,0.12);  color: var(--accent-amber); }
+
+.source-title {
+    font-size: 0.85rem;
+    color: var(--accent-blue);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.source-title:hover {
+    text-decoration: underline;
+}
+
+.source-title--nolink {
+    color: var(--text-secondary);
+}
+
+.source-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
 /* ---- FOOTER ---- */
 .footer {
     max-width: 1400px;

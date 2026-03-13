@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 产品信息采集器</title>
+    <style>
+        :root {
+            --bg-primary: #080c18;
+            --bg-secondary: #0d1224;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --accent-blue: #4f8fff;
+            --accent-purple: #9b6dff;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00e5a0;
+            --accent-amber: #f59e0b;
+            --text-primary: #f0f4ff;
+            --text-secondary: #8a95b5;
+            --text-muted: #4a5270;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(79, 143, 255, 0.4);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ---- HEADER ---- */
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: rgba(79, 143, 255, 0.12);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: rgba(79, 143, 255, 0.22);
+        }
+
+        .btn-success {
+            background: rgba(0, 229, 160, 0.12);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .save-indicator {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .save-indicator.saved {
+            color: var(--accent-green);
+        }
+
+        /* ---- LAYOUT ---- */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            height: calc(100vh - 61px);
+            overflow: hidden;
+        }
+
+        /* ---- LEFT PANEL ---- */
+        .left-panel {
+            overflow-y: auto;
+            padding: 24px;
+            border-right: 1px solid var(--border);
+        }
+
+        /* ---- SECTION ---- */
+        .form-section {
+            margin-bottom: 28px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* ---- FORM FIELDS ---- */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .field-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .field-row.triple {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, select {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            padding: 9px 12px;
+            transition: border-color var(--transition);
+            width: 100%;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 72px;
+        }
+
+        select option {
+            background: var(--bg-secondary);
+        }
+
+        /* ---- DYNAMIC LISTS ---- */
+        .list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .list-item input {
+            flex: 1;
+        }
+
+        .list-item-remove {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .list-item-remove:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-add {
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .btn-add:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        /* ---- METRIC ITEMS ---- */
+        .metric-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .metric-item .field-row {
+            margin-bottom: 8px;
+        }
+
+        .metric-item .field-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---- RIGHT PANEL ---- */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+
+        pre {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.76rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* JSON syntax highlight */
+        .json-key { color: var(--accent-blue); }
+        .json-string { color: var(--accent-green); }
+        .json-number { color: var(--accent-amber); }
+        .json-bool { color: var(--accent-purple); }
+        .json-null { color: var(--text-muted); }
+
+        /* ---- COPY TOAST ---- */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-green);
+            color: #080c18;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+            .right-panel {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-title">🗂 AI 产品信息采集器</div>
+    <div class="header-actions">
+        <span class="save-indicator" id="saveIndicator">草稿已保存</span>
+        <button class="btn" onclick="clearForm()">清空</button>
+        <button class="btn btn-primary" onclick="copyJSON()">复制 JSON</button>
+    </div>
+</div>
+
+<div class="layout">
+    <!-- ======== LEFT: FORM ======== -->
+    <div class="left-panel" id="leftPanel">
+
+        <!-- Section 1: 基本信息 -->
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-icon">📋</span>
+                <span class="section-title">基本信息</span>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>产品 ID（英文小写）</label>
+                    <input type="text" id="f_id" placeholder="chatgpt" oninput="onInput()">
+                </div>
+                <div class="field">
+                    <label>产品名称</label>
+                    <input type="text" id="f_name" placeholder="ChatGPT" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>公司</label>
+                    <input type="text" id="f_company" placeholder="OpenAI" oninput="onInput()">
+                </div>
+                <div class="field">
+                    <label>Logo（Emoji）</label>
+                    <input type="text" id="f_logo" placeholder="🤖" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>分类</label>
+                    <input type="text" id="f_category" placeholder="通用大模型" oninput="onInput()">
+                </div>
+                <div class="field">
+                    <label>商业模式</label>
+                    <input type="text" id="f_businessModel" placeholder="Freemium" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row triple">
+                <div class="field">
+                    <label>上线时间</label>
+                    <input type="text" id="f_launchDate" placeholder="2022-11" oninput="onInput()">
+                </div>
+                <div class="field">
+                    <label>趋势</label>
+                    <select id="f_trend" onchange="onInput()">
+                        <option value="up">📈 上升</option>
+                        <option value="stable">➡️ 稳定</option>
+                        <option value="down">📉 下降</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>期号</label>
+                    <input type="number" id="f_issue" placeholder="1" min="1" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>评分（1-5）</label>
+                    <input type="number" id="f_stars" placeholder="5" min="1" max="5" oninput="onInput()">
+                </div>
+                <div class="field">
+                    <label>官网链接</label>
+                    <input type="url" id="f_detailLink" placeholder="https://..." oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row single">
+                <div class="field">
+                    <label>Tagline（一句话定位）</label>
+                    <input type="text" id="f_tagline" placeholder="从对话工具到 AI 操作系统" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row single">
+                <div class="field">
+                    <label>One-Liner（PM 洞察一句话）</label>
+                    <input type="text" id="f_oneLiner" placeholder="ChatGPT 真正的护城河不是模型，是 2 亿用户的行为数据飞轮" oninput="onInput()">
+                </div>
+            </div>
+
+            <div class="field-row single">
+                <div class="field">
+                    <label>产品简介</label>
+                    <textarea id="f_description" placeholder="简短的产品描述..." oninput="onInput()"></textarea>
+                </div>
+            </div>
+
+            <div class="field-row single">
+                <div class="field">
+                    <label>技术关键词（每行一个）</label>
+                    <textarea id="f_techStack" placeholder="GPT-4o&#10;RLHF&#10;Tool Use" rows="4" oninput="onInput()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: 信息来源 -->
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-icon">🔗</span>
+                <span class="section-title">信息来源</span>
+            </div>
+
+            <div id="sourcesList" class="list-items"></div>
+            <button class="btn-add" onclick="addSource()">+ 添加来源</button>
+        </div>
+
+        <!-- Section 3: 关键数据指标 -->
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <span class="section-title">关键数据指标</span>
+            </div>
+
+            <div id="metricsList"></div>
+            <button class="btn-add" onclick="addMetric()">+ 添加指标</button>
+        </div>
+
+        <!-- Section 4: 产品时间线 -->
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-icon">📅</span>
+                <span class="section-title">产品时间线</span>
+            </div>
+
+            <div id="timelineList"></div>
+            <button class="btn-add" onclick="addTimeline()">+ 添加节点</button>
+        </div>
+
+    </div>
+
+    <!-- ======== RIGHT: JSON PREVIEW ======== -->
+    <div class="right-panel">
+        <div class="preview-header">
+            <span class="preview-title">JSON 预览</span>
+            <button class="btn btn-success" onclick="copyJSON()">复制</button>
+        </div>
+        <div class="preview-body">
+            <pre id="jsonPreview"></pre>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板 ✓</div>
+
+<script>
+const STORAGE_KEY = 'qiuzhi_collector_v1';
+let saveTimer = null;
+
+// ---- DYNAMIC LISTS ----
+function addSource() {
+    const container = document.getElementById('sourcesList');
+    const idx = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'metric-item';
+    div.dataset.type = 'source';
+    div.innerHTML = `
+        <div class="item-header">
+            <span class="item-label">来源 #${idx + 1}</span>
+            <button class="list-item-remove" onclick="removeItem(this)">删除</button>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>标题</label>
+                <input type="text" data-key="title" placeholder="标题" oninput="onInput()">
+            </div>
+            <div class="field">
+                <label>URL</label>
+                <input type="url" data-key="url" placeholder="https://..." oninput="onInput()">
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>日期</label>
+                <input type="text" data-key="date" placeholder="2024-01" oninput="onInput()">
+            </div>
+            <div class="field">
+                <label>类型</label>
+                <select data-key="type" onchange="onInput()">
+                    <option value="official">官方</option>
+                    <option value="media">媒体</option>
+                    <option value="report">报告</option>
+                </select>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    onInput();
+}
+
+function addMetric() {
+    const container = document.getElementById('metricsList');
+    const idx = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'metric-item';
+    div.dataset.type = 'metric';
+    div.innerHTML = `
+        <div class="item-header">
+            <span class="item-label">指标 #${idx + 1}</span>
+            <button class="list-item-remove" onclick="removeItem(this)">删除</button>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>指标名</label>
+                <input type="text" data-key="label" placeholder="月活用户" oninput="onInput()">
+            </div>
+            <div class="field">
+                <label>数值</label>
+                <input type="text" data-key="value" placeholder="2亿+" oninput="onInput()">
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>来源</label>
+                <input type="text" data-key="source" placeholder="OpenAI 官方" oninput="onInput()">
+            </div>
+            <div class="field">
+                <label>日期</label>
+                <input type="text" data-key="date" placeholder="2024-Q1" oninput="onInput()">
+            </div>
+        </div>
+        <div class="field-row single">
+            <div class="field">
+                <label>来源链接</label>
+                <input type="url" data-key="url" placeholder="https://..." oninput="onInput()">
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    onInput();
+}
+
+function addTimeline() {
+    const container = document.getElementById('timelineList');
+    const idx = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'metric-item';
+    div.dataset.type = 'timeline';
+    div.innerHTML = `
+        <div class="item-header">
+            <span class="item-label">节点 #${idx + 1}</span>
+            <button class="list-item-remove" onclick="removeItem(this)">删除</button>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>日期</label>
+                <input type="text" data-key="date" placeholder="2022-11" oninput="onInput()">
+            </div>
+            <div class="field">
+                <label>类型</label>
+                <select data-key="type" onchange="onInput()">
+                    <option value="launch">发布</option>
+                    <option value="milestone">里程碑</option>
+                    <option value="feature">功能</option>
+                    <option value="funding">融资</option>
+                </select>
+            </div>
+        </div>
+        <div class="field-row single">
+            <div class="field">
+                <label>事件描述</label>
+                <input type="text" data-key="event" placeholder="产品正式上线" oninput="onInput()">
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    onInput();
+}
+
+function removeItem(btn) {
+    btn.closest('.metric-item').remove();
+    onInput();
+}
+
+// ---- BUILD JSON ----
+function buildJSON() {
+    const v = (id) => document.getElementById(id)?.value?.trim() || '';
+    const num = (id) => { const n = parseInt(v(id)); return isNaN(n) ? undefined : n; };
+
+    const obj = {};
+
+    if (v('f_id')) obj.id = v('f_id');
+    if (v('f_name')) obj.name = v('f_name');
+    if (v('f_company')) obj.company = v('f_company');
+    if (v('f_category')) obj.category = v('f_category');
+    if (v('f_logo')) obj.logo = v('f_logo');
+    if (v('f_tagline')) obj.tagline = v('f_tagline');
+    if (v('f_description')) obj.description = v('f_description');
+
+    const techRaw = v('f_techStack');
+    if (techRaw) obj.techStack = techRaw.split('\n').map(s => s.trim()).filter(Boolean);
+
+    if (v('f_businessModel')) obj.businessModel = v('f_businessModel');
+    if (v('f_launchDate')) obj.launchDate = v('f_launchDate');
+    obj.trend = v('f_trend') || 'stable';
+    const stars = num('f_stars');
+    if (stars !== undefined) obj.stars = stars;
+    const issue = num('f_issue');
+    if (issue !== undefined) obj.issue = issue;
+    if (v('f_detailLink')) obj.detailLink = v('f_detailLink');
+    if (v('f_oneLiner')) obj.oneLiner = v('f_oneLiner');
+
+    // Sources
+    const sources = collectItems('sourcesList', ['title', 'url', 'date', 'type']);
+    if (sources.length > 0) obj.sources = sources;
+
+    // Metrics
+    const metrics = collectItems('metricsList', ['label', 'value', 'source', 'date', 'url']);
+    if (metrics.length > 0) obj.keyMetrics = metrics;
+
+    // Timeline
+    const timeline = collectItems('timelineList', ['date', 'event', 'type']);
+    if (timeline.length > 0) obj.timeline = timeline;
+
+    return obj;
+}
+
+function collectItems(containerId, keys) {
+    const items = [];
+    document.getElementById(containerId).querySelectorAll('.metric-item').forEach(item => {
+        const obj = {};
+        keys.forEach(k => {
+            const el = item.querySelector(`[data-key="${k}"]`);
+            if (el) {
+                const val = el.value?.trim();
+                if (val) obj[k] = val;
+            }
+        });
+        if (Object.keys(obj).length > 0) items.push(obj);
+    });
+    return items;
+}
+
+// ---- RENDER PREVIEW ----
+function renderPreview() {
+    const json = buildJSON();
+    const raw = JSON.stringify(json, null, 2);
+    document.getElementById('jsonPreview').innerHTML = syntaxHighlight(raw);
+}
+
+function syntaxHighlight(json) {
+    return json
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+            let cls = 'json-number';
+            if (/^"/.test(match)) {
+                cls = /:$/.test(match) ? 'json-key' : 'json-string';
+            } else if (/true|false/.test(match)) {
+                cls = 'json-bool';
+            } else if (/null/.test(match)) {
+                cls = 'json-null';
+            }
+            return `<span class="${cls}">${match}</span>`;
+        });
+}
+
+// ---- AUTOSAVE ----
+function onInput() {
+    renderPreview();
+    clearTimeout(saveTimer);
+    document.getElementById('saveIndicator').textContent = '保存中…';
+    document.getElementById('saveIndicator').className = 'save-indicator';
+    saveTimer = setTimeout(saveDraft, 800);
+}
+
+function saveDraft() {
+    const state = captureState();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    document.getElementById('saveIndicator').textContent = '草稿已保存';
+    document.getElementById('saveIndicator').className = 'save-indicator saved';
+}
+
+function captureState() {
+    const fields = ['f_id','f_name','f_company','f_logo','f_category','f_businessModel',
+                    'f_launchDate','f_trend','f_issue','f_stars','f_detailLink',
+                    'f_tagline','f_oneLiner','f_description','f_techStack'];
+    const state = { fields: {} };
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state.fields[id] = el.value;
+    });
+
+    state.sources = serializeItems('sourcesList');
+    state.metrics = serializeItems('metricsList');
+    state.timeline = serializeItems('timelineList');
+    return state;
+}
+
+function serializeItems(containerId) {
+    const items = [];
+    document.getElementById(containerId).querySelectorAll('.metric-item').forEach(item => {
+        const data = { type: item.dataset.type, values: {} };
+        item.querySelectorAll('[data-key]').forEach(el => {
+            data.values[el.dataset.key] = el.value;
+        });
+        items.push(data);
+    });
+    return items;
+}
+
+function restoreState(state) {
+    if (!state) return;
+    const { fields, sources, metrics, timeline } = state;
+    if (fields) {
+        Object.entries(fields).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val;
+        });
+    }
+    if (sources) restoreItems('sourcesList', sources, addSource);
+    if (metrics) restoreItems('metricsList', metrics, addMetric);
+    if (timeline) restoreItems('timelineList', timeline, addTimeline);
+}
+
+function restoreItems(containerId, items, adder) {
+    items.forEach(item => {
+        adder();
+        const container = document.getElementById(containerId);
+        const el = container.lastElementChild;
+        if (el && item.values) {
+            Object.entries(item.values).forEach(([key, val]) => {
+                const field = el.querySelector(`[data-key="${key}"]`);
+                if (field) field.value = val;
+            });
+        }
+    });
+}
+
+// ---- COPY ----
+function copyJSON() {
+    const json = buildJSON();
+    const text = JSON.stringify(json, null, 2);
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+}
+
+// ---- CLEAR ----
+function clearForm() {
+    if (!confirm('确定清空所有内容？草稿将被删除。')) return;
+    ['f_id','f_name','f_company','f_logo','f_category','f_businessModel',
+     'f_launchDate','f_issue','f_stars','f_detailLink','f_tagline','f_oneLiner',
+     'f_description','f_techStack'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('f_trend').value = 'up';
+    ['sourcesList','metricsList','timelineList'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+    });
+    localStorage.removeItem(STORAGE_KEY);
+    onInput();
+}
+
+// ---- INIT ----
+(function init() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) restoreState(JSON.parse(saved));
+    } catch (e) {
+        console.warn('Failed to restore draft:', e);
+    }
+    renderPreview();
+})();
+</script>
+</body>
+</html>
