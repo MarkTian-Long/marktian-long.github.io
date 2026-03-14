@@ -32,8 +32,5 @@ build/
 node_modules/
 scripts/node_modules/
 
-# Stock tool — contains API tokens, do not commit
-# tools/stock/index.html
-
 # Local config files with API keys — never commit
 *.local.js

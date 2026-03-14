@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A股 AI 助手</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='url(%23g)'>股</text></svg>" />
+  <!-- 本地 key 配置，.gitignore 排除；线上由 GitHub Actions 构建时注入 -->
+  <script src="config.local.js" onerror="window.STOCK_CONFIG={}"></script>
+  <script>
+const CONFIG = {
+  OPENROUTER_KEY: window.STOCK_CONFIG?.openrouterKey || '',
+  MODEL: window.STOCK_CONFIG?.model || 'stepfun/step-3.5-flash:free'
+};
+</script>
+  <style>
+    :root {
+      --bg:           #080c18;
+      --bg-sec:       #0d1224;
+      --card:         rgba(255,255,255,0.04);
+      --card-hover:   rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.08);
+      --border-hover: rgba(79,143,255,0.4);
+      --accent:       #4f8fff;
+      --accent-purple:#9b6dff;
+      --accent-cyan:  #00d4ff;
+      --accent-green: #00e5a0;
+      --accent-red:   #ef4444;
+      --grad:         linear-gradient(135deg, #4f8fff, #9b6dff);
+      --text:         #f0f4ff;
+      --text-sec:     #8a95b5;
+      --text-muted:   #4a5270;
+      --radius-sm:    8px;
+      --radius-md:    16px;
+      --transition:   0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, 'PingFang SC', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sec);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .header-icon {
+      width: 32px; height: 32px;
+      background: var(--grad);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .header-title {
+      font-size: 15px; font-weight: 600;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+    .quick-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 8px; flex-wrap: wrap;
+      flex-shrink: 0; background: var(--bg-sec);
+    }
+    .quick-btn {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+      color: var(--text-sec);
+      font-size: 12px; cursor: pointer;
+      transition: var(--transition); white-space: nowrap;
+    }
+    .quick-btn:hover { border-color: var(--border-hover); color: var(--accent); background: rgba(79,143,255,0.08); }
+
+    .messages {
+      flex: 1; overflow-y: auto;
+      padding: 16px; display: flex;
+      flex-direction: column; gap: 14px;
+    }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+
+    .msg { display: flex; gap: 10px; max-width: 90%; animation: fadeIn 0.3s ease; }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+    .msg-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .msg.user .msg-avatar { background: var(--grad); }
+    .msg.ai .msg-avatar { background: rgba(79,143,255,0.15); border: 1px solid var(--border); }
+    .msg-body { display: flex; flex-direction: column; gap: 6px; }
+
+    .msg-bubble {
+      padding: 10px 14px; border-radius: var(--radius-md);
+      font-size: 13px; line-height: 1.7;
+    }
+    .msg.user .msg-bubble {
+      background: var(--grad); color: #fff;
+      border-radius: var(--radius-md) 4px var(--radius-md) var(--radius-md);
+    }
+    .msg.ai .msg-bubble {
+      background: var(--card); border: 1px solid var(--border); color: var(--text);
+      border-radius: 4px var(--radius-md) var(--radius-md) var(--radius-md);
+    }
+    .msg.ai .msg-bubble.loading { color: var(--text-sec); }
+
+    .data-collapse { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; font-size: 12px; }
+    .data-collapse-header {
+      padding: 7px 12px; background: rgba(79,143,255,0.08);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; color: var(--text-sec); user-select: none;
+    }
+    .data-collapse-header:hover { background: rgba(79,143,255,0.12); }
+    .data-collapse-arrow { transition: var(--transition); }
+    .data-collapse.open .data-collapse-arrow { transform: rotate(180deg); }
+    .data-table-wrap { display: none; overflow-x: auto; max-height: 220px; overflow-y: auto; }
+    .data-collapse.open .data-table-wrap { display: block; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th, .data-table td { padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .data-table th { background: rgba(255,255,255,0.04); color: var(--text-sec); font-weight: 500; position: sticky; top: 0; }
+    .data-table td { color: var(--text); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .welcome {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; flex: 1; gap: 10px;
+      color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;
+    }
+    .welcome-icon { font-size: 40px; margin-bottom: 4px; }
+    .welcome-title { font-size: 15px; color: var(--text-sec); font-weight: 500; }
+
+    .input-area {
+      padding: 12px 16px; border-top: 1px solid var(--border);
+      background: var(--bg-sec); display: flex; gap: 8px;
+      align-items: flex-end; flex-shrink: 0;
+    }
+    .input-wrap { flex: 1; }
+    .input-box {
+      width: 100%; padding: 10px 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); color: var(--text);
+      font-size: 13px; font-family: inherit; resize: none; outline: none;
+      transition: var(--transition); min-height: 42px; max-height: 120px;
+      overflow-y: auto; line-height: 1.5;
+    }
+    .input-box:focus { border-color: var(--border-hover); background: rgba(255,255,255,0.06); }
+    .input-box::placeholder { color: var(--text-muted); }
+
+    .send-btn {
+      padding: 10px 18px; background: var(--grad); border: none;
+      border-radius: var(--radius-md); color: #fff; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: var(--transition);
+      white-space: nowrap; height: 42px;
+    }
+    .send-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .msg.error .msg-bubble { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+
+    .step-tag {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; font-size: 10px; margin-bottom: 4px;
+    }
+    .step-tag.step1 { background: rgba(79,143,255,0.15); color: var(--accent); }
+    .step-tag.step2 { background: rgba(0,229,160,0.12); color: var(--accent-green); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">📊</div>
+  <div class="header-title">A股 AI 数据助手</div>
+  <div class="header-sub">Yahoo Finance · OpenRouter · 自然语言查询</div>
+</div>
+
+<div class="quick-bar">
+  <button class="quick-btn" onclick="sendQuick('上证指数最近一个交易日行情')">上证最近交易日</button>
+  <button class="quick-btn" onclick="sendQuick('茅台近5日行情')">茅台近5日</button>
+  <button class="quick-btn" onclick="sendQuick('中证500指数最近3日走势')">中证500近3日</button>
+  <button class="quick-btn" onclick="sendQuick('宁德时代最近一周涨跌情况')">宁德时代一周</button>
+  <button class="quick-btn" onclick="sendQuick('比亚迪近5日行情')">比亚迪近5日</button>
+</div>
+
+<div class="messages" id="messages">
+  <div class="welcome" id="welcome">
+    <div class="welcome-icon">📈</div>
+    <div class="welcome-title">A股 AI 数据助手</div>
+    <div>用自然语言查询 A股数据 · 数据来自 Yahoo Finance · 延迟约15分钟</div>
+    <div style="margin-top:6px; font-size:12px;">点击快捷按钮或在下方输入问题开始</div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-wrap">
+    <textarea
+      class="input-box" id="inputBox"
+      placeholder="例：茅台近5日行情如何？上证最近一个交易日怎么样？"
+      rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"
+    ></textarea>
+  </div>
+  <button class="send-btn" id="sendBtn" onclick="handleSend()">发送</button>
+</div>
+
+<script>
+let isLoading = false;
+
+// =============================================
+//  股票代码映射（A股 → Yahoo Finance 格式）
+// =============================================
+const SYMBOL_MAP = {
+  // 指数
+  '上证':     '000001.SS', '上证指数': '000001.SS',
+  '深证':     '399001.SZ', '深证成指': '399001.SZ',
+  '创业板':   '399006.SZ', '创业板指': '399006.SZ',
+  '中证500':  '000905.SS', '沪深300':  '000300.SS',
+  // 个股
+  '茅台':     '600519.SS', '贵州茅台': '600519.SS',
+  '宁德时代': '300750.SZ',
+  '比亚迪':   '002594.SZ',
+  '招商银行': '600036.SS',
+  '中国平安': '601318.SS',
+  '腾讯':     '0700.HK',
+};
+
+// =============================================
+//  UI Helpers
+// =============================================
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+}
+function sendQuick(text) {
+  document.getElementById('inputBox').value = text;
+  handleSend();
+}
+function hideWelcome() {
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+}
+function scrollBottom() {
+  const m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+}
+function appendUserMsg(text) {
+  hideWelcome();
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-avatar">👤</div><div class="msg-body"><div class="msg-bubble">${escHtml(text)}</div></div>`;
+  document.getElementById('messages').appendChild(div);
+  scrollBottom();
+}
+function appendLoadingMsg(stepLabel) {
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = `<div class="msg-avatar">🤖</div><div class="msg-body"><div class="msg-bubble loading"><span class="step-tag step1">${escHtml(stepLabel)}</span><br/>处理中…</div></div>`;
+  document.getElementById('messages').appendChild(div);
+  scrollBottom();
+  return div;
+}
+function updateMsg(div, content) {
+  div.querySelector('.msg-bubble').innerHTML = content;
+  scrollBottom();
+}
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// =============================================
+//  Main Flow
+// =============================================
+async function handleSend() {
+  if (isLoading) return;
+  const box = document.getElementById('inputBox');
+  const text = box.value.trim();
+  if (!text) return;
+
+  box.value = ''; box.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  appendUserMsg(text);
+
+  const loadingDiv = appendLoadingMsg('Step 1 · 解析意图');
+
+  try {
+    // Step 1: LLM 解析意图
+    const params = await parseIntent(text);
+    updateMsg(loadingDiv, `<span class="step-tag step1">Step 1 完成</span><br/>股票：<b>${escHtml(params.symbol)}</b>，周期：${escHtml(params.range)}，间隔：${escHtml(params.interval)}`);
+
+    // Step 2: 拉取数据
+    const dataLoading = appendLoadingMsg('Step 2 · 获取行情数据');
+    const rawData = await fetchYahoo(params.symbol, params.range, params.interval);
+    updateMsg(dataLoading, `<span class="step-tag step1">Step 2 完成</span><br/>获取到 ${rawData.length} 条数据`);
+
+    // Step 3: AI 解读
+    const aiLoading = appendLoadingMsg('Step 3 · AI 解读');
+    const answer = await interpretData(text, params, rawData);
+    updateMsg(aiLoading, buildAnswer(answer, rawData));
+
+  } catch (err) {
+    updateMsg(loadingDiv, `<span style="color:var(--accent-red)">⚠️ ${escHtml(String(err.message || err))}</span>`);
+  } finally {
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+  }
+}
+
+// =============================================
+//  LLM Step 1: 意图解析
+// =============================================
+async function parseIntent(userQuery) {
+  const symbolList = Object.entries(SYMBOL_MAP).map(([k,v])=>`${k}=${v}`).join(',');
+  const systemPrompt = `解析A股/港股查询意图，只返回JSON，无其他文字。
+字段：symbol(Yahoo格式股票代码),range(数据范围:1d/5d/1mo/3mo/6mo/1y),interval(粒度:1d/1wk/1mo)
+代码映射：${symbolList}
+若用户提到的股票不在映射表，自行推断Yahoo Finance格式（沪市.SS，深市.SZ）
+"今日/最近交易日/最近一个交易日"→range=1d,interval=1d；"近5日/一周"→range=5d,interval=1d；"近3日"→range=5d,interval=1d；"近一月"→range=1mo,interval=1d
+示例：{"symbol":"600519.SS","range":"5d","interval":"1d"}`;
+
+  const resp = await callLLM(systemPrompt, userQuery);
+  try {
+    const cleaned = resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim();
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('意图解析失败：' + resp.slice(0, 150));
+  }
+}
+
+// =============================================
+//  Yahoo Finance 数据获取（通过 allorigins 代理解决 CORS）
+// =============================================
+async function fetchYahoo(symbol, range, interval) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
+
+  // 依次尝试多个公共 CORS 代理，任一成功即返回
+  const proxies = [
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+  ];
+
+  let json = null;
+  let lastErr = '';
+  for (const makeProxy of proxies) {
+    try {
+      const resp = await fetch(makeProxy(url), { signal: AbortSignal.timeout(8000) });
+      if (!resp.ok) { lastErr = 'HTTP ' + resp.status; continue; }
+      const text = await resp.text();
+      // allorigins 返回 {contents: "..."}, 其他直接返回 JSON
+      try {
+        const outer = JSON.parse(text);
+        json = outer.contents ? JSON.parse(outer.contents) : outer;
+      } catch { lastErr = '响应解析失败'; continue; }
+      if (json?.chart) break; // 成功
+      json = null;
+    } catch (e) { lastErr = e.message; }
+  }
+  if (!json) throw new Error('数据请求失败：' + lastErr);
+
+  const result = json?.chart?.result?.[0];
+  if (!result) {
+    const err = json?.chart?.error?.description || '未找到该股票数据';
+    throw new Error(err);
+  }
+
+  const timestamps = result.timestamp || [];
+  const quote = result.indicators?.quote?.[0] || {};
+  const { open, high, low, close, volume } = quote;
+
+  if (!timestamps.length) return [];
+
+  // 先去重（同一天保留最后一条），再计算涨跌幅
+  const deduped = timestamps.map((ts, i) => ({
+    日期: new Date(ts * 1000).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }),
+    开盘: open?.[i]?.toFixed(2) ?? '-',
+    最高: high?.[i]?.toFixed(2) ?? '-',
+    最低: low?.[i]?.toFixed(2) ?? '-',
+    收盘: close?.[i]?.toFixed(2) ?? '-',
+    成交量: volume?.[i] ? (volume[i] / 10000).toFixed(0) + '万' : '-',
+    _close: close?.[i] ?? null
+  })).filter(r => r.收盘 !== '-')
+  .reduce((acc, row) => {
+    const last = acc[acc.length - 1];
+    if (last && last.日期 === row.日期) acc[acc.length - 1] = row;
+    else acc.push(row);
+    return acc;
+  }, []);
+
+  // 去重后再算涨跌幅（基于相邻两天收盘价）
+  return deduped.map((row, i) => {
+    const prev = deduped[i - 1];
+    const pct = (i > 0 && row._close && prev?._close)
+      ? ((row._close - prev._close) / prev._close * 100).toFixed(2) + '%'
+      : '-';
+    const { _close, ...rest } = row;
+    return { ...rest, 涨跌幅: pct };
+  });
+}
+
+// =============================================
+//  LLM Step 2: 数据解读
+// =============================================
+async function interpretData(userQuery, params, data) {
+  if (!data || data.length === 0) {
+    return '未查询到相关数据，可能是非交易日或股票代码有误。';
+  }
+  const systemPrompt = `你是资深A股分析师，用简洁中文回答（100-200字）。根据数据分析趋势、涨跌幅、成交量变化，给出洞察结论，不要复述数字表格。`;
+  const userContent = `用户问题：${userQuery}\n股票代码：${params.symbol}\n数据：${JSON.stringify(data.slice(0, 20))}`;
+  return await callLLM(systemPrompt, userContent);
+}
+
+// =============================================
+//  构建输出
+// =============================================
+function buildAnswer(answer, rawData) {
+  const safeAnswer = answer.replace(/\n/g, '<br/>');
+  let html = `<span class="step-tag step2">AI 分析</span><br/>${safeAnswer}`;
+
+  if (rawData && rawData.length > 0) {
+    const collapseId = 'dc_' + Date.now();
+    const headers = Object.keys(rawData[0]);
+    const rows = rawData.slice(0, 50);
+    html += `
+      <div class="data-collapse" id="${collapseId}" style="margin-top:10px;">
+        <div class="data-collapse-header" onclick="toggleCollapse('${collapseId}')">
+          <span>📋 原始数据（${rawData.length} 条）</span>
+          <span class="data-collapse-arrow">▼</span>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>${headers.map(h=>`<th>${escHtml(h)}</th>`).join('')}</tr></thead>
+            <tbody>${rows.map(row=>`<tr>${headers.map(h=>`<td>${escHtml(String(row[h]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+  return html;
+}
+
+function toggleCollapse(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// =============================================
+//  OpenRouter LLM Call
+// =============================================
+async function callLLM(systemPrompt, userContent) {
+  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + CONFIG.OPENROUTER_KEY,
+      'HTTP-Referer': location.href,
+      'X-Title': 'A-Share AI Assistant'
+    },
+    body: JSON.stringify({
+      model: CONFIG.MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ],
+      max_tokens: 2000
+    })
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(()=>'');
+    throw new Error('OpenRouter 请求失败：HTTP ' + resp.status + ' ' + errText.slice(0,200));
+  }
+
+  const json = await resp.json();
+  const msg = json.choices?.[0]?.message;
+  const content = msg?.content || msg?.reasoning_content || '';
+  if (!content) throw new Error('LLM 返回为空：' + JSON.stringify(json).slice(0, 300));
+  return content.trim();
+}
+</script>
+</body>
+</html>

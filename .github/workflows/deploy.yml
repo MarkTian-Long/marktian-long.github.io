@@ -28,11 +28,18 @@ jobs:
       - name: Inject API config
         env:
           ESOP_API_KEY: ${{ secrets.ESOP_API_KEY }}
+          STOCK_OPENROUTER_KEY: ${{ secrets.STOCK_OPENROUTER_KEY }}
         run: |
           cat > tools/esop-extractor/config.local.js <<EOF
           window.ESOP_CONFIG = {
             builtinApiKey: '${ESOP_API_KEY}',
             baseUrl:       'https://openrouter.ai/api',
+            model:         'stepfun/step-3.5-flash:free',
+          };
+          EOF
+          cat > tools/stock/config.local.js <<EOF
+          window.STOCK_CONFIG = {
+            openrouterKey: '${STOCK_OPENROUTER_KEY}',
             model:         'stepfun/step-3.5-flash:free',
           };
           EOF

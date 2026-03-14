@@ -205,6 +205,9 @@
                 <button class="tool-tab" id="tab-trends" onclick="switchTool('trends')">
                     📈 热点快照
                 </button>
+                <button class="tool-tab" id="tab-stock" onclick="switchTool('stock')">
+                    📊 A股助手
+                </button>
                 <!-- More tabs can be added here -->
             </div>
 
@@ -377,6 +380,17 @@
                 </div>
                 <iframe src="tools/trends/index.html" class="dashboard-iframe"
                     title="热点快照" loading="lazy"></iframe>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-stock">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">📊 A股 AI 助手 · 自然语言查询 · Tushare 数据</span>
+                        <a href="tools/stock/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/stock/index.html" class="dashboard-iframe"
+                        title="A股 AI 助手" loading="lazy"></iframe>
+                </div>
             </div>
         </div>
     </section>

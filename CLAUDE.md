@@ -40,6 +40,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
 | 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 |
 | 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 |
+| A股 AI 助手 | `tools/stock/index.html` | 自然语言查询 A股/指数行情，Yahoo Finance 数据 + AI 解读 |
 
 ## 核心规范（必须遵守）
 - CSS 颜色/间距**必须用 CSS 变量**，禁止硬编码色值
@@ -60,7 +61,11 @@ docs/                           # 个人文档（.gitignore 排除）
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
 - 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评
 - ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
-- 线上部署的 key 存在 GitHub Secrets（`ESOP_API_KEY`），由 `.github/workflows/deploy.yml` 在构建时注入；换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
+- A股助手 key 配置在 `tools/stock/config.local.js`（不进 git），修改此文件而非 index.html
+- 线上部署的 key 存在 GitHub Secrets，由 `.github/workflows/deploy.yml` 在构建时注入：
+  - `ESOP_API_KEY` → tools/esop-extractor/config.local.js
+  - `STOCK_OPENROUTER_KEY` → tools/stock/config.local.js
+  - 换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
