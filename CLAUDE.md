@@ -60,6 +60,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
 - 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评
 - ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
+- 线上部署的 key 存在 GitHub Secrets（`ESOP_API_KEY`），由 `.github/workflows/deploy.yml` 在构建时注入；换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
