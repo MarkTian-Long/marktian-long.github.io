@@ -34,8 +34,8 @@
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#about" class="nav-link">关于我</a></li>
-                <li><a href="#cases" class="nav-link">产品案例</a></li>
                 <li><a href="#tools" class="nav-link">AI 工具箱</a></li>
+                <li><a href="#cases" class="nav-link">产品案例</a></li>
                 <li><a href="#contact" class="nav-link">联系我</a></li>
             </ul>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
@@ -64,15 +64,16 @@
                 懂技术的 AI 产品经理<br />
                 计算机背景 · 主导 AI 产品从 0 到商业化落地
             </p>
-            <div class="hero-tags reveal delay-3">
+            <p class="hero-value reveal delay-3">帮你把 AI 从 Demo 变成真正能用的产品</p>
+            <div class="hero-tags reveal delay-4">
                 <span class="tag">🤖 AI 产品设计</span>
                 <span class="tag">📊 数据驱动决策</span>
                 <span class="tag">🚀 0→1 产品落地</span>
                 <span class="tag">🔬 用户研究</span>
             </div>
-            <div class="hero-actions reveal delay-4">
-                <a href="#cases" class="btn btn-primary">查看案例 →</a>
-                <a href="#tools" class="btn btn-ghost">体验 AI 工具</a>
+            <div class="hero-actions reveal delay-5">
+                <a href="#tools" class="btn btn-primary">体验 AI 工具 →</a>
+                <a href="#cases" class="btn btn-ghost">查看案例</a>
             </div>
         </div>
         <div class="hero-scroll-hint">
@@ -145,30 +146,12 @@
                     <div class="skills-tags" style="margin-top: 24px;">
                         <span class="skill-tag">Prompt Engineering</span>
                         <span class="skill-tag">RAG 架构</span>
-                        <span class="skill-tag">AI 模型评估</span>
-                        <span class="skill-tag">PRD 编写</span>
-                        <span class="skill-tag">用户访谈</span>
-                        <span class="skill-tag">竞品分析</span>
-                        <span class="skill-tag">SQL 数据分析</span>
-                        <span class="skill-tag">原型设计</span>
+                        <span class="skill-tag">LLM 产品评估</span>
+                        <span class="skill-tag">AI 应用场景设计</span>
+                        <span class="skill-tag">智能体产品设计</span>
+                        <span class="skill-tag">数据飞轮闭环</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== CASES ========== -->
-    <section class="section cases-section" id="cases">
-        <div class="container">
-            <div class="section-header reveal">
-                <span class="section-label">Case Studies</span>
-                <h2 class="section-title">产品案例</h2>
-                <p class="section-desc">真实项目经历，完整产品思维链路</p>
-            </div>
-            <!-- Cases will be rendered by JS -->
-            <div class="cases-grid" id="casesGrid"></div>
-            <div class="cases-more reveal">
-                <p class="cases-note">📌 以上为脱敏展示，详细案例可面谈获取</p>
             </div>
         </div>
     </section>
@@ -184,20 +167,9 @@
 
             <!-- Tool Tabs -->
             <div class="tool-tabs reveal">
-                <button class="tool-tab hidden" id="tab-interview" data-dev onclick="switchTool('interview')">
-                    💬 面试题练习器
-                </button>
-                <button class="tool-tab hidden" id="tab-tracker" data-dev onclick="switchTool('tracker')">
-                    📋 求职 Dashboard
-                </button>
+                <span class="tab-group-label">信息工具</span>
                 <button class="tool-tab active" id="tab-insights" onclick="switchTool('insights')">
                     🔭 AI 产品拆解
-                </button>
-                <button class="tool-tab" id="tab-esop" onclick="switchTool('esop')">
-                    📄 ESOP 提取 Demo
-                </button>
-                <button class="tool-tab hidden" id="tab-collector" data-dev onclick="switchTool('collector')">
-                    🗂 产品信息采集
                 </button>
                 <button class="tool-tab" id="tab-radar" onclick="switchTool('radar')">
                     🛰 前沿雷达
@@ -205,10 +177,22 @@
                 <button class="tool-tab" id="tab-trends" onclick="switchTool('trends')">
                     📈 热点快照
                 </button>
+                <span class="tab-group-label">PM 作品</span>
+                <button class="tool-tab" id="tab-esop" onclick="switchTool('esop')">
+                    📄 ESOP 提取 Demo
+                </button>
                 <button class="tool-tab" id="tab-stock" onclick="switchTool('stock')">
                     📊 A股助手
                 </button>
-                <!-- More tabs can be added here -->
+                <button class="tool-tab hidden" id="tab-interview" data-dev onclick="switchTool('interview')">
+                    💬 面试题练习器
+                </button>
+                <button class="tool-tab hidden" id="tab-tracker" data-dev onclick="switchTool('tracker')">
+                    📋 求职 Dashboard
+                </button>
+                <button class="tool-tab hidden" id="tab-collector" data-dev onclick="switchTool('collector')">
+                    🗂 产品信息采集
+                </button>
             </div>
 
             <!-- Interview Prep Tool -->
@@ -391,6 +375,22 @@
                     <iframe src="tools/stock/index.html" class="dashboard-iframe"
                         title="A股 AI 助手" loading="lazy"></iframe>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CASES ========== -->
+    <section class="section cases-section" id="cases">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Case Studies</span>
+                <h2 class="section-title">产品案例</h2>
+                <p class="section-desc">真实项目经历，完整产品思维链路</p>
+            </div>
+            <!-- Cases will be rendered by JS -->
+            <div class="cases-grid" id="casesGrid"></div>
+            <div class="cases-more reveal">
+                <p class="cases-note">📌 以上为脱敏展示，详细案例可面谈获取</p>
             </div>
         </div>
     </section>

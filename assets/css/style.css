@@ -409,8 +409,14 @@ button {
 .hero-sub {
   font-size: clamp(1rem, 2.5vw, 1.2rem);
   color: var(--text-secondary);
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   line-height: 1.8;
+}
+
+.hero-value {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--text-muted);
+  margin-bottom: 32px;
 }
 
 .hero-tags {
@@ -981,6 +987,23 @@ button {
   border-color: transparent;
   color: var(--text-on-gradient);
   box-shadow: 0 4px 20px var(--accent-blue-30);
+}
+
+.tab-group-label {
+  display: flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 4px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.tab-group-label:not(:first-child) {
+  margin-left: 8px;
 }
 
 .tool-panel {
