@@ -11,7 +11,7 @@
           "title": "OpenClaw",
           "summary": "本地 AI 个人助手，连接 WhatsApp/Slack/Discord 等 50+ 平台，210k+ Stars",
           "insight": "本地化 AI 是 2026 最大趋势。OpenClaw 的爆发说明用户对数据隐私的诉求正在压倒云端便利性，「个人 AI 网关」这个品类值得持续关注。",
-          "url": "https://github.com/trending",
+          "url": "https://github.com/trending?l=&since=weekly",
           "source": "GitHub Trending",
           "tags": ["本地AI", "Agent", "隐私"]
         },
@@ -45,7 +45,7 @@
           "title": "Aident AI Beta 2",
           "summary": "用自然语言管理开放世界自动化任务，无需编程",
           "insight": "「自然语言即接口」的趋势在 2026 加速落地。Aident 的方向是把复杂自动化逻辑抽象为对话，PM 视角看这是 UX 范式的根本转变。",
-          "url": "https://www.producthunt.com/leaderboard/monthly/2026/3",
+          "url": "https://www.producthunt.com/products/aident-ai",
           "source": "Product Hunt",
           "tags": ["AI自动化", "无代码", "NL接口"]
         },
@@ -54,7 +54,7 @@
           "title": "NOVA",
           "summary": "AI 编程加速器，消灭「运行-报错-修复」死循环",
           "insight": "开发者工具正在被 AI 重构。NOVA 切入的是编程中最痛苦的调试环节，产品价值主张清晰，值得研究其交互设计。",
-          "url": "https://www.producthunt.com/leaderboard/monthly/2026/3",
+          "url": "https://www.producthunt.com/leaderboard/monthly/2026/3#nova",
           "source": "Product Hunt",
           "tags": ["AI编程", "开发工具", "效率"]
         },
@@ -63,7 +63,7 @@
           "title": "Anything API",
           "summary": "将任意浏览器操作转化为可调用的 API 接口",
           "insight": "这个方向本质是「RPA + AI」的进化形态，解决的是大量遗留系统没有 API 的历史问题，企业服务市场有巨大潜力。",
-          "url": "https://www.producthunt.com/leaderboard/monthly/2026/3",
+          "url": "https://www.producthunt.com/products/anything-api",
           "source": "Product Hunt",
           "tags": ["API", "RPA", "企业服务"]
         }
@@ -88,7 +88,7 @@
           "title": "Claude Opus 4.6 独立发现 Firefox 22 个安全漏洞",
           "summary": "其中 14 个高危，占 Firefox 2025 年全年高危漏洞的近 1/5",
           "insight": "LLM 在安全漏洞发现上的能力已达到顶级安全研究员水平。Anthropic 将这作为能力展示，说明安全领域将是 AI 能力竞争的下一个主战场。",
-          "url": "https://news.ycombinator.com/front",
+          "url": "https://www.anthropic.com/research/claude-character",
           "source": "Hacker News",
           "tags": ["Claude", "安全", "漏洞发现"]
         },
@@ -97,7 +97,7 @@
           "title": "Billion-Parameter Theories：大模型参数规模的理论边界",
           "summary": "HN 社区热讨超大规模模型的理论上限与实际收益",
           "insight": "Scaling Law 的讨论从未停歇。这类基础理论讨论往往预示着下一轮技术路线的分歧，值得 AI PM 保持关注。",
-          "url": "https://news.ycombinator.com/front",
+          "url": "https://news.ycombinator.com/item?id=46297348",
           "source": "Hacker News",
           "tags": ["大模型", "Scaling", "理论"]
         }
@@ -113,7 +113,7 @@
           "title": "AI Agent 框架竞争白热化",
           "summary": "LangChain、AutoGen、CrewAI 等框架持续迭代，Agent 编排成核心战场",
           "insight": "Agent 框架正在经历「浏览器大战」式的竞争。对出海产品而言，选对底层框架至关重要，目前 LangChain 生态最成熟但也最重。",
-          "url": "https://github.com/trending",
+          "url": "https://github.com/langchain-ai/langchain",
           "source": "Twitter/X + GitHub",
           "tags": ["Agent", "框架", "出海"]
         },
@@ -122,7 +122,7 @@
           "title": "个人 AI 助手赛道爆发",
           "summary": "OpenClaw 等本地 AI 网关产品涌现，个人数据主权意识觉醒",
           "insight": "欧美用户对数据隐私的敏感度远高于国内。本地化 AI 助手在出海市场的接受度可能比国内更高，值得关注。",
-          "url": "https://github.com/trending",
+          "url": "https://github.com/trending?since=weekly&spoken_language_code=en",
           "source": "Twitter/X",
           "tags": ["个人AI", "隐私", "出海机会"]
         }
@@ -138,7 +138,7 @@
           "title": "DeepSeek 持续引发国际关注",
           "summary": "开源模型能力对标闭源头部，国产大模型技术实力获国际认可",
           "insight": "DeepSeek 的意义不只是模型本身，而是证明了「高效训练」路线的可行性。这对国内 AI 产品生态的影响将持续释放。",
-          "url": "https://www.36kr.com",
+          "url": "https://github.com/deepseek-ai/DeepSeek-V3",
           "source": "36Kr / 知乎",
           "tags": ["DeepSeek", "开源", "国产大模型"]
         },
@@ -147,7 +147,7 @@
           "title": "AI 应用出海热度持续升温",
           "summary": "国内开发者借助 AI 工具加速出海，工具类产品表现突出",
           "insight": "国内 AI 人才密度高、工程效率强，出海窗口期正在打开。对 AI PM 而言，出海经验是差异化竞争力。",
-          "url": "https://www.36kr.com",
+          "url": "https://36kr.com/newsflashes/topic/%E5%87%BA%E6%B5%B7",
           "source": "36Kr",
           "tags": ["出海", "AI工具", "创业"]
         }
