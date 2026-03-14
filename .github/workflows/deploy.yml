@@ -30,19 +30,8 @@ jobs:
           ESOP_API_KEY: ${{ secrets.ESOP_API_KEY }}
           STOCK_OPENROUTER_KEY: ${{ secrets.STOCK_OPENROUTER_KEY }}
         run: |
-          cat > tools/esop-extractor/config.local.js <<EOF
-          window.ESOP_CONFIG = {
-            builtinApiKey: '${ESOP_API_KEY}',
-            baseUrl:       'https://openrouter.ai/api',
-            model:         'stepfun/step-3.5-flash:free',
-          };
-          EOF
-          cat > tools/stock/config.local.js <<EOF
-          window.STOCK_CONFIG = {
-            openrouterKey: '${STOCK_OPENROUTER_KEY}',
-            model:         'stepfun/step-3.5-flash:free',
-          };
-          EOF
+          printf "window.ESOP_CONFIG = { builtinApiKey: '%s', baseUrl: 'https://openrouter.ai/api', model: 'stepfun/step-3.5-flash:free' };\n" "$ESOP_API_KEY" > tools/esop-extractor/config.local.js
+          printf "window.STOCK_CONFIG = { openrouterKey: '%s', model: 'stepfun/step-3.5-flash:free' };\n" "$STOCK_OPENROUTER_KEY" > tools/stock/config.local.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
