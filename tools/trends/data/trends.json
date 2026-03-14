@@ -5,6 +5,7 @@
       "id": "github-ai",
       "title": "GitHub AI 热榜",
       "icon": "⚡",
+      "intro": "GitHub 本周增长最快的 AI 相关仓库，按新增 Stars 排序。反映开源社区当前最热门的技术方向。",
       "items": [
         {
           "rank": 1,
@@ -102,12 +103,14 @@
       "id": "product-hunt",
       "title": "Product Hunt 本月",
       "icon": "🚀",
+      "intro": "Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。数据由 Claude 搜索整理。",
       "items": []
     },
     {
       "id": "hacker-news",
       "title": "HN 热议",
       "icon": "🔥",
+      "intro": "Hacker News 当前热度最高的技术讨论，按 Points 排序。HN 社区以技术深度和高质量讨论著称，是观察全球技术趋势的风向标。",
       "items": [
         {
           "rank": 1,
@@ -193,6 +196,7 @@
       "id": "overseas-ai",
       "title": "出海 AI 动态",
       "icon": "🌍",
+      "intro": "GitHub 英文 AI 项目周榜 + 海外社区热点，关注出海产品机会和国际 AI 技术动向。",
       "items": [
         {
           "rank": 1,
@@ -296,6 +300,7 @@
       "id": "cn-ai",
       "title": "国内 AI 热点",
       "icon": "🇨🇳",
+      "intro": "36Kr AI 频道最新文章，聚焦国内 AI 产品、融资、创业动态，是了解国内 AI 生态的快捷窗口。",
       "items": [
         {
           "rank": 1,

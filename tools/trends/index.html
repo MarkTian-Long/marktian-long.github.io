@@ -131,7 +131,7 @@
             background: var(--color-surface);
             border: 1px solid var(--color-border);
             border-radius: var(--radius);
-            padding: 16px 18px;
+            padding: 20px 22px;
             transition: border-color 0.18s;
         }
 
@@ -199,10 +199,43 @@
         }
 
         .item-summary {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--color-text-muted);
-            line-height: 1.55;
-            margin-top: 6px;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        /* Stats row (stars / score) */
+        .item-stats {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .item-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-stat-gain {
+            color: #4ade80;
+            font-weight: 500;
+        }
+
+        /* Board intro */
+        .board-intro {
+            font-size: 0.82rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            padding: 12px 16px;
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
         }
 
         /* Tags */
@@ -399,6 +432,15 @@
                 }
 
                 list.innerHTML = '';
+
+                // Board intro
+                if (board.intro) {
+                    const intro = document.createElement('div');
+                    intro.className = 'board-intro';
+                    intro.textContent = board.intro;
+                    list.appendChild(intro);
+                }
+
                 board.items.forEach(item => {
                     list.appendChild(buildCard(item));
                 });
@@ -416,6 +458,20 @@
                 // Rank style: top 3 get full opacity
                 const rankClass = item.rank <= 3 ? 'item-rank top3' : 'item-rank';
 
+                // Stats row: stars gain / HN score
+                let statsHtml = '';
+                if (item.starsGain) {
+                    statsHtml = `<div class="item-stats">
+                        <span class="item-stat">⭐ ${item.stars ? item.stars.toLocaleString() : ''} stars</span>
+                        <span class="item-stat item-stat-gain">↑ ${esc(item.starsGain)}</span>
+                    </div>`;
+                } else if (item.score) {
+                    const hnLink = item.hnUrl ? ` · <a href="${esc(item.hnUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--color-accent);text-decoration:none;">HN 讨论</a>` : '';
+                    statsHtml = `<div class="item-stats">
+                        <span class="item-stat">🔺 ${item.score} points${hnLink}</span>
+                    </div>`;
+                }
+
                 card.innerHTML = `
                     <div class="item-top">
                         <div class="${rankClass}">${item.rank}</div>
@@ -427,6 +483,7 @@
                                 <span class="item-source-tag">${esc(item.source)}</span>
                             </div>
                             <p class="item-summary">${esc(item.summary)}</p>
+                            ${statsHtml}
                             ${tagsHtml ? `<div class="item-tags">${tagsHtml}</div>` : ''}
                             ${item.insight ? buildInsight(item.insight) : ''}
                         </div>

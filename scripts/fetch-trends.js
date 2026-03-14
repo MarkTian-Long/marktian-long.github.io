@@ -254,59 +254,60 @@ async function main() {
 
   const boards = [];
 
+  const BOARD_INTROS = {
+    'github-ai': 'GitHub 本周增长最快的 AI 相关仓库，按新增 Stars 排序。反映开源社区当前最热门的技术方向。',
+    'product-hunt': 'Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。数据由 Claude 搜索整理。',
+    'hacker-news': 'Hacker News 当前热度最高的技术讨论，按 Points 排序。HN 社区以技术深度和高质量讨论著称，是观察全球技术趋势的风向标。',
+    'overseas-ai': 'GitHub 英文 AI 项目周榜 + 海外社区热点，关注出海产品机会和国际 AI 技术动向。',
+    'cn-ai': '36Kr AI 频道最新文章，聚焦国内 AI 产品、融资、创业动态，是了解国内 AI 生态的快捷窗口。',
+  };
+
   // 1. GitHub AI 热榜
   try {
     console.log('[1/5] GitHub AI 热榜');
     const items = await fetchGithubTrending('weekly');
-    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', items });
+    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: BOARD_INTROS['github-ai'], items });
     console.log(`  ✓ 获取 ${items.length} 条\n`);
   } catch (e) {
     console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', items: [] });
+    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: BOARD_INTROS['github-ai'], items: [] });
   }
 
-  // 2. Product Hunt 本月
-  try {
-    console.log('[2/5] Product Hunt 本月');
-    const items = await fetchProductHunt();
-    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', items: [] });
-  }
+  // 2. Product Hunt 本月（由 Claude 搜索填充，爬虫跳过）
+  console.log('[2/5] Product Hunt 本月（由 /update-trends 更新，跳过）\n');
+  boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items: [] });
 
   // 3. HN 热议
   try {
     console.log('[3/5] Hacker News 热议');
     const items = await fetchHackerNews();
-    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', items });
+    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: BOARD_INTROS['hacker-news'], items });
     console.log(`  ✓ 获取 ${items.length} 条\n`);
   } catch (e) {
     console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', items: [] });
+    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: BOARD_INTROS['hacker-news'], items: [] });
   }
 
   // 4. 出海 AI 动态
   try {
     console.log('[4/5] 出海 AI 动态');
     const items = await fetchOverseasAI();
-    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', items });
+    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: BOARD_INTROS['overseas-ai'], items });
     console.log(`  ✓ 获取 ${items.length} 条\n`);
   } catch (e) {
     console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', items: [] });
+    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: BOARD_INTROS['overseas-ai'], items: [] });
   }
 
   // 5. 国内 AI 热点
   try {
     console.log('[5/5] 国内 AI 热点（36Kr）');
     const items = await fetch36Kr();
-    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', items });
+    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: BOARD_INTROS['cn-ai'], items });
     console.log(`  ✓ 获取 ${items.length} 条\n`);
   } catch (e) {
     console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', items: [] });
+    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: BOARD_INTROS['cn-ai'], items: [] });
   }
 
   const output = {
