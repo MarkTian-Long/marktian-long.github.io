@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>热点快照 · 刘洋</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-surface: #13131a;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-text: #e8e8f0;
+            --color-text-muted: #8888a0;
+            --color-accent: #6366f1;
+            --color-accent-light: rgba(99, 102, 241, 0.15);
+            --color-tag-bg: rgba(99, 102, 241, 0.12);
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .header-sub {
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            margin-top: 3px;
+        }
+
+        .header-badge {
+            font-size: 0.72rem;
+            background: var(--color-accent-light);
+            color: var(--color-accent);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            gap: 6px;
+            padding: 16px 28px 0;
+            border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
+            background: var(--color-surface);
+        }
+
+        .tab-bar::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background: transparent;
+            color: var(--color-text-muted);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
+            position: relative;
+            bottom: -1px;
+        }
+
+        .tab-btn:hover {
+            color: var(--color-text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            color: var(--color-accent);
+            background: var(--color-bg);
+            border-color: var(--color-border);
+            border-bottom-color: var(--color-bg);
+        }
+
+        .tab-icon {
+            font-size: 0.95rem;
+        }
+
+        /* Main */
+        .main {
+            padding: 28px 28px 48px;
+            max-width: 820px;
+        }
+
+        /* Item list */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Hot item card */
+        .item-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            transition: border-color 0.18s;
+        }
+
+        .item-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Card top row: rank + title + source tag */
+        .item-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .item-rank {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--color-accent);
+            opacity: 0.5;
+            line-height: 1;
+            min-width: 36px;
+            flex-shrink: 0;
+            text-align: right;
+            padding-top: 2px;
+        }
+
+        .item-rank.top3 {
+            opacity: 1;
+        }
+
+        .item-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .item-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-text);
+            text-decoration: none;
+            line-height: 1.4;
+            transition: color 0.15s;
+        }
+
+        .item-title:hover {
+            color: var(--color-accent);
+        }
+
+        .item-source-tag {
+            font-size: 0.68rem;
+            color: var(--color-accent);
+            background: var(--color-tag-bg);
+            padding: 2px 7px;
+            border-radius: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .item-summary {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            line-height: 1.55;
+            margin-top: 6px;
+        }
+
+        /* Tags */
+        .item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            font-size: 0.68rem;
+            color: var(--color-text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            padding: 2px 7px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Claude insight toggle */
+        .insight-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            background: transparent;
+            color: var(--color-text-muted);
+            font-family: inherit;
+            font-size: 0.76rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .insight-toggle:hover {
+            color: var(--color-accent);
+            border-color: rgba(99, 102, 241, 0.4);
+            background: var(--color-accent-light);
+        }
+
+        .insight-toggle.open {
+            color: var(--color-accent);
+            border-color: rgba(99, 102, 241, 0.35);
+            background: var(--color-accent-light);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-color: transparent;
+        }
+
+        .toggle-chevron {
+            margin-left: auto;
+            font-size: 0.65rem;
+            transition: transform 0.2s;
+        }
+
+        .insight-toggle.open .toggle-chevron {
+            transform: rotate(180deg);
+        }
+
+        .insight-body {
+            display: none;
+            padding: 10px 12px;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-top: none;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            background: var(--color-accent-light);
+        }
+
+        .insight-body.open {
+            display: block;
+        }
+
+        /* Empty / loading state */
+        .state-msg {
+            color: var(--color-text-muted);
+            font-size: 0.85rem;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            margin-top: 8px;
+            max-width: 820px;
+            padding-left: 28px;
+            padding-right: 28px;
+        }
+
+        @media (max-width: 540px) {
+            .header { padding: 14px 16px; }
+            .tab-bar { padding: 12px 16px 0; }
+            .main { padding: 20px 16px 40px; }
+            .footer { padding-left: 16px; padding-right: 16px; }
+            .item-rank { font-size: 1.25rem; min-width: 28px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1 class="header-title">📈 热点快照</h1>
+            <p class="header-sub">AI &amp; 科技领域热榜 · Claude PM 视角点评</p>
+        </div>
+        <span class="header-badge" id="updated-badge">更新中…</span>
+    </header>
+
+    <nav class="tab-bar" id="tab-bar" aria-label="板块切换">
+        <!-- rendered by JS -->
+    </nav>
+
+    <main class="main">
+        <div class="items-list" id="items-list">
+            <p class="state-msg">加载中…</p>
+        </div>
+
+        <footer class="footer" id="footer" style="display:none;">
+            <p>📌 数据来源：GitHub Trending · Product Hunt · Hacker News · Twitter/X · 36Kr · 知乎 · 个人整理</p>
+        </footer>
+    </main>
+
+    <script>
+        (() => {
+            let data = null;
+            let activeId = null;
+
+            async function init() {
+                try {
+                    const res = await fetch('./data/trends.json');
+                    if (!res.ok) throw new Error('fetch failed');
+                    data = await res.json();
+                } catch (e) {
+                    document.getElementById('items-list').innerHTML =
+                        '<p class="state-msg">数据加载失败，请检查 data/trends.json 是否存在。</p>';
+                    return;
+                }
+
+                // Updated badge
+                if (data.updated_at) {
+                    document.getElementById('updated-badge').textContent = `更新于 ${data.updated_at}`;
+                }
+
+                // Render tabs
+                const tabBar = document.getElementById('tab-bar');
+                data.boards.forEach((board, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+                    btn.dataset.id = board.id;
+                    btn.innerHTML = `<span class="tab-icon">${board.icon}</span>${board.title}`;
+                    btn.addEventListener('click', () => switchTab(board.id));
+                    tabBar.appendChild(btn);
+                });
+
+                // Show first board
+                activeId = data.boards[0].id;
+                renderItems(activeId);
+                document.getElementById('footer').style.display = '';
+            }
+
+            function switchTab(id) {
+                if (id === activeId) return;
+                activeId = id;
+
+                // Update tab states
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.id === id);
+                });
+
+                renderItems(id);
+            }
+
+            function renderItems(id) {
+                const board = data.boards.find(b => b.id === id);
+                const list = document.getElementById('items-list');
+
+                if (!board || !board.items || board.items.length === 0) {
+                    list.innerHTML = '<p class="state-msg">暂无数据</p>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                board.items.forEach(item => {
+                    list.appendChild(buildCard(item));
+                });
+            }
+
+            function buildCard(item) {
+                const card = document.createElement('article');
+                card.className = 'item-card';
+
+                // Tags HTML
+                const tagsHtml = (item.tags || [])
+                    .map(t => `<span class="tag">${esc(t)}</span>`)
+                    .join('');
+
+                // Rank style: top 3 get full opacity
+                const rankClass = item.rank <= 3 ? 'item-rank top3' : 'item-rank';
+
+                card.innerHTML = `
+                    <div class="item-top">
+                        <div class="${rankClass}">${item.rank}</div>
+                        <div class="item-main">
+                            <div class="item-title-row">
+                                <a class="item-title" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">
+                                    ${esc(item.title)}
+                                </a>
+                                <span class="item-source-tag">${esc(item.source)}</span>
+                            </div>
+                            <p class="item-summary">${esc(item.summary)}</p>
+                            ${tagsHtml ? `<div class="item-tags">${tagsHtml}</div>` : ''}
+                            ${item.insight ? buildInsight(item.insight) : ''}
+                        </div>
+                    </div>
+                `;
+
+                // Bind toggle if insight present
+                if (item.insight) {
+                    const btn = card.querySelector('.insight-toggle');
+                    const body = card.querySelector('.insight-body');
+                    btn.addEventListener('click', () => {
+                        const open = body.classList.toggle('open');
+                        btn.classList.toggle('open', open);
+                    });
+                }
+
+                return card;
+            }
+
+            function buildInsight(text) {
+                return `
+                    <button class="insight-toggle" aria-expanded="false">
+                        🤖 Claude 点评
+                        <span class="toggle-chevron">▼</span>
+                    </button>
+                    <div class="insight-body">${esc(text)}</div>
+                `;
+            }
+
+            function esc(str) {
+                return String(str ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            init();
+        })();
+    </script>
+
+</body>
+
+</html>
