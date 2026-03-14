@@ -22,6 +22,8 @@ tools/dashboard/                # 求职追踪 Dashboard
 tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
 tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
+tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
+scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # Markdown 内容资料（不是代码）
 docs/                           # 个人文档（.gitignore 排除）
 .claude/skills/                 # Claude skill 定义
@@ -36,6 +38,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
 | 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 |
+| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 |
 
 ## 核心规范（必须遵守）
 - CSS 颜色/间距**必须用 CSS 变量**，禁止硬编码色值
@@ -54,6 +57,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
+- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码

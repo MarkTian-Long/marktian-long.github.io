@@ -44,8 +44,16 @@ qiuzhi/
 │   │   └── data/products.json #   AI 产品数据源
 │   ├── product-collector/
 │   │   └── index.html         #   AI 产品信息采集器（表单 → JSON）
-│   └── esop-extractor/
-│       └── index.html         #   ESOP 字段提取 Demo
+│   ├── esop-extractor/
+│   │   └── index.html         #   ESOP 字段提取 Demo
+│   ├── radar/
+│   │   └── index.html         #   前沿雷达（信息源导航 + 精选工具）
+│   └── trends/
+│       ├── index.html         #   热点快照展示页
+│       └── data/trends.json   #   热点数据（爬虫 + Claude 搜索）
+│
+├── scripts/                   # 🤖 本地脚本
+│   └── fetch-trends.js        #   热点爬虫（GitHub/HN/36Kr 自动抓取）
 │
 ├── content/                   # 📝 Markdown 内容资料
 │   ├── case_analysis.md       #   AI 产品案例分析（ChatGPT + Midjourney）
@@ -69,6 +77,8 @@ qiuzhi/
 | AI 产品拆解 | `tools/ai-insights/index.html` | 9 款产品，四维拆解 + 关键数据 + 时间线 + 信息来源 |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → 实时 JSON 预览 → 一键复制 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 |
+| 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 |
+| 热点快照 | `tools/trends/index.html` | 五大平台热榜 + Claude PM 视角点评，爬虫自动更新 |
 | 联系方式 | `index.html` | 邮件 / 微信 / LinkedIn |
 
 ## ✏️ 自定义指南
