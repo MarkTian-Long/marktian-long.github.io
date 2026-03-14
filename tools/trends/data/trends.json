@@ -104,7 +104,53 @@
       "title": "Product Hunt 本月",
       "icon": "🚀",
       "intro": "Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。数据由 Claude 搜索整理。",
-      "items": []
+      "items": [
+        {
+          "rank": 1,
+          "title": "Aident AI Beta 2",
+          "summary": "用自然语言管理「开放世界」自动化任务，无需编写代码，直接描述即可执行复杂操作",
+          "insight": "「自然语言即接口」在 2026 加速落地。Aident 把自动化逻辑抽象为对话，是 UX 范式转变的典型案例，PM 视角值得深度拆解其任务理解机制。",
+          "url": "https://www.producthunt.com/products/aident-ai",
+          "source": "Product Hunt",
+          "tags": ["AI自动化", "无代码", "NL接口"]
+        },
+        {
+          "rank": 2,
+          "title": "GojiberryAI",
+          "summary": "AI Agent 自动将高意向潜在客户转化为已预约演示，端到端销售自动化",
+          "insight": "销售漏斗自动化是 AI Agent 最快落地的 B2B 场景之一。GojiberryAI 切入的是销售流程中最费人力的「跟进」环节，PMF 清晰。",
+          "url": "https://www.producthunt.com/leaderboard/monthly/2026/3",
+          "source": "Product Hunt",
+          "tags": ["AI Agent", "销售自动化", "B2B"]
+        },
+        {
+          "rank": 3,
+          "title": "NOVA",
+          "summary": "AI 编程加速器，消灭「运行-报错-修复」循环，让调试变得极速",
+          "insight": "调试是开发者效率最大的杀手。NOVA 聚焦这一痛点，价值主张极其清晰，是「单点极致」产品策略的教科书案例。",
+          "url": "https://www.producthunt.com/leaderboard/daily/2026/3/4",
+          "source": "Product Hunt",
+          "tags": ["AI编程", "开发工具", "效率"]
+        },
+        {
+          "rank": 4,
+          "title": "Anything API",
+          "summary": "将任意浏览器操作自动转化为可调用的 API 接口，让遗留系统秒变可编程",
+          "insight": "「RPA + AI」的进化形态。解决大量遗留系统无 API 的历史难题，企业服务市场潜力巨大，也是出海工具类产品的机会窗口。",
+          "url": "https://www.producthunt.com/leaderboard/daily/2026/3/4",
+          "source": "Product Hunt",
+          "tags": ["API", "RPA", "企业服务"]
+        },
+        {
+          "rank": 5,
+          "title": "GapHunt",
+          "summary": "通过分析竞品差评挖掘产品空白，自动整理 1-2 星评论中的用户痛点",
+          "insight": "用 AI 做竞品分析的思路很务实。对 PM 而言，这类工具把「挖掘未满足需求」这个高价值但耗时的工作自动化了，值得体验。",
+          "url": "https://hunted.space/dashboard/gaphunt",
+          "source": "Product Hunt",
+          "tags": ["竞品分析", "产品工具", "PM必备"]
+        }
+      ]
     },
     {
       "id": "hacker-news",
