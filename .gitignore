@@ -29,3 +29,5 @@ build/
 *.tmp
 *.bak
 *.log
+node_modules/
+scripts/node_modules/
