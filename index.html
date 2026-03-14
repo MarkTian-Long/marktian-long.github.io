@@ -202,6 +202,9 @@
                 <button class="tool-tab" id="tab-radar" onclick="switchTool('radar')">
                     🛰 前沿雷达
                 </button>
+                <button class="tool-tab" id="tab-trends" onclick="switchTool('trends')">
+                    📈 热点快照
+                </button>
                 <!-- More tabs can be added here -->
             </div>
 
@@ -365,6 +368,15 @@
                     <iframe src="tools/radar/index.html" class="dashboard-iframe"
                         title="前沿雷达" loading="lazy"></iframe>
                 </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-trends">
+                <div class="dashboard-header">
+                    <span class="dashboard-label">📈 热点快照 · AI & 科技热榜 · Claude 点评</span>
+                    <a href="tools/trends/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                </div>
+                <iframe src="tools/trends/index.html" class="dashboard-iframe"
+                    title="热点快照" loading="lazy"></iframe>
             </div>
         </div>
     </section>
