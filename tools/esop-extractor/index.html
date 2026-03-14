@@ -199,6 +199,39 @@
 
     .key-hint a:hover { text-decoration: underline; }
 
+    /* ===== API Mode Toggle ===== */
+    .api-mode-toggle {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0 10px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-sec);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .mode-btn.active {
+      background: rgba(79,143,255,0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
     /* ===== Textarea ===== */
     .input-label {
       display: flex;
@@ -768,30 +801,61 @@
       <div class="collapsible-header" onclick="toggleCollapsible('keySection')">
         <div class="collapsible-header-left">
           <div class="section-icon"></div>
-          DeepSeek API Key
+          模型配置
           <span id="keySavedBadge" class="key-saved-badge hidden">✓ 已保存</span>
         </div>
         <span class="collapsible-arrow">▼</span>
       </div>
       <div class="collapsible-body">
         <div class="collapsible-body-inner">
-          <label class="key-label">API Key</label>
-          <div class="key-input-wrap">
-            <input
-              type="password"
-              id="keyInput"
-              class="key-input"
-              placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-              autocomplete="off"
-              oninput="onKeyInput()"
-            />
-            <button class="btn btn-ghost" onclick="saveApiKey()">保存</button>
+          <!-- Mode toggle -->
+          <div class="api-mode-toggle">
+            <button id="modeDefault" class="mode-btn active" onclick="setApiMode('default')">
+              ✦ 系统默认
+            </button>
+            <button id="modeCustom" class="mode-btn" onclick="setApiMode('custom')">
+              自定义 API
+            </button>
           </div>
-          <div id="keyErrorTip" class="error-tip">请输入 API Key 后再开始提取</div>
-          <div class="key-hint">
-            DeepSeek API Key，可在
-            <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a>
-            获取。Key 仅保存在本地浏览器，不会上传服务器。
+          <div class="key-hint" id="defaultModeHint">
+            使用内置模型（stepfun/step-3.5-flash），无需配置，开箱即用。
+          </div>
+          <!-- Custom key input (hidden by default) -->
+          <div id="customKeyArea" style="display:none;">
+            <label class="key-label">API Key（兼容 OpenAI 格式）</label>
+            <div class="key-input-wrap">
+              <input
+                type="password"
+                id="keyInput"
+                class="key-input"
+                placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                autocomplete="off"
+                oninput="onKeyInput()"
+              />
+              <button class="btn btn-ghost" onclick="saveApiKey()">保存</button>
+            </div>
+            <div id="keyErrorTip" class="error-tip">请输入 API Key 后再开始提取</div>
+            <label class="key-label" style="margin-top:10px;">Endpoint（可选）</label>
+            <input
+              type="text"
+              id="endpointInput"
+              class="key-input"
+              placeholder="https://api.deepseek.com（留空则使用 DeepSeek）"
+              autocomplete="off"
+              style="width:100%;"
+            />
+            <label class="key-label" style="margin-top:10px;">模型名称（可选）</label>
+            <input
+              type="text"
+              id="modelInput"
+              class="key-input"
+              placeholder="deepseek-chat（留空则使用默认）"
+              autocomplete="off"
+              style="width:100%;"
+            />
+            <div class="key-hint" style="margin-top:8px;">
+              支持任意兼容 OpenAI Chat API 的服务（DeepSeek / OpenRouter / 本地等）。Key 仅保存在本地浏览器。
+            </div>
           </div>
         </div>
       </div>
@@ -932,6 +996,7 @@
 </div>
 
 
+<script src="config.local.js" onerror="console.warn('config.local.js 未找到，使用代码内默认配置')"></script>
 <script>
 /* ================================================================
    CONSTANTS & PROMPTS
@@ -939,8 +1004,10 @@
 
 const STORAGE_KEY_APIKEY = 'qiuzhi_esop_apikey';
 const STORAGE_KEY_RESULT = 'qiuzhi_esop_last_result';
-const DEEPSEEK_BASE_URL  = 'https://api.deepseek.com';
-const DEEPSEEK_MODEL     = 'deepseek-chat';
+const _cfg               = window.ESOP_CONFIG || {};
+const DEEPSEEK_BASE_URL  = _cfg.baseUrl       || 'https://api.deepseek.com';
+const DEEPSEEK_MODEL     = _cfg.model         || 'deepseek-chat';
+const BUILTIN_API_KEY    = _cfg.builtinApiKey || '';
 
 /* ---- Field label maps ---- */
 const FIELD_LABELS_BASIC = {
@@ -1124,6 +1191,7 @@ const SAMPLE_TEXT = `某科技集团有限公司（股票代码：01234，香港
 ================================================================ */
 const state = {
   apiKey:      '',
+  apiMode:     'default',
   isLoading:   false,
   result:      null,
   activeTab:   'basic',
@@ -1139,17 +1207,19 @@ function init() {
   document.getElementById('previewSystem').textContent = SYSTEM_PROMPT;
   document.getElementById('previewUser').textContent   = USER_PROMPT_TEMPLATE;
 
-  // Load API key
+  // Load API mode & custom key
+  const savedMode = localStorage.getItem('qiuzhi_esop_apimode') || 'default';
+  setApiMode(savedMode, true);
+
   const savedKey = localStorage.getItem(STORAGE_KEY_APIKEY) || '';
   if (savedKey) {
-    state.apiKey = savedKey;
     document.getElementById('keyInput').value = savedKey;
     document.getElementById('keySavedBadge').classList.remove('hidden');
-    // Has key → keep collapsed
-  } else {
-    // No key → auto-open key section
-    openCollapsible('keySection');
   }
+  const savedEndpoint = localStorage.getItem('qiuzhi_esop_endpoint') || '';
+  if (savedEndpoint) document.getElementById('endpointInput').value = savedEndpoint;
+  const savedModel = localStorage.getItem('qiuzhi_esop_model') || '';
+  if (savedModel) document.getElementById('modelInput').value = savedModel;
 
   // Load last result
   const savedResult = localStorage.getItem(STORAGE_KEY_RESULT);
@@ -1182,6 +1252,16 @@ function closeCollapsible(id) {
 /* ================================================================
    API KEY
 ================================================================ */
+function setApiMode(mode, silent) {
+  state.apiMode = mode;
+  if (!silent) localStorage.setItem('qiuzhi_esop_apimode', mode);
+
+  document.getElementById('modeDefault').classList.toggle('active', mode === 'default');
+  document.getElementById('modeCustom').classList.toggle('active', mode === 'custom');
+  document.getElementById('defaultModeHint').style.display = mode === 'default' ? 'block' : 'none';
+  document.getElementById('customKeyArea').style.display   = mode === 'custom'  ? 'block' : 'none';
+}
+
 function onKeyInput() {
   const input = document.getElementById('keyInput');
   input.classList.remove('error');
@@ -1195,8 +1275,13 @@ function saveApiKey() {
     document.getElementById('keyErrorTip').classList.add('visible');
     return;
   }
-  state.apiKey = val;
   localStorage.setItem(STORAGE_KEY_APIKEY, val);
+  const ep = document.getElementById('endpointInput').value.trim();
+  if (ep) localStorage.setItem('qiuzhi_esop_endpoint', ep);
+  else localStorage.removeItem('qiuzhi_esop_endpoint');
+  const mdl = document.getElementById('modelInput').value.trim();
+  if (mdl) localStorage.setItem('qiuzhi_esop_model', mdl);
+  else localStorage.removeItem('qiuzhi_esop_model');
   document.getElementById('keySavedBadge').classList.remove('hidden');
   closeCollapsible('keySection');
 }
@@ -1224,19 +1309,16 @@ function fillSampleText() {
 ================================================================ */
 async function startExtraction() {
   // Read values
-  const keyVal  = document.getElementById('keyInput').value.trim();
   const textVal = document.getElementById('textInput').value.trim();
 
   let hasError = false;
 
-  // Validate key
-  if (!keyVal) {
+  // Validate custom key
+  if (state.apiMode === 'custom' && !localStorage.getItem(STORAGE_KEY_APIKEY)) {
     document.getElementById('keyInput').classList.add('error');
     document.getElementById('keyErrorTip').classList.add('visible');
     openCollapsible('keySection');
     hasError = true;
-  } else {
-    state.apiKey = keyVal;
   }
 
   // Validate text
@@ -1272,14 +1354,26 @@ async function startExtraction() {
 }
 
 async function callDeepSeek(userPrompt) {
-  const resp = await fetch(`${DEEPSEEK_BASE_URL}/v1/chat/completions`, {
+  // Resolve endpoint / key / model based on current mode
+  let apiKey, baseUrl, model;
+  if (state.apiMode === 'custom') {
+    apiKey  = localStorage.getItem(STORAGE_KEY_APIKEY) || '';
+    baseUrl = (localStorage.getItem('qiuzhi_esop_endpoint') || 'https://api.deepseek.com').replace(/\/$/, '');
+    model   = localStorage.getItem('qiuzhi_esop_model') || 'deepseek-chat';
+  } else {
+    apiKey  = BUILTIN_API_KEY;
+    baseUrl = DEEPSEEK_BASE_URL;
+    model   = DEEPSEEK_MODEL;
+  }
+
+  const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${state.apiKey}`
+      'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
+      model,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user',   content: userPrompt }

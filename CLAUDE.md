@@ -23,6 +23,7 @@ tools/ai-insights/              # AI 产品拆解展示（含 data/products.json
 tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
 tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
+tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # Markdown 内容资料（不是代码）
 docs/                           # 个人文档（.gitignore 排除）
@@ -58,6 +59,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
 - 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评
+- ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
