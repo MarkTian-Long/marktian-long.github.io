@@ -73,3 +73,4 @@ docs/                           # 个人文档（.gitignore 排除）
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
 - **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应写生成脚本到 `/tmp/gen_xxx.js`，用 `node /tmp/gen_xxx.js` 执行；分多个脚本 append 写入比一次性写入更可靠
+- **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点
