@@ -229,6 +229,19 @@ const CONFIG = {
       padding: 3px 8px; border: 1px solid var(--border);
       border-radius: 10px; color: var(--text-muted);
     }
+    .prompt-card {
+      margin-top: 8px; border: 1px solid rgba(79,143,255,0.2);
+      border-radius: var(--radius-sm); font-size: 11px; overflow: hidden;
+    }
+    .prompt-card-header {
+      padding: 6px 10px; background: rgba(79,143,255,0.06);
+      display: flex; justify-content: space-between;
+      cursor: pointer; color: var(--accent); user-select: none;
+    }
+    .prompt-card-body { padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+    .prompt-label { font-weight: 600; color: var(--text-sec); margin-bottom: 2px; }
+    .prompt-content { color: var(--text-muted); line-height: 1.5; }
+    .prompt-card-arrow { transition: var(--transition); }
   </style>
 </head>
 <body>
@@ -392,7 +405,7 @@ async function handleSend() {
     // Step 3: AI 解读
     const aiLoading = appendLoadingMsg('Step 3 · AI 解读');
     const answer = await interpretData(text, params, rawData);
-    updateMsg(aiLoading, buildAnswer(answer, rawData));
+    updateMsg(aiLoading, buildAnswer(answer, rawData, params));
 
   } catch (err) {
     updateMsg(loadingDiv, `<span style="color:var(--accent-red)">⚠️ ${escHtml(String(err.message || err))}</span>`);
@@ -509,7 +522,7 @@ async function interpretData(userQuery, params, data) {
 // =============================================
 //  构建输出
 // =============================================
-function buildAnswer(answer, rawData) {
+function buildAnswer(answer, rawData, params) {
   const safeAnswer = answer.replace(/\n/g, '<br/>');
   let html = `<span class="step-tag step2">AI 分析</span><br/>${safeAnswer}`;
 
@@ -531,11 +544,47 @@ function buildAnswer(answer, rawData) {
         </div>
       </div>`;
   }
+  if (params) html += buildPromptCard(params);
   return html;
 }
 
 function toggleCollapse(id) {
-  document.getElementById(id).classList.toggle('open');
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  const body = el.querySelector('.prompt-card-body');
+  const arrow = el.querySelector('.prompt-card-arrow');
+  if (body) {
+    body.style.display = body.style.display === 'none' ? 'flex' : 'none';
+    if (arrow) arrow.style.transform = body.style.display === 'none' ? '' : 'rotate(180deg)';
+  }
+}
+
+function buildPromptCard(params) {
+  const id = 'pc_' + Date.now();
+  return '<div class="prompt-card" id="' + id + '">' +
+    '<div class="prompt-card-header" onclick="toggleCollapse(\'' + id + '\')">' +
+      '<span>🔧 Prompt 设计说明</span>' +
+      '<span class="prompt-card-arrow">▼</span>' +
+    '</div>' +
+    '<div class="prompt-card-body" style="display:none;">' +
+      '<div class="prompt-section">' +
+        '<div class="prompt-label">Step 1 · 意图识别 Prompt 策略</div>' +
+        '<div class="prompt-content">使用 Few-shot 示例约束输出为 JSON，明确字段类型（symbol/range/interval），避免 LLM 自由发挥导致格式漂移。</div>' +
+      '</div>' +
+      '<div class="prompt-section">' +
+        '<div class="prompt-label">模型选型</div>' +
+        '<div class="prompt-content">stepfun/step-3.5-flash — 轻量快速，意图解析任务不需要推理深度，优先响应速度和成本控制。</div>' +
+      '</div>' +
+      '<div class="prompt-section">' +
+        '<div class="prompt-label">解析结果</div>' +
+        '<div class="prompt-content">symbol: <b>' + escHtml(params.symbol) + '</b> · range: <b>' + escHtml(params.range) + '</b> · interval: <b>' + escHtml(params.interval) + '</b></div>' +
+      '</div>' +
+      '<div class="prompt-section">' +
+        '<div class="prompt-label">Step 3 · 解读 Prompt 策略</div>' +
+        '<div class="prompt-content">角色设定（资深分析师）+ 字数约束（100-200字）+ 负面约束（不复述数字表格），引导 LLM 产出洞察而非摘要。</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
 }
 
 // =============================================
