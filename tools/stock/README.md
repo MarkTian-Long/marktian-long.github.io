@@ -1,42 +1,40 @@
-# A股 AI 数据助手
+# A股 AI 研究助手
 
-自然语言查询 A股数据，由 Yahoo Finance 提供数据、OpenRouter LLM 提供解析与解读。
+> AI 产品能力展示台 — 6-Tab 多维度 AI 能力演示
 
-## 功能
+## 功能概览
 
-- 自然语言输入 → AI 解析意图 → Yahoo Finance 取数 → AI 解读数据
-- 支持股票日线、指数行情查询
-- 数据延迟约 15 分钟，覆盖沪深港主要股票及指数
-- 纯前端，无需代理，GitHub Pages 直接可用
+| Tab | 功能 | AI 能力 | 数据来源 |
+|-----|------|---------|---------|
+| 💬 行情助手 | 自然语言查询 A股/指数行情 | Prompt Engineering | Yahoo Finance（真实） |
+| 🔬 个股诊断 | 多维度诊断卡（技术面/基本面/情绪面） | Structured Output | Yahoo Finance + 模拟 |
+| 📄 研报生成 | RAG 检索 + LLM 生成带引用研报 | RAG | 模拟新闻库 |
+| 📡 市场雷达 | 热点板块热力图 + 异动 + AI 简报 | Multi-Source | 模拟数据 |
+| 🤖 Agent 实验室 | ReAct Agent 可视化（THINK/PLAN/ACT/OBSERVE） | AI Agent | Yahoo Finance + 模拟 |
+| 🛡️ 合规设计 | 金融 AI 合规原则 + 数据血缘图 + 标注规范 | Governance | 静态内容 |
 
-## 支持的股票/指数
+## 技术架构
 
-| 名称 | 代码 |
-|------|------|
-| 上证指数 | 000001.SS |
-| 深证成指 | 399001.SZ |
-| 创业板指 | 399006.SZ |
-| 沪深300 | 000300.SS |
-| 中证500 | 000905.SS |
-| 贵州茅台 | 600519.SS |
-| 宁德时代 | 300750.SZ |
-| 比亚迪 | 002594.SZ |
+- **前端**：Vanilla JS + CSS3，零依赖，无构建步骤
+- **行情数据**：Yahoo Finance（CORS 代理，15分钟延迟）
+- **AI 推理**：OpenRouter API（stepfun/step-3.5-flash）
+- **模拟数据**：基本面、情绪评分、新闻库（硬编码 JS 常量，标注 🎭）
 
-也可直接输入其他股票名称，AI 会自动推断代码。
+## 数据标注规范
+
+- 📊 **真实数据** — Yahoo Finance 实时行情
+- 🎭 **模拟数据** — 演示用硬编码数据
+- 🤖 **AI 生成** — LLM 输出内容，标注置信度
 
 ## 配置
 
-打开 `index.html`，修改顶部 `CONFIG`：
-
+API Key 存放在 `config.local.js`（不进 git），格式：
 ```js
-const CONFIG = {
-  OPENROUTER_KEY: 'your_openrouter_key_here',
-  MODEL: 'stepfun/step-3.5-flash:free'
-};
+window.STOCK_CONFIG = { openrouterKey: 'sk-or-...' };
 ```
 
-> ⚠️ 不要将含有真实 Key 的文件提交到公开仓库。
+线上通过 GitHub Secrets (`STOCK_OPENROUTER_KEY`) 自动注入。
 
-## 本地使用
+## 免责声明
 
-直接浏览器打开 `index.html`，或通过主站 AI 工具箱 → 📊 A股助手 访问。
+本工具为 AI 产品能力演示，所有内容仅供参考，不构成投资建议。
