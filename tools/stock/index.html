@@ -379,6 +379,9 @@ const CONFIG = {
 .radar-brief-text { font-size:13px; line-height:1.8; }
 .radar-data-note { padding:6px 12px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; flex-shrink:0; }
 .radar-brief-widget { display:flex; flex-direction:column; }
+/* RAG 升级：查询扩展 */
+.rag-expansion { font-size:11px; color:var(--text-sec); padding:8px; background:rgba(79,143,255,0.06); border-radius:var(--radius-sm); margin-bottom:8px; line-height:1.8; }
+.expand-tag { display:inline-block; background:rgba(79,143,255,0.12); color:var(--accent); padding:1px 6px; border-radius:8px; margin:1px 2px; font-size:10px; }
   </style>
 </head>
 <body>
@@ -1003,6 +1006,46 @@ async function getDiagnosisFromLLM(name, symbol, priceData, fundamental, sentime
 }
 
 // Tab 3: RAG Mock 数据库
+
+// RAG 升级1: 金融同义词词典（对应简历：系统级金融同义词对齐机制）
+const FINANCE_SYNONYMS = {
+  '茅台': ['贵州茅台', '600519', 'MOUTAI', '白酒龙头'],
+  '贵州茅台': ['茅台', '600519', '白酒', '高端白酒'],
+  '宁德时代': ['CATL', '300750', '动力电池', '锂电池'],
+  '比亚迪': ['BYD', '002594', '新能源汽车'],
+  '招商银行': ['招行', '600036', '零售银行'],
+  '新能源': ['新能源汽车', '电动车', 'NEV', '动力电池', '产业链'],
+  '白酒': ['白酒行业', '高端白酒', '酱香白酒', '食品饮料'],
+  '银行': ['银行股', '金融股', '国有大行', '股份制银行'],
+  'ROE': ['净资产收益率', '盈利能力', '股东回报'],
+  '净资产收益率': ['ROE', '盈利能力'],
+  'PE': ['市盈率', '估值'],
+  '市盈率': ['PE', 'P/E', '估值倍数'],
+  '北向资金': ['外资', '陆股通', '北上资金', '外资流入'],
+};
+
+function expandQuery(query) {
+  const expanded = new Set();
+  // 原始词
+  query.split(/[，、\s]+/).filter(function(k) { return k.length > 0; }).forEach(function(k) {
+    expanded.add(k);
+  });
+  // 同义词扩展
+  const synonymExpanded = [];
+  expanded.forEach(function(term) {
+    if (FINANCE_SYNONYMS[term]) {
+      FINANCE_SYNONYMS[term].forEach(function(syn) { expanded.add(syn); synonymExpanded.push(syn); });
+    }
+    // 模糊匹配：查询词包含在词典 key 中，或词典 key 包含在查询词中
+    Object.keys(FINANCE_SYNONYMS).forEach(function(key) {
+      if (key !== term && (key.indexOf(term) >= 0 || term.indexOf(key) >= 0)) {
+        FINANCE_SYNONYMS[key].forEach(function(syn) { expanded.add(syn); });
+      }
+    });
+  });
+  return { terms: Array.from(expanded), expanded: synonymExpanded };
+}
+
 const NEWS_DB = [
   { id: 1, date: '2025-11-08', stock: '茅台', symbol: '600519.SS', title: '贵州茅台Q3财报超预期', content: '贵州茅台三季报显示净利润同比增长15.2%，营收创历史新高，高端白酒市场需求持续旺盛，机构普遍上调目标价。', tags: ['茅台', '白酒', '业绩'], relevance: 0.94 },
   { id: 2, date: '2025-11-05', stock: '白酒行业', symbol: null, title: '白酒板块估值修复行情', content: '受消费复苏预期带动，白酒板块整体回暖，茅台、五粮液等龙头股量价齐升，分析师建议关注春节备货行情。', tags: ['白酒', '消费', '板块'], relevance: 0.87 },
@@ -1016,10 +1059,10 @@ const NEWS_DB = [
 
 function searchNews(query, topK) {
   topK = topK || 3;
-  const keywords = query.split(/[，、\s]+/).filter(function(k) { return k.length > 0; });
+  const { terms } = expandQuery(query);
   const scored = NEWS_DB.map(function(news) {
     let score = 0;
-    keywords.forEach(function(kw) {
+    terms.forEach(function(kw) {
       if (news.title.indexOf(kw) >= 0 || news.stock.indexOf(kw) >= 0) score += 0.4;
       if (news.content.indexOf(kw) >= 0) score += 0.2;
       if (news.tags.some(function(t) { return t.indexOf(kw) >= 0 || kw.indexOf(t) >= 0; })) score += 0.3;
@@ -1034,7 +1077,12 @@ async function runRAG() {
   if (!query) return;
   const sourcesEl = document.getElementById('ragSources');
   const reportEl = document.getElementById('ragReport');
-  sourcesEl.innerHTML = '<div class="rag-searching">🔍 正在向量检索中...</div>';
+  // 查询扩展
+  const expansion = expandQuery(query);
+  const expandHtml = expansion.expanded.length > 0
+    ? '<div class="rag-expansion">🔤 查询扩展：<b>' + escHtml(query) + '</b> → ' + expansion.terms.map(function(t) { return '<span class="expand-tag">' + escHtml(t) + '</span>'; }).join(' ') + '</div>'
+    : '';
+  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 正在检索中...</div>';
   reportEl.innerHTML = '<div class="rag-searching">⏳ 等待检索完成...</div>';
   await new Promise(function(r) { setTimeout(r, 800); });
   const results = searchNews(query);
