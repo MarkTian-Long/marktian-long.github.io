@@ -778,6 +778,203 @@
       background: var(--grad);
       flex-shrink: 0;
     }
+
+    /* ===== PDF Drop Zone ===== */
+    .pdf-drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--transition);
+      line-height: 1.8;
+    }
+
+    .pdf-drop-zone:hover,
+    .pdf-drop-zone.drag-over {
+      border-color: var(--accent);
+      color: var(--text-sec);
+      background: rgba(79,143,255,0.06);
+    }
+
+    .pdf-drop-zone-icon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 6px;
+      opacity: 0.6;
+    }
+
+    /* ===== PDF Info Card ===== */
+    .pdf-info-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(79,143,255,0.08);
+      border: 1px solid rgba(79,143,255,0.25);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .pdf-info-card.hidden { display: none !important; }
+
+    .pdf-file-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .pdf-file-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pdf-file-name {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pdf-file-meta {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 1px;
+    }
+
+    .pdf-clear-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 3px 7px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+
+    .pdf-clear-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ===== Bad Case Checkbox Group ===== */
+    .modal-section-title {
+      font-size: 12px;
+      color: var(--text-sec);
+      font-weight: 500;
+      margin-bottom: 8px;
+      margin-top: 14px;
+    }
+
+    .error-type-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
+    .error-type-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 6px;
+      transition: background var(--transition);
+    }
+
+    .error-type-item:hover {
+      background: var(--card-hover);
+    }
+
+    .error-type-item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .error-type-item span {
+      font-size: 12.5px;
+      color: var(--text-sec);
+    }
+
+    .modal-note-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 7px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      transition: border-color var(--transition);
+      margin-top: 8px;
+    }
+
+    .modal-note-input:focus { border-color: var(--accent); }
+
+    .modal-error-tip {
+      font-size: 11px;
+      color: var(--red);
+      margin-top: 5px;
+      display: none;
+    }
+
+    .modal-error-tip.visible { display: block; }
+
+    /* bad case 标记在表格中的显示 */
+    .badcase-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: var(--red);
+      font-weight: 600;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* bad case 导出按钮 */
+    .btn-export-bad {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-export-bad:hover {
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.5);
+    }
+
+    .btn-export-bad.hidden { display: none !important; }
+
+    /* ===== Source Cell (PDF mode) ===== */
+    .src-location {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .src-snippet {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -861,25 +1058,68 @@
       </div>
     </div>
 
-    <!-- Text Input -->
+    <!-- Input Mode Toggle -->
     <div>
-      <div class="input-label">
-        <span>招股书原文</span>
-        <span class="char-count" id="charCount">0 字</span>
+      <div class="api-mode-toggle" style="margin-bottom:0;">
+        <button id="modeText" class="mode-btn active" onclick="setInputMode('text')">📄 文本输入</button>
+        <button id="modePdf"  class="mode-btn"        onclick="setInputMode('pdf')">📎 上传 PDF <span style="font-size:10px;opacity:0.6;">Demo</span></button>
       </div>
-      <textarea
-        id="textInput"
-        class="textarea-main"
-        placeholder="将招股书相关章节文字粘贴到此处&#10;&#10;建议粘贴：股本结构、购股权计划、董事酬金等章节，效果更佳"
-        oninput="onTextInput()"
-      ></textarea>
-      <div id="textErrorTip" class="error-tip">请输入招股书原文后再开始提取</div>
+
+      <!-- Text Input Area -->
+      <div id="textInputArea">
+        <div class="input-label" style="margin-top:10px;">
+          <span>招股书原文</span>
+          <span class="char-count" id="charCount">0 字</span>
+        </div>
+        <textarea
+          id="textInput"
+          class="textarea-main"
+          placeholder="将招股书相关章节文字粘贴到此处&#10;&#10;建议粘贴：股本结构、购股权计划、董事酬金等章节，效果更佳"
+          oninput="onTextInput()"
+        ></textarea>
+        <div id="textErrorTip" class="error-tip">请输入招股书原文后再开始提取</div>
+      </div>
+
+      <!-- PDF Upload Area -->
+      <div id="pdfInputArea" class="hidden" style="margin-top:10px;">
+        <div
+          id="pdfDropZone"
+          class="pdf-drop-zone"
+          onclick="document.getElementById('pdfFileInput').click()"
+          ondragover="onDragOver(event)"
+          ondragleave="onDragLeave(event)"
+          ondrop="onDrop(event)"
+        >
+          <span class="pdf-drop-zone-icon">📎</span>
+          拖拽 PDF 文件到此处<br/>
+          <span style="font-size:11px;">或点击选择文件（最大 50MB）</span><br/>
+          <span style="font-size:11px;color:var(--yellow);opacity:0.8;">⚠ Demo 模式：返回模拟数据，不读取文件内容</span>
+        </div>
+        <input
+          type="file"
+          id="pdfFileInput"
+          accept=".pdf"
+          style="display:none;"
+          onchange="onPdfFileSelect(event)"
+        />
+        <div id="pdfInfoCard" class="pdf-info-card hidden" style="margin-top:8px;">
+          <span class="pdf-file-icon">📄</span>
+          <div class="pdf-file-details">
+            <div class="pdf-file-name" id="pdfFileName">—</div>
+            <div class="pdf-file-meta" id="pdfFileMeta">—</div>
+          </div>
+          <button class="pdf-clear-btn" onclick="clearPdf()">清除</button>
+        </div>
+        <div id="pdfErrorTip" class="error-tip">请上传 PDF 文件后再开始提取</div>
+      </div>
     </div>
 
-    <!-- Sample Button -->
-    <button class="btn btn-ghost" onclick="fillSampleText()" style="align-self:flex-start;">
-      📋 填入示例文本
-    </button>
+    <!-- Sample Button (text mode only) -->
+    <div id="sampleBtnWrap">
+      <button class="btn btn-ghost" onclick="fillSampleText()" style="align-self:flex-start;">
+        📋 填入示例文本
+      </button>
+    </div>
 
     <!-- Extract Button -->
     <button class="btn btn-primary" id="extractBtn" onclick="startExtraction()">
@@ -948,7 +1188,10 @@
             </span>
           </div>
         </div>
-        <button class="btn btn-export" onclick="exportJSON()">⬇ 导出 JSON</button>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-export-bad hidden" id="exportBadBtn" onclick="exportBadCases()">⚑ 导出 Bad Cases (<span id="badCaseCount">0</span>)</button>
+          <button class="btn btn-export" onclick="exportJSON()">⬇ 导出 JSON</button>
+        </div>
       </div>
 
       <!-- Tabs -->
@@ -977,19 +1220,47 @@
 <!-- ===== Edit Modal ===== -->
 <div class="modal-overlay hidden" id="editModal">
   <div class="modal-card">
-    <div class="modal-title" id="modalTitle">编辑字段</div>
+    <div class="modal-title" id="modalTitle">标注字段</div>
     <div class="modal-subtitle" id="modalSubtitle">字段路径</div>
 
     <label class="modal-label">原文来源（只读）</label>
     <div class="modal-source-box" id="modalSource">—</div>
 
-    <label class="modal-label">修正后的值</label>
-    <input type="text" class="modal-input" id="modalValueInput" placeholder="输入修正值" />
+    <div class="modal-section-title">错误类型（可多选）</div>
+    <div class="error-type-group">
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="value_wrong" />
+        <span>数值 / 内容错误</span>
+      </label>
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="missing" />
+        <span>应有内容未提取</span>
+      </label>
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="overconfident" />
+        <span>标注为「高置信」但实际有误</span>
+      </label>
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="wrong_source" />
+        <span>原文来源定位不对</span>
+      </label>
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="other" />
+        <span>其他</span>
+      </label>
+    </div>
+    <div class="modal-error-tip" id="modalErrorTypeTip">请至少选择一个错误类型</div>
 
-    <div class="modal-actions">
+    <div class="modal-section-title">正确值（可选）</div>
+    <input type="text" class="modal-input" id="modalValueInput" placeholder="填入正确值，留空表示仅标注" style="margin-bottom:0;" />
+
+    <div class="modal-section-title">备注（可选）</div>
+    <textarea class="modal-note-input" id="modalNoteInput" rows="2" placeholder="描述错误原因，方便后续分析…"></textarea>
+
+    <div class="modal-actions" style="margin-top:16px;">
       <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
-      <button class="btn btn-primary" style="width:auto;padding:8px 20px;" onclick="saveEdit()">
-        ✓ 保存并标记已校验
+      <button class="btn btn-primary" style="width:auto;padding:8px 20px;" onclick="saveBadCase()">
+        ⚑ 标注 Bad Case
       </button>
     </div>
   </div>
@@ -1186,6 +1457,62 @@ const SAMPLE_TEXT = `某科技集团有限公司（股票代码：01234，香港
 年度现金薪酬：港币2,600,000元`;
 
 
+/* ---- Mock PDF Result ---- */
+const MOCK_PDF_RESULT = {
+  companyBasic: {
+    tickerCode:          { value: "01234",            confidence: "high",   source: "第2页 · 封面及基本信息 | 股票代码：01234，香港联交所主板上市" },
+    industryCat:         { value: "信息技术",          confidence: "high",   source: "第12页 · 公司概况 | 主要从事企业级人工智能软件研发与云服务业务，属于信息技术行业" },
+    registeredLocation:  { value: "开曼群岛",          confidence: "high",   source: "第14页 · 公司注册及成立 | 本公司于开曼群岛注册成立，以控股公司形式运营" },
+    listingBoard:        { value: "香港联交所主板",     confidence: "high",   source: "第2页 · 封面及基本信息 | 香港联合交易所有限公司主板上市" },
+    securityType:        { value: "普通股（H股）",      confidence: "high",   source: "第18页 · 股本结构章节 | 本公司证券类型为普通股（H股）" },
+    founders:            { value: "陈志远、王晓燕",    confidence: "medium", source: "第22页 · 主要股东及创始人 | 创始人为陈志远先生及王晓燕女士，合计控制约52.3%股份" },
+    listingDate:         { value: "2024-03-28",        confidence: "high",   source: "第8页 · 全球发售时间表 | 股份预计于二零二四年三月二十八日起在联交所主板正式买卖" },
+    ipoPrice:            { value: "港币18.88元/股",    confidence: "high",   source: "第8页 · 全球发售定价章节 | 发行价定为每股H股港币18.88元" },
+    totalSharesAfter:    { value: "1,000,000,000股",   confidence: "high",   source: "第31页 · 股本结构表 | 全球发售后本公司已发行股份总数为1,000,000,000股" },
+    totalSharesBefore:   { value: "800,000,000股",     confidence: "high",   source: "第31页 · 股本结构表 | 全球发售前本公司已发行股份总数为800,000,000股" },
+    ipoMarketCap:        { value: "约人民币173亿元",   confidence: "medium", source: "第9页 · 发售统计数据 | 按发售价计算，本公司首次公开发售时市值约为人民币173亿元" }
+  },
+  esopPlan: {
+    adoptionDate:        { value: "2022-01-10",        confidence: "high",   source: "第45页 · 购股权计划章节第一段 | 董事会于二零二二年一月十日采纳一项购股权计划" },
+    planName:            { value: "购股权计划",         confidence: "high",   source: "第45页 · 购股权计划章节 | 以下简称「购股权计划」" },
+    reservedShares:      { value: "80,000,000股",      confidence: "high",   source: "第46页 · 计划预留股份 | 该计划获批准预留股份数目为80,000,000股" },
+    reservedShareRatio:  { value: "10%",               confidence: "high",   source: "第46页 · 计划预留股份 | 占全球发售前本公司已发行股份总数的10%" },
+    shareType:           { value: "普通股",             confidence: "high",   source: "第45页 · 购股权计划章节 | 股份标的类型为普通股" },
+    incentiveTool:       { value: "购股权（股份期权）", confidence: "high",   source: "第45页 · 购股权计划章节 | 激励工具类型为购股权（股份期权）" },
+    grantedShares:       { value: "60,000,000份",      confidence: "high",   source: "第47页 · 已授购股权汇总 | 已授出购股权合计为60,000,000份" },
+    grantedShareRatio:   { value: "7.5%",              confidence: "high",   source: "第47页 · 已授购股权汇总 | 占全球发售前本公司已发行股份总数的7.5%" },
+    exercisePrice:       { value: "港币15.50元/股",    confidence: "high",   source: "第47页 · 购股权授予条款 | 行使价为每股港币15.50元" },
+    grantDateFMV:        { value: "港币13.20元/股",    confidence: "medium", source: "第47页 · 购股权授予条款 | 授出日期每股普通股公平市值为港币13.20元" }
+  },
+  grantees: [
+    {
+      name:              { value: "张伟",               confidence: "high",   source: "第48页 · 董事购股权明细表 | 张伟先生（首席执行官CEO）" },
+      position:          { value: "首席执行官（CEO）",  confidence: "high",   source: "第48页 · 董事购股权明细表 | 张伟先生（首席执行官CEO）" },
+      hireDate:          { value: "2018-05-16",         confidence: "high",   source: "第48页 · 董事购股权明细表 | 入职日期：二零一八年五月十六日" },
+      grantDate:         { value: "2023-06-01",         confidence: "high",   source: "第48页 · 董事购股权明细表 | 购股权授出日期：二零二三年六月一日" },
+      incentiveTool:     { value: "购股权",              confidence: "high",   source: "第48页 · 董事购股权明细表 | 激励工具：购股权" },
+      grantedShares:     { value: "20,000,000份",       confidence: "high",   source: "第48页 · 董事购股权明细表 | 已授出购股权数目：20,000,000份" },
+      grantedShareRatio: { value: "2.5%",               confidence: "high",   source: "第48页 · 董事购股权明细表 | 占全球发售前总股本：2.5%" },
+      vestingSchedule:   { value: "1年cliff后25%归属，其后每季度6.25%归属", confidence: "medium", source: "第48页 · 归属安排说明 | 自授出日起计第一年届满后25%归属，其后每满一个季度额外6.25%归属" },
+      holdingPlatform:   { value: "不适用（直接持有）", confidence: "low",    source: "第48页 · 董事购股权明细表 | 持股平台：不适用（直接持有）" },
+      cashComp:          { value: "港币3,200,000元/年", confidence: "high",   source: "第49页 · 董事酬金披露 | 年度现金薪酬：港币3,200,000元" }
+    },
+    {
+      name:              { value: "李明",               confidence: "high",   source: "第49页 · 高管购股权明细表 | 李明先生（首席技术官CTO）" },
+      position:          { value: "首席技术官（CTO）",  confidence: "high",   source: "第49页 · 高管购股权明细表 | 李明先生（首席技术官CTO）" },
+      hireDate:          { value: "2019-11-03",         confidence: "high",   source: "第49页 · 高管购股权明细表 | 入职日期：二零一九年十一月零三日" },
+      grantDate:         { value: "2023-06-01",         confidence: "high",   source: "第49页 · 高管购股权明细表 | 购股权授出日期：二零二三年六月一日" },
+      incentiveTool:     { value: "购股权",              confidence: "high",   source: "第49页 · 高管购股权明细表 | 激励工具：购股权" },
+      grantedShares:     { value: "15,000,000份",       confidence: "high",   source: "第49页 · 高管购股权明细表 | 已授出购股权数目：15,000,000份" },
+      grantedShareRatio: { value: "1.875%",             confidence: "medium", source: "第49页 · 高管购股权明细表 | 占全球发售前总股本：1.875%" },
+      vestingSchedule:   { value: "1年cliff后25%归属，其后每季度6.25%归属", confidence: "medium", source: "第49页 · 归属安排说明 | 自授出日起计第一年届满后25%归属，其后每满一个季度额外6.25%归属" },
+      holdingPlatform:   { value: "不适用（直接持有）", confidence: "low",    source: "第49页 · 高管购股权明细表 | 持股平台：不适用（直接持有）" },
+      cashComp:          { value: "港币2,600,000元/年", confidence: "low",    source: "第50页 · 高管酬金披露（数据由附件B推算，请核查）| 年度现金薪酬：港币2,600,000元" }
+    }
+  ]
+};
+
+
 /* ================================================================
    STATE
 ================================================================ */
@@ -1195,7 +1522,10 @@ const state = {
   isLoading:   false,
   result:      null,
   activeTab:   'basic',
-  editingCell: null   // { section, key, granteeIndex }
+  editingCell: null,   // { section, key, granteeIndex }
+  inputMode:   'text', // 'text' | 'pdf'
+  pdfFile:     null,   // File object
+  pdfMeta:     null    // { name, size, pageCount }
 };
 
 
@@ -1308,6 +1638,8 @@ function fillSampleText() {
    EXTRACTION
 ================================================================ */
 async function startExtraction() {
+  if (state.inputMode === 'pdf') return startExtractionPdf();
+
   // Read values
   const textVal = document.getElementById('textInput').value.trim();
 
@@ -1444,7 +1776,9 @@ function setLoading(on) {
   const overlay = document.getElementById('loadingOverlay');
 
   btn.disabled = on;
-  btn.textContent = on ? '⏳ 提取中...' : '🔍 开始提取';
+  btn.textContent = on
+    ? (state.inputMode === 'pdf' ? '⏳ 解析 PDF 中...' : '⏳ 提取中...')
+    : '🔍 开始提取';
 
   if (on) {
     overlay.classList.remove('hidden');
@@ -1517,6 +1851,9 @@ function renderOutput() {
   } else {
     warnWrap.classList.add('hidden');
   }
+
+  // --- Bad case count ---
+  updateBadCaseCount();
 
   // --- Tab warning dots ---
   updateTabDots();
@@ -1617,7 +1954,7 @@ function renderFieldTable(section, labels, sectionKey, granteeIndex) {
 
     const displayVal   = fieldValueHTML(field, sectionKey, key, granteeIndex);
     const badgeHTML    = confBadge(field.confidence);
-    const srcText      = (field.source || '').substring(0, 60) + ((field.source || '').length > 60 ? '…' : '');
+    const srcHTML      = renderSourceCell(field.source || '');
     const editDataAttr = granteeIndex !== undefined
       ? `data-sec="${sectionKey}" data-key="${key}" data-gi="${granteeIndex}"`
       : `data-sec="${sectionKey}" data-key="${key}"`;
@@ -1627,7 +1964,7 @@ function renderFieldTable(section, labels, sectionKey, granteeIndex) {
         <td class="col-name">${escapeHTML(label)}</td>
         <td class="col-value">${displayVal}</td>
         <td class="col-conf">${badgeHTML}</td>
-        <td class="col-src">${escapeHTML(srcText)}</td>
+        <td class="col-src">${srcHTML}</td>
         <td class="col-action">
           <button class="btn-edit" ${editDataAttr} onclick="openEditModal(this)">编辑</button>
         </td>
@@ -1658,8 +1995,8 @@ function fieldValueHTML(field, sectionKey, key, granteeIndex) {
 
   let html = escapeHTML(String(field.value));
 
-  if (field.manuallyVerified) {
-    html += '<span class="verified-tag">✓ 已校验</span>';
+  if (field.badCase) {
+    html += '<span class="badcase-tag">⚑ Bad Case</span>';
   }
 
   return html;
@@ -1704,19 +2041,25 @@ function openEditModal(btn) {
     state.editingCell = { section: sec, key };
   }
 
-  // Determine label
   let labels = {};
   if (sec === 'companyBasic') labels = FIELD_LABELS_BASIC;
   else if (sec === 'esopPlan') labels = FIELD_LABELS_PLAN;
   else labels = FIELD_LABELS_GRANTEE;
 
-  document.getElementById('modalTitle').textContent   = labels[key] || key;
+  document.getElementById('modalTitle').textContent    = labels[key] || key;
   document.getElementById('modalSubtitle').textContent = `${sec} → ${key}` + (gi !== undefined ? ` [${gi}]` : '');
-  document.getElementById('modalSource').textContent  = field.source || '无原文来源';
-  document.getElementById('modalValueInput').value    = field.value !== null ? String(field.value) : '';
+  document.getElementById('modalSource').textContent   = field.source || '无原文来源';
+
+  // Restore existing bad case data if present
+  const existing = field.badCase || {};
+  document.querySelectorAll('input[name="errorType"]').forEach(cb => {
+    cb.checked = (existing.errorTypes || []).includes(cb.value);
+  });
+  document.getElementById('modalValueInput').value  = existing.correctValue != null ? existing.correctValue : (field.value !== null ? String(field.value) : '');
+  document.getElementById('modalNoteInput').value   = existing.note || '';
+  document.getElementById('modalErrorTypeTip').classList.remove('visible');
 
   document.getElementById('editModal').classList.remove('hidden');
-  setTimeout(() => document.getElementById('modalValueInput').focus(), 50);
 }
 
 function closeEditModal() {
@@ -1724,10 +2067,17 @@ function closeEditModal() {
   state.editingCell = null;
 }
 
-function saveEdit() {
+function saveBadCase() {
   if (!state.editingCell) return;
 
-  const newVal = document.getElementById('modalValueInput').value.trim();
+  const checked = [...document.querySelectorAll('input[name="errorType"]:checked')].map(cb => cb.value);
+  if (checked.length === 0) {
+    document.getElementById('modalErrorTypeTip').classList.add('visible');
+    return;
+  }
+
+  const correctValue = document.getElementById('modalValueInput').value.trim();
+  const note         = document.getElementById('modalNoteInput').value.trim();
   const { section, key, granteeIndex } = state.editingCell;
 
   let field;
@@ -1737,13 +2087,20 @@ function saveEdit() {
     field = state.result[section][key];
   }
 
-  field.value            = newVal === '' ? null : newVal;
-  field.manuallyVerified = true;
-  field.confidence       = 'high'; // Manual verification upgrades confidence
+  field.badCase = {
+    errorTypes:   checked,
+    correctValue: correctValue || null,
+    note:         note || null,
+    markedAt:     new Date().toISOString()
+  };
 
-  // Persist
+  // If correct value provided, update field value too
+  if (correctValue) {
+    field.value      = correctValue;
+    field.confidence = 'high';
+  }
+
   localStorage.setItem(STORAGE_KEY_RESULT, JSON.stringify(state.result));
-
   closeEditModal();
   renderOutput();
 }
@@ -1757,6 +2114,75 @@ document.getElementById('editModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeEditModal();
 });
+
+
+/* ================================================================
+   BAD CASE
+================================================================ */
+function collectBadCases(result) {
+  const cases = [];
+
+  const scan = (obj, section, granteeIndex) => {
+    Object.entries(obj).forEach(([key, field]) => {
+      if (field && field.badCase) {
+        cases.push({
+          section,
+          field:        key,
+          granteeIndex: granteeIndex != null ? granteeIndex : undefined,
+          extracted:    field.value,
+          source:       field.source || '',
+          confidence:   field.confidence,
+          errorTypes:   field.badCase.errorTypes,
+          correctValue: field.badCase.correctValue,
+          note:         field.badCase.note,
+          markedAt:     field.badCase.markedAt
+        });
+      }
+    });
+  };
+
+  scan(result.companyBasic, 'companyBasic');
+  scan(result.esopPlan, 'esopPlan');
+  if (Array.isArray(result.grantees)) {
+    result.grantees.forEach((g, i) => scan(g, 'grantees', i));
+  }
+
+  return cases;
+}
+
+function updateBadCaseCount() {
+  const cases = collectBadCases(state.result);
+  const btn   = document.getElementById('exportBadBtn');
+  document.getElementById('badCaseCount').textContent = cases.length;
+  btn.classList.toggle('hidden', cases.length === 0);
+}
+
+function exportBadCases() {
+  if (!state.result) return;
+
+  const cases = collectBadCases(state.result);
+  if (cases.length === 0) return;
+
+  const payload = {
+    exportedAt:    new Date().toISOString(),
+    promptVersion: 'v1',
+    sourceMode:    state.result._meta?.sourceMode || 'text',
+    totalBadCases: cases.length,
+    cases
+  };
+
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const ts   = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `esop_badcases_${ts}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 
 /* ================================================================
@@ -1783,6 +2209,136 @@ function exportJSON() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+
+/* ================================================================
+   INPUT MODE
+================================================================ */
+function setInputMode(mode) {
+  state.inputMode = mode;
+
+  document.getElementById('modeText').classList.toggle('active', mode === 'text');
+  document.getElementById('modePdf').classList.toggle('active', mode === 'pdf');
+
+  document.getElementById('textInputArea').classList.toggle('hidden', mode !== 'text');
+  document.getElementById('pdfInputArea').classList.toggle('hidden', mode !== 'pdf');
+  document.getElementById('sampleBtnWrap').classList.toggle('hidden', mode !== 'text');
+}
+
+
+/* ================================================================
+   PDF UPLOAD
+================================================================ */
+function onDragOver(e) {
+  e.preventDefault();
+  document.getElementById('pdfDropZone').classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  document.getElementById('pdfDropZone').classList.remove('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('pdfDropZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handlePdfFile(file);
+}
+
+function onPdfFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) handlePdfFile(file);
+  e.target.value = '';
+}
+
+function handlePdfFile(file) {
+  const errTip = document.getElementById('pdfErrorTip');
+  errTip.classList.remove('visible');
+
+  if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+    errTip.textContent = '仅支持 PDF 文件，请重新选择';
+    errTip.classList.add('visible');
+    return;
+  }
+  if (file.size > 50 * 1024 * 1024) {
+    errTip.textContent = '文件超过 50MB，请选择较小的文件';
+    errTip.classList.add('visible');
+    return;
+  }
+
+  state.pdfFile = file;
+  parsePdfMock(file);
+}
+
+function parsePdfMock(file) {
+  const pageCount = Math.floor(file.size / 50000) + 5;
+  const sizeMB    = (file.size / (1024 * 1024)).toFixed(1);
+
+  state.pdfMeta = { name: file.name, size: file.size, pageCount };
+
+  document.getElementById('pdfFileName').textContent = file.name;
+  document.getElementById('pdfFileMeta').textContent = `${pageCount} 页 · ${sizeMB} MB`;
+  document.getElementById('pdfInfoCard').classList.remove('hidden');
+  document.getElementById('pdfDropZone').style.display = 'none';
+}
+
+function clearPdf() {
+  state.pdfFile = null;
+  state.pdfMeta = null;
+
+  document.getElementById('pdfInfoCard').classList.add('hidden');
+  document.getElementById('pdfDropZone').style.display = '';
+  document.getElementById('pdfErrorTip').classList.remove('visible');
+  document.getElementById('pdfErrorTip').textContent = '请上传 PDF 文件后再开始提取';
+}
+
+function startExtractionPdf() {
+  if (!state.pdfFile) {
+    document.getElementById('pdfErrorTip').classList.add('visible');
+    return;
+  }
+
+  setLoading(true);
+
+  setTimeout(() => {
+    try {
+      const result = completeResult(JSON.parse(JSON.stringify(MOCK_PDF_RESULT)));
+      result._meta = {
+        extractedAt: new Date().toISOString(),
+        inputLength: state.pdfMeta ? state.pdfMeta.size : 0,
+        sourceMode:  'pdf',
+        fileName:    state.pdfMeta ? state.pdfMeta.name : ''
+      };
+
+      state.result = result;
+      localStorage.setItem(STORAGE_KEY_RESULT, JSON.stringify(state.result));
+      renderOutput();
+    } finally {
+      setLoading(false);
+    }
+  }, 1800);
+}
+
+
+/* ================================================================
+   SOURCE CELL RENDERER
+================================================================ */
+function renderSourceCell(source) {
+  if (!source) return '<span style="color:var(--text-muted)">—</span>';
+
+  const sep = ' | ';
+  const idx = source.indexOf(sep);
+  if (idx !== -1) {
+    const location = source.substring(0, idx);
+    const snippet  = source.substring(idx + sep.length);
+    return `<div class="src-location">${escapeHTML(location)}</div>` +
+           `<div class="src-snippet">${escapeHTML(snippet)}</div>`;
+  }
+
+  // Fallback: plain text truncated
+  const truncated = source.substring(0, 60) + (source.length > 60 ? '…' : '');
+  return escapeHTML(truncated);
 }
 
 
