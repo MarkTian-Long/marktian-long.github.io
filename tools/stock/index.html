@@ -359,6 +359,26 @@ const CONFIG = {
 .standard-table { width:100%; border-collapse:collapse; font-size:12px; }
 .standard-table th { padding:8px 12px; background:rgba(255,255,255,0.04); color:var(--text-sec); text-align:left; border-bottom:1px solid var(--border); }
 .standard-table td { padding:8px 12px; border-bottom:1px solid var(--border); color:var(--text); }
+/* Tab 4 市场雷达 */
+.radar-layout { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:10px; }
+.radar-top, .radar-bottom { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.radar-widget { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; }
+.radar-widget-title { font-size:12px; font-weight:600; color:var(--text-sec); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.sector-heatmap { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.sector-block { border-radius:var(--radius-sm); padding:8px; text-align:center; }
+.sector-name { font-size:11px; color:var(--text); }
+.sector-change { font-size:13px; font-weight:700; }
+.mover-item { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.mover-name { font-weight:600; width:70px; }
+.mover-change { font-weight:700; width:50px; }
+.mover-reason { color:var(--text-muted); flex:1; }
+.trend-chart { display:flex; align-items:flex-end; gap:8px; height:80px; padding-bottom:20px; }
+.trend-bar-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.trend-bar { width:24px; border-radius:2px 2px 0 0; transition:height 0.5s; }
+.trend-label { font-size:10px; color:var(--text-muted); }
+.radar-brief-text { font-size:13px; line-height:1.8; }
+.radar-data-note { padding:6px 12px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; flex-shrink:0; }
+.radar-brief-widget { display:flex; flex-direction:column; }
   </style>
 </head>
 <body>
@@ -474,8 +494,30 @@ const CONFIG = {
 
 <div class="tab-panel" id="tab-radar">
   <div class="radar-layout">
-    <div style="padding:20px; color:var(--text-muted);">市场雷达加载中...</div>
+    <div class="radar-top">
+      <div class="radar-widget">
+        <div class="radar-widget-title">🔥 热点板块 <span class="mock-tag">🎭 模拟</span></div>
+        <div class="sector-heatmap" id="sectorHeatmap"></div>
+      </div>
+      <div class="radar-widget radar-brief-widget">
+        <div class="radar-widget-title">📰 今日 AI 简报 <span class="ai-tag">🤖 AI 生成</span></div>
+        <div class="radar-brief-body" id="radarBrief">
+          <button class="send-btn" onclick="generateBrief()" style="margin:auto;">生成今日简报</button>
+        </div>
+      </div>
+    </div>
+    <div class="radar-bottom">
+      <div class="radar-widget">
+        <div class="radar-widget-title">⚡ 今日异动 <span class="mock-tag">🎭 模拟</span></div>
+        <div class="movers-list" id="moversList"></div>
+      </div>
+      <div class="radar-widget">
+        <div class="radar-widget-title">📈 市场情绪趋势 <span class="mock-tag">🎭 模拟</span></div>
+        <div class="sentiment-trend" id="sentimentTrend"></div>
+      </div>
+    </div>
   </div>
+  <div class="radar-data-note">🎭 热点板块/异动/情绪趋势均为模拟数据；生产环境接入：雪球 API · 新浪财经 · 东方财富 | 更新频率：每15分钟</div>
 </div>
 
 <div class="tab-panel" id="tab-agent">
@@ -903,10 +945,11 @@ async function callLLM(systemPrompt, userContent) {
 }
 
 function switchTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('tab-' + name).classList.add('active');
-  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+  if (name === 'radar') initRadar();
 }
 
 // Tab 2: Mock 数据
@@ -1211,6 +1254,79 @@ function buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentimen
     + '</div>'
     + '<div class="model-choice-note">🔧 <b>模型选型说明：</b>此模块使用 JSON Schema 约束的结构化输出模式，而非自由对话。原因：金融诊断报告需要字段确定性（评级/置信度/风险点），避免 LLM 自由发挥导致格式不稳定，便于前端渲染和后续校验。</div>'
     + '</div>';
+}
+
+// Tab 4: 市场雷达 Mock 数据
+const RADAR_DATA = {
+  hotSectors: [
+    { name: '人工智能', change: 4.2, heat: 95 },
+    { name: '新能源车', change: 2.8, heat: 82 },
+    { name: '白酒', change: 1.9, heat: 71 },
+    { name: '半导体', change: -0.8, heat: 65 },
+    { name: '医药生物', change: -1.2, heat: 58 },
+    { name: '银行', change: 0.5, heat: 44 },
+  ],
+  movers: [
+    { name: '寒武纪', symbol: '688256.SS', change: 8.3, volume: '高', reason: 'AI芯片订单增加' },
+    { name: '东方财富', symbol: '300059.SZ', change: 5.1, volume: '高', reason: '市场活跃度提升' },
+    { name: '药明康德', symbol: '603259.SS', change: -4.2, volume: '中', reason: '海外政策压力' },
+  ],
+  sentimentTrend: [
+    { date: '11-05', score: 2.1 }, { date: '11-06', score: 2.8 },
+    { date: '11-07', score: 3.5 }, { date: '11-08', score: 3.2 },
+    { date: '11-10', score: 3.8 },
+  ]
+};
+
+function initRadar() {
+  const heatmap = document.getElementById('sectorHeatmap');
+  if (!heatmap) return;
+  heatmap.innerHTML = RADAR_DATA.hotSectors.map(function(s) {
+    const alpha = 0.15 + s.heat / 200;
+    const color = s.change >= 0 ? 'rgba(0,229,160,' + alpha + ')' : 'rgba(239,68,68,' + alpha + ')';
+    return '<div class="sector-block" style="background:' + color + '">'
+      + '<div class="sector-name">' + escHtml(s.name) + '</div>'
+      + '<div class="sector-change" style="color:' + (s.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">'
+      + (s.change >= 0 ? '+' : '') + s.change + '%</div></div>';
+  }).join('');
+  const moversList = document.getElementById('moversList');
+  if (moversList) {
+    moversList.innerHTML = RADAR_DATA.movers.map(function(m) {
+      return '<div class="mover-item">'
+        + '<div class="mover-name">' + escHtml(m.name) + '</div>'
+        + '<div class="mover-change" style="color:' + (m.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">'
+        + (m.change >= 0 ? '+' : '') + m.change + '%</div>'
+        + '<div class="mover-reason">' + escHtml(m.reason) + '</div>'
+        + '</div>';
+    }).join('');
+  }
+  const trendEl = document.getElementById('sentimentTrend');
+  if (trendEl) {
+    trendEl.innerHTML = '<div class="trend-chart">' + RADAR_DATA.sentimentTrend.map(function(p) {
+      const h = Math.round(((p.score - 0) / (5 - 0)) * 60);
+      return '<div class="trend-bar-wrap">'
+        + '<div class="trend-bar" style="height:' + h + 'px; background:' + (p.score >= 3 ? 'var(--accent-green)' : 'orange') + '"></div>'
+        + '<div class="trend-label">' + escHtml(p.date) + '</div>'
+        + '</div>';
+    }).join('') + '</div>';
+  }
+}
+
+async function generateBrief() {
+  const el = document.getElementById('radarBrief');
+  el.innerHTML = '<div class="rag-searching">🤖 生成中...</div>';
+  const sectorSummary = RADAR_DATA.hotSectors.slice(0,3).map(function(s) {
+    return s.name + '(' + (s.change > 0 ? '+' : '') + s.change + '%)';
+  }).join('、');
+  const avgSentiment = (RADAR_DATA.sentimentTrend.reduce(function(s, p) { return s + p.score; }, 0) / RADAR_DATA.sentimentTrend.length).toFixed(1);
+  const prompt = '你是A股市场分析师。基于以下信息生成今日市场简报（100字以内，简洁客观）：\n热点板块：' + sectorSummary + '\n今日异动：' + RADAR_DATA.movers.map(function(m) { return m.name + m.change + '%'; }).join('、') + '\n市场情绪：近5日均值' + avgSentiment + '/5';
+  try {
+    const brief = await callLLM(prompt, '请生成简报');
+    el.innerHTML = '<div class="radar-brief-text">' + brief.replace(/\n/g,'<br/>') + '</div>'
+      + '<div class="diag-disclaimer">⚠️ 基于模拟数据生成，仅供演示</div>';
+  } catch(e) {
+    el.innerHTML = '<div class="rag-error">' + escHtml(e.message) + '</div>';
+  }
 }
 </script>
 <div class="disclaimer-bar">
