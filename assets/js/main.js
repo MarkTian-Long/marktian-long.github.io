@@ -203,6 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ---- COPY PHONE ----
+function toggleJudgment() {
+  const body = document.getElementById('judgmentBody');
+  const toggle = document.getElementById('judgmentToggle');
+  const isHidden = body.classList.contains('hidden');
+  body.classList.toggle('hidden', !isHidden);
+  toggle.textContent = isHidden ? '收起 ↑' : '展开 ↓';
+}
+
 function copyPhone() {
   navigator.clipboard.writeText('18314856018').then(() => {
     ['phoneCopyText', 'contactPhoneCopyText'].forEach(id => {

@@ -55,6 +55,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 个人联系方式：`index.html` 搜索 `your@email.com`
 - 产品案例：`assets/js/main.js` → `casesData` 数组
 - AI 产品数据：`tools/ai-insights/data/products.json`
+- AI 落地判断模块：`index.html` 搜索 `ai-judgment`，直接编辑 HTML 内的行业卡片、能力短板、预判条目
 
 ## 给 Claude 的工作指令
 - 修改代码前先读相关文件，不要靠猜
@@ -71,3 +72,4 @@ docs/                           # 个人文档（.gitignore 排除）
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
+- **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应写生成脚本到 `/tmp/gen_xxx.js`，用 `node /tmp/gen_xxx.js` 执行；分多个脚本 append 写入比一次性写入更可靠

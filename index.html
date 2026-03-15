@@ -153,6 +153,123 @@
                     </div>
                 </div>
             </div>
+
+            <!-- AI 产业判断 -->
+            <div class="ai-judgment reveal" id="aiJudgment">
+                <div class="judgment-header" onclick="toggleJudgment()">
+                    <div class="judgment-title-row">
+                        <span class="judgment-icon">💡</span>
+                        <span class="judgment-title">对 AI 落地的判断</span>
+                        <span class="judgment-meta">2026.03 · 持续更新</span>
+                    </div>
+                    <span class="judgment-toggle" id="judgmentToggle">展开 ↓</span>
+                </div>
+                <div class="judgment-body hidden" id="judgmentBody">
+                    <!-- 行业落地 -->
+                    <div class="judgment-section">
+                        <h4 class="judgment-section-title">🏭 行业落地</h4>
+                        <div class="industry-grid">
+                            <div class="industry-card status-scaling">
+                                <div class="industry-header">
+                                    <span class="industry-name">客服 / 售前</span>
+                                    <span class="industry-badge">规模化落地</span>
+                                </div>
+                                <p class="industry-desc">标准化问答场景已跑通，头部电商、银行外呼已大规模上线</p>
+                            </div>
+                            <div class="industry-card status-scaling">
+                                <div class="industry-header">
+                                    <span class="industry-name">软件开发辅助</span>
+                                    <span class="industry-badge">规模化落地</span>
+                                </div>
+                                <p class="industry-desc">Copilot 类工具已成标配，代码补全、Review 辅助是最快被接受的场景</p>
+                            </div>
+                            <div class="industry-card status-pilot">
+                                <div class="industry-header">
+                                    <span class="industry-name">金融</span>
+                                    <span class="industry-badge">试点阶段</span>
+                                </div>
+                                <p class="industry-desc">内部知识库和客服辅助有进展，但合规审批、数据安全要求让决策类应用难以越过监管红线</p>
+                            </div>
+                            <div class="industry-card status-pilot">
+                                <div class="industry-header">
+                                    <span class="industry-name">教育</span>
+                                    <span class="industry-badge">试点阶段</span>
+                                </div>
+                                <p class="industry-desc">个性化辅导、作业批改有场景，但如何处理"学生直接用 AI 完成作业"的边界问题还没有答案</p>
+                            </div>
+                            <div class="industry-card status-early">
+                                <div class="industry-header">
+                                    <span class="industry-name">医疗</span>
+                                    <span class="industry-badge">早期探索</span>
+                                </div>
+                                <p class="industry-desc">辅助诊断、病历整理有探索，但医疗责任归属不明确，AI 输出需要医生全量复核</p>
+                            </div>
+                            <div class="industry-card status-early">
+                                <div class="industry-header">
+                                    <span class="industry-name">法律</span>
+                                    <span class="industry-badge">早期探索</span>
+                                </div>
+                                <p class="industry-desc">合同审查、案例检索有价值，但律师对准确性要求极高，幻觉问题直接影响可用性</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 能力短板 -->
+                    <div class="judgment-section">
+                        <h4 class="judgment-section-title">⚠️ 当前能力短板</h4>
+                        <div class="gap-list">
+                            <div class="gap-item">
+                                <div class="gap-title">过度迎合</div>
+                                <p class="gap-desc">模型倾向认同用户判断，即使用户有误也不主动纠正。在需要批判性反馈的工作场景（方案评审、需求验证）中可用性低。真正解决意味着：模型能主动识别并指出用户假设中的错误。</p>
+                                <div class="gap-blocks"><span>客服质检</span><span>方案评审</span><span>需求分析</span></div>
+                            </div>
+                            <div class="gap-item">
+                                <div class="gap-title">Agent 落地的成本/价值错位</div>
+                                <p class="gap-desc">C 端用户日常任务链条不够长，Agent 能力远超实际需求；B 端有复杂任务，但嵌入已有工作流面临内部知识接入、人机协同边界、权责划分等系统性问题。技术不是瓶颈，工作流整合才是。</p>
+                                <div class="gap-blocks"><span>企业自动化</span><span>个人助理</span><span>RPA 替代</span></div>
+                            </div>
+                            <div class="gap-item">
+                                <div class="gap-title">长期记忆与上下文持久化</div>
+                                <p class="gap-desc">跨会话记忆依赖浅层存储，无真正的语义检索，用户在不同设备、不同会话中无法延续上下文。</p>
+                                <div class="gap-blocks"><span>个人助理</span><span>企业知识库</span><span>长周期辅导</span></div>
+                            </div>
+                            <div class="gap-item">
+                                <div class="gap-title">实时感知与行动能力</div>
+                                <p class="gap-desc">训练数据有截止日期，实时数据接入依赖外部工具调用，稳定性和一致性不足。</p>
+                                <div class="gap-blocks"><span>金融行情</span><span>新闻摘要</span><span>动态监控</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 我的预判 -->
+                    <div class="judgment-section">
+                        <h4 class="judgment-section-title">🔮 我的预判</h4>
+                        <div class="prediction-list">
+                            <div class="prediction-item">
+                                <p class="prediction-text">2026 年底前，以全自动 Agent 为代表的产品不会在企业端大规模落地。C 端需求复杂度撑不起 Agent 的使用门槛；B 端的真正阻碍不是技术，而是工作流整合、权责归属和内部系统对接——这些问题没有纯技术解法。</p>
+                                <div class="prediction-footer">
+                                    <span class="prediction-date">写于 2026.03</span>
+                                    <span class="prediction-label">Agent 落地</span>
+                                </div>
+                            </div>
+                            <div class="prediction-item">
+                                <p class="prediction-text">国内大模型的过度迎合问题短期内难以系统性改善。根本原因在于训练目标和用户反馈机制的设计取向，在需要高质量批判性输出的工作场景，用户仍需主动设计 prompt 来规避这一问题。</p>
+                                <div class="prediction-footer">
+                                    <span class="prediction-date">写于 2026.03</span>
+                                    <span class="prediction-label">模型对齐</span>
+                                </div>
+                            </div>
+                            <div class="prediction-item">
+                                <p class="prediction-text">金融行业 LLM 落地的主战场在 2027 年前将停留在内部知识库和客服辅助，不会进入决策流程。监管合规要求的可解释性、数据不出域、责任归属明确这三条，目前没有哪个 LLM 产品能同时满足。</p>
+                                <div class="prediction-footer">
+                                    <span class="prediction-date">写于 2026.03</span>
+                                    <span class="prediction-label">金融行业</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -327,7 +444,7 @@
             <div class="tool-panel active" id="panel-insights">
                 <div class="dashboard-wrapper reveal">
                     <div class="dashboard-topbar">
-                        <span class="dashboard-label">🔭 AI 产品拆解 · 期号 + 四维深度拆解 · PM 视角洞察</span>
+                        <span class="dashboard-label">🔭 AI 产品拆解 · 七维深度拆解 · PM 视角洞察</span>
                         <a href="tools/ai-insights/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
                     </div>
                     <iframe src="tools/ai-insights/index.html" class="dashboard-iframe"

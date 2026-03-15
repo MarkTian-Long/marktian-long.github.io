@@ -1756,3 +1756,268 @@ button {
     min-width: 60px;
   }
 }
+/* =============================================
+   AI 产业判断区块
+   ============================================= */
+.ai-judgment {
+  margin-top: 40px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-top: 2px solid var(--accent-yellow);
+  border-radius: var(--radius-md);
+  background: rgba(245, 158, 11, 0.03);
+  overflow: hidden;
+}
+
+.judgment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background var(--transition);
+  user-select: none;
+}
+
+.judgment-header:hover {
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.judgment-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.judgment-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.judgment-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.judgment-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(245, 158, 11, 0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.judgment-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--accent-yellow);
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 20px;
+  transition: all var(--transition);
+}
+
+.judgment-header:hover .judgment-toggle {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.judgment-body {
+  padding: 0 24px 28px;
+  border-top: 1px solid rgba(245, 158, 11, 0.12);
+}
+
+.judgment-section {
+  margin-top: 28px;
+}
+
+.judgment-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+}
+
+.judgment-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* 行业落地网格 */
+.industry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.industry-card {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.industry-card:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.status-scaling {
+  border-left: 3px solid var(--accent-green);
+}
+.status-pilot {
+  border-left: 3px solid var(--accent-yellow);
+}
+.status-early {
+  border-left: 3px solid var(--text-muted);
+}
+
+.industry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.industry-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.industry-badge {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 2px 9px;
+  border-radius: 20px;
+}
+
+.status-scaling .industry-badge {
+  background: rgba(0, 229, 160, 0.12);
+  color: var(--accent-green);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+}
+
+.status-pilot .industry-badge {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-yellow);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-early .industry-badge {
+  background: rgba(138, 149, 181, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(138, 149, 181, 0.2);
+}
+
+.industry-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 能力短板 */
+.gap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gap-item {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-left: 3px solid rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.gap-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.gap-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.gap-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gap-blocks span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 预判列表 */
+.prediction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prediction-item {
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-left: 3px solid rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.prediction-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.prediction-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prediction-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.prediction-label {
+  font-size: 0.68rem;
+  color: var(--accent-yellow);
+  background: rgba(245, 158, 11, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .industry-grid {
+    grid-template-columns: 1fr;
+  }
+  .judgment-header {
+    padding: 16px 18px;
+  }
+  .judgment-body {
+    padding: 0 18px 24px;
+  }
+}
