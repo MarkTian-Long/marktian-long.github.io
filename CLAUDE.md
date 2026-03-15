@@ -55,7 +55,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 个人联系方式：`index.html` 搜索 `your@email.com`
 - 产品案例：`assets/js/main.js` → `casesData` 数组
 - AI 产品数据：`tools/ai-insights/data/products.json`
-- AI 落地判断模块：`index.html` 搜索 `ai-judgment`，直接编辑 HTML 内的行业卡片、能力短板、预判条目
+- AI 落地判断模块：`index.html` 搜索 `ai-judgment`，直接编辑 HTML 内的行业卡片、能力短板、观点条目
 
 ## 给 Claude 的工作指令
 - 修改代码前先读相关文件，不要靠猜
