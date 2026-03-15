@@ -242,6 +242,44 @@ const CONFIG = {
     .prompt-label { font-weight: 600; color: var(--text-sec); margin-bottom: 2px; }
     .prompt-content { color: var(--text-muted); line-height: 1.5; }
     .prompt-card-arrow { transition: var(--transition); }
+
+    /* Tab 2 个股诊断 */
+    .diagnosis-input-bar { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+    .diag-input { flex:1; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); font-size:13px; outline:none; }
+    .diag-input:focus { border-color:var(--border-hover); }
+    .diagnosis-content { flex:1; overflow-y:auto; }
+    .diag-card { padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+    .diag-header { display:flex; justify-content:space-between; align-items:flex-start; }
+    .diag-name { font-size:18px; font-weight:700; }
+    .diag-symbol { font-size:12px; color:var(--text-muted); }
+    .diag-rating { font-size:20px; font-weight:800; }
+    .diag-confidence { font-size:12px; color:var(--text-sec); }
+    .diag-panels { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+    .diag-panel { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; }
+    .diag-panel-title { font-size:12px; font-weight:600; color:var(--text-sec); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .real-tag { font-size:10px; background:rgba(0,212,255,0.12); color:var(--accent-cyan); padding:2px 6px; border-radius:8px; }
+    .mock-tag { font-size:10px; background:rgba(155,109,255,0.12); color:var(--accent-purple); padding:2px 6px; border-radius:8px; }
+    .ai-tag { font-size:10px; background:rgba(0,229,160,0.12); color:var(--accent-green); padding:2px 6px; border-radius:8px; }
+    .diag-mini-table { width:100%; border-collapse:collapse; font-size:11px; }
+    .diag-mini-table th, .diag-mini-table td { padding:3px 6px; border-bottom:1px solid var(--border); }
+    .diag-mini-table th { color:var(--text-muted); }
+    .diag-kv-list { display:flex; flex-direction:column; gap:4px; }
+    .diag-kv { display:flex; justify-content:space-between; font-size:12px; }
+    .diag-kv span { color:var(--text-muted); }
+    .sentiment-score { font-size:20px; font-weight:700; color:var(--accent-green); }
+    .sentiment-bar-wrap { background:var(--border); border-radius:4px; height:6px; margin:6px 0; }
+    .sentiment-bar { background:var(--accent-green); height:6px; border-radius:4px; transition:width 0.5s; }
+    .sentiment-news-item { font-size:11px; color:var(--text-sec); padding:2px 0; }
+    .diag-summary { background:rgba(79,143,255,0.06); border:1px solid rgba(79,143,255,0.15); border-radius:var(--radius-md); padding:12px; }
+    .diag-summary-label { font-size:12px; font-weight:600; color:var(--accent); margin-bottom:6px; }
+    .diag-summary-text { font-size:13px; line-height:1.7; }
+    .diag-risks, .diag-catalysts { font-size:12px; color:var(--text-sec); margin-top:6px; }
+    .diag-disclaimer { font-size:11px; color:var(--text-muted); margin-top:8px; }
+    .model-choice-note { font-size:11px; color:var(--text-muted); background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; line-height:1.6; }
+    .model-tip { margin-top:8px; font-size:11px; color:var(--accent-purple); }
+    .diag-loading, .rag-error, .diag-error { padding:20px; text-align:center; color:var(--text-sec); font-size:13px; }
+    .diag-pct { font-size:13px; font-weight:700; margin-top:6px; }
+    .diag-rating-block { text-align:right; }
   </style>
 </head>
 <body>
@@ -307,6 +345,21 @@ const CONFIG = {
   </div>
   <button class="send-btn" id="sendBtn" onclick="handleSend()">发送</button>
 </div>
+</div>
+
+<div class="tab-panel" id="tab-diagnosis">
+  <div class="diagnosis-input-bar">
+    <input class="diag-input" id="diagInput" placeholder="输入股票名称，如：茅台、宁德时代、比亚迪" />
+    <button class="send-btn" onclick="runDiagnosis()">生成诊断报告</button>
+  </div>
+  <div class="diagnosis-content" id="diagContent">
+    <div class="welcome">
+      <div class="welcome-icon">🔬</div>
+      <div class="welcome-title">个股诊断报告</div>
+      <div>输入股票名称，AI 将生成结构化多维度诊断卡</div>
+      <div class="model-tip">🔧 此模块使用结构化输出模式（JSON Schema 约束），而非自由对话</div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -626,6 +679,102 @@ function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+}
+
+// Tab 2: Mock 数据
+const FUNDAMENTAL_MOCK = {
+  '600519.SS': { pe: 28.3, pb: 9.2, marketCap: '2.1万亿', roe: '31.2%', grossMargin: '91.8%' },
+  '300750.SZ': { pe: 22.1, pb: 4.8, marketCap: '1.4万亿', roe: '18.3%', grossMargin: '22.1%' },
+  '002594.SZ': { pe: 18.7, pb: 3.2, marketCap: '8200亿', roe: '17.6%', grossMargin: '20.9%' },
+  '600036.SS': { pe: 7.2, pb: 1.1, marketCap: '9800亿', roe: '15.3%', grossMargin: '-' },
+  '601318.SS': { pe: 8.4, pb: 1.3, marketCap: '7600亿', roe: '14.1%', grossMargin: '-' },
+};
+const SENTIMENT_MOCK = {
+  '600519.SS': { score: 3.2, label: '偏多', news: ['Q3财报超预期，净利润同比+15%', '高端白酒消费复苏信号', '机构持续增持'], trend: 'up' },
+  '300750.SZ': { score: 2.1, label: '中性偏多', news: ['出货量创历史新高', '欧洲市场扩张加速', '原材料价格波动'], trend: 'flat' },
+  '002594.SZ': { score: 1.8, label: '中性', news: ['国内销量领先', '海外工厂投产', '汽车行业价格竞争'], trend: 'flat' },
+};
+const DEFAULT_MOCK = { pe: '--', pb: '--', marketCap: '--', roe: '--', grossMargin: '--' };
+const DEFAULT_SENTIMENT = { score: 0, label: '暂无数据', news: [], trend: 'flat' };
+
+async function runDiagnosis() {
+  const name = document.getElementById('diagInput').value.trim();
+  if (!name) return;
+  const content = document.getElementById('diagContent');
+  content.innerHTML = '<div class="diag-loading">⏳ 正在生成诊断报告...</div>';
+  try {
+    const params = await parseIntent(name + '近5日行情');
+    const symbol = params.symbol;
+    const priceData = await fetchYahoo(symbol, '5d', '1d');
+    const latest = priceData[priceData.length - 1];
+    const first = priceData[0];
+    const pctChange = (latest && latest._close && first && first._close)
+      ? ((latest._close - first._close) / first._close * 100).toFixed(2)
+      : null;
+    const fundamental = FUNDAMENTAL_MOCK[symbol] || DEFAULT_MOCK;
+    const sentiment = SENTIMENT_MOCK[symbol] || DEFAULT_SENTIMENT;
+    const diagResult = await getDiagnosisFromLLM(name, symbol, priceData, fundamental, sentiment);
+    content.innerHTML = buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentiment, diagResult);
+  } catch(err) {
+    content.innerHTML = '<div class="diag-error">⚠️ ' + escHtml(String(err.message)) + '</div>';
+  }
+}
+
+async function getDiagnosisFromLLM(name, symbol, priceData, fundamental, sentiment) {
+  const systemPrompt = '你是A股分析助手。基于提供的数据，输出严格JSON格式的诊断结果，无其他文字。JSON格式：{"rating":"买入|持有|观望|回避","confidence":0到100的整数,"summary":"50字以内的核心判断","risks":["风险1","风险2"],"catalysts":["催化剂1"]}';
+  const userContent = '股票：' + name + '(' + symbol + ')\n近5日走势：' + JSON.stringify(priceData.slice(-5)) + '\n基本面(模拟)：PE=' + fundamental.pe + ', PB=' + fundamental.pb + ', ROE=' + fundamental.roe + '\n新闻情绪(模拟)：' + sentiment.score + '/5, ' + sentiment.label;
+  const resp = await callLLM(systemPrompt, userContent);
+  try {
+    return JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
+  } catch {
+    return { rating: '持有', confidence: 60, summary: resp.slice(0, 50), risks: [], catalysts: [] };
+  }
+}
+
+function buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentiment, diag) {
+  const ratingColor = { '买入': 'var(--accent-green)', '持有': 'var(--accent)', '观望': 'var(--accent-purple)', '回避': 'var(--accent-red)' };
+  const confColor = diag.confidence >= 70 ? 'var(--accent-green)' : diag.confidence >= 40 ? 'orange' : 'var(--accent-red)';
+  const trendRows = priceData.slice(-5).map(function(r) {
+    const isNeg = r['涨跌幅'] && r['涨跌幅'].toString().startsWith('-');
+    return '<tr><td>' + escHtml(r['日期'] || '') + '</td><td>' + escHtml(r['收盘'] || '') + '</td><td style="color:' + (isNeg ? 'var(--accent-red)' : 'var(--accent-green)') + '">' + escHtml(r['涨跌幅'] || '') + '</td></tr>';
+  }).join('');
+  const sentimentBar = Math.round((sentiment.score / 5) * 100);
+  const risks = (diag.risks || []).map(function(r) { return escHtml(r); }).join('、');
+  const catalysts = (diag.catalysts || []).map(function(c) { return escHtml(c); }).join('、');
+  return '<div class="diag-card">'
+    + '<div class="diag-header">'
+    + '<div><div class="diag-name">' + escHtml(name) + '</div><div class="diag-symbol">' + escHtml(symbol) + '</div></div>'
+    + '<div class="diag-rating-block"><div class="diag-rating" style="color:' + (ratingColor[diag.rating] || 'var(--accent)') + '">' + escHtml(diag.rating) + '</div>'
+    + '<div class="diag-confidence">置信度 <span style="color:' + confColor + '">' + diag.confidence + '%</span></div></div>'
+    + '</div>'
+    + '<div class="diag-panels">'
+    + '<div class="diag-panel"><div class="diag-panel-title">📊 技术面 <span class="real-tag">真实数据</span></div>'
+    + '<table class="diag-mini-table"><tr><th>日期</th><th>收盘</th><th>涨跌</th></tr>' + trendRows + '</table>'
+    + (pctChange ? '<div class="diag-pct" style="color:' + (parseFloat(pctChange) >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">5日累计 ' + (pctChange >= 0 ? '+' : '') + pctChange + '%</div>' : '')
+    + '</div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">🏢 基本面 <span class="mock-tag">🎭 模拟数据</span></div>'
+    + '<div class="diag-kv-list">'
+    + '<div class="diag-kv"><span>市盈率</span><b>' + escHtml(String(fundamental.pe)) + '</b></div>'
+    + '<div class="diag-kv"><span>市净率</span><b>' + escHtml(String(fundamental.pb)) + '</b></div>'
+    + '<div class="diag-kv"><span>市值</span><b>' + escHtml(String(fundamental.marketCap)) + '</b></div>'
+    + '<div class="diag-kv"><span>ROE</span><b>' + escHtml(String(fundamental.roe)) + '</b></div>'
+    + '<div class="diag-kv"><span>毛利率</span><b>' + escHtml(String(fundamental.grossMargin)) + '</b></div>'
+    + '</div></div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">📰 情绪面 <span class="mock-tag">🎭 模拟数据</span></div>'
+    + '<div class="sentiment-score">' + sentiment.score.toFixed(1) + ' / 5</div>'
+    + '<div class="sentiment-bar-wrap"><div class="sentiment-bar" style="width:' + sentimentBar + '%"></div></div>'
+    + '<div class="sentiment-label">' + escHtml(sentiment.label) + '</div>'
+    + '<div class="sentiment-news">' + sentiment.news.map(function(n) { return '<div class="sentiment-news-item">· ' + escHtml(n) + '</div>'; }).join('') + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="diag-summary"><div class="diag-summary-label">🤖 AI 综合解读</div>'
+    + '<div class="diag-summary-text">' + escHtml(diag.summary || '') + '</div>'
+    + (risks ? '<div class="diag-risks"><b>风险：</b>' + risks + '</div>' : '')
+    + (catalysts ? '<div class="diag-catalysts"><b>催化剂：</b>' + catalysts + '</div>' : '')
+    + '<div class="diag-disclaimer">⚠️ 仅供参考，不构成投资建议</div>'
+    + '</div>'
+    + '<div class="model-choice-note">🔧 <b>模型选型说明：</b>此模块使用 JSON Schema 约束的结构化输出模式，而非自由对话。原因：金融诊断报告需要字段确定性（评级/置信度/风险点），避免 LLM 自由发挥导致格式不稳定，便于前端渲染和后续校验。</div>'
+    + '</div>';
 }
 </script>
 <div class="disclaimer-bar">
