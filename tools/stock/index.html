@@ -379,6 +379,10 @@ const CONFIG = {
 .radar-brief-text { font-size:13px; line-height:1.8; }
 .radar-data-note { padding:6px 12px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; flex-shrink:0; }
 .radar-brief-widget { display:flex; flex-direction:column; }
+/* RAG 升级：数据分级标注 */
+.tier-badge { font-size:10px; padding:1px 6px; border-radius:8px; font-weight:600; margin-right:4px; }
+.rag-source-meta-row { display:flex; align-items:center; gap:4px; margin-bottom:4px; }
+.rag-source-meta { font-size:10px; color:var(--text-muted); }
 /* RAG 升级：查询扩展 */
 .rag-expansion { font-size:11px; color:var(--text-sec); padding:8px; background:rgba(79,143,255,0.06); border-radius:var(--radius-sm); margin-bottom:8px; line-height:1.8; }
 .expand-tag { display:inline-block; background:rgba(79,143,255,0.12); color:var(--accent); padding:1px 6px; border-radius:8px; margin:1px 2px; font-size:10px; }
@@ -1047,14 +1051,14 @@ function expandQuery(query) {
 }
 
 const NEWS_DB = [
-  { id: 1, date: '2025-11-08', stock: '茅台', symbol: '600519.SS', title: '贵州茅台Q3财报超预期', content: '贵州茅台三季报显示净利润同比增长15.2%，营收创历史新高，高端白酒市场需求持续旺盛，机构普遍上调目标价。', tags: ['茅台', '白酒', '业绩'], relevance: 0.94 },
-  { id: 2, date: '2025-11-05', stock: '白酒行业', symbol: null, title: '白酒板块估值修复行情', content: '受消费复苏预期带动，白酒板块整体回暖，茅台、五粮液等龙头股量价齐升，分析师建议关注春节备货行情。', tags: ['白酒', '消费', '板块'], relevance: 0.87 },
-  { id: 3, date: '2025-11-02', stock: '消费板块', symbol: null, title: '国内消费数据好转，A股消费板块获资金青睐', content: '10月社零数据环比改善，消费板块获北向资金持续净买入，食品饮料领涨，分析师认为估值已具备安全边际。', tags: ['消费', '北向资金', '食品饮料'], relevance: 0.72 },
-  { id: 4, date: '2025-11-10', stock: '宁德时代', symbol: '300750.SZ', title: '宁德时代出货量创历史新高', content: '宁德时代10月动力电池出货量同比增长38%，海外市场占比提升至29%，欧洲工厂二期投产在即，市场份额进一步稳固。', tags: ['宁德时代', '电池', '新能源'], relevance: 0.96 },
-  { id: 5, date: '2025-11-07', stock: '新能源', symbol: null, title: '新能源汽车渗透率突破50%', content: '11月前两周新能源汽车销量渗透率首次突破50%，产业链相关标的受益明显，动力电池、智能驾驶零部件均现强势表现。', tags: ['新能源', '汽车', '产业链'], relevance: 0.81 },
-  { id: 6, date: '2025-11-09', stock: '比亚迪', symbol: '002594.SZ', title: '比亚迪海外工厂投产助力全球化布局', content: '比亚迪泰国工厂正式投产，年产能15万辆，东南亚市场布局加速，叠加国内以旧换新政策拉动，全年销量有望超预期。', tags: ['比亚迪', '汽车', '出海'], relevance: 0.93 },
-  { id: 7, date: '2025-11-06', stock: '招商银行', symbol: '600036.SS', title: '招商银行零售业务优势持续强化', content: '招行三季度零售客户数突破2亿，私行AUM增速领先同业，不良率维持低位，股息率吸引力提升，机构增持意愿明显。', tags: ['招商银行', '银行', '零售'], relevance: 0.91 },
-  { id: 8, date: '2025-11-01', stock: '上证指数', symbol: '000001.SS', title: 'A股市场情绪回暖，北向资金连续净流入', content: '本周北向资金累计净流入超200亿元，上证指数在3200点附近获得有效支撑，市场多头信心逐渐恢复。', tags: ['上证', '北向资金', '市场情绪'], relevance: 0.70 },
+  { id: 1, date: '2025-11-08', stock: '茅台', symbol: '600519.SS', title: '贵州茅台Q3财报超预期', content: '贵州茅台三季报显示净利润同比增长15.2%，营收创历史新高，高端白酒市场需求持续旺盛，机构普遍上调目标价。', tags: ['茅台', '白酒', '业绩'], relevance: 0.94, tier: 'official', source: '财报系统' },
+  { id: 2, date: '2025-11-05', stock: '白酒行业', symbol: null, title: '白酒板块估值修复行情', content: '受消费复苏预期带动，白酒板块整体回暖，茅台、五粮液等龙头股量价齐升，分析师建议关注春节备货行情。', tags: ['白酒', '消费', '板块'], relevance: 0.87, tier: 'mainstream', source: '新浪财经' },
+  { id: 3, date: '2025-11-02', stock: '消费板块', symbol: null, title: '国内消费数据好转，A股消费板块获资金青睐', content: '10月社零数据环比改善，消费板块获北向资金持续净买入，食品饮料领涨，分析师认为估值已具备安全边际。', tags: ['消费', '北向资金', '食品饮料'], relevance: 0.72, tier: 'mainstream', source: '东方财富' },
+  { id: 4, date: '2025-11-10', stock: '宁德时代', symbol: '300750.SZ', title: '宁德时代出货量创历史新高', content: '宁德时代10月动力电池出货量同比增长38%，海外市场占比提升至29%，欧洲工厂二期投产在即，市场份额进一步稳固。', tags: ['宁德时代', '电池', '新能源'], relevance: 0.96, tier: 'official', source: '公司公告' },
+  { id: 5, date: '2025-11-07', stock: '新能源', symbol: null, title: '新能源汽车渗透率突破50%', content: '11月前两周新能源汽车销量渗透率首次突破50%，产业链相关标的受益明显，动力电池、智能驾驶零部件均现强势表现。', tags: ['新能源', '汽车', '产业链'], relevance: 0.81, tier: 'mainstream', source: '证券时报' },
+  { id: 6, date: '2025-11-09', stock: '比亚迪', symbol: '002594.SZ', title: '比亚迪海外工厂投产助力全球化布局', content: '比亚迪泰国工厂正式投产，年产能15万辆，东南亚市场布局加速，叠加国内以旧换新政策拉动，全年销量有望超预期。', tags: ['比亚迪', '汽车', '出海'], relevance: 0.93, tier: 'official', source: '公司公告' },
+  { id: 7, date: '2025-11-06', stock: '招商银行', symbol: '600036.SS', title: '招商银行零售业务优势持续强化', content: '招行三季度零售客户数突破2亿，私行AUM增速领先同业，不良率维持低位，股息率吸引力提升，机构增持意愿明显。', tags: ['招商银行', '银行', '零售'], relevance: 0.91, tier: 'official', source: '财报系统' },
+  { id: 8, date: '2025-11-01', stock: '上证指数', symbol: '000001.SS', title: 'A股市场情绪回暖，北向资金连续净流入', content: '本周北向资金累计净流入超200亿元，上证指数在3200点附近获得有效支撑，市场多头信心逐渐恢复。', tags: ['上证', '北向资金', '市场情绪'], relevance: 0.70, tier: 'unverified', source: '市场资讯' },
 ];
 
 function searchNews(query, topK) {
@@ -1091,11 +1095,20 @@ async function runRAG() {
     reportEl.innerHTML = '<div class="rag-error">知识库中无相关内容</div>';
     return;
   }
-  sourcesEl.innerHTML = results.map(function(n, i) {
+  const tierConfig = {
+    official:   { label: '官方权威', color: 'var(--accent-green)', bg: 'rgba(0,229,160,0.10)' },
+    mainstream: { label: '主流媒体', color: 'var(--accent)',       bg: 'rgba(79,143,255,0.10)' },
+    unverified: { label: '待核实',   color: 'orange',              bg: 'rgba(255,165,0,0.10)' }
+  };
+  sourcesEl.innerHTML = expandHtml + results.map(function(n, i) {
+    const tc = tierConfig[n.tier] || tierConfig.unverified;
     return '<div class="rag-source-item" id="src-' + n.id + '">'
       + '<div class="rag-source-header"><span class="rag-source-idx">[' + (i+1) + ']</span>'
       + '<span class="rag-source-title">' + escHtml(n.title) + '</span></div>'
-      + '<div class="rag-source-meta">' + escHtml(n.date) + ' · ' + escHtml(n.stock) + '</div>'
+      + '<div class="rag-source-meta-row">'
+      + '<span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span>'
+      + '<span class="rag-source-meta">' + escHtml(n.source) + ' · ' + escHtml(n.date) + '</span>'
+      + '</div>'
       + '<div class="rag-source-snippet">' + escHtml(n.content.slice(0, 80)) + '...</div>'
       + '<div class="rag-relevance-bar-wrap">'
       + '<div class="rag-relevance-bar" style="width:' + Math.round(n.score*100) + '%"></div>'
@@ -1111,7 +1124,7 @@ async function runRAG() {
     reportEl.innerHTML = '<div class="rag-report-content">'
       + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究报告 <span class="ai-tag">🤖 AI 生成</span></div>'
       + '<div class="rag-report-text">' + report.replace(/\n/g,'<br/>') + '</div>'
-      + '<div class="rag-report-sources"><b>检索来源：</b>' + results.map(function(n,i){ return '[' + (i+1) + '] ' + escHtml(n.title); }).join('；') + '</div>'
+      + '<div class="rag-report-sources"><b>检索来源：</b>' + results.map(function(n,i){ const tc = tierConfig[n.tier] || tierConfig.unverified; return '[' + (i+1) + '] ' + escHtml(n.title) + ' <span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span> · ' + escHtml(n.source) + ' · ' + escHtml(n.date); }).join('<br/>') + '</div>'
       + '<div class="diag-disclaimer">⚠️ 本报告基于模拟新闻数据生成，仅供演示，不构成投资建议</div>'
       + '</div>';
   } catch(err) {
