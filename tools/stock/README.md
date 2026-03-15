@@ -8,7 +8,7 @@
 |-----|------|---------|---------|
 | 💬 行情助手 | 自然语言查询 A股/指数行情 | Prompt Engineering | Yahoo Finance（真实） |
 | 🔬 个股诊断 | 多维度诊断卡（技术面/基本面/情绪面） | Structured Output | Yahoo Finance + 模拟 |
-| 📄 研报生成 | RAG 检索 + LLM 生成带引用研报 | RAG | 模拟新闻库 |
+| 📄 研报生成 | RAG 检索 + LLM 生成带引用研报；金融同义词扩展、数据分级标注（官方权威/主流媒体/待核实）、LLM Reranking 可视化（Retrieve→Rerank→Generate）、双层知识库（实时市场库 + 私有知识库） | RAG + Reranking | 模拟新闻库 + 私有上传 |
 | 📡 市场雷达 | 热点板块热力图 + 异动 + AI 简报 | Multi-Source | 模拟数据 |
 | 🤖 Agent 实验室 | ReAct Agent 可视化（THINK/PLAN/ACT/OBSERVE） | AI Agent | Yahoo Finance + 模拟 |
 | 🛡️ 合规设计 | 金融 AI 合规原则 + 数据血缘图 + 标注规范 | Governance | 静态内容 |

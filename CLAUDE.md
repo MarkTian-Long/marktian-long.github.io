@@ -39,7 +39,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 | 信息工具 |
 | 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 | 信息工具 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
-| A股 AI 助手 | `tools/stock/index.html` | 自然语言查询 A股/指数行情，Yahoo Finance 数据 + AI 解读 | PM 作品 |
+| A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
