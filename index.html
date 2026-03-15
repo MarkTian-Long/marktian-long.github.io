@@ -299,7 +299,7 @@
                     📄 ESOP 提取 Demo
                 </button>
                 <button class="tool-tab" id="tab-stock" onclick="switchTool('stock')">
-                    📊 A股助手
+                    📊 A股 AI 助手
                 </button>
                 <button class="tool-tab hidden" id="tab-interview" data-dev onclick="switchTool('interview')">
                     💬 面试题练习器
@@ -475,18 +475,20 @@
             </div>
 
             <div class="tool-panel hidden" id="panel-trends">
-                <div class="dashboard-header">
-                    <span class="dashboard-label">📈 热点快照 · AI & 科技热榜 · Claude 点评</span>
-                    <a href="tools/trends/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">📈 热点快照 · AI & 科技热榜 · Claude 点评</span>
+                        <a href="tools/trends/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/trends/index.html" class="dashboard-iframe"
+                        title="热点快照" loading="lazy"></iframe>
                 </div>
-                <iframe src="tools/trends/index.html" class="dashboard-iframe"
-                    title="热点快照" loading="lazy"></iframe>
             </div>
 
             <div class="tool-panel hidden" id="panel-stock">
                 <div class="dashboard-wrapper reveal">
                     <div class="dashboard-topbar">
-                        <span class="dashboard-label">📊 A股 AI 助手 · 自然语言查询 · Tushare 数据</span>
+                        <span class="dashboard-label">📊 A股 AI 助手 · 行情/诊断/研报/雷达/Agent/合规 · 六大 AI 能力演示</span>
                         <a href="tools/stock/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
                     </div>
                     <iframe src="tools/stock/index.html" class="dashboard-iframe"
