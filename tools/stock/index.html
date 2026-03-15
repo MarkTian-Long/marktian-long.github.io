@@ -379,6 +379,19 @@ const CONFIG = {
 .radar-brief-text { font-size:13px; line-height:1.8; }
 .radar-data-note { padding:6px 12px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; flex-shrink:0; }
 .radar-brief-widget { display:flex; flex-direction:column; }
+/* RAG 升级：双层知识库 */
+.kb-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; }
+.kb-tab-btn { flex:1; padding:6px 8px; font-size:11px; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-muted); cursor:pointer; transition:var(--transition); }
+.kb-tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+.kb-tab-panel { display:none; flex-direction:column; flex:1; overflow:hidden; }
+.kb-tab-panel.active { display:flex; }
+.kb-meta { font-size:10px; color:var(--text-muted); padding:5px 10px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); }
+.kb-upload-area { flex-shrink:0; margin:8px; height:80px; padding:8px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:11px; resize:none; outline:none; font-family:inherit; }
+.kb-upload-btn { margin:0 8px 8px; padding:5px 10px; background:rgba(79,143,255,0.12); border:1px solid var(--accent); border-radius:var(--radius-sm); color:var(--accent); font-size:11px; cursor:pointer; }
+.kb-private-list { flex:1; overflow-y:auto; padding:8px; }
+.private-doc-item { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 8px; margin-bottom:4px; }
+.private-doc-title { font-size:11px; font-weight:500; margin-bottom:2px; }
+.private-doc-meta { font-size:10px; color:var(--text-muted); }
 /* RAG 升级：Reranking */
 .rerank-header { font-size:11px; color:var(--accent-purple); padding:6px 8px; background:rgba(155,109,255,0.08); border-radius:var(--radius-sm); margin-bottom:8px; }
 .rerank-reason { font-size:10px; color:var(--accent-purple); padding:2px 0 4px 0; }
@@ -479,14 +492,29 @@ const CONFIG = {
     <div class="rag-left">
       <div class="rag-left-title">
         📚 知识库
-        <span class="rag-db-info">新浪财经 · 350,000+ 条 🎭</span>
+        <span class="rag-db-info">双层架构 🎭</span>
       </div>
-      <div class="rag-left-body" id="ragSources">
-        <div class="rag-placeholder">等待检索...</div>
+      <div class="kb-tabs">
+        <button class="kb-tab-btn active" onclick="switchKbTab('market')" id="kbTabMarket">📡 实时市场库</button>
+        <button class="kb-tab-btn" onclick="switchKbTab('private')" id="kbTabPrivate">🗂️ 私有知识库</button>
+      </div>
+      <div class="kb-tab-panel active" id="kbPanelMarket">
+        <div class="kb-meta">自动同步 · 财报/新闻/政策 · 10+ 数据源 · 🎭 模拟</div>
+        <div class="rag-left-body" id="ragSources">
+          <div class="rag-placeholder">等待检索...</div>
+        </div>
+      </div>
+      <div class="kb-tab-panel" id="kbPanelPrivate">
+        <div class="kb-meta">上传分析师行业报告与历史研报</div>
+        <textarea class="kb-upload-area" id="privateKbInput" placeholder="粘贴研报或行业报告内容（支持多段，用空行分隔）..."></textarea>
+        <button class="kb-upload-btn" onclick="addToPrivateKb()">+ 加入知识库</button>
+        <div class="kb-private-list" id="privateKbList">
+          <div class="rag-placeholder">暂无私有文档</div>
+        </div>
       </div>
       <div class="rag-why">
-        <div class="rag-why-title">💡 为什么用 RAG？</div>
-        <div class="rag-why-body">LLM 训练数据有截止日期，无法获知最新市场动态。RAG 通过检索实时知识库，让模型看到最新信息，同时保持引用可溯源，满足金融场景的合规要求。</div>
+        <div class="rag-why-title">💡 双层知识库设计</div>
+        <div class="rag-why-body">实时市场库：自动同步24小时内财报/新闻/政策动态，覆盖市场反应窗口期；私有知识库：支持分析师上传历史研报，联合召回兼顾时效性与深度。</div>
       </div>
     </div>
     <div class="rag-right">
@@ -1116,8 +1144,10 @@ async function runRAG() {
   sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 正在检索中...</div>';
   reportEl.innerHTML = '<div class="rag-searching">⏳ 等待检索完成...</div>';
   await new Promise(function(r) { setTimeout(r, 800); });
-  // Retrieve 阶段：粗检 top-6
-  const candidates = searchNews(query, 6);
+  // 双层知识库联合召回
+  const marketResults = searchNews(query, 5);
+  const privateResults = searchPrivateKb(query, 2);
+  const candidates = marketResults.concat(privateResults).slice(0, 6);
   if (candidates.length === 0) {
     sourcesEl.innerHTML = '<div class="rag-placeholder">未找到相关新闻</div>';
     reportEl.innerHTML = '<div class="rag-error">知识库中无相关内容</div>';
@@ -1449,6 +1479,71 @@ async function generateBrief() {
   } catch(e) {
     el.innerHTML = '<div class="rag-error">' + escHtml(e.message) + '</div>';
   }
+}
+
+// 私有知识库（内存存储）
+let PRIVATE_KB = [];
+
+function switchKbTab(tab) {
+  document.querySelectorAll('.kb-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.kb-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  if (tab === 'market') {
+    document.getElementById('kbTabMarket').classList.add('active');
+    document.getElementById('kbPanelMarket').classList.add('active');
+  } else {
+    document.getElementById('kbTabPrivate').classList.add('active');
+    document.getElementById('kbPanelPrivate').classList.add('active');
+  }
+}
+
+function addToPrivateKb() {
+  const text = document.getElementById('privateKbInput').value.trim();
+  if (!text) return;
+  const segments = text.split(/\n{2,}/).filter(function(s) { return s.trim().length > 10; });
+  segments.forEach(function(seg) {
+    PRIVATE_KB.push({
+      id: 'priv_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      content: seg.trim(),
+      title: seg.trim().slice(0, 30) + (seg.length > 30 ? '...' : ''),
+      date: new Date().toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }),
+      source: '私有知识库',
+      tier: 'private',
+      addedAt: Date.now()
+    });
+  });
+  document.getElementById('privateKbInput').value = '';
+  renderPrivateKbList();
+  switchKbTab('private');
+}
+
+function renderPrivateKbList() {
+  const el = document.getElementById('privateKbList');
+  if (!PRIVATE_KB.length) {
+    el.innerHTML = '<div class="rag-placeholder">暂无私有文档</div>';
+    return;
+  }
+  el.innerHTML = PRIVATE_KB.map(function(doc) {
+    return '<div class="private-doc-item">'
+      + '<div class="private-doc-title">📄 ' + escHtml(doc.title) + '</div>'
+      + '<div class="private-doc-meta">' + escHtml(doc.date) + ' · ' + doc.content.length + '字</div>'
+      + '</div>';
+  }).join('');
+}
+
+function searchPrivateKb(query, topK) {
+  topK = topK || 2;
+  if (!PRIVATE_KB.length) return [];
+  const { terms } = expandQuery(query);
+  return PRIVATE_KB.map(function(doc) {
+    let score = 0;
+    terms.forEach(function(kw) {
+      if (doc.content.indexOf(kw) >= 0) score += 0.3;
+      if (doc.title.indexOf(kw) >= 0) score += 0.4;
+    });
+    return Object.assign({}, doc, { score: score > 0 ? Math.min(0.95, score) : 0, relevance: 0.9, rerankScore: 0, rerankReason: '', origRank: 0 });
+  }).filter(function(d) { return d.score > 0; })
+  .sort(function(a, b) { return b.score - a.score; })
+  .slice(0, topK);
 }
 </script>
 <div class="disclaimer-bar">
