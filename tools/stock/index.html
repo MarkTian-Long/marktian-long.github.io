@@ -379,6 +379,12 @@ const CONFIG = {
 .radar-brief-text { font-size:13px; line-height:1.8; }
 .radar-data-note { padding:6px 12px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; flex-shrink:0; }
 .radar-brief-widget { display:flex; flex-direction:column; }
+/* RAG 升级：Reranking */
+.rerank-header { font-size:11px; color:var(--accent-purple); padding:6px 8px; background:rgba(155,109,255,0.08); border-radius:var(--radius-sm); margin-bottom:8px; }
+.rerank-reason { font-size:10px; color:var(--accent-purple); padding:2px 0 4px 0; }
+.rank-up { font-size:10px; color:var(--accent-green); font-weight:700; margin:0 3px; }
+.rank-down { font-size:10px; color:var(--accent-red); font-weight:700; margin:0 3px; }
+.rank-same { font-size:10px; color:var(--text-muted); margin:0 3px; }
 /* RAG 升级：数据分级标注 */
 .tier-badge { font-size:10px; padding:1px 6px; border-radius:8px; font-weight:600; margin-right:4px; }
 .rag-source-meta-row { display:flex; align-items:center; gap:4px; margin-bottom:4px; }
@@ -1076,6 +1082,27 @@ function searchNews(query, topK) {
   return scored.sort(function(a, b) { return b.score - a.score; }).slice(0, topK).filter(function(n) { return n.score > 0.1; });
 }
 
+async function rerankResults(query, candidates) {
+  const systemPrompt = '你是金融信息相关性评估专家。对候选新闻与查询的相关性打分，输出严格JSON数组，无其他文字。格式：[{"id":数字,"score":0到1的小数,"reason":"10字以内的判断理由"}]';
+  const userContent = '查询：' + query + '\n\n候选新闻：\n' + candidates.map(function(n) {
+    return '[' + n.id + '] ' + n.title + '（' + n.date + '，' + n.stock + '）';
+  }).join('\n');
+  try {
+    const resp = await callLLM(systemPrompt, userContent);
+    const parsed = JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
+    return candidates.map(function(n) {
+      const ranked = parsed.find(function(r) { return r.id === n.id; });
+      return Object.assign({}, n, {
+        rerankScore: ranked ? ranked.score : n.score,
+        rerankReason: ranked ? ranked.reason : '',
+        origRank: candidates.indexOf(n) + 1
+      });
+    }).sort(function(a, b) { return b.rerankScore - a.rerankScore; });
+  } catch(e) {
+    return candidates.map(function(n) { return Object.assign({}, n, { rerankScore: n.score, rerankReason: '', origRank: candidates.indexOf(n) + 1 }); });
+  }
+}
+
 async function runRAG() {
   const query = document.getElementById('ragInput').value.trim();
   if (!query) return;
@@ -1089,8 +1116,9 @@ async function runRAG() {
   sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 正在检索中...</div>';
   reportEl.innerHTML = '<div class="rag-searching">⏳ 等待检索完成...</div>';
   await new Promise(function(r) { setTimeout(r, 800); });
-  const results = searchNews(query);
-  if (results.length === 0) {
+  // Retrieve 阶段：粗检 top-6
+  const candidates = searchNews(query, 6);
+  if (candidates.length === 0) {
     sourcesEl.innerHTML = '<div class="rag-placeholder">未找到相关新闻</div>';
     reportEl.innerHTML = '<div class="rag-error">知识库中无相关内容</div>';
     return;
@@ -1100,7 +1128,8 @@ async function runRAG() {
     mainstream: { label: '主流媒体', color: 'var(--accent)',       bg: 'rgba(79,143,255,0.10)' },
     unverified: { label: '待核实',   color: 'orange',              bg: 'rgba(255,165,0,0.10)' }
   };
-  sourcesEl.innerHTML = expandHtml + results.map(function(n, i) {
+  // 展示粗检结果（临时）
+  sourcesEl.innerHTML = expandHtml + candidates.map(function(n, i) {
     const tc = tierConfig[n.tier] || tierConfig.unverified;
     return '<div class="rag-source-item" id="src-' + n.id + '">'
       + '<div class="rag-source-header"><span class="rag-source-idx">[' + (i+1) + ']</span>'
@@ -1115,6 +1144,38 @@ async function runRAG() {
       + '<span class="rag-relevance-val">相关度 ' + n.score.toFixed(2) + '</span>'
       + '</div></div>';
   }).join('');
+  // Rerank 阶段：LLM 精排
+  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🧠 LLM 精排中（Reranking）...</div>';
+  reportEl.innerHTML = '<div class="rag-searching">⏳ 等待精排完成...</div>';
+  const reranked = await rerankResults(query, candidates);
+  const results = reranked.slice(0, 3);
+  // 渲染精排后结果（含排序变化）
+  sourcesEl.innerHTML = expandHtml
+    + '<div class="rerank-header">🧠 Reranking 完成 · 粗检6→精排3</div>'
+    + results.map(function(n, i) {
+      const tc = tierConfig[n.tier] || tierConfig.unverified;
+      const rankChange = n.origRank - (i + 1);
+      const rankTag = rankChange > 0
+        ? '<span class="rank-up">↑' + rankChange + '</span>'
+        : rankChange < 0 ? '<span class="rank-down">↓' + Math.abs(rankChange) + '</span>'
+        : '<span class="rank-same">→</span>';
+      return '<div class="rag-source-item" id="src-' + n.id + '">'
+        + '<div class="rag-source-header">'
+        + '<span class="rag-source-idx">[' + (i+1) + ']</span>'
+        + rankTag
+        + '<span class="rag-source-title">' + escHtml(n.title) + '</span></div>'
+        + '<div class="rag-source-meta-row">'
+        + '<span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span>'
+        + '<span class="rag-source-meta">' + escHtml(n.source) + ' · ' + escHtml(n.date) + '</span>'
+        + '</div>'
+        + (n.rerankReason ? '<div class="rerank-reason">💡 ' + escHtml(n.rerankReason) + '</div>' : '')
+        + '<div class="rag-source-snippet">' + escHtml(n.content.slice(0, 80)) + '...</div>'
+        + '<div class="rag-relevance-bar-wrap">'
+        + '<div class="rag-relevance-bar" style="width:' + Math.round(n.rerankScore*100) + '%"></div>'
+        + '<span class="rag-relevance-val">精排得分 ' + n.rerankScore.toFixed(2) + '</span>'
+        + '</div></div>';
+    }).join('');
+  // Generate 阶段
   reportEl.innerHTML = '<div class="rag-searching">🤖 AI 正在撰写研报...</div>';
   const context = results.map(function(n, i) { return '[' + (i+1) + '] ' + n.title + '：' + n.content; }).join('\n');
   const systemPrompt = '你是专业A股研究员。基于提供的新闻资料撰写简短研究报告（150-250字），要求：结构清晰（概况/亮点/风险），引用来源用[数字]标注，末尾附"数据来源"列表。';
