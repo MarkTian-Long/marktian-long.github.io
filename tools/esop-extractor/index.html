@@ -963,6 +963,16 @@
 
     .btn-export-bad.hidden { display: none !important; }
 
+    /* ===== Validation Warning ===== */
+    .validation-warn {
+      display: block;
+      font-size: 11px;
+      color: var(--yellow);
+      font-weight: 500;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
     /* ===== Source Cell (PDF mode) ===== */
     .src-location {
       color: var(--accent);
@@ -1128,6 +1138,25 @@
 
     <div class="divider"></div>
 
+    <!-- Synonym Map Section -->
+    <div class="collapsible" id="synonymSection">
+      <div class="collapsible-header" onclick="toggleCollapsible('synonymSection')">
+        <div class="collapsible-header-left">
+          <div class="section-icon"></div>
+          金融术语同义词映射表
+        </div>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner" style="padding-top:12px;">
+          <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px;">
+            系统级配置，供所有模块 Prompt 复用。提取时自动识别以下术语变体。
+          </div>
+          <div id="synonymMapGrid"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Prompt Preview Section -->
     <div class="collapsible" id="promptSection">
       <div class="collapsible-header" onclick="toggleCollapsible('promptSection')">
@@ -1183,6 +1212,8 @@
           <div class="result-stats">
             <span class="stat-item">提取时间：<strong id="statTime">—</strong></span>
             <span class="stat-item">字段数：<strong id="statFields">—</strong></span>
+            <span class="stat-item" title="核心字段提取准确率（高置信度字段占比）">高置信度率：<strong id="statHighConf" style="color:var(--green)">—</strong></span>
+            <span class="stat-item" title="字段级溯源覆盖率（附有原文来源的字段占比）">溯源覆盖率：<strong id="statSourceCov" style="color:var(--accent-cyan)">—</strong></span>
             <span id="statWarnWrap" class="hidden">
               <span class="warn-badge" id="statWarn">⚠ 0 个低置信度</span>
             </span>
@@ -1320,6 +1351,20 @@ const FIELD_LABELS_GRANTEE = {
   holdingPlatform:    '持股平台',
   cashComp:           '个人现金薪酬'
 };
+
+/* ---- Synonym Map (金融术语同义词映射表，同时注入 SYSTEM_PROMPT) ---- */
+const SYNONYM_MAP = [
+  { standard: 'ESOP / 股权激励计划',   variants: ['员工持股计划', '股票期权计划', '购股权计划', '股份奖励计划', '雇员股份激励计划'] },
+  { standard: '行权价格',              variants: ['认购价', '行使价', '购股价', '授予价格'] },
+  { standard: '归属安排',              variants: ['归属期', '解锁条件', '行权条件', '解禁安排'] },
+  { standard: '发行前总股本',          variants: ['上市前已发行股份', '全球发售前已发行股份'] },
+  { standard: 'FMV（公允市值）',       variants: ['每股公平价值', '授予日公允价值'] },
+  { standard: '首发市值',              variants: ['IPO 市值', '全球发售时市值', '上市时估值'] },
+  { standard: '授予日期',              variants: ['期权授出日期', '股份授予日', '授股日'] },
+  { standard: '持股平台',              variants: ['员工持股平台', '期权池载体', '合伙企业'] },
+  { standard: '激励工具',              variants: ['权益类型', '股权激励类型（如：限制性股份、期权、RSU）'] },
+  { standard: '发行价',                variants: ['全球发售价', '上市发行价', 'IPO 价格'] }
+];
 
 /* ---- System Prompt ---- */
 const SYSTEM_PROMPT = `你是一名专业的股权激励数据提取专家，专门处理港股和A股招股说明书（招股书/招股文件/Prospectus）。
@@ -1489,7 +1534,7 @@ const MOCK_PDF_RESULT = {
       name:              { value: "张伟",               confidence: "high",   source: "第48页 · 董事购股权明细表 | 张伟先生（首席执行官CEO）" },
       position:          { value: "首席执行官（CEO）",  confidence: "high",   source: "第48页 · 董事购股权明细表 | 张伟先生（首席执行官CEO）" },
       hireDate:          { value: "2018-05-16",         confidence: "high",   source: "第48页 · 董事购股权明细表 | 入职日期：二零一八年五月十六日" },
-      grantDate:         { value: "2023-06-01",         confidence: "high",   source: "第48页 · 董事购股权明细表 | 购股权授出日期：二零二三年六月一日" },
+      grantDate:         { value: "2021-11-15",         confidence: "high",   source: "第48页 · 董事购股权明细表 | 购股权授出日期：二零二一年十一月十五日" },
       incentiveTool:     { value: "购股权",              confidence: "high",   source: "第48页 · 董事购股权明细表 | 激励工具：购股权" },
       grantedShares:     { value: "20,000,000份",       confidence: "high",   source: "第48页 · 董事购股权明细表 | 已授出购股权数目：20,000,000份" },
       grantedShareRatio: { value: "2.5%",               confidence: "high",   source: "第48页 · 董事购股权明细表 | 占全球发售前总股本：2.5%" },
@@ -1524,8 +1569,9 @@ const state = {
   activeTab:   'basic',
   editingCell: null,   // { section, key, granteeIndex }
   inputMode:   'text', // 'text' | 'pdf'
-  pdfFile:     null,   // File object
-  pdfMeta:     null    // { name, size, pageCount }
+  pdfFile:             null,   // File object
+  pdfMeta:             null,   // { name, size, pageCount }
+  validationWarnings:  {}
 };
 
 
@@ -1536,6 +1582,17 @@ function init() {
   // Fill prompt previews
   document.getElementById('previewSystem').textContent = SYSTEM_PROMPT;
   document.getElementById('previewUser').textContent   = USER_PROMPT_TEMPLATE;
+
+  // Render synonym map
+  const synonymGrid = document.getElementById('synonymMapGrid');
+  synonymGrid.innerHTML = SYNONYM_MAP.map(item => `
+    <div style="margin-bottom:8px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);">
+      <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px;">${escapeHTML(item.standard)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;">
+        ${item.variants.map(v => `<span style="font-size:11px;padding:1px 7px;background:rgba(79,143,255,0.08);border:1px solid rgba(79,143,255,0.2);border-radius:20px;color:var(--text-sec);">${escapeHTML(v)}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
 
   // Load API mode & custom key
   const savedMode = localStorage.getItem('qiuzhi_esop_apimode') || 'default';
@@ -1835,14 +1892,25 @@ function renderOutput() {
   document.getElementById('outputPlaceholder').classList.add('hidden');
   document.getElementById('outputContent').classList.remove('hidden');
 
+  // --- Run validation ---
+  state.validationWarnings = runValidation(state.result);
+
   // --- Stats ---
   const meta = state.result._meta || {};
   document.getElementById('statTime').textContent =
     meta.extractedAt ? new Date(meta.extractedAt).toLocaleString('zh-CN') : '—';
 
   // Count fields
-  const { fieldCount, lowCount } = countFields(state.result);
+  const { fieldCount, lowCount, highCount, sourcedCount } = countFields(state.result);
   document.getElementById('statFields').textContent = fieldCount + ' 个';
+
+  // 高置信度率
+  const highRatio = fieldCount > 0 ? Math.round(highCount / fieldCount * 100) : 0;
+  document.getElementById('statHighConf').textContent = highRatio + '%';
+
+  // 溯源覆盖率
+  const sourceRatio = fieldCount > 0 ? Math.round(sourcedCount / fieldCount * 100) : 0;
+  document.getElementById('statSourceCov').textContent = sourceRatio + '%';
 
   const warnWrap = document.getElementById('statWarnWrap');
   if (lowCount > 0) {
@@ -1862,15 +1930,88 @@ function renderOutput() {
   renderTab(state.activeTab);
 }
 
+/* ================================================================
+   VALIDATION
+================================================================ */
+/**
+ * 跨字段逻辑校验，返回异常字段路径集合
+ * key 格式：`section.fieldKey` 或 `grantees.${i}.fieldKey`
+ */
+function runValidation(result) {
+  const warnings = {}; // path -> message
+
+  const parseNum = (v) => {
+    if (v === null || v === undefined) return null;
+    const n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+    return isNaN(n) ? null : n;
+  };
+
+  const parseDate = (v) => {
+    if (!v) return null;
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const plan   = result.esopPlan    || {};
+  const basic  = result.companyBasic || {};
+
+  const grantedShares  = parseNum(plan.grantedShares?.value);
+  const reservedShares = parseNum(plan.reservedShares?.value);
+  const exercisePrice  = parseNum(plan.exercisePrice?.value);
+  const ipoPrice       = parseNum(basic.ipoPrice?.value);
+  const adoptionDate   = parseDate(plan.adoptionDate?.value);
+
+  // 规则1：授予股数 > 预留股数（授予不能超过预留池）
+  if (grantedShares !== null && reservedShares !== null && grantedShares > reservedShares) {
+    warnings['esopPlan.grantedShares']  = `授予股数(${grantedShares})超过预留股数(${reservedShares})`;
+    warnings['esopPlan.reservedShares'] = `预留股数(${reservedShares})小于授予股数(${grantedShares})`;
+  }
+
+  // 规则2：行权价 < IPO 价格 × 10%（行权价异常低）
+  if (exercisePrice !== null && ipoPrice !== null && exercisePrice < ipoPrice * 0.1) {
+    warnings['esopPlan.exercisePrice'] = `行权价(${exercisePrice})低于 IPO 发行价(${ipoPrice})的 10%，疑似异常`;
+  }
+
+  // 规则3：被授予人 grantDate < esopPlan.adoptionDate（授予时间早于计划采纳）
+  if (Array.isArray(result.grantees) && adoptionDate) {
+    result.grantees.forEach((g, i) => {
+      const grantDate = parseDate(g.grantDate?.value);
+      if (grantDate && grantDate < adoptionDate) {
+        warnings[`grantees.${i}.grantDate`] =
+          `授予日期(${g.grantDate.value})早于计划采纳日期(${plan.adoptionDate.value})`;
+      }
+    });
+  }
+
+  // 规则4：各被授予人授予股数之和 > esopPlan.grantedShares
+  if (Array.isArray(result.grantees) && grantedShares !== null) {
+    const totalGranted = result.grantees.reduce((sum, g) => {
+      const n = parseNum(g.grantedShares?.value);
+      return sum + (n || 0);
+    }, 0);
+    if (totalGranted > grantedShares * 1.01) { // 允许 1% 误差（单位/精度问题）
+      warnings['esopPlan.grantedShares'] =
+        (warnings['esopPlan.grantedShares'] ? warnings['esopPlan.grantedShares'] + '；' : '') +
+        `各被授予人授予股数合计(${totalGranted})超过计划授予总数(${grantedShares})`;
+    }
+  }
+
+  return warnings;
+}
+
 function countFields(result) {
-  let total = 0;
-  let low   = 0;
+  let total  = 0;
+  let low    = 0;
+  let high   = 0;
+  let sourced = 0;
 
   const scan = (obj) => {
     if (!obj || typeof obj !== 'object') return;
     if ('value' in obj && 'confidence' in obj) {
       total++;
       if (obj.confidence === 'low' && obj.value !== null) low++;
+      if (obj.confidence === 'high') high++;
+      if (obj.source && obj.source.trim() && obj.source !== '未在提供的文本中找到相关内容') sourced++;
       return;
     }
     Object.values(obj).forEach(v => {
@@ -1883,7 +2024,7 @@ function countFields(result) {
   scan(result.esopPlan);
   if (Array.isArray(result.grantees)) result.grantees.forEach(scan);
 
-  return { fieldCount: total, lowCount: low };
+  return { fieldCount: total, lowCount: low, highCount: high, sourcedCount: sourced };
 }
 
 function haslowWarning(obj) {
@@ -1997,6 +2138,15 @@ function fieldValueHTML(field, sectionKey, key, granteeIndex) {
 
   if (field.badCase) {
     html += '<span class="badcase-tag">⚑ Bad Case</span>';
+  }
+
+  // 校验警告图标
+  const warnPath = granteeIndex !== undefined
+    ? `${sectionKey}.${granteeIndex}.${key}`
+    : `${sectionKey}.${key}`;
+  const warnMsg = state.validationWarnings && state.validationWarnings[warnPath];
+  if (warnMsg) {
+    html += `<div class="validation-warn">⚠ 校验异常：${escapeHTML(warnMsg)}</div>`;
   }
 
   return html;
