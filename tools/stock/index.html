@@ -405,6 +405,50 @@ const CONFIG = {
 /* RAG 升级：查询扩展 */
 .rag-expansion { font-size:11px; color:var(--text-sec); padding:8px; background:rgba(79,143,255,0.06); border-radius:var(--radius-sm); margin-bottom:8px; line-height:1.8; }
 .expand-tag { display:inline-block; background:rgba(79,143,255,0.12); color:var(--accent); padding:1px 6px; border-radius:8px; margin:1px 2px; font-size:10px; }
+/* 研报质量评估卡 */
+.report-quality-card { margin-top:10px; border:1px solid rgba(0,229,160,0.2); border-radius:var(--radius-sm); padding:10px 12px; background:rgba(0,229,160,0.04); font-size:12px; }
+.quality-card-title { font-size:11px; font-weight:600; color:var(--accent-green); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.quality-metrics { display:flex; flex-direction:column; gap:5px; }
+.quality-metric { display:flex; align-items:center; gap:8px; }
+.quality-icon { width:18px; text-align:center; flex-shrink:0; }
+.quality-label { color:var(--text-sec); flex:1; }
+.quality-value { font-weight:600; }
+.quality-pass { color:var(--accent-green); }
+.quality-warn { color:orange; }
+/* 反馈条 */
+.feedback-bar { margin-top:10px; border-top:1px solid var(--border); padding-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.feedback-label { font-size:11px; color:var(--text-muted); }
+.fb-btn { padding:4px 10px; border:1px solid var(--border); border-radius:14px; background:var(--card); color:var(--text-sec); font-size:12px; cursor:pointer; transition:var(--transition); }
+.fb-btn:hover { border-color:var(--border-hover); }
+.fb-btn.fb-adopt:hover { border-color:var(--accent-green); color:var(--accent-green); background:rgba(0,229,160,0.08); }
+.fb-btn.fb-revise:hover { border-color:orange; color:orange; background:rgba(255,165,0,0.08); }
+.fb-btn.fb-bad:hover { border-color:var(--accent-red); color:var(--accent-red); background:rgba(239,68,68,0.08); }
+.fb-btn.fb-active-adopt { border-color:var(--accent-green); color:var(--accent-green); background:rgba(0,229,160,0.08); }
+.fb-btn.fb-active-bad { border-color:var(--accent-red); color:var(--accent-red); background:rgba(239,68,68,0.08); }
+.fb-reasons { display:none; flex-wrap:wrap; gap:6px; margin-top:6px; width:100%; }
+.fb-reasons.show { display:flex; }
+.fb-reason-btn { padding:3px 8px; border:1px solid var(--border); border-radius:10px; background:none; color:var(--text-muted); font-size:11px; cursor:pointer; }
+.fb-reason-btn:hover { border-color:orange; color:orange; }
+.fb-bad-input-wrap { display:none; width:100%; margin-top:6px; }
+.fb-bad-input-wrap.show { display:block; }
+.fb-bad-textarea { width:100%; padding:6px 10px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:12px; font-family:inherit; resize:none; outline:none; height:60px; }
+.fb-bad-submit { margin-top:4px; padding:4px 10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius-sm); color:var(--accent-red); font-size:11px; cursor:pointer; }
+.fb-stats { font-size:11px; color:var(--text-muted); margin-left:auto; }
+/* 私有知识库删除按钮 */
+.private-doc-item { display:flex; align-items:flex-start; gap:6px; }
+.private-doc-content { flex:1; }
+.private-doc-del { flex-shrink:0; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:var(--transition); line-height:1; margin-top:1px; }
+.private-doc-del:hover { color:var(--accent-red); background:rgba(239,68,68,0.1); }
+/* 空输入 shake 动画 */
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
+.input-shake { animation:shake 0.4s ease; border-color:var(--accent-red) !important; }
+/* 市场雷达时间戳 */
+.radar-timestamp-bar { display:flex; align-items:center; gap:8px; padding:6px 12px; border-bottom:1px solid var(--border); font-size:11px; color:var(--text-muted); flex-shrink:0; }
+.radar-refresh-btn { padding:3px 10px; border:1px solid var(--border); border-radius:10px; background:var(--card); color:var(--text-sec); font-size:11px; cursor:pointer; transition:var(--transition); display:flex; align-items:center; gap:4px; }
+.radar-refresh-btn:hover { border-color:var(--border-hover); color:var(--accent); }
+.radar-refresh-icon { display:inline-block; transition:transform 0.4s ease; }
+.radar-refresh-icon.spinning { animation:spin 0.6s linear; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   </style>
 </head>
 <body>
@@ -534,6 +578,11 @@ const CONFIG = {
 </div>
 
 <div class="tab-panel" id="tab-radar">
+  <div class="radar-timestamp-bar">
+    <span>数据截至：<span id="radarTimestamp">2025-11-10 15:00（模拟）</span></span>
+    <button class="radar-refresh-btn" onclick="refreshRadarData()"><span class="radar-refresh-icon" id="radarRefreshIcon">🔄</span> 更新</button>
+    <span style="margin-left:auto;font-size:10px;">生产环境：每15分钟自动刷新</span>
+  </div>
   <div class="radar-layout">
     <div class="radar-top">
       <div class="radar-widget">
@@ -743,11 +792,17 @@ function escHtml(str) {
 // =============================================
 //  Main Flow
 // =============================================
+function shakeInput(el) {
+  el.classList.add('input-shake');
+  el.style.borderColor = 'var(--accent-red)';
+  setTimeout(function() { el.classList.remove('input-shake'); el.style.borderColor = ''; }, 600);
+}
+
 async function handleSend() {
   if (isLoading) return;
   const box = document.getElementById('inputBox');
   const text = box.value.trim();
-  if (!text) return;
+  if (!text) { shakeInput(box); return; }
 
   box.value = ''; box.style.height = 'auto';
   isLoading = true;
@@ -1011,7 +1066,7 @@ const DEFAULT_SENTIMENT = { score: 0, label: '暂无数据', news: [], trend: 'f
 
 async function runDiagnosis() {
   const name = document.getElementById('diagInput').value.trim();
-  if (!name) return;
+  if (!name) { shakeInput(document.getElementById('diagInput')); return; }
   const content = document.getElementById('diagContent');
   content.innerHTML = '<div class="diag-loading">⏳ 正在生成诊断报告...</div>';
   try {
@@ -1133,7 +1188,7 @@ async function rerankResults(query, candidates) {
 
 async function runRAG() {
   const query = document.getElementById('ragInput').value.trim();
-  if (!query) return;
+  if (!query) { shakeInput(document.getElementById('ragInput')); return; }
   const sourcesEl = document.getElementById('ragSources');
   const reportEl = document.getElementById('ragReport');
   // 查询扩展
@@ -1212,15 +1267,109 @@ async function runRAG() {
   const userContent = '研究对象：' + query + '\n\n参考资料：\n' + context;
   try {
     const report = await callLLM(systemPrompt, userContent);
+    const wordCount = report.replace(/<[^>]+>/g, '').replace(/\s+/g, '').length;
+    const citationCount = new Set((report.match(/\[(\d+)\]/g) || []).map(function(m){ return m; })).size;
+    const qualityCard = buildQualityCard(wordCount, citationCount, results.length);
+    const feedbackBar = buildFeedbackBar(query);
     reportEl.innerHTML = '<div class="rag-report-content">'
       + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究报告 <span class="ai-tag">🤖 AI 生成</span></div>'
       + '<div class="rag-report-text">' + report.replace(/\n/g,'<br/>') + '</div>'
       + '<div class="rag-report-sources"><b>检索来源：</b>' + results.map(function(n,i){ const tc = tierConfig[n.tier] || tierConfig.unverified; return '[' + (i+1) + '] ' + escHtml(n.title) + ' <span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span> · ' + escHtml(n.source) + ' · ' + escHtml(n.date); }).join('<br/>') + '</div>'
       + '<div class="diag-disclaimer">⚠️ 本报告基于模拟新闻数据生成，仅供演示，不构成投资建议</div>'
+      + qualityCard
+      + feedbackBar
       + '</div>';
   } catch(err) {
     reportEl.innerHTML = '<div class="rag-error">⚠️ ' + escHtml(err.message) + '</div>';
   }
+}
+
+function buildQualityCard(wordCount, citationCount, sourceCount) {
+  const wordOk = wordCount >= 150 && wordCount <= 250;
+  const citationOk = citationCount >= sourceCount;
+  const roundEstimate = citationCount >= 3 ? '≤3次（引用充分）' : citationCount >= 1 ? '≤3次（参考值）' : '可能需要补充引用';
+  const roundClass = citationCount >= 1 ? 'quality-pass' : 'quality-warn';
+  return '<div class="report-quality-card">'
+    + '<div class="quality-card-title">📊 质量评估 <span style="font-weight:400;color:var(--text-muted);font-size:10px;">基于业务指标体系</span></div>'
+    + '<div class="quality-metrics">'
+    + '<div class="quality-metric"><span class="quality-icon">' + (citationOk ? '✅' : '⚠️') + '</span><span class="quality-label">引用覆盖</span><span class="quality-value ' + (citationOk ? 'quality-pass' : 'quality-warn') + '">' + citationCount + '/' + sourceCount + ' 文档有溯源 → ' + (citationOk ? '引用准确率达标' : '建议补充引用') + '</span></div>'
+    + '<div class="quality-metric"><span class="quality-icon">' + (wordOk ? '✅' : '⚠️') + '</span><span class="quality-label">研报字数</span><span class="quality-value ' + (wordOk ? 'quality-pass' : 'quality-warn') + '">' + wordCount + '字（目标范围 150-250）</span></div>'
+    + '<div class="quality-metric"><span class="quality-icon">🔄</span><span class="quality-label">预计修改轮次</span><span class="quality-value ' + roundClass + '">' + roundEstimate + '</span></div>'
+    + '</div></div>';
+}
+
+// 反馈闭环：localStorage 记录采用/修改/Bad Case
+const FB_STORAGE_KEY = 'qiuzhi_stock_feedback_v1';
+function getFbData() {
+  try { return JSON.parse(localStorage.getItem(FB_STORAGE_KEY) || '{"adoptCount":0,"reviseCount":0,"badCases":[]}'); } catch { return { adoptCount: 0, reviseCount: 0, badCases: [] }; }
+}
+function saveFbData(d) { localStorage.setItem(FB_STORAGE_KEY, JSON.stringify(d)); }
+
+function buildFeedbackBar(query) {
+  const d = getFbData();
+  const statsText = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+  return '<div class="feedback-bar" id="feedbackBar">'
+    + '<span class="feedback-label">这份研报对你有帮助吗？</span>'
+    + '<button class="fb-btn fb-adopt" onclick="fbAdopt(this)">👍 采用</button>'
+    + '<button class="fb-btn fb-revise" onclick="fbRevise(this)">👎 需修改</button>'
+    + '<button class="fb-btn fb-bad" onclick="fbBad(this)">🚩 标记 Bad Case</button>'
+    + '<div class="fb-reasons" id="fbReasons">'
+    + '<span style="font-size:11px;color:var(--text-muted);">原因：</span>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">引用不准</button>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">分析浅</button>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">格式问题</button>'
+    + '</div>'
+    + '<div class="fb-bad-input-wrap" id="fbBadInputWrap">'
+    + '<textarea class="fb-bad-textarea" id="fbBadTextarea" placeholder="描述问题（可选）..."></textarea>'
+    + '<button class="fb-bad-submit" onclick="fbSubmitBad(\'' + escHtml(query) + '\')">提交 Bad Case</button>'
+    + '</div>'
+    + '<span class="fb-stats" id="fbStats">' + statsText + '</span>'
+    + '</div>';
+}
+
+function fbAdopt(btn) {
+  const d = getFbData();
+  d.adoptCount++;
+  saveFbData(d);
+  btn.classList.add('fb-active-adopt');
+  btn.textContent = '👍 已采用';
+  btn.disabled = true;
+  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+}
+
+function fbRevise(btn) {
+  const reasons = document.getElementById('fbReasons');
+  reasons.classList.toggle('show');
+}
+
+function fbSelectReason(btn, query) {
+  const d = getFbData();
+  d.reviseCount = (d.reviseCount || 0) + 1;
+  d.badCases = d.badCases || [];
+  d.badCases.push({ query: query, reason: btn.textContent, ts: Date.now(), type: 'revise' });
+  saveFbData(d);
+  btn.style.borderColor = 'orange';
+  btn.style.color = 'orange';
+  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+}
+
+function fbBad(btn) {
+  const wrap = document.getElementById('fbBadInputWrap');
+  wrap.classList.toggle('show');
+  btn.classList.toggle('fb-active-bad');
+}
+
+function fbSubmitBad(query) {
+  const note = document.getElementById('fbBadTextarea').value.trim();
+  const d = getFbData();
+  d.badCases = d.badCases || [];
+  d.badCases.push({ query: query, note: note, ts: Date.now(), type: 'bad_case' });
+  saveFbData(d);
+  document.getElementById('fbBadInputWrap').classList.remove('show');
+  document.getElementById('fbBadTextarea').value = '';
+  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+  const btn = document.querySelector('.fb-btn.fb-bad');
+  if (btn) { btn.classList.remove('fb-active-bad'); btn.textContent = '🚩 已记录'; btn.disabled = true; }
 }
 
 // Tab 5: Agent 工具定义
@@ -1305,16 +1454,32 @@ function renderAgentTools() {
 
 async function runAgent() {
   const question = document.getElementById('agentInput').value.trim();
-  if (!question) return;
+  if (!question) {
+    const inp = document.getElementById('agentInput');
+    inp.classList.add('input-shake');
+    inp.style.borderColor = 'var(--accent-red)';
+    setTimeout(function() { inp.classList.remove('input-shake'); inp.style.borderColor = ''; }, 600);
+    return;
+  }
   const el = document.getElementById('agentProcess');
   el.innerHTML = '';
   renderAgentTools();
-  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '分析问题，规划所需信息...');
-  await sleep(600);
-  updateAgentStep(thinkEl, '分析问题：「' + question + '」\n需要获取：价格走势数据、估值指标、市场情绪、相关新闻');
-  const planEl = addAgentStep(el, 'plan', '📋 PLAN', '制定执行计划...');
-  await sleep(500);
-  updateAgentStep(planEl, '执行计划：\n1. 解析股票代码\n2. 调用 get_price → 近期行情\n3. 调用 get_valuation → 估值数据\n4. 调用 search_news → 市场情绪\n5. 综合分析，输出判断');
+  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '🤖 LLM 正在思考...');
+  const planEl = addAgentStep(el, 'plan', '📋 PLAN', '⏳ 等待 THINK 完成...');
+  // LLM 实时生成 THINK + PLAN
+  try {
+    const tpSystemPrompt = '你是ReAct Agent的推理模块。根据用户问题，以JSON格式输出think和plan两段。\nthink：分析这个具体问题需要哪些信息，简洁2-3句话，要提到具体的股票/行业名称。\nplan：列出4-5步执行计划，提及具体要调用的工具（get_price/get_valuation/search_news/get_sentiment）和用途。\n格式：{"think":"...","plan":"1. ...\n2. ...\n3. ..."}';
+    const tpResp = await callLLM(tpSystemPrompt, '用户问题：' + question);
+    let tpData;
+    try {
+      tpData = JSON.parse(tpResp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
+    } catch { tpData = { think: '分析问题：「' + question + '」\n需要获取价格走势、估值指标、市场情绪', plan: '1. 解析股票代码\n2. 调用 get_price → 近期行情\n3. 调用 get_valuation → 估值数据\n4. 调用 search_news → 市场情绪\n5. 综合分析输出判断' }; }
+    updateAgentStep(thinkEl, tpData.think || '');
+    updateAgentStep(planEl, tpData.plan || '');
+  } catch(e) {
+    updateAgentStep(thinkEl, '分析问题：「' + question + '」\n需要获取：价格走势数据、估值指标、市场情绪、相关新闻');
+    updateAgentStep(planEl, '执行计划：\n1. 解析股票代码\n2. 调用 get_price → 近期行情\n3. 调用 get_valuation → 估值数据\n4. 调用 search_news → 市场情绪\n5. 综合分析，输出判断');
+  }
   const actEl = addAgentStep(el, 'act', '⚡ ACT', '执行工具调用...');
   const toolResults = {};
   let symbol, stockName;
@@ -1430,6 +1595,21 @@ const RADAR_DATA = {
   ]
 };
 
+function refreshRadarData() {
+  const icon = document.getElementById('radarRefreshIcon');
+  if (icon) { icon.classList.add('spinning'); setTimeout(function() { icon.classList.remove('spinning'); }, 600); }
+  // 随机微调数值，模拟更新感
+  RADAR_DATA.hotSectors = RADAR_DATA.hotSectors.map(function(s) {
+    return Object.assign({}, s, { change: parseFloat((s.change + (Math.random() - 0.5) * 0.4).toFixed(1)), heat: Math.min(99, Math.max(20, s.heat + Math.round((Math.random() - 0.5) * 6))) });
+  });
+  RADAR_DATA.sentimentTrend[RADAR_DATA.sentimentTrend.length - 1].score = parseFloat(Math.max(0.5, Math.min(5, RADAR_DATA.sentimentTrend[RADAR_DATA.sentimentTrend.length-1].score + (Math.random() - 0.5) * 0.6)).toFixed(1));
+  const now = new Date();
+  const ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + '（模拟）';
+  const tsEl = document.getElementById('radarTimestamp');
+  if (tsEl) tsEl.textContent = ts;
+  initRadar();
+}
+
 function initRadar() {
   const heatmap = document.getElementById('sectorHeatmap');
   if (!heatmap) return;
@@ -1524,10 +1704,18 @@ function renderPrivateKbList() {
   }
   el.innerHTML = PRIVATE_KB.map(function(doc) {
     return '<div class="private-doc-item">'
+      + '<div class="private-doc-content">'
       + '<div class="private-doc-title">📄 ' + escHtml(doc.title) + '</div>'
       + '<div class="private-doc-meta">' + escHtml(doc.date) + ' · ' + doc.content.length + '字</div>'
+      + '</div>'
+      + '<button class="private-doc-del" onclick="deletePrivateDoc(\'' + doc.id + '\')" title="删除">✕</button>'
       + '</div>';
   }).join('');
+}
+
+function deletePrivateDoc(id) {
+  PRIVATE_KB = PRIVATE_KB.filter(function(doc) { return doc.id !== id; });
+  renderPrivateKbList();
 }
 
 function searchPrivateKb(query, topK) {
