@@ -107,9 +107,9 @@ const casesData = [
     title: '反洗钱系统 LLM 审批助手',
     desc: '某头部金融科技公司。设计"AI生成参考意见 + 人工最终审批"协作模式，在提升尽调效率的同时守住合规底线，推动私有化部署落地。',
     metrics: [
-      { num: 'AI辅助+人工决策', label: '合规协作模式' },
-      { num: '私有化部署', label: '落地交付' },
-      { num: '书面表扬', label: '客户公司级认可' },
+      { num: '合规协作模式设计', label: 'AI辅助+人工最终决策' },
+      { num: '私有化交付', label: '落地部署方式' },
+      { num: '获客户公司级书面表扬', label: '客户认可' },
     ],
     detail: {
       background: '传统反洗钱尽调依赖人工录入分析意见，存在分析维度不全面、操作易出错的问题。在确保风控合规前提下引入 AI 辅助，提升审批效率与全面性。',
@@ -169,12 +169,26 @@ function toggleCaseDetail(btn) {
   btn.classList.toggle('open', !isOpen);
 }
 
-// ---- TOOL SWITCHER ----
-function switchTool(tool) {
-  document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+// ---- TOOL OPENER ----
+function openTool(tool) {
+  const panel = document.getElementById(`panel-${tool}`);
+  const card = document.querySelector(`.toolbox-card[data-tool="${tool}"]`);
+  const isOpen = !panel.classList.contains('hidden');
+
+  // 关闭所有 panels 和 active 状态
   document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
-  document.getElementById(`tab-${tool}`).classList.add('active');
-  document.getElementById(`panel-${tool}`).classList.remove('hidden');
+  document.querySelectorAll('.toolbox-card').forEach(c => c.classList.remove('active'));
+
+  if (!isOpen) {
+    panel.classList.remove('hidden');
+    if (card) card.classList.add('active');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// 兼容旧引用（如 case detail 的 demo link）
+function switchTool(tool) {
+  openTool(tool);
 }
 
 // ---- SVG GRADIENT for Progress Ring ----
@@ -202,13 +216,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ---- COPY PHONE ----
-function toggleJudgment() {
-  const body = document.getElementById('judgmentBody');
-  const toggle = document.getElementById('judgmentToggle');
+// ---- SECTION TOGGLE (行业落地 / 能力短板) ----
+function toggleSection(titleEl) {
+  const body = titleEl.nextElementSibling;
+  const toggleSpan = titleEl.querySelector('.section-toggle');
   const isHidden = body.classList.contains('hidden');
   body.classList.toggle('hidden', !isHidden);
-  toggle.textContent = isHidden ? '收起 ↑' : '展开 ↓';
+  if (toggleSpan) toggleSpan.textContent = isHidden ? '收起 ↑' : '展开 ↓';
+}
+
+// ---- COPY PHONE ----
+function toggleJudgment() {
+  // 整块默认展开，此函数保留兼容旧调用
 }
 
 function copyPhone() {
