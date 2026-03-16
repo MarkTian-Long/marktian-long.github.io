@@ -23,6 +23,7 @@ tools/ai-insights/              # AI 产品拆解展示（含 data/products.json
 tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
 tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
+tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
 tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # Markdown 内容资料（不是代码）
@@ -40,6 +41,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 | 信息工具 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
 | A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
+| 智能客服中台 Demo | `tools/service-agent/index.html` | 5-Tab：意图路由+多 Agent 协作+HITL，两列视角布局（用户视角/系统视角） | PM 作品 |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
@@ -68,9 +70,10 @@ docs/                           # 个人文档（.gitignore 排除）
 - 线上部署的 key 存在 GitHub Secrets，由 `.github/workflows/deploy.yml` 在构建时注入：
   - `ESOP_API_KEY` → tools/esop-extractor/config.local.js
   - `STOCK_OPENROUTER_KEY` → tools/stock/config.local.js
+  - `SERVICE_OPENROUTER_KEY` → tools/service-agent/config.local.js
   - 换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
-- **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应写生成脚本到 `/tmp/gen_xxx.js`，用 `node /tmp/gen_xxx.js` 执行；分多个脚本 append 写入比一次性写入更可靠
+- **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本；注意 Windows 环境下 `/tmp` 不可用，须用项目内路径
 - **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点

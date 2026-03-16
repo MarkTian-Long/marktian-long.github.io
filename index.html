@@ -65,13 +65,7 @@
                 计算机背景 · 主导 AI 产品从 0 到商业化落地
             </p>
             <p class="hero-value reveal delay-3">帮你把 AI 从 Demo 变成真正能用的产品</p>
-            <div class="hero-tags reveal delay-4">
-                <span class="tag">RAG 架构</span>
-                <span class="tag">Prompt Engineering</span>
-                <span class="tag">金融科技</span>
-                <span class="tag">0→1 落地</span>
-            </div>
-            <div class="hero-actions reveal delay-5">
+            <div class="hero-actions reveal delay-4">
                 <a href="#tools" class="btn btn-primary">体验 AI 工具 →</a>
                 <a href="#cases" class="btn btn-ghost">查看案例</a>
             </div>
@@ -319,6 +313,28 @@
                         </div>
                         <button class="toolbox-card-btn">体验 Demo →</button>
                     </div>
+
+                    <div class="toolbox-card" data-tool="service" onclick="openTool('service')">
+                        <div class="toolbox-card-icon">🤖</div>
+                        <div class="toolbox-card-body">
+                            <h3>智能客服中台 Demo</h3>
+                            <p>意图路由 → 多 Agent 协作 → Human-in-the-Loop，完整展示 AI 中台产品设计</p>
+                            <div class="toolbox-card-tags">
+                                <span>多 Agent 编排</span><span>意图路由</span><span>HITL</span>
+                            </div>
+                        </div>
+                        <div class="toolbox-card-highlights">
+                            <div class="highlight-item">
+                                <span class="hl-num">4 种意图</span>
+                                <span class="hl-label">动态路由到对应 Agent 链</span>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="hl-num">Workflow 可视化</span>
+                                <span class="hl-label">节点动态高亮，过程全透明</span>
+                            </div>
+                        </div>
+                        <button class="toolbox-card-btn">体验 Demo →</button>
+                    </div>
                 </div>
             </div>
 
@@ -342,6 +358,17 @@
                     </div>
                     <iframe src="tools/stock/index.html" class="dashboard-iframe"
                         title="A股 AI 助手" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-service">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">🤖 智能客服中台 Demo · 意图路由 + 多 Agent 协作 + Human-in-the-Loop</span>
+                        <a href="tools/service-agent/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/service-agent/index.html" class="dashboard-iframe"
+                        title="智能客服中台 Demo" loading="lazy"></iframe>
                 </div>
             </div>
 

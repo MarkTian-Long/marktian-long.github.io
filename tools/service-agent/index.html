@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能客服中台 Demo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='url(%23g)'>客</text></svg>" />
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="config.local.js" onerror="window.SERVICE_AGENT_CONFIG={}"></script>
+<script>
+const CONFIG = {
+  OPENROUTER_KEY: window.SERVICE_AGENT_CONFIG?.openrouterKey || '',
+  MODEL: window.SERVICE_AGENT_CONFIG?.model || 'anthropic/claude-3-haiku'
+};
+</script>
+<style>
+/* ===== 颜色常量（不依赖外部 CSS 变量） ===== */
+:root {
+  --sa-bg:       #080c18;
+  --sa-surface:  #0d1224;
+  --sa-card:     #111827;
+  --sa-border:   rgba(255,255,255,0.08);
+  --sa-text:     #f0f4ff;
+  --sa-muted:    #8a95b5;
+  --sa-dimmed:   #4a5270;
+  --sa-accent:   #4f8fff;
+  --sa-hover:    rgba(255,255,255,0.05);
+}
+
+/* ===== 基础 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: var(--sa-bg); color: var(--sa-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.sa-wrapper { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+/* ===== Topbar ===== */
+.sa-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px; background: var(--sa-surface);
+  border-bottom: 1px solid var(--sa-border); flex-shrink: 0;
+}
+.sa-topbar-title { font-size: 14px; font-weight: 600; color: var(--sa-text); }
+.sa-topbar-meta { font-size: 12px; color: var(--sa-muted); }
+.sa-topbar-model { font-size: 11px; color: var(--sa-accent); background: rgba(79,143,255,.12); padding: 2px 8px; border-radius: 10px; }
+
+/* ===== Tab Nav ===== */
+.sa-tab-nav {
+  display: flex; gap: 4px; padding: 8px 16px;
+  background: var(--sa-surface); border-bottom: 1px solid var(--sa-border); flex-shrink: 0;
+}
+.sa-tab-btn {
+  padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 500; background: transparent; color: var(--sa-muted);
+  transition: all .15s;
+}
+.sa-tab-btn:hover { background: var(--sa-hover); color: var(--sa-text); }
+.sa-tab-btn.active { background: var(--sa-accent); color: #fff; }
+
+/* ===== Tab Content ===== */
+.sa-tab-content { flex: 1; overflow: hidden; min-height: 0; }
+/* 对话 tab：不滚动，靠内部列自己管 */
+.sa-tab-panel { display: none; height: 100%; }
+.sa-tab-panel.active { display: flex; flex-direction: column; }
+/* 静态 tab：整体可滚动 */
+.sa-tab-panel.scrollable { overflow-y: auto; padding: 16px; }
+
+/* ===== Tab 1: 两列布局 ===== */
+.chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 10px;
+  padding: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 视角标签 */
+.pane-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 8px;
+}
+.pane-label.user-pov  { background: rgba(79,143,255,.12); color: #4f8fff; }
+.pane-label.sys-pov   { background: rgba(155,109,255,.12); color: #9b6dff; }
+
+/* 系统侧内部布局 */
+.sys-pane {
+  display: flex; flex-direction: column; min-height: 0; gap: 10px;
+}
+.sys-pane-inner {
+  display: flex; gap: 10px; flex: 1; min-height: 0;
+}
+
+/* ===== 流程图面板 ===== */
+.flow-panel {
+  background: var(--sa-surface); border: 1px solid var(--sa-border);
+  border-radius: 10px; padding: 12px; display: flex; flex-direction: column;
+  overflow-y: auto; min-height: 0; width: 200px; flex-shrink: 0;
+}
+
+/* 步骤卡片流（系统侧） */
+.step-stream-panel {
+  background: var(--sa-surface); border: 1px solid var(--sa-border);
+  border-radius: 10px; padding: 10px 12px; flex-shrink: 0;
+  max-height: 140px; overflow-y: auto;
+}
+.step-stream { display: flex; flex-direction: column; gap: 6px; }
+.flow-panel-title { font-size: 10px; font-weight: 600; color: var(--sa-dimmed); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; flex-shrink: 0; }
+.flow-svg { width: 100%; flex-shrink: 0; }
+
+/* 流程图节点状态 */
+.fn-group.idle .fn-rect    { fill: #111827; stroke: rgba(255,255,255,0.1); }
+.fn-group.routing .fn-rect { fill: rgba(251,191,36,.12); stroke: #fbbf24; stroke-width: 2; }
+.fn-group.active .fn-rect  { fill: rgba(79,143,255,.18); stroke: #4f8fff; stroke-width: 2; }
+.fn-group.done .fn-rect    { fill: rgba(34,197,94,.12); stroke: #22c55e; stroke-width: 1.5; }
+.fn-group.escalated .fn-rect { fill: rgba(239,68,68,.12); stroke: #ef4444; stroke-width: 2; }
+.fn-text { font-size: 11px; fill: #8a95b5; font-family: sans-serif; transition: all .3s; }
+.fn-group.routing .fn-text { fill: #fbbf24; }
+.fn-group.active .fn-text  { fill: #93c5fd; }
+.fn-group.done .fn-text    { fill: #86efac; }
+.fn-group.escalated .fn-text { fill: #fca5a5; }
+
+/* 连接线动画 */
+@keyframes dash-flow { to { stroke-dashoffset: -20; } }
+.flow-line { stroke: rgba(255,255,255,0.1); stroke-width: 1.5; fill: none; transition: stroke .3s; }
+.flow-line.active { stroke: #4f8fff; stroke-dasharray: 5 3; animation: dash-flow .6s linear infinite; }
+
+/* ===== 中间聊天面板 ===== */
+.chat-panel {
+  background: var(--sa-surface); border: 1px solid var(--sa-border);
+  border-radius: 10px; display: flex; flex-direction: column;
+  min-height: 0; overflow: hidden;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.chat-bubble {
+  max-width: 85%; padding: 10px 13px; border-radius: 10px; font-size: 13px; line-height: 1.5;
+}
+.chat-bubble.user { align-self: flex-end; background: #4f8fff; color: #fff; }
+.chat-bubble.assistant {
+  align-self: flex-start; background: var(--sa-card);
+  border: 1px solid var(--sa-border); color: var(--sa-text);
+}
+.chat-bubble.system-msg {
+  align-self: center; background: transparent; border: 1px dashed var(--sa-border);
+  color: var(--sa-muted); font-size: 11px; max-width: 95%;
+}
+
+/* Agent 步骤卡片 */
+.step-card {
+  align-self: flex-start; width: 95%; background: var(--sa-card);
+  border: 1px solid var(--sa-border); border-radius: 8px; padding: 10px 12px; font-size: 12px;
+}
+.step-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.step-card-icon { font-size: 16px; }
+.step-card-name { font-weight: 600; color: var(--sa-text); font-size: 12px; }
+.step-card-badge {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  background: rgba(79,143,255,.2); color: #4f8fff;
+}
+.step-card-badge.mock { background: rgba(251,191,36,.15); color: #fbbf24; }
+.step-card-badge.hitl { background: rgba(239,68,68,.15); color: #ef4444; }
+.step-card.running .step-card-name::after { content: ' …'; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.step-card-body { color: var(--sa-muted); line-height: 1.5; }
+.step-card-body pre {
+  background: rgba(0,0,0,.25); border-radius: 4px; padding: 6px; margin-top: 4px;
+  font-size: 11px; white-space: pre-wrap; word-break: break-all; color: var(--sa-muted);
+}
+
+/* HITL 卡片 */
+.hitl-card {
+  align-self: flex-start; width: 95%;
+  background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3);
+  border-radius: 8px; padding: 12px 14px;
+}
+.hitl-card-title { font-size: 13px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
+.hitl-card-body { font-size: 12px; color: var(--sa-muted); margin-bottom: 10px; }
+.hitl-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.hitl-btn {
+  padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 500; transition: all .15s;
+}
+.hitl-btn.approve { background: #22c55e; color: #fff; }
+.hitl-btn.reject  { background: #ef4444; color: #fff; }
+.hitl-btn.delegate { background: var(--sa-card); border: 1px solid var(--sa-border); color: var(--sa-text); }
+.hitl-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* 输入区 */
+.chat-input-area {
+  padding: 10px 12px; border-top: 1px solid var(--sa-border); flex-shrink: 0;
+}
+.quick-questions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.quick-btn {
+  padding: 4px 10px; border-radius: 16px; border: 1px solid var(--sa-border);
+  background: transparent; color: var(--sa-muted); font-size: 11px; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.quick-btn:hover { border-color: var(--sa-accent); color: var(--sa-accent); }
+.quick-btn:disabled { opacity: .4; cursor: not-allowed; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input-row input {
+  flex: 1; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--sa-border); background: var(--sa-card);
+  color: var(--sa-text); font-size: 13px; outline: none;
+}
+.chat-input-row input:focus { border-color: var(--sa-accent); }
+.chat-input-row input:disabled { opacity: .5; }
+.chat-send-btn {
+  padding: 8px 16px; border-radius: 8px; border: none;
+  background: var(--sa-accent); color: #fff; font-size: 13px; cursor: pointer;
+  font-weight: 500; transition: opacity .15s;
+}
+.chat-send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ===== 右侧 Agent 状态面板 ===== */
+.agent-status-panel {
+  background: var(--sa-surface); border: 1px solid var(--sa-border);
+  border-radius: 10px; padding: 10px; display: flex; flex-direction: column;
+  overflow-y: auto; min-height: 0;
+}
+.asp-title { font-size: 10px; font-weight: 600; color: var(--sa-dimmed); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; flex-shrink: 0; }
+.asp-agent {
+  padding: 6px 8px; border-radius: 6px; border: 1px solid var(--sa-border);
+  margin-bottom: 4px; transition: all .3s; flex-shrink: 0;
+}
+.asp-agent-name { font-size: 11px; font-weight: 600; color: var(--sa-text); margin-bottom: 2px; }
+.asp-agent-status { font-size: 10px; color: var(--sa-muted); display: flex; align-items: center; gap: 4px; }
+.asp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sa-border); flex-shrink: 0; transition: all .3s; }
+.asp-agent.routing .asp-dot  { background: #fbbf24; }
+.asp-agent.active .asp-dot   { background: #4f8fff; animation: pulse-dot .8s infinite; }
+.asp-agent.done .asp-dot     { background: #22c55e; }
+.asp-agent.escalated .asp-dot { background: #ef4444; animation: pulse-dot .8s infinite; }
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .7; } }
+.asp-agent.routing { background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.3); }
+.asp-agent.active  { background: rgba(79,143,255,.08); border-color: rgba(79,143,255,.3); }
+.asp-agent.done    { background: rgba(34,197,94,.06); border-color: rgba(34,197,94,.2); }
+.asp-agent.escalated { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.3); }
+
+/* 运行日志 */
+.asp-log { margin-top: 8px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.asp-log-title { font-size: 10px; color: var(--sa-dimmed); margin-bottom: 4px; flex-shrink: 0; }
+.asp-log-body {
+  background: var(--sa-card); border-radius: 6px; padding: 6px;
+  font-size: 10px; color: var(--sa-muted); flex: 1; overflow-y: auto;
+  font-family: monospace; line-height: 1.6; min-height: 60px;
+}
+.log-line.info  { color: #93c5fd; }
+.log-line.ok    { color: #86efac; }
+.log-line.warn  { color: #fbbf24; }
+.log-line.error { color: #fca5a5; }
+
+/* ===== 静态 Tab 内容 ===== */
+.static-tab { padding: 4px 0; max-width: 900px; }
+.section-card {
+  background: var(--sa-surface); border: 1px solid var(--sa-border);
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 14px;
+}
+.section-card h3 { font-size: 14px; font-weight: 700; color: var(--sa-text); margin-bottom: 10px; }
+.section-card p, .section-card li { font-size: 13px; color: var(--sa-muted); line-height: 1.7; }
+.section-card ul { padding-left: 18px; }
+.section-card strong { color: var(--sa-text); }
+.section-card code { background: rgba(79,143,255,.1); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+
+/* 意图路由卡片 */
+.intent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.intent-card { background: var(--sa-card); border: 1px solid var(--sa-border); border-radius: 8px; padding: 14px; }
+.intent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.intent-icon { font-size: 20px; }
+.intent-name { font-size: 13px; font-weight: 700; color: var(--sa-text); }
+.intent-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
+.intent-badge.faq       { background: rgba(34,197,94,.15); color: #22c55e; }
+.intent-badge.logistics { background: rgba(79,143,255,.15); color: #93c5fd; }
+.intent-badge.return    { background: rgba(251,191,36,.15); color: #fbbf24; }
+.intent-badge.complaint { background: rgba(239,68,68,.15); color: #ef4444; }
+.intent-keywords { font-size: 11px; color: var(--sa-muted); margin-bottom: 8px; }
+.intent-chain { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.chain-node { font-size: 10px; padding: 3px 8px; border-radius: 12px; background: rgba(79,143,255,.1); color: #93c5fd; border: 1px solid rgba(79,143,255,.2); }
+.chain-arrow { font-size: 10px; color: var(--sa-dimmed); }
+
+/* Agent 图谱 */
+.agent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.agent-card { background: var(--sa-card); border: 1px solid var(--sa-border); border-radius: 8px; padding: 14px; }
+.agent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.agent-card-icon { font-size: 18px; }
+.agent-card-name { font-size: 13px; font-weight: 700; color: var(--sa-text); }
+.agent-card-role { font-size: 11px; color: var(--sa-muted); }
+.agent-card-row { display: flex; gap: 6px; margin-bottom: 5px; }
+.agent-card-label { font-size: 10px; color: var(--sa-dimmed); min-width: 28px; }
+.agent-card-val { font-size: 11px; color: var(--sa-muted); }
+.agent-prompt {
+  margin-top: 8px; background: rgba(0,0,0,.2); border-radius: 6px; padding: 8px;
+  font-size: 10px; color: var(--sa-muted); font-family: monospace;
+  white-space: pre-wrap; max-height: 90px; overflow-y: auto;
+}
+
+/* 治理表格 */
+.gov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.gov-table th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--sa-border); color: var(--sa-muted); font-weight: 600; font-size: 11px; }
+.gov-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--sa-muted); }
+.gov-table tr:last-child td { border-bottom: none; }
+
+/* 飞轮 */
+.flywheel { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.fw-step {
+  flex: 1; min-width: 110px; background: var(--sa-card);
+  border: 1px solid var(--sa-border); border-radius: 8px; padding: 12px 10px; text-align: center;
+  position: relative;
+}
+.fw-step:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--sa-dimmed); z-index: 1; }
+.fw-icon { font-size: 22px; margin-bottom: 6px; }
+.fw-name { font-size: 11px; font-weight: 600; color: var(--sa-text); margin-bottom: 3px; }
+.fw-desc { font-size: 10px; color: var(--sa-muted); }
+</style>
+</head>
+<body>
+<div class="sa-wrapper">
+
+  <!-- Topbar -->
+  <div class="sa-topbar">
+    <div>
+      <div class="sa-topbar-title">🤖 智能客服中台 Demo</div>
+      <div class="sa-topbar-meta">意图路由 · 多 Agent 协作 · Human-in-the-Loop</div>
+    </div>
+    <span class="sa-topbar-model" id="model-badge">模型加载中…</span>
+  </div>
+
+  <!-- Tab Nav -->
+  <div class="sa-tab-nav">
+    <button class="sa-tab-btn active" data-tab="chat" onclick="switchSaTab('chat')">💬 对话演示</button>
+    <button class="sa-tab-btn" data-tab="routing" onclick="switchSaTab('routing')">🧭 路由逻辑</button>
+    <button class="sa-tab-btn" data-tab="agents" onclick="switchSaTab('agents')">🤖 Agent 图谱</button>
+    <button class="sa-tab-btn" data-tab="gov" onclick="switchSaTab('gov')">⚙️ 中台治理</button>
+    <button class="sa-tab-btn" data-tab="flywheel" onclick="switchSaTab('flywheel')">🔄 数据飞轮</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="sa-tab-content">
+
+    <!-- ===== Tab 1: 对话演示 ===== -->
+    <div class="sa-tab-panel active" id="sa-tab-chat">
+      <div class="chat-layout">
+
+        <!-- 左侧：用户视角 -->
+        <div style="display:flex;flex-direction:column;min-height:0;gap:8px;">
+          <span class="pane-label user-pov">👤 用户视角</span>
+          <div class="chat-panel" style="flex:1;min-height:0;">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-bubble system-msg">👋 选择下方快捷问题，体验 AI 客服全流程（右侧可查看系统运行状态）</div>
+          </div>
+          <div class="chat-input-area">
+            <div class="quick-questions">
+              <button class="quick-btn" onclick="sendQuick('退换货政策是什么？')">📦 退换货政策</button>
+              <button class="quick-btn" onclick="sendQuick('我的订单2024031001还没到，在哪里？')">🚚 查询物流</button>
+              <button class="quick-btn" onclick="sendQuick('我要退货，昨天买的手机质量太差了')">🔄 申请退货</button>
+              <button class="quick-btn" onclick="sendQuick('你们服务太差了！快递丢件还不处理，我要投诉！')">😤 愤怒投诉</button>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" id="chat-input" placeholder="输入问题，回车发送…" onkeydown="if(event.key==='Enter')sendChat()"/>
+              <button class="chat-send-btn" id="send-btn" onclick="sendChat()">发送</button>
+            </div>
+          </div>
+        </div>
+        </div><!-- /用户视角 -->
+
+        <!-- 右侧：系统视角 -->
+        <div class="sys-pane">
+          <span class="pane-label sys-pov">⚙️ 系统视角（面试官/PM 视角）</span>
+          <div class="sys-pane-inner">
+
+        <!-- 流程图 -->
+        <div class="flow-panel">
+          <div class="flow-panel-title">Workflow 状态</div>
+          <svg class="flow-svg" viewBox="0 0 220 560" xmlns="http://www.w3.org/2000/svg">
+            <g class="fn-group idle" id="node-router">
+              <rect class="fn-rect" x="30" y="10" width="160" height="44" rx="8" ry="8"/>
+              <text class="fn-text" x="110" y="30" text-anchor="middle" font-size="12">🧭</text>
+              <text class="fn-text" x="110" y="46" text-anchor="middle" font-size="11" font-weight="600">意图路由 Router</text>
+            </g>
+            <line class="flow-line" id="line-faq"      x1="80"  y1="54" x2="50"  y2="110"/>
+            <line class="flow-line" id="line-logistics" x1="110" y1="54" x2="110" y2="110"/>
+            <line class="flow-line" id="line-return"    x1="140" y1="54" x2="180" y2="110"/>
+            <g class="fn-group idle" id="node-faq">
+              <rect class="fn-rect" x="8" y="110" width="80" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="48" y="127" text-anchor="middle" font-size="11">📖</text>
+              <text class="fn-text" x="48" y="142" text-anchor="middle" font-size="10">FAQ Agent</text>
+            </g>
+            <g class="fn-group idle" id="node-logistics">
+              <rect class="fn-rect" x="70" y="110" width="80" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="110" y="127" text-anchor="middle" font-size="11">🚚</text>
+              <text class="fn-text" x="110" y="142" text-anchor="middle" font-size="10">物流查询</text>
+            </g>
+            <line class="flow-line" id="line-logi-reply" x1="110" y1="148" x2="110" y2="198"/>
+            <g class="fn-group idle" id="node-logi-reply">
+              <rect class="fn-rect" x="70" y="198" width="80" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="110" y="215" text-anchor="middle" font-size="11">✍️</text>
+              <text class="fn-text" x="110" y="230" text-anchor="middle" font-size="10">回复生成</text>
+            </g>
+            <g class="fn-group idle" id="node-return-check">
+              <rect class="fn-rect" x="140" y="110" width="76" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="178" y="127" text-anchor="middle" font-size="11">📋</text>
+              <text class="fn-text" x="178" y="142" text-anchor="middle" font-size="10">规则核查</text>
+            </g>
+            <line class="flow-line" id="line-return-sol" x1="178" y1="148" x2="178" y2="198"/>
+            <g class="fn-group idle" id="node-return-sol">
+              <rect class="fn-rect" x="140" y="198" width="76" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="178" y="215" text-anchor="middle" font-size="11">💡</text>
+              <text class="fn-text" x="178" y="230" text-anchor="middle" font-size="10">方案生成</text>
+            </g>
+            <line x1="10" y1="258" x2="210" y2="258" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <text x="110" y="272" text-anchor="middle" font-size="9" fill="#4b5563">— 投诉链 —</text>
+            <g class="fn-group idle" id="node-emotion">
+              <rect class="fn-rect" x="30" y="280" width="160" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="110" y="297" text-anchor="middle" font-size="11">😤</text>
+              <text class="fn-text" x="110" y="312" text-anchor="middle" font-size="10">情绪识别 Agent</text>
+            </g>
+            <line class="flow-line" id="line-emo-esc" x1="110" y1="318" x2="110" y2="360"/>
+            <g class="fn-group idle" id="node-escalation">
+              <rect class="fn-rect" x="30" y="360" width="160" height="38" rx="7" ry="7"/>
+              <text class="fn-text" x="110" y="377" text-anchor="middle" font-size="11">⚖️</text>
+              <text class="fn-text" x="110" y="392" text-anchor="middle" font-size="10">升级判断 Agent</text>
+            </g>
+            <line class="flow-line" id="line-esc-branch" x1="110" y1="398" x2="110" y2="438"/>
+            <g class="fn-group idle" id="node-hitl">
+              <rect class="fn-rect" x="20" y="438" width="80" height="36" rx="7" ry="7"/>
+              <text class="fn-text" x="60" y="454" text-anchor="middle" font-size="11">👤</text>
+              <text class="fn-text" x="60" y="468" text-anchor="middle" font-size="10">人工接入</text>
+            </g>
+            <g class="fn-group idle" id="node-soothe">
+              <rect class="fn-rect" x="120" y="438" width="80" height="36" rx="7" ry="7"/>
+              <text class="fn-text" x="160" y="454" text-anchor="middle" font-size="11">🌸</text>
+              <text class="fn-text" x="160" y="468" text-anchor="middle" font-size="10">安抚回复</text>
+            </g>
+          </svg>
+        </div>
+
+          <!-- 系统侧：Agent 状态 -->
+          <div class="agent-status-panel">
+            <div class="asp-title">Agent 状态</div>
+            <div class="asp-agent idle" id="asp-router">
+              <div class="asp-agent-name">🧭 意图路由 Router</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-router-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-faq">
+              <div class="asp-agent-name">📖 FAQ Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-faq-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-logistics">
+              <div class="asp-agent-name">🚚 物流查询 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-logistics-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-logi-reply">
+              <div class="asp-agent-name">✍️ 回复生成 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-logi-reply-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-return-check">
+              <div class="asp-agent-name">📋 规则核查 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-return-check-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-return-sol">
+              <div class="asp-agent-name">💡 方案生成 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-return-sol-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-emotion">
+              <div class="asp-agent-name">😤 情绪识别 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-emotion-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-escalation">
+              <div class="asp-agent-name">⚖️ 升级判断 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-escalation-status">待命</span></div>
+            </div>
+            <div class="asp-agent idle" id="asp-soothe">
+              <div class="asp-agent-name">🌸 安抚回复 Agent</div>
+              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-soothe-status">待命</span></div>
+            </div>
+            <div class="asp-log">
+              <div class="asp-log-title">运行日志</div>
+              <div class="asp-log-body" id="run-log"></div>
+            </div>
+          </div>
+          </div><!-- /sys-pane-inner -->
+
+          <!-- 系统侧：步骤卡片流 -->
+          <div class="step-stream-panel">
+            <div class="asp-title">Agent 执行步骤</div>
+            <div class="step-stream" id="step-stream"></div>
+          </div>
+
+        </div><!-- /sys-pane -->
+
+      </div><!-- /chat-layout -->
+    </div><!-- /tab-chat -->
+
+    <!-- ===== Tab 2: 路由逻辑 ===== -->
+    <div class="sa-tab-panel scrollable" id="sa-tab-routing">
+      <div class="static-tab">
+        <div class="section-card">
+          <h3>🧭 意图路由设计原则</h3>
+          <p>路由是客服中台的核心决策节点。本设计将问题分为 4 类，通过 LLM 语义分类器进行路由（而非关键词匹配），分类置信度低时默认走 FAQ 链兜底。核心原则：<strong>确定化决策交给规则，模糊判断交给 LLM</strong>。</p>
+        </div>
+        <div class="intent-grid">
+          <div class="intent-card">
+            <div class="intent-card-header">
+              <span class="intent-icon">📖</span>
+              <div><div class="intent-name">FAQ 咨询</div><span class="intent-badge faq">1 次 LLM</span></div>
+            </div>
+            <div class="intent-keywords">典型问法：政策是什么、多少天、支持哪些支付…</div>
+            <div class="intent-chain">
+              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
+              <span class="chain-node">FAQ Agent</span><span class="chain-arrow">→</span>
+              <span class="chain-node">输出回复</span>
+            </div>
+          </div>
+          <div class="intent-card">
+            <div class="intent-card-header">
+              <span class="intent-icon">🚚</span>
+              <div><div class="intent-name">物流查询</div><span class="intent-badge logistics">2 次 LLM + 工具</span></div>
+            </div>
+            <div class="intent-keywords">典型问法：快递到哪了、订单发货了吗、几天到…</div>
+            <div class="intent-chain">
+              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
+              <span class="chain-node">物流查询🎭</span><span class="chain-arrow">→</span>
+              <span class="chain-node">回复生成</span>
+            </div>
+          </div>
+          <div class="intent-card">
+            <div class="intent-card-header">
+              <span class="intent-icon">🔄</span>
+              <div><div class="intent-name">退换货申请</div><span class="intent-badge return">2 次 LLM</span></div>
+            </div>
+            <div class="intent-keywords">典型问法：我要退货、质量有问题、能换货吗…</div>
+            <div class="intent-chain">
+              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
+              <span class="chain-node">规则核查</span><span class="chain-arrow">→</span>
+              <span class="chain-node">方案生成</span>
+            </div>
+          </div>
+          <div class="intent-card">
+            <div class="intent-card-header">
+              <span class="intent-icon">😤</span>
+              <div><div class="intent-name">投诉 / 维权</div><span class="intent-badge complaint">2–3 次 LLM + HITL</span></div>
+            </div>
+            <div class="intent-keywords">典型问法：太差了、要投诉、赔偿、曝光、维权…</div>
+            <div class="intent-chain">
+              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
+              <span class="chain-node">情绪识别</span><span class="chain-arrow">→</span>
+              <span class="chain-node">升级判断</span><span class="chain-arrow">→</span>
+              <span class="chain-node">HITL/安抚</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-card" style="margin-top:14px;">
+          <h3>Router System Prompt 设计要点</h3>
+          <p>Router 被严格约束只输出 4 个枚举值之一（<code>faq / logistics / return / complaint</code>），禁止解释和加标点。这是「确定化」的典型应用——当分类规则明确时，约束 LLM 输出格式，以保证下游解析的稳健性。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Tab 3: Agent 图谱 ===== -->
+    <div class="sa-tab-panel scrollable" id="sa-tab-agents">
+      <div class="static-tab">
+        <div class="section-card">
+          <h3>🤖 Agent 设计原则</h3>
+          <p>每个 Agent 职责单一、输入/输出明确、相互解耦。Router 只做分类，不做回复；回复 Agent 只做措辞，不做决策。这使每个节点可独立测试、替换、优化，也便于溯源问题。</p>
+        </div>
+        <div class="agent-grid">
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">🧭</span><div><div class="agent-card-name">意图路由 Router</div><div class="agent-card-role">分类器，不生成回复</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户原始消息</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">faq | logistics | return | complaint</span></div>
+            <div class="agent-prompt">你是一个客服意图分类器。根据用户消息，输出且仅输出以下标签之一：
+faq（政策咨询）
+logistics（物流查询）
+return（退换货申请）
+complaint（投诉维权）
+不要输出任何其他内容。</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">📖</span><div><div class="agent-card-name">FAQ Agent</div><div class="agent-card-role">知识库问答</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户问题</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">基于政策的标准回答</span></div>
+            <div class="agent-prompt">你是电商客服 FAQ 专员。政策：7天无理由退换，配送3-5个工作日，支持微信/支付宝/银行卡，客服工作日9:00-22:00。
+简洁准确，使用"您"的敬语，不超过100字。</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">🚚</span><div><div class="agent-card-name">物流查询 Agent 🎭</div><div class="agent-card-role">工具调用（模拟）</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户消息（含订单号）</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">结构化物流状态 JSON</span></div>
+            <div class="agent-prompt">从用户消息提取订单号（10位+数字），输出JSON：
+{"order_id":"xxx","status":"xxx","location":"xxx","eta":"xxx"}
+如无订单号，status设"需要订单号"。仅输出JSON。</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">✍️</span><div><div class="agent-card-name">回复生成 Agent</div><div class="agent-card-role">自然语言生成</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">物流查询结果 JSON</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">面向用户的友好回复</span></div>
+            <div class="agent-prompt">根据物流查询结果生成友好专业的客服回复。
+如结果显示需要订单号，礼貌引导用户提供。
+使用"您"敬语，80字以内。</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">📋</span><div><div class="agent-card-name">规则核查 Agent</div><div class="agent-card-role">政策合规判断</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">退换货诉求</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">是否符合政策 JSON</span></div>
+            <div class="agent-prompt">退换货规则：7天无理由退换，15天质量问题换货，超期或人为损坏不支持。
+输出JSON：{"eligible":true/false,"reason":"xxx","days_suggestion":"xxx"}</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">💡</span><div><div class="agent-card-name">方案生成 Agent</div><div class="agent-card-role">个性化方案输出</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">核查结果 + 用户诉求</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">处理方案文本</span></div>
+            <div class="agent-prompt">根据退换货核查结果生成处理方案。
+符合条件：具体操作步骤和时间节点。
+不符合：礼貌说明原因，提供替代方案（维修/折扣券）。
+使用"您"敬语，100字以内。</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">😤</span><div><div class="agent-card-name">情绪识别 Agent</div><div class="agent-card-role">情感分析</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户投诉消息</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">情绪强度分 + 诉求摘要 JSON</span></div>
+            <div class="agent-prompt">分析情绪强度（1=轻微不满，10=极度愤怒）。
+输出JSON：{"emotion_score":数字,"emotion_label":"不满/生气/愤怒/激烈","core_complaint":"xxx","tags":[]}</div>
+          </div>
+          <div class="agent-card">
+            <div class="agent-card-header"><span class="agent-card-icon">⚖️</span><div><div class="agent-card-name">升级判断 Agent</div><div class="agent-card-role">HITL 触发决策</div></div></div>
+            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">情绪分析结果</span></div>
+            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">是否触发人工 JSON</span></div>
+            <div class="agent-prompt">触发条件：情绪分≥7，或涉及"法律""曝光""媒体""投诉平台"。
+输出JSON：{"need_human":true/false,"reason":"xxx","priority":"high/medium/low","suggestion":"xxx"}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Tab 4: 中台治理 ===== -->
+    <div class="sa-tab-panel scrollable" id="sa-tab-gov">
+      <div class="static-tab">
+        <div class="section-card">
+          <h3>⚙️ Human-in-the-Loop 触发设计</h3>
+          <p>HITL 是 AI 客服中台的核心安全机制。不是所有问题都应由 AI 全自动处理——高风险场景必须设计「暂停点」，让人工在关键决策前介入确认。</p>
+          <table class="gov-table" style="margin-top:12px;">
+            <thead><tr><th>触发条件</th><th>优先级</th><th>处理方式</th><th>SLA</th></tr></thead>
+            <tbody>
+              <tr><td>情绪分 ≥ 7（愤怒/激烈）</td><td>🔴 高</td><td>人工实时介入</td><td>90秒内响应</td></tr>
+              <tr><td>涉及法律/曝光/媒体关键词</td><td>🔴 高</td><td>升级客服主管</td><td>立即</td></tr>
+              <tr><td>退款金额 > 500元</td><td>🟠 中</td><td>人工审批后执行</td><td>5分钟</td></tr>
+              <tr><td>超时未解决（&gt;10min）</td><td>🟠 中</td><td>自动转人工</td><td>自动触发</td></tr>
+              <tr><td>用户主动要求人工</td><td>🟡 低</td><td>正常排队</td><td>3分钟</td></tr>
+              <tr><td>AI 置信度 &lt; 0.6</td><td>🟡 低</td><td>人工兜底</td><td>5分钟</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-card">
+          <h3>📊 SLA 指标体系</h3>
+          <table class="gov-table">
+            <thead><tr><th>指标</th><th>目标值</th><th>监控维度</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>首响应时间（FRT）</td><td>&lt; 5秒</td><td>P50/P95/P99</td><td>AI 自动回复时延</td></tr>
+              <tr><td>意图识别准确率</td><td>≥ 92%</td><td>按意图类型分桶</td><td>错误路由影响满意度</td></tr>
+              <tr><td>AI 自动化率</td><td>≥ 70%</td><td>按场景/时段</td><td>降低人工成本</td></tr>
+              <tr><td>用户满意度（CSAT）</td><td>≥ 4.2/5</td><td>AI vs 人工对比</td><td>衡量回复质量</td></tr>
+              <tr><td>HITL 误触发率</td><td>&lt; 8%</td><td>按触发条件</td><td>避免人工负担过重</td></tr>
+              <tr><td>人工接入时长</td><td>&lt; 3分钟</td><td>P50</td><td>HITL 后转接效率</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-card">
+          <h3>🏗 中台治理能力矩阵</h3>
+          <ul>
+            <li><strong>可观测性</strong>：每次 LLM 调用记录 token 消耗、延迟、输入/输出摘要，支持按场景 Drill-down</li>
+            <li><strong>灰度发布</strong>：新 Agent Prompt 版本先对 5% 流量生效，A/B 对比 CSAT 后全量</li>
+            <li><strong>降级策略</strong>：LLM 超时 &gt; 3s 时走规则引擎兜底，保证 SLA</li>
+            <li><strong>成本控制</strong>：FAQ 链优先走小模型（haiku），复杂链路才调大模型（sonnet）</li>
+            <li><strong>安全审查</strong>：输出经过敏感词过滤 + 品牌口吻校验后再发送给用户</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Tab 5: 数据飞轮 ===== -->
+    <div class="sa-tab-panel scrollable" id="sa-tab-flywheel">
+      <div class="static-tab">
+        <div class="section-card">
+          <h3>🔄 数据飞轮：Bad Case 驱动持续优化</h3>
+          <p>AI 客服中台的核心竞争力不是上线时的准确率，而是<strong>持续迭代</strong>的能力。数据飞轮将每次失败案例转化为下一版本的训练信号，形成正向循环。</p>
+        </div>
+        <div class="flywheel">
+          <div class="fw-step"><div class="fw-icon">💬</div><div class="fw-name">用户对话</div><div class="fw-desc">实时采集全量对话日志</div></div>
+          <div class="fw-step"><div class="fw-icon">🔍</div><div class="fw-name">Bad Case 识别</div><div class="fw-desc">低评分、HITL触发、超时转人工</div></div>
+          <div class="fw-step"><div class="fw-icon">🏷️</div><div class="fw-name">人工标注</div><div class="fw-desc">客服专员标注正确意图和理想回复</div></div>
+          <div class="fw-step"><div class="fw-icon">🧬</div><div class="fw-name">Prompt 迭代</div><div class="fw-desc">PM+算法分析，优化 System Prompt</div></div>
+          <div class="fw-step"><div class="fw-icon">🚀</div><div class="fw-name">灰度验证</div><div class="fw-desc">A/B 测试新版本效果</div></div>
+        </div>
+        <div class="section-card" style="margin-top:14px;">
+          <h3>📋 Bad Case 分类与处理优先级</h3>
+          <table class="gov-table">
+            <thead><tr><th>Bad Case 类型</th><th>来源信号</th><th>优先级</th><th>处理方式</th></tr></thead>
+            <tbody>
+              <tr><td>意图误分类</td><td>人工接入后标注纠偏</td><td>🔴 P0</td><td>扩充 Router 训练集 / 优化分类 Prompt</td></tr>
+              <tr><td>回复内容错误</td><td>用户给 1 星评分</td><td>🔴 P0</td><td>审查知识库，更新 Agent Prompt</td></tr>
+              <tr><td>HITL 误触发</td><td>人工判断无需介入</td><td>🟠 P1</td><td>调整情绪分阈值，增加白名单规则</td></tr>
+              <tr><td>回复语气不佳</td><td>3 星以下 + 负向词</td><td>🟠 P1</td><td>优化回复 Agent 口吻要求</td></tr>
+              <tr><td>回复过长/过短</td><td>用户追问/反馈</td><td>🟡 P2</td><td>调整 max_tokens 和长度指令</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-card">
+          <h3>📈 PM 视角：飞轮加速的关键</h3>
+          <ul>
+            <li><strong>标注效率</strong>：设计清晰的标注界面，单条 Bad Case 标注时间 &lt; 30秒</li>
+            <li><strong>标注一致性</strong>：制定标注规范文档，定期校准（IAA ≥ 0.85）</li>
+            <li><strong>自动化扩充</strong>：用 LLM 生成语义相似变体，人工抽样验证 10%</li>
+            <li><strong>效果归因</strong>：每次 Prompt 迭代记录变更内容，便于回溯和对比</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sa-tab-content -->
+</div><!-- /sa-wrapper -->
+
+<script>
+// =============================================
+//  Tab 切换
+// =============================================
+function switchSaTab(name) {
+  document.querySelectorAll('.sa-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.sa-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('sa-tab-' + name).classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+}
+
+// =============================================
+//  初始化
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+  var badge = document.getElementById('model-badge');
+  if (CONFIG.OPENROUTER_KEY) {
+    badge.textContent = CONFIG.MODEL;
+    badge.style.background = 'rgba(34,197,94,.15)';
+    badge.style.color = '#22c55e';
+  } else {
+    badge.textContent = '未配置 API Key';
+    badge.style.background = 'rgba(239,68,68,.15)';
+    badge.style.color = '#ef4444';
+  }
+});
+
+// =============================================
+//  Agent 定义
+// =============================================
+var AGENTS = {
+  router: {
+    name: '意图路由 Router', icon: '🧭',
+    system: '你是一个客服意图分类器。根据用户消息，输出且仅输出以下标签之一：\nfaq（政策咨询）\nlogistics（物流查询）\nreturn（退换货申请）\ncomplaint（投诉维权）\n不要输出任何其他内容，不要解释，不要加标点。'
+  },
+  faq: {
+    name: 'FAQ Agent', icon: '📖',
+    system: '你是电商客服 FAQ 专员。根据以下平台政策回答用户问题。\n政策：7天无理由退换，配送3-5个工作日，支持微信/支付宝/银行卡，客服工作日9:00-22:00。\n要求：简洁准确，使用"您"的敬语，不超过100字。'
+  },
+  logistics: {
+    name: '物流查询 Agent', icon: '🚚',
+    system: '从用户消息中提取订单号（通常是10位以上数字），输出JSON：{"order_id":"xxx或null","status":"已发货/运输中/已到达/需要订单号","location":"xxx或null","eta":"xxx或null"}。仅输出JSON。'
+  },
+  logiReply: {
+    name: '回复生成 Agent', icon: '✍️',
+    system: '根据物流查询结果，生成友好专业的客服回复。如结果显示需要订单号，礼貌引导用户提供完整订单号。使用"您"敬语，80字以内。'
+  },
+  returnCheck: {
+    name: '规则核查 Agent', icon: '📋',
+    system: '你是退换货规则核查员。规则：7天内无理由退换（商品未使用），15天内质量问题可换货，超出时限或人为损坏不支持。\n根据用户诉求判断。输出JSON：{"eligible":true或false,"reason":"判断依据20字内","days_suggestion":"建议操作"}'
+  },
+  returnSol: {
+    name: '方案生成 Agent', icon: '💡',
+    system: '根据退换货核查结果生成处理方案。\n符合条件：给出具体操作步骤（拍照→申请→寄回→退款周期）。\n不符合：礼貌说明，提供替代方案（维修/折扣券）。\n使用"您"敬语，100字以内。'
+  },
+  emotion: {
+    name: '情绪识别 Agent', icon: '😤',
+    system: '分析用户投诉消息的情绪强度（1=轻微不满，10=极度愤怒）。\n输出JSON（仅输出JSON）：{"emotion_score":数字1到10,"emotion_label":"不满/生气/愤怒/激烈","core_complaint":"核心诉求20字内","tags":["关键词"]}'
+  },
+  escalation: {
+    name: '升级判断 Agent', icon: '⚖️',
+    system: '根据情绪分析结果判断是否需要人工介入。\n触发条件（满足任一）：情绪分≥7，或涉及法律/曝光/媒体/投诉平台关键词。\n输出JSON（仅输出JSON）：{"need_human":true或false,"reason":"原因20字内","priority":"high/medium/low","suggestion":"建议处理方式"}'
+  },
+  soothe: {
+    name: '安抚回复 Agent', icon: '🌸',
+    system: '用户情绪激动，给出安抚性回复。要求：首先表达理解和歉意，明确承诺认真处理，给出具体后续跟进承诺，语气温和诚恳，100字以内，使用"您"敬语。'
+  }
+};
+
+// =============================================
+//  Mock 物流数据
+// =============================================
+var MOCK_ORDERS = {
+  '2024031001': { status: '运输中', location: '上海转运中心', carrier: '顺丰速运', eta: '明天下午送达' },
+  '2024030999': { status: '已签收', location: '已送达', carrier: '京东快递', eta: '已完成' },
+  '2024031100': { status: '已发货', location: '北京仓库发出', carrier: '中通快递', eta: '3-5个工作日' }
+};
+
+// =============================================
+//  OpenRouter LLM 调用
+// =============================================
+async function callLLM(systemPrompt, userContent) {
+  if (!CONFIG.OPENROUTER_KEY) {
+    throw new Error('未配置 API Key，请在 config.local.js 中填入 openrouterKey');
+  }
+  var resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + CONFIG.OPENROUTER_KEY,
+      'HTTP-Referer': location.href,
+      'X-Title': 'Service Agent Demo'
+    },
+    body: JSON.stringify({
+      model: CONFIG.MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ],
+      max_tokens: 800
+    })
+  });
+  if (!resp.ok) {
+    var errText = await resp.text().catch(function() { return ''; });
+    throw new Error('OpenRouter 请求失败：HTTP ' + resp.status + ' ' + errText.slice(0, 200));
+  }
+  var json = await resp.json();
+  var msg = json.choices && json.choices[0] && json.choices[0].message;
+  var content = (msg && (msg.content || msg.reasoning_content)) || '';
+  if (!content) throw new Error('LLM 返回为空：' + JSON.stringify(json).slice(0, 300));
+  return content.trim();
+}
+
+// =============================================
+//  节点/状态管理
+// =============================================
+var LINE_MAP = {
+  'faq': 'line-faq',
+  'logistics': 'line-logistics',
+  'return-check': 'line-return',
+  'logi-reply': 'line-logi-reply',
+  'return-sol': 'line-return-sol',
+  'emotion': null,
+  'escalation': 'line-emo-esc',
+  'hitl': 'line-esc-branch',
+  'soothe': 'line-esc-branch'
+};
+
+function setNodeState(nodeId, state, statusText) {
+  var node = document.getElementById('node-' + nodeId);
+  if (node) node.className = 'fn-group ' + state;
+
+  var aspEl = document.getElementById('asp-' + nodeId);
+  if (aspEl) {
+    aspEl.className = 'asp-agent ' + state;
+    var statusSpan = document.getElementById('asp-' + nodeId + '-status');
+    if (statusSpan && statusText) statusSpan.textContent = statusText;
+  }
+
+  if (LINE_MAP[nodeId] && (state === 'active' || state === 'routing')) {
+    var line = document.getElementById(LINE_MAP[nodeId]);
+    if (line) line.classList.add('active');
+  }
+}
+
+function resetAllNodes() {
+  ['router','faq','logistics','logi-reply','return-check','return-sol','emotion','escalation','hitl','soothe'].forEach(function(id) {
+    setNodeState(id, 'idle', '待命');
+  });
+  document.querySelectorAll('.flow-line').forEach(function(l) { l.classList.remove('active'); });
+  var stream = document.getElementById('step-stream');
+  if (stream) stream.innerHTML = '';
+  var log = document.getElementById('run-log');
+  if (log) log.innerHTML = '';
+}
+
+// =============================================
+//  日志
+// =============================================
+function appendLog(msg, type) {
+  var log = document.getElementById('run-log');
+  if (!log) return;
+  var line = document.createElement('div');
+  line.className = 'log-line ' + (type || 'info');
+  var now = new Date();
+  var ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
+  line.textContent = '[' + ts + '] ' + msg;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+// =============================================
+//  消息渲染
+// =============================================
+function appendMessage(type, content) {
+  var msgs = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'chat-bubble ' + type;
+  div.textContent = content;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+var AGENT_KEY_MAP = {
+  'router': 'router', 'faq': 'faq', 'logistics': 'logistics',
+  'logi-reply': 'logiReply', 'return-check': 'returnCheck',
+  'return-sol': 'returnSol', 'emotion': 'emotion',
+  'escalation': 'escalation', 'hitl': 'hitl', 'soothe': 'soothe'
+};
+
+function appendStepCard(agentId, content, extra, badgeType) {
+  var agentKey = AGENT_KEY_MAP[agentId] || agentId;
+  var agent = AGENTS[agentKey] || { name: agentId, icon: '🤖' };
+  var msgs = document.getElementById('step-stream');
+  if (!msgs) msgs = document.getElementById('chat-messages');
+  var card = document.createElement('div');
+  card.className = 'step-card';
+  card.id = 'step-' + agentId;
+
+  var badgeText = badgeType === 'mock' ? '🎭 模拟工具' : badgeType === 'hitl' ? '👤 HITL' : 'LLM 调用';
+  var badgeClass = badgeType || '';
+
+  card.innerHTML =
+    '<div class="step-card-header">' +
+      '<span class="step-card-icon">' + agent.icon + '</span>' +
+      '<span class="step-card-name">' + agent.name + '</span>' +
+      '<span class="step-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
+    '</div>' +
+    '<div class="step-card-body">' + escHtml(content) + (extra ? '<pre>' + escHtml(extra) + '</pre>' : '') + '</div>';
+  msgs.appendChild(card);
+  msgs.scrollTop = msgs.scrollHeight;
+  return card;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// =============================================
+//  Agent 调用封装
+// =============================================
+async function callAgent(agentId, userContent, badgeType) {
+  var agentKey = AGENT_KEY_MAP[agentId] || agentId;
+  var agent = AGENTS[agentKey];
+  if (!agent) throw new Error('未知 Agent: ' + agentId);
+
+  setNodeState(agentId, 'active', '处理中…');
+  appendLog('调用 ' + agent.name, 'info');
+
+  var card = appendStepCard(agentId, '正在处理…', null, badgeType);
+  card.classList.add('running');
+
+  var result;
+  try {
+    result = await callLLM(agent.system, userContent);
+    card.classList.remove('running');
+    var bodyEl = card.querySelector('.step-card-body');
+    var preview = result.length > 300 ? result.slice(0, 300) + '…' : result;
+    if (bodyEl) bodyEl.innerHTML = '输出：<pre>' + escHtml(preview) + '</pre>';
+    setNodeState(agentId, 'done', '完成');
+    appendLog(agent.name + ' 完成', 'ok');
+  } catch (e) {
+    card.classList.remove('running');
+    var bodyEl2 = card.querySelector('.step-card-body');
+    if (bodyEl2) bodyEl2.textContent = '❌ ' + e.message;
+    setNodeState(agentId, 'idle', '错误');
+    appendLog(agent.name + ' 失败: ' + e.message, 'error');
+    throw e;
+  }
+  return result;
+}
+
+// =============================================
+//  4 条 Agent 链路
+// =============================================
+async function runFaqChain(userMsg) {
+  appendLog('→ FAQ 链路', 'info');
+  var reply = await callAgent('faq', userMsg);
+  appendMessage('assistant', reply);
+}
+
+async function runLogisticsChain(userMsg) {
+  appendLog('→ 物流链路', 'info');
+  var logiRaw = await callAgent('logistics', userMsg, 'mock');
+  var logiData;
+  try {
+    var jsonMatch = logiRaw.match(/\{[\s\S]*?\}/);
+    logiData = jsonMatch ? JSON.parse(jsonMatch[0]) : { status: '解析失败' };
+  } catch (e) {
+    logiData = { status: '解析失败' };
+  }
+
+  if (logiData.order_id && MOCK_ORDERS[logiData.order_id]) {
+    var mock = MOCK_ORDERS[logiData.order_id];
+    logiData.status = mock.status;
+    logiData.location = mock.location;
+    logiData.eta = mock.eta;
+    logiData.carrier = mock.carrier;
+    appendLog('🎭 模拟物流 API：' + logiData.status + ' / ' + logiData.location, 'warn');
+  }
+
+  var replyContent = '物流查询结果：' + JSON.stringify(logiData, null, 0);
+  var reply = await callAgent('logi-reply', replyContent);
+  appendMessage('assistant', reply);
+}
+
+async function runReturnChain(userMsg) {
+  appendLog('→ 退换货链路', 'info');
+  var checkRaw = await callAgent('return-check', userMsg);
+  var checkData;
+  try {
+    var jsonMatch = checkRaw.match(/\{[\s\S]*?\}/);
+    checkData = jsonMatch ? JSON.parse(jsonMatch[0]) : { eligible: true, reason: '政策内' };
+  } catch (e) {
+    checkData = { eligible: true, reason: '政策内' };
+  }
+
+  var solInput = '用户诉求：' + userMsg + '\n核查结果：' + JSON.stringify(checkData);
+  var reply = await callAgent('return-sol', solInput);
+  appendMessage('assistant', reply);
+}
+
+async function runComplaintChain(userMsg) {
+  appendLog('→ 投诉链路', 'info');
+  var emotionRaw = await callAgent('emotion', userMsg);
+  var emotionData;
+  try {
+    var jsonMatch = emotionRaw.match(/\{[\s\S]*?\}/);
+    emotionData = jsonMatch ? JSON.parse(jsonMatch[0]) : { emotion_score: 5 };
+  } catch (e) {
+    emotionData = { emotion_score: 5 };
+  }
+
+  var escalInput = '情绪分析：' + JSON.stringify(emotionData) + '\n用户原话：' + userMsg;
+  var escalRaw = await callAgent('escalation', escalInput);
+  var escalData;
+  try {
+    var jsonMatch2 = escalRaw.match(/\{[\s\S]*?\}/);
+    escalData = jsonMatch2 ? JSON.parse(jsonMatch2[0]) : { need_human: false };
+  } catch (e) {
+    escalData = { need_human: false };
+  }
+
+  if (escalData.need_human) {
+    setNodeState('escalation', 'done', '触发 HITL');
+    setNodeState('hitl', 'escalated', '等待人工');
+    appendLog('⚠️ 触发 HITL：' + (escalData.reason || ''), 'warn');
+    showHumanIntervention(emotionData, escalData, userMsg);
+    return; // 不调用 enableInput，等待人工操作
+  } else {
+    setNodeState('escalation', 'done', '无需升级');
+    var sootheInput = '用户原话：' + userMsg + '\n情绪分析：' + JSON.stringify(emotionData);
+    var reply = await callAgent('soothe', sootheInput);
+    appendMessage('assistant', reply);
+  }
+}
+
+// =============================================
+//  HITL 卡片
+// =============================================
+function showHumanIntervention(emotionData, escalData, originalMsg) {
+  var msgs = document.getElementById('chat-messages');
+  var card = document.createElement('div');
+  card.className = 'hitl-card';
+  card.dataset.originalMsg = originalMsg;
+  card.innerHTML =
+    '<div class="hitl-card-title">⚠️ 已触发人工审核</div>' +
+    '<div class="hitl-card-body">' +
+      '情绪强度：' + escHtml(String(emotionData.emotion_score || 'N/A')) + '/10 · ' + escHtml(emotionData.emotion_label || '') + '<br>' +
+      '核心诉求：' + escHtml(emotionData.core_complaint || originalMsg.slice(0, 30)) + '<br>' +
+      '优先级：' + escHtml(escalData.priority || 'medium') + ' · ' + escHtml(escalData.reason || '') +
+    '</div>' +
+    '<div class="hitl-card-actions">' +
+      '<button class="hitl-btn approve" onclick="handleHITL(this,\'approve\')">✅ 批准 AI 安抚</button>' +
+      '<button class="hitl-btn reject" onclick="handleHITL(this,\'reject\')">🚫 直接转人工</button>' +
+      '<button class="hitl-btn delegate" onclick="handleHITL(this,\'delegate\')">📞 升级主管</button>' +
+    '</div>';
+  msgs.appendChild(card);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function handleHITL(btn, action) {
+  var card = btn.closest('.hitl-card');
+  card.querySelectorAll('.hitl-btn').forEach(function(b) { b.disabled = true; });
+  var originalMsg = card.dataset.originalMsg || '';
+
+  try {
+    if (action === 'approve') {
+      appendLog('👤 人工批准 → AI 安抚', 'ok');
+      setNodeState('hitl', 'done', '已处理');
+      setNodeState('soothe', 'active', '安抚中…');
+      var reply = await callAgent('soothe', '用户原话：' + originalMsg + '（已经过人工审核确认安抚策略）');
+      appendMessage('assistant', reply);
+    } else if (action === 'reject') {
+      appendLog('👤 人工接管', 'ok');
+      setNodeState('hitl', 'done', '人工接管');
+      appendMessage('assistant', '您好，已为您转接专属客服，稍后会有专人与您联系，请稍候。');
+    } else {
+      appendLog('👤 升级至主管', 'warn');
+      setNodeState('hitl', 'escalated', '升级主管');
+      appendMessage('assistant', '您的问题已升级至客服主管处理，预计30分钟内会有专员回电，感谢您的耐心等待。');
+    }
+  } catch (e) {
+    appendMessage('assistant', '❌ 处理出错：' + e.message);
+    appendLog('HITL 错误：' + e.message, 'error');
+  }
+  enableInput();
+}
+
+// =============================================
+//  主流程控制
+// =============================================
+var isBusy = false;
+
+function enableInput() {
+  isBusy = false;
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('chat-input').disabled = false;
+  document.querySelectorAll('.quick-btn').forEach(function(b) { b.disabled = false; });
+}
+
+function disableInput() {
+  isBusy = true;
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('chat-input').disabled = true;
+  document.querySelectorAll('.quick-btn').forEach(function(b) { b.disabled = true; });
+}
+
+async function runChat(userMsg) {
+  if (isBusy) return;
+  if (!CONFIG.OPENROUTER_KEY) {
+    appendMessage('assistant', '⚠️ 未配置 API Key，请在 tools/service-agent/config.local.js 中填入 openrouterKey。');
+    return;
+  }
+
+  disableInput();
+  resetAllNodes();
+  appendMessage('user', userMsg);
+
+  var hitlTriggered = false;
+  try {
+    setNodeState('router', 'routing', '分类中…');
+    appendLog('开始路由：' + userMsg.slice(0, 20) + (userMsg.length > 20 ? '…' : ''), 'info');
+
+    var intentRaw = await callAgent('router', userMsg);
+    var intent = intentRaw.toLowerCase().replace(/[^a-z]/g, '').trim();
+    if (intent.indexOf('faq') >= 0)       intent = 'faq';
+    else if (intent.indexOf('logistics') >= 0) intent = 'logistics';
+    else if (intent.indexOf('return') >= 0)    intent = 'return';
+    else if (intent.indexOf('complaint') >= 0) intent = 'complaint';
+    else intent = 'faq';
+
+    setNodeState('router', 'done', intent);
+    appendLog('路由结果：' + intent, 'ok');
+
+    if (intent === 'faq') {
+      await runFaqChain(userMsg);
+    } else if (intent === 'logistics') {
+      await runLogisticsChain(userMsg);
+    } else if (intent === 'return') {
+      await runReturnChain(userMsg);
+    } else if (intent === 'complaint') {
+      // 投诉链内部如果触发 HITL，会 return 提前退出且不调用 enableInput
+      // 需要标记
+      var prevHitlNode = document.getElementById('node-hitl');
+      var prevClass = prevHitlNode ? prevHitlNode.className : '';
+      await runComplaintChain(userMsg);
+      var afterClass = prevHitlNode ? prevHitlNode.className : '';
+      if (afterClass.indexOf('escalated') >= 0) hitlTriggered = true;
+    }
+  } catch (e) {
+    appendMessage('assistant', '❌ 处理出错：' + e.message);
+    appendLog('错误：' + e.message, 'error');
+  }
+
+  if (!hitlTriggered) enableInput();
+}
+
+function sendChat() {
+  var input = document.getElementById('chat-input');
+  var msg = input.value.trim();
+  if (!msg || isBusy) return;
+  input.value = '';
+  runChat(msg);
+}
+
+function sendQuick(msg) {
+  if (isBusy) return;
+  document.getElementById('chat-input').value = '';
+  runChat(msg);
+}
+</script>
+</body>
+</html>

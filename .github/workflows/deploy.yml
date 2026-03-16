@@ -29,9 +29,11 @@ jobs:
         env:
           ESOP_API_KEY: ${{ secrets.ESOP_API_KEY }}
           STOCK_OPENROUTER_KEY: ${{ secrets.STOCK_OPENROUTER_KEY }}
+          SERVICE_OPENROUTER_KEY: ${{ secrets.SERVICE_OPENROUTER_KEY }}
         run: |
           printf "window.ESOP_CONFIG = { builtinApiKey: '%s', baseUrl: 'https://openrouter.ai/api', model: 'stepfun/step-3.5-flash:free' };\n" "$ESOP_API_KEY" > tools/esop-extractor/config.local.js
           printf "window.STOCK_CONFIG = { openrouterKey: '%s', model: 'stepfun/step-3.5-flash:free' };\n" "$STOCK_OPENROUTER_KEY" > tools/stock/config.local.js
+          printf "window.SERVICE_AGENT_CONFIG = { openrouterKey: '%s', model: 'stepfun/step-3.5-flash:free' };\n" "$SERVICE_OPENROUTER_KEY" > tools/service-agent/config.local.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
