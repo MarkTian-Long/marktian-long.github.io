@@ -1173,8 +1173,8 @@ async function runChat(userMsg) {
       var prevHitlNode = document.getElementById('node-hitl');
       var prevClass = prevHitlNode ? prevHitlNode.className : '';
       await runComplaintChain(userMsg);
-      var afterClass = prevHitlNode ? prevHitlNode.className : '';
-      if (afterClass.indexOf('escalated') >= 0) hitlTriggered = true;
+      var afterClass = prevHitlNode ? (prevHitlNode.className.baseVal || prevHitlNode.className) : '';
+      if (String(afterClass).indexOf('escalated') >= 0) hitlTriggered = true;
     }
   } catch (e) {
     appendMessage('assistant', '❌ 处理出错：' + e.message);
