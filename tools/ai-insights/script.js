@@ -12,11 +12,6 @@ function dataComplete(p) {
         && p.sources && p.sources.length > 0;
 }
 
-const TREND_MAP = {
-    up: { label: '📈 上升趋势', cls: 'trend-up' },
-    stable: { label: '➡️ 稳定', cls: 'trend-stable' },
-    down: { label: '📉 下降', cls: 'trend-down' },
-};
 
 const CARD_GRADS = [
     'linear-gradient(135deg, #4f8fff, #9b6dff)',
@@ -77,7 +72,6 @@ function renderGrid() {
     }
 
     grid.innerHTML = filtered.map((p, i) => {
-        const trend = TREND_MAP[p.trend] || TREND_MAP.stable;
         const grad = CARD_GRADS[i % CARD_GRADS.length];
 
         return `
@@ -85,7 +79,6 @@ function renderGrid() {
            onclick="showDetail('${p.id}')">
         <div class="card-top">
           <span class="card-logo">${p.logo}</span>
-          <span class="card-trend ${trend.cls}">${trend.label}</span>
         </div>
         ${p.issue ? `<div class="card-issue">#${String(p.issue).padStart(3, '0')}</div>` : ''}
         <div class="card-name">${p.name}</div>
@@ -110,7 +103,6 @@ function showDetail(id) {
     const p = products.find(pr => pr.id === id);
     if (!p) return;
 
-    const trend = TREND_MAP[p.trend] || TREND_MAP.stable;
     const content = document.getElementById('detailContent');
 
     const headerHtml = `
@@ -130,7 +122,6 @@ function showDetail(id) {
             <div class="detail-meta-item"><span class="detail-meta-label">分类</span>${p.category}</div>
             <div class="detail-meta-item"><span class="detail-meta-label">商业模式</span>${p.businessModel}</div>
             <div class="detail-meta-item"><span class="detail-meta-label">上线时间</span>${p.launchDate}</div>
-            <div class="detail-meta-item"><span class="detail-meta-label">趋势</span>${trend.label}</div>
         </div>
     `;
 
