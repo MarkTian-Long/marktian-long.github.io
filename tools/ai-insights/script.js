@@ -78,7 +78,6 @@ function renderGrid() {
 
     grid.innerHTML = filtered.map((p, i) => {
         const trend = TREND_MAP[p.trend] || TREND_MAP.stable;
-        const stars = '★'.repeat(p.stars) + '☆'.repeat(5 - p.stars);
         const grad = CARD_GRADS[i % CARD_GRADS.length];
 
         return `
@@ -98,7 +97,6 @@ function renderGrid() {
           ${p.techStack.slice(0, 3).map(t => `<span class="card-tag">${t}</span>`).join('')}
         </div>
         <div class="card-footer">
-          <span class="card-stars">${stars}</span>
           ${dataComplete(p) ? '' : '<span class="card-incomplete">数据待补充</span>'}
           <span class="card-cta">查看拆解 →</span>
         </div>
@@ -113,7 +111,6 @@ function showDetail(id) {
     if (!p) return;
 
     const trend = TREND_MAP[p.trend] || TREND_MAP.stable;
-    const stars = '★'.repeat(p.stars) + '☆'.repeat(5 - p.stars);
     const content = document.getElementById('detailContent');
 
     const headerHtml = `
@@ -121,7 +118,7 @@ function showDetail(id) {
             <span class="detail-logo">${p.logo}</span>
             <div>
                 <div class="detail-name">${p.name}</div>
-                <div class="detail-company">${p.company} · ${stars}</div>
+                <div class="detail-company">${p.company}</div>
             </div>
             <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
                 ${p.issue ? `<div class="card-issue">#${String(p.issue).padStart(3, '0')}</div>` : ''}
