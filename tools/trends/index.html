@@ -383,8 +383,10 @@
                     if (!res.ok) throw new Error('fetch failed');
                     data = await res.json();
                 } catch (e) {
-                    document.getElementById('items-list').innerHTML =
-                        '<p class="state-msg">数据加载失败，请检查 data/trends.json 是否存在。</p>';
+                    const isFile = location.protocol === 'file:';
+                    document.getElementById('items-list').innerHTML = isFile
+                        ? '<p class="state-msg">本地 file:// 协议无法加载数据，请用本地服务器打开：<br><code>npx serve .</code>（在项目根目录运行）</p>'
+                        : '<p class="state-msg">数据加载失败，请检查 data/trends.json 是否存在。</p>';
                     return;
                 }
 
