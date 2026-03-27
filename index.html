@@ -152,6 +152,9 @@
                                     <span class="prediction-date">写于 2026.03</span>
                                     <span class="prediction-label">Agent 落地</span>
                                 </div>
+                                <div class="prediction-expand">
+                                    <button class="expand-btn" onclick="openTool('agent-hub')">📎 支撑材料：Agent 认知全景——框架对比 · 架构设计 · 企业场景地图 →</button>
+                                </div>
                             </div>
                             <div class="prediction-item">
                                 <p class="prediction-text">金融行业 AI 的近期落地形态，是"有人工节点的半自动化"，而不是完全自主的 Agent 链。<br><br>B 端：监管与审计要求每一步决策可追溯、可签字，部分节点的法律责任必须由人工承担，推理步骤不透明的 Agent 进不了审批流程。<br>C 端：大模型不具备直接替代持牌顾问做出最终投资建议的资质，AI 只能辅助决策，不能绕过人工审核环节。<br><br>现实的切入点有三个：<br>· 智能投顾：行业痛点不在涨跌预测，而在用户行为管理——AI 的切入点是情绪陪伴、行为分析和量化逻辑筛选组合，最终建议仍由顾问确认<br>· 研报生成：投研人员耗时在信息聚合而非分析本身——AI 承担资讯聚合、数据填充、格式校验，分析师专注判断与审核<br>· 客服路由：大量重复咨询消耗人工资源——AI 识别意图后精准分发，人工专注处理投诉、异议等高复杂度案例<br><br>这些场景的共同特点是 AI 给答案、人工做确认，而不是 AI 替代决策。</p>
@@ -335,6 +338,7 @@
                         </div>
                         <button class="toolbox-card-btn">体验 Demo →</button>
                     </div>
+
                 </div>
             </div>
 
@@ -414,6 +418,18 @@
                         </div>
                         <button class="toolbox-card-btn">打开工具 →</button>
                     </div>
+
+                    <div class="toolbox-card" data-tool="agent-hub" onclick="openTool('agent-hub')">
+                        <div class="toolbox-card-icon">🧠</div>
+                        <div class="toolbox-card-body">
+                            <h3>Agent 认知全景</h3>
+                            <p>框架选型 · 架构设计 · 企业提效地图——「Agent 短期不落地」判断的知识底层</p>
+                            <div class="toolbox-card-tags">
+                                <span>框架对比</span><span>架构设计</span><span>企业落地</span>
+                            </div>
+                        </div>
+                        <button class="toolbox-card-btn">查看全景 →</button>
+                    </div>
                 </div>
             </div>
 
@@ -448,6 +464,17 @@
                     </div>
                     <iframe src="tools/trends/index.html" class="dashboard-iframe"
                         title="热点快照" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-agent-hub">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">🧠 Agent 认知全景 · 框架选型 + 架构设计 + 企业提效地图 + PM 判断框架</span>
+                        <a href="tools/agent-hub/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/agent-hub/index.html" class="dashboard-iframe"
+                        title="Agent 认知全景" loading="lazy"></iframe>
                 </div>
             </div>
 

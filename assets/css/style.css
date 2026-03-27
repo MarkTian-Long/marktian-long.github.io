@@ -2011,6 +2011,29 @@ button {
   border-radius: 4px;
 }
 
+.prediction-expand {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.expand-btn:hover {
+  color: var(--accent-blue);
+}
+
 @media (max-width: 600px) {
   .industry-grid {
     grid-template-columns: 1fr;
