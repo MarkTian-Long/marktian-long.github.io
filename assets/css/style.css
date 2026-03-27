@@ -360,7 +360,7 @@ button {
   position: relative;
   z-index: 1;
   text-align: center;
-  max-width: 700px;
+  max-width: 860px;
 }
 
 .hero-badge {
@@ -407,16 +407,18 @@ button {
 }
 
 .hero-sub {
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  color: var(--text-secondary);
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  color: var(--text-primary);
   margin-bottom: 16px;
-  line-height: 1.6;
+  line-height: 1.7;
+  opacity: 0.75;
 }
 
 .hero-value {
   font-size: clamp(1rem, 2vw, 1.1rem);
-  color: var(--text-secondary);
-  margin-bottom: 32px;
+  color: var(--accent-blue);
+  margin-bottom: 28px;
+  opacity: 0.9;
 }
 
 .hero-tags {
