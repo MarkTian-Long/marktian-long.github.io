@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 认知全景 · 刘洋</title>
+<link rel="icon" href="../../assets/images/favicon.ico">
+<style>
+:root {
+  --bg: #0d0d14;
+  --bg-card: #13131f;
+  --bg-card2: #1a1a2e;
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(99,179,237,0.4);
+  --text-primary: #f0f0f8;
+  --text-secondary: rgba(240,240,248,0.6);
+  --text-muted: rgba(240,240,248,0.4);
+  --accent: #63b3ed;
+  --accent2: #9f7aea;
+  --accent3: #68d391;
+  --accent-warn: #f6ad55;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Tab Nav ── */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.tab-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-size: 13px;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+.tab-btn.active {
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--bg);
+  margin-bottom: -1px;
+}
+
+/* ── Tab Panels ── */
+.tab-panel {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+.tab-panel.active { display: block; }
+
+/* ── Section Card ── */
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.section-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-card h3 .tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(99,179,237,0.15);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Tab 1: 框架选型 ── */
+.filter-bar {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.filter-group { display: flex; flex-direction: column; gap: 6px; }
+.filter-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  user-select: none;
+}
+.pill:hover { border-color: var(--accent); color: var(--accent); }
+.pill.active { background: rgba(99,179,237,0.15); border-color: var(--accent); color: var(--accent); }
+
+.framework-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.fw-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.fw-card:hover { border-color: var(--border-hover); }
+.fw-card.recommended {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(99,179,237,0.15);
+}
+.fw-card.dimmed { opacity: 0.35; }
+.fw-card.open { border-color: var(--accent2); }
+.fw-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.fw-tagline { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.fw-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-secondary);
+}
+.badge.green { background: rgba(104,211,145,0.15); color: var(--accent3); }
+.badge.blue { background: rgba(99,179,237,0.15); color: var(--accent); }
+.badge.purple { background: rgba(159,122,234,0.15); color: var(--accent2); }
+.badge.warn { background: rgba(246,173,85,0.15); color: var(--accent-warn); }
+.fw-recommend-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+.fw-note {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.fw-note.open { display: block; }
+.fw-note strong { color: var(--accent2); }
+
+.compare-table-wrap { overflow-x: auto; }
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.compare-table th {
+  background: var(--bg-card2);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.compare-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+.compare-table td.dim-row { opacity: 0.4; }
+.compare-table .fw-col { font-weight: 600; color: var(--text-primary); }
+
+/* ── Tab 2: 架构设计 ── */
+.topo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.topo-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.topo-card h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+.topo-card .topo-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.topo-card svg { display: block; width: 100%; }
+
+.seq-diagram {
+  font-size: 12px;
+  overflow-x: auto;
+}
+.seq-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+.seq-actor {
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+  font-size: 11px;
+}
+.seq-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.seq-arrow { color: var(--accent); font-size: 14px; }
+.seq-msg {
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 11px;
+  flex: 1;
+}
+.seq-msg.parallel { border-color: rgba(104,211,145,0.3); background: rgba(104,211,145,0.05); }
+.seq-msg.hitl { border-color: rgba(246,173,85,0.4); background: rgba(246,173,85,0.08); color: var(--accent-warn); font-weight: 500; }
+.seq-msg.retry { border-color: rgba(159,122,234,0.3); background: rgba(159,122,234,0.05); }
+.seq-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  grid-column: 2;
+  padding-left: 28px;
+  margin-top: -2px;
+  margin-bottom: 4px;
+}
+
+.design-note-list { display: flex; flex-direction: column; gap: 10px; }
+.design-note {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-card2);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent2);
+}
+.note-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent2);
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.note-body .note-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.note-body .note-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ── Tab 3: 企业提效地图 ── */
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.scene-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.scene-header {
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.scene-dept {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.scene-pain {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.scene-body { padding: 12px 14px; flex: 1; }
+.scene-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.flow-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(99,179,237,0.15);
+  border: 1px solid rgba(99,179,237,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.flow-hitl .flow-dot {
+  background: rgba(246,173,85,0.15);
+  border-color: rgba(246,173,85,0.4);
+  color: var(--accent-warn);
+}
+.scene-roi {
+  padding: 8px 10px;
+  background: rgba(104,211,145,0.06);
+  border: 1px solid rgba(104,211,145,0.2);
+  border-radius: var(--radius-sm);
+}
+.roi-num { font-size: 13px; font-weight: 700; color: var(--accent3); margin-bottom: 2px; }
+.roi-note { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+/* ── Tab 4: 判断框架 ── */
+.view-cards { display: flex; flex-direction: column; gap: 14px; }
+.view-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.view-title {
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.view-num {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(99,179,237,0.15);
+  color: var(--accent);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.view-body { padding: 14px 16px; }
+.view-args { margin-bottom: 12px; }
+.view-arg {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.arg-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.counter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  transition: var(--transition);
+  width: 100%;
+  text-align: left;
+}
+.counter-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
+.counter-body {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(159,122,234,0.05);
+  border: 1px solid rgba(159,122,234,0.2);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.counter-body.open { display: block; }
+
+@media (max-width: 700px) {
+  .framework-grid { grid-template-columns: 1fr 1fr; }
+  .topo-grid { grid-template-columns: 1fr; }
+  .scene-grid { grid-template-columns: 1fr; }
+  .filter-bar { gap: 12px; }
+}
+@media (max-width: 480px) {
+  .framework-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('tab-selector')">⚖️ 框架选型</button>
+  <button class="tab-btn" onclick="switchTab('tab-arch')">🏗️ 架构设计</button>
+  <button class="tab-btn" onclick="switchTab('tab-enterprise')">🏢 企业提效地图</button>
+  <button class="tab-btn" onclick="switchTab('tab-views')">💡 我的判断框架</button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     Tab 1: 框架选型
+══════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-selector">
+
+  <div class="section-card">
+    <h3>选型筛选器 <span class="tag">交互</span></h3>
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">任务类型</span>
+        <div class="filter-pills" id="filter-task">
+          <span class="pill active" data-val="">全部</span>
+          <span class="pill" data-val="long">长任务 / 复杂流程</span>
+          <span class="pill" data-val="short">短任务 / 快速响应</span>
+          <span class="pill" data-val="parallel">批量并行</span>
+          <span class="pill" data-val="hitl">人机协同 HITL</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">团队背景</span>
+        <div class="filter-pills" id="filter-team">
+          <span class="pill active" data-val="">全部</span>
+          <span class="pill" data-val="python">Python 工程团队</span>
+          <span class="pill" data-val="enterprise">企业级 / 严格审计</span>
+          <span class="pill" data-val="nocode">无代码 / 业务团队</span>
+          <span class="pill" data-val="fast">快速原型 / 小团队</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-bottom:16px">
+      点击框架卡片展开 PM 选型注记 · 推荐框架高亮显示
+    </p>
+
+    <div class="framework-grid" id="fw-grid">
+
+      <div class="fw-card" id="fw-langgraph" onclick="toggleFwNote('langgraph')"
+           data-task="long hitl" data-team="python enterprise">
+        <div class="fw-name">LangGraph</div>
+        <div class="fw-tagline">有状态 DAG，复杂工作流首选</div>
+        <div class="fw-badges">
+          <span class="badge blue">有状态</span>
+          <span class="badge green">生产稳定</span>
+          <span class="badge blue">HITL 原生</span>
+        </div>
+        <div class="fw-note" id="note-langgraph">
+          <strong>PM 选型注记</strong><br>
+          可视化调试工具较弱，设计阶段必须把 Workflow 图画清楚，否则节点边界模糊会让调试成本极高。适合有专职 AI 工程师且流程需要循环/条件回退的场景。学习曲线陡，不适合快速原型。
+        </div>
+      </div>
+
+      <div class="fw-card" id="fw-autogen" onclick="toggleFwNote('autogen')"
+           data-task="long parallel" data-team="fast python">
+        <div class="fw-name">AutoGen</div>
+        <div class="fw-tagline">多 Agent 对话框架，微软出品</div>
+        <div class="fw-badges">
+          <span class="badge purple">对话式</span>
+          <span class="badge warn">Beta 阶段</span>
+          <span class="badge blue">HumanProxy</span>
+        </div>
+        <div class="fw-note" id="note-autogen">
+          <strong>PM 选型注记</strong><br>
+          对话式协作的 token 消耗高，生产环境 cost 需要单独评估。v0.4 架构重写后接口变化较大，要注意版本锁定。适合需要多 Agent 互相辩论/迭代细化的创作型任务，不适合延迟敏感场景。
+        </div>
+      </div>
+
+      <div class="fw-card" id="fw-crewai" onclick="toggleFwNote('crewai')"
+           data-task="long parallel" data-team="fast python enterprise">
+        <div class="fw-name">CrewAI</div>
+        <div class="fw-tagline">角色驱动协作，最接近开箱即用</div>
+        <div class="fw-badges">
+          <span class="badge green">低学习曲线</span>
+          <span class="badge green">生产稳定</span>
+          <span class="badge blue">角色驱动</span>
+        </div>
+        <div class="fw-note" id="note-crewai">
+          <strong>PM 选型注记</strong><br>
+          角色定义质量直接决定结果质量，Prompt Engineering 投入高。优点是概念直觉（角色/目标/任务），非工程背景的 PM 能快速理解。内容生产流水线（调研→写作→审核）是最典型的适用场景。
+        </div>
+      </div>
+
+      <div class="fw-card" id="fw-swarm" onclick="toggleFwNote('swarm')"
+           data-task="short" data-team="fast">
+        <div class="fw-name">OpenAI Swarm</div>
+        <div class="fw-tagline">极简 handoff，轻量场景适用</div>
+        <div class="fw-badges">
+          <span class="badge warn">实验性</span>
+          <span class="badge blue">极低门槛</span>
+          <span class="badge">无状态</span>
+        </div>
+        <div class="fw-note" id="note-swarm">
+          <strong>PM 选型注记</strong><br>
+          OpenAI 明确标注 experimental，没有公开的长期路线图支撑，生产环境依赖风险需评估。适合简单意图路由+专门化处理（如客服意图分发），超出这个范围建议换框架。
+        </div>
+      </div>
+
+      <div class="fw-card" id="fw-dify" onclick="toggleFwNote('dify')"
+           data-task="long hitl" data-team="nocode enterprise">
+        <div class="fw-name">Dify</div>
+        <div class="fw-tagline">可视化画布，非技术团队入门</div>
+        <div class="fw-badges">
+          <span class="badge green">无代码</span>
+          <span class="badge green">企业版稳定</span>
+          <span class="badge blue">审批节点</span>
+        </div>
+        <div class="fw-note" id="note-dify">
+          <strong>PM 选型注记</strong><br>
+          定制化能力受限，复杂逻辑需要"逃逸"到代码节点。关键问题：要评估业务是否会超出平台边界。如果未来 70% 的节点都是代码节点，还不如直接用 LangGraph。适合非技术团队的知识问答、审批流、内容生成管线。
+        </div>
+      </div>
+
+      <div class="fw-card" id="fw-custom" onclick="toggleFwNote('custom')"
+           data-task="long parallel hitl" data-team="enterprise python">
+        <div class="fw-name">自研编排层</div>
+        <div class="fw-tagline">企业级定制化的终极选择</div>
+        <div class="fw-badges">
+          <span class="badge warn">极高成本</span>
+          <span class="badge green">完全可控</span>
+          <span class="badge purple">架构自由</span>
+        </div>
+        <div class="fw-note" id="note-custom">
+          <strong>PM 选型注记</strong><br>
+          前提是已有成熟的技术中台和专职 AI 工程团队。盲目自研是最常见的过度工程陷阱——绝大多数团队在实现到 50% 时才发现维护成本超出预期。适合对数据主权/审计/可观测性有严格要求的大型企业。
+        </div>
+      </div>
+
+    </div><!-- /fw-grid -->
+  </div>
+
+  <div class="section-card">
+    <h3>消费级 Agent 代表 <span class="tag">产品层 · 非选型框架</span></h3>
+    <p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">
+      以下不是构建 Agent 的开发框架，而是直接交付给终端用户运行的 Agent 产品。列出它是为了说明 Agent 生态有「框架层」与「产品层」两个不同的演化方向——理解这个分层，是 PM 做 Agent 相关产品决策的前提。
+    </p>
+    <div style="background:var(--bg-card2);border:1px solid rgba(246,173,85,0.25);border-radius:var(--radius-sm);padding:16px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+        <div>
+          <div class="fw-name">OpenClaw</div>
+          <div class="fw-tagline">247k Stars · 个人自主 Agent 守护进程（原名 Clawdbot / Moltbot）</div>
+          <div class="fw-badges" style="margin-top:6px">
+            <span class="badge warn">消费级</span>
+            <span class="badge">本地运行</span>
+            <span class="badge">非构建框架</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div style="background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);padding:10px;">
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">交互层 UI</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8">
+            WhatsApp · Telegram<br>Discord · Slack · Signal
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);padding:10px;">
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">能力层 Action</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.8">
+            Shell 执行 · 浏览器自动化<br>邮件 / 日历 · 定时任务
+          </div>
+        </div>
+      </div>
+      <div style="padding:10px 12px;background:rgba(159,122,234,0.05);border:1px solid rgba(159,122,234,0.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);line-height:1.7">
+        <strong style="color:var(--accent2)">PM 视角：</strong>与 LangGraph/CrewAI 的本质差异在于——后者是给工程师<em>构建</em> Agent 用的工具，OpenClaw 是<em>交付给终端用户直接运行</em>的产品。选择消息平台而非独立 App 作为界面，是刻意降低信任建立成本的设计决策：用户已经信任 WhatsApp，比接受一个新 App 的心理门槛低得多。它代表的不是框架选型问题，而是「Agent 如何从 B 端工具演化为 C 端个人助手」这个产品层命题。
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3>对比矩阵 <span class="tag">8 维度</span></h3>
+    <div class="compare-table-wrap">
+      <table class="compare-table" id="compare-table">
+        <thead>
+          <tr>
+            <th>框架</th>
+            <th>编排模型</th>
+            <th>状态管理</th>
+            <th>学习曲线</th>
+            <th>生产可用</th>
+            <th>HITL</th>
+            <th>适合团队</th>
+            <th>PM 关注点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-fw="langgraph">
+            <td class="fw-col">LangGraph</td>
+            <td>有状态 DAG</td>
+            <td>GraphState 持久化</td>
+            <td>高</td>
+            <td><span class="badge green">稳定</span></td>
+            <td><span class="badge green">原生</span></td>
+            <td>Python 工程</td>
+            <td>设计阶段画清 Workflow 图</td>
+          </tr>
+          <tr data-fw="autogen">
+            <td class="fw-col">AutoGen</td>
+            <td>多 Agent 对话</td>
+            <td>对话历史，无持久化</td>
+            <td>中</td>
+            <td><span class="badge warn">Beta</span></td>
+            <td><span class="badge blue">HumanProxy</span></td>
+            <td>研究/快速原型</td>
+            <td>Token 消耗高，需评估 cost</td>
+          </tr>
+          <tr data-fw="crewai">
+            <td class="fw-col">CrewAI</td>
+            <td>角色驱动</td>
+            <td>Task 间传递</td>
+            <td>低</td>
+            <td><span class="badge green">稳定</span></td>
+            <td><span class="badge blue">参数控制</span></td>
+            <td>全栈/快速落地</td>
+            <td>Prompt 质量决定结果质量</td>
+          </tr>
+          <tr data-fw="swarm">
+            <td class="fw-col">OpenAI Swarm</td>
+            <td>函数式 handoff</td>
+            <td>无状态</td>
+            <td>极低</td>
+            <td><span class="badge warn">实验性</span></td>
+            <td>不内置</td>
+            <td>OpenAI 生态小团队</td>
+            <td>无长期路线图，依赖风险高</td>
+          </tr>
+          <tr data-fw="dify">
+            <td class="fw-col">Dify</td>
+            <td>可视化画布</td>
+            <td>内置工作流状态</td>
+            <td>极低</td>
+            <td><span class="badge green">企业版稳定</span></td>
+            <td><span class="badge blue">审批节点</span></td>
+            <td>产品/业务团队</td>
+            <td>评估业务是否超出平台边界</td>
+          </tr>
+          <tr data-fw="custom">
+            <td class="fw-col">自研编排层</td>
+            <td>完全自定义</td>
+            <td>完全自控</td>
+            <td>极高</td>
+            <td>取决于工程投入</td>
+            <td><span class="badge green">完全可控</span></td>
+            <td>大型企业 AI 团队</td>
+            <td>盲目自研是最常见的过度工程陷阱</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /tab-selector -->
+
+
+<!-- ══════════════════════════════════════════
+     Tab 2: 架构设计
+══════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-arch">
+
+  <div class="section-card">
+    <h3>四种多 Agent 拓扑形态</h3>
+    <div class="topo-grid">
+
+      <!-- 1. 单 Agent + 工具链 -->
+      <div class="topo-card">
+        <h4>① 单 Agent + 工具链</h4>
+        <div class="topo-desc">最简路径，工具数 ≤5，单一目标任务</div>
+        <svg viewBox="0 0 220 100" height="90">
+          <rect x="80" y="10" width="60" height="30" rx="6" fill="#1a1a2e" stroke="#63b3ed" stroke-width="1.5"/>
+          <text x="110" y="30" text-anchor="middle" fill="#63b3ed" font-size="11" font-weight="600">Agent</text>
+          <line x1="20" y1="60" x2="55" y2="60" stroke="#444" stroke-width="1.5"/>
+          <circle cx="15" cy="60" r="8" fill="#1a1a2e" stroke="#68d391" stroke-width="1.5"/>
+          <text x="15" y="64" text-anchor="middle" fill="#68d391" font-size="8">T</text>
+          <line x1="55" y1="60" x2="55" y2="40" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="75" y1="60" x2="110" y2="60" stroke="#444" stroke-width="1.5"/>
+          <rect x="65" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="75" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
+          <line x1="130" y1="60" x2="170" y2="60" stroke="#444" stroke-width="1.5"/>
+          <rect x="155" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="165" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
+          <line x1="185" y1="60" x2="205" y2="60" stroke="#444" stroke-width="1.5"/>
+          <rect x="195" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="205" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
+          <text x="110" y="88" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：目标明确的单步任务</text>
+        </svg>
+      </div>
+
+      <!-- 2. 主-从编排 -->
+      <div class="topo-card">
+        <h4>② 主-从编排（Hub &amp; Spoke）</h4>
+        <div class="topo-desc">有中央协调者，子任务可并行，适合统一质控</div>
+        <svg viewBox="0 0 220 110" height="100">
+          <rect x="80" y="5" width="60" height="28" rx="6" fill="#1a1a2e" stroke="#63b3ed" stroke-width="1.5"/>
+          <text x="110" y="23" text-anchor="middle" fill="#63b3ed" font-size="10" font-weight="600">Orchestrator</text>
+          <line x1="50" y1="72" x2="90" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="110" y1="72" x2="110" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="170" y1="72" x2="130" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
+          <rect x="20" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="50" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent A</text>
+          <rect x="80" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="110" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent B</text>
+          <rect x="140" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="170" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent C</text>
+          <text x="110" y="103" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：需要统一质控的复杂任务</text>
+        </svg>
+      </div>
+
+      <!-- 3. 对等协作 -->
+      <div class="topo-card">
+        <h4>③ 对等协作（Peer-to-Peer）</h4>
+        <div class="topo-desc">Agent 互相审查/辩论，创作/决策类任务</div>
+        <svg viewBox="0 0 220 110" height="100">
+          <rect x="10" y="35" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="39" y="52" text-anchor="middle" fill="#9f7aea" font-size="10">写作 Agent</text>
+          <rect x="152" y="35" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="181" y="52" text-anchor="middle" fill="#9f7aea" font-size="10">审查 Agent</text>
+          <rect x="81" y="65" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#68d391" stroke-width="1.5"/>
+          <text x="110" y="82" text-anchor="middle" fill="#68d391" font-size="10">决策 Agent</text>
+          <line x1="68" y1="48" x2="152" y2="48" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="152" y1="53" x2="68" y2="53" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <line x1="68" y1="58" x2="93" y2="65" stroke="#9f7aea" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="152" y1="58" x2="127" y2="65" stroke="#9f7aea" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="110" y="103" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：创作/高风险决策任务</text>
+        </svg>
+      </div>
+
+      <!-- 4. 流水线 -->
+      <div class="topo-card">
+        <h4>④ 流水线（Pipeline）</h4>
+        <div class="topo-desc">线性流程，每步产出是下步输入，内容生产管线</div>
+        <svg viewBox="0 0 220 90" height="80">
+          <rect x="5" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="27" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">采集</text>
+          <line x1="49" y1="42" x2="60" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
+          <polygon points="60,38 68,42 60,46" fill="#63b3ed"/>
+          <rect x="68" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="90" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">处理</text>
+          <line x1="112" y1="42" x2="123" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
+          <polygon points="123,38 131,42 123,46" fill="#63b3ed"/>
+          <rect x="131" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
+          <text x="153" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">生成</text>
+          <line x1="175" y1="42" x2="186" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
+          <polygon points="186,38 194,42 186,46" fill="#63b3ed"/>
+          <rect x="194" y="30" width="22" height="24" rx="5" fill="#1a1a2e" stroke="#f6ad55" stroke-width="1.5"/>
+          <text x="205" y="46" text-anchor="middle" fill="#f6ad55" font-size="8">审核</text>
+          <text x="110" y="78" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：内容生产、数据处理管线</text>
+        </svg>
+      </div>
+
+    </div><!-- /topo-grid -->
+  </div>
+
+  <div class="section-card">
+    <h3>案例：企业年度报告自动生成系统 <span class="tag">序列图</span></h3>
+    <div class="seq-diagram">
+
+      <div class="seq-row">
+        <span class="seq-actor">用户</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">触发年报生成任务</div></div>
+      </div>
+      <div class="seq-row">
+        <span class="seq-actor">Orchestrator</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg parallel">并行分发：Research Agent + Data Agent（同时启动，减少延迟）</div></div>
+      </div>
+      <div class="seq-label">⚡ 并行执行，两个 Agent 同时工作</div>
+      <div class="seq-row">
+        <span class="seq-actor">Research Agent</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">搜索财报/行业新闻/竞品动态</div></div>
+      </div>
+      <div class="seq-row">
+        <span class="seq-actor">Data Agent</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">结构化数据提取（财务指标/KPI）</div></div>
+      </div>
+      <div class="seq-row">
+        <span class="seq-actor">Orchestrator</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">聚合两路结果 → 发给 Writing Agent</div></div>
+      </div>
+      <div class="seq-row">
+        <span class="seq-actor">Writing Agent</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">分章节起草报告初稿</div></div>
+      </div>
+      <div class="seq-row">
+        <span class="seq-actor">QA Agent</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg retry">事实核查 + 引用验证（最多 2 次修订循环）</div></div>
+      </div>
+      <div class="seq-label">🔄 如核查未通过：Writing Agent 修订 → QA Agent 再审，最多循环 2 次</div>
+      <div class="seq-row">
+        <span class="seq-actor">HITL</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg hitl">⚠️ 人工审核节点（必经，不可绕过）</div></div>
+      </div>
+      <div class="seq-label">🔒 关键设计决策：高风险输出必须有人签字，AI 不可自主发布</div>
+      <div class="seq-row">
+        <span class="seq-actor">Formatter Agent</span>
+        <div class="seq-action"><span class="seq-arrow">→</span><div class="seq-msg">排版格式化 → 最终输出</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3>PM 设计注记</h3>
+    <div class="design-note-list">
+      <div class="design-note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <div class="note-title">先画泳道图，再选框架</div>
+          <div class="note-text">多 Agent 架构设计是 Workflow 设计，不是技术选型。绝大多数团队踩的坑是先选了框架再想场景，导致为了迁就框架而扭曲 Workflow。正确顺序：先把人工流程文档化 → 识别可 Agent 化的节点 → 画泳道图 → 最后选框架。</div>
+        </div>
+      </div>
+      <div class="design-note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <div class="note-title">Agent 边界即 Prompt 边界</div>
+          <div class="note-text">一个 Agent 做的事越多，Prompt 越难写，结果越难稳定。单一职责原则在 Agent 设计里比在代码设计里更重要——因为 Agent 的失败是乘法效应，边界不清晰的 Agent 会让整个链路的可靠性骤降。</div>
+        </div>
+      </div>
+      <div class="design-note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <div class="note-title">异步优先，同步兜底</div>
+          <div class="note-text">能并行的子任务设计为异步，在结果聚合层做同步。避免串行等待造成的延迟叠加。以上面的年报系统为例，Research + Data 并行节省了约 40% 总执行时间，这是在不改变任何模型能力的前提下纯靠架构获得的收益。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-arch -->
+
+
+<!-- ══════════════════════════════════════════
+     Tab 3: 企业提效地图
+══════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-enterprise">
+
+  <div class="section-card">
+    <h3>六大企业场景 <span class="tag">痛点 → 方案 → ROI</span></h3>
+    <div class="scene-grid">
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">HR · 人才招募</div>
+          <div class="scene-pain">简历初筛耗时 2h/天，标准不一致</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>简历解析 Agent：PDF→结构化字段</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>岗位匹配评分 Agent：JD 比对打分</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>亮点/风险提取 Agent：标注关键信息</span></div>
+            <div class="flow-step flow-hitl"><div class="flow-dot">✓</div><span>HITL：HR 确认待面试清单</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">2h → 20min/天</div>
+            <div class="roi-note">适用前提：招聘量 &gt;50份/月；文化契合度高权重岗位建议 AI 辅助而非主导</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">研发 · Code Review</div>
+          <div class="scene-pain">资深工程师 15% 时间在重复性审查</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>diff 分析 Agent：提取变更范围</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>安全检测 Agent：OWASP 规则库比对</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>规范检测 Agent：团队规范文档匹配</span></div>
+            <div class="flow-step flow-hitl"><div class="flow-dot">✓</div><span>批注汇总 → PR 自动 Comment</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">规范问题拦截率 &gt;85%</div>
+            <div class="roi-note">节省资深工程师约 40% Review 时间；安全敏感代码仍需人工全量审查</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">客服 · 工单处理</div>
+          <div class="scene-pain">70% 时间处理标准化问题，复杂工单等待久</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>意图识别 Agent：分类标准工单</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>情绪评分 Agent：识别高风险对话</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>路由：FAQ / 退换货 / 投诉 / 升级</span></div>
+            <div class="flow-step flow-hitl"><div class="flow-dot">✓</div><span>复杂/情绪高风险工单 → 人工</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">标准工单自主处理率 70%</div>
+            <div class="roi-note">P0 工单响应从 4h → 30min（更快路由到人工）；早期 3 个月保留人工抽样质检</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">BI · 数据报告</div>
+          <div class="scene-pain">分析师每周 4-6h 生成同结构周报</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>数据拉取 Agent：接 BI 系统 API</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>异动检测 Agent：同比/环比阈值告警</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>解读 Agent：自然语言分析异动原因</span></div>
+            <div class="flow-step"><div class="flow-dot">4</div><span>格式化 Agent → 定时推送</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">4h → 20min/周</div>
+            <div class="roi-note">异动判断标准须与业务方对齐，否则产生大量噪声告警；依赖 BI 系统稳定 API</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">法务 · 合同审查</div>
+          <div class="scene-pain">合同审查依赖少数法务，普通合同排队 2 天</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>合同解析 Agent：PDF→条款结构化</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>风险识别 Agent：对比标准模板库</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>差异摘要 Agent：生成偏差报告</span></div>
+            <div class="flow-step flow-hitl"><div class="flow-dot">✓</div><span>HITL：法务确认异常条款后签署</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">2天 → 2小时</div>
+            <div class="roi-note">前提：法务团队建立标准合同模板库；最终签署审批必须由法务人工完成</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-header">
+          <div class="scene-dept">IT · 帮助台</div>
+          <div class="scene-pain">50% 工单是重复的系统使用问题</div>
+        </div>
+        <div class="scene-body">
+          <div class="scene-flow">
+            <div class="flow-step"><div class="flow-dot">1</div><span>问题理解 Agent：意图识别</span></div>
+            <div class="flow-step"><div class="flow-dot">2</div><span>RAG 检索 Agent：知识库语义搜索</span></div>
+            <div class="flow-step"><div class="flow-dot">3</div><span>回答生成 Agent（带引用溯源）</span></div>
+            <div class="flow-step flow-hitl"><div class="flow-dot">✓</div><span>未解决 → 人工，答复自动入库</span></div>
+          </div>
+          <div class="scene-roi">
+            <div class="roi-num">标准问题自主解答 &gt;60%</div>
+            <div class="roi-note">知识库质量是瓶颈，需专人维护；对新系统上线/政策变更需即时同步</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /scene-grid -->
+  </div>
+
+</div><!-- /tab-enterprise -->
+
+
+<!-- ══════════════════════════════════════════
+     Tab 4: 我的判断框架
+══════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-views">
+
+  <div class="section-card">
+    <h3>6 条 PM 判断框架 <span class="tag">有立场 · 有数据</span></h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+      点击「反面思考」展开我对自己观点的反驳
+    </p>
+
+    <div class="view-cards">
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">01</span>
+          Agent 的 ROI 主要来自「消除等待」，而非「提升质量」
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span>大多数企业流程的瓶颈不是单步任务的质量，而是任务在队列中等待的时间（审批队列、人工处理队列）。Agent 把等待时间从「小时/天」压缩到「秒/分钟」，这是最可量化的收益。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>质量提升是更难量化的 ROI，因为基线不清晰（人工处理的原始质量也不稳定）。在立项时用「消除等待」作为核心指标，比用「质量提升」更容易获得业务侧支持。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>反例：如果某个流程的瓶颈在「人做决策」而非「人在等」（如法务最终签字、高管最终审批），Agent 无法解决这个瓶颈，ROI 会远低于预期。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：也有场景质量才是核心
+          </button>
+          <div class="counter-body">
+            代码生成类场景（Cursor、GitHub Copilot），写出能运行的代码本身就是价值，不只是速度。但这类场景的「质量」定义清晰、可量化（通过率/测试覆盖率），不在我说的「模糊质量提升」范畴内。我的观点是针对「质量基线不清晰」的场景，而非否定质量本身的价值。
+          </div>
+        </div>
+      </div>
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">02</span>
+          Agent 的失败率是乘法而不是加法
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span>如果一个 3 步 Agent 链每步成功率 90%，整体成功率是 <strong style="color:var(--accent)">72.9%（0.9³）</strong>，而不是 90%。每新增一个节点，都在乘以一个小于 1 的数。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>这意味着 Agent 的链路长度不应由「功能需求」决定，而应由「可接受的整体可靠性」倒推：确定允许的失败率 → 估算每步成功率 → 推算最大链路长度。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>实践结论：<strong style="color:var(--accent)">3-5 步以内</strong>的 Agent 链在生产环境是可控的；超过 7-8 步的链在当前模型能力下，不加检查点几乎必然产生不可接受的累积错误率。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：检查点和重试机制可以提升可靠性
+          </button>
+          <div class="counter-body">
+            可以通过中间检查点、错误重试、回退机制来提升整体可靠性。但这些机制本身也是新的节点，会带来延迟和 token 成本。更重要的是，检查点需要有人定义「什么叫通过」，这本身也是设计成本。没有免费的可靠性——只是在成本之间权衡。
+          </div>
+        </div>
+      </div>
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">03</span>
+          企业 Agent 落地的真实阻力在「责任归属」而非技术层
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span>当 Agent 自动执行了一个操作（发送邮件、提交审批、修改数据），出错后「谁来负责」是一个组织问题，不是技术问题。AI 没有法律人格。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>业务部门在 POC 阶段很兴奋，到生产部署阶段开始回缩，根本原因是他们意识到如果 Agent 出错，他们是接受问责的那个人。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>PM 设计 Agent 方案时，必须在功能设计之前解决「责任设计」：明确哪些操作 AI 可以自主执行，哪些操作必须有人工签字，以及出错时的追溯链路。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：低风险操作的责任争议很小
+          </button>
+          <div class="counter-body">
+            有些低风险、高频的操作（发送系统通知邮件、更新 CRM 标签）的责任归属争议很小，可以快速推进。关键是识别和隔离「高责任风险」节点，不要用它来阻塞全局。一个可行的方法：先从没有外部影响的内部操作开始（读而不写），再逐步扩展到有外部影响的写操作。
+          </div>
+        </div>
+      </div>
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">04</span>
+          「何时不值得用 Agent」比「何时值得用」更重要
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent-warn)">信号 A：任务本身定义不清楚时。</strong> Agent 不能澄清需求，只能执行需求。如果连人工做这件事的标准答案都写不出来，Agent 的 Prompt 也写不出来。Agent 只是放大了需求的模糊性。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent-warn)">信号 B：反馈循环缺失时。</strong> Agent 的可靠性来自数据飞轮（错误 → 标注 → 优化）。如果任务输出无法被快速评估好坏，没有数据飞轮，Agent 质量会停滞甚至退化。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent-warn)">信号 C：一次性任务。</strong> Agent 的建设成本（Prompt 设计、工具接入、评估体系、监控）在第一次使用时无法摊销。每季度才做一次的任务，ROI 计算通常是负的。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：某些一次性高价值任务值得投入
+          </button>
+          <div class="counter-body">
+            如果单次任务的价值足够高（如重大并购的尽调文档整理），一次性投入 Agent 建设也可能合算。但这类任务通常有大量自定义需求，「通用 Agent」难以处理，更接近「一次性 AI 项目」而非「可复用 Agent」。我的信号 C 针对的是常规运营任务，不是这类特殊高价值场景。
+          </div>
+        </div>
+      </div>
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">05</span>
+          Agentic 产品的 UX 核心是「可预期性」，而非「自主性」
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span>用户对 Agent 的核心焦虑来自「不知道它接下来要做什么」。自主性越强，焦虑越大。真正好的 Agent 产品 UX 应该让用户随时知道 Agent 在做什么、下一步会做什么、在哪里可以介入。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>Cursor、Perplexity 能被用户接受的原因：每步行动都是可见的，用户有清晰的「接管时机」。相比之下，纯黑盒 Agent（给指令→等结果）的用户信任度普遍低。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span>PM 设计优先级：<strong style="color:var(--accent)">透明度设计</strong>（让用户看到执行步骤）> <strong style="color:var(--accent)">效率设计</strong>（减少等待感知）> <strong style="color:var(--accent)">自主性设计</strong>（扩大可自主操作范围）。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：过度透明会造成认知负担
+          </button>
+          <div class="counter-body">
+            Cursor 的 agent 模式在执行大量小步骤时，用户也会感到疲惫。透明度设计需要分层：关键节点展示，微操作折叠。真正的设计挑战不是「是否透明」，而是「在哪个粒度透明」。这需要通过用户研究来标定，而不是一刀切地展示所有步骤。
+          </div>
+        </div>
+      </div>
+
+      <div class="view-card">
+        <div class="view-title">
+          <span class="view-num">06</span>
+          消除执行层摩擦，决策层仍由人类——这是判断 Agent 落地时机的主轴
+        </div>
+        <div class="view-body">
+          <div class="view-args">
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent-warn)">B 端：</strong>工作流整合、权责归属、内部系统对接是三道无法靠技术跨越的坎。Agent 能做的是把「人工排队等待处理」的环节自动化，但最终审批、签字、法律责任这些节点必须有人背——这不会因为模型更强而改变。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent-warn)">C 端：</strong>OpenClaw 证明了 C 端 Agent 的门槛在快速降低（消息平台接入解决了「用起来」），但解决不了「用得稳」。Agent 能产生实际效果的操作往往不可逆（误删文件、代发消息、读取通讯录），一旦出错用户没有补救空间，信任壁垒不会因为入口变了就消失。</span></div>
+            <div class="view-arg"><div class="arg-dot"></div><span><strong style="color:var(--accent)">判断方法：</strong>先问「这个节点的决策错了，谁承担后果？」如果是用户/企业承担 → 必须有人工确认环节，Agent 做执行不做决策；如果后果可逆、影响范围可控 → 可以考虑让 Agent 自主执行。</span></div>
+          </div>
+          <button class="counter-toggle" onclick="toggleCounter(this)">
+            ▶ 反面思考：「决策层仍由人类」不是永久结论
+          </button>
+          <div class="counter-body">
+            随着使用习惯建立，C 端对复杂任务的需求会逐步释放，信任壁垒也会随之降低。「决策层仍由人类」是当前阶段的判断，不是永久结论——真正的问题是：什么样的技术/制度条件成熟后，这个边界会移动？可能的答案是：可靠的撤销机制 + 明确的责任归属框架 + 用户对 Agent 错误率的感知下降到可接受阈值。
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view-cards -->
+  </div>
+
+</div><!-- /tab-views -->
+
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  var idx = {'tab-selector':0,'tab-arch':1,'tab-enterprise':2,'tab-views':3}[id];
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+}
+
+// ── 框架选型筛选逻辑 ──
+var activeTask = '';
+var activeTeam = '';
+
+function setupPills(groupId, setter) {
+  var pills = document.querySelectorAll('#' + groupId + ' .pill');
+  pills.forEach(function(pill) {
+    pill.addEventListener('click', function() {
+      pills.forEach(function(p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      setter(pill.dataset.val);
+      applyFilters();
+    });
+  });
+}
+
+setupPills('filter-task', function(v) { activeTask = v; });
+setupPills('filter-team', function(v) { activeTeam = v; });
+
+function applyFilters() {
+  var cards = document.querySelectorAll('.fw-card');
+  var tableRows = document.querySelectorAll('.compare-table tbody tr');
+
+  cards.forEach(function(card) {
+    var taskTags = (card.dataset.task || '').split(' ');
+    var teamTags = (card.dataset.team || '').split(' ');
+    var taskOk = !activeTask || taskTags.indexOf(activeTask) !== -1;
+    var teamOk = !activeTeam || teamTags.indexOf(activeTeam) !== -1;
+    var match = taskOk && teamOk;
+
+    card.classList.remove('recommended', 'dimmed');
+    if (!activeTask && !activeTeam) return;
+    if (match) {
+      card.classList.add('recommended');
+      if (!card.querySelector('.fw-recommend-badge')) {
+        var badge = document.createElement('span');
+        badge.className = 'fw-recommend-badge';
+        badge.textContent = '推荐';
+        card.appendChild(badge);
+      }
+    } else {
+      card.classList.add('dimmed');
+      var existBadge = card.querySelector('.fw-recommend-badge');
+      if (existBadge) existBadge.remove();
+    }
+  });
+
+  // 同步对比表格
+  var fwMap = {
+    'fw-langgraph': 'langgraph', 'fw-autogen': 'autogen', 'fw-crewai': 'crewai',
+    'fw-swarm': 'swarm', 'fw-dify': 'dify', 'fw-custom': 'custom'
+  };
+  cards.forEach(function(card) {
+    var fw = card.id.replace('fw-', '');
+    var row = document.querySelector('.compare-table tr[data-fw="' + fw + '"]');
+    if (!row) return;
+    if (!activeTask && !activeTeam) {
+      row.querySelectorAll('td').forEach(function(td) { td.classList.remove('dim-row'); });
+      return;
+    }
+    if (card.classList.contains('dimmed')) {
+      row.querySelectorAll('td').forEach(function(td) { td.classList.add('dim-row'); });
+    } else {
+      row.querySelectorAll('td').forEach(function(td) { td.classList.remove('dim-row'); });
+    }
+  });
+}
+
+function toggleFwNote(name) {
+  var note = document.getElementById('note-' + name);
+  var card = document.getElementById('fw-' + name);
+  var isOpen = note.classList.contains('open');
+  // 关闭所有
+  document.querySelectorAll('.fw-note').forEach(function(n) { n.classList.remove('open'); });
+  document.querySelectorAll('.fw-card').forEach(function(c) { c.classList.remove('open'); });
+  if (!isOpen) {
+    note.classList.add('open');
+    card.classList.add('open');
+  }
+}
+
+function toggleCounter(btn) {
+  var body = btn.nextElementSibling;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  btn.textContent = (isOpen ? '▶' : '▼') + btn.textContent.slice(1);
+}
+</script>
+
+</body>
+</html>
