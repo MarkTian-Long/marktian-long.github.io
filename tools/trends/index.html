@@ -379,7 +379,7 @@
 
             async function init() {
                 try {
-                    const res = await fetch('./data/trends.json');
+                    const res = await fetch('/tools/trends/data/trends.json');
                     if (!res.ok) throw new Error('fetch failed');
                     data = await res.json();
                 } catch (e) {

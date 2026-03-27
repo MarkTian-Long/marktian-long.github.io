@@ -25,7 +25,7 @@ const CARD_GRADS = [
 // ---- LOAD DATA ----
 async function loadProducts() {
     try {
-        const res = await fetch('data/products.json');
+        const res = await fetch('/tools/ai-insights/data/products.json');
         products = await res.json();
         renderFilters();
         renderGrid();
