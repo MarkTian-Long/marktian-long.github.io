@@ -92,13 +92,6 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 .log-lvl-error{color:var(--asci-red);background:rgba(248,113,113,0.1)}
 @keyframes log-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 
-/* ---- CHECKPOINT CARD ---- */
-.checkpoint-card{margin:12px 0;border:1px solid rgba(251,191,36,0.35);border-radius:8px;background:rgba(251,191,36,0.05);overflow:hidden}
-.cp-title{padding:10px 14px;font-size:12px;font-weight:700;color:var(--asci-yellow);border-bottom:1px solid rgba(251,191,36,0.2)}
-.cp-body{padding:12px 14px}
-.cp-body p{font-size:12px;color:var(--asci-text);margin-bottom:10px;line-height:1.6;font-family:system-ui,sans-serif}
-.cp-papers{display:flex;flex-direction:column;gap:6px}
-.cp-paper{font-size:11px;color:var(--asci-text-dim);padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--asci-border)}
 
 /* ---- RIGHT: PANEL ---- */
 .asci-panel{overflow-y:auto;border-left:1px solid var(--asci-border);padding:16px;background:var(--asci-surface);display:flex;flex-direction:column;gap:20px}
@@ -190,6 +183,131 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 .cp-paper-hint{float:right;font-size:10px;color:var(--asci-blue);opacity:.7}
 .s3-paper-link{color:inherit;text-decoration:none;cursor:pointer;border-bottom:1px dashed rgba(79,143,255,0.4);transition:border-color .15s,color .15s}
 .s3-paper-link:hover{color:var(--asci-blue);border-color:var(--asci-blue)}
+
+/* ---- STEP RESULT CARD（步骤结果卡片，插入日志区） ---- */
+.step-result-card{margin:14px 0 4px;border:1px solid rgba(79,143,255,0.25);border-radius:8px;background:rgba(79,143,255,0.05);overflow:hidden;font-family:system-ui,sans-serif}
+.src-header{padding:8px 14px;font-size:11px;font-weight:700;color:var(--asci-blue);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(79,143,255,0.15);display:flex;align-items:center;justify-content:space-between}
+.src-body{padding:12px 14px}
+.src-hint{font-size:11px;color:var(--asci-text-muted);margin-top:10px;font-style:italic}
+
+/* ---- KEYWORD TAGS ---- */
+.kw-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.kw-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 10px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.25);cursor:default}
+.kw-tag-mesh{font-size:10px;color:var(--asci-text-muted);margin-left:2px}
+.kw-tag-del{background:none;border:none;color:var(--asci-text-muted);cursor:pointer;font-size:13px;line-height:1;padding:0 0 0 2px;transition:color .15s}
+.kw-tag-del:hover{color:var(--asci-red)}
+.kw-add-row{display:flex;gap:6px;margin-top:8px}
+.kw-add-input{flex:1;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--asci-border2);color:var(--asci-text);font-size:12px;outline:none}
+.kw-add-input:focus{border-color:var(--asci-blue)}
+.kw-add-btn{padding:5px 12px;border-radius:6px;background:var(--asci-blue);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:600}
+
+/* ---- SEARCH RESULT BARS ---- */
+.search-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.search-bar-item{display:flex;align-items:center;gap:8px}
+.search-bar-label{font-size:11px;color:var(--asci-text-dim);width:120px;flex-shrink:0}
+.search-bar-track{flex:1;height:6px;background:#1e2840;border-radius:99px;overflow:hidden}
+.search-bar-fill{height:100%;border-radius:99px}
+.search-bar-count{font-size:12px;font-weight:700;color:var(--asci-text);width:32px;text-align:right;flex-shrink:0}
+.search-query-box{background:rgba(255,255,255,0.03);border:1px solid var(--asci-border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--asci-text-dim);font-family:'Courier New',monospace;word-break:break-all;margin-bottom:10px}
+.year-range-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.year-range-label{font-size:11px;color:var(--asci-text-dim);flex-shrink:0}
+.year-input{width:60px;padding:3px 6px;border-radius:4px;background:rgba(255,255,255,0.05);border:1px solid var(--asci-border2);color:var(--asci-text);font-size:12px;text-align:center;outline:none}
+.year-input:focus{border-color:var(--asci-blue)}
+.re-search-btn{padding:4px 12px;border-radius:6px;background:transparent;border:1px solid var(--asci-blue);color:var(--asci-blue);font-size:11px;cursor:pointer;transition:background .15s}
+.re-search-btn:hover{background:var(--asci-blue-dim)}
+
+/* ---- SCREENING / BORDERLINE PAPERS ---- */
+.threshold-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.threshold-label{font-size:11px;color:var(--asci-text-dim);flex-shrink:0}
+.threshold-slider{flex:1;accent-color:var(--asci-blue)}
+.threshold-val{font-size:13px;font-weight:700;color:var(--asci-blue);width:36px;text-align:right;flex-shrink:0}
+.included-count{font-size:11px;color:var(--asci-green);margin-bottom:10px}
+.borderline-list{display:flex;flex-direction:column;gap:6px}
+.bl-paper{border:1px solid var(--asci-border);border-radius:6px;overflow:hidden}
+.bl-paper-top{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;background:rgba(255,255,255,0.02)}
+.bl-paper-top:hover{background:rgba(79,143,255,0.06)}
+.bl-paper-title{flex:1;font-size:12px;font-weight:600;color:var(--asci-text)}
+.bl-paper-score{font-size:11px;padding:2px 7px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2);flex-shrink:0}
+.bl-paper-expand{font-size:11px;color:var(--asci-text-muted)}
+.bl-paper-detail{padding:0 10px;max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s}
+.bl-paper-detail.open{max-height:200px;padding:8px 10px}
+.bl-paper-abstract{font-size:11px;color:var(--asci-text-dim);line-height:1.7;margin-bottom:8px}
+.bl-decision-row{display:flex;gap:6px}
+.bl-btn{padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid;transition:background .15s,color .15s}
+.bl-btn-include{color:var(--asci-green);border-color:rgba(52,211,153,0.4);background:rgba(52,211,153,0.08)}
+.bl-btn-include:hover,.bl-btn-include.active{background:rgba(52,211,153,0.2)}
+.bl-btn-maybe{color:var(--asci-yellow);border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.08)}
+.bl-btn-maybe:hover,.bl-btn-maybe.active{background:rgba(251,191,36,0.2)}
+.bl-btn-exclude{color:var(--asci-red);border-color:rgba(248,113,113,0.4);background:rgba(248,113,113,0.08)}
+.bl-btn-exclude:hover,.bl-btn-exclude.active{background:rgba(248,113,113,0.2)}
+.bl-paper.decided-include{border-color:rgba(52,211,153,0.35)}
+.bl-paper.decided-maybe{border-color:rgba(251,191,36,0.35)}
+.bl-paper.decided-exclude{border-color:rgba(248,113,113,0.35);opacity:.6}
+.batch-actions{display:flex;gap:6px;margin-bottom:10px}
+.batch-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--asci-border);background:rgba(255,255,255,0.03);color:var(--asci-text-dim);transition:background .15s,border-color .15s}
+.batch-btn:hover{background:rgba(79,143,255,0.08);border-color:var(--asci-blue);color:var(--asci-text)}
+
+/* ---- CONTRADICTION CARD ---- */
+.contradiction-card{border:1px solid rgba(248,113,113,0.3);border-radius:8px;background:rgba(248,113,113,0.04);overflow:hidden;margin-bottom:10px}
+.contradiction-header{padding:8px 12px;font-size:11px;font-weight:700;color:var(--asci-red);border-bottom:1px solid rgba(248,113,113,0.2)}
+.contradiction-metric{font-size:12px;color:var(--asci-text-dim);padding:8px 12px;border-bottom:1px solid rgba(248,113,113,0.1)}
+.contradiction-papers{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.contra-paper{padding:10px 12px;border-right:1px solid rgba(248,113,113,0.15)}
+.contra-paper:last-child{border-right:none}
+.contra-paper-title{font-size:11px;font-weight:700;color:var(--asci-text);margin-bottom:3px}
+.contra-paper-meta{font-size:10px;color:var(--asci-text-muted);margin-bottom:6px}
+.contra-paper-value{font-size:20px;font-weight:800;color:var(--asci-red);margin-bottom:3px}
+.contra-paper-method{font-size:10px;color:var(--asci-text-dim);line-height:1.4}
+.contradiction-options{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.contra-opt{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;border:1px solid var(--asci-border);background:rgba(255,255,255,0.02);cursor:pointer;transition:border-color .15s,background .15s}
+.contra-opt:hover{border-color:var(--asci-border2);background:rgba(79,143,255,0.05)}
+.contra-opt.selected{border-color:var(--asci-blue);background:var(--asci-blue-dim)}
+.contra-opt-radio{width:14px;height:14px;border-radius:50%;border:2px solid var(--asci-text-muted);flex-shrink:0;margin-top:1px;transition:border-color .15s,background .15s}
+.contra-opt.selected .contra-opt-radio{border-color:var(--asci-blue);background:var(--asci-blue)}
+.contra-opt-label{font-size:12px;font-weight:600;color:var(--asci-text)}
+.contra-opt-reason{font-size:11px;color:var(--asci-text-muted);margin-top:1px}
+
+/* ---- OUTLINE EDITOR ---- */
+.outline-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.outline-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid var(--asci-border);background:rgba(255,255,255,0.02)}
+.outline-num{width:20px;height:20px;border-radius:50%;background:var(--asci-blue-dim);color:var(--asci-blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:1px solid rgba(79,143,255,0.25);margin-top:1px}
+.outline-content{flex:1;min-width:0}
+.outline-title-input{width:100%;background:transparent;border:none;color:var(--asci-text);font-size:12px;font-weight:600;outline:none;padding:0;margin-bottom:3px}
+.outline-title-input:focus{border-bottom:1px solid var(--asci-blue)}
+.outline-points{font-size:11px;color:var(--asci-text-muted);line-height:1.5}
+
+/* ---- BACK BUTTON ---- */
+.asci-btn-back{padding:9px 16px;border-radius:8px;background:transparent;color:var(--asci-text-muted);border:1px solid var(--asci-border);cursor:pointer;font-size:13px;font-weight:600;transition:border-color .15s,color .15s}
+.asci-btn-back:hover:not(:disabled){border-color:var(--asci-border2);color:var(--asci-text)}
+.asci-btn-back:disabled{opacity:.3;cursor:default}
+
+/* ---- CONFIRM MODAL ---- */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;display:flex;align-items:center;justify-content:center}
+.confirm-modal{background:var(--asci-surface);border:1px solid var(--asci-border2);border-radius:var(--asci-radius);padding:24px;max-width:380px;width:90%}
+.confirm-modal-title{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--asci-yellow)}
+.confirm-modal-body{font-size:13px;color:var(--asci-text-dim);line-height:1.6;margin-bottom:20px}
+.confirm-modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.confirm-btn-cancel{padding:7px 16px;border-radius:6px;background:transparent;border:1px solid var(--asci-border);color:var(--asci-text-dim);cursor:pointer;font-size:13px}
+.confirm-btn-ok{padding:7px 16px;border-radius:6px;background:var(--asci-yellow);border:none;color:#000;cursor:pointer;font-size:13px;font-weight:700}
+
+/* ---- RIGHT PANEL: HITL STATUS ---- */
+.hitl-status{padding:8px 10px;border-radius:6px;font-size:11px;line-height:1.5;margin-top:6px}
+.hitl-status-wait{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);color:var(--asci-yellow)}
+.hitl-status-done{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);color:var(--asci-green)}
+.hitl-status-required{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);color:var(--asci-red)}
+
+/* ---- RIGHT PANEL: DECISION HISTORY ---- */
+.decision-history{margin-top:10px}
+.decision-history-title{font-size:10px;font-weight:700;color:var(--asci-text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.decision-history-item{font-size:11px;color:var(--asci-text-dim);padding:4px 0;border-top:1px solid var(--asci-border);line-height:1.5}
+.decision-history-item strong{color:var(--asci-text)}
+
+/* ---- SCREEN 3: HITL SUMMARY ---- */
+.s3-hitl-card{border:1px solid rgba(79,143,255,0.25);border-radius:8px;background:rgba(79,143,255,0.03);overflow:hidden}
+.s3-hitl-item{padding:10px 14px;border-bottom:1px solid rgba(79,143,255,0.1);font-size:12px;line-height:1.6}
+.s3-hitl-item:last-child{border-bottom:none}
+.s3-hitl-step{font-weight:700;color:var(--asci-blue);margin-right:6px}
+.s3-hitl-decision{color:var(--asci-text)}
 </style>
 </head>
 <body>
@@ -270,17 +388,6 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
       <div class="log-header">执行日志 · Agent Runtime</div>
       <div class="asci-log" id="logPanel">
         <div id="logBody"></div>
-        <div class="checkpoint-card hidden" id="checkpointCard">
-          <div class="cp-title">👤 Human Checkpoint — 摘要筛选质量确认</div>
-          <div class="cp-body">
-            <p>AI 已筛选 <strong>21 篇</strong>摘要（阈值 0.72），其中 <strong>3 篇</strong>置信度处于边界区间 [0.72–0.75]，建议人工确认是否纳入精读。</p>
-            <div class="cp-papers">
-              <div class="cp-paper" onclick="showPaperModal('cp1')">📄 Attention Is All You Need (2017) — 相关性评分 0.74 <span class="cp-paper-hint">点击查看摘要 →</span></div>
-              <div class="cp-paper" onclick="showPaperModal('cp2')">📄 Drug-Target Interaction via Transformer (2021) — 相关性评分 0.73 <span class="cp-paper-hint">点击查看摘要 →</span></div>
-              <div class="cp-paper" onclick="showPaperModal('cp3')">📄 Molecular Graph Transformer (2022) — 相关性评分 0.72 <span class="cp-paper-hint">点击查看摘要 →</span></div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     <!-- 右列：状态面板 -->
@@ -310,8 +417,9 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
     </div>
     <!-- 底部控制栏 -->
     <div class="asci-controls">
-      <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
+      <button class="asci-btn-back" id="backBtn" onclick="handleBack()" disabled>← 上一步</button>
       <span class="ctrl-progress" id="ctrlProgress">准备就绪 · 共 5 个步骤</span>
+      <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
     </div>
   </div>
 </div>
@@ -369,7 +477,149 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 </div>
 
 <script>
-var MOCK_STEPS = [{"id":1,"icon":"🔑","name":"关键词提取","risk":"low","riskLabel":"低风险","tools":["NLP Parser","MeSH API"],"subs":["主题词拆解","MeSH 术语映射"],"logs":[{"level":"INFO","text":"解析任务描述：Transformer in Drug Discovery"},{"level":"INFO","text":"提取核心主题词：Transformer, Drug Discovery, Molecular Property"},{"level":"INFO","text":"调用 MeSH API 映射标准术语 (3 terms)"},{"level":"INFO","text":"✓ 关键词提取完成，共 8 个检索词"}]},{"id":2,"icon":"🔍","name":"数据库检索","risk":"low","riskLabel":"低风险","tools":["PubMed API","Semantic Scholar","Deduplicator"],"subs":["PubMed 检索","Semantic Scholar 检索","去重合并"],"logs":[{"level":"INFO","text":"查询 PubMed：Transformer AND Drug Discovery [2018:2024]"},{"level":"INFO","text":"PubMed 返回 142 条记录"},{"level":"INFO","text":"查询 Semantic Scholar API (top_k=200)"},{"level":"INFO","text":"Semantic Scholar 返回 198 条记录"},{"level":"INFO","text":"去重合并：340 → 276 篇（移除 64 条重复）"},{"level":"INFO","text":"✓ 数据库检索完成，候选文献 276 篇"}]},{"id":3,"icon":"📋","name":"摘要筛选","risk":"medium","riskLabel":"中风险","checkpoint":true,"tools":["Relevance Scorer","Threshold Filter"],"subs":["相关性打分","阈值过滤","👤 Human Checkpoint"],"logs":[{"level":"INFO","text":"对 276 篇文献进行相关性评分（模型：SciBERT-ft）"},{"level":"INFO","text":"评分完成，阈值 0.72 过滤后剩余 21 篇"},{"level":"WARN","text":"3 篇文献置信度处于边界区间 [0.72–0.75]，触发 Human Checkpoint"},{"level":"INFO","text":"⏸ 等待人工确认边界文献..."}]},{"id":4,"icon":"📖","name":"全文精读","risk":"high","riskLabel":"高风险","tools":["PDF Parser","Method Extractor","Contradiction Detector"],"subs":["方法论提取","关键发现提取","矛盾检测"],"logs":[{"level":"INFO","text":"下载全文 PDF (21 篇)，解析文档结构"},{"level":"INFO","text":"提取方法论章节：21/21 篇"},{"level":"INFO","text":"识别关键发现：共 47 条 findings"},{"level":"WARN","text":"发现潜在矛盾：Liu et al.(2022) 与 Wang et al.(2023) 在 AUROC 指标上结论相悖"},{"level":"INFO","text":"矛盾已标注，待综述生成时人工复核"},{"level":"INFO","text":"✓ 全文精读完成"}]},{"id":5,"icon":"✍️","name":"综述生成","risk":"medium","riskLabel":"中风险","tools":["Outline Generator","Para Writer","Citation Inserter"],"subs":["生成大纲","段落撰写","引用插入"],"logs":[{"level":"INFO","text":"根据 47 条 findings 生成综述大纲（5 节）"},{"level":"INFO","text":"撰写各段落，自动插入 APA 引用格式"},{"level":"INFO","text":"引用文献 21 篇，精选核心 6 篇进入摘要层"},{"level":"INFO","text":"✓ 综述生成完成，总字数约 2400 字"}]}];
+var MOCK_STEPS = [
+  {
+    id: 1, icon: '🔑', name: '关键词提取', risk: 'low', riskLabel: '低风险',
+    tools: ['NLP Parser', 'MeSH API'],
+    subs: ['主题词拆解', 'MeSH 术语映射'],
+    logs: [
+      {level:'INFO', text:'解析任务描述：Transformer in Drug Discovery'},
+      {level:'INFO', text:'提取核心主题词：Transformer, Drug Discovery, Molecular Property'},
+      {level:'INFO', text:'调用 MeSH API 映射标准术语 (3 terms)'},
+      {level:'INFO', text:'✓ 关键词提取完成，共 8 个检索词'}
+    ],
+    result: {
+      type: 'keywords',
+      keywords: [
+        {term: 'Transformer', mesh: 'Neural Networks, Computer', editable: true},
+        {term: 'Drug Discovery', mesh: 'Drug Discovery', editable: true},
+        {term: 'Molecular Property', mesh: 'Molecular Structure', editable: true},
+        {term: 'Self-Attention', mesh: null, editable: true},
+        {term: 'SMILES', mesh: 'Drug Design', editable: true},
+        {term: 'Protein-Ligand', mesh: 'Ligands', editable: true},
+        {term: 'Deep Learning', mesh: 'Deep Learning', editable: true},
+        {term: 'Binding Affinity', mesh: 'Protein Binding', editable: true}
+      ],
+      hint: '可删除不相关词，或添加遗漏的领域术语。确认后进入数据库检索。'
+    }
+  },
+  {
+    id: 2, icon: '🔍', name: '数据库检索', risk: 'low', riskLabel: '低风险',
+    tools: ['PubMed API', 'Semantic Scholar', 'Deduplicator'],
+    subs: ['PubMed 检索', 'Semantic Scholar 检索', '去重合并'],
+    logs: [
+      {level:'INFO', text:'查询 PubMed：Transformer AND Drug Discovery [2018:2024]'},
+      {level:'INFO', text:'PubMed 返回 142 条记录'},
+      {level:'INFO', text:'查询 Semantic Scholar API (top_k=200)'},
+      {level:'INFO', text:'Semantic Scholar 返回 198 条记录'},
+      {level:'INFO', text:'去重合并：340 → 276 篇（移除 64 条重复）'},
+      {level:'INFO', text:'✓ 数据库检索完成，候选文献 276 篇'}
+    ],
+    result: {
+      type: 'search',
+      query: 'Transformer AND ("Drug Discovery" OR "Molecular Property") [2018:2024]',
+      sources: [
+        {name: 'PubMed', count: 142, color: '#4f8fff'},
+        {name: 'Semantic Scholar', count: 198, color: '#9b6dff'},
+        {name: '去重后合计', count: 276, color: '#34d399'}
+      ],
+      yearRange: {min: 2018, max: 2024, current: [2018, 2024]},
+      hint: '可调整时间范围后点击"重新检索"，或直接确认当前结果。'
+    }
+  },
+  {
+    id: 3, icon: '📋', name: '摘要筛选', risk: 'medium', riskLabel: '中风险',
+    checkpoint: true,
+    tools: ['Relevance Scorer', 'Threshold Filter'],
+    subs: ['相关性打分', '阈值过滤', '👤 Human Checkpoint'],
+    logs: [
+      {level:'INFO', text:'对 276 篇文献进行相关性评分（模型：SciBERT-ft）'},
+      {level:'INFO', text:'评分完成，阈值 0.72 过滤后剩余 21 篇'},
+      {level:'WARN', text:'3 篇文献置信度处于边界区间 [0.72–0.75]，触发 Human Checkpoint'},
+      {level:'INFO', text:'⏸ 等待人工确认边界文献...'}
+    ],
+    result: {
+      type: 'screening',
+      threshold: 0.72,
+      included: 18,
+      borderline: [
+        {id:'cp1', title:'Attention Is All You Need', authors:'Vaswani et al.', year:2017, score:0.74,
+         abstract:'本文提出 Transformer 架构，完全基于注意力机制，摒弃了循环和卷积结构。在机器翻译任务上，模型质量更优，并行性更强，所需训练时间显著减少。该架构已成为现代 NLP 和药物发现 AI 的基础组件，其自注意力机制可高效捕获分子序列中的长程依赖关系。',
+         decision: null},
+        {id:'cp2', title:'Drug-Target Interaction via Transformer', authors:'Zhang et al.', year:2021, score:0.73,
+         abstract:'本文将 Transformer 双编码器架构应用于药物-靶点相互作用（DTI）预测：蛋白质序列编码器 + SMILES 分子编码器，通过交叉注意力融合两路表示。在 BindingDB 和 Davis 数据集上，AUROC 达 0.924，优于 GNN 和 LSTM 基线。',
+         decision: null},
+        {id:'cp3', title:'Molecular Graph Transformer', authors:'Liu et al.', year:2022, score:0.72,
+         abstract:'本文将图神经网络与 Transformer 注意力机制结合，提出 Molecular Graph Transformer（MGT），在分子属性预测任务中引入全局自注意力层以捕获远程原子交互。在 QM9 和 MoleculeNet 基准上，MGT 在多个属性预测任务上超越纯 GNN 方法。',
+         decision: null}
+      ],
+      hint: '请对每篇边界文献做出判断后，调整阈值或确认纳入数量。'
+    }
+  },
+  {
+    id: 4, icon: '📖', name: '全文精读', risk: 'high', riskLabel: '高风险',
+    tools: ['PDF Parser', 'Method Extractor', 'Contradiction Detector'],
+    subs: ['方法论提取', '关键发现提取', '矛盾检测'],
+    logs: [
+      {level:'INFO', text:'下载全文 PDF (21 篇)，解析文档结构'},
+      {level:'INFO', text:'提取方法论章节：21/21 篇'},
+      {level:'INFO', text:'识别关键发现：共 47 条 findings'},
+      {level:'WARN', text:'发现潜在矛盾：Liu et al.(2022) 与 Wang et al.(2023) 在 AUROC 指标上结论相悖'},
+      {level:'INFO', text:'矛盾已标注，等待人工处置...'}
+    ],
+    result: {
+      type: 'contradiction',
+      findings: 47,
+      contradiction: {
+        metric: 'AUROC（BindingDB 数据集）',
+        paperA: {
+          title: 'Transformer-based DTI Prediction',
+          authors: 'Liu et al., 2022',
+          journal: 'Bioinformatics (SCI Q1)',
+          value: '0.924',
+          method: 'Transformer 双编码器 + 交叉注意力'
+        },
+        paperB: {
+          title: 'Multi-omics Integration via Transformer',
+          authors: 'Wang et al., 2023',
+          journal: 'Nature Methods (SCI Q1)',
+          value: '0.864',
+          method: 'Transformer 跨模态注意力（多组学）'
+        },
+        options: [
+          {id:'A', label:'采信 Liu 2022', reason:'同类任务基准更匹配'},
+          {id:'B', label:'采信 Wang 2023', reason:'更新、期刊更高'},
+          {id:'both', label:'两篇均纳入并标注争议', reason:'保留学术争议'},
+          {id:'exclude', label:'排除两篇，仅用其他文献', reason:'矛盾无法调和'}
+        ],
+        decision: null
+      },
+      hint: '此为高风险步骤，矛盾文献必须人工处置后才能继续。'
+    }
+  },
+  {
+    id: 5, icon: '✍️', name: '综述生成', risk: 'medium', riskLabel: '中风险',
+    tools: ['Outline Generator', 'Para Writer', 'Citation Inserter'],
+    subs: ['生成大纲', '段落撰写', '引用插入'],
+    logs: [
+      {level:'INFO', text:'根据 47 条 findings 生成综述大纲（5 节）'},
+      {level:'INFO', text:'撰写各段落，自动插入 APA 引用格式'},
+      {level:'INFO', text:'引用文献 21 篇，精选核心 6 篇进入摘要层'},
+      {level:'INFO', text:'✓ 综述生成完成，总字数约 2400 字'}
+    ],
+    result: {
+      type: 'outline',
+      sections: [
+        {id:1, title:'引言：Transformer 架构概述', points:'自注意力机制原理；从 NLP 到生物医学的迁移路径', editable:true},
+        {id:2, title:'分子属性预测应用', points:'ChemBERTa / MolBERT 预训练范式；MoleculeNet 基准对比', editable:true},
+        {id:3, title:'药物-靶点相互作用识别', points:'双编码器架构；BindingDB / Davis 数据集结果', editable:true},
+        {id:4, title:'从头分子生成', points:'REINVENT 变体；QED × SA 综合指标；3D 构象局限性', editable:true},
+        {id:5, title:'局限性与未来方向', points:'可解释性不足；标注数据稀缺；多模态整合趋势', editable:true}
+      ],
+      hint: '可编辑节标题或调整论点描述，确认大纲后生成正文。'
+    }
+  }
+];
 var CONF_BY_STEP = [95,88,82,75,78];
 var MOCK_RESULT = {"title":"Transformer 架构在药物发现中的应用综述","abstract":"Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本综述系统梳理了 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个核心场景中的应用进展，汇总分析 21 篇高质量文献，重点探讨模型架构演化路径、基准数据集选取策略及临床转化瓶颈。研究表明，预训练-微调范式已成为药物发现 AI 的主流方法，但可解释性不足与标注数据稀缺仍是限制规模化落地的关键障碍。","findings":["预训练 Transformer（如 ChemBERTa、MolBERT）在分子属性预测任务上平均 AUROC 提升 8.3%，优于传统 ECFP 指纹方法。","药物-靶点相互作用（DTI）任务中，Transformer 双编码器架构在 BindingDB 数据集 AUROC 达 0.924，显著优于图神经网络基线。","从头分子生成领域，基于 Transformer 的 REINVENT 变体在 QED × SA 综合指标上表现最优，但 3D 构象生成准确性仍有较大提升空间。"],"sources":[{"title":"Attention Is All You Need","authors":"Vaswani et al.","year":2017,"journal":"NeurIPS","score":9.2},{"title":"ChemBERTa: Large-Scale Self-Supervised Pretraining","authors":"Chithrananda et al.","year":2020,"journal":"arXiv / Nature MI","score":8.8},{"title":"MolBERT: Molecular Property Prediction","authors":"Fabian et al.","year":2020,"journal":"ICLR workshop","score":8.5},{"title":"Transformer-based DTI Prediction","authors":"Liu et al.","year":2022,"journal":"Bioinformatics (SCI Q1)","score":8.3},{"title":"REINVENT 2.0 with Transformer Prior","authors":"Blaschke et al.","year":2020,"journal":"J. Chem. Inf. Model. (SCI Q1)","score":7.9},{"title":"Multi-omics Integration via Transformer","authors":"Wang et al.","year":2023,"journal":"Nature Methods (SCI Q1)","score":7.6}],"credibility":{"sourceQuality":{"score":8.5,"note":"87% 文献来自 SCI Q1 期刊，核心论文高被引（\u003e500 次）"},"reasoning":{"score":7.8,"note":"推理链路清晰，结论均有文献支撑，逻辑一致"},"consistency":{"score":7.2,"note":"Liu(2022) 与 Wang(2023) AUROC 指标存在 0.06 差异，已标注"},"overall":7.8,"suggestion":"综合评分 7.8/10。建议对全文精读步骤中检测到的矛盾标注（Liu vs Wang AUROC）进行人工复核后再提交。"}};
 
@@ -415,7 +665,6 @@ function renderTree() {
 
 function handleNext() {
   if (isRunning) return;
-  if (awaitingCheckpoint) { confirmCheckpoint(); return; }
   if (currentStep >= 5) return;
   isRunning = true;
   var btn = document.getElementById('nextBtn');
@@ -429,6 +678,8 @@ function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
 
 async function runStep(stepIdx) {
   currentStep = stepIdx;
+  // 执行中禁用回退按钮
+  document.getElementById('backBtn').disabled = true;
   var step = MOCK_STEPS[stepIdx - 1];
   document.getElementById('ctrlProgress').textContent = '正在执行：' + step.name + ' (' + stepIdx + '/5)';
   updatePanel(stepIdx, 'running');
@@ -436,22 +687,10 @@ async function runStep(stepIdx) {
 
   for (var i = 0; i < step.logs.length; i++) {
     await sleep(300 + Math.random() * 500);
-    appendLog(step.logs[i].level, step.logs[i].text);
+    appendLog(step.logs[i].level, step.logs[i].text, stepIdx);
   }
 
-  if (step.checkpoint) {
-    awaitingCheckpoint = true;
-    isRunning = false;
-    document.getElementById('checkpointCard').classList.remove('hidden');
-    document.getElementById('logPanel').scrollTop = 99999;
-    var btn = document.getElementById('nextBtn');
-    btn.disabled = false;
-    btn.textContent = '✅ 确认并继续';
-    btn.classList.add('checkpoint-mode');
-    document.getElementById('ctrlProgress').textContent = '等待人工确认 Checkpoint';
-    return;
-  }
-
+  // Step 3 逐篇判断由结果卡片内的 blDecide 驱动，直接 finishStep
   finishStep(stepIdx);
 }
 
@@ -460,34 +699,46 @@ function finishStep(stepIdx) {
   isRunning = false;
   updatePanel(stepIdx, 'done');
   renderTree();
+
+  // 渲染步骤结果卡片
+  renderStepResult(stepIdx);
+
   var btn = document.getElementById('nextBtn');
   btn.disabled = false;
+
   if (stepIdx < 5) {
     btn.textContent = '▶ 执行下一步';
-    document.getElementById('ctrlProgress').textContent = '步骤 ' + stepIdx + ' 完成 · 准备下一步';
+    document.getElementById('ctrlProgress').textContent = '步骤 ' + stepIdx + ' 完成 · 请审核结果后继续';
+    updateHitlStatus(stepIdx);
   } else {
     btn.textContent = '✓ 查看结果';
     btn.onclick = function(){ renderScreen3(); showScreen(3); };
     document.getElementById('ctrlProgress').textContent = '全部完成 · 点击查看综述结果';
     document.getElementById('taskBadge').textContent = '执行完成';
     document.getElementById('taskBadge').className = 'asci-badge asci-badge-done';
+    updateHitlStatus(stepIdx);
   }
+
+  // 步骤完成后重新启用回退按钮
+  document.getElementById('backBtn').disabled = false;
+
+  // 高/中风险步骤完成后按需锁定下一步
+  updateNextBtnState();
 }
 
 function confirmCheckpoint() {
-  document.getElementById('checkpointCard').classList.add('hidden');
+  // Step 3 的 checkpoint 现在由 blDecide 逐篇驱动，此函数保留兼容
   awaitingCheckpoint = false;
-  appendLog('INFO', '✓ 人工确认完成，3 篇边界文献已纳入，继续执行...');
-  finishStep(3);
 }
 
-function appendLog(level, text) {
+function appendLog(level, text, stepIdx) {
   var d = new Date();
   var ts = d.toTimeString().slice(0,8);
   var div = document.createElement('div');
   div.className = 'log-line';
+  if (stepIdx) div.setAttribute('data-step', stepIdx);
   div.innerHTML = '<span class="log-ts">[' + ts + ']</span>' +
-    '<span class="log-lvl log-lvl-' + level.toLowerCase() + '">' + level + '</span> ' + text;
+    '<span class="log-lvl log-lvl-' + level.toLowerCase() + '">' + level + '</span> ' + escHtml(text);
   document.getElementById('logBody').appendChild(div);
   document.getElementById('logPanel').scrollTop = 99999;
 }
@@ -549,6 +800,7 @@ function renderScreen3() {
       '</div>';
   });
   document.getElementById('s3CredSummary').innerHTML = '<strong>综合评分 ' + cred.overall + ' / 10</strong> · ' + cred.suggestion;
+  renderScreen3HitlSummary();
 }
 
 function acceptResult() {
@@ -558,23 +810,113 @@ function acceptResult() {
 function restart() {
   currentStep = 0; isRunning = false; awaitingCheckpoint = false;
   doneSets.clear();
+  stepUserData = {};
   document.getElementById('logBody').innerHTML = '';
-  document.getElementById('checkpointCard').classList.add('hidden');
   document.getElementById('progressBar').style.width = '0%';
   document.getElementById('progressText').textContent = '步骤 0 / 5';
   document.getElementById('confRing').style.setProperty('--pct', 0);
   document.getElementById('confNum').textContent = '—';
   document.getElementById('confTrend').innerHTML = '任务启动后<br>实时更新';
   document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
+  // 清除 HITL 状态和决策历史
+  var hitlStatus = document.getElementById('statusPanel').querySelector('.hitl-status');
+  if (hitlStatus) hitlStatus.remove();
+  var decHistory = document.getElementById('statusPanel').querySelector('.decision-history');
+  if (decHistory) decHistory.remove();
   var btn = document.getElementById('nextBtn');
   btn.textContent = '▶ 执行下一步';
   btn.onclick = handleNext;
   btn.disabled = false;
   btn.classList.remove('checkpoint-mode');
+  document.getElementById('backBtn').disabled = true;
   document.getElementById('ctrlProgress').textContent = '准备就绪 · 共 5 个步骤';
   document.getElementById('taskBadge').textContent = '任务执行中';
   document.getElementById('taskBadge').className = 'asci-badge asci-badge-running';
   showScreen(1);
+}
+
+// ======== BACK / ROLLBACK ========
+
+function handleBack() {
+  if (isRunning) return;
+  if (currentStep <= 0) return;
+  var targetStep = currentStep - 1;
+  if (doneSets.has(currentStep)) {
+    showConfirmModal(
+      '⚠ 确认回退？',
+      '回退到步骤 ' + targetStep + '（' + (targetStep > 0 ? MOCK_STEPS[targetStep-1].name : '起始') + '）将清除步骤 ' + currentStep + '–5 的所有结果。',
+      function() { doBack(targetStep); }
+    );
+  } else {
+    doBack(targetStep);
+  }
+}
+
+function doBack(targetStep) {
+  // 清除 targetStep+1 及之后的所有状态
+  for (var i = targetStep + 1; i <= 5; i++) {
+    doneSets.delete(i);
+    delete stepUserData[i];
+    var card = document.getElementById('stepResult_' + i);
+    if (card) card.remove();
+  }
+  doneSets.delete(targetStep + 1);
+
+  // 裁剪日志：移除 data-step > targetStep 的行
+  var logLines = document.getElementById('logBody').querySelectorAll('.log-line[data-step]');
+  logLines.forEach(function(line) {
+    if (parseInt(line.getAttribute('data-step')) > targetStep) line.remove();
+  });
+
+  currentStep = targetStep;
+  isRunning = false;
+  awaitingCheckpoint = false;
+
+  if (targetStep === 0) {
+    document.getElementById('backBtn').disabled = true;
+    document.getElementById('nextBtn').textContent = '▶ 执行下一步';
+    document.getElementById('nextBtn').onclick = handleNext;
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('ctrlProgress').textContent = '准备就绪 · 共 5 个步骤';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressText').textContent = '步骤 0 / 5';
+    document.getElementById('confRing').style.setProperty('--pct', 0);
+    document.getElementById('confNum').textContent = '—';
+    document.getElementById('confTrend').innerHTML = '任务启动后<br>实时更新';
+    document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
+    var hitlStatus = document.getElementById('statusPanel').querySelector('.hitl-status');
+    if (hitlStatus) hitlStatus.remove();
+    var decHistory = document.getElementById('statusPanel').querySelector('.decision-history');
+    if (decHistory) decHistory.remove();
+  } else {
+    updatePanel(targetStep, 'done');
+    updateHitlStatus(targetStep);
+    document.getElementById('nextBtn').textContent = '▶ 执行下一步';
+    document.getElementById('nextBtn').onclick = handleNext;
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('backBtn').disabled = false;
+    document.getElementById('ctrlProgress').textContent = '已回退至步骤 ' + targetStep + ' · 准备重新执行下一步';
+  }
+
+  renderTree();
+  appendLog('INFO', '← 已回退至步骤 ' + targetStep + (targetStep > 0 ? '（' + MOCK_STEPS[targetStep-1].name + '）' : '（起始）') + '，步骤 ' + (targetStep+1) + '–5 结果已清除');
+}
+
+function showConfirmModal(title, body, onConfirm) {
+  var overlay = document.createElement('div');
+  overlay.className = 'confirm-overlay';
+  overlay.innerHTML = '<div class="confirm-modal">' +
+    '<div class="confirm-modal-title">' + escHtml(title) + '</div>' +
+    '<div class="confirm-modal-body">' + escHtml(body) + '</div>' +
+    '<div class="confirm-modal-actions">' +
+    '<button class="confirm-btn-cancel" onclick="this.closest(\'.confirm-overlay\').remove()">取消</button>' +
+    '<button class="confirm-btn-ok" id="confirmOkBtn">确认回退</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('#confirmOkBtn').onclick = function() {
+    overlay.remove();
+    onConfirm();
+  };
 }
 
 function showToast(msg) {
@@ -657,6 +999,386 @@ function showPaperModal(key) {
 
 function closePaperModal(overlay) {
   if (overlay && overlay.parentNode) overlay.remove();
+}
+
+// ======== HITL STEP RESULT RENDERING ========
+
+// XSS 转义工具函数
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// 保存每步用户修改/决策，key = stepId
+var stepUserData = {};
+
+function renderStepResult(stepIdx) {
+  var step = MOCK_STEPS[stepIdx - 1];
+  var r = step.result;
+  if (!r) return;
+
+  // 初始化用户数据（若已有则保留）
+  if (!stepUserData[step.id]) {
+    stepUserData[step.id] = JSON.parse(JSON.stringify(r));
+  }
+  var ud = stepUserData[step.id];
+
+  var card = document.createElement('div');
+  card.className = 'step-result-card';
+  card.id = 'stepResult_' + stepIdx;
+
+  var riskLabel = step.risk === 'high' ? '⚠ 高风险 · 必须人工处置' :
+                  step.risk === 'medium' ? '📋 中风险 · 建议审核' : '✓ 低风险 · 可选审核';
+  card.innerHTML = '<div class="src-header"><span>步骤产出 · ' + escHtml(step.name) + '</span><span style="font-weight:400;opacity:.7">' + riskLabel + '</span></div>' +
+    '<div class="src-body" id="srcBody_' + stepIdx + '"></div>';
+  document.getElementById('logBody').appendChild(card);
+
+  var body = document.getElementById('srcBody_' + stepIdx);
+
+  if (r.type === 'keywords') renderKeywordsResult(body, stepIdx, ud);
+  else if (r.type === 'search') renderSearchResult(body, stepIdx, ud);
+  else if (r.type === 'screening') renderScreeningResult(body, stepIdx, ud);
+  else if (r.type === 'contradiction') renderContradictionResult(body, stepIdx, ud);
+  else if (r.type === 'outline') renderOutlineResult(body, stepIdx, ud);
+
+  document.getElementById('logPanel').scrollTop = 99999;
+}
+
+function renderKeywordsResult(body, stepIdx, ud) {
+  var html = '<div class="kw-tags" id="kwTags_' + stepIdx + '">';
+  ud.keywords.forEach(function(kw, i) {
+    html += '<span class="kw-tag">' +
+      escHtml(kw.term) +
+      (kw.mesh ? '<span class="kw-tag-mesh">→ ' + escHtml(kw.mesh) + '</span>' : '') +
+      '<button class="kw-tag-del" onclick="removeKeyword(' + stepIdx + ',' + i + ')">×</button>' +
+      '</span>';
+  });
+  html += '</div>';
+  html += '<div class="kw-add-row">' +
+    '<input class="kw-add-input" id="kwInput_' + stepIdx + '" placeholder="添加关键词..." maxlength="40" />' +
+    '<button class="kw-add-btn" onclick="addKeyword(' + stepIdx + ')">+ 添加</button>' +
+    '</div>';
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+  document.getElementById('kwInput_' + stepIdx).addEventListener('keydown', function(e){
+    if (e.key === 'Enter') addKeyword(stepIdx);
+  });
+}
+
+function removeKeyword(stepIdx, idx) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  var removed = ud.keywords[idx].term;
+  ud.keywords.splice(idx, 1);
+  appendLog('INFO', '用户删除关键词：' + removed, stepIdx);
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderKeywordsResult(body, stepIdx, ud);
+  // 有修改时更新按钮文字提示
+  document.getElementById('nextBtn').textContent = '✓ 确认并继续';
+}
+
+function addKeyword(stepIdx) {
+  var input = document.getElementById('kwInput_' + stepIdx);
+  var val = input.value.trim();
+  if (!val) return;
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  ud.keywords.push({term: val, mesh: null, editable: true});
+  appendLog('INFO', '用户添加关键词：' + val, stepIdx);
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderKeywordsResult(body, stepIdx, ud);
+  // 有修改时更新按钮文字提示
+  document.getElementById('nextBtn').textContent = '✓ 确认并继续';
+}
+
+function renderSearchResult(body, stepIdx, ud) {
+  var maxCount = Math.max.apply(null, ud.sources.map(function(s){ return s.count; }));
+  var html = '<div class="search-query-box">🔍 ' + escHtml(ud.query) + '</div>';
+  html += '<div class="search-bars">';
+  ud.sources.forEach(function(s) {
+    var pct = Math.round(s.count / maxCount * 100);
+    html += '<div class="search-bar-item">' +
+      '<span class="search-bar-label">' + escHtml(s.name) + '</span>' +
+      '<div class="search-bar-track"><div class="search-bar-fill" style="width:' + pct + '%;background:' + escHtml(s.color) + '"></div></div>' +
+      '<span class="search-bar-count">' + s.count + '</span>' +
+      '</div>';
+  });
+  html += '</div>';
+  html += '<div class="year-range-row">' +
+    '<span class="year-range-label">时间范围：</span>' +
+    '<input class="year-input" id="yearFrom_' + stepIdx + '" type="number" value="' + ud.yearRange.current[0] + '" min="2010" max="2024" />' +
+    '<span style="color:var(--asci-text-muted);font-size:12px"> — </span>' +
+    '<input class="year-input" id="yearTo_' + stepIdx + '" type="number" value="' + ud.yearRange.current[1] + '" min="2010" max="2024" />' +
+    '<button class="re-search-btn" onclick="reSearch(' + stepIdx + ')">重新检索</button>' +
+    '</div>';
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+}
+
+function reSearch(stepIdx) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  var from = parseInt(document.getElementById('yearFrom_' + stepIdx).value);
+  var to = parseInt(document.getElementById('yearTo_' + stepIdx).value);
+  if (from > to) { showToast('起始年份不能大于结束年份'); return; }
+  ud.yearRange.current = [from, to];
+  var factor = (to - from) / (ud.yearRange.max - ud.yearRange.min);
+  ud.sources[0].count = Math.round(142 * factor);
+  ud.sources[1].count = Math.round(198 * factor);
+  ud.sources[2].count = Math.round(276 * factor);
+  ud.query = 'Transformer AND ("Drug Discovery" OR "Molecular Property") [' + from + ':' + to + ']';
+  appendLog('INFO', '重新检索：时间范围调整为 ' + from + '–' + to + '，候选文献 ' + ud.sources[2].count + ' 篇', stepIdx);
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderSearchResult(body, stepIdx, ud);
+}
+
+function renderScreeningResult(body, stepIdx, ud) {
+  var html = '<div class="batch-actions">' +
+    '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'include\')">全选纳入</button>' +
+    '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'exclude\')">全选排除</button>' +
+    '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'sort\')">按评分排序</button>' +
+    '</div>';
+  html += '<div class="threshold-row">' +
+    '<span class="threshold-label">相关性阈值：</span>' +
+    '<input class="threshold-slider" id="threshSlider_' + stepIdx + '" type="range" min="60" max="90" value="' + Math.round(ud.threshold * 100) + '" oninput="updateThreshold(' + stepIdx + ',this.value)" />' +
+    '<span class="threshold-val" id="threshVal_' + stepIdx + '">' + ud.threshold.toFixed(2) + '</span>' +
+    '</div>';
+  html += '<div class="included-count" id="includedCount_' + stepIdx + '">✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）</div>';
+  html += '<div style="font-size:11px;font-weight:700;color:var(--asci-text-muted);margin-bottom:6px">边界文献（逐篇判断）</div>';
+  html += '<div class="borderline-list">';
+  ud.borderline.forEach(function(p, i) {
+    var decided = p.decision;
+    var decidedClass = decided ? ' decided-' + decided : '';
+    html += '<div class="bl-paper' + decidedClass + '" id="blPaper_' + stepIdx + '_' + i + '">' +
+      '<div class="bl-paper-top" onclick="toggleBlDetail(' + stepIdx + ',' + i + ')">' +
+      '<span class="bl-paper-title">' + escHtml(p.title) + ' <span style="font-size:10px;color:var(--asci-text-muted);font-weight:400">— ' + escHtml(p.authors) + ', ' + p.year + '</span></span>' +
+      '<span class="bl-paper-score">' + p.score + '</span>' +
+      '<span class="bl-paper-expand" id="blArrow_' + stepIdx + '_' + i + '">▾</span>' +
+      '</div>' +
+      '<div class="bl-paper-detail" id="blDetail_' + stepIdx + '_' + i + '">' +
+      '<div class="bl-paper-abstract">' + escHtml(p.abstract) + '</div>' +
+      '<div class="bl-decision-row">' +
+      '<button class="bl-btn bl-btn-include' + (decided==='include'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'include\')">✓ 纳入</button>' +
+      '<button class="bl-btn bl-btn-maybe' + (decided==='maybe'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'maybe\')">? 待定</button>' +
+      '<button class="bl-btn bl-btn-exclude' + (decided==='exclude'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'exclude\')">✕ 排除</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+}
+
+function toggleBlDetail(stepIdx, i) {
+  var detail = document.getElementById('blDetail_' + stepIdx + '_' + i);
+  var arrow = document.getElementById('blArrow_' + stepIdx + '_' + i);
+  detail.classList.toggle('open');
+  arrow.textContent = detail.classList.contains('open') ? '▴' : '▾';
+}
+
+function blDecide(stepIdx, i, decision) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  ud.borderline[i].decision = decision;
+  var decisionLabel = decision === 'include' ? '纳入' : decision === 'maybe' ? '待定' : '排除';
+  appendLog('INFO', '用户决策 [Step ' + stepIdx + '] 边界文献 "' + ud.borderline[i].title + '"：' + decisionLabel, stepIdx);
+  appendHitlDecisionLog('Step ' + stepIdx + ' 边界文献 ' + (i+1), decisionLabel);
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderScreeningResult(body, stepIdx, ud);
+  // 自动展开下一个未决定项
+  var nextUndecided = ud.borderline.findIndex(function(p, idx){ return idx > i && !p.decision; });
+  if (nextUndecided >= 0) toggleBlDetail(stepIdx, nextUndecided);
+  updateNextBtnState();
+}
+
+function blBatchAction(stepIdx, action) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  if (action === 'sort') {
+    ud.borderline.sort(function(a, b){ return b.score - a.score; });
+    appendLog('INFO', '用户操作：边界文献按评分降序排列', stepIdx);
+  } else {
+    ud.borderline.forEach(function(p){ p.decision = action; });
+    var label = action === 'include' ? '全部纳入' : '全部排除';
+    appendLog('INFO', '用户批量操作：' + label + '所有边界文献', stepIdx);
+    appendHitlDecisionLog('Step ' + stepIdx + ' 批量操作', label);
+  }
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderScreeningResult(body, stepIdx, ud);
+  updateNextBtnState();
+}
+
+function updateThreshold(stepIdx, val) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  ud.threshold = val / 100;
+  document.getElementById('threshVal_' + stepIdx).textContent = ud.threshold.toFixed(2);
+  var base = 18;
+  var delta = Math.round((0.72 - ud.threshold) * 200);
+  ud.included = Math.max(5, base + delta);
+  document.getElementById('includedCount_' + stepIdx).innerHTML = '✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）';
+}
+
+function renderContradictionResult(body, stepIdx, ud) {
+  var c = ud.contradiction;
+  var html = '<div class="contradiction-card">' +
+    '<div class="contradiction-header">⚡ 检测到矛盾文献 · 必须人工处置</div>' +
+    '<div class="contradiction-metric">矛盾指标：<strong>' + escHtml(c.metric) + '</strong></div>' +
+    '<div class="contradiction-papers">' +
+    '<div class="contra-paper">' +
+    '<div class="contra-paper-title">' + escHtml(c.paperA.title) + '</div>' +
+    '<div class="contra-paper-meta">' + escHtml(c.paperA.authors) + ' · ' + escHtml(c.paperA.journal) + '</div>' +
+    '<div class="contra-paper-value">' + escHtml(c.paperA.value) + '</div>' +
+    '<div class="contra-paper-method">' + escHtml(c.paperA.method) + '</div>' +
+    '</div>' +
+    '<div class="contra-paper">' +
+    '<div class="contra-paper-title">' + escHtml(c.paperB.title) + '</div>' +
+    '<div class="contra-paper-meta">' + escHtml(c.paperB.authors) + ' · ' + escHtml(c.paperB.journal) + '</div>' +
+    '<div class="contra-paper-value">' + escHtml(c.paperB.value) + '</div>' +
+    '<div class="contra-paper-method">' + escHtml(c.paperB.method) + '</div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="contradiction-options">';
+  c.options.forEach(function(opt) {
+    var selected = c.decision === opt.id;
+    html += '<div class="contra-opt' + (selected ? ' selected' : '') + '" onclick="contraDecide(' + stepIdx + ',\'' + opt.id + '\')">' +
+      '<div class="contra-opt-radio"></div>' +
+      '<div><div class="contra-opt-label">' + escHtml(opt.label) + '</div><div class="contra-opt-reason">' + escHtml(opt.reason) + '</div></div>' +
+      '</div>';
+  });
+  html += '</div></div>';
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+}
+
+function contraDecide(stepIdx, optId) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  ud.contradiction.decision = optId;
+  var opt = ud.contradiction.options.find(function(o){ return o.id === optId; });
+  var label = opt ? opt.label : optId;
+  appendLog('INFO', '用户处置矛盾文献：' + label, stepIdx);
+  appendHitlDecisionLog('Step ' + stepIdx + ' 矛盾处置', label);
+  var body = document.getElementById('srcBody_' + stepIdx);
+  renderContradictionResult(body, stepIdx, ud);
+  updateNextBtnState();
+}
+
+function renderOutlineResult(body, stepIdx, ud) {
+  var html = '<div class="outline-list">';
+  ud.sections.forEach(function(sec, i) {
+    html += '<div class="outline-item">' +
+      '<div class="outline-num">' + sec.id + '</div>' +
+      '<div class="outline-content">' +
+      '<input class="outline-title-input" id="outlineTitle_' + stepIdx + '_' + i + '" value="' + escHtml(sec.title) + '" onchange="updateOutlineTitle(' + stepIdx + ',' + i + ',this.value)" />' +
+      '<div class="outline-points">' + escHtml(sec.points) + '</div>' +
+      '</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+}
+
+function updateOutlineTitle(stepIdx, i, val) {
+  var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
+  ud.sections[i].title = val;
+}
+
+// ---- HITL STATUS（右侧面板） ----
+function updateHitlStatus(stepIdx) {
+  var step = MOCK_STEPS[stepIdx - 1];
+  var panel = document.getElementById('statusPanel');
+  var existing = panel.querySelector('.hitl-status');
+  if (existing) existing.remove();
+  var div = document.createElement('div');
+  if (step.risk === 'high') {
+    div.className = 'hitl-status hitl-status-required';
+    div.textContent = '⚠ 高风险步骤：必须完成人工处置才能继续';
+  } else if (step.risk === 'medium') {
+    div.className = 'hitl-status hitl-status-wait';
+    div.textContent = '📋 中风险：建议审核结果后再继续';
+  } else {
+    div.className = 'hitl-status hitl-status-done';
+    div.textContent = '✓ 低风险：可直接继续，或选择审核修改';
+  }
+  panel.appendChild(div);
+}
+
+function updateNextBtnState() {
+  // 高风险步骤（Step 4）：矛盾未处置则禁用下一步
+  if (doneSets.has(4) && !doneSets.has(5)) {
+    var ud4 = stepUserData[4];
+    if (ud4 && ud4.contradiction && !ud4.contradiction.decision) {
+      document.getElementById('nextBtn').disabled = true;
+      document.getElementById('ctrlProgress').textContent = '⚠ 请先处置矛盾文献';
+      return;
+    }
+  }
+  // 中风险步骤（Step 3）：边界文献必须全部判断
+  if (doneSets.has(3) && !doneSets.has(4)) {
+    var ud3 = stepUserData[3];
+    if (ud3 && ud3.borderline) {
+      var undecided = ud3.borderline.filter(function(p){ return !p.decision; }).length;
+      if (undecided > 0) {
+        document.getElementById('nextBtn').disabled = true;
+        document.getElementById('ctrlProgress').textContent = '还有 ' + undecided + ' 篇边界文献待判断';
+        return;
+      }
+    }
+  }
+  var btn = document.getElementById('nextBtn');
+  if (currentStep < 5 && !isRunning) {
+    btn.disabled = false;
+  }
+}
+
+// ---- 决策历史追加（右侧面板，cherry-pick #2）----
+function appendHitlDecisionLog(stepLabel, decisionText) {
+  var panel = document.getElementById('statusPanel');
+  var history = panel.querySelector('.decision-history');
+  if (!history) {
+    history = document.createElement('div');
+    history.className = 'decision-history';
+    history.innerHTML = '<div class="decision-history-title">已处置决策</div>';
+    panel.appendChild(history);
+  }
+  var item = document.createElement('div');
+  item.className = 'decision-history-item';
+  item.innerHTML = '<strong>' + escHtml(stepLabel) + '</strong>：' + escHtml(decisionText);
+  history.appendChild(item);
+}
+
+// ---- Screen 3 人工决策摘要（cherry-pick #3）----
+function renderScreen3HitlSummary() {
+  // 收集3个关键决策
+  var decisions = [];
+  var ud3 = stepUserData[3];
+  if (ud3 && ud3.borderline) {
+    var decided = ud3.borderline.filter(function(p){ return p.decision; });
+    if (decided.length > 0) {
+      var summary = decided.map(function(p){
+        return p.title.slice(0,20) + '…→' + (p.decision === 'include' ? '纳入' : p.decision === 'maybe' ? '待定' : '排除');
+      }).join('；');
+      decisions.push({step: 'Step 3 摘要筛选', text: '边界文献处置：' + summary});
+    }
+  }
+  var ud4 = stepUserData[4];
+  if (ud4 && ud4.contradiction && ud4.contradiction.decision) {
+    var opt = ud4.contradiction.options.find(function(o){ return o.id === ud4.contradiction.decision; });
+    decisions.push({step: 'Step 4 全文精读', text: '矛盾处置：' + (opt ? opt.label : ud4.contradiction.decision)});
+  }
+  var ud1 = stepUserData[1];
+  if (ud1 && ud1.keywords) {
+    decisions.push({step: 'Step 1 关键词', text: '最终检索词 ' + ud1.keywords.length + ' 个'});
+  }
+  if (!decisions.length) return;
+
+  // 插入到 s3-grid 末尾
+  var grid = document.querySelector('.s3-grid');
+  if (!grid) return;
+  var existing = document.getElementById('s3HitlCard');
+  if (existing) existing.remove();
+  var card = document.createElement('div');
+  card.className = 's3-card s3-full';
+  card.id = 's3HitlCard';
+  var html = '<div class="s3-card-label">人工决策摘要</div><div class="s3-hitl-card">';
+  decisions.forEach(function(d) {
+    html += '<div class="s3-hitl-item"><span class="s3-hitl-step">' + escHtml(d.step) + '</span><span class="s3-hitl-decision">' + escHtml(d.text) + '</span></div>';
+  });
+  html += '</div>';
+  card.innerHTML = html;
+  grid.appendChild(card);
 }
 </script>
 </body>
