@@ -298,6 +298,28 @@
                         <button class="toolbox-card-btn">体验 Demo →</button>
                     </div>
 
+                    <div class="toolbox-card" data-tool="asci" onclick="openTool('asci')">
+                        <div class="toolbox-card-icon">🔬</div>
+                        <div class="toolbox-card-body">
+                            <h3>ASCI 科研任务执行系统</h3>
+                            <p>模拟科研 Agent OS 全链路：关键词提取 → 数据库检索 → 摘要筛选（Human Checkpoint）→ 全文精读 → 综述生成</p>
+                            <div class="toolbox-card-tags">
+                                <span>风险分级</span><span>Human-in-the-Loop</span><span>可信度评估</span>
+                            </div>
+                        </div>
+                        <div class="toolbox-card-highlights">
+                            <div class="highlight-item">
+                                <span class="hl-num">5 步全链路</span>
+                                <span class="hl-label">端到端文献综述 Agent</span>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="hl-num">三维可信度</span>
+                                <span class="hl-label">来源质量 / 推理链路 / 数据一致性</span>
+                            </div>
+                        </div>
+                        <button class="toolbox-card-btn">体验 Demo →</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -332,6 +354,17 @@
                     </div>
                     <iframe src="tools/service-agent/index.html" class="dashboard-iframe"
                         title="智能客服中台 Demo" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="tool-panel hidden" id="panel-asci">
+                <div class="dashboard-wrapper reveal">
+                    <div class="dashboard-topbar">
+                        <span class="dashboard-label">🔬 ASCI 科研任务执行系统 · 5步全链路 Agent · Human-in-the-Loop + 可信度评估</span>
+                        <a href="tools/asci/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
+                    </div>
+                    <iframe src="tools/asci/index.html" class="dashboard-iframe"
+                        title="ASCI 科研任务执行系统" loading="lazy"></iframe>
                 </div>
             </div>
 

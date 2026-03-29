@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ASCI 科研任务执行系统</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23080c18'/><text x='16' y='23' text-anchor='middle' font-family='Arial' font-size='18' font-weight='bold' fill='%234f8fff'>A</text></svg>" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --asci-bg:#080c18;
+  --asci-surface:#0d1224;
+  --asci-surface2:#111827;
+  --asci-log-bg:#070b17;
+  --asci-border:rgba(79,143,255,0.15);
+  --asci-border2:rgba(79,143,255,0.25);
+  --asci-blue:#4f8fff;
+  --asci-blue-dim:rgba(79,143,255,0.12);
+  --asci-green:#34d399;
+  --asci-yellow:#fbbf24;
+  --asci-red:#f87171;
+  --asci-text:#e2e8f0;
+  --asci-text-dim:#94a3b8;
+  --asci-text-muted:#475569;
+  --asci-radius:12px;
+  --asci-radius-sm:6px;
+}
+html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci-text);font-family:'Inter',system-ui,sans-serif;font-size:14px}
+
+/* ---- SCREENS ---- */
+.asci-screen{height:100vh;display:flex;flex-direction:column}
+.hidden{display:none!important}
+
+/* ---- SCREEN 1 ---- */
+.s1-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:32px}
+.s1-title{font-size:28px;font-weight:800;text-align:center;line-height:1.2}
+.s1-title span{background:linear-gradient(135deg,#4f8fff,#9b6dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s1-sub{color:var(--asci-text-dim);text-align:center;font-size:15px}
+.s1-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:860px;width:100%}
+.s1-card{flex:1;min-width:220px;max-width:260px;background:var(--asci-surface);border:1px solid var(--asci-border);border-radius:var(--asci-radius);padding:24px 20px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;position:relative;overflow:hidden}
+.s1-card:hover{border-color:var(--asci-border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,143,255,0.15)}
+.s1-card.disabled{opacity:.45;cursor:default;pointer-events:none}
+.s1-card-icon{font-size:32px;margin-bottom:12px}
+.s1-card-name{font-size:16px;font-weight:700;margin-bottom:6px}
+.s1-card-desc{color:var(--asci-text-dim);font-size:12px;line-height:1.5;margin-bottom:14px}
+.s1-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.s1-card-tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2)}
+.s1-card-risk{font-size:11px;padding:2px 8px;border-radius:99px;margin-top:8px;display:inline-block}
+.risk-low{background:rgba(52,211,153,0.1);color:#34d399;border:1px solid rgba(52,211,153,0.25)}
+.risk-medium{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.risk-high{background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.25)}
+.s1-card-coming{position:absolute;top:12px;right:12px;font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(148,163,184,0.1);color:var(--asci-text-muted);border:1px solid rgba(148,163,184,0.15)}
+.s1-card-btn{display:block;width:100%;margin-top:16px;padding:8px;border-radius:var(--asci-radius-sm);background:var(--asci-blue);color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:opacity .15s}
+.s1-card-btn:hover{opacity:.88}
+
+/* ---- TOPBAR (Screen 2) ---- */
+.asci-topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--asci-surface);border-bottom:1px solid var(--asci-border);flex-shrink:0;gap:12px}
+.asci-topbar-title{font-size:13px;font-weight:600;color:var(--asci-text)}
+.asci-badge{font-size:11px;padding:3px 10px;border-radius:99px}
+.asci-badge-running{background:rgba(79,143,255,0.15);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.3)}
+.asci-badge-done{background:rgba(52,211,153,0.15);color:var(--asci-green);border:1px solid rgba(52,211,153,0.3)}
+
+/* ---- EXECUTION LAYOUT ---- */
+.asci-execution{flex:1;display:grid;grid-template-columns:220px 1fr 280px;grid-template-rows:1fr auto;overflow:hidden}
+
+/* ---- LEFT: TREE ---- */
+.asci-tree{overflow-y:auto;border-right:1px solid var(--asci-border);padding:12px 8px;background:var(--asci-surface)}
+.tree-step{border-radius:8px;margin-bottom:4px;overflow:hidden}
+.tree-step-header{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:default}
+.tree-step.active .tree-step-header{background:var(--asci-blue-dim)}
+.tree-step-icon{font-size:14px;flex-shrink:0}
+.tree-step-name{font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-step-risk{font-size:10px;padding:1px 5px;border-radius:99px;flex-shrink:0}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.status-dot.pending{background:#334155}
+.status-dot.running{background:var(--asci-blue);animation:pulse-dot 1s infinite}
+.status-dot.done{background:var(--asci-green)}
+.tree-subs{padding:4px 10px 8px 32px}
+.tree-sub{font-size:11px;color:var(--asci-text-dim);padding:2px 0;display:flex;align-items:center;gap:6px}
+.tree-sub::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--asci-text-muted);flex-shrink:0}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+
+/* ---- CENTER: LOG ---- */
+.asci-log-wrap{display:flex;flex-direction:column;overflow:hidden;background:var(--asci-log-bg)}
+.log-header{padding:10px 16px;font-size:11px;font-weight:700;color:var(--asci-text-dim);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--asci-border);flex-shrink:0}
+.asci-log{flex:1;overflow-y:auto;padding:12px 16px;font-family:'Courier New',Consolas,monospace;font-size:12px;line-height:1.7}
+.log-line{animation:log-in .2s ease forwards;white-space:pre-wrap;word-break:break-all}
+.log-ts{color:var(--asci-text-muted);margin-right:6px}
+.log-lvl{font-weight:700;margin-right:8px;padding:0 4px;border-radius:3px;font-size:11px}
+.log-lvl-info{color:var(--asci-blue);background:rgba(79,143,255,0.1)}
+.log-lvl-warn{color:var(--asci-yellow);background:rgba(251,191,36,0.1)}
+.log-lvl-error{color:var(--asci-red);background:rgba(248,113,113,0.1)}
+@keyframes log-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---- CHECKPOINT CARD ---- */
+.checkpoint-card{margin:12px 0;border:1px solid rgba(251,191,36,0.35);border-radius:8px;background:rgba(251,191,36,0.05);overflow:hidden}
+.cp-title{padding:10px 14px;font-size:12px;font-weight:700;color:var(--asci-yellow);border-bottom:1px solid rgba(251,191,36,0.2)}
+.cp-body{padding:12px 14px}
+.cp-body p{font-size:12px;color:var(--asci-text);margin-bottom:10px;line-height:1.6;font-family:system-ui,sans-serif}
+.cp-papers{display:flex;flex-direction:column;gap:6px}
+.cp-paper{font-size:11px;color:var(--asci-text-dim);padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--asci-border)}
+
+/* ---- RIGHT: PANEL ---- */
+.asci-panel{overflow-y:auto;border-left:1px solid var(--asci-border);padding:16px;background:var(--asci-surface);display:flex;flex-direction:column;gap:20px}
+.panel-section{}
+.panel-label{font-size:10px;font-weight:700;color:var(--asci-text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.confidence-ring-wrap{display:flex;align-items:center;gap:14px}
+.confidence-ring{width:72px;height:72px;border-radius:50%;background:conic-gradient(var(--asci-blue) calc(var(--pct,0) * 1%),#1e2840 0);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.confidence-ring::after{content:'';position:absolute;width:54px;height:54px;border-radius:50%;background:var(--asci-surface)}
+.conf-num{position:relative;z-index:1;font-size:14px;font-weight:800;color:var(--asci-blue)}
+.conf-trend{font-size:11px;color:var(--asci-text-dim);line-height:1.4}
+.progress-bar-wrap{height:6px;background:#1e2840;border-radius:99px;overflow:hidden;margin-bottom:6px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--asci-blue),#9b6dff);border-radius:99px;transition:width .4s ease}
+.progress-text{font-size:11px;color:var(--asci-text-dim)}
+.step-card{background:var(--asci-surface2);border:1px solid var(--asci-border);border-radius:8px;padding:12px}
+.step-card-name{font-size:13px;font-weight:700;margin-bottom:8px}
+.step-card-risk{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;margin-bottom:8px}
+.step-card-tools{display:flex;flex-wrap:wrap;gap:4px}
+.step-card-tool{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2)}
+.step-card-empty{color:var(--asci-text-muted);font-size:12px}
+
+/* ---- CONTROLS ---- */
+.asci-controls{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--asci-border);background:var(--asci-surface);flex-shrink:0}
+.asci-btn-next{padding:9px 22px;border-radius:8px;background:var(--asci-blue);color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s,background .15s}
+.asci-btn-next:hover:not(:disabled){opacity:.88}
+.asci-btn-next:disabled{opacity:.4;cursor:default}
+.asci-btn-next.checkpoint-mode{background:linear-gradient(135deg,#34d399,#059669)}
+.ctrl-progress{font-size:12px;color:var(--asci-text-dim)}
+
+/* ---- SCREEN 3 ---- */
+.s3-wrap{flex:1;overflow-y:auto;padding:28px}
+.s3-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.s3-title-main{font-size:20px;font-weight:800}
+.s3-badge-done{font-size:12px;padding:4px 12px;border-radius:99px;background:rgba(52,211,153,0.15);color:var(--asci-green);border:1px solid rgba(52,211,153,0.3)}
+.s3-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.s3-full{grid-column:1/-1}
+.s3-card{background:var(--asci-surface);border:1px solid var(--asci-border);border-radius:var(--asci-radius);padding:20px}
+.s3-card-label{font-size:11px;font-weight:700;color:var(--asci-text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.s3-abstract{font-size:13px;color:var(--asci-text);line-height:1.8}
+.s3-findings{list-style:none;display:flex;flex-direction:column;gap:10px}
+.s3-finding{display:flex;gap:10px;font-size:13px;color:var(--asci-text);line-height:1.6}
+.s3-finding-num{width:22px;height:22px;border-radius:50%;background:var(--asci-blue-dim);color:var(--asci-blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;border:1px solid rgba(79,143,255,0.25)}
+.s3-table{width:100%;border-collapse:collapse;font-size:12px}
+.s3-table th{padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--asci-text-muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--asci-border)}
+.s3-table td{padding:8px 10px;border-bottom:1px solid rgba(79,143,255,0.07);color:var(--asci-text)}
+.s3-table tr:last-child td{border-bottom:none}
+.s3-score{font-weight:700;color:var(--asci-blue)}
+.s3-table-footer{margin-top:8px;font-size:11px;color:var(--asci-text-dim);font-style:italic}
+.cred-bar-wrap{display:flex;flex-direction:column;gap:14px}
+.cred-bar-item{}
+.cred-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.cred-bar-name{font-size:12px;font-weight:600}
+.cred-bar-score{font-size:13px;font-weight:800;color:var(--asci-blue)}
+.cred-bar-track{height:6px;background:#1e2840;border-radius:99px;overflow:hidden;margin-bottom:4px}
+.cred-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--asci-blue),#9b6dff)}
+.cred-bar-note{font-size:11px;color:var(--asci-text-dim);line-height:1.4}
+.cred-summary{margin-top:14px;padding:12px;background:var(--asci-surface2);border-radius:8px;border:1px solid var(--asci-border);font-size:12px;color:var(--asci-text-dim);line-height:1.6}
+.cred-summary strong{color:var(--asci-text)}
+.s3-actions{display:flex;gap:12px;margin-top:4px;padding-bottom:20px}
+.s3-btn-accept{padding:10px 24px;border-radius:8px;background:var(--asci-green);color:#000;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .15s}
+.s3-btn-accept:hover{opacity:.88}
+.s3-btn-restart{padding:10px 24px;border-radius:8px;background:transparent;color:var(--asci-text-dim);border:1px solid var(--asci-border);cursor:pointer;font-size:13px;font-weight:600;transition:border-color .15s,color .15s}
+.s3-btn-restart:hover{border-color:var(--asci-border2);color:var(--asci-text)}
+
+/* ---- TOAST ---- */
+.asci-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e2840;border:1px solid var(--asci-green);color:var(--asci-green);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;animation:toast-in .25s ease}
+@keyframes toast-in{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ========== SCREEN 1: 任务提交 ========== -->
+<div id="screen1" class="asci-screen">
+  <div class="asci-topbar">
+    <span class="asci-topbar-title">🔬 ASCI · Artificial Science Intelligence</span>
+    <span class="asci-badge asci-badge-running">AI 驱动的全链路科研 Agent OS</span>
+  </div>
+  <div class="s1-wrap">
+    <div>
+      <div class="s1-title">ASCI 科研任务执行系统<br><span>选择你的研究任务</span></div>
+      <div class="s1-sub" style="margin-top:8px">点击任务卡片，体验 AI Agent 全链路自动执行过程</div>
+    </div>
+    <div class="s1-cards">
+      <div class="s1-card" onclick="startTask()">
+        <div class="s1-card-icon">📚</div>
+        <div class="s1-card-name">文献综述</div>
+        <div class="s1-card-desc">Transformer in Drug Discovery<br>系统检索 + 摘要筛选 + 全文精读 + 综述生成</div>
+        <div class="s1-card-tags">
+          <span class="s1-card-tag">文献检索</span>
+          <span class="s1-card-tag">NLP 分析</span>
+          <span class="s1-card-tag">HITL</span>
+        </div>
+        <div>
+          <span class="s1-card-risk risk-low">低/中风险任务</span>
+        </div>
+        <button class="s1-card-btn">开始执行 →</button>
+      </div>
+      <div class="s1-card disabled">
+        <span class="s1-card-coming">Coming Soon</span>
+        <div class="s1-card-icon">📊</div>
+        <div class="s1-card-name">数据分析</div>
+        <div class="s1-card-desc">NLP 论文引用量相关性分析<br>数据清洗 + 统计建模 + 可视化报告</div>
+        <div class="s1-card-tags">
+          <span class="s1-card-tag">统计分析</span>
+          <span class="s1-card-tag">数据清洗</span>
+        </div>
+        <div>
+          <span class="s1-card-risk risk-medium">中风险任务</span>
+        </div>
+      </div>
+      <div class="s1-card disabled">
+        <span class="s1-card-coming">Coming Soon</span>
+        <div class="s1-card-icon">🧬</div>
+        <div class="s1-card-name">假设生成</div>
+        <div class="s1-card-desc">肠道菌群与阿尔茨海默症关联探索<br>跨库检索 + 因果推理 + 假设评分</div>
+        <div class="s1-card-tags">
+          <span class="s1-card-tag">因果推理</span>
+          <span class="s1-card-tag">知识图谱</span>
+        </div>
+        <div>
+          <span class="s1-card-risk risk-high">高风险任务</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCREEN 2: 执行过程 ========== -->
+<div id="screen2" class="asci-screen hidden">
+  <div class="asci-topbar">
+    <span class="asci-topbar-title">📚 文献综述 · Transformer in Drug Discovery</span>
+    <span class="asci-badge asci-badge-running" id="taskBadge">任务执行中</span>
+  </div>
+  <div class="asci-execution">
+    <!-- 左列：任务树 -->
+    <div class="asci-tree" id="taskTree"></div>
+    <!-- 中列：日志 -->
+    <div class="asci-log-wrap">
+      <div class="log-header">执行日志 · Agent Runtime</div>
+      <div class="asci-log" id="logPanel">
+        <div id="logBody"></div>
+        <div class="checkpoint-card hidden" id="checkpointCard">
+          <div class="cp-title">👤 Human Checkpoint — 摘要筛选质量确认</div>
+          <div class="cp-body">
+            <p>AI 已筛选 <strong>21 篇</strong>摘要（阈值 0.72），其中 <strong>3 篇</strong>置信度处于边界区间 [0.72–0.75]，建议人工确认是否纳入精读。</p>
+            <div class="cp-papers">
+              <div class="cp-paper">📄 Attention Is All You Need (2017) — 相关性评分 0.74</div>
+              <div class="cp-paper">📄 Drug-Target Interaction via Transformer (2021) — 相关性评分 0.73</div>
+              <div class="cp-paper">📄 Molecular Graph Transformer (2022) — 相关性评分 0.72</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 右列：状态面板 -->
+    <div class="asci-panel" id="statusPanel">
+      <div class="panel-section">
+        <div class="panel-label">置信度</div>
+        <div class="confidence-ring-wrap">
+          <div class="confidence-ring" id="confRing" style="--pct:0">
+            <span class="conf-num" id="confNum">—</span>
+          </div>
+          <div class="conf-trend" id="confTrend">任务启动后<br>实时更新</div>
+        </div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">进度</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progressBar" style="width:0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">步骤 0 / 5</div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">当前步骤</div>
+        <div class="step-card" id="stepCard">
+          <div class="step-card-empty">等待执行...</div>
+        </div>
+      </div>
+    </div>
+    <!-- 底部控制栏 -->
+    <div class="asci-controls">
+      <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
+      <span class="ctrl-progress" id="ctrlProgress">准备就绪 · 共 5 个步骤</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCREEN 3: 结果评估 ========== -->
+<div id="screen3" class="asci-screen hidden">
+  <div class="asci-topbar">
+    <span class="asci-topbar-title">✅ 任务完成 · 文献综述结果</span>
+    <span class="asci-badge asci-badge-done">已完成</span>
+  </div>
+  <div class="s3-wrap">
+    <div class="s3-topbar">
+      <div class="s3-title-main" id="s3Title"></div>
+    </div>
+    <div class="s3-grid">
+      <!-- 摘要 -->
+      <div class="s3-card s3-full">
+        <div class="s3-card-label">综述摘要</div>
+        <div class="s3-abstract" id="s3Abstract"></div>
+      </div>
+      <!-- 关键发现 -->
+      <div class="s3-card">
+        <div class="s3-card-label">关键发现</div>
+        <ul class="s3-findings" id="s3Findings"></ul>
+      </div>
+      <!-- 可信度评估 -->
+      <div class="s3-card">
+        <div class="s3-card-label">可信度评估</div>
+        <div class="cred-bar-wrap" id="s3CredBars"></div>
+        <div class="cred-summary" id="s3CredSummary"></div>
+      </div>
+      <!-- 来源溯源 -->
+      <div class="s3-card s3-full">
+        <div class="s3-card-label">来源溯源</div>
+        <table class="s3-table" id="s3Table">
+          <thead>
+            <tr>
+              <th>论文标题</th>
+              <th>作者</th>
+              <th>年份</th>
+              <th>期刊</th>
+              <th>相关性</th>
+            </tr>
+          </thead>
+          <tbody id="s3TableBody"></tbody>
+        </table>
+        <div class="s3-table-footer" id="s3TableFooter"></div>
+      </div>
+    </div>
+    <div class="s3-actions">
+      <button class="s3-btn-accept" onclick="acceptResult()">✅ 接受结果</button>
+      <button class="s3-btn-restart" onclick="restart()">🔄 重新开始</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var MOCK_STEPS = [{"id":1,"icon":"🔑","name":"关键词提取","risk":"low","riskLabel":"低风险","tools":["NLP Parser","MeSH API"],"subs":["主题词拆解","MeSH 术语映射"],"logs":[{"level":"INFO","text":"解析任务描述：Transformer in Drug Discovery"},{"level":"INFO","text":"提取核心主题词：Transformer, Drug Discovery, Molecular Property"},{"level":"INFO","text":"调用 MeSH API 映射标准术语 (3 terms)"},{"level":"INFO","text":"✓ 关键词提取完成，共 8 个检索词"}]},{"id":2,"icon":"🔍","name":"数据库检索","risk":"low","riskLabel":"低风险","tools":["PubMed API","Semantic Scholar","Deduplicator"],"subs":["PubMed 检索","Semantic Scholar 检索","去重合并"],"logs":[{"level":"INFO","text":"查询 PubMed：Transformer AND Drug Discovery [2018:2024]"},{"level":"INFO","text":"PubMed 返回 142 条记录"},{"level":"INFO","text":"查询 Semantic Scholar API (top_k=200)"},{"level":"INFO","text":"Semantic Scholar 返回 198 条记录"},{"level":"INFO","text":"去重合并：340 → 276 篇（移除 64 条重复）"},{"level":"INFO","text":"✓ 数据库检索完成，候选文献 276 篇"}]},{"id":3,"icon":"📋","name":"摘要筛选","risk":"medium","riskLabel":"中风险","checkpoint":true,"tools":["Relevance Scorer","Threshold Filter"],"subs":["相关性打分","阈值过滤","👤 Human Checkpoint"],"logs":[{"level":"INFO","text":"对 276 篇文献进行相关性评分（模型：SciBERT-ft）"},{"level":"INFO","text":"评分完成，阈值 0.72 过滤后剩余 21 篇"},{"level":"WARN","text":"3 篇文献置信度处于边界区间 [0.72–0.75]，触发 Human Checkpoint"},{"level":"INFO","text":"⏸ 等待人工确认边界文献..."}]},{"id":4,"icon":"📖","name":"全文精读","risk":"high","riskLabel":"高风险","tools":["PDF Parser","Method Extractor","Contradiction Detector"],"subs":["方法论提取","关键发现提取","矛盾检测"],"logs":[{"level":"INFO","text":"下载全文 PDF (21 篇)，解析文档结构"},{"level":"INFO","text":"提取方法论章节：21/21 篇"},{"level":"INFO","text":"识别关键发现：共 47 条 findings"},{"level":"WARN","text":"发现潜在矛盾：Liu et al.(2022) 与 Wang et al.(2023) 在 AUROC 指标上结论相悖"},{"level":"INFO","text":"矛盾已标注，待综述生成时人工复核"},{"level":"INFO","text":"✓ 全文精读完成"}]},{"id":5,"icon":"✍️","name":"综述生成","risk":"medium","riskLabel":"中风险","tools":["Outline Generator","Para Writer","Citation Inserter"],"subs":["生成大纲","段落撰写","引用插入"],"logs":[{"level":"INFO","text":"根据 47 条 findings 生成综述大纲（5 节）"},{"level":"INFO","text":"撰写各段落，自动插入 APA 引用格式"},{"level":"INFO","text":"引用文献 21 篇，精选核心 6 篇进入摘要层"},{"level":"INFO","text":"✓ 综述生成完成，总字数约 2400 字"}]}];
+var CONF_BY_STEP = [95,88,82,75,78];
+var MOCK_RESULT = {"title":"Transformer 架构在药物发现中的应用综述","abstract":"Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本综述系统梳理了 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个核心场景中的应用进展，汇总分析 21 篇高质量文献，重点探讨模型架构演化路径、基准数据集选取策略及临床转化瓶颈。研究表明，预训练-微调范式已成为药物发现 AI 的主流方法，但可解释性不足与标注数据稀缺仍是限制规模化落地的关键障碍。","findings":["预训练 Transformer（如 ChemBERTa、MolBERT）在分子属性预测任务上平均 AUROC 提升 8.3%，优于传统 ECFP 指纹方法。","药物-靶点相互作用（DTI）任务中，Transformer 双编码器架构在 BindingDB 数据集 AUROC 达 0.924，显著优于图神经网络基线。","从头分子生成领域，基于 Transformer 的 REINVENT 变体在 QED × SA 综合指标上表现最优，但 3D 构象生成准确性仍有较大提升空间。"],"sources":[{"title":"Attention Is All You Need","authors":"Vaswani et al.","year":2017,"journal":"NeurIPS","score":9.2},{"title":"ChemBERTa: Large-Scale Self-Supervised Pretraining","authors":"Chithrananda et al.","year":2020,"journal":"arXiv / Nature MI","score":8.8},{"title":"MolBERT: Molecular Property Prediction","authors":"Fabian et al.","year":2020,"journal":"ICLR workshop","score":8.5},{"title":"Transformer-based DTI Prediction","authors":"Liu et al.","year":2022,"journal":"Bioinformatics (SCI Q1)","score":8.3},{"title":"REINVENT 2.0 with Transformer Prior","authors":"Blaschke et al.","year":2020,"journal":"J. Chem. Inf. Model. (SCI Q1)","score":7.9},{"title":"Multi-omics Integration via Transformer","authors":"Wang et al.","year":2023,"journal":"Nature Methods (SCI Q1)","score":7.6}],"credibility":{"sourceQuality":{"score":8.5,"note":"87% 文献来自 SCI Q1 期刊，核心论文高被引（\u003e500 次）"},"reasoning":{"score":7.8,"note":"推理链路清晰，结论均有文献支撑，逻辑一致"},"consistency":{"score":7.2,"note":"Liu(2022) 与 Wang(2023) AUROC 指标存在 0.06 差异，已标注"},"overall":7.8,"suggestion":"综合评分 7.8/10。建议对全文精读步骤中检测到的矛盾标注（Liu vs Wang AUROC）进行人工复核后再提交。"}};
+
+var currentStep = 0;
+var isRunning = false;
+var awaitingCheckpoint = false;
+var doneSets = new Set();
+
+function showScreen(n) {
+  document.querySelectorAll('.asci-screen').forEach(function(s){ s.classList.add('hidden'); });
+  document.getElementById('screen' + n).classList.remove('hidden');
+}
+
+function startTask() {
+  showScreen(2);
+  renderTree();
+}
+
+function renderTree() {
+  var tree = document.getElementById('taskTree');
+  tree.innerHTML = '';
+  MOCK_STEPS.forEach(function(step) {
+    var status = doneSets.has(step.id) ? 'done' : (currentStep === step.id && isRunning ? 'running' : (currentStep === step.id && awaitingCheckpoint ? 'running' : 'pending'));
+    var isActive = (currentStep === step.id);
+    var div = document.createElement('div');
+    div.className = 'tree-step' + (isActive ? ' active' : '');
+
+    var riskClass = step.risk === 'low' ? 'risk-low' : (step.risk === 'medium' ? 'risk-medium' : 'risk-high');
+    var cpMark = step.checkpoint ? ' 👤' : '';
+    div.innerHTML = '<div class="tree-step-header">' +
+      '<span class="status-dot ' + status + '"></span>' +
+      '<span class="tree-step-icon">' + step.icon + '</span>' +
+      '<span class="tree-step-name">' + step.name + cpMark + '</span>' +
+      '<span class="tree-step-risk ' + riskClass + '">' + step.riskLabel + '</span>' +
+      '</div>';
+
+    if (isActive || doneSets.has(step.id)) {
+      var subsDiv = document.createElement('div');
+      subsDiv.className = 'tree-subs';
+      step.subs.forEach(function(sub) {
+        subsDiv.innerHTML += '<div class="tree-sub">' + sub + '</div>';
+      });
+      div.appendChild(subsDiv);
+    }
+    tree.appendChild(div);
+  });
+}
+
+function handleNext() {
+  if (isRunning) return;
+  if (awaitingCheckpoint) { confirmCheckpoint(); return; }
+  if (currentStep >= 5) return;
+  isRunning = true;
+  var btn = document.getElementById('nextBtn');
+  btn.disabled = true;
+  btn.textContent = '执行中...';
+  btn.classList.remove('checkpoint-mode');
+  runStep(currentStep + 1);
+}
+
+function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
+
+async function runStep(stepIdx) {
+  currentStep = stepIdx;
+  var step = MOCK_STEPS[stepIdx - 1];
+  document.getElementById('ctrlProgress').textContent = '正在执行：' + step.name + ' (' + stepIdx + '/5)';
+  updatePanel(stepIdx, 'running');
+  renderTree();
+
+  for (var i = 0; i < step.logs.length; i++) {
+    await sleep(300 + Math.random() * 500);
+    appendLog(step.logs[i].level, step.logs[i].text);
+  }
+
+  if (step.checkpoint) {
+    awaitingCheckpoint = true;
+    isRunning = false;
+    document.getElementById('checkpointCard').classList.remove('hidden');
+    document.getElementById('logPanel').scrollTop = 99999;
+    var btn = document.getElementById('nextBtn');
+    btn.disabled = false;
+    btn.textContent = '✅ 确认并继续';
+    btn.classList.add('checkpoint-mode');
+    document.getElementById('ctrlProgress').textContent = '等待人工确认 Checkpoint';
+    return;
+  }
+
+  finishStep(stepIdx);
+}
+
+function finishStep(stepIdx) {
+  doneSets.add(stepIdx);
+  isRunning = false;
+  updatePanel(stepIdx, 'done');
+  renderTree();
+  var btn = document.getElementById('nextBtn');
+  btn.disabled = false;
+  if (stepIdx < 5) {
+    btn.textContent = '▶ 执行下一步';
+    document.getElementById('ctrlProgress').textContent = '步骤 ' + stepIdx + ' 完成 · 准备下一步';
+  } else {
+    btn.textContent = '✓ 查看结果';
+    btn.onclick = function(){ renderScreen3(); showScreen(3); };
+    document.getElementById('ctrlProgress').textContent = '全部完成 · 点击查看综述结果';
+    document.getElementById('taskBadge').textContent = '执行完成';
+    document.getElementById('taskBadge').className = 'asci-badge asci-badge-done';
+  }
+}
+
+function confirmCheckpoint() {
+  document.getElementById('checkpointCard').classList.add('hidden');
+  awaitingCheckpoint = false;
+  appendLog('INFO', '✓ 人工确认完成，3 篇边界文献已纳入，继续执行...');
+  finishStep(3);
+}
+
+function appendLog(level, text) {
+  var d = new Date();
+  var ts = d.toTimeString().slice(0,8);
+  var div = document.createElement('div');
+  div.className = 'log-line';
+  div.innerHTML = '<span class="log-ts">[' + ts + ']</span>' +
+    '<span class="log-lvl log-lvl-' + level.toLowerCase() + '">' + level + '</span> ' + text;
+  document.getElementById('logBody').appendChild(div);
+  document.getElementById('logPanel').scrollTop = 99999;
+}
+
+function updatePanel(stepIdx, state) {
+  var pct = CONF_BY_STEP[stepIdx - 1];
+  if (state === 'done') {
+    var ring = document.getElementById('confRing');
+    ring.style.setProperty('--pct', pct);
+    document.getElementById('confNum').textContent = pct + '%';
+    var prev = stepIdx > 1 ? CONF_BY_STEP[stepIdx - 2] : 100;
+    var diff = pct - prev;
+    document.getElementById('confTrend').textContent = (diff >= 0 ? '▲ +' : '▼ ') + Math.abs(diff) + '% vs 上一步';
+    document.getElementById('progressBar').style.width = (stepIdx / 5 * 100) + '%';
+    document.getElementById('progressText').textContent = '步骤 ' + stepIdx + ' / 5';
+  }
+  var step = MOCK_STEPS[stepIdx - 1];
+  var riskClass = step.risk === 'low' ? 'risk-low' : (step.risk === 'medium' ? 'risk-medium' : 'risk-high');
+  var toolsHtml = step.tools.map(function(t){ return '<span class="step-card-tool">' + t + '</span>'; }).join('');
+  document.getElementById('stepCard').innerHTML =
+    '<div class="step-card-name">' + step.icon + ' ' + step.name + '</div>' +
+    '<span class="step-card-risk ' + riskClass + '">' + step.riskLabel + '</span>' +
+    '<div class="step-card-tools">' + toolsHtml + '</div>';
+}
+
+function renderScreen3() {
+  var r = MOCK_RESULT;
+  document.getElementById('s3Title').textContent = r.title;
+  document.getElementById('s3Abstract').textContent = r.abstract;
+
+  var fl = document.getElementById('s3Findings');
+  fl.innerHTML = '';
+  r.findings.forEach(function(f, i) {
+    fl.innerHTML += '<li class="s3-finding"><span class="s3-finding-num">' + (i+1) + '</span><span>' + f + '</span></li>';
+  });
+
+  var tb = document.getElementById('s3TableBody');
+  tb.innerHTML = '';
+  r.sources.forEach(function(s) {
+    tb.innerHTML += '<tr><td>' + s.title + '</td><td>' + s.authors + '</td><td>' + s.year + '</td><td>' + s.journal + '</td><td class="s3-score">' + s.score + '</td></tr>';
+  });
+  var q1Count = r.sources.filter(function(s){ return s.journal.indexOf('Q1') >= 0 || s.journal.indexOf('NeurIPS') >= 0 || s.journal.indexOf('Nature') >= 0; }).length;
+  document.getElementById('s3TableFooter').textContent = '共引用 ' + r.sources.length + ' 篇文献，' + Math.round(q1Count/r.sources.length*100) + '% 来自 SCI Q1 / 顶会期刊';
+
+  var cred = r.credibility;
+  var bars = [
+    { name: '来源质量', score: cred.sourceQuality.score, note: cred.sourceQuality.note },
+    { name: '推理链路', score: cred.reasoning.score, note: cred.reasoning.note },
+    { name: '数据一致性', score: cred.consistency.score, note: cred.consistency.note },
+  ];
+  var credWrap = document.getElementById('s3CredBars');
+  credWrap.innerHTML = '';
+  bars.forEach(function(b) {
+    var pct = b.score / 10 * 100;
+    credWrap.innerHTML += '<div class="cred-bar-item">' +
+      '<div class="cred-bar-top"><span class="cred-bar-name">' + b.name + '</span><span class="cred-bar-score">' + b.score + ' / 10</span></div>' +
+      '<div class="cred-bar-track"><div class="cred-bar-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="cred-bar-note">' + b.note + '</div>' +
+      '</div>';
+  });
+  document.getElementById('s3CredSummary').innerHTML = '<strong>综合评分 ' + cred.overall + ' / 10</strong> · ' + cred.suggestion;
+}
+
+function acceptResult() {
+  showToast('✅ 结果已保存至知识库');
+}
+
+function restart() {
+  currentStep = 0; isRunning = false; awaitingCheckpoint = false;
+  doneSets.clear();
+  document.getElementById('logBody').innerHTML = '';
+  document.getElementById('checkpointCard').classList.add('hidden');
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressText').textContent = '步骤 0 / 5';
+  document.getElementById('confRing').style.setProperty('--pct', 0);
+  document.getElementById('confNum').textContent = '—';
+  document.getElementById('confTrend').textContent = '任务启动后\n实时更新';
+  document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
+  var btn = document.getElementById('nextBtn');
+  btn.textContent = '▶ 执行下一步';
+  btn.onclick = handleNext;
+  btn.disabled = false;
+  btn.classList.remove('checkpoint-mode');
+  document.getElementById('ctrlProgress').textContent = '准备就绪 · 共 5 个步骤';
+  document.getElementById('taskBadge').textContent = '任务执行中';
+  document.getElementById('taskBadge').className = 'asci-badge asci-badge-running';
+  showScreen(1);
+}
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'asci-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 2500);
+}
+</script>
+</body>
+</html>
