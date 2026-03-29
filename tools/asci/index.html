@@ -538,7 +538,7 @@ function restart() {
   document.getElementById('progressText').textContent = '步骤 0 / 5';
   document.getElementById('confRing').style.setProperty('--pct', 0);
   document.getElementById('confNum').textContent = '—';
-  document.getElementById('confTrend').textContent = '任务启动后\n实时更新';
+  document.getElementById('confTrend').innerHTML = '任务启动后<br>实时更新';
   document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
   var btn = document.getElementById('nextBtn');
   btn.textContent = '▶ 执行下一步';
