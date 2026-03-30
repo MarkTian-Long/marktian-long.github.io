@@ -178,12 +178,43 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 .paper-modal-score{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 10px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2);margin-bottom:14px}
 .paper-modal-abstract{font-size:12px;color:var(--asci-text-dim);line-height:1.8;border-top:1px solid var(--asci-border);padding-top:12px}
 .paper-modal-abstract strong{color:var(--asci-text)}
+.paper-modal-actions{margin-top:14px;padding-top:12px;border-top:1px solid var(--asci-border)}
+.paper-modal-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--asci-blue);text-decoration:none;padding:5px 12px;border:1px solid rgba(79,143,255,0.3);border-radius:6px;transition:background .15s,border-color .15s}
+.paper-modal-link:hover{background:rgba(79,143,255,0.1);border-color:var(--asci-blue)}
+.s3-export-btn{margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid rgba(79,143,255,0.3);border-radius:6px;background:transparent;color:var(--asci-blue);cursor:pointer;transition:background .15s}
+.s3-export-btn:hover{background:rgba(79,143,255,0.1)}
 .cp-paper{cursor:pointer;transition:background .15s,border-color .15s}
 .cp-paper:hover{background:rgba(79,143,255,0.08);border-color:rgba(79,143,255,0.3)}
 .cp-paper-hint{float:right;font-size:10px;color:var(--asci-blue);opacity:.7}
 .s3-paper-link{color:inherit;text-decoration:none;cursor:pointer;border-bottom:1px dashed rgba(79,143,255,0.4);transition:border-color .15s,color .15s}
 .s3-paper-link:hover{color:var(--asci-blue);border-color:var(--asci-blue)}
 
+/* ---- 降级策略 ---- */
+.log-degrade-banner{margin:6px 0;padding:8px 14px;background:rgba(255,60,60,0.12);border:1px solid rgba(255,80,80,0.4);border-radius:6px;color:#ff6b6b;font-size:12px;font-weight:700;letter-spacing:.03em}
+.degrade-header{padding:16px 16px 12px;border-bottom:1px solid var(--asci-border)}
+.degrade-icon{font-size:22px;margin-bottom:6px}
+.degrade-title{font-size:14px;font-weight:700;color:#ff6b6b;margin-bottom:4px}
+.degrade-desc{font-size:11px;color:var(--asci-text-muted);line-height:1.5}
+.degrade-reason{padding:12px 16px;border-bottom:1px solid var(--asci-border)}
+.degrade-reason-label{font-size:10px;font-weight:700;color:var(--asci-text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.degrade-reason-text{font-size:11px;color:var(--asci-text-dim);line-height:1.6}
+.degrade-options{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.degrade-btn{width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--asci-border2);background:var(--asci-surface);cursor:pointer;transition:background .15s,border-color .15s}
+.degrade-btn:hover{border-color:rgba(79,143,255,0.5);background:rgba(79,143,255,0.07)}
+.degrade-btn-a:hover{border-color:rgba(79,143,255,0.5)}
+.degrade-btn-b:hover{border-color:rgba(130,100,255,0.5)}
+.degrade-btn-c:hover{border-color:rgba(255,165,0,0.5)}
+.degrade-btn-title{font-size:12px;font-weight:700;color:var(--asci-text);margin-bottom:2px}
+.degrade-btn-desc{font-size:10px;color:var(--asci-text-muted)}
+.draft-header{padding:14px 16px 10px;border-bottom:1px solid var(--asci-border)}
+.draft-title{font-size:13px;font-weight:700;color:var(--asci-text);margin-bottom:4px}
+.draft-desc{font-size:11px;color:var(--asci-text-muted);line-height:1.5}
+.draft-textarea{display:block;width:100%;box-sizing:border-box;margin:10px 0;padding:10px 12px;background:var(--asci-bg);border:1px solid var(--asci-border2);border-radius:6px;color:var(--asci-text);font-size:11px;line-height:1.7;font-family:inherit;resize:vertical;min-height:160px;max-height:260px}
+.draft-submit-btn{display:block;width:calc(100% - 32px);margin:0 16px 16px;padding:9px;background:var(--asci-blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.draft-submit-btn:hover{opacity:.85}
+.degrade-demo-btn{font-size:11px;padding:5px 12px;border:1px dashed rgba(255,165,0,0.5);border-radius:6px;background:transparent;color:rgba(255,165,0,0.8);cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap}
+.degrade-demo-btn:hover{background:rgba(255,165,0,0.1);border-color:rgba(255,165,0,0.8)}
+.human-edited-badge{display:inline-block;margin-left:10px;font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(79,143,255,0.12);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2);font-weight:600;vertical-align:middle}
 /* ---- STEP RESULT CARD（步骤结果卡片，插入日志区） ---- */
 .step-result-card{margin:14px 0 4px;border:1px solid rgba(79,143,255,0.25);border-radius:8px;background:rgba(79,143,255,0.05);overflow:hidden;font-family:system-ui,sans-serif}
 .src-header{padding:8px 14px;font-size:11px;font-weight:700;color:var(--asci-blue);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(79,143,255,0.15);display:flex;align-items:center;justify-content:space-between}
@@ -419,6 +450,7 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
     <div class="asci-controls">
       <button class="asci-btn-back" id="backBtn" onclick="handleBack()" disabled>← 上一步</button>
       <span class="ctrl-progress" id="ctrlProgress">准备就绪 · 共 5 个步骤</span>
+      <button class="degrade-demo-btn" id="degradeDemoBtn" onclick="jumpToDegradeDemo()" title="跳过前4步，直接演示 Step 5 降级流程">⚡ 演示降级流程</button>
       <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
     </div>
   </div>
@@ -602,6 +634,13 @@ var MOCK_STEPS = [
     tools: ['Outline Generator', 'Para Writer', 'Citation Inserter'],
     subs: ['生成大纲', '段落撰写', '引用插入'],
     logs: [
+      {level:'INFO', text:'启动综述报告生成模块...'},
+      {level:'INFO', text:'加载全文精读结果与矛盾处置记录...'},
+      {level:'ERROR', text:'[ERROR-1] 报告结构生成失败：上下文窗口溢出，内容截断', _trigger:'error1'},
+      {level:'WARN', text:'[重试 1/3] 扩大上下文窗口至 128K，重新生成...'},
+      {level:'ERROR', text:'[ERROR-2] 输出结构异常：章节编号错位，与已有文献结论矛盾', _trigger:'error2'},
+      {level:'WARN', text:'[重试 2/3] 切换备用模型（降低温度至 0.2）...'},
+      {level:'ERROR', text:'[ERROR-3] 置信度极低（23%）：生成内容与 Step 4 矛盾处置结果不一致', _trigger:'error3'},
       {level:'INFO', text:'根据 47 条 findings 生成综述大纲（5 节）'},
       {level:'INFO', text:'撰写各段落，自动插入 APA 引用格式'},
       {level:'INFO', text:'引用文献 21 篇，精选核心 6 篇进入摘要层'},
@@ -621,7 +660,32 @@ var MOCK_STEPS = [
   }
 ];
 var CONF_BY_STEP = [95,88,82,75,78];
-var MOCK_RESULT = {"title":"Transformer 架构在药物发现中的应用综述","abstract":"Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本综述系统梳理了 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个核心场景中的应用进展，汇总分析 21 篇高质量文献，重点探讨模型架构演化路径、基准数据集选取策略及临床转化瓶颈。研究表明，预训练-微调范式已成为药物发现 AI 的主流方法，但可解释性不足与标注数据稀缺仍是限制规模化落地的关键障碍。","findings":["预训练 Transformer（如 ChemBERTa、MolBERT）在分子属性预测任务上平均 AUROC 提升 8.3%，优于传统 ECFP 指纹方法。","药物-靶点相互作用（DTI）任务中，Transformer 双编码器架构在 BindingDB 数据集 AUROC 达 0.924，显著优于图神经网络基线。","从头分子生成领域，基于 Transformer 的 REINVENT 变体在 QED × SA 综合指标上表现最优，但 3D 构象生成准确性仍有较大提升空间。"],"sources":[{"title":"Attention Is All You Need","authors":"Vaswani et al.","year":2017,"journal":"NeurIPS","score":9.2},{"title":"ChemBERTa: Large-Scale Self-Supervised Pretraining","authors":"Chithrananda et al.","year":2020,"journal":"arXiv / Nature MI","score":8.8},{"title":"MolBERT: Molecular Property Prediction","authors":"Fabian et al.","year":2020,"journal":"ICLR workshop","score":8.5},{"title":"Transformer-based DTI Prediction","authors":"Liu et al.","year":2022,"journal":"Bioinformatics (SCI Q1)","score":8.3},{"title":"REINVENT 2.0 with Transformer Prior","authors":"Blaschke et al.","year":2020,"journal":"J. Chem. Inf. Model. (SCI Q1)","score":7.9},{"title":"Multi-omics Integration via Transformer","authors":"Wang et al.","year":2023,"journal":"Nature Methods (SCI Q1)","score":7.6}],"credibility":{"sourceQuality":{"score":8.5,"note":"87% 文献来自 SCI Q1 期刊，核心论文高被引（\u003e500 次）"},"reasoning":{"score":7.8,"note":"推理链路清晰，结论均有文献支撑，逻辑一致"},"consistency":{"score":7.2,"note":"Liu(2022) 与 Wang(2023) AUROC 指标存在 0.06 差异，已标注"},"overall":7.8,"suggestion":"综合评分 7.8/10。建议对全文精读步骤中检测到的矛盾标注（Liu vs Wang AUROC）进行人工复核后再提交。"}};
+var errorCount = 0;
+var degradeMode = false;
+var humanEdited = false;
+var draftContent = '';
+
+function calcConfidence(stepIdx) {
+  var base = CONF_BY_STEP[stepIdx - 1];
+  var delta = 0;
+  if (stepIdx === 3) {
+    var ud3 = stepUserData[3];
+    if (ud3 && ud3.borderline) {
+      var accepted = ud3.borderline.filter(function(p){ return p.decision === 'include'; }).length;
+      if (accepted < 1) delta -= 5;
+    }
+  }
+  if (stepIdx === 4) {
+    var ud4 = stepUserData[4];
+    var decision = ud4 && ud4.contradiction ? ud4.contradiction.decision : null;
+    if (decision === 'exclude') delta -= 8;
+    else if (decision === 'both') delta -= 3;
+    else if (decision === 'A' || decision === 'B') delta += 2;
+  }
+  if (stepIdx === 5 && degradeMode) delta -= 12;
+  return Math.max(60, Math.min(99, base + delta));
+}
+var MOCK_RESULT = {"title":"Transformer 架构在药物发现中的应用综述","abstract":"Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本综述系统梳理了 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个核心场景中的应用进展，汇总分析 21 篇高质量文献，重点探讨模型架构演化路径、基准数据集选取策略及临床转化瓶颈。研究表明，预训练-微调范式已成为药物发现 AI 的主流方法，但可解释性不足与标注数据稀缺仍是限制规模化落地的关键障碍。","findings":["预训练 Transformer（如 ChemBERTa、MolBERT）在分子属性预测任务上平均 AUROC 提升 8.3%，优于传统 ECFP 指纹方法。","药物-靶点相互作用（DTI）任务中，Transformer 双编码器架构在 BindingDB 数据集 AUROC 达 0.924，显著优于图神经网络基线。","从头分子生成领域，基于 Transformer 的 REINVENT 变体在 QED × SA 综合指标上表现最优，但 3D 构象生成准确性仍有较大提升空间。"],"sources":[{"title":"Attention Is All You Need","authors":"Vaswani et al.","year":2017,"journal":"NeurIPS","score":9.2,"doi":"https://doi.org/10.48550/arXiv.1706.03762"},{"title":"ChemBERTa: Large-Scale Self-Supervised Pretraining","authors":"Chithrananda et al.","year":2020,"journal":"arXiv / Nature MI","score":8.8,"doi":"https://doi.org/10.48550/arXiv.2010.09885"},{"title":"MolBERT: Molecular Property Prediction","authors":"Fabian et al.","year":2020,"journal":"ICLR workshop","score":8.5,"doi":"https://doi.org/10.48550/arXiv.2011.13230"},{"title":"Transformer-based DTI Prediction","authors":"Liu et al.","year":2022,"journal":"Bioinformatics (SCI Q1)","score":8.3,"doi":"https://doi.org/10.1093/bioinformatics/btab500"},{"title":"REINVENT 2.0 with Transformer Prior","authors":"Blaschke et al.","year":2020,"journal":"J. Chem. Inf. Model. (SCI Q1)","score":7.9,"doi":"https://doi.org/10.26434/chemrxiv.12058026"},{"title":"Multi-omics Integration via Transformer","authors":"Wang et al.","year":2023,"journal":"Nature Methods (SCI Q1)","score":7.6,"doi":"https://doi.org/10.1038/s41592-023-01970-4"}],"credibility":{"sourceQuality":{"score":8.5,"note":"87% 文献来自 SCI Q1 期刊，核心论文高被引（\u003e500 次）"},"reasoning":{"score":7.8,"note":"推理链路清晰，结论均有文献支撑，逻辑一致"},"consistency":{"score":7.2,"note":"Liu(2022) 与 Wang(2023) AUROC 指标存在 0.06 差异，已标注"},"overall":7.8,"suggestion":"综合评分 7.8/10。建议对全文精读步骤中检测到的矛盾标注（Liu vs Wang AUROC）进行人工复核后再提交。"}};
 
 var currentStep = 0;
 var isRunning = false;
@@ -686,8 +750,22 @@ async function runStep(stepIdx) {
   renderTree();
 
   for (var i = 0; i < step.logs.length; i++) {
+    var logEntry = step.logs[i];
+    if (logEntry._resume_only) continue; // resumeStep 专用日志，runStep 时跳过
     await sleep(300 + Math.random() * 500);
-    appendLog(step.logs[i].level, step.logs[i].text, stepIdx);
+    appendLog(logEntry.level, logEntry.text, stepIdx);
+    if (logEntry._trigger === 'error1') {
+      errorCount = 1;
+      await sleep(600);
+    } else if (logEntry._trigger === 'error2') {
+      errorCount = 2;
+      await sleep(600);
+    } else if (logEntry._trigger === 'error3') {
+      errorCount = 3;
+      isRunning = false;
+      showDegradePanel(stepIdx);
+      return; // 暂停，等待用户选择
+    }
   }
 
   // Step 3 逐篇判断由结果卡片内的 blDecide 驱动，直接 finishStep
@@ -744,12 +822,12 @@ function appendLog(level, text, stepIdx) {
 }
 
 function updatePanel(stepIdx, state) {
-  var pct = CONF_BY_STEP[stepIdx - 1];
+  var pct = calcConfidence(stepIdx);
   if (state === 'done') {
     var ring = document.getElementById('confRing');
     ring.style.setProperty('--pct', pct);
     document.getElementById('confNum').textContent = pct + '%';
-    var prev = stepIdx > 1 ? CONF_BY_STEP[stepIdx - 2] : 100;
+    var prev = stepIdx > 1 ? calcConfidence(stepIdx - 1) : 100;
     var diff = pct - prev;
     document.getElementById('confTrend').textContent = (diff >= 0 ? '▲ +' : '▼ ') + Math.abs(diff) + '% vs 上一步';
     document.getElementById('progressBar').style.width = (stepIdx / 5 * 100) + '%';
@@ -766,7 +844,14 @@ function updatePanel(stepIdx, state) {
 
 function renderScreen3() {
   var r = MOCK_RESULT;
-  document.getElementById('s3Title').textContent = r.title;
+  var titleEl = document.getElementById('s3Title');
+  titleEl.textContent = r.title;
+  if (humanEdited) {
+    var badge = document.createElement('span');
+    badge.className = 'human-edited-badge';
+    badge.textContent = '✓ 已由人工修改';
+    titleEl.appendChild(badge);
+  }
   document.getElementById('s3Abstract').textContent = r.abstract;
 
   var fl = document.getElementById('s3Findings');
@@ -781,7 +866,9 @@ function renderScreen3() {
     tb.innerHTML += '<tr><td><span class="s3-paper-link" onclick="showPaperModal(\'s3_' + idx + '\')">' + s.title + '</span></td><td>' + s.authors + '</td><td>' + s.year + '</td><td>' + s.journal + '</td><td class="s3-score">' + s.score + '</td></tr>';
   });
   var q1Count = r.sources.filter(function(s){ return s.journal.indexOf('Q1') >= 0 || s.journal.indexOf('NeurIPS') >= 0 || s.journal.indexOf('Nature') >= 0; }).length;
-  document.getElementById('s3TableFooter').textContent = '共引用 ' + r.sources.length + ' 篇文献，' + Math.round(q1Count/r.sources.length*100) + '% 来自 SCI Q1 / 顶会期刊';
+  var footerEl = document.getElementById('s3TableFooter');
+  footerEl.innerHTML = '共引用 ' + r.sources.length + ' 篇文献，' + Math.round(q1Count/r.sources.length*100) + '% 来自 SCI Q1 / 顶会期刊' +
+    '&nbsp;&nbsp;<button class="s3-export-btn" onclick="exportReferences(this)">📋 复制参考文献（BibTeX）</button>';
 
   var cred = r.credibility;
   var bars = [
@@ -807,22 +894,157 @@ function acceptResult() {
   showToast('✅ 结果已保存至知识库');
 }
 
+// ---- 降级策略相关函数 ----
+
+function appendDegradeWarningBanner() {
+  var banner = document.createElement('div');
+  banner.className = 'log-degrade-banner';
+  banner.textContent = '⛔ 连续 3 次执行失败 · 已进入异常处理模式 · 需人工决策';
+  document.getElementById('logBody').appendChild(banner);
+  document.getElementById('logPanel').scrollTop = 99999;
+}
+
+function showDegradePanel(stepIdx) {
+  degradeMode = true;
+  appendDegradeWarningBanner();
+  var panel = document.getElementById('statusPanel');
+  panel.innerHTML =
+    '<div class="degrade-header">' +
+      '<div class="degrade-icon">⚠</div>' +
+      '<div class="degrade-title">异常处理模式</div>' +
+      '<div class="degrade-desc">连续 3 次执行失败，AI 已达能力边界<br>请选择处理路径</div>' +
+    '</div>' +
+    '<div class="degrade-reason">' +
+      '<div class="degrade-reason-label">失败原因分析</div>' +
+      '<div class="degrade-reason-text">综述报告生成涉及跨步骤结论综合，当前上下文中存在未完全解决的矛盾，导致模型无法生成一致性输出。</div>' +
+    '</div>' +
+    '<div class="degrade-options">' +
+      '<button class="degrade-btn degrade-btn-a" onclick="handleDegrade(\'retry\',' + stepIdx + ')">' +
+        '<div class="degrade-btn-title">🔄 调整参数重试</div>' +
+        '<div class="degrade-btn-desc">提高采样温度，引入多样性</div>' +
+      '</button>' +
+      '<button class="degrade-btn degrade-btn-b" onclick="handleDegrade(\'model\',' + stepIdx + ')">' +
+        '<div class="degrade-btn-title">🔀 切换备用模型</div>' +
+        '<div class="degrade-btn-desc">使用更大参数量模型重新生成</div>' +
+      '</button>' +
+      '<button class="degrade-btn degrade-btn-c" onclick="handleDegrade(\'human\',' + stepIdx + ')">' +
+        '<div class="degrade-btn-title">👤 人工接管</div>' +
+        '<div class="degrade-btn-desc">AI 提供草稿，由你完成编辑</div>' +
+      '</button>' +
+    '</div>';
+}
+
+function handleDegrade(choice, stepIdx) {
+  var label = choice === 'retry' ? '调整参数重试' : choice === 'model' ? '切换备用模型' : '人工接管';
+  appendHitlDecisionLog('Step ' + stepIdx + ' · 异常处理', label);
+  if (choice === 'human') {
+    showDraftEditor(stepIdx);
+  } else {
+    var msg = choice === 'retry' ? '参数调整完成，重新执行...' : '已切换至备用模型，重新执行...';
+    appendLog('INFO', msg, stepIdx);
+    isRunning = true;
+    sleep(1500).then(function(){ resumeStep(stepIdx); });
+  }
+}
+
+function showDraftEditor(stepIdx) {
+  var draft = '# Transformer 架构在药物发现中的应用综述\n\n' +
+    '## 1. 引言：Transformer 架构概述\n' +
+    '自注意力机制原理；从 NLP 到生物医学的迁移路径。\n\n' +
+    '## 2. 分子属性预测应用\n' +
+    'ChemBERTa / MolBERT 预训练范式；MoleculeNet 基准对比。\n\n' +
+    '## 3. 药物-靶点相互作用识别\n' +
+    '双编码器架构；BindingDB / Davis 数据集结果。\n\n' +
+    '## 4. 从头分子生成\n' +
+    'REINVENT 变体；QED × SA 综合指标；3D 构象局限性。\n\n' +
+    '## 5. 局限性与未来方向\n' +
+    '可解释性不足；标注数据稀缺；多模态整合趋势。';
+  draftContent = draft;
+  var panel = document.getElementById('statusPanel');
+  panel.innerHTML =
+    '<div class="draft-header">' +
+      '<div class="draft-title">📝 AI 草稿（可编辑）</div>' +
+      '<div class="draft-desc">请修改草稿内容后提交，系统将接回自动流程</div>' +
+    '</div>' +
+    '<textarea class="draft-textarea" id="draftTextarea">' + escHtml(draft) + '</textarea>' +
+    '<button class="draft-submit-btn" onclick="submitDraft(' + stepIdx + ')">✓ 确认提交，接回自动流程</button>';
+  document.getElementById('nextBtn').disabled = true;
+}
+
+function submitDraft(stepIdx) {
+  var ta = document.getElementById('draftTextarea');
+  if (!ta || !ta.value.trim()) {
+    alert('请输入内容后再提交');
+    return;
+  }
+  draftContent = ta.value;
+  humanEdited = true;
+  appendLog('INFO', '✓ 人工草稿已提交，接回自动流程', stepIdx);
+  appendHitlDecisionLog('Step ' + stepIdx + ' · 草稿编辑', '人工修改完成');
+  document.getElementById('nextBtn').disabled = false;
+  isRunning = true;
+  sleep(800).then(function(){ resumeStep(stepIdx); });
+}
+
+async function resumeStep(stepIdx) {
+  var step = MOCK_STEPS[stepIdx - 1];
+  // 找到第一条 _resume_only 或正常（无 _trigger）的日志继续执行
+  var startFromNormal = false;
+  for (var i = 0; i < step.logs.length; i++) {
+    var logEntry = step.logs[i];
+    if (logEntry._trigger === 'error3') { startFromNormal = true; continue; }
+    if (!startFromNormal) continue;
+    await sleep(300 + Math.random() * 500);
+    appendLog(logEntry.level, logEntry.text, stepIdx);
+  }
+  finishStep(stepIdx);
+}
+
+// ---- 演示降级快捷按钮 ----
+function jumpToDegradeDemo() {
+  // 快速完成 Step 1-4（不触发 HITL，直接标记完成），跳到 Step 5
+  for (var i = 1; i <= 4; i++) { doneSets.add(i); }
+  currentStep = 4;
+  isRunning = false;
+  document.getElementById('progressBar').style.width = '80%';
+  document.getElementById('progressText').textContent = '步骤 4 / 5';
+  renderTree();
+  document.getElementById('ctrlProgress').textContent = '前 4 步已跳过 · 直接演示 Step 5 降级流程';
+  var btn = document.getElementById('nextBtn');
+  btn.disabled = false;
+  btn.textContent = '▶ 执行下一步';
+  btn.onclick = handleNext;
+  document.getElementById('backBtn').disabled = false;
+}
+
 function restart() {
   currentStep = 0; isRunning = false; awaitingCheckpoint = false;
+  errorCount = 0; degradeMode = false; humanEdited = false; draftContent = '';
   doneSets.clear();
   stepUserData = {};
   document.getElementById('logBody').innerHTML = '';
-  document.getElementById('progressBar').style.width = '0%';
-  document.getElementById('progressText').textContent = '步骤 0 / 5';
-  document.getElementById('confRing').style.setProperty('--pct', 0);
-  document.getElementById('confNum').textContent = '—';
-  document.getElementById('confTrend').innerHTML = '任务启动后<br>实时更新';
-  document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
-  // 清除 HITL 状态和决策历史
-  var hitlStatus = document.getElementById('statusPanel').querySelector('.hitl-status');
-  if (hitlStatus) hitlStatus.remove();
-  var decHistory = document.getElementById('statusPanel').querySelector('.decision-history');
-  if (decHistory) decHistory.remove();
+  // 恢复 statusPanel 原始结构（降级模式会整体替换它）
+  document.getElementById('statusPanel').innerHTML =
+    '<div class="panel-section">' +
+      '<div class="panel-label">置信度</div>' +
+      '<div class="confidence-ring-wrap">' +
+        '<div class="confidence-ring" id="confRing" style="--pct:0">' +
+          '<span class="conf-num" id="confNum">—</span>' +
+        '</div>' +
+        '<div class="conf-trend" id="confTrend">任务启动后<br>实时更新</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="panel-section">' +
+      '<div class="panel-label">进度</div>' +
+      '<div class="progress-bar-wrap">' +
+        '<div class="progress-bar" id="progressBar" style="width:0%"></div>' +
+      '</div>' +
+      '<div class="progress-text" id="progressText">步骤 0 / 5</div>' +
+    '</div>' +
+    '<div class="panel-section">' +
+      '<div class="panel-label">当前步骤</div>' +
+      '<div class="step-card" id="stepCard"><div class="step-card-empty">等待执行...</div></div>' +
+    '</div>';
   var btn = document.getElementById('nextBtn');
   btn.textContent = '▶ 执行下一步';
   btn.onclick = handleNext;
@@ -942,19 +1164,22 @@ var PAPER_DATA = {
     title: 'Attention Is All You Need',
     meta: 'Vaswani et al. · NeurIPS 2017',
     score: '相关性评分 0.74',
-    abstract: '本文提出 <strong>Transformer</strong> 架构，完全基于注意力机制，摒弃了循环和卷积结构。在机器翻译任务上，模型质量更优，并行性更强，所需训练时间显著减少。该架构已成为现代 NLP 和药物发现 AI 的基础组件，其自注意力机制可高效捕获分子序列中的长程依赖关系。'
+    abstract: '本文提出 <strong>Transformer</strong> 架构，完全基于注意力机制，摒弃了循环和卷积结构。在机器翻译任务上，模型质量更优，并行性更强，所需训练时间显著减少。该架构已成为现代 NLP 和药物发现 AI 的基础组件，其自注意力机制可高效捕获分子序列中的长程依赖关系。',
+    doi: 'https://doi.org/10.48550/arXiv.1706.03762'
   },
   'cp2': {
     title: 'Drug-Target Interaction Prediction via Transformer',
     meta: 'Zhang et al. · Bioinformatics 2021',
     score: '相关性评分 0.73',
-    abstract: '本文将 <strong>Transformer 双编码器</strong>架构应用于药物-靶点相互作用（DTI）预测：蛋白质序列编码器 + SMILES 分子编码器，通过交叉注意力融合两路表示。在 BindingDB 和 Davis 数据集上，AUROC 达 0.924，优于 GNN 和 LSTM 基线，展示了 Transformer 在结构生物学场景的迁移能力。'
+    abstract: '本文将 <strong>Transformer 双编码器</strong>架构应用于药物-靶点相互作用（DTI）预测：蛋白质序列编码器 + SMILES 分子编码器，通过交叉注意力融合两路表示。在 BindingDB 和 Davis 数据集上，AUROC 达 0.924，优于 GNN 和 LSTM 基线，展示了 Transformer 在结构生物学场景的迁移能力。',
+    doi: 'https://doi.org/10.1093/bioinformatics/btab500'
   },
   'cp3': {
     title: 'Molecular Graph Transformer for Property Prediction',
     meta: 'Liu et al. · ICLR Workshop 2022',
     score: '相关性评分 0.72',
-    abstract: '本文将图神经网络与 <strong>Transformer 注意力机制</strong>结合，提出 Molecular Graph Transformer（MGT），在分子属性预测任务中引入全局自注意力层以捕获远程原子交互。在 QM9 和 MoleculeNet 基准上，MGT 在多个属性预测任务上超越纯 GNN 方法，但在 3D 构象预测精度上仍有提升空间。'
+    abstract: '本文将图神经网络与 <strong>Transformer 注意力机制</strong>结合，提出 Molecular Graph Transformer（MGT），在分子属性预测任务中引入全局自注意力层以捕获远程原子交互。在 QM9 和 MoleculeNet 基准上，MGT 在多个属性预测任务上超越纯 GNN 方法，但在 3D 构象预测精度上仍有提升空间。',
+    doi: 'https://doi.org/10.48550/arXiv.2202.09501'
   }
 };
 
@@ -975,7 +1200,8 @@ function getPaperDataFromSources(idxKey) {
     title: s.title,
     meta: s.authors + ' · ' + s.journal + ' · ' + s.year,
     score: '相关性评分 ' + s.score + ' / 10',
-    abstract: S3_ABSTRACTS[idx] || '暂无摘要信息。'
+    abstract: S3_ABSTRACTS[idx] || '暂无摘要信息。',
+    doi: s.doi || null
   };
 }
 
@@ -986,12 +1212,14 @@ function showPaperModal(key) {
   var overlay = document.createElement('div');
   overlay.className = 'paper-modal-overlay';
   overlay.onclick = function(e){ if (e.target === overlay) closePaperModal(overlay); };
+  var doiLink = data.doi ? '<div class="paper-modal-actions"><a class="paper-modal-link" href="' + data.doi + '" target="_blank" rel="noopener">🔗 查看原文（DOI）</a></div>' : '';
   overlay.innerHTML = '<div class="paper-modal">' +
     '<button class="paper-modal-close" onclick="closePaperModal(document.querySelector(\'.paper-modal-overlay\'))">✕</button>' +
     '<div class="paper-modal-title">' + data.title + '</div>' +
     '<div class="paper-modal-meta">' + data.meta + '</div>' +
     '<div class="paper-modal-score">📊 ' + data.score + '</div>' +
     '<div class="paper-modal-abstract">' + data.abstract + '</div>' +
+    doiLink +
     '</div>';
   document.body.appendChild(overlay);
   document.addEventListener('keydown', function esc(e){ if (e.key === 'Escape'){ closePaperModal(overlay); document.removeEventListener('keydown', esc); } });
@@ -999,6 +1227,24 @@ function showPaperModal(key) {
 
 function closePaperModal(overlay) {
   if (overlay && overlay.parentNode) overlay.remove();
+}
+
+function exportReferences(btn) {
+  var bibtex = MOCK_RESULT.sources.map(function(s, i) {
+    return '@article{ref' + (i+1) + ',\n' +
+      '  title={' + s.title + '},\n' +
+      '  author={' + s.authors + '},\n' +
+      '  journal={' + s.journal + '},\n' +
+      '  year={' + s.year + '},\n' +
+      '  doi={' + (s.doi || 'N/A') + '}\n}';
+  }).join('\n\n');
+  navigator.clipboard.writeText(bibtex).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = '✓ 已复制！';
+    setTimeout(function(){ btn.textContent = orig; }, 2000);
+  }).catch(function() {
+    btn.textContent = '复制失败，请手动复制';
+  });
 }
 
 // ======== HITL STEP RESULT RENDERING ========
