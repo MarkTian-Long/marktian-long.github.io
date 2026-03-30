@@ -19,6 +19,12 @@ AI 产品经理个人求职网站工具模块。
 - CSS 变量自包含，不依赖 style.css
 - 可独立运行：直接打开 `index.html`
 
-## 生成
+## 文件结构
 
-`index.html` 由 `gen_index.js` 脚本生成（已删除脚本，直接使用生成后的文件即可）。
+```
+tools/agent-hub/
+├── index.html    # 完整单文件实现（HTML/CSS/JS 全部内联）
+└── README.md
+```
+
+> `index.html` 是完整交付物，可直接使用，无需任何构建步骤或依赖脚本。
