@@ -61,7 +61,7 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 .asci-badge-done{background:rgba(52,211,153,0.15);color:var(--asci-green);border:1px solid rgba(52,211,153,0.3)}
 
 /* ---- EXECUTION LAYOUT ---- */
-.asci-execution{flex:1;display:grid;grid-template-columns:220px 1fr 280px;grid-template-rows:1fr auto;overflow:hidden}
+.asci-execution{flex:1;display:grid;grid-template-columns:200px 1fr 240px;grid-template-rows:1fr auto;overflow:hidden}
 
 /* ---- LEFT: TREE ---- */
 .asci-tree{overflow-y:auto;border-right:1px solid var(--asci-border);padding:12px 8px;background:var(--asci-surface)}
@@ -339,6 +339,92 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
 .s3-hitl-item:last-child{border-bottom:none}
 .s3-hitl-step{font-weight:700;color:var(--asci-blue);margin-right:6px}
 .s3-hitl-decision{color:var(--asci-text)}
+
+/* ---- LEFT: STEP TIMELINE ENHANCEMENTS ---- */
+.tree-step-header{cursor:pointer}
+.tree-step.review .tree-step-header{background:rgba(251,191,36,0.1);border-left:2px solid var(--asci-yellow)}
+.tree-step-status{font-size:10px;padding:1px 6px;border-radius:99px;flex-shrink:0;border:1px solid}
+.tree-step-status.pending{color:var(--asci-text-muted);border-color:rgba(148,163,184,0.2);background:rgba(148,163,184,0.06)}
+.tree-step-status.running{color:var(--asci-blue);border-color:rgba(79,143,255,0.3);background:rgba(79,143,255,0.1)}
+.tree-step-status.review{color:var(--asci-yellow);border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1)}
+.tree-step-status.done{color:var(--asci-green);border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08)}
+.tree-step-summary{font-size:10px;color:var(--asci-text-muted);padding:2px 10px 6px 32px;line-height:1.4}
+
+/* ---- CENTER: TWO-ZONE LAYOUT ---- */
+.asci-center-wrap{display:flex;flex-direction:column;overflow:hidden;background:var(--asci-log-bg)}
+.asci-main-content{flex:0 0 65%;overflow-y:auto;border-bottom:1px solid var(--asci-border);padding:14px 16px}
+.main-content-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:120px;gap:8px;color:var(--asci-text-muted)}
+.main-empty-icon{font-size:28px}
+.main-empty-title{font-size:14px;font-weight:600;color:var(--asci-text-dim)}
+.main-empty-sub{font-size:12px}
+
+/* ---- LOG SECTION ---- */
+.asci-log-section{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.asci-log-section.collapsed .asci-log{display:none}
+.asci-log-section.collapsed{flex:0 0 36px}
+.log-section-header{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:11px;border-bottom:1px solid var(--asci-border);flex-shrink:0;background:var(--asci-surface)}
+.log-section-title{font-weight:700;color:var(--asci-text-dim);letter-spacing:.06em;text-transform:uppercase;flex:1}
+.log-warn-badge{font-size:10px;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,0.12);color:var(--asci-yellow);border:1px solid rgba(251,191,36,0.25)}
+.log-toggle-btn{background:none;border:none;color:var(--asci-text-muted);cursor:pointer;font-size:11px;padding:2px 6px;border-radius:4px;transition:color .15s,background .15s}
+.log-toggle-btn:hover{color:var(--asci-text);background:rgba(255,255,255,0.06)}
+
+/* ---- RIGHT: ARTIFACTS PANEL ---- */
+.asci-artifacts{overflow-y:auto;border-left:1px solid var(--asci-border);padding:14px 14px;background:var(--asci-surface);display:flex;flex-direction:column;gap:16px}
+
+/* ---- CONFIDENCE MINI CHART ---- */
+.conf-mini-chart-wrap{background:var(--asci-surface2);border:1px solid var(--asci-border);border-radius:6px;padding:8px;margin-bottom:4px}
+.conf-mini-chart{width:100%;height:60px;display:block}
+.conf-mini-labels{display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--asci-text-muted)}
+.conf-mini-label{text-align:center}
+
+/* ---- ARTIFACTS ITEMS ---- */
+.artifacts-tools{display:flex;flex-wrap:wrap;gap:4px}
+.artifacts-tool-tag{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--asci-blue-dim);color:var(--asci-blue);border:1px solid rgba(79,143,255,0.2)}
+.artifacts-decisions{display:flex;flex-direction:column;gap:6px}
+.artifacts-decision-item{font-size:11px;color:var(--asci-text-dim);padding:6px 8px;border-radius:6px;background:var(--asci-surface2);border:1px solid var(--asci-border);line-height:1.5}
+.artifacts-decision-item strong{color:var(--asci-text)}
+.artifacts-empty{font-size:11px;color:var(--asci-text-muted)}
+
+/* ---- DEGRADE DEMO BTN (subtle) ---- */
+.degrade-demo-btn-subtle{font-size:11px;padding:4px 10px;border:1px solid rgba(148,163,184,0.2);border-radius:6px;background:transparent;color:var(--asci-text-muted);cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap}
+.degrade-demo-btn-subtle:hover{background:rgba(255,255,255,0.05);border-color:rgba(148,163,184,0.35);color:var(--asci-text-dim)}
+
+/* ---- STEP 2: PAPER PREVIEW ---- */
+.paper-preview-block{margin-top:10px;border:1px solid var(--asci-border);border-radius:6px;overflow:hidden}
+.paper-preview-toggle{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;font-size:11px;font-weight:700;color:var(--asci-text-dim);cursor:pointer;background:rgba(255,255,255,0.02);user-select:none}
+.paper-preview-toggle:hover{background:rgba(79,143,255,0.06)}
+.paper-preview-toggle .toggle-arrow{transition:transform .2s}
+.paper-preview-toggle.open .toggle-arrow{transform:rotate(180deg)}
+.paper-preview-list{display:none;flex-direction:column;gap:0}
+.paper-preview-list.open{display:flex}
+.preview-paper-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-top:1px solid var(--asci-border);cursor:pointer;transition:background .15s}
+.preview-paper-item:hover{background:rgba(79,143,255,0.06)}
+.preview-paper-year{font-size:10px;color:var(--asci-text-muted);flex-shrink:0;width:32px}
+.preview-paper-title{font-size:11px;color:var(--asci-text);flex:1}
+.preview-paper-hint{font-size:10px;color:var(--asci-blue);flex-shrink:0}
+.export-row{margin-top:8px;display:flex;gap:8px;align-items:center}
+.export-btn{font-size:11px;padding:4px 12px;border:1px solid rgba(79,143,255,0.3);border-radius:6px;background:transparent;color:var(--asci-blue);cursor:pointer;transition:background .15s}
+.export-btn:hover{background:rgba(79,143,255,0.1)}
+
+/* ---- STEP 3: DECISION BADGE ---- */
+.decision-count-bar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.dc-badge{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:600}
+.dc-include{background:rgba(52,211,153,0.12);color:var(--asci-green);border:1px solid rgba(52,211,153,0.25)}
+.dc-hold{background:rgba(251,191,36,0.12);color:var(--asci-yellow);border:1px solid rgba(251,191,36,0.25)}
+.dc-exclude{background:rgba(248,113,113,0.12);color:var(--asci-red);border:1px solid rgba(248,113,113,0.25)}
+.threshold-preview{font-size:11px;color:var(--asci-text-muted);font-style:italic;margin-left:6px}
+
+/* ---- STEP 4: FINDINGS LIST ---- */
+.findings-block{margin-top:10px;border:1px solid var(--asci-border);border-radius:6px;overflow:hidden}
+.findings-block-toggle{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;font-size:11px;font-weight:700;color:var(--asci-text-dim);cursor:pointer;background:rgba(255,255,255,0.02);user-select:none}
+.findings-block-toggle:hover{background:rgba(79,143,255,0.06)}
+.findings-block-toggle .toggle-arrow{transition:transform .2s}
+.findings-block-toggle.open .toggle-arrow{transform:rotate(180deg)}
+.findings-list{display:none;flex-direction:column;gap:0}
+.findings-list.open{display:flex}
+.finding-item{padding:7px 12px;border-top:1px solid var(--asci-border);font-size:11px;line-height:1.5}
+.finding-text{color:var(--asci-text)}
+.finding-source{font-size:10px;color:var(--asci-text-muted);margin-top:2px}
 </style>
 </head>
 <body>
@@ -412,37 +498,64 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
     <span class="asci-badge asci-badge-running" id="taskBadge">任务执行中</span>
   </div>
   <div class="asci-execution">
-    <!-- 左列：任务树 -->
+    <!-- 左列：步骤时间线 -->
     <div class="asci-tree" id="taskTree"></div>
-    <!-- 中列：日志 -->
-    <div class="asci-log-wrap">
-      <div class="log-header">执行日志 · Agent Runtime</div>
-      <div class="asci-log" id="logPanel">
-        <div id="logBody"></div>
-      </div>
-    </div>
-    <!-- 右列：状态面板 -->
-    <div class="asci-panel" id="statusPanel">
-      <div class="panel-section">
-        <div class="panel-label">置信度</div>
-        <div class="confidence-ring-wrap">
-          <div class="confidence-ring" id="confRing" style="--pct:0">
-            <span class="conf-num" id="confNum">—</span>
-          </div>
-          <div class="conf-trend" id="confTrend">任务启动后<br>实时更新</div>
+    <!-- 中列：主内容区 + 日志区 -->
+    <div class="asci-center-wrap">
+      <!-- 上区：主内容 -->
+      <div class="asci-main-content" id="mainContent">
+        <div class="main-content-empty">
+          <div class="main-empty-icon">⏳</div>
+          <div class="main-empty-title">等待执行</div>
+          <div class="main-empty-sub">点击"执行下一步"开始 Step 1</div>
         </div>
       </div>
+      <!-- 下区：日志 -->
+      <div class="asci-log-section" id="logSection">
+        <div class="log-section-header">
+          <span class="log-section-title">执行日志 · Agent Runtime</span>
+          <span class="log-warn-badge hidden" id="logWarnBadge">⚠ 0 条警告</span>
+          <button class="log-toggle-btn" id="logToggleBtn" onclick="toggleLog()">▼ 收起日志</button>
+        </div>
+        <div class="asci-log" id="logPanel">
+          <div id="logBody"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 右列：Artifacts 积累面板 -->
+    <div class="asci-artifacts" id="statusPanel">
+      <!-- HITL 状态（顶部突出） -->
+      <div class="panel-section" id="hitlStatusSection">
+        <div class="panel-label">需要你做什么</div>
+        <div class="hitl-status hitl-status-wait" id="hitlStatusBox">等待任务启动...</div>
+      </div>
+      <!-- 置信度折线迷你图 -->
       <div class="panel-section">
-        <div class="panel-label">进度</div>
-        <div class="progress-bar-wrap">
+        <div class="panel-label">置信度趋势</div>
+        <div class="conf-mini-chart-wrap">
+          <svg class="conf-mini-chart" id="confMiniChart" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <polyline id="confMiniLine" points="" fill="none" stroke="var(--asci-blue)" stroke-width="2" stroke-linejoin="round"/>
+            <g id="confMiniDots"></g>
+          </svg>
+          <div class="conf-mini-labels" id="confMiniLabels"></div>
+        </div>
+        <div class="progress-bar-wrap" style="margin-top:8px">
           <div class="progress-bar" id="progressBar" style="width:0%"></div>
         </div>
         <div class="progress-text" id="progressText">步骤 0 / 5</div>
       </div>
+      <!-- 工具调用记录 -->
       <div class="panel-section">
-        <div class="panel-label">当前步骤</div>
-        <div class="step-card" id="stepCard">
-          <div class="step-card-empty">等待执行...</div>
+        <div class="panel-label">工具调用</div>
+        <div class="artifacts-tools" id="artifactsTools">
+          <span class="artifacts-empty">暂无</span>
+        </div>
+      </div>
+      <!-- 决策记录 -->
+      <div class="panel-section">
+        <div class="panel-label">决策记录</div>
+        <div class="artifacts-decisions" id="artifactsDecisions">
+          <span class="artifacts-empty">暂无人工决策</span>
         </div>
       </div>
     </div>
@@ -450,7 +563,7 @@ html,body{height:100%;overflow:hidden;background:var(--asci-bg);color:var(--asci
     <div class="asci-controls">
       <button class="asci-btn-back" id="backBtn" onclick="handleBack()" disabled>← 上一步</button>
       <span class="ctrl-progress" id="ctrlProgress">准备就绪 · 共 5 个步骤</span>
-      <button class="degrade-demo-btn" id="degradeDemoBtn" onclick="jumpToDegradeDemo()" title="跳过前4步，直接演示 Step 5 降级流程">⚡ 演示降级流程</button>
+      <button class="degrade-demo-btn-subtle" id="degradeDemoBtn" onclick="jumpToDegradeDemo()" title="跳过前4步，直接演示 Step 5 降级流程">演示降级</button>
       <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
     </div>
   </div>
@@ -556,6 +669,13 @@ var MOCK_STEPS = [
         {name: '去重后合计', count: 276, color: '#34d399'}
       ],
       yearRange: {min: 2018, max: 2024, current: [2018, 2024]},
+      preview: [
+        {title: 'Attention Is All You Need', year: 2017, key: 'cp1'},
+        {title: 'ChemBERTa: Large-Scale Self-Supervised Pretraining for Molecular Property Prediction', year: 2020, key: 'cp2'},
+        {title: 'MolBERT: Molecular Property Prediction with BERT', year: 2020, key: null},
+        {title: 'Transformer-based DTI Prediction for Drug Discovery', year: 2022, key: null},
+        {title: 'REINVENT 2.0: An AI Tool for De Novo Drug Design', year: 2020, key: null}
+      ],
       hint: '可调整时间范围后点击"重新检索"，或直接确认当前结果。'
     }
   },
@@ -602,6 +722,13 @@ var MOCK_STEPS = [
     result: {
       type: 'contradiction',
       findings: 47,
+      findingsList: [
+        {text: 'ChemBERTa 在 MoleculeNet BBBP 任务上 AUROC 达 0.947，较 ECFP+RF 提升 8.3%', source: 'Chithrananda et al., 2020'},
+        {text: 'MolBERT 在 HIV 抑制剂筛选任务中准确率提升 12.1%，预训练数据规模是关键', source: 'Fabian et al., 2020'},
+        {text: 'Transformer DTI 双编码器在 BindingDB AUROC=0.924，显著优于 GNN 基线 0.871', source: 'Liu et al., 2022'},
+        {text: 'REINVENT 2.0 在 QED×SA 综合指标排名第一，但 3D 构象预测误差率 >15%', source: 'Blaschke et al., 2020'},
+        {text: '多组学 Transformer 在阿尔茨海默症靶点预测 F1=0.89，训练数据需 >50k 样本', source: 'Wang et al., 2023'}
+      ],
       contradiction: {
         metric: 'AUROC（BindingDB 数据集）',
         paperA: {
@@ -697,25 +824,59 @@ function showScreen(n) {
   document.getElementById('screen' + n).classList.remove('hidden');
 }
 
+var STEP_SUMMARIES = {
+  1: function(){ return '8 个检索词'; },
+  2: function(){ return '276 篇候选'; },
+  3: function(){
+    var ud = stepUserData[3];
+    var inc = 18, hold = 0, exc = 0;
+    if (ud && ud.borderline) {
+      ud.borderline.forEach(function(p){
+        if (p.decision === 'include') inc++;
+        else if (p.decision === 'maybe') hold++;
+        else if (p.decision === 'exclude') exc++;
+      });
+    }
+    return inc + ' 篇纳入' + (hold > 0 ? ' · ' + hold + ' 篇待定' : '');
+  },
+  4: function(){ return '47 条 Findings · 1 处矛盾'; },
+  5: function(){ return '2400 字综述'; }
+};
+
 function renderTree() {
   var tree = document.getElementById('taskTree');
   tree.innerHTML = '';
   MOCK_STEPS.forEach(function(step) {
-    var status = doneSets.has(step.id) ? 'done' : (currentStep === step.id && isRunning ? 'running' : (currentStep === step.id && awaitingCheckpoint ? 'running' : 'pending'));
+    var isDone = doneSets.has(step.id);
+    var isRunningStep = (currentStep === step.id && isRunning);
+    var isActiveStep = (currentStep === step.id && !isRunning && !isDone);
+    var needsReview = (isDone && step.checkpoint && stepUserData[step.id]);
+    // 状态：pending / running / review / done
+    var statusKey = isDone ? 'done' : isRunningStep ? 'running' : (isActiveStep && step.checkpoint ? 'review' : (currentStep === step.id ? 'running' : 'pending'));
+    var statusLabel = {pending:'待执行', running:'执行中', review:'需审核', done:'已完成'}[statusKey];
     var isActive = (currentStep === step.id);
-    var div = document.createElement('div');
-    div.className = 'tree-step' + (isActive ? ' active' : '');
 
-    var riskClass = step.risk === 'low' ? 'risk-low' : (step.risk === 'medium' ? 'risk-medium' : 'risk-high');
+    var div = document.createElement('div');
+    div.className = 'tree-step' + (isActive ? ' active' : '') + (statusKey === 'review' ? ' review' : '');
+
     var cpMark = step.checkpoint ? ' 👤' : '';
     div.innerHTML = '<div class="tree-step-header">' +
-      '<span class="status-dot ' + status + '"></span>' +
+      '<span class="status-dot ' + (isDone ? 'done' : isRunningStep ? 'running' : 'pending') + '"></span>' +
       '<span class="tree-step-icon">' + step.icon + '</span>' +
       '<span class="tree-step-name">' + step.name + cpMark + '</span>' +
-      '<span class="tree-step-risk ' + riskClass + '">' + step.riskLabel + '</span>' +
+      '<span class="tree-step-status ' + statusKey + '">' + statusLabel + '</span>' +
       '</div>';
 
-    if (isActive || doneSets.has(step.id)) {
+    // 摘要（完成后显示）
+    if (isDone && STEP_SUMMARIES[step.id]) {
+      var summary = document.createElement('div');
+      summary.className = 'tree-step-summary';
+      summary.textContent = STEP_SUMMARIES[step.id]();
+      div.appendChild(summary);
+    }
+
+    // 子步骤（执行中或完成时显示）
+    if (isActive || isDone) {
       var subsDiv = document.createElement('div');
       subsDiv.className = 'tree-subs';
       step.subs.forEach(function(sub) {
@@ -723,8 +884,28 @@ function renderTree() {
       });
       div.appendChild(subsDiv);
     }
+
+    // 点击已完成步骤可切换主内容
+    if (isDone) {
+      div.style.cursor = 'pointer';
+      div.addEventListener('click', function(){ showStepInMain(step.id); });
+    }
+
     tree.appendChild(div);
   });
+}
+
+function showStepInMain(stepId) {
+  var card = document.getElementById('stepResult_' + stepId);
+  if (!card) return;
+  // 将卡片内容展示到 mainContent（克隆显示）
+  var main = document.getElementById('mainContent');
+  // 高亮对应树步骤
+  document.querySelectorAll('.tree-step').forEach(function(el){ el.classList.remove('active'); });
+  var allSteps = document.getElementById('taskTree').querySelectorAll('.tree-step');
+  if (allSteps[stepId - 1]) allSteps[stepId - 1].classList.add('active');
+  // 滚动到对应位置（mainContent 中展示的就是当前步骤卡片，直接滚到顶）
+  main.scrollTop = 0;
 }
 
 function handleNext() {
@@ -819,53 +1000,103 @@ function appendLog(level, text, stepIdx) {
     '<span class="log-lvl log-lvl-' + level.toLowerCase() + '">' + level + '</span> ' + escHtml(text);
   document.getElementById('logBody').appendChild(div);
   document.getElementById('logPanel').scrollTop = 99999;
+  // WARN 计数 badge
+  if (level === 'WARN') {
+    logWarnCount++;
+    var badge = document.getElementById('logWarnBadge');
+    if (badge) {
+      badge.textContent = '⚠ ' + logWarnCount + ' 条警告';
+      badge.classList.remove('hidden');
+    }
+  }
 }
 
 function restoreStatusPanelStructure() {
-  document.getElementById('statusPanel').innerHTML =
-    '<div class="panel-section">' +
-      '<div class="panel-label">置信度</div>' +
-      '<div class="confidence-ring-wrap">' +
-        '<div class="confidence-ring" id="confRing" style="--pct:0">' +
-          '<span class="conf-num" id="confNum">—</span>' +
-        '</div>' +
-        '<div class="conf-trend" id="confTrend"></div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="panel-section">' +
-      '<div class="panel-label">进度</div>' +
-      '<div class="progress-bar-wrap">' +
-        '<div class="progress-bar" id="progressBar" style="width:0%"></div>' +
-      '</div>' +
-      '<div class="progress-text" id="progressText">步骤 0 / 5</div>' +
-    '</div>' +
-    '<div class="panel-section">' +
-      '<div class="panel-label">当前步骤</div>' +
-      '<div class="step-card" id="stepCard"></div>' +
-    '</div>';
+  // 右列已改为 Artifacts 面板（静态 HTML），无需重建
 }
+
+// 置信度历史，用于折线迷你图
+var confHistory = [];
 
 function updatePanel(stepIdx, state) {
   var pct = calcConfidence(stepIdx);
+  var step = MOCK_STEPS[stepIdx - 1];
+
   if (state === 'done') {
-    // 如果 degradeMode 替换了 statusPanel（confRing 不存在），先恢复结构
-    if (!document.getElementById('confRing')) restoreStatusPanelStructure();
-    var ring = document.getElementById('confRing');
-    ring.style.setProperty('--pct', pct);
-    document.getElementById('confNum').textContent = pct + '%';
-    var prev = stepIdx > 1 ? calcConfidence(stepIdx - 1) : 100;
-    var diff = pct - prev;
-    document.getElementById('confTrend').textContent = (diff >= 0 ? '▲ +' : '▼ ') + Math.abs(diff) + '% vs 上一步';
+    // 更新置信度历史 + 折线图
+    confHistory.push({step: stepIdx, val: pct});
+    updateConfMiniChart();
+
+    // 更新进度条
     document.getElementById('progressBar').style.width = (stepIdx / 5 * 100) + '%';
     document.getElementById('progressText').textContent = '步骤 ' + stepIdx + ' / 5';
+
+    // 追加工具调用标签
+    step.tools.forEach(function(t){ appendArtifactTool(t); });
   }
-  var step = MOCK_STEPS[stepIdx - 1];
-  var riskClass = step.risk === 'low' ? 'risk-low' : (step.risk === 'medium' ? 'risk-medium' : 'risk-high');
-  var toolsHtml = step.tools.map(function(t){ return '<span class="step-card-tool">' + t + '</span>'; }).join('');
-  document.getElementById('stepCard').innerHTML =
-    '<div class="step-card-name">' + step.icon + ' ' + step.name + '</div>' +
-    '<span class="step-card-risk ' + riskClass + '">' + step.riskLabel + '</span>' +
-    '<div class="step-card-tools">' + toolsHtml + '</div>';
+}
+
+function updateConfMiniChart() {
+  var svg = document.getElementById('confMiniChart');
+  var line = document.getElementById('confMiniLine');
+  var dots = document.getElementById('confMiniDots');
+  var labels = document.getElementById('confMiniLabels');
+  if (!svg || !line) return;
+
+  var W = 200, H = 60, pad = 10;
+  var vals = confHistory.map(function(c){ return c.val; });
+  var minV = Math.min.apply(null, vals.concat([60]));
+  var maxV = Math.max.apply(null, vals.concat([100]));
+  var range = maxV - minV || 10;
+
+  var pts = vals.map(function(v, i) {
+    var x = pad + (vals.length > 1 ? i / (vals.length - 1) * (W - 2*pad) : (W - 2*pad)/2);
+    var y = H - pad - ((v - minV) / range * (H - 2*pad));
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  });
+
+  line.setAttribute('points', pts.join(' '));
+
+  dots.innerHTML = '';
+  vals.forEach(function(v, i) {
+    var parts = pts[i].split(',');
+    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', parts[0]);
+    circle.setAttribute('cy', parts[1]);
+    circle.setAttribute('r', '3');
+    circle.setAttribute('fill', 'var(--asci-blue)');
+
+    var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = 'Step ' + confHistory[i].step + ': ' + v + '%';
+    circle.appendChild(title);
+    dots.appendChild(circle);
+  });
+
+  labels.innerHTML = '';
+  confHistory.forEach(function(c) {
+    var span = document.createElement('span');
+    span.className = 'conf-mini-label';
+    span.textContent = 'S' + c.step + ':' + c.val + '%';
+    labels.appendChild(span);
+  });
+}
+
+function appendArtifactTool(toolName) {
+  var wrap = document.getElementById('artifactsTools');
+  if (!wrap) return;
+  // 避免重复
+  var existing = wrap.querySelectorAll('.artifacts-tool-tag');
+  for (var i = 0; i < existing.length; i++) {
+    if (existing[i].textContent === toolName) return;
+  }
+  // 清除"暂无"占位
+  var empty = wrap.querySelector('.artifacts-empty');
+  if (empty) empty.remove();
+
+  var tag = document.createElement('span');
+  tag.className = 'artifacts-tool-tag';
+  tag.textContent = toolName;
+  wrap.appendChild(tag);
 }
 
 function renderScreen3() {
@@ -933,8 +1164,9 @@ function appendDegradeWarningBanner() {
 function showDegradePanel(stepIdx) {
   degradeMode = true;
   appendDegradeWarningBanner();
-  var panel = document.getElementById('statusPanel');
-  panel.innerHTML =
+  // 降级面板展示到中列主内容区，右列 Artifacts 保持不变
+  var main = document.getElementById('mainContent');
+  main.innerHTML =
     '<div class="degrade-header">' +
       '<div class="degrade-icon">⚠</div>' +
       '<div class="degrade-title">异常处理模式</div>' +
@@ -986,8 +1218,8 @@ function showDraftEditor(stepIdx) {
     '## 5. 局限性与未来方向\n' +
     '可解释性不足；标注数据稀缺；多模态整合趋势。';
   draftContent = draft;
-  var panel = document.getElementById('statusPanel');
-  panel.innerHTML =
+  var main = document.getElementById('mainContent');
+  main.innerHTML =
     '<div class="draft-header">' +
       '<div class="draft-title">📝 AI 草稿（可编辑）</div>' +
       '<div class="draft-desc">请修改草稿内容后提交，系统将接回自动流程</div>' +
@@ -1032,6 +1264,10 @@ function jumpToDegradeDemo() {
   for (var i = 1; i <= 4; i++) { doneSets.add(i); }
   currentStep = 4;
   isRunning = false;
+  // 补齐置信度历史（用于折线图）
+  confHistory = [];
+  for (var j = 1; j <= 4; j++) { confHistory.push({step: j, val: CONF_BY_STEP[j-1]}); }
+  updateConfMiniChart();
   document.getElementById('progressBar').style.width = '80%';
   document.getElementById('progressText').textContent = '步骤 4 / 5';
   renderTree();
@@ -1046,31 +1282,40 @@ function jumpToDegradeDemo() {
 function restart() {
   currentStep = 0; isRunning = false; awaitingCheckpoint = false;
   errorCount = 0; degradeMode = false; humanEdited = false; draftContent = '';
+  confHistory = [];
+  logWarnCount = 0;
   doneSets.clear();
   stepUserData = {};
   document.getElementById('logBody').innerHTML = '';
-  // 恢复 statusPanel 原始结构（降级模式会整体替换它）
-  document.getElementById('statusPanel').innerHTML =
-    '<div class="panel-section">' +
-      '<div class="panel-label">置信度</div>' +
-      '<div class="confidence-ring-wrap">' +
-        '<div class="confidence-ring" id="confRing" style="--pct:0">' +
-          '<span class="conf-num" id="confNum">—</span>' +
-        '</div>' +
-        '<div class="conf-trend" id="confTrend">任务启动后<br>实时更新</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="panel-section">' +
-      '<div class="panel-label">进度</div>' +
-      '<div class="progress-bar-wrap">' +
-        '<div class="progress-bar" id="progressBar" style="width:0%"></div>' +
-      '</div>' +
-      '<div class="progress-text" id="progressText">步骤 0 / 5</div>' +
-    '</div>' +
-    '<div class="panel-section">' +
-      '<div class="panel-label">当前步骤</div>' +
-      '<div class="step-card" id="stepCard"><div class="step-card-empty">等待执行...</div></div>' +
+  // 重置主内容区
+  document.getElementById('mainContent').innerHTML =
+    '<div class="main-content-empty">' +
+      '<div class="main-empty-icon">⏳</div>' +
+      '<div class="main-empty-title">等待执行</div>' +
+      '<div class="main-empty-sub">点击"执行下一步"开始 Step 1</div>' +
     '</div>';
+  // 重置日志折叠状态
+  var logSection = document.getElementById('logSection');
+  if (logSection) { logSection.classList.remove('collapsed'); }
+  var logToggleBtn = document.getElementById('logToggleBtn');
+  if (logToggleBtn) { logToggleBtn.textContent = '▼ 收起日志'; }
+  // 重置 Artifacts 面板
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressText').textContent = '步骤 0 / 5';
+  document.getElementById('artifactsTools').innerHTML = '<span class="artifacts-empty">暂无</span>';
+  document.getElementById('artifactsDecisions').innerHTML = '<span class="artifacts-empty">暂无人工决策</span>';
+  document.getElementById('hitlStatusBox').className = 'hitl-status hitl-status-wait';
+  document.getElementById('hitlStatusBox').textContent = '等待任务启动...';
+  // 重置置信度折线图
+  var line = document.getElementById('confMiniLine');
+  if (line) line.setAttribute('points', '');
+  var dotsEl = document.getElementById('confMiniDots');
+  if (dotsEl) dotsEl.innerHTML = '';
+  var labelsEl = document.getElementById('confMiniLabels');
+  if (labelsEl) labelsEl.innerHTML = '';
+  // 重置日志警告 badge
+  var warnBadge = document.getElementById('logWarnBadge');
+  if (warnBadge) { warnBadge.textContent = '⚠ 0 条警告'; warnBadge.classList.add('hidden'); }
   var btn = document.getElementById('nextBtn');
   btn.textContent = '▶ 执行下一步';
   btn.onclick = handleNext;
@@ -1120,6 +1365,10 @@ function doBack(targetStep) {
   isRunning = false;
   awaitingCheckpoint = false;
 
+  // 截断置信度历史
+  confHistory = confHistory.filter(function(c){ return c.step <= targetStep; });
+  updateConfMiniChart();
+
   if (targetStep === 0) {
     document.getElementById('backBtn').disabled = true;
     document.getElementById('nextBtn').textContent = '▶ 执行下一步';
@@ -1128,14 +1377,15 @@ function doBack(targetStep) {
     document.getElementById('ctrlProgress').textContent = '准备就绪 · 共 5 个步骤';
     document.getElementById('progressBar').style.width = '0%';
     document.getElementById('progressText').textContent = '步骤 0 / 5';
-    document.getElementById('confRing').style.setProperty('--pct', 0);
-    document.getElementById('confNum').textContent = '—';
-    document.getElementById('confTrend').innerHTML = '任务启动后<br>实时更新';
-    document.getElementById('stepCard').innerHTML = '<div class="step-card-empty">等待执行...</div>';
-    var hitlStatus = document.getElementById('statusPanel').querySelector('.hitl-status');
-    if (hitlStatus) hitlStatus.remove();
-    var decHistory = document.getElementById('statusPanel').querySelector('.decision-history');
-    if (decHistory) decHistory.remove();
+    document.getElementById('hitlStatusBox').className = 'hitl-status hitl-status-wait';
+    document.getElementById('hitlStatusBox').textContent = '等待任务启动...';
+    // 重置主内容区
+    document.getElementById('mainContent').innerHTML =
+      '<div class="main-content-empty">' +
+        '<div class="main-empty-icon">⏳</div>' +
+        '<div class="main-empty-title">等待执行</div>' +
+        '<div class="main-empty-sub">点击"执行下一步"开始 Step 1</div>' +
+      '</div>';
   } else {
     updatePanel(targetStep, 'done');
     updateHitlStatus(targetStep);
@@ -1144,6 +1394,13 @@ function doBack(targetStep) {
     document.getElementById('nextBtn').disabled = false;
     document.getElementById('backBtn').disabled = false;
     document.getElementById('ctrlProgress').textContent = '已回退至步骤 ' + targetStep + ' · 准备重新执行下一步';
+    // 恢复上一步结果到主内容区（若存在）
+    var prevCard = document.getElementById('stepResult_' + targetStep);
+    if (prevCard) {
+      var main = document.getElementById('mainContent');
+      main.innerHTML = '';
+      main.appendChild(prevCard);
+    }
   }
 
   renderTree();
@@ -1166,6 +1423,21 @@ function showConfirmModal(title, body, onConfirm) {
     onConfirm();
   };
 }
+
+function toggleLog() {
+  var section = document.getElementById('logSection');
+  var btn = document.getElementById('logToggleBtn');
+  if (!section || !btn) return;
+  section.classList.toggle('collapsed');
+  btn.textContent = section.classList.contains('collapsed') ? '▲ 展开日志' : '▼ 收起日志';
+}
+
+// 日志警告 badge 更新
+var logWarnCount = 0;
+var _origAppendLog = null;
+(function patchAppendLog() {
+  // 在 appendLog 基础上统计 WARN 数量
+})();
 
 function showToast(msg) {
   var t = document.createElement('div');
@@ -1294,6 +1566,10 @@ function renderStepResult(stepIdx) {
   }
   var ud = stepUserData[step.id];
 
+  // 先移除同一步骤的旧卡片（避免重复渲染）
+  var oldCard = document.getElementById('stepResult_' + stepIdx);
+  if (oldCard) oldCard.remove();
+
   var card = document.createElement('div');
   card.className = 'step-result-card';
   card.id = 'stepResult_' + stepIdx;
@@ -1302,7 +1578,11 @@ function renderStepResult(stepIdx) {
                   step.risk === 'medium' ? '📋 中风险 · 建议审核' : '✓ 低风险 · 可选审核';
   card.innerHTML = '<div class="src-header"><span>步骤产出 · ' + escHtml(step.name) + '</span><span style="font-weight:400;opacity:.7">' + riskLabel + '</span></div>' +
     '<div class="src-body" id="srcBody_' + stepIdx + '"></div>';
-  document.getElementById('logBody').appendChild(card);
+
+  // 写入主内容区
+  var main = document.getElementById('mainContent');
+  main.innerHTML = '';
+  main.appendChild(card);
 
   var body = document.getElementById('srcBody_' + stepIdx);
 
@@ -1312,7 +1592,7 @@ function renderStepResult(stepIdx) {
   else if (r.type === 'contradiction') renderContradictionResult(body, stepIdx, ud);
   else if (r.type === 'outline') renderOutlineResult(body, stepIdx, ud);
 
-  document.getElementById('logPanel').scrollTop = 99999;
+  main.scrollTop = 0;
 }
 
 function renderKeywordsResult(body, stepIdx, ud) {
@@ -1380,8 +1660,43 @@ function renderSearchResult(body, stepIdx, ud) {
     '<input class="year-input" id="yearTo_' + stepIdx + '" type="number" value="' + ud.yearRange.current[1] + '" min="2010" max="2024" />' +
     '<button class="re-search-btn" onclick="reSearch(' + stepIdx + ')">重新检索</button>' +
     '</div>';
+  // 论文预览折叠块
+  if (ud.preview && ud.preview.length > 0) {
+    html += '<div class="paper-preview-block">' +
+      '<div class="paper-preview-toggle" id="previewToggle_' + stepIdx + '" onclick="togglePreview(' + stepIdx + ')">' +
+        '<span>📄 论文预览（前 ' + ud.preview.length + ' 条）</span>' +
+        '<span class="toggle-arrow">▼</span>' +
+      '</div>' +
+      '<div class="paper-preview-list" id="previewList_' + stepIdx + '">';
+    ud.preview.forEach(function(p) {
+      var clickHandler = p.key ? 'onclick="showPaperModal(\'' + p.key + '\')"' : '';
+      html += '<div class="preview-paper-item" ' + clickHandler + '>' +
+        '<span class="preview-paper-year">' + p.year + '</span>' +
+        '<span class="preview-paper-title">' + escHtml(p.title) + '</span>' +
+        (p.key ? '<span class="preview-paper-hint">查看摘要 →</span>' : '') +
+        '</div>';
+    });
+    html += '</div></div>';
+  }
+  // 导出按钮
+  html += '<div class="export-row">' +
+    '<button class="export-btn" onclick="exportSearchResults(this,' + ud.sources[2].count + ')">📋 导出检索结果</button>' +
+    '</div>';
   html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
   body.innerHTML = html;
+}
+
+function togglePreview(stepIdx) {
+  var toggle = document.getElementById('previewToggle_' + stepIdx);
+  var list = document.getElementById('previewList_' + stepIdx);
+  if (!toggle || !list) return;
+  var isOpen = list.classList.contains('open');
+  list.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+function exportSearchResults(btn, count) {
+  showToast('已导出 ' + count + ' 条 BibTeX');
 }
 
 function reSearch(stepIdx) {
@@ -1401,7 +1716,21 @@ function reSearch(stepIdx) {
 }
 
 function renderScreeningResult(body, stepIdx, ud) {
-  var html = '<div class="batch-actions">' +
+  // 统计决策情况
+  var incCount = 0, holdCount = 0, excCount = 0;
+  ud.borderline.forEach(function(p) {
+    if (p.decision === 'include') incCount++;
+    else if (p.decision === 'maybe') holdCount++;
+    else if (p.decision === 'exclude') excCount++;
+  });
+  var totalInc = ud.included + incCount;
+  // 决策计数 badge
+  var html = '<div class="decision-count-bar">' +
+    '<span class="dc-badge dc-include">✅ 纳入 ' + totalInc + ' 篇</span>' +
+    (holdCount > 0 ? '<span class="dc-badge dc-hold">⏸ 暂缓 ' + holdCount + ' 篇</span>' : '') +
+    (excCount > 0 ? '<span class="dc-badge dc-exclude">❌ 排除 ' + excCount + ' 篇</span>' : '') +
+    '</div>';
+  html += '<div class="batch-actions">' +
     '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'include\')">全选纳入</button>' +
     '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'exclude\')">全选排除</button>' +
     '<button class="batch-btn" onclick="blBatchAction(' + stepIdx + ',\'sort\')">按评分排序</button>' +
@@ -1410,6 +1739,7 @@ function renderScreeningResult(body, stepIdx, ud) {
     '<span class="threshold-label">相关性阈值：</span>' +
     '<input class="threshold-slider" id="threshSlider_' + stepIdx + '" type="range" min="60" max="90" value="' + Math.round(ud.threshold * 100) + '" oninput="updateThreshold(' + stepIdx + ',this.value)" />' +
     '<span class="threshold-val" id="threshVal_' + stepIdx + '">' + ud.threshold.toFixed(2) + '</span>' +
+    '<span class="threshold-preview" id="threshPreview_' + stepIdx + '"></span>' +
     '</div>';
   html += '<div class="included-count" id="includedCount_' + stepIdx + '">✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）</div>';
   html += '<div style="font-size:11px;font-weight:700;color:var(--asci-text-muted);margin-bottom:6px">边界文献（逐篇判断）</div>';
@@ -1427,7 +1757,7 @@ function renderScreeningResult(body, stepIdx, ud) {
       '<div class="bl-paper-abstract">' + escHtml(p.abstract) + '</div>' +
       '<div class="bl-decision-row">' +
       '<button class="bl-btn bl-btn-include' + (decided==='include'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'include\')">✓ 纳入</button>' +
-      '<button class="bl-btn bl-btn-maybe' + (decided==='maybe'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'maybe\')">? 待定</button>' +
+      '<button class="bl-btn bl-btn-maybe' + (decided==='maybe'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'maybe\')">⏸ 暂缓（需全文确认）</button>' +
       '<button class="bl-btn bl-btn-exclude' + (decided==='exclude'?' active':'') + '" onclick="blDecide(' + stepIdx + ',' + i + ',\'exclude\')">✕ 排除</button>' +
       '</div></div></div>';
   });
@@ -1475,12 +1805,22 @@ function blBatchAction(stepIdx, action) {
 
 function updateThreshold(stepIdx, val) {
   var ud = stepUserData[MOCK_STEPS[stepIdx-1].id];
-  ud.threshold = val / 100;
+  var newThresh = val / 100;
+  var prevIncluded = ud.included;
+  ud.threshold = newThresh;
   document.getElementById('threshVal_' + stepIdx).textContent = ud.threshold.toFixed(2);
   var base = 18;
   var delta = Math.round((0.72 - ud.threshold) * 200);
   ud.included = Math.max(5, base + delta);
   document.getElementById('includedCount_' + stepIdx).innerHTML = '✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）';
+  // 显示预估变化
+  var preview = document.getElementById('threshPreview_' + stepIdx);
+  if (preview) {
+    var diff = ud.included - prevIncluded;
+    if (diff > 0) preview.textContent = '↑ 纳入 +' + diff + ' 篇';
+    else if (diff < 0) preview.textContent = '↓ 纳入 ' + diff + ' 篇';
+    else preview.textContent = '';
+  }
 }
 
 function renderContradictionResult(body, stepIdx, ud) {
@@ -1511,8 +1851,40 @@ function renderContradictionResult(body, stepIdx, ud) {
       '</div>';
   });
   html += '</div></div>';
+  // Findings 折叠块
+  if (ud.findingsList && ud.findingsList.length > 0) {
+    html += '<div class="findings-block">' +
+      '<div class="findings-block-toggle" id="findingsToggle_' + stepIdx + '" onclick="toggleFindings(' + stepIdx + ')">' +
+        '<span>📋 全部 Findings（' + ud.findings + ' 条，显示前 ' + ud.findingsList.length + ' 条）</span>' +
+        '<span class="toggle-arrow">▼</span>' +
+      '</div>' +
+      '<div class="findings-list" id="findingsList_' + stepIdx + '">';
+    ud.findingsList.forEach(function(f) {
+      html += '<div class="finding-item">' +
+        '<div class="finding-text">' + escHtml(f.text) + '</div>' +
+        '<div class="finding-source">出处：' + escHtml(f.source) + '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  }
+  // 导出 Findings 按钮
+  html += '<div class="export-row">' +
+    '<button class="export-btn" onclick="exportFindings(this)">📋 导出 Findings</button>' +
+    '</div>';
   html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
   body.innerHTML = html;
+}
+
+function toggleFindings(stepIdx) {
+  var toggle = document.getElementById('findingsToggle_' + stepIdx);
+  var list = document.getElementById('findingsList_' + stepIdx);
+  if (!toggle || !list) return;
+  list.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+function exportFindings(btn) {
+  showToast('已导出 Findings 列表');
 }
 
 function contraDecide(stepIdx, optId) {
@@ -1547,24 +1919,21 @@ function updateOutlineTitle(stepIdx, i, val) {
   ud.sections[i].title = val;
 }
 
-// ---- HITL STATUS（右侧面板） ----
+// ---- HITL STATUS（右侧 Artifacts 顶部） ----
 function updateHitlStatus(stepIdx) {
   var step = MOCK_STEPS[stepIdx - 1];
-  var panel = document.getElementById('statusPanel');
-  var existing = panel.querySelector('.hitl-status');
-  if (existing) existing.remove();
-  var div = document.createElement('div');
+  var box = document.getElementById('hitlStatusBox');
+  if (!box) return;
   if (step.risk === 'high') {
-    div.className = 'hitl-status hitl-status-required';
-    div.textContent = '⚠ 高风险步骤：必须完成人工处置才能继续';
+    box.className = 'hitl-status hitl-status-required';
+    box.textContent = '⚠ 高风险步骤：必须完成人工处置才能继续';
   } else if (step.risk === 'medium') {
-    div.className = 'hitl-status hitl-status-wait';
-    div.textContent = '📋 中风险：建议审核结果后再继续';
+    box.className = 'hitl-status hitl-status-wait';
+    box.textContent = '📋 中风险：建议审核结果后再继续';
   } else {
-    div.className = 'hitl-status hitl-status-done';
-    div.textContent = '✓ 低风险：可直接继续，或选择审核修改';
+    box.className = 'hitl-status hitl-status-done';
+    box.textContent = '✓ 低风险：可直接继续，或选择审核修改';
   }
-  panel.appendChild(div);
 }
 
 function updateNextBtnState() {
@@ -1595,20 +1964,18 @@ function updateNextBtnState() {
   }
 }
 
-// ---- 决策历史追加（右侧面板，cherry-pick #2）----
+// ---- 决策历史追加（右侧 Artifacts 决策记录区） ----
 function appendHitlDecisionLog(stepLabel, decisionText) {
-  var panel = document.getElementById('statusPanel');
-  var history = panel.querySelector('.decision-history');
-  if (!history) {
-    history = document.createElement('div');
-    history.className = 'decision-history';
-    history.innerHTML = '<div class="decision-history-title">已处置决策</div>';
-    panel.appendChild(history);
-  }
+  var wrap = document.getElementById('artifactsDecisions');
+  if (!wrap) return;
+  // 清除"暂无"占位
+  var empty = wrap.querySelector('.artifacts-empty');
+  if (empty) empty.remove();
+
   var item = document.createElement('div');
-  item.className = 'decision-history-item';
+  item.className = 'artifacts-decision-item';
   item.innerHTML = '<strong>' + escHtml(stepLabel) + '</strong>：' + escHtml(decisionText);
-  history.appendChild(item);
+  wrap.appendChild(item);
 }
 
 // ---- Screen 3 人工决策摘要（cherry-pick #3）----
