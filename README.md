@@ -131,6 +131,27 @@ python -m http.server 8080
 
 ---
 
+### PM 作品组
+
+#### ASCI 科研任务执行系统
+
+`tools/asci/`
+
+面试作业 Demo，模拟「科研 Agent OS」的任务执行全流程，覆盖四道面试核心问题：
+
+| 设计亮点 | 体现内容 |
+|---------|----------|
+| 任务拆解树 | 多层 Agent 结构，含风险分级（低/中/高）和 Human Checkpoint 节点 |
+| 执行日志流 | 终端风格实时日志，INFO / WARN / ERROR 分级，连续出错触发红色警告 |
+| 降级策略面板 | 三次出错后展示三条恢复路径（调参重试 / 切换模型 / 人工接管） |
+| 可信度拆解 | 来源质量 / 推理链路 / 数据一致性三维评分 |
+
+三条预设任务路径覆盖正常完成、单次 WARN、连续出错→人工介入三种场景。
+
+**体现能力**：AI 能力边界认知、Human-in-the-Loop 设计、Agent 编排产品化思考
+
+---
+
 #### 智能客服中台
 
 `tools/service-agent/`
@@ -202,8 +223,8 @@ qiuzhi/
 │   ├── ai-insights/           # AI 产品拆解（信息工具组）
 │   ├── trends/                # 热点快照（信息工具组）
 │   ├── radar/                 # 前沿雷达（信息工具组）
+│   ├── agent-hub/             # Agent 认知全景（信息工具组）
 │   ├── asci/                  # ASCI 科研任务执行系统（PM 作品组）
-│   ├── agent-hub/             # Agent 认知全景（PM 作品组）
 │   ├── service-agent/         # 智能客服中台（PM 作品组）
 │   ├── stock/                 # A股 AI 助手（PM 作品组）
 │   ├── esop-extractor/        # ESOP 字段提取（PM 作品组）
