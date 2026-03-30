@@ -77,3 +77,28 @@ docs/                           # 个人文档（.gitignore 排除）
 - 保持最小改动，不要顺手重构没有被要求改的代码
 - **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本；注意 Windows 环境下 `/tmp` 不可用，须用项目内路径
 - **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点
+
+## 危险操作 HITL 清单（必须暂停等用户确认）
+在执行以下操作前，必须明确告知用户并等待确认，不得自动执行：
+- git push / git push --force（推送到远程）
+- 删除任何文件或目录（rm、unlink）
+- 修改 .github/workflows/ 下的 CI/CD 配置
+- 提示用户修改 GitHub Secrets
+- git reset --hard 或其他丢弃本地改动的操作
+- 修改 config.local.js（API key 文件）
+
+## Skill 选择树（任务类型 → 触发哪个 Skill）
+| 场景 | 必用 Skill |
+|------|-----------|
+| 新建功能/组件 | /brainstorming 然后 /writing-plans，不要直接写代码 |
+| 实现已有 plan | /executing-plans 或 /subagent-driven-development |
+| 遇到 bug | /systematic-debugging 或 /investigate，禁止不调查直接改代码 |
+| 添加新工具页面 | /add-tool |
+| 采集 AI 产品数据 | /analyze-product 产品名 |
+| 声称完成前 | /verification-before-completion |
+| 提交代码前 | /review |
+| 代码质量存疑 | /code-health-check |
+| 文档与代码不同步 | /sync-docs |
+| 样式/UI 改动后 | /design-review |
+| 安全相关改动 | /insecure-defaults 加 /sharp-edges |
+| 2+ 独立并行任务 | /dispatching-parallel-agents |

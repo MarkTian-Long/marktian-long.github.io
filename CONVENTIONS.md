@@ -17,7 +17,10 @@ qiuzhi/
 │   └── <tool-name>/
 │       └── index.html
 ├── content/                # Markdown 内容资料
-└── docs/                   # 个人文档（不纳入版本控制）
+└── docs/                   # 文档目录（分两类）
+    ├── plans/              # 设计文档、复盘（纳入版本控制）
+    │   └── archive/        # 已完结的计划文档归档
+    └── personal/           # 个人文件（简历等，.gitignore 排除）
 ```
 
 ### 关键规则
@@ -27,7 +30,7 @@ qiuzhi/
 3. **工具类页面放 `tools/<tool-name>/`**，通过 iframe 嵌入主页面
 4. **每个工具必须有 `README.md`**，说明功能、数据来源和维护方式
 5. **内容资料放 `content/`**，与代码分离，方便独立编辑和管理
-6. **个人文件放 `docs/`**，已在 `.gitignore` 中排除
+6. **设计文档放 `docs/plans/`**，纳入版本控制；**个人文件放 `docs/personal/`**，已在 `.gitignore` 中排除
 
 ---
 

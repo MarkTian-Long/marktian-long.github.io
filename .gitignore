@@ -34,3 +34,7 @@ scripts/node_modules/
 
 # Local config files with API keys — never commit
 *.local.js
+.gstack/
+
+docs/personal/
+docs/*.html

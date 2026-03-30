@@ -31,7 +31,18 @@
       "Bash(wc -l /d/CS/Coding/qiuzhi/assets/css/style.css /d/CS/Coding/qiuzhi/assets/js/*.js /d/CS/Coding/qiuzhi/tools/*/script.js 2>/dev/null | tail -20)",
       "Bash(cd \"D:\\\\CS\\\\Coding\\\\qiuzhi\" && node -e \"const d=require\\('./tools/ai-insights/data/products.json'\\); console.log\\('Total products:', d.length\\); d.forEach\\(p=>console.log\\(p.id, '| keyMetrics:', p.keyMetrics?.length||0, '| timeline:', p.timeline?.length||0, '| sources:', p.sources?.length||0\\)\\)\")",
       "Bash(cd \"D:\\\\CS\\\\Coding\\\\qiuzhi\" && node -e \"const d=require\\('./tools/ai-insights/data/products.json'\\); const p=d[1]; console.log\\(JSON.stringify\\(p, null, 2\\)\\)\" 2>&1 | head -60)",
-      "Bash(node -e \"const d = require\\('./tools/ai-insights/data/products.json'\\); console.log\\('产品数:', d.length\\); d.forEach\\(p => console.log\\(p.id, '| metrics:', \\(p.keyMetrics||[]\\).length, '| timeline:', \\(p.timeline||[]\\).length, '| sources:', \\(p.sources||[]\\).length\\)\\)\" 2>&1)"
+      "Bash(node -e \"const d = require\\('./tools/ai-insights/data/products.json'\\); console.log\\('产品数:', d.length\\); d.forEach\\(p => console.log\\(p.id, '| metrics:', \\(p.keyMetrics||[]\\).length, '| timeline:', \\(p.timeline||[]\\).length, '| sources:', \\(p.sources||[]\\).length\\)\\)\" 2>&1)",
+      "Read(//d/CS/Coding/qiuzhi/$HOME/.claude/skills/gstack/**)",
+      "Read(//d/CS/Coding/qiuzhi/$HOME/.claude/**)",
+      "Read(//d/CS/Coding/qiuzhi/$HOME/.claude/skills/**)",
+      "Bash(git clone:*)",
+      "Skill(gstack-upgrade)",
+      "Skill(plan-ceo-review)",
+      "Bash(\"D:/CS/Coding/qiuzhi/CLAUDE.md\":*)",
+      "Skill(schedule)",
+      "WebFetch(domain:support.claude.com)",
+      "Bash(start:*)",
+      "Bash(node:*)"
     ]
   }
 }
