@@ -1387,20 +1387,20 @@ function doBack(targetStep) {
         '<div class="main-empty-sub">点击"执行下一步"开始 Step 1</div>' +
       '</div>';
   } else {
-    updatePanel(targetStep, 'done');
+    // 不重复追加置信度历史，只更新图表和进度显示
+    var pct = calcConfidence(targetStep);
+    document.getElementById('progressBar').style.width = (targetStep / 5 * 100) + '%';
+    document.getElementById('progressText').textContent = '步骤 ' + targetStep + ' / 5';
     updateHitlStatus(targetStep);
     document.getElementById('nextBtn').textContent = '▶ 执行下一步';
     document.getElementById('nextBtn').onclick = handleNext;
     document.getElementById('nextBtn').disabled = false;
     document.getElementById('backBtn').disabled = false;
     document.getElementById('ctrlProgress').textContent = '已回退至步骤 ' + targetStep + ' · 准备重新执行下一步';
-    // 恢复上一步结果到主内容区（若存在）
-    var prevCard = document.getElementById('stepResult_' + targetStep);
-    if (prevCard) {
-      var main = document.getElementById('mainContent');
-      main.innerHTML = '';
-      main.appendChild(prevCard);
-    }
+    // 恢复上一步结果到主内容区
+    // 由于进入下一步时 mainContent 会被清空，需重新渲染该步骤结果
+    renderStepResult(targetStep);
+    updateNextBtnState();
   }
 
   renderTree();
