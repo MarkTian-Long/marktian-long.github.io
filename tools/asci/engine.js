@@ -256,6 +256,17 @@ function finishNode(nodeId) {
   renderTree();
   renderNodeResult(nodeId);
 
+  if (nodeId === 'data-source-config') {
+    var dsResult = NODE_REGISTRY['data-source-config'].result;
+    var selectedNames = dsResult.sources
+      .filter(function (s) { return dsResult.selected.indexOf(s.id) >= 0; })
+      .map(function (s) { return s.name; });
+    appendHitlDecisionLog(
+      '数据源配置',
+      '已选 ' + selectedNames.join(' / ') + '，共 ' + selectedNames.length + ' 个授权数据库'
+    );
+  }
+
   var btn = document.getElementById('nextBtn');
   btn.disabled = false;
 
@@ -607,6 +618,30 @@ function toggleLog() {
   btn.textContent = section.classList.contains('collapsed') ? '▲ 展开日志' : '▼ 收起日志';
 }
 
+// ---- 依赖图可达集计算 ----
+function computeDownstreamSet(startNodeId) {
+  var reverseDeps = {};
+  Object.keys(NODE_REGISTRY).forEach(function (nid) {
+    var deps = NODE_REGISTRY[nid].deps || [];
+    deps.forEach(function (depId) {
+      if (!reverseDeps[depId]) reverseDeps[depId] = [];
+      reverseDeps[depId].push(nid);
+    });
+  });
+  var visited = {}, queue = [startNodeId], result = [];
+  while (queue.length) {
+    var cur = queue.shift();
+    (reverseDeps[cur] || []).forEach(function (child) {
+      if (!visited[child]) {
+        visited[child] = true;
+        result.push(child);
+        queue.push(child);
+      }
+    });
+  }
+  return result;
+}
+
 // ---- 节点重跑 ----
 function initiateRetry(nodeId) {
   var node = NODE_REGISTRY[nodeId];
@@ -620,25 +655,60 @@ function initiateRetry(nodeId) {
   if (nodeId === 'abstract-screen') {
     paramHtml = '<div class="retry-modal-param">' +
       '<label>相关性阈值（当前 0.72，放宽后将纳入更多边界文献）</label>' +
-      '<input type="range" id="retrySlider" min="60" max="80" value="68" ' +
-      'oninput="document.getElementById(\'retrySliderVal\').textContent=\'0.\'+this.value" />' +
-      '<span id="retrySliderVal">0.68</span>' +
+      '<input type="range" id="retrySlider" min="60" max="80" value="72" ' +
+      'oninput="document.getElementById(\'retrySliderVal\').textContent=(this.value/100).toFixed(2)" />' +
+      '<span id="retrySliderVal">0.72</span>' +
       '</div>';
   } else if (nodeId === 'db-search') {
     paramHtml = '<div class="retry-modal-param">' +
       '<label>检索策略</label>' +
       '<select id="retrySelect">' +
-      '<option value="standard">标准检索（当前：276 篇）</option>' +
-      '<option value="expanded" selected>扩展检索（含 SMILES/Protein Binding，预计 341 篇）</option>' +
+      '<option value="standard" selected>标准检索（当前：276 篇）</option>' +
+      '<option value="expanded">扩展检索（含 SMILES/Protein Binding，预计 341 篇）</option>' +
+      '</select>' +
+      '</div>';
+  } else if (nodeId === 'keyword-extract') {
+    paramHtml = '<div class="retry-modal-param">' +
+      '<label>检索关键词策略</label>' +
+      '<select id="retrySelect">' +
+      '<option value="standard" selected>标准策略（当前：8 个词）</option>' +
+      '<option value="expanded">扩展策略（新增 Graph Neural Network、Protein Language Model 等，共 11 个词）</option>' +
+      '</select>' +
+      '</div>';
+  } else if (nodeId === 'outline-gen') {
+    paramHtml = '<div class="retry-modal-param">' +
+      '<label>大纲结构</label>' +
+      '<select id="retrySelect">' +
+      '<option value="standard" selected>标准结构（当前：5 节）</option>' +
+      '<option value="expanded">扩展结构（新增多组学整合与结论章节，共 6 节）</option>' +
       '</select>' +
       '</div>';
   } else {
     paramHtml = '<div class="retry-modal-body">将使用调整后的上下文重新执行「' + node.name + '」节点。</div>';
   }
 
+  // 影响范围说明
+  var downstream = computeDownstreamSet(nodeId);
+  var affectedInPipeline = downstream.filter(function (nid) {
+    return activePipeline.indexOf(nid) >= 0 && doneSets.has(nid);
+  });
+  var impactHtml = '<div class="retry-modal-impact">' +
+    '<div class="retry-modal-impact-title">⚠ 重跑影响范围</div>' +
+    '<div class="retry-modal-impact-desc">重跑「' + escHtml(node.name) + '」后，以下已完成节点将被重置，需重新执行：</div>' +
+    '<div class="retry-modal-impact-nodes">' +
+    (affectedInPipeline.length
+      ? affectedInPipeline.map(function (nid) {
+          var n = NODE_REGISTRY[nid];
+          return '<span class="impact-node-tag">' + escHtml(n ? n.name : nid) + '</span>';
+        }).join('')
+      : '<span style="opacity:.6;font-size:12px">无已完成的下游节点</span>'
+    ) +
+    '</div></div>';
+
   overlay.innerHTML = '<div class="retry-modal">' +
     '<div class="retry-modal-title">重新执行「' + escHtml(node.name) + '」</div>' +
     paramHtml +
+    impactHtml +
     '<div class="retry-modal-footer">' +
     '<button class="retry-modal-cancel" onclick="this.closest(\'.retry-modal-overlay\').remove()">取消</button>' +
     '<button class="retry-modal-confirm" onclick="confirmRetry(\'' + nodeId + '\',this.closest(\'.retry-modal-overlay\'))">确认重跑</button>' +
@@ -652,17 +722,33 @@ function confirmRetry(nodeId, overlay) {
   var nodeIdx = activePipeline.indexOf(nodeId);
   if (nodeIdx < 0) return;
 
-  // 清除该节点及后续所有节点的状态
-  for (var i = nodeIdx; i < activePipeline.length; i++) {
-    var nid = activePipeline[i];
+  // 计算下游可达集，过滤出在当前管线中的节点
+  var downstream = computeDownstreamSet(nodeId);
+  var toReset = downstream.filter(function (nid) {
+    return activePipeline.indexOf(nid) >= 0;
+  });
+
+  // 清除重跑节点自身
+  doneSets.delete(nodeId);
+  nodeState[nodeId] = 'pending';
+  delete nodeUserData[nodeId];
+
+  // 清除下游依赖节点
+  toReset.forEach(function (nid) {
     doneSets.delete(nid);
     nodeState[nid] = 'pending';
     delete nodeUserData[nid];
-    // 清除置信度历史中该节点及后续
-  }
-  confHistory = confHistory.filter(function (c) {
-    return activePipeline.indexOf(c.nodeId) < nodeIdx;
   });
+
+  // 截断 confHistory：移除重跑节点及其下游的记录
+  var resetSet = [nodeId].concat(toReset);
+  confHistory = confHistory.filter(function (c) {
+    return resetSet.indexOf(c.nodeId) < 0;
+  });
+
+  appendLog('INFO', '重跑影响范围：将被重置的节点：' + toReset.map(function (nid) {
+    return NODE_REGISTRY[nid] ? NODE_REGISTRY[nid].name : nid;
+  }).join('、'), nodeId);
 
   // 写入重跑 mock 结果（深拷贝防止引用污染）
   if (MOCK_RETRY_RESULTS[nodeId]) {

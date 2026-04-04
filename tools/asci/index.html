@@ -104,18 +104,6 @@
         <div class="panel-section" id="hitlStatusSection">
           <div class="panel-label">需要你做什么</div>
           <div class="hitl-status hitl-status-wait" id="hitlStatusBox">等待任务启动...</div>
-        </div>
-        <!-- 置信度折线迷你图 -->
-        <div class="panel-section">
-          <div class="panel-label">置信度趋势</div>
-          <div class="conf-mini-chart-wrap">
-            <svg class="conf-mini-chart" id="confMiniChart" viewBox="0 0 200 60" preserveAspectRatio="none">
-              <polyline id="confMiniLine" points="" fill="none" stroke="var(--asci-blue)" stroke-width="2"
-                stroke-linejoin="round" />
-              <g id="confMiniDots"></g>
-            </svg>
-            <div class="conf-mini-labels" id="confMiniLabels"></div>
-          </div>
           <div class="progress-bar-wrap" style="margin-top:8px">
             <div class="progress-bar" id="progressBar" style="width:0%"></div>
           </div>
@@ -124,7 +112,7 @@
         <!-- 工具调用记录 -->
         <div class="panel-section">
           <div class="panel-label">AI 工具调用</div>
-          <div class="panel-sublabel">本节点调用的外部 API / 算法模型</div>
+          <div class="panel-sublabel">任务全程累计调用的外部 API 与算法模型</div>
           <div class="artifacts-tools" id="artifactsTools">
             <span class="artifacts-empty">暂无</span>
           </div>
@@ -144,6 +132,7 @@
         <span class="ctrl-progress" id="ctrlProgress">准备就绪</span>
         <button class="degrade-demo-btn-subtle" id="degradeDemoBtn" onclick="jumpToDegradeDemo()"
           title="跳过前 N-1 步，直接演示最后节点降级流程">演示降级</button>
+        <button class="asci-btn-reconfig" onclick="restart()" title="返回重新选择主题和节点配置">重新配置</button>
         <button class="asci-btn-next" id="nextBtn" onclick="handleNext()">▶ 执行下一步</button>
       </div>
     </div>

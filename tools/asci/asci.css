@@ -88,7 +88,10 @@ body {
 
 .s1-node-grid-wrap {
   flex: 1;
-  min-width: 0
+  min-width: 0;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px
 }
 
 .s1-node-grid-title {
@@ -2401,11 +2404,12 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  height: 100%;
   background: var(--asci-log-bg)
 }
 
 .asci-main-content {
-  flex: 0 0 65%;
+  flex: 1;
   overflow-y: auto;
   border-bottom: 1px solid var(--asci-border);
   padding: 14px 16px
@@ -2590,6 +2594,23 @@ body {
 }
 
 .degrade-demo-btn-subtle:hover {
+  background: var(--asci-surface2);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: var(--asci-text-dim)
+}
+
+.asci-btn-reconfig {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--asci-border2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--asci-text-muted);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap
+}
+.asci-btn-reconfig:hover {
   background: var(--asci-surface2);
   border-color: rgba(0, 0, 0, 0.2);
   color: var(--asci-text-dim)
@@ -2936,13 +2957,12 @@ body {
 /* ---- CHAT SECTION (任务 5：对话交互框) ---- */
 /* ============================================================ */
 .asci-chat-section {
-  flex-shrink: 0;
+  flex: 0 0 200px;
   border-top: 1px solid var(--asci-border);
   background: var(--asci-surface);
   display: flex;
   flex-direction: column;
-  max-height: 220px;
-  min-height: 140px;
+  overflow: hidden;
 }
 .asci-chat-header {
   display: flex;
@@ -3141,4 +3161,149 @@ body {
   font-size: 10px;
   color: var(--asci-text-muted);
   margin: -4px 0 6px;
+}
+
+/* ============================================================ */
+/* ---- 引文追踪结果 (citation-chase) ---- */
+/* ============================================================ */
+.citation-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.citation-summary-header {
+  color: var(--asci-text);
+}
+.citation-summary-header p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--asci-text-muted);
+  line-height: 1.6;
+}
+.citation-new-papers-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--asci-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.citation-paper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.citation-paper-card {
+  background: var(--asci-surface);
+  border: 1px solid var(--asci-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.citation-paper-title {
+  flex: 1 1 200px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--asci-text);
+}
+.citation-paper-meta {
+  font-size: 11px;
+  color: var(--asci-text-muted);
+  flex: 1 1 120px;
+}
+.citation-chase-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.citation-chase-tag.chase-backward {
+  background: rgba(37,99,235,.12);
+  color: var(--asci-blue);
+}
+.citation-chase-tag.chase-forward {
+  background: rgba(5,150,105,.12);
+  color: var(--asci-green);
+}
+
+/* ============================================================ */
+/* ---- 摘要筛选：摘要按钮 ---- */
+/* ============================================================ */
+.included-paper-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.inc-abstract-btn {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--asci-border);
+  background: var(--asci-surface);
+  color: var(--asci-text-muted);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  margin-left: auto;
+}
+.inc-abstract-btn:hover {
+  background: var(--asci-blue);
+  color: #fff;
+  border-color: var(--asci-blue);
+}
+
+/* ============================================================ */
+/* ---- 时间线重跑图标 ---- */
+/* ============================================================ */
+.tree-retry-icon {
+  font-size: 11px;
+  margin-left: 4px;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity .15s, transform .15s;
+  user-select: none;
+  flex-shrink: 0;
+}
+.tree-retry-icon:hover {
+  opacity: 1;
+  transform: rotate(30deg);
+}
+
+/* ============================================================ */
+/* ---- 重跑 Modal：影响范围块 ---- */
+/* ============================================================ */
+.retry-modal-impact {
+  background: rgba(234,88,12,.08);
+  border: 1px solid rgba(234,88,12,.25);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.retry-modal-impact-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #c2410c;
+  margin-bottom: 4px;
+}
+.retry-modal-impact-desc {
+  font-size: 11px;
+  color: var(--asci-text-muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.retry-modal-impact-nodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.impact-node-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(234,88,12,.15);
+  color: #9a3412;
+  font-weight: 600;
 }

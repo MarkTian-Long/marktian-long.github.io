@@ -10,7 +10,8 @@ var NODE_REGISTRY = {
     id: 'data-source-config',
     icon: '🗄️',
     name: '数据源配置',
-    desc: '选择检索数据库（PubMed/arXiv/Semantic Scholar）并配置访问权限',
+    desc: '选择检索数据库（PubMed/arXiv/Semantic Scholar），机构账号可解锁全文权限和付费库',
+    required: true,
     category: 'config',
     categoryLabel: '配置',
     risk: 'low',
@@ -45,6 +46,7 @@ var NODE_REGISTRY = {
     name: '关键词提取',
     desc: '从研究主题提取核心词，映射 MeSH 标准术语，生成检索策略',
     required: true,
+    retryable: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -80,6 +82,7 @@ var NODE_REGISTRY = {
     name: '数据库检索',
     desc: '在已选数据库执行关键词检索，返回初始候选文献列表',
     required: true,
+    retryable: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -137,10 +140,20 @@ var NODE_REGISTRY = {
       { level: 'INFO', text: '✓ 引文追踪完成' }
     ],
     result: {
-      type: 'simple',
-      icon: '🔗',
+      type: 'citation',
       summary: '引文追踪完成',
-      details: '通过正向（被引）和反向（引用）追踪，在原有 276 篇基础上新增 41 篇候选文献，总量扩展至 317 篇。追踪深度：2 跳。核心文献（Attention Is All You Need）引用网络中发现 12 篇近期高被引新作。'
+      details: '通过正向（被引）和反向（引用）追踪，在原有 276 篇基础上新增 41 篇候选文献，总量扩展至 317 篇。追踪深度：2 跳。核心文献（Attention Is All You Need）引用网络中发现 12 篇近期高被引新作。',
+      newPapers: [
+        { title: 'BERT: Pre-training of Deep Bidirectional Transformers', authors: 'Devlin et al.', year: 2019, chaseType: 'backward' },
+        { title: 'Graph Neural Networks: A Review of Methods', authors: 'Zhou et al.', year: 2020, chaseType: 'backward' },
+        { title: 'AlphaFold2: Protein Structure Prediction', authors: 'Jumper et al.', year: 2021, chaseType: 'forward' },
+        { title: 'ESM-2: Language Models of Protein Sequences', authors: 'Lin et al.', year: 2022, chaseType: 'forward' },
+        { title: 'Uni-Mol: A Universal 3D Molecular Representation', authors: 'Zhou et al.', year: 2023, chaseType: 'forward' },
+        { title: 'MolT5: Translation between SMILES and Natural Language', authors: 'Edwards et al.', year: 2022, chaseType: 'forward' },
+        { title: 'Drug Discovery with Generative Deep Learning', authors: 'Schneider et al.', year: 2020, chaseType: 'backward' },
+        { title: 'Molecular Fingerprints and Pharmacophores', authors: 'Cereto-Massagué et al.', year: 2015, chaseType: 'backward' }
+      ],
+      bibtexMock: '@article{devlin2019bert,...}\n@article{zhou2020gnn,...}\n...(共 41 篇 BibTeX)'
     }
   },
   'expand-search': {
@@ -149,8 +162,8 @@ var NODE_REGISTRY = {
     name: '焦点扩展搜索',
     desc: '基于已纳入文献识别相邻主题，扩展搜索覆盖面',
     demoUnavailable: true,
-    category: 'discovery',
-    categoryLabel: '发现',
+    category: 'screening',
+    categoryLabel: '筛选',
     risk: 'low',
     riskLabel: '低风险',
     deps: ['abstract-screen'],
@@ -175,6 +188,7 @@ var NODE_REGISTRY = {
     icon: '📋',
     name: '摘要筛选',
     desc: '用 SciBERT 对摘要打分，阈值过滤，边界文献需人工判断',
+    retryable: true,
     category: 'filter',
     categoryLabel: '筛选',
     risk: 'medium',
@@ -384,6 +398,7 @@ var NODE_REGISTRY = {
     icon: '📝',
     name: '综述大纲',
     desc: '根据发现和主题自动生成综述大纲（可编辑）',
+    retryable: true,
     category: 'output',
     categoryLabel: '输出',
     risk: 'low',
@@ -481,8 +496,8 @@ var PIPELINE_TEMPLATES = {
   quick: {
     id: 'quick',
     name: '快速综述',
-    desc: '5 步标准流程',
-    nodes: ['keyword-extract', 'db-search', 'abstract-screen', 'outline-gen', 'review-write']
+    desc: '6 步标准流程',
+    nodes: ['data-source-config', 'keyword-extract', 'db-search', 'abstract-screen', 'outline-gen', 'review-write']
   },
   deep: {
     id: 'deep',
@@ -494,7 +509,7 @@ var PIPELINE_TEMPLATES = {
     id: 'map',
     name: '文献地图',
     desc: '含引文追踪 + 主题聚类',
-    nodes: ['keyword-extract', 'db-search', 'citation-chase', 'abstract-screen', 'theme-cluster', 'bibtex-export', 'outline-gen']
+    nodes: ['data-source-config', 'keyword-extract', 'db-search', 'citation-chase', 'abstract-screen', 'theme-cluster', 'bibtex-export', 'outline-gen']
   }
 };
 
@@ -592,14 +607,80 @@ var PAPER_DATA = {
     score: '相关性评分 0.72',
     abstract: '本文将图神经网络与 <strong>Transformer 注意力机制</strong>结合，提出 Molecular Graph Transformer（MGT），在分子属性预测任务中引入全局自注意力层以捕获远程原子交互。在 QM9 和 MoleculeNet 基准上，MGT 在多个属性预测任务上超越纯 GNN 方法，但在 3D 构象预测精度上仍有提升空间。',
     doi: 'https://doi.org/10.48550/arXiv.2202.09501'
+  },
+  'inc1': {
+    title: 'ChemBERTa: Large-Scale Self-Supervised Pretraining for Molecular Property Prediction',
+    meta: 'Chithrananda et al. · arXiv 2020',
+    score: '相关性评分 0.91',
+    abstract: '本文提出 <strong>ChemBERTa</strong>，在 77M SMILES 字符串上进行自监督预训练，通过 fine-tuning 完成下游分子属性预测。在多个 MoleculeNet 基准上，BBBP 任务 AUROC 达 0.947，优于传统 ECFP+RF 方法 8.3%。',
+    doi: 'https://doi.org/10.48550/arXiv.2010.09885'
+  },
+  'inc2': {
+    title: 'MolBERT: Molecular Property Prediction with BERT',
+    meta: 'Fabian et al. · ICLR Workshop 2020',
+    score: '相关性评分 0.89',
+    abstract: '本文将 BERT 预训练范式迁移至分子表示学习，提出 <strong>MolBERT</strong>，通过掩码原子预测和分子属性对齐两个预训练目标习得高质量分子嵌入。在 HIV 抑制剂筛选任务中准确率提升 12.1%，预训练数据规模是关键因素。',
+    doi: 'https://doi.org/10.48550/arXiv.2011.13230'
+  },
+  'inc3': {
+    title: 'Transformer-based Drug-Target Interaction Prediction',
+    meta: 'Liu et al. · Bioinformatics 2022',
+    score: '相关性评分 0.88',
+    abstract: '本文将 <strong>Transformer 双编码器</strong>架构应用于 DTI 预测，蛋白质序列编码器 + SMILES 分子编码器通过交叉注意力融合。在 BindingDB 数据集 AUROC 达 0.924，优于 GNN 基线 0.871。',
+    doi: 'https://doi.org/10.1093/bioinformatics/btab500'
+  },
+  'inc4': {
+    title: 'REINVENT 2.0: Transformer Prior for Molecular Generation',
+    meta: 'Blaschke et al. · J. Chem. Inf. Model. 2020',
+    score: '相关性评分 0.85',
+    abstract: '本文引入 <strong>Transformer 先验网络</strong>替代 RNN，通过强化学习引导 REINVENT 分子生成朝目标属性优化。在 QED × SA 综合指标上表现最优，但 3D 构象生成准确性仍有提升空间。',
+    doi: 'https://doi.org/10.26434/chemrxiv.12058026'
+  },
+  'inc5': {
+    title: 'Multi-omics Integration via Transformer Cross-Modal Attention',
+    meta: 'Wang et al. · Nature Methods 2023',
+    score: '相关性评分 0.83',
+    abstract: '本文通过 <strong>Transformer 跨模态注意力</strong>整合基因组、转录组、蛋白质组数据，在细胞类型识别和疾病关联分析任务中显著优于单组学方法。AUROC 达 0.864（BindingDB）。',
+    doi: 'https://doi.org/10.1038/s41592-023-01970-4'
+  },
+  'inc6': {
+    title: 'SE(3)-Equivariant Graph Neural Networks for Molecular Property',
+    meta: 'Fuchs et al. · NeurIPS 2020',
+    score: '相关性评分 0.81',
+    abstract: '本文提出 <strong>SE(3)-Transformer</strong>，将 Transformer 注意力机制与等变几何特征结合，保证分子三维表示的旋转/平移不变性，在 QM9 量子化学属性预测上达到 SOTA。',
+    doi: 'https://doi.org/10.48550/arXiv.2006.10503'
+  },
+  'inc7': {
+    title: 'Molecular Conformer Generation with Transformer',
+    meta: 'Shi et al. · ICLR 2021',
+    score: '相关性评分 0.80',
+    abstract: '本文将 <strong>Transformer 生成模型</strong>用于分子三维构象预测，通过自回归方式生成原子坐标。在 GEOM 数据集上优于 RDKit 和 GNN 基线，尤其适用于柔性分子构象采样。',
+    doi: 'https://doi.org/10.48550/arXiv.2012.09712'
+  },
+  'inc8': {
+    title: 'Pre-training Molecular Graph Transformer via Motif Prediction',
+    meta: 'Zhang et al. · AAAI 2022',
+    score: '相关性评分 0.79',
+    abstract: '本文提出基于 <strong>子结构动机预测</strong>的分子图 Transformer 预训练策略，结合 Graph Transformer 与 SMILES Transformer 双编码器，在低数据场景下 ADMET 属性预测优于单一模态方法。',
+    doi: 'https://doi.org/10.48550/arXiv.2110.00773'
+  },
+  'inc9': {
+    title: 'Protein Language Models Enable Zero-Shot Drug Discovery',
+    meta: 'Ferruz et al. · Nature Communications 2022',
+    score: '相关性评分 0.77',
+    abstract: '本文利用在 UniRef50 上预训练的 <strong>蛋白质语言模型</strong>（ProtGPT2），实现对蛋白质功能的零样本推理，在药物靶点识别中展示出超越传统同源建模方法的泛化能力。',
+    doi: 'https://doi.org/10.1038/s41467-022-32007-7'
   }
 };
+
+// ---- 已纳入文献键列表（摘要筛选专用）----
+var INCLUDED_PAPER_KEYS = ['inc1', 'inc2', 'inc3', 'inc4', 'inc5', 'inc6', 'inc7', 'inc8', 'inc9'];
 
 // ---- 管线分组（时间线分组框用）----
 var PIPELINE_GROUPS = [
   { id: 'config',    label: '配置',    nodeIds: ['data-source-config'] },
-  { id: 'discovery', label: '文献发现', nodeIds: ['keyword-extract', 'db-search', 'citation-chase', 'expand-search'] },
-  { id: 'filter',    label: '质量筛选', nodeIds: ['abstract-screen', 'fulltext-read', 'quality-assess'] },
+  { id: 'discovery', label: '文献发现', nodeIds: ['keyword-extract', 'db-search', 'citation-chase'] },
+  { id: 'filter',    label: '质量筛选', nodeIds: ['abstract-screen', 'expand-search', 'fulltext-read', 'quality-assess'] },
   { id: 'analysis',  label: '深度分析', nodeIds: ['contradiction-detect', 'theme-cluster', 'meta-analysis'] },
   { id: 'output',    label: '综述输出', nodeIds: ['outline-gen', 'review-write', 'bibtex-export'] }
 ];
@@ -615,6 +696,37 @@ var GROUP_SUMMARIES = {
 
 // ---- 节点重跑 Mock 结果 ----
 var MOCK_RETRY_RESULTS = {
+  'keyword-extract': {
+    type: 'keywords',
+    keywords: [
+      { term: 'Transformer', mesh: 'Neural Networks, Computer', editable: true },
+      { term: 'Drug Discovery', mesh: 'Drug Discovery', editable: true },
+      { term: 'Molecular Property', mesh: 'Molecular Structure', editable: true },
+      { term: 'Self-Attention', mesh: null, editable: true },
+      { term: 'SMILES', mesh: 'Drug Design', editable: true },
+      { term: 'Protein-Ligand', mesh: 'Ligands', editable: true },
+      { term: 'Deep Learning', mesh: 'Deep Learning', editable: true },
+      { term: 'Binding Affinity', mesh: 'Protein Binding', editable: true },
+      { term: 'Graph Neural Network', mesh: 'Neural Networks, Computer', editable: true },
+      { term: 'Protein Language Model', mesh: 'Molecular Sequence Data', editable: true },
+      { term: 'Molecular Generation', mesh: 'Drug Design', editable: true }
+    ],
+    hint: '扩展策略新增 Graph Neural Network、Protein Language Model 等词，检索覆盖面更广。',
+    _retryHint: '扩展关键词策略'
+  },
+  'outline-gen': {
+    type: 'outline',
+    sections: [
+      { id: 1, title: '引言：Transformer 架构概述', points: '自注意力机制原理；从 NLP 到生物医学的迁移路径', editable: true },
+      { id: 2, title: '分子属性预测应用', points: 'ChemBERTa / MolBERT 预训练范式；MoleculeNet 基准对比', editable: true },
+      { id: 3, title: '药物-靶点相互作用识别', points: '双编码器架构；BindingDB / Davis 数据集结果', editable: true },
+      { id: 4, title: '从头分子生成', points: 'REINVENT 变体；QED × SA 综合指标；3D 构象局限性', editable: true },
+      { id: 5, title: '多组学整合与跨模态学习', points: 'Transformer 跨模态注意力；蛋白质语言模型；图 Transformer 融合', editable: true },
+      { id: 6, title: '局限性、挑战与未来方向', points: '可解释性不足；标注数据稀缺；多模态整合趋势；临床转化瓶颈', editable: true }
+    ],
+    hint: '扩展结构新增第 5 节（多组学整合）和扩充结论章节，共 6 节。',
+    _retryHint: '扩展大纲结构至 6 节'
+  },
   'abstract-screen': {
     type: 'screening',
     threshold: 0.68,

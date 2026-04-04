@@ -85,8 +85,6 @@ function renderNodeGrid() {
       else if (isSelected) classes += ' selected';
 
       var lockHtml = node.required ? '<span class="s1-card-lock">🔒</span>' : '';
-      var riskClass = node.risk || 'low';
-      var riskLabel = node.riskLabel || '低风险';
       var desc = node.desc || '';
 
       html += '<div class="' + classes + '" onclick="toggleNode(\'' + node.id + '\')">' +
@@ -96,9 +94,6 @@ function renderNodeGrid() {
         lockHtml +
         '</div>' +
         '<div class="s1-card-desc">' + escHtml(desc) + '</div>' +
-        '<div class="s1-card-tags">' +
-        '<span class="s1-card-risk ' + riskClass + '">' + riskLabel + '</span>' +
-        '</div>' +
         '</div>';
     });
     html += '</div>';
@@ -174,7 +169,7 @@ function toggleNode(nodeId) {
 
 // 确保必选节点始终在管线中
 function ensureRequiredNodes() {
-  var requiredIds = ['keyword-extract', 'db-search'];
+  var requiredIds = ['data-source-config', 'keyword-extract', 'db-search'];
   requiredIds.forEach(function (id) {
     if (activePipeline.indexOf(id) < 0) {
       activePipeline.unshift(id);
@@ -274,14 +269,6 @@ function restart() {
     hitlStatusBox.className = 'hitl-status hitl-status-wait';
     hitlStatusBox.textContent = '等待任务启动...';
   }
-
-  // 重置置信度折线图
-  var line = document.getElementById('confMiniLine');
-  if (line) line.setAttribute('points', '');
-  var dotsEl = document.getElementById('confMiniDots');
-  if (dotsEl) dotsEl.innerHTML = '';
-  var labelsEl = document.getElementById('confMiniLabels');
-  if (labelsEl) labelsEl.innerHTML = '';
 
   // 重置日志警告 badge
   var warnBadge = document.getElementById('logWarnBadge');

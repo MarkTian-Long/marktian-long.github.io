@@ -44,12 +44,16 @@ function renderTree() {
       div.className = 'tree-step' + (isActive ? ' active' : '');
 
       var cpMark = node.checkpoint ? ' 👤' : '';
+      var retryIconHtml = (isDone && node.retryable)
+        ? '<span class="tree-retry-icon" title="参数可调整，重跑不影响平行分支" onclick="event.stopPropagation();initiateRetry(\'' + nodeId + '\')">🔄</span>'
+        : '';
 
       div.innerHTML = '<div class="tree-step-header">' +
         '<span class="status-dot ' + statusKey + '"></span>' +
         '<span class="tree-step-icon">' + node.icon + '</span>' +
         '<span class="tree-step-name">' + node.name + cpMark + '</span>' +
         '<span class="tree-step-status ' + statusKey + '">' + statusLabel + '</span>' +
+        retryIconHtml +
         '</div>';
 
       // 节点摘要（完成后显示）
@@ -137,18 +141,15 @@ function renderNodeResult(nodeId) {
   card.className = 'step-result-card';
   card.id = 'nodeResult_' + nodeId;
 
-  var riskLabel = node.risk === 'high' ? '⚠ 高风险 · 必须人工处置' :
-    node.risk === 'medium' ? '📋 中风险 · 建议审核' : '✓ 低风险 · 可选审核';
-
-  // 重跑按钮（仅对有可调参数的节点显示）
+  // 重跑按钮（仅对 retryable 节点显示）
   var retryBtnHtml = '';
-  if (['abstract-screen', 'db-search', 'keyword-extract', 'outline-gen'].indexOf(nodeId) >= 0) {
+  if (NODE_REGISTRY[nodeId] && NODE_REGISTRY[nodeId].retryable) {
     retryBtnHtml = '<button class="node-retry-btn" onclick="initiateRetry(\'' + nodeId + '\')">↺ 调整重跑</button>';
   }
 
   card.innerHTML =
     '<div class="src-header"><span>节点产出 · ' + escHtml(node.name) + '</span>' +
-    '<span style="font-weight:400;opacity:.7;display:flex;align-items:center;gap:8px">' + riskLabel + retryBtnHtml + '</span></div>' +
+    '<span style="font-weight:400;opacity:.7;display:flex;align-items:center;gap:8px">' + retryBtnHtml + '</span></div>' +
     '<div class="src-body" id="nodeBody_' + nodeId + '"></div>';
 
   var main = document.getElementById('mainContent');
@@ -164,6 +165,7 @@ function renderNodeResult(nodeId) {
   else if (ud.type === 'fulltext') renderFulltextResult(body, nodeId, ud);
   else if (ud.type === 'contradiction') renderContradictionResult(body, nodeId, ud);
   else if (ud.type === 'outline') renderOutlineResult(body, nodeId, ud);
+  else if (ud.type === 'citation') renderCitationResult(body, nodeId, ud);
   else if (ud.type === 'simple') renderSimpleResult(body, nodeId, ud);
 
   main.scrollTop = 0;
@@ -302,6 +304,10 @@ function exportSearchResults(btn, count) {
   showToast('已导出 ' + count + ' 条 BibTeX');
 }
 
+function exportIncludedPapers(btn, count) {
+  showToast('已导出 ' + count + ' 篇纳入文献');
+}
+
 function reSearch(nodeId) {
   var ud = nodeUserData[nodeId];
   var from = parseInt(document.getElementById('yearFrom_' + nodeId).value);
@@ -377,6 +383,28 @@ function renderScreeningResult(body, nodeId, ud) {
       '</div></div></div>';
   });
   html += '</div>';
+  // 已纳入文章折叠清单
+  var paperKeys = INCLUDED_PAPER_KEYS;
+  var includedCount = Math.min(ud.included, paperKeys.length);
+  html += '<details class="included-paper-list">' +
+    '<summary>查看已纳入 ' + ud.included + ' 篇文章清单（示例 ' + includedCount + ' 条）</summary>' +
+    '<div class="included-papers-inner">';
+  for (var k = 0; k < includedCount; k++) {
+    var p = PAPER_DATA[paperKeys[k]];
+    if (!p) continue;
+    html += '<div class="included-paper-row">' +
+      '<span class="inc-idx">' + (k + 1) + '.</span>' +
+      '<span class="inc-title">' + escHtml(p.title) + '</span>' +
+      '<span class="inc-meta">' + escHtml(p.meta) + '</span>' +
+      '<button class="inc-abstract-btn" onclick="showPaperModal(\'' + paperKeys[k] + '\')">📄 摘要</button>' +
+      '</div>';
+  }
+  html += '</div>' +
+    '<div class="export-row">' +
+    '<button class="export-btn" onclick="exportIncludedPapers(this,' + ud.included + ')">📋 导出纳入文献</button>' +
+    '</div>' +
+    '</details>';
+
   html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
   body.innerHTML = html;
 }
@@ -590,6 +618,39 @@ function renderSimpleResult(body, nodeId, ud) {
     '<p>' + escHtml(ud.details) + '</p>' +
     '</div>';
   body.innerHTML = html;
+}
+
+// ---- 引文追踪结果 ----
+function renderCitationResult(body, nodeId, ud) {
+  var html = '<div class="citation-result-wrap">';
+  html += '<div class="citation-summary-header"><strong>' + escHtml(ud.summary) + '</strong><p>' + escHtml(ud.details) + '</p></div>';
+  html += '<div class="citation-new-papers-label">新增文献（示例 ' + (ud.newPapers ? ud.newPapers.length : 0) + ' 篇）</div>';
+  html += '<div class="citation-paper-list">';
+  (ud.newPapers || []).forEach(function (p) {
+    var tagClass = p.chaseType === 'backward' ? 'chase-backward' : 'chase-forward';
+    var tagLabel = p.chaseType === 'backward' ? '反向追踪' : '正向追踪';
+    html += '<div class="citation-paper-card">' +
+      '<div class="citation-paper-title">' + escHtml(p.title) + '</div>' +
+      '<div class="citation-paper-meta">' + escHtml(p.authors) + ' · ' + p.year + '</div>' +
+      '<span class="citation-chase-tag ' + tagClass + '">' + tagLabel + '</span>' +
+      '</div>';
+  });
+  html += '</div>';
+  html += '<div class="export-row">' +
+    '<button class="export-btn" onclick="copyBibtex(\'' + nodeId + '\')">📋 导出 BibTeX</button>' +
+    '</div>';
+  html += '</div>';
+  body.innerHTML = html;
+}
+
+function copyBibtex(nodeId) {
+  var ud = nodeUserData[nodeId];
+  if (!ud || !ud.bibtexMock) return;
+  navigator.clipboard.writeText(ud.bibtexMock).then(function () {
+    showToast('BibTeX 已复制到剪贴板');
+  }).catch(function () {
+    showToast('复制失败，请手动复制');
+  });
 }
 
 // ---- Paper Modal ----
