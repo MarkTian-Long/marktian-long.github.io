@@ -42,7 +42,16 @@
       "Skill(schedule)",
       "WebFetch(domain:support.claude.com)",
       "Bash(start:*)",
-      "Bash(node:*)"
-    ]
+      "Bash(node:*)",
+      "Bash(xargs grep:*)",
+      "Bash(ls ~/.claude/plans/*.md)",
+      "Bash(xargs -I{} head -5 {})",
+      "Bash(mkdir -p service-agent stock ai-insights trends)",
+      "Bash(mv 2026-03-29-asci-demo-design.md 2026-03-29-asci-demo-impl.md 2026-03-29-asci-hitl-redesign.md 2026-03-30-asci-layout-redesign.md 2026-04-01-asci-back-button-bug-retrospective.md ASCI_设计思路文档.md service-agent/)",
+      "Bash(mv 2026-03-15-rag-upgrade-plan.md 2026-03-15-rag-upgrade-retrospective.md stock/)",
+      "Bash(mv archive/2026-03-14-stock-upgrade-design.md archive/2026-03-14-stock-upgrade-plan.md archive/2026-03-15-rag-upgrade-plan.md archive/2026-03-15-rag-upgrade-retrospective.md stock/)",
+      "Bash(mv archive/2026-03-13-ai-insights-weekly.md ai-insights/)"
+    ],
+    "defaultMode": "auto"
   }
 }

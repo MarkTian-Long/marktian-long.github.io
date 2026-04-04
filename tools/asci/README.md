@@ -1,43 +1,72 @@
-# ASCI 科研任务执行系统 Demo
+# ASCI 科研文献综述工具 Demo
 
 ## 功能描述
 
-模拟 ASCI（Artificial Science Intelligence）科研 Agent OS 的任务执行全流程：
-文献综述任务从关键词提取 → 数据库检索 → 摘要筛选（Human Checkpoint）→ 全文精读 → 综述生成，
-展示风险分级标注、可信度评估、Human-in-the-Loop 等核心产品设计能力。
-
-## 数据来源
-
-纯 Mock 数据，无 API 调用，所有数据内嵌于 index.html 的 JS 常量中。
+模拟 ASCI（Artificial Science Intelligence）科研 Agent OS 的文献综述全流程，展示：
+- **非线性管线**：可自定义节点组合，动态插入引文追踪/焦点扩展等节点
+- **流程配置器**：Screen 1 提供节点网格 + 管线预览 + 三种预设模板
+- **Human-in-the-Loop**：摘要筛选（边界文献逐篇判断）、矛盾检测（必须处置才能继续）
+- **降级策略**：连续 3 次 ERROR → 三条路径（重试/换模型/人工接管）
+- **可信度评估**：Screen 3 三维度评分 + 人工决策摘要
+- **浅色配色**：符合科研用户使用习惯的浅色主题
 
 ## 文件结构
 
-- `index.html` — 单文件完整实现（Screen 1/2/3 三屏）
+```
+tools/asci/
+├── index.html    — HTML 骨架（三屏布局，约 192 行）
+├── asci.css      — 全部样式（浅色配色，约 2811 行）
+├── data.js       — 数据层：NODE_REGISTRY（15 节点）、PIPELINE_TEMPLATES（3 模板）、MOCK 数据
+├── main.js       — 全局状态 + Screen 1 流程配置器逻辑
+├── engine.js     — 执行引擎：runNode/finishNode/handleBack/降级策略/非线性扩展
+├── ui.js         — UI 渲染层：renderTree/renderNodeResult/renderScreen3 等
+└── README.md
+```
 
-## 界面布局（Screen 2）
+> 纯前端，零依赖，浏览器直接打开即可运行。
 
-三列布局：左列步骤时间线（含执行结果摘要）+ 中列双区（上：步骤主内容 / 下：可折叠日志）+ 右列 Artifacts 积累面板（置信度折线图、工具调用、决策记录）。
+## 节点注册表（NODE_REGISTRY）
+
+| 类别 | 节点 ID | 名称 | 有完整交互 |
+|------|---------|------|-----------|
+| 配置 | `data-source-config` | 数据源配置 | 是（checkbox 网格） |
+| 发现 | `keyword-extract` | 关键词提取 | 是（可增删关键词） |
+| 发现 | `db-search` | 数据库检索 | 是（年份筛选 + 预览） |
+| 发现 | `citation-chase` | 引文追踪 | 简单文字（可非线性插入） |
+| 发现 | `expand-search` | 焦点扩展搜索 | 简单文字（可非线性插入） |
+| 筛选 | `abstract-screen` | 摘要筛选 | 是（HITL 边界文献 + 阈值说明） |
+| 筛选 | `fulltext-read` | 全文精读 | 是（HITL + 全文边界说明） |
+| 筛选 | `quality-assess` | 方法学质量评估 | 简单文字 |
+| 分析 | `contradiction-detect` | 矛盾检测 | 是（HITL） |
+| 分析 | `theme-cluster` | 主题聚类 | 简单文字 |
+| 分析 | `meta-analysis` | 效应量汇总 | 简单文字 |
+| 输出 | `outline-gen` | 综述大纲 | 是（可编辑标题） |
+| 输出 | `review-write` | 综述撰写 | 是（降级策略 + 人工草稿） |
+| 输出 | `bibtex-export` | 参考文献导出 | 简单文字 |
+
+## 预设模板
+
+| 模板 | 节点序列 |
+|------|---------|
+| 快速综述（默认） | keyword-extract → db-search → abstract-screen → outline-gen → review-write |
+| 深度分析 | data-source-config → keyword-extract → db-search → abstract-screen → fulltext-read → quality-assess → contradiction-detect → outline-gen → review-write |
+| 文献地图 | keyword-extract → db-search → citation-chase → abstract-screen → theme-cluster → bibtex-export → outline-gen |
 
 ## 面试题覆盖
 
 | 面试题 | 覆盖方式 |
 |--------|---------|
-| Q1：最容易出错的环节 | 任务树节点风险分级（低/中/高 + 颜色标注），高风险节点含说明 |
-| Q2：连续3次出错如何处理 | **文献综述路径 Step 5**：三次 ERROR → 降级策略面板 → 三条路径选择（重试/换模型/人工接管） |
-| Q3：用户为什么相信结果 | Screen 3 可信度三维度评分（来源质量/推理链路/数据一致性） |
-| Q4：哪步必须由人来做 | Step 3 Human Checkpoint 内联卡片，暂停并要求用户确认后继续 |
+| Q1：最容易出错的环节 | 节点风险分级（低/中/高），高风险节点强制 HITL |
+| Q2：连续 3 次出错如何处理 | review-write 节点：三次 ERROR → 降级面板 → 三条路径（重试/换模型/人工接管） |
+| Q3：用户为什么相信结果 | Screen 3 可信度三维度评分（来源质量/推理链路/数据一致性）|
+| Q4：哪步必须由人来做 | abstract-screen（边界文献）、fulltext-read/contradiction-detect（矛盾处置必须完成才能继续） |
 
-## 预设演示路径
+## 非线性扩展
 
-| 任务 | 状态 | 路径特点 | 覆盖题目 |
-|------|------|---------|---------|
-| 📚 文献综述（默认） | ✅ 已实现 | 正常完成含风险标注、Step 3 Human Checkpoint、Step 5 三次 ERROR + 降级流程 | Q1、Q2、Q3、Q4 |
-| 📊 数据分析 | 🚧 Coming Soon | 触发黄色 WARN，展示中风险处理 | Q1、Q2（单次） |
-| 🧬 假设生成 | 🚧 Coming Soon | 高风险路径，连续 3 次 ERROR → 人工介入全流程 | Q1、Q2（全流程）、Q4 |
-
-> **注**：文献综述路径已完整覆盖 Q1–Q4 全部面试题，可独立作为完整 Demo 使用。
+执行完 `db-search` 后，主内容区显示"+ 引文追踪"按钮；执行完 `abstract-screen` 后，显示"+ 焦点扩展搜索"按钮。点击后将新节点动态插入当前管线位置之后。
 
 ## 维护指南
 
-修改 Mock 数据：编辑 index.html 中 MOCK_STEPS、MOCK_RESULT 常量。
-新增演示路径：复制文献综述卡片逻辑，接入新的步骤/日志数据集。
+- 修改 Mock 数据：编辑 `data.js` 中 `NODE_REGISTRY` 和 `MOCK_RESULT`
+- 新增节点：在 `NODE_REGISTRY` 中添加定义，在 `PIPELINE_TEMPLATES` 中引用
+- 样式修改：编辑 `asci.css`（所有颜色使用 CSS 变量）

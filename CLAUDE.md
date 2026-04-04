@@ -27,6 +27,7 @@ tools/service-agent/                # 智能客服中台 Demo（意图路由+多
 tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # Markdown 内容资料（不是代码）
+docs/plans/<tool-name>/         # 各工具的设计/实现/复盘文档，按功能子目录存放
 docs/                           # 个人文档（.gitignore 排除）
 .claude/skills/                 # Claude skill 定义
 ```
@@ -74,6 +75,11 @@ docs/                           # 个人文档（.gitignore 排除）
   - 换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 文档和代码不同步时使用 `/sync-docs` skill
+- **Plan 文件存放规范**：
+  - 必须写到项目 `docs/plans/<tool-name>/` 目录，**禁止**写到全局 `~/.claude/plans/`
+  - 文件名格式：`YYYY-MM-DD-<类型>.md`，类型用 `design`/`impl`/`retrospective`/`redesign`
+  - 同一功能的所有历史文档放同一子目录，便于追溯演进过程
+  - 当前已有子目录：`service-agent/`、`stock/`、`ai-insights/`、`trends/`；新工具新建同名目录
 - 保持最小改动，不要顺手重构没有被要求改的代码
 - **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本；注意 Windows 环境下 `/tmp` 不可用，须用项目内路径
 - **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点
