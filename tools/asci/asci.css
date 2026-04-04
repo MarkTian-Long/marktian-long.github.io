@@ -2809,3 +2809,336 @@ body {
 .simple-node-result p {
   margin-bottom: 6px
 }
+
+
+/* ============================================================ */
+/* ---- S1 NODE CARDS (任务 1：节点卡片) ---- */
+/* ============================================================ */
+.s1-node-card {
+  border: 1.5px solid var(--asci-border);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--asci-surface);
+}
+.s1-node-card:hover {
+  border-color: var(--asci-blue);
+}
+.s1-node-card.selected {
+  border-color: var(--asci-blue);
+  background: var(--asci-blue-bg);
+}
+.s1-node-card.required {
+  border-color: var(--asci-blue);
+  opacity: 1;
+  cursor: default;
+}
+.s1-node-card.demo-unavailable {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.s1-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.s1-card-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.s1-card-name {
+  font-size: 12px;
+  font-weight: 700;
+  flex: 1;
+  color: var(--asci-text);
+}
+.s1-card-lock {
+  font-size: 11px;
+  opacity: 0.7;
+}
+.s1-card-desc {
+  font-size: 11px;
+  color: var(--asci-text-muted);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.s1-card-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.s1-card-risk {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+.s1-card-risk.low {
+  background: var(--asci-green-bg);
+  color: var(--asci-green);
+}
+.s1-card-risk.medium {
+  background: var(--asci-yellow-bg);
+  color: var(--asci-yellow);
+}
+.s1-card-risk.high {
+  background: var(--asci-red-bg);
+  color: var(--asci-red);
+}
+/* 节点网格内子分组 */
+.s1-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--asci-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 10px 0 4px;
+  padding-left: 2px;
+}
+.s1-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* ============================================================ */
+/* ---- TREE GROUPS (任务 4：时间线分组框) ---- */
+/* ============================================================ */
+.tree-group {
+  margin-bottom: 8px;
+}
+.tree-group-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--asci-text-muted);
+  padding: 3px 8px;
+  border-left: 2px solid var(--asci-blue-light);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tree-group-header.done {
+  border-left-color: var(--asci-green);
+  color: var(--asci-green);
+}
+.tree-group-summary {
+  font-size: 10px;
+  color: var(--asci-text-muted);
+  padding-left: 10px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* ============================================================ */
+/* ---- CHAT SECTION (任务 5：对话交互框) ---- */
+/* ============================================================ */
+.asci-chat-section {
+  flex-shrink: 0;
+  border-top: 1px solid var(--asci-border);
+  background: var(--asci-surface);
+  display: flex;
+  flex-direction: column;
+  max-height: 220px;
+  min-height: 140px;
+}
+.asci-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 4px;
+  border-bottom: 1px solid var(--asci-border);
+  flex-shrink: 0;
+}
+.asci-chat-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--asci-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.asci-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.asci-chat-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.asci-chat-msg-user {
+  flex-direction: row-reverse;
+}
+.asci-chat-avatar {
+  font-size: 14px;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+.asci-chat-bubble {
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 5px 8px;
+  border-radius: 8px;
+  max-width: 85%;
+  background: var(--asci-bg);
+  color: var(--asci-text);
+  border: 1px solid var(--asci-border);
+}
+.asci-chat-msg-user .asci-chat-bubble {
+  background: var(--asci-blue-bg);
+  border-color: var(--asci-blue-light);
+  color: var(--asci-blue);
+}
+.asci-chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--asci-border);
+  flex-shrink: 0;
+}
+.asci-chat-upload-btn {
+  font-size: 14px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: var(--asci-bg);
+  border: 1px solid var(--asci-border);
+  flex-shrink: 0;
+  user-select: none;
+}
+.asci-chat-upload-btn:hover {
+  border-color: var(--asci-blue);
+}
+.asci-chat-input {
+  flex: 1;
+  font-size: 11px;
+  padding: 5px 8px;
+  border: 1px solid var(--asci-border);
+  border-radius: 5px;
+  background: var(--asci-bg);
+  color: var(--asci-text);
+  outline: none;
+}
+.asci-chat-input:focus {
+  border-color: var(--asci-blue);
+}
+.asci-chat-send-btn {
+  font-size: 11px;
+  padding: 5px 10px;
+  background: var(--asci-blue);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.asci-chat-send-btn:hover {
+  opacity: 0.85;
+}
+
+/* ============================================================ */
+/* ---- NODE RETRY BUTTON (任务 6：重跑按钮) ---- */
+/* ============================================================ */
+.node-retry-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--asci-blue-light);
+  border-radius: 10px;
+  background: var(--asci-blue-bg);
+  color: var(--asci-blue);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-left: auto;
+}
+.node-retry-btn:hover {
+  background: var(--asci-blue);
+  color: #fff;
+}
+
+/* ---- RETRY MODAL ---- */
+.retry-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.retry-modal {
+  background: var(--asci-surface);
+  border: 1px solid var(--asci-border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  width: 340px;
+  max-width: 95vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+.retry-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--asci-text);
+  margin-bottom: 12px;
+}
+.retry-modal-body {
+  font-size: 12px;
+  color: var(--asci-text-dim);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.retry-modal-param {
+  margin-bottom: 14px;
+}
+.retry-modal-param label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--asci-text-muted);
+  margin-bottom: 6px;
+}
+.retry-modal-param select,
+.retry-modal-param input[type="range"] {
+  width: 100%;
+}
+.retry-modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.retry-modal-cancel {
+  font-size: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--asci-border);
+  border-radius: 6px;
+  background: var(--asci-bg);
+  color: var(--asci-text-muted);
+  cursor: pointer;
+}
+.retry-modal-confirm {
+  font-size: 12px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  background: var(--asci-blue);
+  color: #fff;
+  cursor: pointer;
+}
+.retry-modal-confirm:hover {
+  opacity: 0.85;
+}
+
+/* ============================================================ */
+/* ---- PANEL SUBLABEL (任务 3：右侧面板辅助文字) ---- */
+/* ============================================================ */
+.panel-sublabel {
+  font-size: 10px;
+  color: var(--asci-text-muted);
+  margin: -4px 0 6px;
+}

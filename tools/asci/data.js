@@ -10,6 +10,7 @@ var NODE_REGISTRY = {
     id: 'data-source-config',
     icon: '🗄️',
     name: '数据源配置',
+    desc: '选择检索数据库（PubMed/arXiv/Semantic Scholar）并配置访问权限',
     category: 'config',
     categoryLabel: '配置',
     risk: 'low',
@@ -42,6 +43,8 @@ var NODE_REGISTRY = {
     id: 'keyword-extract',
     icon: '🔑',
     name: '关键词提取',
+    desc: '从研究主题提取核心词，映射 MeSH 标准术语，生成检索策略',
+    required: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -75,6 +78,8 @@ var NODE_REGISTRY = {
     id: 'db-search',
     icon: '🔍',
     name: '数据库检索',
+    desc: '在已选数据库执行关键词检索，返回初始候选文献列表',
+    required: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -114,6 +119,8 @@ var NODE_REGISTRY = {
     id: 'citation-chase',
     icon: '🔗',
     name: '引文追踪',
+    desc: '通过正向/反向引文链接发现检索遗漏的相关论文',
+    demoUnavailable: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -140,6 +147,8 @@ var NODE_REGISTRY = {
     id: 'expand-search',
     icon: '🔭',
     name: '焦点扩展搜索',
+    desc: '基于已纳入文献识别相邻主题，扩展搜索覆盖面',
+    demoUnavailable: true,
     category: 'discovery',
     categoryLabel: '发现',
     risk: 'low',
@@ -165,6 +174,7 @@ var NODE_REGISTRY = {
     id: 'abstract-screen',
     icon: '📋',
     name: '摘要筛选',
+    desc: '用 SciBERT 对摘要打分，阈值过滤，边界文献需人工判断',
     category: 'filter',
     categoryLabel: '筛选',
     risk: 'medium',
@@ -208,6 +218,7 @@ var NODE_REGISTRY = {
     id: 'fulltext-read',
     icon: '📖',
     name: '全文精读',
+    desc: '下载全文 PDF，提取方法论和关键发现，标注潜在矛盾',
     category: 'filter',
     categoryLabel: '筛选',
     risk: 'high',
@@ -225,46 +236,23 @@ var NODE_REGISTRY = {
       { level: 'INFO', text: '矛盾已标注，等待人工处置...' }
     ],
     result: {
-      type: 'contradiction',
+      type: 'fulltext',
       findings: 47,
+      contradictionCount: 1, // 只标注"发现了几处矛盾"，处置数据由 contradiction-detect 负责
       findingsList: [
         { text: 'ChemBERTa 在 MoleculeNet BBBP 任务上 AUROC 达 0.947，较 ECFP+RF 提升 8.3%', source: 'Chithrananda et al., 2020' },
         { text: 'MolBERT 在 HIV 抑制剂筛选任务中准确率提升 12.1%，预训练数据规模是关键', source: 'Fabian et al., 2020' },
-        { text: 'Transformer DTI 双编码器在 BindingDB AUROC=0.924，显著优于 GNN 基线 0.871', source: 'Liu et al., 2022' },
-        { text: 'REINVENT 2.0 在 QED×SA 综合指标排名第一，但 3D 构象预测误差率 >15%', source: 'Blaschke et al., 2020' },
-        { text: '多组学 Transformer 在阿尔茨海默症靶点预测 F1=0.89，训练数据需 >50k 样本', source: 'Wang et al., 2023' }
+        { text: 'Transformer DTI 双编码器在 BindingDB AUROC=0.924，显著优于 GNN 基线 0.871', source: 'Liu et al., 2022' }
+        // Mock 简化：边界文献全部纳入为假设，findingsList 展示前 3 条
       ],
-      contradiction: {
-        metric: 'AUROC（BindingDB 数据集）',
-        paperA: {
-          title: 'Transformer-based DTI Prediction',
-          authors: 'Liu et al., 2022',
-          journal: 'Bioinformatics (SCI Q1)',
-          value: '0.924',
-          method: 'Transformer 双编码器 + 交叉注意力'
-        },
-        paperB: {
-          title: 'Multi-omics Integration via Transformer',
-          authors: 'Wang et al., 2023',
-          journal: 'Nature Methods (SCI Q1)',
-          value: '0.864',
-          method: 'Transformer 跨模态注意力（多组学）'
-        },
-        options: [
-          { id: 'A', label: '采信 Liu 2022', reason: '同类任务基准更匹配' },
-          { id: 'B', label: '采信 Wang 2023', reason: '更新、期刊更高' },
-          { id: 'both', label: '两篇均纳入并标注争议', reason: '保留学术争议' },
-          { id: 'exclude', label: '排除两篇，仅用其他文献', reason: '矛盾无法调和' }
-        ],
-        decision: null
-      },
-      hint: '此为高风险步骤，矛盾文献必须人工处置后才能继续。'
+      hint: '全文精读完成，矛盾检测将在后续节点处置。'
     }
   },
   'quality-assess': {
     id: 'quality-assess',
     icon: '🏅',
     name: '方法学质量评估',
+    desc: '用 GRADE 量表评估方法学质量，识别偏倚风险',
     category: 'filter',
     categoryLabel: '筛选',
     risk: 'medium',
@@ -290,6 +278,7 @@ var NODE_REGISTRY = {
     id: 'contradiction-detect',
     icon: '⚡',
     name: '矛盾检测',
+    desc: '对矛盾文献进行结构化处置，四选一人工决策',
     category: 'analysis',
     categoryLabel: '分析',
     risk: 'high',
@@ -301,7 +290,7 @@ var NODE_REGISTRY = {
     logs: [
       { level: 'INFO', text: '提取各文献核心主张（指标 / 结论）...' },
       { level: 'INFO', text: '共提取 147 条可验证主张' },
-      { level: 'WARN', text: '发现 2 处潜在矛盾：AUROC 差值 >0.05' },
+      { level: 'WARN', text: '发现 1 处潜在矛盾：Liu 2022 vs Wang 2023，AUROC 差值 0.060' },
       { level: 'INFO', text: '⏸ 等待人工处置矛盾...' }
     ],
     result: {
@@ -342,6 +331,7 @@ var NODE_REGISTRY = {
     id: 'theme-cluster',
     icon: '🗂️',
     name: '主题聚类',
+    desc: '对全部纳入文献做主题聚类，发现研究方向分布',
     category: 'analysis',
     categoryLabel: '分析',
     risk: 'low',
@@ -366,6 +356,8 @@ var NODE_REGISTRY = {
     id: 'meta-analysis',
     icon: '📊',
     name: '效应量汇总',
+    desc: '汇总效应量，输出森林图数据和异质性统计',
+    demoUnavailable: true,
     category: 'analysis',
     categoryLabel: '分析',
     risk: 'medium',
@@ -391,6 +383,7 @@ var NODE_REGISTRY = {
     id: 'outline-gen',
     icon: '📝',
     name: '综述大纲',
+    desc: '根据发现和主题自动生成综述大纲（可编辑）',
     category: 'output',
     categoryLabel: '输出',
     risk: 'low',
@@ -420,6 +413,7 @@ var NODE_REGISTRY = {
     id: 'review-write',
     icon: '✍️',
     name: '综述撰写',
+    desc: '基于大纲和文献生成完整综述草稿',
     category: 'output',
     categoryLabel: '输出',
     risk: 'medium',
@@ -457,6 +451,8 @@ var NODE_REGISTRY = {
     id: 'bibtex-export',
     icon: '📚',
     name: '参考文献导出',
+    desc: '导出所有纳入文献的 BibTeX 引用文件',
+    demoUnavailable: true,
     category: 'output',
     categoryLabel: '输出',
     risk: 'low',
@@ -539,8 +535,8 @@ var NODE_SUMMARIES = {
     return inc + ' 篇纳入' + (hold > 0 ? ' · ' + hold + ' 篇待定' : '');
   },
   'fulltext-read': function () { return '47 条 Findings · 1 处矛盾'; },
-  'quality-assess': function () { return '8 篇 A 级 / 11 篇 B 级'; },
-  'contradiction-detect': function () { return '2 处矛盾已处置'; },
+  'quality-assess': function () { return '8 篇 A / 11 篇 B / 2 篇 C'; },
+  'contradiction-detect': function () { return '1 处矛盾已处置'; },
   'theme-cluster': function () { return '4 个主题聚类'; },
   'meta-analysis': function () { return 'AUROC 提升 +0.073'; },
   'outline-gen': function () { return '5 节大纲'; },
@@ -596,6 +592,55 @@ var PAPER_DATA = {
     score: '相关性评分 0.72',
     abstract: '本文将图神经网络与 <strong>Transformer 注意力机制</strong>结合，提出 Molecular Graph Transformer（MGT），在分子属性预测任务中引入全局自注意力层以捕获远程原子交互。在 QM9 和 MoleculeNet 基准上，MGT 在多个属性预测任务上超越纯 GNN 方法，但在 3D 构象预测精度上仍有提升空间。',
     doi: 'https://doi.org/10.48550/arXiv.2202.09501'
+  }
+};
+
+// ---- 管线分组（时间线分组框用）----
+var PIPELINE_GROUPS = [
+  { id: 'config',    label: '配置',    nodeIds: ['data-source-config'] },
+  { id: 'discovery', label: '文献发现', nodeIds: ['keyword-extract', 'db-search', 'citation-chase', 'expand-search'] },
+  { id: 'filter',    label: '质量筛选', nodeIds: ['abstract-screen', 'fulltext-read', 'quality-assess'] },
+  { id: 'analysis',  label: '深度分析', nodeIds: ['contradiction-detect', 'theme-cluster', 'meta-analysis'] },
+  { id: 'output',    label: '综述输出', nodeIds: ['outline-gen', 'review-write', 'bibtex-export'] }
+];
+
+// ---- 分组汇总文字 ----
+var GROUP_SUMMARIES = {
+  config:    '数据源配置就绪，3 个授权数据库。',
+  discovery: '文献发现完成，候选文献 276 篇。',
+  filter:    '质量筛选完成，21 篇高质量文献纳入。',
+  analysis:  '深度分析完成，矛盾已处置，主题聚类清晰。',
+  output:    '综述输出完成，可导出草稿与参考文献。'
+};
+
+// ---- 节点重跑 Mock 结果 ----
+var MOCK_RETRY_RESULTS = {
+  'abstract-screen': {
+    type: 'screening',
+    threshold: 0.68,
+    included: 28,
+    borderline: [],
+    hint: '放宽阈值后纳入文献从 18 篇增至 28 篇。',
+    _retryHint: '放宽阈值后纳入增加'
+  },
+  'db-search': {
+    type: 'search',
+    query: 'Transformer AND ("Drug Discovery" OR "Molecular Property" OR "SMILES" OR "Protein Binding") [2018:2024]',
+    sources: [
+      { name: 'PubMed', count: 178, color: '#2563eb' },
+      { name: 'Semantic Scholar', count: 241, color: '#7c3aed' },
+      { name: '去重后合计', count: 341, color: '#059669' }
+    ],
+    yearRange: { min: 2018, max: 2024, current: [2018, 2024] },
+    preview: [
+      { title: 'Attention Is All You Need', year: 2017, key: 'cp1' },
+      { title: 'ChemBERTa: Large-Scale Self-Supervised Pretraining', year: 2020, key: 'cp2' },
+      { title: 'MolBERT: Molecular Property Prediction', year: 2020, key: null },
+      { title: 'Transformer-based DTI Prediction', year: 2022, key: null },
+      { title: 'Graph Transformer for Molecular Property', year: 2023, key: null }
+    ],
+    hint: '扩展检索词后候选文献从 276 篇增至 341 篇。',
+    _retryHint: '扩展检索词后候选增加'
   }
 };
 

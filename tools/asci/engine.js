@@ -16,7 +16,10 @@ function calcConfidence(nodeId) {
       if (accepted < 1) delta -= 5;
     }
   }
-  if (nodeId === 'fulltext-read' || nodeId === 'contradiction-detect') {
+  if (nodeId === 'fulltext-read') {
+    return 75; // Fix 3：fulltext-read 职责已拆分，固定置信度 75
+  }
+  if (nodeId === 'contradiction-detect') {
     var ud2 = nodeUserData[nodeId];
     var decision = ud2 && ud2.contradiction ? ud2.contradiction.decision : null;
     if (decision === 'exclude') delta -= 8;
@@ -194,8 +197,15 @@ function updateConfMiniChart() {
     var span = document.createElement('span');
     span.className = 'conf-mini-label';
     var node = NODE_REGISTRY[c.nodeId];
-    var shortName = node ? node.name.slice(0, 4) : c.nodeId.slice(0, 4);
-    span.textContent = shortName + ':' + c.val + '%';
+    // 节点数 > 6 时标签改为序号格式，避免标签拥挤
+    var labelText;
+    if (confHistory.length > 6) {
+      labelText = (i + 1) + '·' + c.val + '%';
+    } else {
+      var shortName = node ? node.name.slice(0, 4) : c.nodeId.slice(0, 4);
+      labelText = shortName + ':' + c.val + '%';
+    }
+    span.textContent = labelText;
     labels.appendChild(span);
   });
 }
@@ -595,4 +605,91 @@ function toggleLog() {
   if (!section || !btn) return;
   section.classList.toggle('collapsed');
   btn.textContent = section.classList.contains('collapsed') ? '▲ 展开日志' : '▼ 收起日志';
+}
+
+// ---- 节点重跑 ----
+function initiateRetry(nodeId) {
+  var node = NODE_REGISTRY[nodeId];
+  if (!node) return;
+
+  var overlay = document.createElement('div');
+  overlay.className = 'retry-modal-overlay';
+
+  // 按节点差异化参数区
+  var paramHtml = '';
+  if (nodeId === 'abstract-screen') {
+    paramHtml = '<div class="retry-modal-param">' +
+      '<label>相关性阈值（当前 0.72，放宽后将纳入更多边界文献）</label>' +
+      '<input type="range" id="retrySlider" min="60" max="80" value="68" ' +
+      'oninput="document.getElementById(\'retrySliderVal\').textContent=\'0.\'+this.value" />' +
+      '<span id="retrySliderVal">0.68</span>' +
+      '</div>';
+  } else if (nodeId === 'db-search') {
+    paramHtml = '<div class="retry-modal-param">' +
+      '<label>检索策略</label>' +
+      '<select id="retrySelect">' +
+      '<option value="standard">标准检索（当前：276 篇）</option>' +
+      '<option value="expanded" selected>扩展检索（含 SMILES/Protein Binding，预计 341 篇）</option>' +
+      '</select>' +
+      '</div>';
+  } else {
+    paramHtml = '<div class="retry-modal-body">将使用调整后的上下文重新执行「' + node.name + '」节点。</div>';
+  }
+
+  overlay.innerHTML = '<div class="retry-modal">' +
+    '<div class="retry-modal-title">重新执行「' + escHtml(node.name) + '」</div>' +
+    paramHtml +
+    '<div class="retry-modal-footer">' +
+    '<button class="retry-modal-cancel" onclick="this.closest(\'.retry-modal-overlay\').remove()">取消</button>' +
+    '<button class="retry-modal-confirm" onclick="confirmRetry(\'' + nodeId + '\',this.closest(\'.retry-modal-overlay\'))">确认重跑</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+}
+
+function confirmRetry(nodeId, overlay) {
+  if (overlay) overlay.remove();
+
+  var nodeIdx = activePipeline.indexOf(nodeId);
+  if (nodeIdx < 0) return;
+
+  // 清除该节点及后续所有节点的状态
+  for (var i = nodeIdx; i < activePipeline.length; i++) {
+    var nid = activePipeline[i];
+    doneSets.delete(nid);
+    nodeState[nid] = 'pending';
+    delete nodeUserData[nid];
+    // 清除置信度历史中该节点及后续
+  }
+  confHistory = confHistory.filter(function (c) {
+    return activePipeline.indexOf(c.nodeId) < nodeIdx;
+  });
+
+  // 写入重跑 mock 结果
+  if (MOCK_RETRY_RESULTS[nodeId]) {
+    NODE_REGISTRY[nodeId].result = Object.assign({}, NODE_REGISTRY[nodeId].result, MOCK_RETRY_RESULTS[nodeId]);
+  }
+
+  currentNodeIdx = nodeIdx - 1;
+
+  updateConfMiniChart();
+  renderTree();
+
+  var total = activePipeline.length;
+  var doneCount = doneSets.size;
+  document.getElementById('progressBar').style.width = (doneCount / total * 100) + '%';
+  document.getElementById('progressText').textContent = '节点 ' + doneCount + ' / ' + total;
+
+  var nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.textContent = '▶ 执行下一步';
+    nextBtn.onclick = handleNext;
+    nextBtn.disabled = false;
+    nextBtn.classList.remove('checkpoint-mode');
+  }
+  var backBtn = document.getElementById('backBtn');
+  if (backBtn) backBtn.disabled = (currentNodeIdx < 0);
+
+  appendLog('INFO', '用户发起重跑：' + NODE_REGISTRY[nodeId].name + '（后续节点已重置）', nodeId);
+  appendChatMsg('agent', '🤖', '已重置「' + NODE_REGISTRY[nodeId].name + '」及后续节点，点击「执行下一步」继续。');
+  showToast('已重置，点击「执行下一步」继续');
 }

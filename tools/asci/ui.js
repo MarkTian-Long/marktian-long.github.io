@@ -4,61 +4,120 @@
 //       renderScreen3、Paper Modal、Export、HITL Summary
 // ============================================================
 
-// ---- 左侧树渲染 ----
+// ---- 左侧树渲染（分组版）----
 function renderTree() {
   var tree = document.getElementById('taskTree');
   if (!tree) return;
   tree.innerHTML = '';
 
+  // 按 PIPELINE_GROUPS 分组渲染
+  PIPELINE_GROUPS.forEach(function (group) {
+    // 过滤出本组中在当前管线里的节点
+    var groupNodes = group.nodeIds.filter(function (id) {
+      return activePipeline.indexOf(id) >= 0;
+    });
+    if (!groupNodes.length) return;
+
+    // 判断组是否全部完成
+    var allDone = groupNodes.every(function (id) { return doneSets.has(id); });
+
+    var groupDiv = document.createElement('div');
+    groupDiv.className = 'tree-group';
+
+    var headerDiv = document.createElement('div');
+    headerDiv.className = 'tree-group-header' + (allDone ? ' done' : '');
+    headerDiv.textContent = (allDone ? '✓ ' : '') + group.label;
+    groupDiv.appendChild(headerDiv);
+
+    groupNodes.forEach(function (nodeId) {
+      var idx = activePipeline.indexOf(nodeId);
+      var node = NODE_REGISTRY[nodeId];
+      if (!node) return;
+
+      var isDone = doneSets.has(nodeId);
+      var isRunningNode = (nodeState[nodeId] === 'running');
+      var isActive = (idx === currentNodeIdx);
+      var statusKey = isDone ? 'done' : isRunningNode ? 'running' : 'pending';
+      var statusLabel = { pending: '待执行', running: '执行中', done: '已完成' }[statusKey];
+
+      var div = document.createElement('div');
+      div.className = 'tree-step' + (isActive ? ' active' : '');
+
+      var cpMark = node.checkpoint ? ' 👤' : '';
+
+      div.innerHTML = '<div class="tree-step-header">' +
+        '<span class="status-dot ' + statusKey + '"></span>' +
+        '<span class="tree-step-icon">' + node.icon + '</span>' +
+        '<span class="tree-step-name">' + node.name + cpMark + '</span>' +
+        '<span class="tree-step-status ' + statusKey + '">' + statusLabel + '</span>' +
+        '</div>';
+
+      // 节点摘要（完成后显示）
+      if (isDone && NODE_SUMMARIES[nodeId]) {
+        var ud = nodeUserData[nodeId];
+        var summary = document.createElement('div');
+        summary.className = 'tree-step-summary';
+        summary.textContent = NODE_SUMMARIES[nodeId](ud);
+        div.appendChild(summary);
+      }
+
+      // 子步骤（执行中或完成时显示）
+      if (isActive || isDone) {
+        var subsDiv = document.createElement('div');
+        subsDiv.className = 'tree-subs';
+        node.subs.forEach(function (sub) {
+          subsDiv.innerHTML += '<div class="tree-sub">' + sub + '</div>';
+        });
+        div.appendChild(subsDiv);
+      }
+
+      // 点击已完成步骤可切换主内容
+      if (isDone) {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', (function (nid) {
+          return function () { showStepInMain(nid); };
+        })(nodeId));
+      }
+
+      groupDiv.appendChild(div);
+    });
+
+    // 组完成后显示汇总
+    if (allDone && GROUP_SUMMARIES[group.id]) {
+      var summaryDiv = document.createElement('div');
+      summaryDiv.className = 'tree-group-summary';
+      summaryDiv.textContent = GROUP_SUMMARIES[group.id];
+      groupDiv.appendChild(summaryDiv);
+    }
+
+    tree.appendChild(groupDiv);
+  });
+
+  // 将不在任何分组中的节点（如有）单独渲染在最后
+  var groupedIds = PIPELINE_GROUPS.reduce(function (acc, g) { return acc.concat(g.nodeIds); }, []);
   activePipeline.forEach(function (nodeId, idx) {
+    if (groupedIds.indexOf(nodeId) >= 0) return;
     var node = NODE_REGISTRY[nodeId];
     if (!node) return;
-
     var isDone = doneSets.has(nodeId);
     var isRunningNode = (nodeState[nodeId] === 'running');
     var isActive = (idx === currentNodeIdx);
     var statusKey = isDone ? 'done' : isRunningNode ? 'running' : 'pending';
     var statusLabel = { pending: '待执行', running: '执行中', done: '已完成' }[statusKey];
-
     var div = document.createElement('div');
     div.className = 'tree-step' + (isActive ? ' active' : '');
-
-    var cpMark = node.checkpoint ? ' 👤' : '';
-
     div.innerHTML = '<div class="tree-step-header">' +
       '<span class="status-dot ' + statusKey + '"></span>' +
       '<span class="tree-step-icon">' + node.icon + '</span>' +
-      '<span class="tree-step-name">' + node.name + cpMark + '</span>' +
+      '<span class="tree-step-name">' + node.name + '</span>' +
       '<span class="tree-step-status ' + statusKey + '">' + statusLabel + '</span>' +
       '</div>';
-
-    // 节点摘要（完成后显示）
-    if (isDone && NODE_SUMMARIES[nodeId]) {
-      var ud = nodeUserData[nodeId];
-      var summary = document.createElement('div');
-      summary.className = 'tree-step-summary';
-      summary.textContent = NODE_SUMMARIES[nodeId](ud);
-      div.appendChild(summary);
-    }
-
-    // 子步骤（执行中或完成时显示）
-    if (isActive || isDone) {
-      var subsDiv = document.createElement('div');
-      subsDiv.className = 'tree-subs';
-      node.subs.forEach(function (sub) {
-        subsDiv.innerHTML += '<div class="tree-sub">' + sub + '</div>';
-      });
-      div.appendChild(subsDiv);
-    }
-
-    // 点击已完成步骤可切换主内容
     if (isDone) {
       div.style.cursor = 'pointer';
       div.addEventListener('click', (function (nid) {
         return function () { showStepInMain(nid); };
       })(nodeId));
     }
-
     tree.appendChild(div);
   });
 }
@@ -80,9 +139,16 @@ function renderNodeResult(nodeId) {
 
   var riskLabel = node.risk === 'high' ? '⚠ 高风险 · 必须人工处置' :
     node.risk === 'medium' ? '📋 中风险 · 建议审核' : '✓ 低风险 · 可选审核';
+
+  // 重跑按钮（仅对有可调参数的节点显示）
+  var retryBtnHtml = '';
+  if (['abstract-screen', 'db-search', 'keyword-extract', 'outline-gen'].indexOf(nodeId) >= 0) {
+    retryBtnHtml = '<button class="node-retry-btn" onclick="initiateRetry(\'' + nodeId + '\')">↺ 调整重跑</button>';
+  }
+
   card.innerHTML =
     '<div class="src-header"><span>节点产出 · ' + escHtml(node.name) + '</span>' +
-    '<span style="font-weight:400;opacity:.7">' + riskLabel + '</span></div>' +
+    '<span style="font-weight:400;opacity:.7;display:flex;align-items:center;gap:8px">' + riskLabel + retryBtnHtml + '</span></div>' +
     '<div class="src-body" id="nodeBody_' + nodeId + '"></div>';
 
   var main = document.getElementById('mainContent');
@@ -95,6 +161,7 @@ function renderNodeResult(nodeId) {
   else if (ud.type === 'keywords') renderKeywordsResult(body, nodeId, ud);
   else if (ud.type === 'search') renderSearchResult(body, nodeId, ud);
   else if (ud.type === 'screening') renderScreeningResult(body, nodeId, ud);
+  else if (ud.type === 'fulltext') renderFulltextResult(body, nodeId, ud);
   else if (ud.type === 'contradiction') renderContradictionResult(body, nodeId, ud);
   else if (ud.type === 'outline') renderOutlineResult(body, nodeId, ud);
   else if (ud.type === 'simple') renderSimpleResult(body, nodeId, ud);
@@ -377,18 +444,47 @@ function updateThreshold(nodeId, val) {
   }
 }
 
-// ---- Phase 5.1: 全文精读（含边界说明）----
-function renderContradictionResult(body, nodeId, ud) {
-  var html = '';
+// ---- 全文精读结果（Fix 3：只显示发现列表，不含矛盾处置）----
+function renderFulltextResult(body, nodeId, ud) {
+  var html = '<div class="fulltext-boundary-notice">' +
+    '<strong>数据边界说明</strong>：当前接入开放获取数据库（PubMed、arXiv、Semantic Scholar），全文覆盖率约 67%（OA 论文）。' +
+    '付费数据库全文接入为后续规划。无全文论文已降级为摘要+元数据分析，输出中标注数据完整度。' +
+    '</div>';
 
-  // Phase 5.1：如果是 fulltext-read 节点，加边界说明
-  if (nodeId === 'fulltext-read') {
-    html += '<div class="fulltext-boundary-notice">' +
-      '<strong>数据边界说明</strong>：当前接入开放获取数据库（PubMed、arXiv、Semantic Scholar），全文覆盖率约 67%（OA 论文）。' +
-      '付费数据库全文接入为后续规划。无全文论文已降级为摘要+元数据分析，输出中标注数据完整度。' +
+  html += '<div class="decision-count-bar">' +
+    '<span class="dc-badge dc-include">📄 已处理 21 篇全文</span>' +
+    '<span class="dc-badge dc-hold">📋 ' + ud.findings + ' 条 Findings</span>' +
+    '</div>';
+
+  if (ud.findingsList && ud.findingsList.length > 0) {
+    html += '<div class="findings-block">' +
+      '<div class="findings-block-toggle" id="findingsToggle_' + nodeId + '" onclick="toggleFindings(\'' + nodeId + '\')">' +
+      '<span>📋 关键发现（共 ' + ud.findings + ' 条，显示前 ' + ud.findingsList.length + ' 条）</span>' +
+      '<span class="toggle-arrow">▼</span>' +
+      '</div>' +
+      '<div class="findings-list" id="findingsList_' + nodeId + '">';
+    ud.findingsList.forEach(function (f) {
+      html += '<div class="finding-item">' +
+        '<div class="finding-text">' + escHtml(f.text) + '</div>' +
+        '<div class="finding-source">出处：' + escHtml(f.source) + '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  if (ud.contradictionCount && ud.contradictionCount > 0) {
+    html += '<div class="src-hint" style="background:var(--asci-yellow-bg);border-color:var(--asci-yellow);color:var(--asci-yellow)">' +
+      '⚠ 检测到 ' + ud.contradictionCount + ' 处矛盾待后续节点处置' +
       '</div>';
   }
 
+  html += '<div class="src-hint">' + escHtml(ud.hint) + '</div>';
+  body.innerHTML = html;
+}
+
+// ---- Phase 5.1: 矛盾检测（含边界说明，已拆分职责）----
+function renderContradictionResult(body, nodeId, ud) {
+  var html = '';
   var c = ud.contradiction;
   html += '<div class="contradiction-card">' +
     '<div class="contradiction-header">⚡ 检测到矛盾文献 · 必须人工处置</div>' +

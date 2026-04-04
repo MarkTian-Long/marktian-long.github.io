@@ -53,7 +53,6 @@ function showToast(msg) {
 
 function renderScreen1() {
   renderNodeGrid();
-  renderPipelinePreview();
   renderTemplateButtons();
   updateStartBtn();
 }
@@ -65,10 +64,10 @@ function renderNodeGrid() {
   // 按类别分组
   var categories = [
     { key: 'config', label: '配置' },
-    { key: 'discovery', label: '发现' },
-    { key: 'filter', label: '筛选' },
-    { key: 'analysis', label: '分析' },
-    { key: 'output', label: '输出' }
+    { key: 'discovery', label: '文献发现' },
+    { key: 'filter', label: '质量筛选' },
+    { key: 'analysis', label: '深度分析' },
+    { key: 'output', label: '综述输出' }
   ];
 
   var html = '';
@@ -76,49 +75,39 @@ function renderNodeGrid() {
     var nodes = Object.values(NODE_REGISTRY).filter(function (n) { return n.category === cat.key; });
     if (!nodes.length) return;
 
-    html += '<div class="s1-node-category">';
-    html += '<div class="s1-node-category-label">' + cat.label + '</div>';
-    html += '<div class="s1-node-grid">';
+    html += '<div class="s1-group-label">' + cat.label + '</div>';
+    html += '<div class="s1-group-grid">';
     nodes.forEach(function (node) {
       var isSelected = activePipeline.indexOf(node.id) >= 0;
-      html += '<span class="s1-node-chip' + (isSelected ? ' selected' : '') + '" onclick="toggleNode(\'' + node.id + '\')">' +
-        node.icon + ' ' + node.name +
-        '</span>';
+      var classes = 's1-node-card';
+      if (node.required) classes += ' required selected';
+      else if (node.demoUnavailable) classes += ' demo-unavailable';
+      else if (isSelected) classes += ' selected';
+
+      var lockHtml = node.required ? '<span class="s1-card-lock">🔒</span>' : '';
+      var riskClass = node.risk || 'low';
+      var riskLabel = node.riskLabel || '低风险';
+      var desc = node.desc || '';
+
+      html += '<div class="' + classes + '" onclick="toggleNode(\'' + node.id + '\')">' +
+        '<div class="s1-card-top">' +
+        '<span class="s1-card-icon">' + node.icon + '</span>' +
+        '<span class="s1-card-name">' + escHtml(node.name) + '</span>' +
+        lockHtml +
+        '</div>' +
+        '<div class="s1-card-desc">' + escHtml(desc) + '</div>' +
+        '<div class="s1-card-tags">' +
+        '<span class="s1-card-risk ' + riskClass + '">' + riskLabel + '</span>' +
+        '</div>' +
+        '</div>';
     });
-    html += '</div></div>';
+    html += '</div>';
   });
 
   container.innerHTML = html;
 }
 
-function renderPipelinePreview() {
-  var list = document.getElementById('pipelineList');
-  if (!list) return;
-
-  if (!activePipeline.length) {
-    list.innerHTML = '<div class="s1-pipeline-empty">从左侧选择节点，或使用预设模板</div>';
-    return;
-  }
-
-  var html = '';
-  activePipeline.forEach(function (nodeId, idx) {
-    var node = NODE_REGISTRY[nodeId];
-    if (!node) return;
-    html += '<div class="s1-pipeline-item">' +
-      '<span class="pipe-icon">' + node.icon + '</span>' +
-      '<span class="pipe-name">' + node.name + '</span>' +
-      '<span class="pipe-arrow">' +
-      '<button class="pipe-move-btn" onclick="moveNode(\'' + nodeId + '\',-1)" ' + (idx === 0 ? 'disabled' : '') + '>▲</button>' +
-      '<button class="pipe-move-btn" onclick="moveNode(\'' + nodeId + '\',1)" ' + (idx === activePipeline.length - 1 ? 'disabled' : '') + '>▼</button>' +
-      '</span>' +
-      '</div>';
-    if (idx < activePipeline.length - 1) {
-      html += '<div class="s1-pipeline-arrow">↓</div>';
-    }
-  });
-
-  list.innerHTML = html;
-}
+// renderPipelinePreview 已移除（任务 2：移除排序列）
 
 function renderTemplateButtons() {
   var container = document.getElementById('templateButtons');
@@ -148,38 +137,49 @@ function selectTemplate(templateId) {
   var tpl = PIPELINE_TEMPLATES[templateId];
   if (!tpl) return;
   s1SelectedTemplate = templateId;
+  // 必选节点始终保留
   activePipeline = tpl.nodes.slice();
+  ensureRequiredNodes();
   renderNodeGrid();
-  renderPipelinePreview();
   renderTemplateButtons();
   updateStartBtn();
 }
 
 function toggleNode(nodeId) {
+  var node = NODE_REGISTRY[nodeId];
+  if (!node) return;
+  // 必选节点：轻微抖动，不可取消
+  if (node.required) {
+    var el = document.querySelector('.s1-node-card.required[onclick*="' + nodeId + '"]');
+    if (el) { el.style.animation = 'none'; el.offsetWidth; el.style.animation = 'shake 0.3s'; }
+    showToast('「' + node.name + '」是必选节点，不可移除');
+    return;
+  }
+  // 演示版不可用节点
+  if (node.demoUnavailable) {
+    showToast('演示版暂不支持，实际产品中可启用');
+    return;
+  }
   var idx = activePipeline.indexOf(nodeId);
   if (idx >= 0) {
     activePipeline.splice(idx, 1);
   } else {
     activePipeline.push(nodeId);
   }
-  s1SelectedTemplate = null; // 手动修改后清空模板选中
+  s1SelectedTemplate = null;
   renderNodeGrid();
-  renderPipelinePreview();
   renderTemplateButtons();
   updateStartBtn();
 }
 
-function moveNode(nodeId, dir) {
-  var idx = activePipeline.indexOf(nodeId);
-  if (idx < 0) return;
-  var newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= activePipeline.length) return;
-  var tmp = activePipeline[idx];
-  activePipeline[idx] = activePipeline[newIdx];
-  activePipeline[newIdx] = tmp;
-  s1SelectedTemplate = null;
-  renderPipelinePreview();
-  renderTemplateButtons();
+// 确保必选节点始终在管线中
+function ensureRequiredNodes() {
+  var requiredIds = ['keyword-extract', 'db-search'];
+  requiredIds.forEach(function (id) {
+    if (activePipeline.indexOf(id) < 0) {
+      activePipeline.unshift(id);
+    }
+  });
 }
 
 // ---- 启动任务 ----
@@ -190,6 +190,7 @@ function startTask() {
     researchTopic = topicInput.value.trim() || 'Transformer in Drug Discovery';
   }
 
+  ensureRequiredNodes();
   if (!activePipeline.length) {
     showToast('请先选择至少一个节点或选择预设模板');
     return;
@@ -250,11 +251,14 @@ function restart() {
       '</div>';
   }
 
-  // 重置日志折叠状态
-  var logSection = document.getElementById('logSection');
-  if (logSection) logSection.classList.remove('collapsed');
-  var logToggleBtn = document.getElementById('logToggleBtn');
-  if (logToggleBtn) logToggleBtn.textContent = '▼ 收起日志';
+  // 重置对话框消息
+  var chatMessages = document.getElementById('chatMessages');
+  if (chatMessages) {
+    chatMessages.innerHTML = '<div class="asci-chat-msg asci-chat-msg-agent">' +
+      '<span class="asci-chat-avatar">🤖</span>' +
+      '<div class="asci-chat-bubble">你好！我是 ASCI Agent。你可以问我节点执行状况、发起重跑或上传补充文献。</div>' +
+      '</div>';
+  }
 
   // 重置 Artifacts 面板
   var progressBar = document.getElementById('progressBar');
@@ -305,6 +309,52 @@ function restart() {
   showScreen(1);
   // 重新渲染 Screen 1
   renderScreen1();
+}
+
+// ---- 对话框函数 ----
+
+function sendChatMsg() {
+  var input = document.getElementById('chatInput');
+  if (!input) return;
+  var msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendChatMsg('user', '👤', msg);
+
+  // 关键词匹配 mock 响应
+  var resp;
+  if (/重跑|重新|再次|调整/.test(msg)) {
+    resp = '请点击节点卡片右上角的 ↺ 按钮发起重跑，可调整参数后重新执行该节点。';
+  } else if (/解释|什么是|为什么/.test(msg)) {
+    var curNode = activePipeline[currentNodeIdx];
+    var nodeName = curNode && NODE_REGISTRY[curNode] ? NODE_REGISTRY[curNode].name : '当前节点';
+    var nodeDesc = curNode && NODE_REGISTRY[curNode] && NODE_REGISTRY[curNode].desc ? NODE_REGISTRY[curNode].desc : '暂无详细说明';
+    resp = '「' + nodeName + '」：' + nodeDesc + '。如需了解更多，可继续追问。';
+  } else if (/上传|论文|文献/.test(msg)) {
+    resp = '请点击输入框左侧的 📎 按钮上传 PDF 文献，系统将自动加入检索池。';
+  } else {
+    resp = '已记录问题，实际产品中将由 LLM 实时响应。';
+  }
+
+  setTimeout(function () { appendChatMsg('agent', '🤖', resp); }, 400);
+}
+
+function appendChatMsg(role, avatar, text) {
+  var messages = document.getElementById('chatMessages');
+  if (!messages) return;
+  var div = document.createElement('div');
+  div.className = 'asci-chat-msg asci-chat-msg-' + role;
+  div.innerHTML = '<span class="asci-chat-avatar">' + avatar + '</span>' +
+    '<div class="asci-chat-bubble">' + escHtml(text) + '</div>';
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function handleUploadPaper(input) {
+  if (!input.files || !input.files[0]) return;
+  var fileName = input.files[0].name;
+  appendChatMsg('agent', '🤖', '已将《' + escHtml(fileName) + '》加入检索池，将在下次相关节点执行时纳入分析。');
+  input.value = '';
 }
 
 // ---- 页面初始化 ----
