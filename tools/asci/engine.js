@@ -664,9 +664,13 @@ function confirmRetry(nodeId, overlay) {
     return activePipeline.indexOf(c.nodeId) < nodeIdx;
   });
 
-  // 写入重跑 mock 结果
+  // 写入重跑 mock 结果（深拷贝防止引用污染）
   if (MOCK_RETRY_RESULTS[nodeId]) {
-    NODE_REGISTRY[nodeId].result = Object.assign({}, NODE_REGISTRY[nodeId].result, MOCK_RETRY_RESULTS[nodeId]);
+    NODE_REGISTRY[nodeId].result = JSON.parse(JSON.stringify(
+      Object.assign({}, NODE_REGISTRY[nodeId].result, MOCK_RETRY_RESULTS[nodeId])
+    ));
+    // 确保 nodeUserData 被彻底清除，下次 renderNodeResult 会从新 result 重新初始化
+    delete nodeUserData[nodeId];
   }
 
   currentNodeIdx = nodeIdx - 1;
