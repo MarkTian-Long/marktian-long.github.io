@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--
+date:    2026.03
+title:   技术消亡度框架：判断哪些 AI 技术值得长期投入
+tags:    [产品框架, 技术判断]
+slug:    tech-obsolescence
+summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷型"和"编码知识型"是判断技术投资价值的核心框架。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>技术消亡度框架 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .post-body ul, .post-body ol {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .post-body em { color: var(--text-secondary); font-style: normal; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .formula {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin: 20px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: #a8c7ff;
+        }
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .example-grid { grid-template-columns: 1fr; } }
+        .example-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+        }
+        .example-card .label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .label-high { color: #ff6b6b; }
+        .label-low { color: #51cf66; }
+        .example-card ul {
+            padding-left: 16px;
+            list-style: none;
+        }
+        .example-card li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            position: relative;
+        }
+        .example-card li::before {
+            content: '·';
+            position: absolute;
+            left: -12px;
+            color: var(--text-muted);
+        }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.03</span>
+            <span class="tag">产品框架</span>
+            <span class="tag">技术判断</span>
+        </div>
+        <h1 class="post-title">技术消亡度框架：判断哪些 AI 技术值得长期投入</h1>
+        <p class="post-summary">不是所有 AI 技术都有相同的生命周期。区分"补救缺陷型"和"编码知识型"是判断技术投资价值的核心框架。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            AI 技术的生命周期差异极大。有些技术会随着基础模型能力的提升被自然"吞掉"，有些则会持续演进、长期有效。判断一项技术的生存空间，比追踪技术本身更有价值。区分标准只有一个：这项技术解决的是<strong>模型的能力缺陷</strong>，还是<strong>领域知识的结构化</strong>？
+        </p>
+
+        <div class="callout">
+            <strong>消亡度公式：</strong><br>
+            消亡度 = 补救缺陷的价值比例 ÷ 编码业务知识的价值比例<br>
+            比值越高，随模型进化消亡越快；比值越低，越有持久投入价值。
+        </div>
+
+        <h2>两类技术的本质区别</h2>
+        <p>
+            <strong>补救缺陷型</strong>：为弥补当前模型不足而产生，是过渡方案而非根本性解决。一旦基础模型升级，这类技术的价值就会显著缩水。典型特征是：去掉它，用更强的模型就能达到相同效果。
+        </p>
+        <p>
+            <strong>编码知识型</strong>：将特定领域的规则、约束、最佳实践结构化地传递给模型。这类技术的价值来源不是弥补缺陷，而是提供模型无法自行推断的领域信息，因此不会随模型进化消失。
+        </p>
+
+        <div class="example-grid">
+            <div class="example-card">
+                <div class="label label-high">消亡度高</div>
+                <ul>
+                    <li>CoT / 分步推理提示</li>
+                    <li>Role Prompt 角色模拟</li>
+                    <li>"请用 JSON 格式输出"</li>
+                    <li>Skill / 标准化工具模板</li>
+                </ul>
+            </div>
+            <div class="example-card">
+                <div class="label label-low">消亡度低</div>
+                <ul>
+                    <li>金融行业合规规则代码化</li>
+                    <li>多源数据冲突的解决优先级</li>
+                    <li>领域最佳实践清单</li>
+                    <li>上下文工程 / Harness 架构</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>为什么 CoT 会消亡，但合规规则不会</h2>
+        <p>
+            思维链（CoT）的本质是"告诉模型要分步骤推理"，解决的是早期模型推理能力弱的问题。当 Claude Opus、GPT-5 这样的模型出现后，分步推理成了默认行为，显式的 CoT 提示自然失去价值。
+        </p>
+        <p>
+            而金融行业的合规约束——比如"个人客户的杠杆上限是 2 倍，机构客户是 5 倍，特殊账户需额外审批"——这是领域知识，不是补救模型的缺陷。模型不可能从训练数据中推断出某家公司的内部风控规则，这类信息必须被显式编码传入，永远需要。
+        </p>
+
+        <h2>对 AI PM 的实际意义</h2>
+        <p>
+            这个框架直接影响技术投资的优先级判断。在高消亡度技术上花大力气——深钻 Prompt 技巧、研究 Skill 模板规范——ROI 是递减的；而在低消亡度方向上的积累——业务知识结构化、上下文工程设计、系统可靠性架构——随着模型进化会越来越值钱。
+        </p>
+        <p>
+            不是说消亡度高的技术不该学，而是：<strong>学技术的目的是用它解决问题，而不是押注这个技术本身的长期价值。</strong>把判断力放在"哪些问题是根本性的"上，而不是"哪些技术最新"。
+        </p>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

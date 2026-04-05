@@ -34,6 +34,7 @@
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#about" class="nav-link">我的判断</a></li>
+                <li><a href="#writing" class="nav-link">写作</a></li>
                 <li><a href="#tools" class="nav-link">AI 工具箱</a></li>
                 <li><a href="#cases" class="nav-link">产品案例</a></li>
                 <li><a href="#contact" class="nav-link">联系我</a></li>
@@ -121,10 +122,27 @@
                                 </div>
                             </div>
                             <div class="prediction-item">
-                                <p class="prediction-text">在模型对齐的设计取向上，国内大模型和 Claude 存在明显差异。<br><br>Claude 的不同体现在两处：一是批判性输出更克制，不倾向于给用户想听的答案；二是执行任务前会先问清楚"你想要什么结果、有哪些限制"，而不是直接开始——理解意图比快速给输出更重要，国内模型普遍跳过这个环节。</p>
+                                <p class="prediction-text">在模型对齐的设计取向上，国内大模型和 Claude 存在明显差异。<br><br>Claude 的不同体现在两处：一是批判性输出更克制，不倾向于给用户想听的答案；二是执行任务前会先问清楚"你想要什么结果、有哪些限制"，而不是直接开始——理解意图比快速给输出更重要，国内模型普遍跳过这个环节。<br><br>这个差异对 AI PM 定义产品的影响是实质性的：如果你设计的产品以"快速给答案"为核心交互，那么意图澄清机制天然被挤掉；但在企业场景中，一个需求理解错了的快速输出，往往比慢一步确认代价更大。如何在"响应速度"和"意图对齐"之间找到平衡，是当前 AI 产品设计中真正值得深入的问题之一。</p>
                                 <div class="prediction-footer">
                                     <span class="prediction-date">写于 2026.03</span>
                                     <span class="prediction-label">模型对齐</span>
+                                </div>
+                            </div>
+                            <div class="prediction-item">
+                                <p class="prediction-text">判断一项 AI 技术值不值得长期投入，核心标准是它的"消亡度"——即它解决的是模型的能力缺陷，还是在编码领域知识。<br><br>补救缺陷型技术（CoT 提示、角色扮演设定、JSON 格式要求）会随着基础模型能力提升而消亡，因为模型升级后这些缺陷自然消失。编码知识型技术（金融合规规则结构化、多源数据冲突优先级定义、行业约束条件代码化）不会消亡，因为模型不可能从训练数据中推断出特定组织的内部规则。<br><br>实际意义：在消亡度高的技术上大量投入，ROI 是递减的；真正值得建立的护城河是领域知识的结构化能力，以及让系统在生产环境可靠运行的工程设计。</p>
+                                <div class="prediction-footer">
+                                    <span class="prediction-date">写于 2026.03</span>
+                                    <span class="prediction-label">产品框架</span>
+                                </div>
+                                <div class="prediction-expand">
+                                    <button class="expand-btn" onclick="openTool('agent-hub')">📎 支撑材料：Agent 认知全景——框架对比 · 架构设计 · 企业场景地图 →</button>
+                                </div>
+                            </div>
+                            <div class="prediction-item">
+                                <p class="prediction-text">AI 工程经历了三个层次的演进：Prompt Engineering → Context Engineering → Harness Engineering，关注的问题依次从"这次调用输出更好"，到"整个任务的信息怎么组织"，再到"整个 Agent 系统怎么在生产环境里稳定运行"。<br><br>三层的本质区别：Prompt Engineering 补救模型缺陷，是过渡技术；Context Engineering 解决信息组织问题，属于编码知识型，持续有效；Harness Engineering 解决系统可靠性问题，与模型能力正交——模型越强、真正暴露出的系统设计问题反而越多。<br><br>2026 年的竞争重心已从"谁的 Prompt 写得好"转向"谁的 Harness 设计得更稳"：工具调用的安全边界、失败恢复机制、人工介入节点设计、系统可观测性，这些才是难以复制的工程壁垒。</p>
+                                <div class="prediction-footer">
+                                    <span class="prediction-date">写于 2026.04</span>
+                                    <span class="prediction-label">工程演进</span>
                                 </div>
                             </div>
                         </div>
@@ -212,6 +230,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== WRITING ========== -->
+    <section class="section" id="writing">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Writing</span>
+                <h2 class="section-title">思考碎片</h2>
+                <p class="section-desc">对 AI 产品、技术演进、行业判断的持续记录</p>
+            </div>
+            <div class="writing-archive reveal" id="writingArchive"></div>
+            <div style="text-align:center;margin-top:24px;">
+                <a href="tools/blog/index.html" target="_blank" class="writing-archive-link">查看全部文章 →</a>
             </div>
         </div>
     </section>
@@ -656,6 +689,42 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/interview.js"></script>
     <script src="assets/js/tracker.js"></script>
+    <script>
+    // ========== Writing Section ==========
+    const blogPosts = [
+        {
+            date: '2026.04',
+            title: '工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里',
+            tags: ['工程演进'],
+            url: 'tools/blog/posts/harness-engineering.html',
+            summary: 'Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移。'
+        },
+        {
+            date: '2026.03',
+            title: '技术消亡度框架：判断哪些 AI 技术值得长期投入',
+            tags: ['产品框架', '技术判断'],
+            url: 'tools/blog/posts/tech-obsolescence.html',
+            summary: '区分"补救缺陷型"和"编码知识型"，是判断技术投资价值的核心框架。'
+        }
+    ];
+
+    (function renderWriting() {
+        const root = document.getElementById('writingArchive');
+        if (!root || !blogPosts.length) return;
+        root.innerHTML = blogPosts.map(p => `
+            <a class="writing-post-row" href="${p.url}" target="_blank">
+                <span class="writing-post-date">${p.date}</span>
+                <div class="writing-post-content">
+                    <span class="writing-post-title">${p.title}</span>
+                    <span class="writing-post-summary">${p.summary}</span>
+                </div>
+                <div class="writing-post-tags">
+                    ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
+                </div>
+            </a>
+        `).join('');
+    })();
+    </script>
 </body>
 
 </html>

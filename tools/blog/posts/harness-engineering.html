@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里
+tags:    [工程演进]
+slug:    harness-engineering
+summary: Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移，2026 年的竞争重心已不在"谁的 Prompt 写得好"。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>工程演进三段论 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .post-body ul, .post-body ol {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .evolution-steps {
+            margin: 28px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            position: relative;
+        }
+        .step-card + .step-card {
+            margin-top: 0;
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .step-card:first-child {
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .step-arrow {
+            text-align: center;
+            padding: 6px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            background: var(--bg-subtle);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+        .step-label {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .step-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .step-period {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        .step-focus {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .callout {
+            background: rgba(79,143,255,0.08);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .three-col { grid-template-columns: 1fr; } }
+        .col-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+        }
+        .col-card .col-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .col-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.6;
+        }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.04</span>
+            <span class="tag">工程演进</span>
+        </div>
+        <h1 class="post-title">工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里</h1>
+        <p class="post-summary">Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移，2026 年的竞争重心已不在"谁的 Prompt 写得好"。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            AI 工程经历了三个层次的演进，每个阶段关注的问题不同。目前正处于从 Context Engineering 向 Harness Engineering 过渡的节点。2026 年的竞争差距不在"谁的 Prompt 更优雅"，而在"谁的系统在生产环境里跑得更稳"。
+        </p>
+
+        <div class="evolution-steps">
+            <div class="step-card">
+                <div class="step-label">
+                    <span class="step-name">Prompt Engineering</span>
+                    <span class="step-period">2023–2024</span>
+                </div>
+                <p class="step-desc">让单次大语言模型调用效果更好。核心操作：调整输入格式、加入角色设定、写思维链、给 few-shot 示例。</p>
+                <p class="step-focus">关注焦点：这一次调用的输出质量</p>
+            </div>
+            <div class="step-arrow">↓</div>
+            <div class="step-card">
+                <div class="step-label">
+                    <span class="step-name">Context Engineering</span>
+                    <span class="step-period">2024–2025</span>
+                </div>
+                <p class="step-desc">让上下文管理更全面、系统化。核心操作：上下文压缩、信息精选、结构化组织（XML 标签）、动态组装。解决的是"给模型什么信息"的问题。</p>
+                <p class="step-focus">关注焦点：整个对话/任务的信息组织质量</p>
+            </div>
+            <div class="step-arrow">↓</div>
+            <div class="step-card">
+                <div class="step-label">
+                    <span class="step-name">Harness Engineering</span>
+                    <span class="step-period">2025+</span>
+                </div>
+                <p class="step-desc">让整个 Agent 系统在生产环境可靠运行。核心操作：工具抽象与编排、输出验证、错误恢复、状态管理、观测与监控。</p>
+                <p class="step-focus">关注焦点：系统的整体可靠性与可维护性</p>
+            </div>
+        </div>
+
+        <h2>三层的本质区别</h2>
+        <div class="three-col">
+            <div class="col-card">
+                <div class="col-title">Prompt Engineering</div>
+                <p>补救模型的能力不足，是过渡技术。模型越强，这层的价值越低。</p>
+            </div>
+            <div class="col-card">
+                <div class="col-title">Context Engineering</div>
+                <p>解决信息组织问题，属于编码知识型，会持续演进但不会消亡。</p>
+            </div>
+            <div class="col-card">
+                <div class="col-title">Harness Engineering</div>
+                <p>解决系统可靠性问题，与模型能力正交，模型越强、Harness 越重要。</p>
+            </div>
+        </div>
+
+        <h2>为什么关注层次会上移</h2>
+        <p>
+            早期的 AI 应用以单次调用为主，"这次 Prompt 写得好不好"决定了产品体验的上限。当应用演进为多步骤 Agent 任务，单次调用的质量只占了一小部分——工具调用是否安全、中间结果如何传递、失败怎么恢复，这些成了主要瓶颈。
+        </p>
+        <p>
+            Harness 解决的问题不能靠"换一个更强的模型"来绕过。即使模型能力翻倍，如果没有正确的工具抽象和错误恢复机制，Agent 系统在生产环境依然不稳定。这是层次上移的根本原因：<strong>上层问题不能被下层能力提升直接解决。</strong>
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的启示：</strong>评估一个 AI 产品的工程能力，不能只看模型选型和 Prompt 策略，要看它的 Harness 设计——工具调用的安全边界在哪、失败如何处理、人工介入点在哪、系统状态如何可观测。这些是真正的工程护城河。
+        </div>
+
+        <h2>2026 年的竞争格局</h2>
+        <p>
+            当前市场上大多数 AI 产品的竞争差距来自两处：一是模型选型（用哪个基础模型），二是数据资产（是否有独家的领域知识）。Prompt 层的差距已经在快速收窄——随着最佳实践的公开化，写出一个"够用"的 Prompt 门槛越来越低。
+        </p>
+        <p>
+            真正的护城河会逐渐转移到 Harness 层：谁的系统能在用户真实的使用场景中稳定运行、能优雅地处理边缘情况、能在出错时给用户有意义的反馈，谁就建立了难以复制的工程壁垒。
+        </p>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>
