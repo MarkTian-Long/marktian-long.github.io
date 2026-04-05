@@ -712,7 +712,7 @@
         const root = document.getElementById('writingArchive');
         if (!root || !blogPosts.length) return;
         root.innerHTML = blogPosts.map(p => `
-            <a class="writing-post-row" href="${p.url}" target="_blank">
+            <a class="writing-post-row" href="${p.url}" target="_blank" aria-label="${p.title}">
                 <span class="writing-post-date">${p.date}</span>
                 <div class="writing-post-content">
                     <span class="writing-post-title">${p.title}</span>
