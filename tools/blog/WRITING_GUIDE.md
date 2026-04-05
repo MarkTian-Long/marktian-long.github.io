@@ -41,9 +41,23 @@ summary: 1-2 句，概括核心观点，用于列表页展示
    2-4 段，每段聚焦一个支撑维度
    可用小标题区分，避免每段都是叙述型，要有判断
 
-三、结论与影响（总，可选）
-   1 段，说明对 AI PM 实践的实际意义
+三、对 AI PM 的启示（总，必须）
+   用 callout 块收尾，不加 <h2> 小标题
+   格式固定：<strong>对 AI PM 的启示：</strong> + 1-2 句实践意义
 ```
+
+**callout 收尾示例：**
+
+```html
+<div class="callout">
+    <strong>对 AI PM 的启示：</strong>评估一个 AI 产品的工程能力，不能只看模型选型和 Prompt 策略，要看它的 Harness 设计……
+</div>
+```
+
+**注意：**
+- callout 必须是文章 `post-body` 内的**最后一个元素**
+- 不要在 callout 后面再加 `<h2>` 正文节
+- callout 使用 `accent-soft` 背景（`.callout` 类已在各文章 `<style>` 中定义）
 
 ---
 
