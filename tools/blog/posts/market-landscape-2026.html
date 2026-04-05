@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   2026 年 AI Agent 市场格局：开放 vs 封闭的博弈
+tags:    [市场格局]
+slug:    market-landscape-2026
+summary: Anthropic 的策略转变揭示了平台战的底层逻辑：谁控制了 Harness 层，谁就控制了 Agent 生态的价值分配。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2026 年 AI Agent 市场格局 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper { max-width: var(--max-width); margin: 0 auto; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date { font-size: 13px; color: var(--text-muted); }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .event-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 20px 0;
+        }
+        .event-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.07em;
+            margin-bottom: 8px;
+        }
+        .event-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .event-body { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+        .framework-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .framework-grid { grid-template-columns: 1fr; } }
+        .fw-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 13px 15px;
+        }
+        .fw-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        .fw-niche {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .fw-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.04</span>
+            <span class="tag">市场格局</span>
+        </div>
+        <h1 class="post-title">2026 年 AI Agent 市场格局：开放 vs 封闭的博弈</h1>
+        <p class="post-summary">Anthropic 的策略转变揭示了平台战的底层逻辑：谁控制了 Harness 层，谁就控制了 Agent 生态的价值分配。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            2026 年的 AI Agent 市场正在经历一次格局重组。框架大战已经基本结束，赢家已经确定；更重要的转变是：基础设施提供商（Anthropic、OpenAI）开始主动划清界线，把第三方生态的机会成本算清楚了。
+        </p>
+
+        <h2>框架大战：赢家已确定</h2>
+        <p>
+            2023-2024 年的框架爆炸期已经大幅收窄。目前形成了分工明确的格局：
+        </p>
+
+        <div class="framework-grid">
+            <div class="fw-card">
+                <div class="fw-name">LangGraph</div>
+                <div class="fw-niche">有状态、可控的工作流</div>
+                <div class="fw-desc">图形化执行模型，支持暂停、等待人工审批、从检查点恢复，适合生产规模的复杂业务逻辑。</div>
+            </div>
+            <div class="fw-card">
+                <div class="fw-name">AutoGen / 微软 Agent</div>
+                <div class="fw-niche">多 Agent 协作</div>
+                <div class="fw-desc">微软在 2025 年 10 月合并 AutoGen 和 Semantic Kernel，正式押注企业多 Agent 协作场景。</div>
+            </div>
+            <div class="fw-card">
+                <div class="fw-name">CrewAI</div>
+                <div class="fw-niche">易用性与功能的平衡</div>
+                <div class="fw-desc">基于角色的抽象，非 ML 工程师也能理解和部署。但 6-12 个月后多数团队会遇到能力天花板需要迁移。</div>
+            </div>
+            <div class="fw-card">
+                <div class="fw-name">LlamaIndex</div>
+                <div class="fw-niche">检索优先的 Agent</div>
+                <div class="fw-desc">从编排框架演进为检索层专家，现在通常搭配 LangGraph/AutoGen 使用，负责知识流水线和 RAG 层。</div>
+            </div>
+        </div>
+
+        <h2>关键事件：Anthropic 的策略转变</h2>
+
+        <div class="event-box">
+            <div class="event-label">2026 年 4 月 · OpenClaw 禁用案例</div>
+            <div class="event-title">Anthropic 阻止第三方 Agent 工具使用订阅配额</div>
+            <div class="event-body">
+                从 2026 年 4 月 4 日起，Anthropic 阻止了 Claude Pro/Max 订阅用户通过订阅来支撑 OpenClaw 等第三方 Agent 工具。OpenClaw 当时有 135,000+ 个运行实例，约 60% 的活跃会话通过订阅配额运行。<br><br>
+                技术根源：OpenClaw 这类第三方 Harness 框架绕过了提示词缓存优化，一个重度 OpenClaw 会话消耗的基础设施资源远多于等效的 Claude Code 会话——相当于以固定订阅价格获得了无限计算资源。<br><br>
+                对用户的实际影响：从固定价格订阅切换为按令牌计费，成本可能增加 50 倍。
+            </div>
+        </div>
+
+        <h2>这不是偶然，是系统性转变</h2>
+        <p>
+            Anthropic 不是在"消灭竞争对手"，而是在做经济现实检查：订阅模式无法支撑 24 小时的 Agent 重度使用，OpenClaw 无意中成为了 Anthropic 最大的补贴接收者。
+        </p>
+        <p>
+            Google 同期也对使用第三方工具的 Gemini CLI 用户采取了类似行动。<strong>这是所有基础设施提供商都在进行的系统性策略</strong>，而非 Anthropic 的个例。
+        </p>
+        <p>
+            底层逻辑是：当 Agent 工作负载的真实成本变得可见，最初通过开放生态快速增长的 AI 公司，开始把这部分成本算进产品定价里。
+        </p>
+
+        <h2>未来的可能格局</h2>
+        <p>
+            市场正在形成两层结构：
+        </p>
+        <ul>
+            <li><strong>第一方生态</strong>（Anthropic：Claude Code、Claude Projects）：享受完整的基础设施优化和订阅定价</li>
+            <li><strong>API 直连用户</strong>（企业直接调用 API）：按量计费，有完整的能力访问</li>
+            <li><strong>第三方框架</strong>：必须采用按量计费或自建基础设施，无法依赖平台补贴</li>
+        </ul>
+        <p>
+            这意味着：构建在第三方 Harness 框架上的 Agent 产品，其经济模型需要重新测算；而能控制 Harness 层的平台方，掌握了 Agent 生态的价值分配权。
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的启示：</strong>做 Agent 产品选型时，要把"基础设施提供商的策略方向"算进来。如果你的产品依赖某个第三方框架，要问：这个框架和底层模型提供商的关系是什么？有没有被"断粮"的风险？选择和平台方直接对接，虽然工程成本更高，但依赖关系更清晰。
+        </div>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

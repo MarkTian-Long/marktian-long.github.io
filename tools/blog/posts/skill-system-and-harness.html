@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--
+date:    2026.03
+title:   Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑
+tags:    [工程演进, 产品框架]
+slug:    skill-system-and-harness
+summary: Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill 系统的本质 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper { max-width: var(--max-width); margin: 0 auto; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date { font-size: 13px; color: var(--text-muted); }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .contrast-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 20px 0;
+        }
+        .contrast-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .contrast-row:last-child { margin-bottom: 0; }
+        .contrast-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 80px;
+            padding-top: 2px;
+        }
+        .contrast-val { color: var(--text-secondary); line-height: 1.55; }
+        .four-cols {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .four-cols { grid-template-columns: 1fr 1fr; } }
+        .mini-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .mini-card .mini-icon { font-size: 18px; margin-bottom: 6px; }
+        .mini-card .mini-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .mini-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.03</span>
+            <span class="tag">工程演进</span>
+            <span class="tag">产品框架</span>
+        </div>
+        <h1 class="post-title">Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑</h1>
+        <p class="post-summary">Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            一个常见的误解：Skill 是 Prompt Engineering 的下一阶段，是"更工程化的 Prompt"。这个理解是错的。Skill 和 Prompt Engineering 解决的是不同层次的问题，被创造的理由也完全不同。
+        </p>
+
+        <div class="callout">
+            <strong>Skill 出现的真实原因：</strong>Agent 时代需要可靠地执行长链条任务，但同一个任务在不同 Agent 间无法复用、执行结果难以观察、失败原因难以追踪——Skill 是为了解决这些可靠性问题而被创造的，不是为了把 Prompt 写得更好看。
+        </div>
+
+        <h2>Prompt Engineering vs Skill：本质区别</h2>
+        <div class="contrast-box">
+            <div class="contrast-row">
+                <span class="contrast-label">Prompt 工程</span>
+                <span class="contrast-val">经验性的，每个人写的不同；关注单次调用的输出质量；没有标准化的评估标准；随模型升级逐渐消亡</span>
+            </div>
+            <div class="contrast-row">
+                <span class="contrast-label">Skill 系统</span>
+                <span class="contrast-val">产品化的，有明确的定义、参数、评估标准；关注任务执行的可观察性和复用性；为 Harness 层提供标准单元；Domain-specific 部分不会消亡</span>
+            </div>
+        </div>
+
+        <h2>Skill 的四个永久价值</h2>
+        <p>
+            即使基础模型变得无限强，Skill 系统的这四个属性仍然有价值：
+        </p>
+        <div class="four-cols">
+            <div class="mini-card">
+                <div class="mini-icon">👁</div>
+                <div class="mini-label">可观察</div>
+                <p>每次执行都可被追踪，知道哪一步失败了</p>
+            </div>
+            <div class="mini-card">
+                <div class="mini-icon">♻️</div>
+                <div class="mini-label">可复用</div>
+                <p>好的 Skill 可以在不同 Agent 间共享</p>
+            </div>
+            <div class="mini-card">
+                <div class="mini-icon">📊</div>
+                <div class="mini-label">可评估</div>
+                <p>有明确的成功标准，成本和成功率可量化</p>
+            </div>
+            <div class="mini-card">
+                <div class="mini-icon">🔧</div>
+                <div class="mini-label">可优化</div>
+                <p>有数据就能改进，支持版本管理和迭代</p>
+            </div>
+        </div>
+
+        <h2>哪些 Skill 会消亡，哪些会留下</h2>
+        <p>
+            Skill 内部同样有消亡度的分野。那些纯粹为了补救模型能力不足而存在的 Skill 会被吞掉：
+        </p>
+        <ul>
+            <li>"让模型按格式输出的 Skill" — 强模型自然输出格式，这个 Skill 失去存在理由</li>
+            <li>"让模型分步推理的 Skill" — 强模型默认推理，无需额外包装</li>
+        </ul>
+        <p>
+            但领域专属的 Skill 不会消亡：
+        </p>
+        <ul>
+            <li>医学诊断的决策树 Skill — 编码的是医学专业知识，不是补救缺陷</li>
+            <li>金融合规的规则引擎 Skill — 编码的是特定机构的合规要求</li>
+            <li>法律文书的模板系统 Skill — 编码的是法律领域的最佳实践</li>
+        </ul>
+
+        <h2>当前最大的问题：Discovery Layer 缺失</h2>
+        <p>
+            现在 Skill 系统最核心的工程问题不是 Skill 本身的质量，而是 Discovery——用户不知道该用哪个 Skill。
+        </p>
+        <p>
+            Claude Code 有数百个 Skill；各平台的 Skill 市场还在早期阶段；没有好的自动路由系统。如果用户需要手动选择 Skill，那 Skill 能提供的价值就大打折扣。理想的系统应该能自动识别"这个任务需要哪个 Skill"然后自动调用——这才是真正意义上的 Harness Engineering。
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的启示：</strong>评估一个 AI 产品的 Skill 体系，不能只看 Skill 的数量和质量，要看它的 Discovery Layer——用户怎么知道有这个能力？系统怎么自动路由到正确的 Skill？这才是决定 Skill 实际价值的关键。
+        </div>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

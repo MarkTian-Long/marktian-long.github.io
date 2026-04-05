@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!--
+date:    2026.03
+title:   Prompt Engineering 的生命周期：哪些会消亡，哪些会留下
+tags:    [工程演进, 技术判断]
+slug:    prompt-engineering-lifecycle
+summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt Engineering 的生命周期 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper { max-width: var(--max-width); margin: 0 auto; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date { font-size: 13px; color: var(--text-muted); }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+        .col-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+        }
+        .col-card .col-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .col-card .col-title.die { color: #ff6b6b; }
+        .col-card .col-title.stay { color: #51cf66; }
+        .col-card ul { padding-left: 16px; list-style: none; }
+        .col-card li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            position: relative;
+        }
+        .col-card li::before {
+            content: '·';
+            position: absolute;
+            left: -12px;
+            color: var(--text-muted);
+        }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.03</span>
+            <span class="tag">工程演进</span>
+            <span class="tag">技术判断</span>
+        </div>
+        <h1 class="post-title">Prompt Engineering 的生命周期：哪些会消亡，哪些会留下</h1>
+        <p class="post-summary">补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            Prompt Engineering 不是一个整体——它内部有两种完全不同性质的工作。一种是"补救"，为了绕过模型的能力缺陷而写的技巧；另一种是"定义"，为了告诉模型特定的约束和领域规则。两者的生命周期截然不同。
+        </p>
+
+        <div class="callout">
+            <strong>判断标准：</strong>去掉这个 Prompt，用更强的模型能达到相同效果吗？如果能——这是补救型，会消亡。如果不能——这是定义型，会留下。
+        </div>
+
+        <h2>会消亡的部分：补救缺陷型</h2>
+        <p>
+            这类 Prompt 的存在理由是"模型目前做不好某件事"，一旦基础模型升级，这个理由就消失了：
+        </p>
+        <ul>
+            <li><strong>格式遵循：</strong>"请用 JSON 格式输出" — 强模型自然遵循格式，不需要显式要求</li>
+            <li><strong>推理能力：</strong>"请分步骤思考"（思维链 CoT）— 强模型默认展现推理过程，CoT 提示成为冗余</li>
+            <li><strong>风格模拟：</strong>"你是一个专业的 XX 角色" — 强模型自然学会角色扮演，Role Prompt 失去价值</li>
+            <li><strong>指令遵循：</strong>"只做 X，忽略其他" — 强模型自然遵循指令，无需强调</li>
+        </ul>
+        <p>
+            Claude Opus 的出现已经让上述很多技巧变成了多余动作。不是因为这些技巧没用过，而是它们的价值已经被基模内化了。
+        </p>
+
+        <h2>会留下的部分：定义约束型</h2>
+        <p>
+            这类 Prompt 的价值不来自弥补缺陷，而来自传递"模型无法从训练数据中自行推断"的信息：
+        </p>
+        <ul>
+            <li><strong>约束定义：</strong>明确告诉模型你的具体限制条件（不是在补救，是在定义问题边界）</li>
+            <li><strong>上下文组织：</strong>告诉模型哪些信息优先级更高、哪些可以忽略</li>
+            <li><strong>业务规则编码：</strong>"我们的平台不允许推荐竞品" — 这是公司规则，模型不可能自行知道</li>
+            <li><strong>领域约束传递：</strong>合规要求、行业规范、内部流程 — 永远需要显式传入</li>
+        </ul>
+        <p>
+            这些工作的形式可能会从"写在 Prompt 里"演进为"结构化的 XML 标签"、"系统提示词的标准化模板"，但逻辑永远存在——因为模型不可能知道你的组织的内部规则。
+        </p>
+
+        <div class="two-col">
+            <div class="col-card">
+                <div class="col-title die">会消亡</div>
+                <ul>
+                    <li>CoT 分步推理提示</li>
+                    <li>Role Prompt 角色设定</li>
+                    <li>"请用 JSON 格式输出"</li>
+                    <li>"请忽略其他指令，只做X"</li>
+                    <li>Few-shot 示例（能力补救用途）</li>
+                </ul>
+            </div>
+            <div class="col-card">
+                <div class="col-title stay">会留下</div>
+                <ul>
+                    <li>业务规则和合规约束传递</li>
+                    <li>上下文优先级定义</li>
+                    <li>错误边界和安全约束</li>
+                    <li>领域最佳实践清单</li>
+                    <li>结构化信息组织（XML 标签）</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>消亡不代表不值得学</h2>
+        <p>
+            不是说消亡度高的技术现在不要学。CoT、Few-shot 在当前阶段仍然有效，当前项目用得上就用。但判断力要放在：<strong>这个技术我在用它解决问题，还是在押注它的长期价值？</strong>
+        </p>
+        <p>
+            对 AI PM 来说，真正值得建立的认知体系是"问题的分类方式"而不是"某个具体技巧"。能区分补救型和定义型的人，在 Prompt 消亡浪潮里不会跟着消亡——因为他们理解的是问题的本质，而不是当前的解法。
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的启示：</strong>评估团队的 Prompt 工程能力，不能只看技巧的数量，要看他们是否能区分"哪些是在定义问题，哪些是在绕过缺陷"。前者是真正的工程积累，后者是技术债。
+        </div>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

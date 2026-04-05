@@ -225,6 +225,11 @@ function toggleSection(titleEl) {
   if (toggleSpan) toggleSpan.textContent = isHidden ? '收起 ↑' : '展开 ↓';
 }
 
+// ---- PREDICTION TOGGLE (我的观点折叠展开) ----
+function togglePrediction(itemEl) {
+  itemEl.classList.toggle('expanded');
+}
+
 // ---- COPY PHONE ----
 function toggleJudgment() {
   // 整块默认展开，此函数保留兼容旧调用

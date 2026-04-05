@@ -104,45 +104,94 @@
                     <div class="judgment-section">
                         <h4 class="judgment-section-title">💬 我的观点</h4>
                         <div class="prediction-list">
-                            <div class="prediction-item">
-                                <p class="prediction-text">全自动、无人监督的 Agent 在 2027 年前不会大规模落地。<br><br>B 端：真正的阻碍从来不是技术——工作流整合、权责归属、内部系统对接，这三道坎没有纯技术解法，也不会因为模型更强而自动消失。<br>C 端：OpenClaw、QClaw 等产品证明门槛已在快速降低，但平台接入解决的是"用起来"，解决不了"用得稳"。Agent 能产生实际效果的操作（误删文件、代发消息、读取通讯录和聊天记录）往往不可逆或存在隐私风险，一旦出错用户没有补救空间，信任壁垒不会因为入口变了就消失。<br><br>此外，当前阶段普通用户的日常需求复杂度本就有限，长链条 Agent 的能力溢出于实际需要——但随着使用习惯的建立，C 端对复杂任务的需求也会逐步释放。</p>
-                                <div class="prediction-footer">
-                                    <span class="prediction-date">写于 2026.03</span>
-                                    <span class="prediction-label">Agent 落地</span>
+                            <!-- 观点1：Agent 落地 -->
+                            <div class="prediction-item" onclick="togglePrediction(this)">
+                                <div class="prediction-header">
+                                    <span class="prediction-lead">全自动无监督的 Agent 在 2027 年前不会大规模落地</span>
+                                    <div class="prediction-meta">
+                                        <span class="prediction-date">2026.03</span>
+                                        <span class="prediction-label">Agent 落地</span>
+                                        <span class="prediction-toggle">▾</span>
+                                    </div>
                                 </div>
-                                <div class="prediction-expand">
-                                    <button class="expand-btn" onclick="openTool('agent-hub')">📎 支撑材料：Agent 认知全景——框架对比 · 架构设计 · 企业场景地图 →</button>
-                                </div>
-                            </div>
-                            <div class="prediction-item">
-                                <p class="prediction-text">金融行业 AI 的近期落地形态，是"有人工节点的半自动化"，而不是完全自主的 Agent 链。<br><br>B 端：监管与审计要求每一步决策可追溯、可签字，部分节点的法律责任必须由人工承担，推理步骤不透明的 Agent 进不了审批流程。<br>C 端：大模型不具备直接替代持牌顾问做出最终投资建议的资质，AI 只能辅助决策，不能绕过人工审核环节。<br><br>现实的切入点有三个：<br>· 智能投顾：行业痛点不在涨跌预测，而在用户行为管理——AI 的切入点是情绪陪伴、行为分析和量化逻辑筛选组合，最终建议仍由顾问确认<br>· 研报生成：投研人员耗时在信息聚合而非分析本身——AI 承担资讯聚合、数据填充、格式校验，分析师专注判断与审核<br>· 客服路由：大量重复咨询消耗人工资源——AI 识别意图后精准分发，人工专注处理投诉、异议等高复杂度案例<br><br>这些场景的共同特点是 AI 给答案、人工做确认，而不是 AI 替代决策。</p>
-                                <div class="prediction-footer">
-                                    <span class="prediction-date">写于 2026.03</span>
-                                    <span class="prediction-label">金融行业</span>
-                                </div>
-                            </div>
-                            <div class="prediction-item">
-                                <p class="prediction-text">在模型对齐的设计取向上，国内大模型和 Claude 存在明显差异。<br><br>Claude 的不同体现在两处：一是批判性输出更克制，不倾向于给用户想听的答案；二是执行任务前会先问清楚"你想要什么结果、有哪些限制"，而不是直接开始——理解意图比快速给输出更重要，国内模型普遍跳过这个环节。<br><br>这个差异对 AI PM 定义产品的影响是实质性的：如果你设计的产品以"快速给答案"为核心交互，那么意图澄清机制天然被挤掉；但在企业场景中，一个需求理解错了的快速输出，往往比慢一步确认代价更大。如何在"响应速度"和"意图对齐"之间找到平衡，是当前 AI 产品设计中真正值得深入的问题之一。</p>
-                                <div class="prediction-footer">
-                                    <span class="prediction-date">写于 2026.03</span>
-                                    <span class="prediction-label">模型对齐</span>
+                                <div class="prediction-body">
+                                    <div class="prediction-body-inner">
+                                        <p class="prediction-text">B 端：真正的阻碍从来不是技术——工作流整合、权责归属、内部系统对接，这三道坎没有纯技术解法，也不会因为模型更强而自动消失。<br>C 端：平台接入解决的是"用起来"，解决不了"用得稳"。Agent 能产生实际效果的操作（误删文件、代发消息、读取通讯录和聊天记录）往往不可逆或存在隐私风险，一旦出错用户没有补救空间，信任壁垒不会因为入口变了就消失。<br><br>此外，当前阶段普通用户的日常需求复杂度本就有限，长链条 Agent 的能力溢出于实际需要——但随着使用习惯的建立，C 端对复杂任务的需求也会逐步释放。</p>
+                                        <div class="prediction-expand">
+                                            <a class="expand-btn-link" href="tools/blog/posts/agent-three-problems.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：Agent 三大工程问题 →</a>
+                                            <button class="expand-btn-link" onclick="event.stopPropagation();openTool('agent-hub')">🛠 工具：Agent 认知全景 →</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="prediction-item">
-                                <p class="prediction-text">判断一项 AI 技术值不值得长期投入，核心标准是它的"消亡度"——即它解决的是模型的能力缺陷，还是在编码领域知识。<br><br>补救缺陷型技术（CoT 提示、角色扮演设定、JSON 格式要求）会随着基础模型能力提升而消亡，因为模型升级后这些缺陷自然消失。编码知识型技术（金融合规规则结构化、多源数据冲突优先级定义、行业约束条件代码化）不会消亡，因为模型不可能从训练数据中推断出特定组织的内部规则。<br><br>实际意义：在消亡度高的技术上大量投入，ROI 是递减的；真正值得建立的护城河是领域知识的结构化能力，以及让系统在生产环境可靠运行的工程设计。</p>
-                                <div class="prediction-footer">
-                                    <span class="prediction-date">写于 2026.03</span>
-                                    <span class="prediction-label">产品框架</span>
+                            <!-- 观点2：金融行业 -->
+                            <div class="prediction-item" onclick="togglePrediction(this)">
+                                <div class="prediction-header">
+                                    <span class="prediction-lead">金融 AI 的近期形态是"有人工节点的半自动化"，而非完全自主 Agent 链</span>
+                                    <div class="prediction-meta">
+                                        <span class="prediction-date">2026.03</span>
+                                        <span class="prediction-label">金融行业</span>
+                                        <span class="prediction-toggle">▾</span>
+                                    </div>
                                 </div>
-                                <div class="prediction-expand">
-                                    <button class="expand-btn" onclick="openTool('agent-hub')">📎 支撑材料：Agent 认知全景——框架对比 · 架构设计 · 企业场景地图 →</button>
+                                <div class="prediction-body">
+                                    <div class="prediction-body-inner">
+                                        <p class="prediction-text">B 端：监管与审计要求每一步决策可追溯、可签字，部分节点的法律责任必须由人工承担，推理步骤不透明的 Agent 进不了审批流程。<br>C 端：大模型不具备直接替代持牌顾问做出最终投资建议的资质，AI 只能辅助决策，不能绕过人工审核环节。<br><br>现实的切入点有三个：<br>· 智能投顾：行业痛点不在涨跌预测，而在用户行为管理——AI 的切入点是情绪陪伴、行为分析和量化逻辑筛选组合，最终建议仍由顾问确认<br>· 研报生成：投研人员耗时在信息聚合而非分析本身——AI 承担资讯聚合、数据填充、格式校验，分析师专注判断与审核<br>· 客服路由：大量重复咨询消耗人工资源——AI 识别意图后精准分发，人工专注处理投诉、异议等高复杂度案例</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="prediction-item">
-                                <p class="prediction-text">AI 工程经历了三个层次的演进：Prompt Engineering → Context Engineering → Harness Engineering，关注的问题依次从"这次调用输出更好"，到"整个任务的信息怎么组织"，再到"整个 Agent 系统怎么在生产环境里稳定运行"。<br><br>三层的本质区别：Prompt Engineering 补救模型缺陷，是过渡技术；Context Engineering 解决信息组织问题，属于编码知识型，持续有效；Harness Engineering 解决系统可靠性问题，与模型能力正交——模型越强、真正暴露出的系统设计问题反而越多。<br><br>2026 年的竞争重心已从"谁的 Prompt 写得好"转向"谁的 Harness 设计得更稳"：工具调用的安全边界、失败恢复机制、人工介入节点设计、系统可观测性，这些才是难以复制的工程壁垒。</p>
-                                <div class="prediction-footer">
-                                    <span class="prediction-date">写于 2026.04</span>
-                                    <span class="prediction-label">工程演进</span>
+                            <!-- 观点3：模型对齐 -->
+                            <div class="prediction-item" onclick="togglePrediction(this)">
+                                <div class="prediction-header">
+                                    <span class="prediction-lead">国内大模型与 Claude 在对齐取向上存在实质差异，影响产品设计</span>
+                                    <div class="prediction-meta">
+                                        <span class="prediction-date">2026.03</span>
+                                        <span class="prediction-label">模型对齐</span>
+                                        <span class="prediction-toggle">▾</span>
+                                    </div>
+                                </div>
+                                <div class="prediction-body">
+                                    <div class="prediction-body-inner">
+                                        <p class="prediction-text">Claude 的不同体现在两处：一是批判性输出更克制，不倾向于给用户想听的答案；二是执行任务前会先问清楚"你想要什么结果、有哪些限制"，而不是直接开始——理解意图比快速给输出更重要，国内模型普遍跳过这个环节。<br><br>这个差异对 AI PM 定义产品的影响是实质性的：如果你设计的产品以"快速给答案"为核心交互，那么意图澄清机制天然被挤掉；但在企业场景中，一个需求理解错了的快速输出，往往比慢一步确认代价更大。如何在"响应速度"和"意图对齐"之间找到平衡，是当前 AI 产品设计中真正值得深入的问题之一。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 观点4：技术消亡度 -->
+                            <div class="prediction-item" onclick="togglePrediction(this)">
+                                <div class="prediction-header">
+                                    <span class="prediction-lead">AI 技术的投入价值取决于它是"补救缺陷"还是"编码知识"</span>
+                                    <div class="prediction-meta">
+                                        <span class="prediction-date">2026.03</span>
+                                        <span class="prediction-label">产品框架</span>
+                                        <span class="prediction-toggle">▾</span>
+                                    </div>
+                                </div>
+                                <div class="prediction-body">
+                                    <div class="prediction-body-inner">
+                                        <p class="prediction-text">补救缺陷型技术（CoT 提示、角色扮演设定、JSON 格式要求）会随着基础模型能力提升而消亡，因为模型升级后这些缺陷自然消失。编码知识型技术（金融合规规则结构化、多源数据冲突优先级定义、行业约束条件代码化）不会消亡，因为模型不可能从训练数据中推断出特定组织的内部规则。<br><br>实际意义：在消亡度高的技术上大量投入，ROI 是递减的；真正值得建立的护城河是领域知识的结构化能力，以及让系统在生产环境可靠运行的工程设计。</p>
+                                        <div class="prediction-expand">
+                                            <a class="expand-btn-link" href="tools/blog/posts/tech-obsolescence.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：技术消亡度框架 →</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 观点5：工程演进 -->
+                            <div class="prediction-item" onclick="togglePrediction(this)">
+                                <div class="prediction-header">
+                                    <span class="prediction-lead">AI 工程竞争重心已从 Prompt 转向 Harness，2026 年护城河在系统可靠性</span>
+                                    <div class="prediction-meta">
+                                        <span class="prediction-date">2026.04</span>
+                                        <span class="prediction-label">工程演进</span>
+                                        <span class="prediction-toggle">▾</span>
+                                    </div>
+                                </div>
+                                <div class="prediction-body">
+                                    <div class="prediction-body-inner">
+                                        <p class="prediction-text">Prompt Engineering → Context Engineering → Harness Engineering，关注的问题依次从"这次调用输出更好"，到"整个任务的信息怎么组织"，再到"整个 Agent 系统怎么在生产环境里稳定运行"。<br><br>三层的本质区别：Prompt Engineering 补救模型缺陷，是过渡技术；Context Engineering 解决信息组织问题，属于编码知识型，持续有效；Harness Engineering 解决系统可靠性问题，与模型能力正交——模型越强、真正暴露出的系统设计问题反而越多。<br><br>2026 年的竞争重心已从"谁的 Prompt 写得好"转向"谁的 Harness 设计得更稳"：工具调用的安全边界、失败恢复机制、人工介入节点设计、系统可观测性，这些才是难以复制的工程壁垒。</p>
+                                        <div class="prediction-expand">
+                                            <a class="expand-btn-link" href="tools/blog/posts/harness-engineering.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：工程演进三段论 →</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -700,18 +749,60 @@
             summary: 'Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移。'
         },
         {
+            date: '2026.04',
+            title: 'Agent 现在面临的三大工程问题',
+            tags: ['Agent', '工程演进'],
+            url: 'tools/blog/posts/agent-three-problems.html',
+            summary: 'Agent 当前的瓶颈不在智能，而在工程：可靠性、状态管理和人机协作边界，这三个问题决定了 Agent 的落地质量。'
+        },
+        {
+            date: '2026.04',
+            title: '2026 年 AI Agent 市场格局：开放 vs 封闭的博弈',
+            tags: ['市场格局'],
+            url: 'tools/blog/posts/market-landscape-2026.html',
+            summary: 'Anthropic 的策略转变揭示了平台战的底层逻辑：谁控制了 Harness 层，谁就控制了 Agent 生态的价值分配。'
+        },
+        {
             date: '2026.03',
             title: '技术消亡度框架：判断哪些 AI 技术值得长期投入',
             tags: ['产品框架', '技术判断'],
             url: 'tools/blog/posts/tech-obsolescence.html',
             summary: '区分"补救缺陷型"和"编码知识型"，是判断技术投资价值的核心框架。'
-        }
+        },
+        {
+            date: '2026.03',
+            title: 'RAG 的演进：从"被动检索"到"主动信息系统"',
+            tags: ['技术判断', '架构设计'],
+            url: 'tools/blog/posts/rag-evolution.html',
+            summary: '现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。'
+        },
+        {
+            date: '2026.03',
+            title: 'Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑',
+            tags: ['工程演进', '产品框架'],
+            url: 'tools/blog/posts/skill-system-and-harness.html',
+            summary: 'Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。'
+        },
+        {
+            date: '2026.03',
+            title: '微调的演进：哪些场景还值得做，哪些已被替代',
+            tags: ['技术判断', '架构设计'],
+            url: 'tools/blog/posts/finetuning-evolution.html',
+            summary: '能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。'
+        },
+        {
+            date: '2026.03',
+            title: 'Prompt Engineering 的生命周期：哪些会消亡，哪些会留下',
+            tags: ['工程演进', '技术判断'],
+            url: 'tools/blog/posts/prompt-engineering-lifecycle.html',
+            summary: '补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。'
+        },
     ];
 
     (function renderWriting() {
         const root = document.getElementById('writingArchive');
         if (!root || !blogPosts.length) return;
-        root.innerHTML = blogPosts.map(p => `
+        root.innerHTML = blogPosts.slice(0, 3).map(p => `
             <a class="writing-post-row" href="${p.url}" target="_blank" aria-label="${p.title}">
                 <span class="writing-post-date">${p.date}</span>
                 <div class="writing-post-content">

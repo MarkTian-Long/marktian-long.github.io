@@ -98,6 +98,47 @@ background: rgba(255, 255, 255, 0.04);
 | `.reveal` + `.visible` | 滚动入场动画 |
 | `.grad-text` | 渐变文字 |
 | `.container` | 内容最大宽度容器 |
+| `.prediction-item` + `.expanded` | 观点折叠卡片（见下方） |
+| `.expand-btn-link` | 支撑材料链接/按钮（a 或 button 均可） |
+
+### 观点折叠组件（`.prediction-item`）
+
+「我的观点」区块使用折叠交互，默认收起只展示标题，点击展开详情。
+
+**HTML 结构：**
+
+```html
+<div class="prediction-item" onclick="togglePrediction(this)">
+    <!-- 始终可见的标题行 -->
+    <div class="prediction-header">
+        <span class="prediction-lead">核心判断一句话（≤30字）</span>
+        <div class="prediction-meta">
+            <span class="prediction-date">2026.03</span>
+            <span class="prediction-label">标签名</span>
+            <span class="prediction-toggle">▾</span>
+        </div>
+    </div>
+    <!-- 折叠详情体（默认 max-height:0） -->
+    <div class="prediction-body">
+        <div class="prediction-body-inner">
+            <p class="prediction-text">完整论述...</p>
+            <!-- 可选：支撑材料 -->
+            <div class="prediction-expand">
+                <a class="expand-btn-link" href="..." target="_blank"
+                   onclick="event.stopPropagation()">📝 思考碎片：标题 →</a>
+                <button class="expand-btn-link"
+                        onclick="event.stopPropagation();openTool('id')">🛠 工具：名称 →</button>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+**规则：**
+- `togglePrediction(this)` 挂在最外层容器，切换 `.expanded` class
+- 所有内部可点击元素（链接、按钮）必须加 `event.stopPropagation()` 阻止冒泡
+- 支撑材料格式：思考碎片 `📝 思考碎片：标题 →`，工具 `🛠 工具：名称 →`
+- 没有合适资源时无需补支撑材料，留空即可
 
 ---
 

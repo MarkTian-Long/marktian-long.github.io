@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   Agent 现在面临的三大工程问题
+tags:    [Agent, 工程演进]
+slug:    agent-three-problems
+summary: Agent 当前的瓶颈不在智能，而在工程：可靠性、成本和可控性，这三个问题决定了 Agent 的落地质量。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent 现在面临的三大工程问题 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper { max-width: var(--max-width); margin: 0 auto; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date { font-size: 13px; color: var(--text-muted); }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            margin: 16px 0;
+        }
+        .problem-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+        .problem-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .problem-body { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+        .problem-body ul { padding-left: 16px; margin: 8px 0 0; }
+        .problem-body li { margin-bottom: 5px; }
+        .stat-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 20px 0;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .stat-item { text-align: center; }
+        .stat-num {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat-label { font-size: 11px; color: var(--text-muted); }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.04</span>
+            <span class="tag">Agent</span>
+            <span class="tag">工程演进</span>
+        </div>
+        <h1 class="post-title">Agent 现在面临的三大工程问题</h1>
+        <p class="post-summary">Agent 当前的瓶颈不在智能，而在工程：可靠性、成本和可控性，这三个问题决定了 Agent 的落地质量。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            根据 LangChain 2026 年的调查，57% 的受访者已经有 Agent 在生产环境运行，但 32% 仍然把"质量"列为进入生产的最大障碍。Agent 能做事，但 <strong>doing it reliably 还是硬题</strong>。
+        </p>
+
+        <div class="stat-bar">
+            <div class="stat-item">
+                <div class="stat-num">57%</div>
+                <div class="stat-label">已有 Agent 在生产环境</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">32%</div>
+                <div class="stat-label">仍把"质量"列为最大障碍</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-label">核心工程问题</div>
+            </div>
+        </div>
+
+        <p>这三个问题正是推动 Harness Engineering 出现的根本原因——它们无法靠"换一个更强的模型"来解决。</p>
+
+        <div class="problem-card">
+            <div class="problem-num">问题 01</div>
+            <div class="problem-name">可靠性</div>
+            <div class="problem-body">
+                长链条执行很容易在任何一步失败，而且失败之后缺乏好的恢复机制：
+                <ul>
+                    <li>第 1 步对，第 2 步错 → 整个任务失败</li>
+                    <li>工具调用返回意外格式 → 后续步骤崩溃</li>
+                    <li>网络超时 → 某个步骤卡住，整个链路挂起</li>
+                </ul>
+                <br>
+                问题的本质不是单步的模型能力，而是系统没有好的错误恢复机制。模型越强，单步成功率越高，但系统级的容错（网络超时、API 故障、权限错误）无法通过模型强度解决。
+            </div>
+        </div>
+
+        <div class="problem-card">
+            <div class="problem-num">问题 02</div>
+            <div class="problem-name">成本</div>
+            <div class="problem-body">
+                多步骤执行 = 多次模型调用 = 费用高，而且这个等式不会因为模型变强而改变：
+                <ul>
+                    <li>10 步任务 = 至少 10 次 LLM 调用</li>
+                    <li>用强模型（Claude Opus）→ 成本很高</li>
+                    <li>用便宜模型（Claude Haiku）→ 某些步骤失败率太高</li>
+                </ul>
+                <br>
+                真正的解法是智能路由：在整个任务链里，哪些步骤需要强模型？哪些步骤用便宜模型就够？这需要系统级的优化，不是单点的模型选择。
+            </div>
+        </div>
+
+        <div class="problem-card">
+            <div class="problem-num">问题 03</div>
+            <div class="problem-name">可控性</div>
+            <div class="problem-body">
+                Agent 自主决策，但自主不等于安全：
+                <ul>
+                    <li>Agent 决定"转账 100 万元" → 需要人工审批，不能自动执行</li>
+                    <li>Agent 决定"删除用户所有数据" → 不可逆操作，必须确认</li>
+                    <li>Agent 的决策过程是黑箱 → 不知道为什么选择了行动 X</li>
+                </ul>
+                <br>
+                更强的模型反而可能更自主，更难控制。可控性问题是治理问题，永远无法通过模型能力解决。
+            </div>
+        </div>
+
+        <h2>三个问题都指向同一个方向</h2>
+        <p>
+            这三个问题有一个共同特征：它们都是系统级问题，而不是模型级问题。解决可靠性需要错误恢复机制和检查点；解决成本需要智能路由和模型选择策略；解决可控性需要人工介入节点和审批工作流。
+        </p>
+        <p>
+            这就是 Harness Engineering 被创造出来的原因：<strong>Agent 能力强 ≠ 系统质量高。</strong>即使是最强的 Agent，如果 Harness 设计差，生产环境依然不稳定。
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的启示：</strong>评估一个 Agent 产品，不要只看它能做什么，要看它的 Harness 设计——失败了怎么恢复？高风险操作有没有人工节点？成本有没有优化路径？这三个问题的答案，决定了产品是 demo 还是生产系统。
+        </div>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

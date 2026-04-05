@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+date:    2026.03
+title:   微调的演进：哪些场景还值得做，哪些已被替代
+tags:    [技术判断, 架构设计]
+slug:    finetuning-evolution
+summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>微调的演进 — 刘洋的思考碎片</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <style>
+        :root {
+            --bg: #0d1224;
+            --bg-card: #131929;
+            --bg-subtle: #1a2235;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8892a4;
+            --text-muted: #5a6478;
+            --accent: #4f8fff;
+            --accent-soft: rgba(79,143,255,0.12);
+            --tag-bg: rgba(79,143,255,0.15);
+            --tag-text: #7ab3ff;
+            --code-bg: #0a0f1e;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius: 10px;
+            --max-width: 720px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.75;
+            padding: 40px 20px 80px;
+        }
+        .wrapper { max-width: var(--max-width); margin: 0 auto; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 36px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .post-header { margin-bottom: 36px; }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .post-date { font-size: 13px; color: var(--text-muted); }
+        .tag {
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+        }
+        .post-title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+        .post-summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+        .post-body h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 32px 0 12px;
+        }
+        .post-body h2:first-child { margin-top: 0; }
+        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 8px; }
+        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .callout {
+            background: var(--accent-soft);
+            border: 1px solid rgba(79,143,255,0.2);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--accent); }
+        .timeline {
+            margin: 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .tl-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+        }
+        .tl-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+        .tl-item:last-child { border-radius: 0 0 var(--radius) var(--radius); border-top: none; }
+        .tl-item + .tl-item { border-top: none; }
+        .tl-period {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .tl-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        @media (max-width: 560px) { .three-col { grid-template-columns: 1fr; } }
+        .col-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+        }
+        .col-card .col-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .col-card p { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+        .footer-nav {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+
+    <header class="post-header">
+        <div class="post-meta">
+            <span class="post-date">2026.03</span>
+            <span class="tag">技术判断</span>
+            <span class="tag">架构设计</span>
+        </div>
+        <h1 class="post-title">微调的演进：哪些场景还值得做，哪些已被替代</h1>
+        <p class="post-summary">能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+        <h2>核心判断</h2>
+        <p>
+            微调（Fine-tuning）正在经历分化。不是整体衰落，而是其中一类在快速萎缩，另一类依然必要。区分这两类，决定了你在技术选型时是否会做出正确的判断。
+        </p>
+
+        <h2>正在消亡的部分：能力补救类微调</h2>
+        <p>
+            2023-2024 年微调最常见的用途是"让模型学会某个特定能力"：
+        </p>
+        <ul>
+            <li>"让模型学会遵循指令" — 指令微调现已内置进所有主流基础模型</li>
+            <li>"让模型拒绝有害请求" — 宪法 AI 等对齐技术已硬编码进基模</li>
+            <li>"让模型学会某种写作风格" — 少样本学习（in-context learning）能做到，成本更低</li>
+        </ul>
+        <p>
+            这些微调的存在理由是"模型原本做不到"，但 2025-2026 年的强基模已经在训练中学会了这些模式。微调它们变成了冗余——而且相比之下，RAG 和 Few-shot 成本更低、更灵活、更易更新。
+        </p>
+
+        <div class="callout">
+            <strong>被什么替代：</strong>少样本学习（上下文中放示例）→ 成本低、灵活；RAG（检索相关示例）→ 动态、可更新。这两种方式在大多数"能力扩展"场景里已经能替代微调。
+        </div>
+
+        <h2>永不消亡的部分：工程驱动类微调</h2>
+        <p>
+            这类微调解决的不是"模型能力"而是"工程需求"，基模升级无法让它消失：
+        </p>
+
+        <div class="three-col">
+            <div class="col-card">
+                <div class="col-title">成本优化</div>
+                <p>用强模型的知识蒸馏出小模型，性能接近但推理成本/延迟大幅降低。高频场景永远有这个需求。</p>
+            </div>
+            <div class="col-card">
+                <div class="col-title">延迟优化</div>
+                <p>量化、剪枝等技术压缩模型，保证推理速度。ToC 产品的延迟要求永远无法被"换更强的模型"解决。</p>
+            </div>
+            <div class="col-card">
+                <div class="col-title">可控性微调</div>
+                <p>让模型以特定方式行动，而不是让模型更聪明。偏好学习（RLHF）解决的是风格和行为约束，与模型能力正交。</p>
+            </div>
+        </div>
+
+        <h2>微调 vs RAG：该怎么选</h2>
+        <p>
+            这是当前最常见的技术选型问题。简单的判断框架：
+        </p>
+        <ul>
+            <li><strong>知识稳定、数据量少、需要改变行为模式</strong> → 考虑微调（但先问：RAG 能不能做到？）</li>
+            <li><strong>知识快速变化、数据量大、需要溯源</strong> → RAG 更合适</li>
+            <li><strong>想扩展模型某个能力</strong> → 先试 Few-shot，再试 RAG，最后才考虑微调</li>
+        </ul>
+        <p>
+            趋势很明确：<strong>RAG 在赢</strong>。因为现在知识变化快、数据多、需要追踪信息来源。微调的假设（"知识是稳定的"）越来越不符合现实。
+        </p>
+
+        <h2>LoRA 让部分微调重新可行</h2>
+        <p>
+            低秩适应（LoRA）的出现改变了微调的成本结构：不需要微调整个模型，只需训练额外的低秩矩阵，成本显著降低。这让一些此前因成本太高而放弃微调的场景重新变得可行——比如为不同客户快速适配不同风格的模型，或者为不同领域快速构建专用模型。
+        </p>
+
+        <div class="callout">
+            <strong>对 AI PM 的判断框架：</strong>看到"微调"这个词，先问两个问题：(1) 这是在补救能力缺陷，还是在优化工程指标？(2) RAG + Few-shot 能不能达到相同效果？只有两个问题都给出否定答案，微调才是真正必要的。
+        </div>
+    </div>
+
+    <nav class="footer-nav">
+        <a href="../index.html">← 返回列表</a>
+    </nav>
+</div>
+</body>
+</html>

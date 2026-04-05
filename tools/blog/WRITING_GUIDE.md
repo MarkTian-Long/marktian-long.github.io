@@ -58,12 +58,36 @@ summary: 1-2 句，概括核心观点，用于列表页展示
 ## 新增文章操作流程
 
 1. 在 `tools/blog/posts/` 下新建 HTML 文件，参照现有文章的模板
-2. 在 `tools/blog/index.html` 的 `posts` 数组里加一行：
+2. 在 `tools/blog/index.html` 的 `posts` 数组里加一行（按日期降序插入）：
    ```javascript
    { date: '2026.MM', title: '文章标题', tags: ['标签'], url: 'posts/xxx.html', summary: '摘要' }
    ```
-3. 在主页 `index.html` 的 `blogPosts` 数组里加同一行（保持同步）
-4. `git add tools/blog/posts/xxx.html`（新文件必须显式 add，否则 GitHub Pages 404）
+3. 在主页 `index.html` 的 `blogPosts` 数组里加同一行（保持同步，同样按日期降序）
+4. 主页 `renderWriting()` 只展示 `blogPosts.slice(0, 3)`，新文章若排在前3则自动上首页
+5. `git add tools/blog/posts/xxx.html`（新文件必须显式 add，否则 GitHub Pages 404）
+
+---
+
+## 观点区支撑材料规范
+
+主页「我的观点」区块（`prediction-item`）可关联支撑材料，格式如下：
+
+```html
+<div class="prediction-expand">
+    <!-- 思考碎片文章 -->
+    <a class="expand-btn-link" href="tools/blog/posts/xxx.html" target="_blank"
+       onclick="event.stopPropagation()">📝 思考碎片：文章标题 →</a>
+    <!-- 站内工具 -->
+    <button class="expand-btn-link" onclick="event.stopPropagation();openTool('tool-id')">🛠 工具：工具名称 →</button>
+</div>
+```
+
+**规则：**
+- 思考碎片链接用 `<a>` + `expand-btn-link`，前缀 `📝 思考碎片：`
+- 站内工具用 `<button>` + `expand-btn-link` + `openTool()`，前缀 `🛠 工具：`
+- 多个支撑材料横排（`.prediction-expand` 已设 `display:flex; gap:8px`）
+- 内部所有交互元素必须加 `onclick="event.stopPropagation()"` 阻止触发父级折叠
+- 没有合适资源的观点无需强行补充支撑材料，留空即可
 
 ---
 
