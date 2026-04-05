@@ -163,7 +163,7 @@ function render() {
         <div class="year-group">
             <div class="year-label">${year}</div>
             ${byYear[year].map(p => `
-                <a class="post-row" href="${p.url}" target="_blank">
+                <a class="post-row" href="${p.url}" target="_blank" aria-label="${p.title}">
                     <span class="post-date">${p.date}</span>
                     <div class="post-content">
                         <div class="post-title">${p.title}</div>
