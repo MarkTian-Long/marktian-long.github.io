@@ -118,10 +118,17 @@ GitHub Pages 部署后无此问题。
 
 ## 主题切换
 
-博客列表页支持浅色/深色双主题：
+博客支持浅色/深色双主题，列表页和文章页均已支持：
+
+**列表页（`index.html`）：**
 - 初始化：优先读 `localStorage` 的 `blog_theme` 值 → 无则跟随 `prefers-color-scheme`
-- 切换按钮在左侧导航栏底部
-- 文章页（`posts/*.html`）暂不支持主题切换，固定为深色
+- 切换按钮在左侧导航栏底部（月亮/太阳图标）
+- `blog_theme` 取值：`'dark'` = 深色，`''`（空字符串）= 跟随系统浅色
+
+**文章页（`posts/*.html`）：**
+- 自动同步列表页的主题设置（读取同一 `localStorage` key）
+- 无独立切换按钮，在列表页切换后再进入文章页生效
+- 默认值：未设置时显示浅色（`data-theme="light"`）
 
 ---
 
@@ -151,5 +158,78 @@ GitHub Pages 部署后无此问题。
 ## 样式规范
 
 - CSS 变量完全自包含于文章 HTML 的 `<style>` 标签，不依赖外部 `style.css`
-- 配色方案参考 `tools/blog/posts/tech-obsolescence.html` 的 `:root` 定义
 - 文章正文用语义 HTML（`<h2>`、`<p>`、`<ul>`、`<code>`），无需 Markdown 解析库
+- 字体：正文 `Source Sans 3`，标题 `Libre Baskerville`（衬线）
+- 品牌色：clay 橙（`--clay`），深色 `#d97757`，浅色 `#c96442`
+
+### CSS 变量命名规范（文章页标准模板）
+
+```css
+/* 深色（默认） */
+:root {
+    --bg:          #080c18;
+    --bg-card:     rgba(255,255,255,0.04);
+    --bg-subtle:   rgba(255,255,255,0.07);
+    --border:      rgba(255,255,255,0.08);
+    --text-1:      #f0f4ff;       /* 主文本 */
+    --text-2:      #8a95b5;       /* 次要文本、callout 正文 */
+    --text-3:      #4a5270;       /* 辅助文本、日期、小标注 */
+    --accent:      #4f8fff;       /* 蓝色，用于链接 focus（保留） */
+    --clay:        #d97757;       /* 品牌色：标签、callout strong、hover */
+    --clay-soft:   rgba(217,119,87,0.12);
+    --tag-bg:      rgba(217,119,87,0.12);
+    --tag-text:    #d97757;
+    --code-bg:     #0a0f1e;
+    --font:        'Source Sans 3', -apple-system, sans-serif;
+    --font-serif:  'Libre Baskerville', Georgia, serif;
+    --radius:      10px;
+    --max-width:   720px;
+}
+/* 浅色主题 */
+[data-theme="light"] {
+    --bg:          #f5f4ed;
+    --bg-card:     #faf9f5;
+    --bg-subtle:   #f0eee6;
+    --border:      #e8e6dc;
+    --text-1:      #141413;
+    --text-2:      #5e5d59;
+    --text-3:      #87867f;
+    --accent:      #2563eb;
+    --clay:        #c96442;
+    --clay-soft:   rgba(201,100,66,0.10);
+    --tag-bg:      rgba(201,100,66,0.10);
+    --tag-text:    #c96442;
+    --code-bg:     #ece9e0;
+}
+```
+
+### 关键组件样式规则
+
+| 组件 | 规则 |
+|------|------|
+| `.post-title` | `font-family: var(--font-serif)` |
+| `.post-summary` | `border-left: 3px solid var(--clay)` |
+| `.tag` | `background: var(--tag-bg); color: var(--tag-text)` |
+| `.callout` | `background: var(--clay-soft); border: clay 色系` |
+| `.callout strong` | `color: var(--clay)` |
+| `.back-link:hover` | `color: var(--clay)` |
+| `.footer-nav a:hover` | `color: var(--clay)` |
+
+### Google Fonts 引入（每篇文章 `<head>` 必须包含）
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+```
+
+### 主题同步 JS（每篇文章 `</body>` 前必须包含）
+
+```html
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
+```

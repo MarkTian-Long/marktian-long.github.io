@@ -276,14 +276,58 @@ refactor: 迁移文件到 assets/ 目录结构
 - **商业**：市场分析、竞争格局、商业模式、行业趋势
 - **生活**：个人成长、工作方法、读书笔记
 
-### 博客列表页双主题规范
-- 列表页 CSS **自包含**（不依赖 style.css 变量名）
-- 同时定义 `:root`（浅色）和 `[data-theme="dark"]`（深色）两套变量
-- 主题状态持久化到 `localStorage` key：`blog_theme`
-- 初始化逻辑：先读 localStorage → 无则读 `prefers-color-scheme`
+### 博客双主题规范
+- 列表页和文章页 CSS 均**自包含**（不依赖 style.css 变量名）
+- **列表页**：`:root`（浅色默认）+ `[data-theme="dark"]`（深色覆盖），切换按钮在左侧导航栏底部
+- **文章页**：`:root`（深色默认）+ `[data-theme="light"]`（浅色覆盖），自动同步列表页设置（无独立切换按钮）
+- 主题状态持久化到 `localStorage` key：`blog_theme`（`'dark'` = 深色，`''` = 跟随系统浅色）
+- 列表页初始化逻辑：先读 localStorage → 无则读 `prefers-color-scheme`
+- 文章页初始化逻辑：读取 `blog_theme`，`'dark'` 则深色，否则浅色
+- CSS 变量命名体系：`--text-1/2/3`、`--clay`、`--clay-soft`、`--font-serif`（详见 WRITING_GUIDE.md）
 
 ### 本地开发注意
 - `fetch` 在 `file://` 协议下因 CORS 失败，需用 HTTP server：`python -m http.server 8080`
+
+---
+
+## 九、Skill 管理规范
+
+### 目录结构
+
+```
+.claude/skills/
+├── <name>/
+│   └── SKILL.md        # 必须：含 frontmatter 的 skill 定义
+└── ...
+skills-lock.json        # 系统级 skill 哈希锁（不要手动编辑）
+```
+
+### SKILL.md frontmatter 格式
+
+```markdown
+---
+name: skill-name
+description: 一句话描述，会显示在 Skill 列表里，要准确反映触发场景
+---
+
+# Skill 标题
+
+...
+```
+
+### 关键规则
+
+1. **目录结构固定**：`<name>/SKILL.md`，不允许根目录裸 `.md` 文件
+2. **frontmatter 必须完整**：缺少 `name` 或 `description` 时 skill 可能无法被正确识别
+3. **路径兼容 Windows**：shell 命令中禁止 `/tmp`，统一用项目内路径（如 `tools/.design-tmp/`）
+4. **系统级 skill 不手动改**：`adapt/animate/audit` 等 17 个 impeccable skill 由 `skills-lock.json` 管理
+5. **skill 与规范同步**：新增规范后，检查相关 skill 是否覆盖（反之亦然）；变更时同步更新 CLAUDE.md 的「Skill 管理」表格
+
+### 新增项目级 Skill 流程
+
+1. 创建 `.claude/skills/<name>/SKILL.md`，写 frontmatter + 内容
+2. 在 CLAUDE.md「Skill 选择树」中添加触发场景行
+3. 在 CLAUDE.md「Skill 管理」表格中添加一行（含最近更新日期）
 
 ---
 

@@ -11,46 +11,67 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>微调的演进 — 刘洋的思考碎片</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%234f8fff'>✍</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bg: #0d1224;
-            --bg-card: #131929;
-            --bg-subtle: #1a2235;
-            --border: rgba(255,255,255,0.08);
-            --text-primary: #e8eaf0;
-            --text-secondary: #8892a4;
-            --text-muted: #5a6478;
-            --accent: #4f8fff;
-            --accent-soft: rgba(79,143,255,0.12);
-            --tag-bg: rgba(79,143,255,0.15);
-            --tag-text: #7ab3ff;
-            --code-bg: #0a0f1e;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --radius: 10px;
-            --max-width: 720px;
+            --bg:          #080c18;
+            --bg-card:     rgba(255,255,255,0.04);
+            --bg-subtle:   rgba(255,255,255,0.07);
+            --border:      rgba(255,255,255,0.08);
+            --text-1:      #f0f4ff;
+            --text-2:      #8a95b5;
+            --text-3:      #4a5270;
+            --accent:      #4f8fff;
+            --clay:        #d97757;
+            --clay-soft:   rgba(217,119,87,0.12);
+            --tag-bg:      rgba(217,119,87,0.12);
+            --tag-text:    #d97757;
+            --code-bg:     #0a0f1e;
+            --font:        'Source Sans 3', -apple-system, sans-serif;
+            --font-serif:  'Libre Baskerville', Georgia, serif;
+            --radius:      10px;
+            --max-width:   720px;
+        }
+        [data-theme="light"] {
+            --bg:          #f5f4ed;
+            --bg-card:     #faf9f5;
+            --bg-subtle:   #f0eee6;
+            --border:      #e8e6dc;
+            --text-1:      #141413;
+            --text-2:      #5e5d59;
+            --text-3:      #87867f;
+            --accent:      #2563eb;
+            --clay:        #c96442;
+            --clay-soft:   rgba(201,100,66,0.10);
+            --tag-bg:      rgba(201,100,66,0.10);
+            --tag-text:    #c96442;
+            --code-bg:     #ece9e0;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background: var(--bg);
-            color: var(--text-primary);
+            color: var(--text-1);
             font-family: var(--font);
             font-size: 15px;
             line-height: 1.75;
             padding: 40px 20px 80px;
+            transition: background 0.2s, color 0.2s;
         }
         .wrapper { max-width: var(--max-width); margin: 0 auto; }
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            color: var(--text-secondary);
+            color: var(--text-2);
             text-decoration: none;
             font-size: 13px;
             margin-bottom: 36px;
             transition: color 0.2s;
         }
-        .back-link:hover { color: var(--accent); }
+        .back-link:hover { color: var(--clay); }
         .post-header { margin-bottom: 36px; }
         .post-meta {
             display: flex;
@@ -59,7 +80,7 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             margin-bottom: 14px;
             flex-wrap: wrap;
         }
-        .post-date { font-size: 13px; color: var(--text-muted); }
+        .post-date { font-size: 13px; color: var(--text-3); }
         .tag {
             font-size: 11px;
             padding: 3px 9px;
@@ -69,41 +90,42 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             font-weight: 500;
         }
         .post-title {
+            font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
             line-height: 1.35;
-            color: var(--text-primary);
+            color: var(--text-1);
             margin-bottom: 14px;
         }
         .post-summary {
             font-size: 15px;
-            color: var(--text-secondary);
+            color: var(--text-2);
             line-height: 1.65;
             padding-left: 14px;
-            border-left: 3px solid var(--accent);
+            border-left: 3px solid var(--clay);
         }
         .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
         .post-body h2 {
             font-size: 17px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-1);
             margin: 32px 0 12px;
         }
         .post-body h2:first-child { margin-top: 0; }
-        .post-body p { margin-bottom: 16px; color: var(--text-primary); }
+        .post-body p { margin-bottom: 16px; color: var(--text-1); }
         .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
         .post-body li { margin-bottom: 8px; }
-        .post-body strong { color: var(--text-primary); font-weight: 600; }
+        .post-body strong { color: var(--text-1); font-weight: 600; }
         .callout {
-            background: var(--accent-soft);
-            border: 1px solid rgba(79,143,255,0.2);
+            background: var(--clay-soft);
+            border: 1px solid rgba(201,100,66,0.2);
             border-radius: var(--radius);
             padding: 16px 18px;
             margin: 24px 0;
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--text-2);
         }
-        .callout strong { color: var(--accent); }
+        .callout strong { color: var(--clay); }
         .timeline {
             margin: 24px 0;
             display: flex;
@@ -121,11 +143,11 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
         .tl-period {
             font-size: 11px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text-3);
             letter-spacing: 0.05em;
             margin-bottom: 6px;
         }
-        .tl-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .tl-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
         .three-col {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -145,14 +167,14 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             color: var(--accent);
             margin-bottom: 8px;
         }
-        .col-card p { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
+        .col-card p { font-size: 13px; color: var(--text-2); margin: 0; line-height: 1.6; }
         .footer-nav {
             margin-top: 56px;
             padding-top: 24px;
             border-top: 1px solid var(--border);
         }
         .footer-nav a {
-            color: var(--text-secondary);
+            color: var(--text-2);
             text-decoration: none;
             font-size: 13px;
             display: inline-flex;
@@ -160,7 +182,7 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             gap: 6px;
             transition: color 0.2s;
         }
-        .footer-nav a:hover { color: var(--accent); }
+        .footer-nav a:hover { color: var(--clay); }
     </style>
 </head>
 <body>
@@ -249,5 +271,11 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
         <a href="../index.html">← 返回列表</a>
     </nav>
 </div>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
 </body>
 </html>
