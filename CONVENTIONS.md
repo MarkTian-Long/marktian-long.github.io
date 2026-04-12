@@ -251,7 +251,43 @@ refactor: 迁移文件到 assets/ 目录结构
 
 ---
 
-## 七、待办：未来规范扩展
+## 七、博客内容规范
+
+### 数据文件
+- 博客元数据统一存放在 `tools/blog/data/posts-meta.json`（单一来源）
+- 主页和列表页都通过 `fetch` 读取，**不得**在 HTML 内联重复的文章数组
+- 新增文章只需在 `posts-meta.json` 头部追加条目，无需改动 HTML
+
+### posts-meta.json 字段规范
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| slug | string | 文件名不含 .html，唯一标识符，kebab-case |
+| date | string | 格式 `YYYY.MM` |
+| title | string | 完整标题 |
+| summary | string | 一句话摘要（用于搜索和主页展示） |
+| tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
+| category | string | 大分类：`技术` / `产品` / `商业` / `生活` |
+| url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
+
+### 分类原则
+- **技术**：架构设计、工程实现、技术选型、模型机制
+- **产品**：PRD 思路、PM 决策框架、用户研究、功能设计
+- **商业**：市场分析、竞争格局、商业模式、行业趋势
+- **生活**：个人成长、工作方法、读书笔记
+
+### 博客列表页双主题规范
+- 列表页 CSS **自包含**（不依赖 style.css 变量名）
+- 同时定义 `:root`（浅色）和 `[data-theme="dark"]`（深色）两套变量
+- 主题状态持久化到 `localStorage` key：`blog_theme`
+- 初始化逻辑：先读 localStorage → 无则读 `prefers-color-scheme`
+
+### 本地开发注意
+- `fetch` 在 `file://` 协议下因 CORS 失败，需用 HTTP server：`python -m http.server 8080`
+
+---
+
+## 八、待办：未来规范扩展
 
 - [ ] 响应式断点标准化（目前仅 768px 一个断点）
 - [ ] 图片资源优化规范（WebP 格式、尺寸限制）

@@ -418,80 +418,26 @@
     <script src="assets/js/interview.js"></script>
     <script>
     // ========== Writing Section ==========
-    const blogPosts = [
-        {
-            date: '2026.04',
-            title: '工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里',
-            tags: ['工程演进'],
-            url: 'tools/blog/posts/harness-engineering.html',
-            summary: 'Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移。'
-        },
-        {
-            date: '2026.04',
-            title: 'Agent 现在面临的三大工程问题',
-            tags: ['Agent', '工程演进'],
-            url: 'tools/blog/posts/agent-three-problems.html',
-            summary: 'Agent 当前的瓶颈不在智能，而在工程：可靠性、状态管理和人机协作边界，这三个问题决定了 Agent 的落地质量。'
-        },
-        {
-            date: '2026.04',
-            title: '2026 年 AI Agent 市场格局：开放 vs 封闭的博弈',
-            tags: ['市场格局'],
-            url: 'tools/blog/posts/market-landscape-2026.html',
-            summary: 'Anthropic 的策略转变揭示了平台战的底层逻辑：谁控制了 Harness 层，谁就控制了 Agent 生态的价值分配。'
-        },
-        {
-            date: '2026.03',
-            title: '技术消亡度框架：判断哪些 AI 技术值得长期投入',
-            tags: ['产品框架', '技术判断'],
-            url: 'tools/blog/posts/tech-obsolescence.html',
-            summary: '区分"补救缺陷型"和"编码知识型"，是判断技术投资价值的核心框架。'
-        },
-        {
-            date: '2026.03',
-            title: 'RAG 的演进：从"被动检索"到"主动信息系统"',
-            tags: ['技术判断', '架构设计'],
-            url: 'tools/blog/posts/rag-evolution.html',
-            summary: '现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。'
-        },
-        {
-            date: '2026.03',
-            title: 'Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑',
-            tags: ['工程演进', '产品框架'],
-            url: 'tools/blog/posts/skill-system-and-harness.html',
-            summary: 'Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。'
-        },
-        {
-            date: '2026.03',
-            title: '微调的演进：哪些场景还值得做，哪些已被替代',
-            tags: ['技术判断', '架构设计'],
-            url: 'tools/blog/posts/finetuning-evolution.html',
-            summary: '能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。'
-        },
-        {
-            date: '2026.03',
-            title: 'Prompt Engineering 的生命周期：哪些会消亡，哪些会留下',
-            tags: ['工程演进', '技术判断'],
-            url: 'tools/blog/posts/prompt-engineering-lifecycle.html',
-            summary: '补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。'
-        },
-    ];
-
-    (function renderWriting() {
+    (async function renderWriting() {
         const root = document.getElementById('writingArchive');
-        if (!root || !blogPosts.length) return;
-        root.innerHTML = blogPosts.slice(0, 3).map(p => `
-            <a class="writing-post-row" href="${p.url}" target="_blank" aria-label="${p.title}">
-                <span class="writing-post-date">${p.date}</span>
-                <div class="writing-post-content">
-                    <span class="writing-post-title">${p.title}</span>
-                    <span class="writing-post-summary">${p.summary}</span>
-                </div>
-                <div class="writing-post-tags">
-                    ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
-                </div>
-            </a>
-        `).join('');
+        if (!root) return;
+        try {
+            const data = await fetch('tools/blog/data/posts-meta.json').then(r => r.json());
+            root.innerHTML = data.posts.slice(0, 3).map(p => `
+                <a class="writing-post-row" href="tools/blog/${p.url}" target="_blank" aria-label="${p.title}">
+                    <span class="writing-post-date">${p.date}</span>
+                    <div class="writing-post-content">
+                        <span class="writing-post-title">${p.title}</span>
+                        <span class="writing-post-summary">${p.summary}</span>
+                    </div>
+                    <div class="writing-post-tags">
+                        ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
+                    </div>
+                </a>
+            `).join('');
+        } catch (e) {
+            root.innerHTML = '<p style="color:var(--text-muted,#87867f);font-size:14px;padding:20px 0">文章加载中，请稍后刷新。</p>';
+        }
     })();
     </script>
 

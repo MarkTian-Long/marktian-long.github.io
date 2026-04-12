@@ -59,6 +59,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 产品案例：`assets/js/main.js` → `casesData` 数组
 - AI 产品数据：`tools/ai-insights/data/products.json`
 - AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
+- 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
 
 ## 给 Claude 的工作指令
 - 修改代码前先读相关文件，不要靠猜

@@ -9,11 +9,12 @@
 每篇文章的 `<head>` 注释中必须包含以下元数据：
 
 ```
-date:    YYYY.MM（年月，精确到月即可）
-title:   简洁动词短语或判断句，不超过 20 字
-tags:    从固定标签库选择（见下方）
-slug:    kebab-case，对应 posts/xxx.html 文件名
-summary: 1-2 句，概括核心观点，用于列表页展示
+date:     YYYY.MM（年月，精确到月即可）
+title:    简洁动词短语或判断句，不超过 20 字
+tags:     从固定标签库选择（见下方）
+slug:     kebab-case，对应 posts/xxx.html 文件名
+summary:  1-2 句，概括核心观点，用于列表页展示
+category: 技术 | 产品 | 商业 | 生活（大分类，用于列表页分类导航）
 ```
 
 ### 固定标签库
@@ -27,6 +28,17 @@ summary: 1-2 句，概括核心观点，用于列表页展示
 | 市场格局 | 竞争态势、行业格局判断 |
 | 行业洞察 | 垂直行业的 AI 落地观察 |
 | 技术判断 | 对具体技术方向的判断与评估 |
+| 架构设计 | 系统架构、技术选型 |
+| Agent | Agent 设计、工作流、编排 |
+
+### 文章分类
+
+| 分类 | 适用方向 |
+|------|----------|
+| 技术 | 架构设计、工程实现、技术选型、模型机制 |
+| 产品 | PRD 思路、PM 决策框架、用户研究、功能设计 |
+| 商业 | 市场分析、竞争格局、商业模式、行业趋势 |
+| 生活 | 个人成长、工作方法、读书笔记 |
 
 ---
 
@@ -71,14 +83,45 @@ summary: 1-2 句，概括核心观点，用于列表页展示
 
 ## 新增文章操作流程
 
-1. 在 `tools/blog/posts/` 下新建 HTML 文件，参照现有文章的模板
-2. 在 `tools/blog/index.html` 的 `posts` 数组里加一行（按日期降序插入）：
-   ```javascript
-   { date: '2026.MM', title: '文章标题', tags: ['标签'], url: 'posts/xxx.html', summary: '摘要' }
+1. 在 `tools/blog/posts/` 下新建 HTML 文件（参照现有文章模板）
+2. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
+   ```json
+   {
+     "slug": "your-slug",
+     "date": "YYYY.MM",
+     "title": "...",
+     "summary": "...",
+     "tags": ["标签1"],
+     "category": "技术",
+     "url": "posts/your-slug.html"
+   }
    ```
-3. 在主页 `index.html` 的 `blogPosts` 数组里加同一行（保持同步，同样按日期降序）
-4. 主页 `renderWriting()` 只展示 `blogPosts.slice(0, 3)`，新文章若排在前3则自动上首页
-5. `git add tools/blog/posts/xxx.html`（新文件必须显式 add，否则 GitHub Pages 404）
+3. 主页和列表页自动从 JSON 读取，**无需改动任何 HTML 文件**
+4. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json`
+   （新文件必须显式 add，否则 GitHub Pages 404）
+
+---
+
+## 本地开发
+
+博客列表页通过 `fetch` 加载 `posts-meta.json`，在 `file://` 协议下会因 CORS 失败。
+本地验证需启动 HTTP server：
+
+```bash
+python -m http.server 8080
+# 然后访问 http://localhost:8080/tools/blog/
+```
+
+GitHub Pages 部署后无此问题。
+
+---
+
+## 主题切换
+
+博客列表页支持浅色/深色双主题：
+- 初始化：优先读 `localStorage` 的 `blog_theme` 值 → 无则跟随 `prefers-color-scheme`
+- 切换按钮在左侧导航栏底部
+- 文章页（`posts/*.html`）暂不支持主题切换，固定为深色
 
 ---
 
