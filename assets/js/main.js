@@ -49,11 +49,6 @@ const casesData = [
   {
     emoji: '📋',
     tag: 'AI 产品 · Prompt Engineering',
-    grad: 'linear-gradient(135deg, #4f8fff, #9b6dff)',
-    tagBg: 'rgba(79,143,255,0.12)',
-    tagColor: '#4f8fff',
-    tagBorder: 'rgba(79,143,255,0.25)',
-    accentColor: '#00e5a0',
     title: '股权激励 AI 对标数据库',
     desc: '某股权激励 SaaS 服务商。针对港交所/SEC招股书等非结构化PDF文档，主导Prompt Engineering方案设计，推动MVP上线并投入商用。',
     metrics: [
@@ -74,11 +69,6 @@ const casesData = [
   {
     emoji: '🔍',
     tag: 'RAG · 金融 AI 平台',
-    grad: 'linear-gradient(135deg, #9b6dff, #00d4ff)',
-    tagBg: 'rgba(155,109,255,0.12)',
-    tagColor: '#9b6dff',
-    tagBorder: 'rgba(155,109,255,0.25)',
-    accentColor: '#9b6dff',
     title: 'LLM 驱动：金融资讯研报 AI 平台',
     desc: '某头部金融科技公司。主导RAG架构设计，覆盖10+数据源实时接入、双层知识库、数据溯源分级标注；制定业务与技术双轨评估指标，建立 Bad Case 驱动的数据飞轮。',
     metrics: [
@@ -99,11 +89,6 @@ const casesData = [
   {
     emoji: '🛡️',
     tag: 'LLM · 金融风控',
-    grad: 'linear-gradient(135deg, #00d4ff, #00e5a0)',
-    tagBg: 'rgba(0,212,255,0.12)',
-    tagColor: '#00d4ff',
-    tagBorder: 'rgba(0,212,255,0.25)',
-    accentColor: '#00d4ff',
     title: '反洗钱系统 LLM 审批助手',
     desc: '某头部金融科技公司。设计"AI生成参考意见 + 人工最终审批"协作模式，在提升尽调效率的同时守住合规底线，推动私有化部署落地。',
     metrics: [
@@ -125,38 +110,35 @@ const casesData = [
 function renderCases() {
   const grid = document.getElementById('casesGrid');
   if (!grid) return;
+  grid.className = 'cases-list';
   grid.innerHTML = casesData.map((c, i) => `
-    <div class="case-card glass-card reveal" style="animation-delay:${i * 0.1}s; --grad: ${c.grad}; --tag-bg: ${c.tagBg}; --tag-color: ${c.tagColor}; --tag-border: ${c.tagBorder}; --accent-color: ${c.accentColor}">
-      <div class="case-emoji">${c.emoji}</div>
-      <span class="case-tag">${c.tag}</span>
-      <h3 class="case-title">${c.title}</h3>
-      <p class="case-desc">${c.desc}</p>
-      <div class="case-metrics">
-        ${c.metrics.map(m => `
-          <div class="case-metric">
-            <span class="metric-num">${m.num}</span>
-            <span class="metric-label">${m.label}</span>
+    <div class="case-row reveal" style="animation-delay:${i * 0.1}s">
+      <span class="case-row-icon">${c.emoji}</span>
+      <div class="case-row-body">
+        <span class="case-row-tag">${c.tag}</span>
+        <h3 class="case-row-title">${c.title}</h3>
+        <p class="case-row-desc">${c.desc}</p>
+        <div class="case-row-metrics">${c.metrics.map(m => `${m.num} ${m.label}`).join(' · ')}</div>
+        <button class="case-detail-btn" onclick="toggleCaseDetail(this)">
+          查看设计详情 <i class="btn-arrow">▾</i>
+        </button>
+        <div class="case-detail-body">
+          <div class="case-detail-inner">
+            <div class="detail-section">
+              <div class="detail-section-title">项目背景</div>
+              <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;">${c.detail.background}</p>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">核心设计决策</div>
+              <ul class="detail-points">
+                ${c.detail.decisions.map(d => `<li>${d}</li>`).join('')}
+              </ul>
+            </div>
+            ${c.detail.demoLink ? `<a class="detail-demo-link" href="#tools" onclick="setTimeout(()=>switchTool('esop'),100)">▶ 立即体验 ESOP 提取 Demo</a>` : ''}
           </div>
-        `).join('')}
-      </div>
-      <button class="case-detail-btn" onclick="toggleCaseDetail(this)">
-        查看设计详情 <i class="btn-arrow">▾</i>
-      </button>
-      <div class="case-detail-body">
-        <div class="case-detail-inner">
-          <div class="detail-section">
-            <div class="detail-section-title">项目背景</div>
-            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;">${c.detail.background}</p>
-          </div>
-          <div class="detail-section">
-            <div class="detail-section-title">核心设计决策</div>
-            <ul class="detail-points">
-              ${c.detail.decisions.map(d => `<li>${d}</li>`).join('')}
-            </ul>
-          </div>
-          ${c.detail.demoLink ? `<a class="detail-demo-link" href="#tools" onclick="setTimeout(()=>switchTool('esop'),100)">▶ 立即体验 ESOP 提取 Demo</a>` : ''}
         </div>
       </div>
+      <span class="case-row-arrow">↗</span>
     </div>
   `).join('');
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
