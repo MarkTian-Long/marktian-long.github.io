@@ -4,22 +4,29 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mark Liu · AI Product Manager</title>
+    <title>Leo Liu · AI / Product / Builder</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='bold' fill='url(%23g)'>L</text></svg>" />
-    <meta name="description" content="刘洋 - AI产品经理，3年+经验，主导 AI 产品从 POC 到商业化落地，懂技术、懂业务。" />
-    <meta name="keywords" content="AI产品经理,刘洋,RAG,Prompt Engineering,AI产品,求职" />
-    <meta property="og:title" content="Mark Liu · AI Product Manager" />
-    <meta property="og:description" content="懂技术的 AI 产品经理，计算机背景，主导 AI 产品从 0 到商业化落地。" />
+    <meta name="description" content="Leo Liu — AI 产品与工程实践，写关于 AI 落地的独立观察。" />
+    <meta name="keywords" content="AI产品,Leo Liu,RAG,Agent,AI落地,工程实践" />
+    <meta property="og:title" content="Leo Liu · AI / Product / Builder" />
+    <meta property="og:description" content="AI 产品与工程实践，写关于 AI 落地的独立观察。" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://marktian-long.github.io" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Mark Liu · AI Product Manager" />
-    <meta name="twitter:description" content="懂技术的 AI 产品经理，计算机背景，主导 AI 产品从 0 到商业化落地。" />
+    <meta name="twitter:title" content="Leo Liu · AI / Product / Builder" />
+    <meta name="twitter:description" content="AI 产品与工程实践，写关于 AI 落地的独立观察。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/style-light.css" />
+  <script>
+    // 主题初始化（防闪烁，在 CSS 加载前执行）
+    (function() {
+      const saved = localStorage.getItem('qiuzhi_theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
 </head>
 
 <body>
@@ -28,17 +35,18 @@
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="#hero" class="nav-logo">
-                <span class="logo-text">刘洋</span>
+                <span class="logo-text">Leo</span>
                 <span class="logo-dot">·</span>
-                <span class="logo-sub">AI PM</span>
+                <span class="logo-sub">AI · Product · Builder</span>
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#about" class="nav-link">我的判断</a></li>
-                <li><a href="#writing" class="nav-link">写作</a></li>
-                <li><a href="#tools" class="nav-link">AI 工具箱</a></li>
-                <li><a href="#cases" class="nav-link">产品案例</a></li>
-                <li><a href="#contact" class="nav-link">联系我</a></li>
+                <li><a href="#writing" class="nav-link">文章</a></li>
+                <li><a href="#tools" class="nav-link">作品</a></li>
+                <li><a href="#cases" class="nav-link">案例</a></li>
+                <li><a href="#contact" class="nav-link">联系</a></li>
             </ul>
+            <button class="theme-toggle" id="themeToggle" aria-label="切换主题">☀️</button>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
                 <span></span><span></span><span></span>
             </button>
@@ -52,26 +60,22 @@
             <div class="hero-glow glow-1"></div>
             <div class="hero-glow glow-2"></div>
             <div class="hero-glow glow-3"></div>
+            <div class="hero-deco-char" aria-hidden="true">L</div>
         </div>
         <div class="hero-content">
-            <h1 class="hero-title reveal delay-1">
-                你好，我是<span class="grad-text"> 刘洋</span>
+            <p class="hero-eyebrow reveal delay-1">AI · Product · Builder</p>
+            <h1 class="hero-title reveal delay-2">
+                你好，我是<span class="grad-text"> Leo</span>
             </h1>
-            <p class="hero-sub reveal delay-2">
-                AI 产品经理 · 计算机背景 · 3年+ LLM 产品经验<br />
-                擅长定义 AI 介入边界、RAG 架构设计与数据飞轮迭代
+            <p class="hero-sub reveal delay-3">
+                关注 AI 从实验室到业务落地的全过程——技术演变、产品决策、商业逻辑，从多角度拆解，把判断写下来。
             </p>
-            <p class="hero-value reveal delay-3">让 AI 能力精准匹配业务目标——从场景定义到可量化落地</p>
-            <div class="hero-tags reveal delay-4">
-                <span class="tag">Prompt Engineering</span>
-                <span class="tag">RAG 架构</span>
-                <span class="tag">LLM 评估体系</span>
-                <span class="tag">Agent 产品设计</span>
-                <span class="tag">数据飞轮闭环</span>
-            </div>
-            <div class="hero-actions reveal delay-4">
-                <a href="#tools" class="btn btn-primary">体验 AI 工具 →</a>
-                <a href="#cases" class="btn btn-ghost">查看案例</a>
+            <p class="hero-manifesto reveal delay-3">
+                不写最优解，只写我真实认为的。
+            </p>
+            <div class="hero-actions reveal delay-3">
+                <a href="#writing" class="btn btn-primary">最近文章 →</a>
+                <a href="#cases" class="btn btn-ghost">产品案例</a>
             </div>
         </div>
         <div class="hero-scroll-hint">
@@ -87,209 +91,177 @@
             <div class="section-header reveal">
                 <span class="section-label">Judgment</span>
                 <h2 class="section-title">我的判断</h2>
-                <p class="section-desc">对 AI 落地现状的独立判断，持续更新</p>
+                <p class="section-desc">对 AI 落地现状的独立观察，持续更新</p>
             </div>
 
-            <!-- AI 产业判断 -->
-            <div class="ai-judgment reveal" id="aiJudgment">
-                <div class="judgment-header">
-                    <div class="judgment-title-row">
-                        <span class="judgment-icon">💡</span>
-                        <span class="judgment-title">对 AI 落地的判断</span>
-                        <span class="judgment-meta">2026.03 · 持续更新</span>
+            <!-- 观点列表 -->
+            <div class="view-list reveal">
+
+                <div class="view-item" onclick="toggleView(this)">
+                    <div class="view-head">
+                        <span class="view-num">01</span>
+                        <span class="view-lead">全自动无监督的 Agent 在 2027 年前不会大规模落地</span>
+                        <span class="view-tag">Agent 落地</span>
+                        <span class="view-date">2026.03</span>
+                        <span class="view-toggle">展开</span>
+                    </div>
+                    <div class="view-body">
+                        <p>B 端：真正的阻碍从来不是技术——工作流整合、权责归属、内部系统对接，这三道坎没有纯技术解法，也不会因为模型更强而自动消失。</p>
+                        <p>C 端：平台接入解决的是"用起来"，解决不了"用得稳"。Agent 能产生实际效果的操作往往不可逆或存在隐私风险，信任壁垒不会因为入口变了就消失。</p>
+                        <p>当前阶段普通用户的日常需求复杂度本就有限，长链条 Agent 的能力溢出于实际需要——但随着使用习惯建立，C 端对复杂任务的需求也会逐步释放。</p>
+                        <div class="view-links">
+                            <a class="view-link-btn" href="tools/blog/posts/agent-three-problems.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：Agent 三大工程问题</a>
+                            <a class="view-link-btn" href="tools/agent-hub/index.html" target="_blank" onclick="event.stopPropagation()">🛠 工具：Agent 认知全景</a>
+                        </div>
                     </div>
                 </div>
-                <div class="judgment-body" id="judgmentBody">
-                    <!-- 我的观点 -->
-                    <div class="judgment-section">
-                        <h4 class="judgment-section-title">💬 我的观点</h4>
-                        <div class="prediction-list">
-                            <!-- 观点1：Agent 落地 -->
-                            <div class="prediction-item" onclick="togglePrediction(this)">
-                                <div class="prediction-header">
-                                    <span class="prediction-lead">全自动无监督的 Agent 在 2027 年前不会大规模落地</span>
-                                    <div class="prediction-meta">
-                                        <span class="prediction-date">2026.03</span>
-                                        <span class="prediction-label">Agent 落地</span>
-                                        <span class="prediction-toggle">▾</span>
-                                    </div>
-                                </div>
-                                <div class="prediction-body">
-                                    <div class="prediction-body-inner">
-                                        <p class="prediction-text">B 端：真正的阻碍从来不是技术——工作流整合、权责归属、内部系统对接，这三道坎没有纯技术解法，也不会因为模型更强而自动消失。<br>C 端：平台接入解决的是"用起来"，解决不了"用得稳"。Agent 能产生实际效果的操作（误删文件、代发消息、读取通讯录和聊天记录）往往不可逆或存在隐私风险，一旦出错用户没有补救空间，信任壁垒不会因为入口变了就消失。<br><br>此外，当前阶段普通用户的日常需求复杂度本就有限，长链条 Agent 的能力溢出于实际需要——但随着使用习惯的建立，C 端对复杂任务的需求也会逐步释放。</p>
-                                        <div class="prediction-expand">
-                                            <a class="expand-btn-link" href="tools/blog/posts/agent-three-problems.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：Agent 三大工程问题 →</a>
-                                            <button class="expand-btn-link" onclick="event.stopPropagation();openTool('agent-hub')">🛠 工具：Agent 认知全景 →</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 观点2：金融行业 -->
-                            <div class="prediction-item" onclick="togglePrediction(this)">
-                                <div class="prediction-header">
-                                    <span class="prediction-lead">金融 AI 的近期形态是"有人工节点的半自动化"，而非完全自主 Agent 链</span>
-                                    <div class="prediction-meta">
-                                        <span class="prediction-date">2026.03</span>
-                                        <span class="prediction-label">金融行业</span>
-                                        <span class="prediction-toggle">▾</span>
-                                    </div>
-                                </div>
-                                <div class="prediction-body">
-                                    <div class="prediction-body-inner">
-                                        <p class="prediction-text">B 端：监管与审计要求每一步决策可追溯、可签字，部分节点的法律责任必须由人工承担，推理步骤不透明的 Agent 进不了审批流程。<br>C 端：大模型不具备直接替代持牌顾问做出最终投资建议的资质，AI 只能辅助决策，不能绕过人工审核环节。<br><br>现实的切入点有三个：<br>· 智能投顾：行业痛点不在涨跌预测，而在用户行为管理——AI 的切入点是情绪陪伴、行为分析和量化逻辑筛选组合，最终建议仍由顾问确认<br>· 研报生成：投研人员耗时在信息聚合而非分析本身——AI 承担资讯聚合、数据填充、格式校验，分析师专注判断与审核<br>· 客服路由：大量重复咨询消耗人工资源——AI 识别意图后精准分发，人工专注处理投诉、异议等高复杂度案例</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 观点3：模型对齐 -->
-                            <div class="prediction-item" onclick="togglePrediction(this)">
-                                <div class="prediction-header">
-                                    <span class="prediction-lead">国内大模型与 Claude 在对齐取向上存在实质差异，影响产品设计</span>
-                                    <div class="prediction-meta">
-                                        <span class="prediction-date">2026.03</span>
-                                        <span class="prediction-label">模型对齐</span>
-                                        <span class="prediction-toggle">▾</span>
-                                    </div>
-                                </div>
-                                <div class="prediction-body">
-                                    <div class="prediction-body-inner">
-                                        <p class="prediction-text">Claude 的不同体现在两处：一是批判性输出更克制，不倾向于给用户想听的答案；二是执行任务前会先问清楚"你想要什么结果、有哪些限制"，而不是直接开始——理解意图比快速给输出更重要，国内模型普遍跳过这个环节。<br><br>这个差异对 AI PM 定义产品的影响是实质性的：如果你设计的产品以"快速给答案"为核心交互，那么意图澄清机制天然被挤掉；但在企业场景中，一个需求理解错了的快速输出，往往比慢一步确认代价更大。如何在"响应速度"和"意图对齐"之间找到平衡，是当前 AI 产品设计中真正值得深入的问题之一。</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 观点4：技术消亡度 -->
-                            <div class="prediction-item" onclick="togglePrediction(this)">
-                                <div class="prediction-header">
-                                    <span class="prediction-lead">AI 技术的投入价值取决于它是"补救缺陷"还是"编码知识"</span>
-                                    <div class="prediction-meta">
-                                        <span class="prediction-date">2026.03</span>
-                                        <span class="prediction-label">产品框架</span>
-                                        <span class="prediction-toggle">▾</span>
-                                    </div>
-                                </div>
-                                <div class="prediction-body">
-                                    <div class="prediction-body-inner">
-                                        <p class="prediction-text">补救缺陷型技术（CoT 提示、角色扮演设定、JSON 格式要求）会随着基础模型能力提升而消亡，因为模型升级后这些缺陷自然消失。编码知识型技术（金融合规规则结构化、多源数据冲突优先级定义、行业约束条件代码化）不会消亡，因为模型不可能从训练数据中推断出特定组织的内部规则。<br><br>实际意义：在消亡度高的技术上大量投入，ROI 是递减的；真正值得建立的护城河是领域知识的结构化能力，以及让系统在生产环境可靠运行的工程设计。</p>
-                                        <div class="prediction-expand">
-                                            <a class="expand-btn-link" href="tools/blog/posts/tech-obsolescence.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：技术消亡度框架 →</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 观点5：工程演进 -->
-                            <div class="prediction-item" onclick="togglePrediction(this)">
-                                <div class="prediction-header">
-                                    <span class="prediction-lead">AI 工程竞争重心已从 Prompt 转向 Harness，2026 年护城河在系统可靠性</span>
-                                    <div class="prediction-meta">
-                                        <span class="prediction-date">2026.04</span>
-                                        <span class="prediction-label">工程演进</span>
-                                        <span class="prediction-toggle">▾</span>
-                                    </div>
-                                </div>
-                                <div class="prediction-body">
-                                    <div class="prediction-body-inner">
-                                        <p class="prediction-text">Prompt Engineering → Context Engineering → Harness Engineering，关注的问题依次从"这次调用输出更好"，到"整个任务的信息怎么组织"，再到"整个 Agent 系统怎么在生产环境里稳定运行"。<br><br>三层的本质区别：Prompt Engineering 补救模型缺陷，是过渡技术；Context Engineering 解决信息组织问题，属于编码知识型，持续有效；Harness Engineering 解决系统可靠性问题，与模型能力正交——模型越强、真正暴露出的系统设计问题反而越多。<br><br>2026 年的竞争重心已从"谁的 Prompt 写得好"转向"谁的 Harness 设计得更稳"：工具调用的安全边界、失败恢复机制、人工介入节点设计、系统可观测性，这些才是难以复制的工程壁垒。</p>
-                                        <div class="prediction-expand">
-                                            <a class="expand-btn-link" href="tools/blog/posts/harness-engineering.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：工程演进三段论 →</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
+                <div class="view-item" onclick="toggleView(this)">
+                    <div class="view-head">
+                        <span class="view-num">02</span>
+                        <span class="view-lead">金融 AI 的近期形态是"有人工节点的半自动化"，而非完全自主 Agent 链</span>
+                        <span class="view-tag">金融行业</span>
+                        <span class="view-date">2026.03</span>
+                        <span class="view-toggle">展开</span>
+                    </div>
+                    <div class="view-body">
+                        <p>B 端：监管与审计要求每一步决策可追溯、可签字，推理步骤不透明的 Agent 进不了审批流程。C 端：大模型不具备直接替代持牌顾问做出最终投资建议的资质。</p>
+                        <p>现实切入点：智能投顾的核心是用户行为管理而非涨跌预测；研报生成 AI 承担资讯聚合与格式校验；客服路由 AI 识别意图后精准分发，人工专注高复杂度案例。</p>
+                    </div>
+                </div>
+
+                <div class="view-item" onclick="toggleView(this)">
+                    <div class="view-head">
+                        <span class="view-num">03</span>
+                        <span class="view-lead">国内大模型与 Claude 在对齐取向上存在实质差异，影响产品设计</span>
+                        <span class="view-tag">模型对齐</span>
+                        <span class="view-date">2026.03</span>
+                        <span class="view-toggle">展开</span>
+                    </div>
+                    <div class="view-body">
+                        <p>Claude 的不同在于：批判性输出更克制，不倾向于给用户想听的答案；执行任务前会先澄清意图，而非直接开始——国内模型普遍跳过这个环节。</p>
+                        <p>对 AI PM 的影响是实质性的：如果产品以"快速给答案"为核心交互，意图澄清机制天然被挤掉；但在企业场景，一个理解错了的快速输出，代价往往比慢一步确认更大。</p>
+                    </div>
+                </div>
+
+                <div class="view-item" onclick="toggleView(this)">
+                    <div class="view-head">
+                        <span class="view-num">04</span>
+                        <span class="view-lead">AI 技术的投入价值取决于它是"补救缺陷"还是"编码知识"</span>
+                        <span class="view-tag">产品框架</span>
+                        <span class="view-date">2026.03</span>
+                        <span class="view-toggle">展开</span>
+                    </div>
+                    <div class="view-body">
+                        <p>补救缺陷型技术（CoT 提示、角色扮演设定）会随着基础模型能力提升而消亡。编码知识型技术（金融合规规则结构化、行业约束条件代码化）不会消亡——模型无法从训练数据推断特定组织的内部规则。</p>
+                        <p>实际意义：在消亡度高的技术上大量投入，ROI 是递减的；真正值得建立的护城河是领域知识的结构化能力。</p>
+                        <div class="view-links">
+                            <a class="view-link-btn" href="tools/blog/posts/tech-obsolescence.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：技术消亡度框架</a>
                         </div>
                     </div>
+                </div>
 
-                    <!-- 行业落地 -->
-                    <div class="judgment-section">
-                        <h4 class="judgment-section-title collapsible" onclick="toggleSection(this)">🏭 行业落地 <span class="section-toggle">展开 ↓</span></h4>
-                        <div class="section-body hidden">
-                        <div class="industry-grid">
-                            <div class="industry-card status-scaling">
-                                <div class="industry-header">
-                                    <span class="industry-name">客服 / 售前</span>
-                                    <span class="industry-badge">规模化落地</span>
-                                </div>
-                                <p class="industry-desc">标准化问答场景已跑通，头部电商、银行外呼已大规模上线</p>
-                            </div>
-                            <div class="industry-card status-scaling">
-                                <div class="industry-header">
-                                    <span class="industry-name">软件开发辅助</span>
-                                    <span class="industry-badge">规模化落地</span>
-                                </div>
-                                <p class="industry-desc">Copilot 类工具已成标配，代码补全、Review 辅助是最快被接受的场景</p>
-                            </div>
-                            <div class="industry-card status-scaling">
-                                <div class="industry-header">
-                                    <span class="industry-name">内容创作</span>
-                                    <span class="industry-badge">规模化落地</span>
-                                </div>
-                                <p class="industry-desc">文案、营销、短视频脚本等场景已大规模渗透，AI 辅助生产成为内容团队标配；创意判断和品牌调性把控仍依赖人工</p>
-                            </div>
-                            <div class="industry-card status-pilot">
-                                <div class="industry-header">
-                                    <span class="industry-name">金融</span>
-                                    <span class="industry-badge">试点阶段</span>
-                                </div>
-                                <p class="industry-desc">内部知识库和客服辅助有进展，但合规审批、数据安全要求让决策类应用难以越过监管红线</p>
-                            </div>
-                            <div class="industry-card status-pilot">
-                                <div class="industry-header">
-                                    <span class="industry-name">教育</span>
-                                    <span class="industry-badge">试点阶段</span>
-                                </div>
-                                <p class="industry-desc">个性化辅导、作业批改有场景，但如何处理"学生直接用 AI 完成作业"的边界问题还没有答案</p>
-                            </div>
-                            <div class="industry-card status-early">
-                                <div class="industry-header">
-                                    <span class="industry-name">医疗</span>
-                                    <span class="industry-badge">早期探索</span>
-                                </div>
-                                <p class="industry-desc">辅助诊断、病历整理有探索，但医疗责任归属不明确，AI 输出需要医生全量复核</p>
-                            </div>
-                            <div class="industry-card status-early">
-                                <div class="industry-header">
-                                    <span class="industry-name">法律</span>
-                                    <span class="industry-badge">早期探索</span>
-                                </div>
-                                <p class="industry-desc">合同审查、案例检索有价值，但律师对准确性要求极高，幻觉问题直接影响可用性</p>
-                            </div>
-                        </div>
+                <div class="view-item" onclick="toggleView(this)">
+                    <div class="view-head">
+                        <span class="view-num">05</span>
+                        <span class="view-lead">AI 工程竞争重心已从 Prompt 转向 Harness，2026 年护城河在系统可靠性</span>
+                        <span class="view-tag">工程演进</span>
+                        <span class="view-date">2026.04</span>
+                        <span class="view-toggle">展开</span>
+                    </div>
+                    <div class="view-body">
+                        <p>Prompt Engineering → Context Engineering → Harness Engineering，关注层次从"这次调用输出更好"上移到"整个 Agent 系统怎么在生产环境稳定运行"。</p>
+                        <p>Harness Engineering 解决系统可靠性问题，与模型能力正交——模型越强，真正暴露出的系统设计问题反而越多。工具调用的安全边界、失败恢复、人工介入节点、可观测性，这些才是难以复制的工程壁垒。</p>
+                        <div class="view-links">
+                            <a class="view-link-btn" href="tools/blog/posts/harness-engineering.html" target="_blank" onclick="event.stopPropagation()">📝 思考碎片：工程演进三段论</a>
                         </div>
                     </div>
+                </div>
 
-                    <!-- 能力短板 -->
-                    <div class="judgment-section">
-                        <h4 class="judgment-section-title collapsible" onclick="toggleSection(this)">⚠️ 当前能力短板 <span class="section-toggle">展开 ↓</span></h4>
-                        <div class="section-body hidden">
-                        <div class="gap-list">
-                            <div class="gap-item">
-                                <div class="gap-title">过度迎合</div>
-                                <p class="gap-desc">模型倾向认同用户判断，即使用户有误也不主动纠正。在需要批判性反馈的工作场景（方案评审、需求验证）中可用性低。真正解决意味着：模型能主动识别并指出用户假设中的错误。</p>
-                                <div class="gap-blocks"><span>客服质检</span><span>方案评审</span><span>需求分析</span></div>
-                            </div>
-                            <div class="gap-item">
-                                <div class="gap-title">长期记忆与上下文持久化</div>
-                                <p class="gap-desc">跨会话记忆依赖浅层存储，无真正的语义检索，用户在不同设备、不同会话中无法延续上下文。</p>
-                                <div class="gap-blocks"><span>个人助理</span><span>企业知识库</span><span>长周期辅导</span></div>
-                            </div>
-                            <div class="gap-item">
-                                <div class="gap-title">知识边界的自我认知不足</div>
-                                <p class="gap-desc">模型在训练数据覆盖范围内会表现出过度自信，即使面对可能已过时的信息也不主动提示不确定性，需要用户显式要求联网才会验证。真正解决意味着：模型能主动识别"这条信息可能已变化"并自发触发验证，而不是等用户质疑。</p>
-                                <div class="gap-blocks"><span>金融行情</span><span>新闻摘要</span><span>动态监控</span></div>
-                            </div>
+            </div>
+
+            <!-- 行业落地（折叠） -->
+            <div class="view-extra reveal">
+                <button class="view-extra-toggle" onclick="toggleExtra(this)">
+                    行业落地现状 <span>展开 +</span>
+                </button>
+                <div class="view-extra-body">
+                    <div class="landing-body">
+                        <!-- 第一层：通用场景 -->
+                        <p class="landing-lead">部分通用场景已率先跑通，与行业无关——凡是标准化程度高、错误代价低的工作，AI 替代速度都超出预期：</p>
+                        <div class="landing-scenes">
+                            <span class="ls-item">客服 / 售前自动化</span>
+                            <span class="ls-sep">·</span>
+                            <span class="ls-item">代码补全与 Review</span>
+                            <span class="ls-sep">·</span>
+                            <span class="ls-item">文案与内容生产</span>
+                            <span class="ls-sep">·</span>
+                            <span class="ls-item">知识库问答</span>
                         </div>
+                        <!-- 第二层：行业进度 -->
+                        <p class="landing-lead landing-lead--sec">各行业的落地进度则由自身壁垒决定，而非技术成熟度：</p>
+                        <div class="landing-industries">
+                            <div class="li-row">
+                                <span class="li-name">金融</span>
+                                <span class="li-stage li-stage--pilot">试点</span>
+                                <span class="li-note">合规审计与数据安全是主要壁垒，每步决策需可追溯</span>
+                            </div>
+                            <div class="li-row">
+                                <span class="li-name">教育</span>
+                                <span class="li-stage li-stage--pilot">试点</span>
+                                <span class="li-note">个性化辅导场景明确；AI 代写的边界尚无定论</span>
+                            </div>
+                            <div class="li-row">
+                                <span class="li-name">医疗</span>
+                                <span class="li-stage li-stage--early">早期</span>
+                                <span class="li-note">责任归属不明确，AI 输出需全量人工复核才能入流程</span>
+                            </div>
+                            <div class="li-row">
+                                <span class="li-name">法律</span>
+                                <span class="li-stage li-stage--early">早期</span>
+                                <span class="li-note">合同审查有价值，但幻觉问题对律师可用性是硬伤</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 能力短板（折叠） -->
+            <div class="view-extra reveal">
+                <button class="view-extra-toggle" onclick="toggleExtra(this)">
+                    当前能力短板 <span>展开 +</span>
+                </button>
+                <div class="view-extra-body">
+                    <div class="gap2-list">
+                        <div class="gap2-item">
+                            <span class="gap2-title">过度迎合</span>
+                            <p>模型倾向认同用户判断，在需要批判性反馈的工作场景中可用性低。真正解决意味着模型能主动识别并指出用户假设中的错误。</p>
+                            <div class="gap2-tags"><span>客服质检</span><span>方案评审</span><span>需求分析</span></div>
+                        </div>
+                        <div class="gap2-item">
+                            <span class="gap2-title">长期记忆与上下文持久化</span>
+                            <p>跨会话记忆依赖浅层存储，无真正的语义检索，用户无法跨设备延续上下文。</p>
+                            <div class="gap2-tags"><span>个人助理</span><span>企业知识库</span><span>长周期辅导</span></div>
+                        </div>
+                        <div class="gap2-item">
+                            <span class="gap2-title">知识边界的自我认知不足</span>
+                            <p>面对可能已过时的信息不主动提示不确定性，需用户显式要求联网才会验证。</p>
+                            <div class="gap2-tags"><span>金融行情</span><span>新闻摘要</span><span>动态监控</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
     <!-- ========== WRITING ========== -->
-    <section class="section" id="writing">
+    <section class="section writing-section" id="writing">
         <div class="container">
             <div class="section-header reveal">
                 <span class="section-label">Writing</span>
                 <h2 class="section-title">思考碎片</h2>
-                <p class="section-desc">对 AI 产品、技术演进、行业判断的持续记录</p>
+                <p class="section-desc">技术、产品、商业多角度拆解 AI 动态——分析前因后果，做出自己的预测</p>
             </div>
             <div class="writing-archive reveal" id="writingArchive"></div>
             <div style="text-align:center;margin-top:24px;">
@@ -302,382 +274,92 @@
     <section class="section tools-section" id="tools">
         <div class="container">
             <div class="section-header reveal">
-                <span class="section-label">AI Toolbox</span>
-                <h2 class="section-title">AI 工具箱</h2>
-                <p class="section-desc">PM 作品可直接体验，信息工具是我日常在用的 AI 工作流</p>
+                <span class="section-label">Works & Tools</span>
+                <h2 class="section-title">作品 & 工具</h2>
+                <p class="section-desc">PM 产品 Demo 与日常信息工作流工具</p>
             </div>
 
-            <!-- PM 作品组 -->
+            <!-- PM 作品 -->
             <div class="toolbox-group reveal">
                 <div class="toolbox-group-header">
                     <span class="toolbox-group-label">PM 作品</span>
-                    <span class="toolbox-group-desc">可交互的产品 Demo，展示真实 AI 产品设计能力</span>
+                    <span class="toolbox-group-desc">可交互的产品 Demo</span>
                 </div>
-                <div class="toolbox-cards">
-                    <div class="toolbox-card" data-tool="esop" onclick="openTool('esop')">
-                        <div class="toolbox-card-icon">📄</div>
-                        <div class="toolbox-card-body">
-                            <h3>ESOP 字段提取 Demo</h3>
-                            <p>上传招股书 PDF → AI 结构化提取股权激励字段 → 可溯源输出</p>
-                            <div class="toolbox-card-tags">
-                                <span>Prompt Engineering</span><span>非结构化文档</span><span>结构化提取</span>
-                            </div>
+                <div class="works-list">
+                    <a class="works-item" href="tools/esop-extractor/index.html" target="_blank">
+                        <span class="works-icon">📄</span>
+                        <div class="works-body">
+                            <span class="works-title">ESOP 字段提取 Demo</span>
+                            <span class="works-desc">招股书 PDF → AI 结构化提取股权激励字段，≥95% 核心字段准确率</span>
                         </div>
-                        <div class="toolbox-card-highlights">
-                            <div class="highlight-item">
-                                <span class="hl-num">≥95%</span>
-                                <span class="hl-label">核心字段准确率</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="hl-num">4-5天→1天</span>
-                                <span class="hl-label">对标数据准备时间</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/stock/index.html" target="_blank">
+                        <span class="works-icon">📊</span>
+                        <div class="works-body">
+                            <span class="works-title">A股 AI 助手</span>
+                            <span class="works-desc">6 个 Tab 完整演示 AI 在金融场景的核心能力：行情、RAG 研报、合规审查</span>
                         </div>
-                        <button class="toolbox-card-btn">体验 Demo →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="stock" onclick="openTool('stock')">
-                        <div class="toolbox-card-icon">📊</div>
-                        <div class="toolbox-card-body">
-                            <h3>A股 AI 助手</h3>
-                            <p>6 个 Tab 完整演示 AI 在金融场景的核心能力设计</p>
-                            <div class="toolbox-card-tags">
-                                <span>行情分析</span><span>RAG 研报</span><span>合规审查</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/service-agent/index.html" target="_blank">
+                        <span class="works-icon">🤖</span>
+                        <div class="works-body">
+                            <span class="works-title">智能客服中台 Demo</span>
+                            <span class="works-desc">意图路由 → 多 Agent 协作 → HITL，完整展示 AI 中台产品设计</span>
                         </div>
-                        <div class="toolbox-card-highlights">
-                            <div class="highlight-item">
-                                <span class="hl-num">多源数据接入</span>
-                                <span class="hl-label">实时行情/财报/政策动态</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="hl-num">数据溯源分级标注</span>
-                                <span class="hl-label">可解释输出设计</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/asci/index.html" target="_blank">
+                        <span class="works-icon">🔬</span>
+                        <div class="works-body">
+                            <span class="works-title">ASCI 科研任务执行系统</span>
+                            <span class="works-desc">5 步全链路科研 Agent：文献检索 → 摘要筛选（Human Checkpoint）→ 综述生成</span>
                         </div>
-                        <button class="toolbox-card-btn">体验 Demo →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="service" onclick="openTool('service')">
-                        <div class="toolbox-card-icon">🤖</div>
-                        <div class="toolbox-card-body">
-                            <h3>智能客服中台 Demo</h3>
-                            <p>意图路由 → 多 Agent 协作 → Human-in-the-Loop，完整展示 AI 中台产品设计</p>
-                            <div class="toolbox-card-tags">
-                                <span>多 Agent 编排</span><span>意图路由</span><span>HITL</span>
-                            </div>
-                        </div>
-                        <div class="toolbox-card-highlights">
-                            <div class="highlight-item">
-                                <span class="hl-num">4 种意图</span>
-                                <span class="hl-label">动态路由到对应 Agent 链</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="hl-num">Workflow 可视化</span>
-                                <span class="hl-label">节点动态高亮，过程全透明</span>
-                            </div>
-                        </div>
-                        <button class="toolbox-card-btn">体验 Demo →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="asci" onclick="openTool('asci')">
-                        <div class="toolbox-card-icon">🔬</div>
-                        <div class="toolbox-card-body">
-                            <h3>ASCI 科研任务执行系统</h3>
-                            <p>模拟科研 Agent OS 全链路：关键词提取 → 数据库检索 → 摘要筛选（Human Checkpoint）→ 全文精读 → 综述生成</p>
-                            <div class="toolbox-card-tags">
-                                <span>风险分级</span><span>Human-in-the-Loop</span><span>可信度评估</span>
-                            </div>
-                        </div>
-                        <div class="toolbox-card-highlights">
-                            <div class="highlight-item">
-                                <span class="hl-num">5 步全链路</span>
-                                <span class="hl-label">端到端文献综述 Agent</span>
-                            </div>
-                            <div class="highlight-item">
-                                <span class="hl-num">三维可信度</span>
-                                <span class="hl-label">来源质量 / 推理链路 / 数据一致性</span>
-                            </div>
-                        </div>
-                        <button class="toolbox-card-btn">体验 Demo →</button>
-                    </div>
-
+                        <span class="works-arrow">↗</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- PM 作品 iframe panels -->
-            <div class="tool-panel hidden" id="panel-esop">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">📄 ESOP 字段提取 Demo · 招股书结构化提取 · Prompt Engineering 展示</span>
-                        <a href="tools/esop-extractor/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/esop-extractor/index.html" class="dashboard-iframe"
-                        title="ESOP 字段提取 Demo" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-stock">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">📊 A股 AI 助手 · 行情/诊断/研报/雷达/Agent/合规 · 六大 AI 能力演示</span>
-                        <a href="tools/stock/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/stock/index.html" class="dashboard-iframe"
-                        title="A股 AI 助手" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-service">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🤖 智能客服中台 Demo · 意图路由 + 多 Agent 协作 + Human-in-the-Loop</span>
-                        <a href="tools/service-agent/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/service-agent/index.html" class="dashboard-iframe"
-                        title="智能客服中台 Demo" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-asci">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🔬 ASCI 科研任务执行系统 · 5步全链路 Agent · Human-in-the-Loop + 可信度评估</span>
-                        <a href="tools/asci/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/asci/index.html" class="dashboard-iframe"
-                        title="ASCI 科研任务执行系统" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <!-- 信息工具组 -->
+            <!-- 信息工具 -->
             <div class="toolbox-group reveal">
                 <div class="toolbox-group-header">
                     <span class="toolbox-group-label">信息工具</span>
-                    <span class="toolbox-group-desc">我持续在用的 AI 信息工作流工具</span>
+                    <span class="toolbox-group-desc">日常在用的 AI 信息工作流</span>
                 </div>
-                <div class="toolbox-cards toolbox-cards--info">
-                    <div class="toolbox-card" data-tool="insights" onclick="openTool('insights')">
-                        <div class="toolbox-card-icon">🔭</div>
-                        <div class="toolbox-card-body">
-                            <h3>AI 产品拆解</h3>
-                            <p>PM 视角深度拆解市场标杆 AI 产品，七维分析框架</p>
-                            <div class="toolbox-card-tags">
-                                <span>产品分析</span><span>七维框架</span><span>竞品研究</span>
-                            </div>
+                <div class="works-list">
+                    <a class="works-item" href="tools/ai-insights/index.html" target="_blank">
+                        <span class="works-icon">🔭</span>
+                        <div class="works-body">
+                            <span class="works-title">AI 产品拆解</span>
+                            <span class="works-desc">PM 视角七维深度拆解市场标杆 AI 产品</span>
                         </div>
-                        <button class="toolbox-card-btn">打开工具 →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="radar" onclick="openTool('radar')">
-                        <div class="toolbox-card-icon">🛰</div>
-                        <div class="toolbox-card-body">
-                            <h3>前沿雷达</h3>
-                            <p>追踪国内外 AI 前沿信息源，中英分栏，精选工具导航</p>
-                            <div class="toolbox-card-tags">
-                                <span>信息源导航</span><span>中英分栏</span><span>精选工具</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/radar/index.html" target="_blank">
+                        <span class="works-icon">🛰</span>
+                        <div class="works-body">
+                            <span class="works-title">前沿雷达</span>
+                            <span class="works-desc">国内外 AI 前沿信息源导航，中英分栏，精选工具</span>
                         </div>
-                        <button class="toolbox-card-btn">打开工具 →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="trends" onclick="openTool('trends')">
-                        <div class="toolbox-card-icon">📈</div>
-                        <div class="toolbox-card-body">
-                            <h3>热点快照</h3>
-                            <p>聚合 GitHub/HN/PH/出海/国内五大平台热榜，AI 视角点评</p>
-                            <div class="toolbox-card-tags">
-                                <span>GitHub</span><span>HN</span><span>Product Hunt</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/trends/index.html" target="_blank">
+                        <span class="works-icon">📈</span>
+                        <div class="works-body">
+                            <span class="works-title">热点快照</span>
+                            <span class="works-desc">GitHub / HN / PH / 出海 / 国内五大热榜聚合 + AI 视角点评</span>
                         </div>
-                        <button class="toolbox-card-btn">打开工具 →</button>
-                    </div>
-
-                    <div class="toolbox-card" data-tool="agent-hub" onclick="openTool('agent-hub')">
-                        <div class="toolbox-card-icon">🧠</div>
-                        <div class="toolbox-card-body">
-                            <h3>Agent 认知全景</h3>
-                            <p>框架选型 · 架构设计 · 企业提效地图——「Agent 短期不落地」判断的知识底层</p>
-                            <div class="toolbox-card-tags">
-                                <span>框架对比</span><span>架构设计</span><span>企业落地</span>
-                            </div>
+                        <span class="works-arrow">↗</span>
+                    </a>
+                    <a class="works-item" href="tools/agent-hub/index.html" target="_blank">
+                        <span class="works-icon">🧠</span>
+                        <div class="works-body">
+                            <span class="works-title">Agent 认知全景</span>
+                            <span class="works-desc">框架选型 · 架构设计 · 企业提效地图</span>
                         </div>
-                        <button class="toolbox-card-btn">查看全景 →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 信息工具 iframe panels -->
-            <div class="tool-panel hidden" id="panel-insights">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🔭 AI 产品拆解 · 七维深度拆解 · PM 视角洞察</span>
-                        <a href="tools/ai-insights/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/ai-insights/index.html" class="dashboard-iframe"
-                        title="AI 产品拆解周刊" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-radar">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🛰 前沿雷达 · 信息源导航 + 精选 AI 工具</span>
-                        <a href="tools/radar/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/radar/index.html" class="dashboard-iframe"
-                        title="前沿雷达" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-trends">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">📈 热点快照 · AI & 科技热榜 · Claude 点评</span>
-                        <a href="tools/trends/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/trends/index.html" class="dashboard-iframe"
-                        title="热点快照" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <div class="tool-panel hidden" id="panel-agent-hub">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🧠 Agent 认知全景 · 框架选型 + 架构设计 + 企业提效地图 + PM 判断框架</span>
-                        <a href="tools/agent-hub/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/agent-hub/index.html" class="dashboard-iframe"
-                        title="Agent 认知全景" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <!-- Dev-only tools -->
-            <div class="tool-panel hidden" id="panel-interview">
-                <div class="interview-tool glass-card reveal">
-                    <div class="tool-header">
-                        <div class="tool-title-area">
-                            <h3 class="tool-title">🎯 AI PM 面试题练习器</h3>
-                            <p class="tool-desc">覆盖产品设计、AI专题、数据分析、行为面试4大类别</p>
-                        </div>
-                        <div class="tool-progress-area">
-                            <div class="progress-ring-container">
-                                <svg class="progress-ring" width="60" height="60" viewBox="0 0 60 60">
-                                    <circle class="progress-ring-bg" cx="30" cy="30" r="24" />
-                                    <circle class="progress-ring-fill" id="progressRingFill" cx="30" cy="30" r="24" />
-                                </svg>
-                                <span class="progress-ring-label" id="progressLabel">0%</span>
-                            </div>
-                            <span class="progress-text" id="progressText">未开始</span>
-                        </div>
-                    </div>
-
-                    <!-- Category Select -->
-                    <div class="category-select" id="categorySelect">
-                        <div class="category-title">选择练习类别</div>
-                        <div class="category-grid">
-                            <button class="category-btn active" data-cat="all" onclick="selectCategory(this, 'all')">
-                                🌐 全部题目
-                            </button>
-                            <button class="category-btn" data-cat="design" onclick="selectCategory(this, 'design')">
-                                🎨 产品设计
-                            </button>
-                            <button class="category-btn" data-cat="ai" onclick="selectCategory(this, 'ai')">
-                                🤖 AI 专题
-                            </button>
-                            <button class="category-btn" data-cat="data" onclick="selectCategory(this, 'data')">
-                                📊 数据分析
-                            </button>
-                            <button class="category-btn" data-cat="behavior" onclick="selectCategory(this, 'behavior')">
-                                💼 行为面试
-                            </button>
-                        </div>
-                        <button class="btn btn-primary start-btn" id="startBtn" onclick="startPractice()">
-                            开始练习 →
-                        </button>
-                    </div>
-
-                    <!-- Question Area -->
-                    <div class="question-area hidden" id="questionArea">
-                        <div class="question-meta">
-                            <span class="q-category" id="qCategory">产品设计</span>
-                            <span class="q-difficulty" id="qDifficulty">★★★</span>
-                            <div class="timer-box">
-                                <span class="timer-icon">⏱</span>
-                                <span class="timer-display" id="timerDisplay">00:00</span>
-                            </div>
-                        </div>
-                        <div class="question-number" id="questionNumber">第 1 题 / 共 10 题</div>
-                        <div class="question-text" id="questionText">
-                            请稍候...
-                        </div>
-                        <div class="answer-area hidden" id="answerArea">
-                            <div class="answer-label">💡 参考答点</div>
-                            <div class="answer-text" id="answerText"></div>
-                            <div class="self-rate">
-                                <div class="rate-label">自我评估：</div>
-                                <div class="rate-stars" id="rateStars">
-                                    <button class="star-btn" onclick="rateSelf(1)">★</button>
-                                    <button class="star-btn" onclick="rateSelf(2)">★</button>
-                                    <button class="star-btn" onclick="rateSelf(3)">★</button>
-                                    <button class="star-btn" onclick="rateSelf(4)">★</button>
-                                    <button class="star-btn" onclick="rateSelf(5)">★</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="question-actions">
-                            <button class="btn btn-ghost" onclick="showAnswer()" id="showAnswerBtn">查看答点</button>
-                            <button class="btn btn-primary hidden" onclick="nextQuestion()" id="nextBtn">
-                                下一题 →
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Result Area -->
-                    <div class="result-area hidden" id="resultArea">
-                        <div class="result-icon">🎉</div>
-                        <h3 class="result-title">练习完成！</h3>
-                        <div class="result-stats">
-                            <div class="result-stat">
-                                <span class="result-stat-num" id="resultTotal">-</span>
-                                <span class="result-stat-label">完成题数</span>
-                            </div>
-                            <div class="result-stat">
-                                <span class="result-stat-num" id="resultAvg">-</span>
-                                <span class="result-stat-label">平均自评分</span>
-                            </div>
-                            <div class="result-stat">
-                                <span class="result-stat-num" id="resultTime">-</span>
-                                <span class="result-stat-label">总用时</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" onclick="restartPractice()">再来一轮</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Job Tracker Tool (embedded dashboard) -->
-            <div class="tool-panel hidden" id="panel-tracker">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">📋 求职追踪 Dashboard · 数据本地保存，刷新不丢失</span>
-                        <a href="tools/dashboard/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗
-                            独立窗口打开</a>
-                    </div>
-                    <iframe id="dashboardFrame" src="tools/dashboard/index.html" class="dashboard-iframe"
-                        title="求职追踪 Dashboard" loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <!-- Dev-only: product collector -->
-            <div class="tool-panel hidden" id="panel-collector">
-                <div class="dashboard-wrapper reveal">
-                    <div class="dashboard-topbar">
-                        <span class="dashboard-label">🗂 AI 产品信息采集器 · 结构化录入 · 自动生成 JSON</span>
-                        <a href="tools/product-collector/index.html" target="_blank" class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-                    </div>
-                    <iframe src="tools/product-collector/index.html" class="dashboard-iframe"
-                        title="AI 产品信息采集器" loading="lazy"></iframe>
+                        <span class="works-arrow">↗</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -694,7 +376,7 @@
             <!-- Cases will be rendered by JS -->
             <div class="cases-grid" id="casesGrid"></div>
             <div class="cases-more reveal">
-                <p class="cases-note">📌 以上为脱敏展示，详细案例可面谈获取</p>
+                <p class="cases-note">以上均为脱敏展示</p>
             </div>
         </div>
     </section>
@@ -702,26 +384,23 @@
     <!-- ========== CONTACT ========== -->
     <section class="section contact-section" id="contact">
         <div class="container">
-            <div class="contact-card glass-card reveal">
-                <div class="contact-glow"></div>
-                <div class="contact-content">
-                    <h2 class="contact-title">找一个能定义 AI 介入边界、推动产品可量化落地的 PM？</h2>
-                    <p class="contact-sub">欢迎 HR、猎头、同行直接联系，随时接受沟通</p>
-                    <div class="contact-links">
-                        <!-- 修改为你的实际联系方式 -->
-                        <a href="mailto:ly_tianlong@163.com" class="contact-link" id="contact-email">
-                            <span class="contact-icon">📧</span>
-                            <span>ly_tianlong@163.com</span>
-                        </a>
-                        <a href="javascript:void(0)" class="contact-link" id="contact-phone" onclick="copyPhone()">
-                            <span class="contact-icon">📱</span>
-                            <span id="contactPhoneCopyText">点击复制手机号</span>
-                        </a>
-                        <a href="https://marktian-long.github.io" target="_blank" class="contact-link" id="contact-site">
-                            <span class="contact-icon">🌐</span>
-                            <span>marktian-long.github.io</span>
-                        </a>
-                    </div>
+            <div class="contact-body reveal">
+                <p class="contact-eyebrow">Get in touch</p>
+                <h2 class="contact-title">有想法想聊，<br>或者只是想交流，都欢迎。</h2>
+                <p class="contact-sub">关于 AI 落地的判断、产品设计的困惑，或者有趣的合作机会。</p>
+                <div class="contact-links">
+                    <a href="mailto:ly_tianlong@163.com" class="contact-link" id="contact-email">
+                        <span class="contact-label">Email</span>
+                        <span>ly_tianlong@163.com</span>
+                    </a>
+                    <a href="javascript:void(0)" class="contact-link" id="contact-phone" onclick="copyPhone()">
+                        <span class="contact-label">Phone / WeChat</span>
+                        <span id="contactPhoneCopyText">点击复制</span>
+                    </a>
+                    <a href="https://marktian-long.github.io" target="_blank" class="contact-link" id="contact-site">
+                        <span class="contact-label">Site</span>
+                        <span>marktian-long.github.io</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -730,14 +409,13 @@
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
-            <p>© 2026 刘洋 · AI 产品经理 · 用产品思维构建这个网站</p>
+            <p>© 2026 Leo Liu · AI · Product · Builder</p>
             <p class="footer-sub">Made with ❤️ and a lot of AI</p>
         </div>
     </footer>
 
     <script src="assets/js/main.js"></script>
     <script src="assets/js/interview.js"></script>
-    <script src="assets/js/tracker.js"></script>
     <script>
     // ========== Writing Section ==========
     const blogPosts = [
@@ -815,6 +493,59 @@
             </a>
         `).join('');
     })();
+    </script>
+
+    <script>
+    // ========== Judgment: toggleView ==========
+    function toggleView(el) {
+        const isOpen = el.classList.contains('open');
+        // 关闭所有
+        document.querySelectorAll('.view-item.open').forEach(function(item) {
+            item.classList.remove('open');
+            const toggle = item.querySelector('.view-toggle');
+            if (toggle) toggle.textContent = '展开';
+        });
+        if (!isOpen) {
+            el.classList.add('open');
+            const toggle = el.querySelector('.view-toggle');
+            if (toggle) toggle.textContent = '收起';
+        }
+    }
+
+    // ========== Judgment: toggleExtra ==========
+    function toggleExtra(btn) {
+        const wrapper = btn.closest('.view-extra');
+        const isOpen = wrapper.classList.contains('open');
+        wrapper.classList.toggle('open', !isOpen);
+        const span = btn.querySelector('span');
+        if (span) span.textContent = isOpen ? '展开 +' : '收起 −';
+    }
+    </script>
+
+    <script>
+    // ========== Theme Toggle ==========
+    const themeToggleBtn = document.getElementById('themeToggle');
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggleBtn.textContent = '🌙';
+            themeToggleBtn.setAttribute('aria-label', '切换到浅色模式');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggleBtn.textContent = '☀️';
+            themeToggleBtn.setAttribute('aria-label', '切换到深色模式');
+        }
+    }
+    // 初始化按钮状态
+    const savedTheme = localStorage.getItem('qiuzhi_theme') || 'light';
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener('click', function() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('qiuzhi_theme', next);
+        applyTheme(next);
+    });
     </script>
 </body>
 

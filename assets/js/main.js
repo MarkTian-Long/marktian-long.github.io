@@ -239,7 +239,7 @@ function copyPhone() {
   navigator.clipboard.writeText('18314856018').then(() => {
     ['phoneCopyText', 'contactPhoneCopyText'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) { el.textContent = '已复制 ✓'; setTimeout(() => { el.textContent = '点击复制手机号'; }, 2000); }
+      if (el) { el.textContent = '已复制 ✓'; setTimeout(() => { el.textContent = '点击复制'; }, 2000); }
     });
   });
 }
