@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   企业AI应用不是一条线，而是三个不同的战场
+tags:    [产品框架]
+slug:    enterprise-ai-three-stages
+summary: 用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。
+category: 产品
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企业AI应用三个战场 — Leo 的思考碎片</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      margin-bottom: 36px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .stage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 20px 0;
+    }
+    .stage-card .stage-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+    .stage-card .stage-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .stage-card p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <a href="../index.html" class="back-link">← 返回列表</a>
+
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.04</span>
+      <span class="tag">产品框架</span>
+    </div>
+    <h1 class="post-title">企业AI应用不是一条线，而是三个不同的战场</h1>
+    <p class="post-summary">用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+    <p>最近面试AI PM岗位，遇到一个让我困惑的现象。</p>
+    <p>同样是讲RAG的设计细节，有的面试官听得很专注，有的却明显兴趣缺缺。起初我以为是表达问题，后来才意识到：不是我讲得好不好，是我们根本在说不同的事。</p>
+    <p>这让我开始认真想一个问题：<strong>为什么同样是"要做AI"的公司，对AI PM的期待差异会这么大？</strong></p>
+
+    <h2>用技术复杂度判断企业成熟度，是一个常见的认知陷阱</h2>
+    <p>很多人（包括我自己）会下意识地用技术栈来给企业分级——直接调API是初级，用Coze/Dify是中级，内部自研RAG是高级。</p>
+    <p>这个判断框架看起来合理，但其实有问题。</p>
+    <p>技术复杂度描述的是企业"用了什么"，但没有回答更关键的问题：<strong>企业现在真正面对的不确定性是什么？</strong></p>
+    <p>一家用Dify搭了工作流的公司，可能还完全不知道自己的AI产品要交付什么业务结果；一家有算法团队的公司，可能已经在用数据驱动的方式持续迭代产品。技术复杂度和企业真实面对的问题，并不直接对应。</p>
+    <p>更有效的判断维度是：<strong>这家企业有没有明确的、可度量的AI产品化目标。</strong></p>
+    <p>用这个维度来看，企业的AI应用现状自然分成三层，每一层面对的根本问题完全不同。</p>
+
+    <h2>第一层：探索期——真正的问题是"值不值得做"</h2>
+    <p>这类企业通常有明确的AI战略意图，但还没有落地成具体的产品目标。老板层面已经达成共识"要拥抱AI"，但往下问"做什么、先做哪个、投入多少合理"，往往没有清晰的答案。</p>
+    <p><strong>企业的真实焦虑不是技术，是决策。</strong></p>
+    <p>他们面对的核心不确定性是：哪个业务场景引入AI的ROI最高？现有的数据和流程条件支不支持？如果做错了方向，代价是什么？</p>
+    <p>AI在这个阶段扮演的角色，不是解决方案，而是<strong>一个需要被评估的选项</strong>。</p>
+    <p>做场景筛选时，我的判断框架大概是三个维度：</p>
+    <ul>
+      <li><strong>重复性</strong>：这个任务够不够标准化，能不能用规则描述。如果每次都需要人的主观判断，就不适合优先交给AI。</li>
+      <li><strong>出错成本</strong>：AI判断错了，有没有人工兜底的机制，错误能不能被快速发现和纠正。</li>
+      <li><strong>反馈可验证性</strong>：怎么知道AI做得好不好，有没有明确的验收指标。</li>
+    </ul>
+    <p>基于这三个维度，通常的结论是：执行层、重复性高、规则可标准化的任务，优先让AI接；涉及最终决策、影响较大、出错难以挽回的判断，必须留给人。</p>
+    <p>这个阶段最常见的认知误区是：把"引入AI"本身当成目标，而不是手段。于是开始大量采购AI工具、搭建基础设施，却没有一个清晰的业务问题等待被解决。结果是投入了资源，但没有任何可度量的产出，热情在半年内消退。</p>
+
+    <h2>第二层：交付期——真正的问题是"出在哪一层"</h2>
+    <p>这类企业已经有了明确的AI产品目标，也在跑了，但效果不稳定，始终达不到预期。团队知道自己想要什么，但不知道问题出在哪里。</p>
+    <p><strong>企业的真实焦虑不是方向，是诊断。</strong></p>
+    <p>效果上不去的原因可能有很多：数据质量不够、工程实现有缺陷、产品设计本身就错了、或者工具选型和业务需求不匹配。这几种原因表现出来的症状可能很像，但解法完全不同。诊断能力本身，才是这个阶段最稀缺的东西。</p>
+    <p>一个典型的场景：用低代码平台搭了一个客服工作流，上线后效果不稳定，团队开始反复调Prompt，但始终没有明显改善。真正的问题可能出在工具选型阶段——当初没有认真评估平台能力边界和业务需求的匹配度，导致后续所有优化都在错误的层面上使劲。</p>
+    <p>这个阶段最常见的认知误区是：<strong>把工具能力边界的问题，误诊成了使用姿势的问题。</strong>于是不断在Prompt上做文章，却始终没有触及真正的瓶颈。</p>
+
+    <h2>第三层：迭代期——真正的问题是"飞轮转起来了吗"</h2>
+    <p>这类企业已经有稳定交付，AI产品在跑，业务结果可度量。但产品往往在某个效果水位停滞——不是因为遇到了技术天花板，而是因为没有建立从用户反馈到持续优化的闭环。</p>
+    <p><strong>企业的真实焦虑不是能不能做，是能不能持续变好。</strong></p>
+    <p>AI产品和传统软件产品最不一样的地方在于：它不是一次设计完就固定的，而是动态收敛的。用户每一次对AI输出的修改和反馈，都是潜在的优化信号。如果这些信号没有被系统性地收集、分析和反哺到迭代中，产品就会停在一个局部最优点上，再怎么调也很难突破。</p>
+    <p>数据飞轮的基本逻辑是：持续收集Bad Case，定期分析根因，反哺迭代，让AI的能力边界随着使用不断被校准。这个机制建立起来之前，讨论微调或更复杂的技术优化，往往是在错误的层面上使劲——基础没打稳，优化的方向本身就可能跑偏。</p>
+    <p>这个阶段最常见的认知误区是：<strong>跳过飞轮直接谈技术升级。</strong>数据积累不足、反馈机制不完善，就开始讨论微调——结果优化的基础本身有问题，方向跑偏了却很难察觉。</p>
+
+    <h2>三层对照</h2>
+    <div class="stage-card">
+      <div class="stage-label">第一层 · 探索期</div>
+      <div class="stage-title">核心问题：值不值得做</div>
+      <p>不确定性在决策层。用AI场景筛选框架（重复性 × 出错成本 × 验证可行性）帮助企业锁定正确的起点，避免把"引入AI"本身当成目标。</p>
+    </div>
+    <div class="stage-card">
+      <div class="stage-label">第二层 · 交付期</div>
+      <div class="stage-title">核心问题：出在哪一层</div>
+      <p>不确定性在诊断层。效果不稳定的根因可能是数据、工程、设计或选型任一环节，解法完全不同。最忌把工具边界问题误诊成使用姿势问题。</p>
+    </div>
+    <div class="stage-card">
+      <div class="stage-label">第三层 · 迭代期</div>
+      <div class="stage-title">核心问题：飞轮转起来了吗</div>
+      <p>不确定性在优化层。有稳定交付但效果停滞，通常缺的是Bad Case收集 → 根因分析 → 反哺迭代的闭环，而不是更复杂的技术升级。</p>
+    </div>
+
+    <div class="callout">
+      <strong>对 AI PM 的启示：</strong>认知错位比技术能力差距更难解决。那些对RAG细节兴趣缺缺的面试官，不是不懂技术，是他们的公司还在问一个更前置的问题——这个场景值不值得做。在那个问题没有答案之前，RAG怎么设计根本不在他们的议程上。技术能力的差距可以通过学习填补，但如果对企业所处阶段的判断本身就错了，再强的技术表达也是答非所问。
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+</div>
+<script>
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
+</body>
+</html>

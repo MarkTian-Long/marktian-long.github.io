@@ -2,6 +2,28 @@
   "version": 1,
   "posts": [
     {
+      "slug": "enterprise-ai-three-stages",
+      "date": "2026.04",
+      "title": "企业AI应用不是一条线，而是三个不同的战场",
+      "summary": "用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。",
+      "tags": [
+        "产品框架"
+      ],
+      "category": "产品",
+      "url": "posts/enterprise-ai-three-stages.html"
+    },
+    {
+      "slug": "memory-system",
+      "date": "2026.04",
+      "title": "AI产品记忆系统：从四阶段演进到怎么做对",
+      "summary": "记忆系统不是黑魔法，也不是简单的 lock-in 工具。从四个演进阶段到三种并存范式，从 A/B Test 视角到决策框架，这篇文章梳理了 AI PM 在记忆系统上最需要看清的判断。",
+      "tags": [
+        "产品框架"
+      ],
+      "category": "产品",
+      "url": "posts/memory-system.html"
+    },
+    {
       "slug": "harness-engineering",
       "date": "2026.04",
       "title": "工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里",
@@ -38,8 +60,8 @@
     {
       "slug": "tech-obsolescence",
       "date": "2026.03",
-      "title": "技术消亡度框架：判断哪些 AI 技术值得长期投入",
-      "summary": "不是所有 AI 技术都有相同的生命周期。区分补救缺陷型和编码知识型是判断技术投资价值的核心框架。",
+      "title": "技术消亡度框架：判断哪些 AI 技术値得长期投入",
+      "summary": "不是所有 AI 技术都有相同的生命周期。区分补救缺降型和编码知识型是判断技术投资价值的核心框架。",
       "tags": [
         "产品框架",
         "技术判断"
@@ -74,7 +96,7 @@
     {
       "slug": "finetuning-evolution",
       "date": "2026.03",
-      "title": "微调的演进：哪些场景还值得做，哪些已被替代",
+      "title": "微调的演进：哪些场景还値得做，哪些已被替代",
       "summary": "能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。",
       "tags": [
         "技术判断",
@@ -87,7 +109,7 @@
       "slug": "prompt-engineering-lifecycle",
       "date": "2026.03",
       "title": "Prompt Engineering 的生命周期：哪些会消亡，哪些会留下",
-      "summary": "补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
+      "summary": "补救模型缺降的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
       "tags": [
         "工程演进",
         "技术判断"
