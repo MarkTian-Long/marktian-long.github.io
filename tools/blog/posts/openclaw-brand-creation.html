@@ -234,54 +234,74 @@ category: 商业
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
 
-  /* TOC 内联目录 */
-  .toc-inline {
-    margin: 0 0 2rem;
-    padding: 1rem 1.25rem;
-    background: var(--bg-subtle);
-    border-left: 3px solid var(--border);
-    border-radius: 6px;
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
   }
-  .toc-inline-label {
+  .toc-wrap { position: sticky; top: 40px; }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-3);
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
   }
-  .toc-inline-list {
-    margin: 0;
-    padding: 0 0 0 1.1em;
-    list-style: decimal;
-  }
-  .toc-inline-list li { margin: 0.2em 0; }
-  .toc-inline-list a {
+  .toc-list { list-style: none; margin: 0; padding: 0; }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
     color: var(--text-2);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.15s;
-    padding-left: 4px;
+    font-size: 0.85rem;
+    line-height: 1.4;
     border-left: 2px solid transparent;
-    display: inline-block;
+    transition: color 0.15s, border-color 0.15s;
   }
-  .toc-inline-list a:hover,
-  .toc-inline-list a.toc-active {
+  .toc-list a:hover,
+  .toc-list a.toc-active {
     color: var(--clay);
     border-left-color: var(--clay);
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
   }
   </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="top-bar">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
     <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
       <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
-
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-what">它到底是什么</a></li>
+          <li><a href="#sec-decisions">三个产品决策，每一个都有代价</a></li>
+          <li><a href="#sec-b2b">OpenClaw 走进 B 端的真实路径</a></li>
+          <li><a href="#sec-fate">品类宿命：脚手架终将被基础设施吞并</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
@@ -295,15 +315,6 @@ category: 商业
   <hr class="divider" />
 
   <div class="post-body">
-    <nav class="toc-inline" aria-label="本文目录">
-        <span class="toc-inline-label">本文目录</span>
-        <ol class="toc-inline-list">
-            <li><a href="#sec-what">它到底是什么</a></li>
-            <li><a href="#sec-decisions">三个产品决策，每一个都有代价</a></li>
-            <li><a href="#sec-b2b">OpenClaw 走进 B 端的真实路径</a></li>
-            <li><a href="#sec-fate">品类宿命：脚手架终将被基础设施吞并</a></li>
-        </ol>
-    </nav>
 
     <p>我第一次听说 OpenClaw 是去年年底，当时没有用，配置成本摆在那里，token 也要自己掏钱，动力不足。真正开始用，已经是今年二三月份，国内大厂陆续跟进，部署门槛低了，还送 token。</p>
     <p>这个时间差本身就很说明问题。一个产品爆红之后，真正推动普通技术用户开始用的，不是它本身，而是跟进者。OpenClaw 验证了需求，别人降低了门槛。这件事的逻辑，贯穿了这款产品的整个故事。</p>
@@ -373,13 +384,15 @@ category: 商业
   <nav class="footer-nav">
     <a href="../index.html">← 返回列表</a>
   </nav>
-</div>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
 
 
 <script>
 (function(){
   var sections = document.querySelectorAll('.post-body h2[id]');
-  var links = document.querySelectorAll('.toc-inline-list a');
+  var links = document.querySelectorAll('.toc-list a');
   if (sections.length && links.length) {
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
