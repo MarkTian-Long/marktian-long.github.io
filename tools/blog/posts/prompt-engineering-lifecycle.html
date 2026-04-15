@@ -196,6 +196,43 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* TOC 内联目录 */
+  .toc-inline {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-inline-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .toc-inline-list {
+    margin: 0;
+    padding: 0 0 0 1.1em;
+    list-style: decimal;
+  }
+  .toc-inline-list li { margin: 0.2em 0; }
+  .toc-inline-list a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+    display: inline-block;
+  }
+  .toc-inline-list a:hover,
+  .toc-inline-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
   </style>
 </head>
 <body>
@@ -221,7 +258,17 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
     <hr class="divider" />
 
     <div class="post-body">
-        <h2>核心判断</h2>
+        <nav class="toc-inline" aria-label="本文目录">
+            <span class="toc-inline-label">本文目录</span>
+            <ol class="toc-inline-list">
+                <li><a href="#sec-core">核心判断</a></li>
+                <li><a href="#sec-dying">会消亡的部分：补救缺陷型</a></li>
+                <li><a href="#sec-staying">会留下的部分：定义约束型</a></li>
+                <li><a href="#sec-learn">消亡不代表不值得学</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="sec-core" style="scroll-margin-top:60px">核心判断</h2>
         <p>
             Prompt Engineering 不是一个整体——它内部有两种完全不同性质的工作。一种是"补救"，为了绕过模型的能力缺陷而写的技巧；另一种是"定义"，为了告诉模型特定的约束和领域规则。两者的生命周期截然不同。
         </p>
@@ -230,7 +277,7 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
             <strong>判断标准：</strong>去掉这个 Prompt，用更强的模型能达到相同效果吗？如果能——这是补救型，会消亡。如果不能——这是定义型，会留下。
         </div>
 
-        <h2>会消亡的部分：补救缺陷型</h2>
+        <h2 id="sec-dying" style="scroll-margin-top:60px">会消亡的部分：补救缺陷型</h2>
         <p>
             这类 Prompt 的存在理由是"模型目前做不好某件事"，一旦基础模型升级，这个理由就消失了：
         </p>
@@ -244,7 +291,7 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
             Claude Opus 的出现已经让上述很多技巧变成了多余动作。不是因为这些技巧没用过，而是它们的价值已经被基模内化了。
         </p>
 
-        <h2>会留下的部分：定义约束型</h2>
+        <h2 id="sec-staying" style="scroll-margin-top:60px">会留下的部分：定义约束型</h2>
         <p>
             这类 Prompt 的价值不来自弥补缺陷，而来自传递"模型无法从训练数据中自行推断"的信息：
         </p>
@@ -281,7 +328,7 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
             </div>
         </div>
 
-        <h2>消亡不代表不值得学</h2>
+        <h2 id="sec-learn" style="scroll-margin-top:60px">消亡不代表不值得学</h2>
         <p>
             不是说消亡度高的技术现在不要学。CoT、Few-shot 在当前阶段仍然有效，当前项目用得上就用。但判断力要放在：<strong>这个技术我在用它解决问题，还是在押注它的长期价值？</strong>
         </p>
@@ -301,6 +348,23 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-inline-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

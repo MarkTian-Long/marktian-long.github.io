@@ -205,11 +205,63 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap {
+    position: sticky;
+    top: 40px;
+  }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
   </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="top-bar">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+    <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
     <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
       <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -217,6 +269,21 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
     </button>
   </div>
 
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-core">核心判断</a></li>
+          <li><a href="#sec-dying">正在消亡的部分：能力补救类微调</a></li>
+          <li><a href="#sec-staying">永不消亡的部分：工程驱动类微调</a></li>
+          <li><a href="#sec-vs-rag">微调 vs RAG：该怎么选</a></li>
+          <li><a href="#sec-lora">LoRA 让部分微调重新可行</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="content-col">
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.03</span>
@@ -230,12 +297,12 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
     <hr class="divider" />
 
     <div class="post-body">
-        <h2>核心判断</h2>
+        <h2 id="sec-core" style="scroll-margin-top:60px">核心判断</h2>
         <p>
             微调（Fine-tuning）正在经历分化。不是整体衰落，而是其中一类在快速萎缩，另一类依然必要。区分这两类，决定了你在技术选型时是否会做出正确的判断。
         </p>
 
-        <h2>正在消亡的部分：能力补救类微调</h2>
+        <h2 id="sec-dying" style="scroll-margin-top:60px">正在消亡的部分：能力补救类微调</h2>
         <p>
             2023-2024 年微调最常见的用途是"让模型学会某个特定能力"：
         </p>
@@ -252,7 +319,7 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             <strong>被什么替代：</strong>少样本学习（上下文中放示例）→ 成本低、灵活；RAG（检索相关示例）→ 动态、可更新。这两种方式在大多数"能力扩展"场景里已经能替代微调。
         </div>
 
-        <h2>永不消亡的部分：工程驱动类微调</h2>
+        <h2 id="sec-staying" style="scroll-margin-top:60px">永不消亡的部分：工程驱动类微调</h2>
         <p>
             这类微调解决的不是"模型能力"而是"工程需求"，基模升级无法让它消失：
         </p>
@@ -272,7 +339,7 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             </div>
         </div>
 
-        <h2>微调 vs RAG：该怎么选</h2>
+        <h2 id="sec-vs-rag" style="scroll-margin-top:60px">微调 vs RAG：该怎么选</h2>
         <p>
             这是当前最常见的技术选型问题。简单的判断框架：
         </p>
@@ -285,7 +352,7 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
             趋势很明确：<strong>RAG 在赢</strong>。因为现在知识变化快、数据多、需要追踪信息来源。微调的假设（"知识是稳定的"）越来越不符合现实。
         </p>
 
-        <h2>LoRA 让部分微调重新可行</h2>
+        <h2 id="sec-lora" style="scroll-margin-top:60px">LoRA 让部分微调重新可行</h2>
         <p>
             低秩适应（LoRA）的出现改变了微调的成本结构：不需要微调整个模型，只需训练额外的低秩矩阵，成本显著降低。这让一些此前因成本太高而放弃微调的场景重新变得可行——比如为不同客户快速适配不同风格的模型，或者为不同领域快速构建专用模型。
         </p>
@@ -298,10 +365,29 @@ summary: 能力补救类微调正在被 RAG 和少样本学习替代，但成本
     <nav class="footer-nav">
         <a href="../index.html">← 返回列表</a>
     </nav>
-</div>
+    </div><!-- /.content-col -->
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

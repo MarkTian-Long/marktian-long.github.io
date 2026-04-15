@@ -233,6 +233,43 @@ category: 商业
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* TOC 内联目录 */
+  .toc-inline {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-inline-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .toc-inline-list {
+    margin: 0;
+    padding: 0 0 0 1.1em;
+    list-style: decimal;
+  }
+  .toc-inline-list li { margin: 0.2em 0; }
+  .toc-inline-list a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+    display: inline-block;
+  }
+  .toc-inline-list a:hover,
+  .toc-inline-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
   </style>
 </head>
 <body>
@@ -258,10 +295,20 @@ category: 商业
   <hr class="divider" />
 
   <div class="post-body">
+    <nav class="toc-inline" aria-label="本文目录">
+        <span class="toc-inline-label">本文目录</span>
+        <ol class="toc-inline-list">
+            <li><a href="#sec-what">它到底是什么</a></li>
+            <li><a href="#sec-decisions">三个产品决策，每一个都有代价</a></li>
+            <li><a href="#sec-b2b">OpenClaw 走进 B 端的真实路径</a></li>
+            <li><a href="#sec-fate">品类宿命：脚手架终将被基础设施吞并</a></li>
+        </ol>
+    </nav>
+
     <p>我第一次听说 OpenClaw 是去年年底，当时没有用，配置成本摆在那里，token 也要自己掏钱，动力不足。真正开始用，已经是今年二三月份，国内大厂陆续跟进，部署门槛低了，还送 token。</p>
     <p>这个时间差本身就很说明问题。一个产品爆红之后，真正推动普通技术用户开始用的，不是它本身，而是跟进者。OpenClaw 验证了需求，别人降低了门槛。这件事的逻辑，贯穿了这款产品的整个故事。</p>
 
-    <h2>它到底是什么</h2>
+    <h2 id="sec-what" style="scroll-margin-top:60px">它到底是什么</h2>
     <p>很多人第一次看到 OpenClaw 的介绍，会以为它是一个"更强的 AI 助手"。这个理解是偏的。</p>
     <p>OpenClaw 不是模型，也不是产品意义上的 AI 助手。<a href="https://fortune.com/2026/03/14/openclaw-china-ai-agent-boom-open-source-lobster-craze-minimax-qwen/">它是一个 agentic harness</a>，一套把 LLM 包装成能自主执行任务的基础设施框架。你选一个模型作为大脑（Claude、GPT-4、DeepSeek 都行），OpenClaw 负责把这个大脑接上你的工具：邮件、日历、文件系统、浏览器、各种 API。然后你通过 Telegram 或 WhatsApp 给它下指令，它去执行。</p>
     <p>更准确的类比是：OpenClaw 是脚手架，不是房子。</p>
@@ -269,7 +316,7 @@ category: 商业
     <p>这个定位决定了它的真实用户画像，不是所有人想象中的"普通大众"，而是<strong>有明确自动化需求、愿意付出配置成本换自动化收益的跨行业技术爱好者和个体创业者</strong>。<a href="https://36kr.com/p/3709855637598595">实际社群数据印证了这一点</a>：用户里有技术从业者，也有行政、律师、财务、淘宝店主，年龄从05后大学生到中年企业高管都有，共同点不是职业，而是"有高频重复任务想甩给 AI"这个具体需求。</p>
     <p>但这里有一个值得正视的反差：<a href="https://zhuanlan.zhihu.com/p/2012431646817813094">有知乎作者统计，90% 的人装完 OpenClaw 之后，根本不知道该拿它干什么</a>。爆红和真实有效使用之间，存在一道不小的鸿沟。这道鸿沟的本质是：OpenClaw 给你最大的自由，但也把最大的责任推给了你，你得先想清楚要自动化什么，工具才有意义。</p>
 
-    <h2>三个产品决策，每一个都有代价</h2>
+    <h2 id="sec-decisions" style="scroll-margin-top:60px">三个产品决策，每一个都有代价</h2>
     <p><a href="https://en.wikipedia.org/wiki/OpenClaw">OpenClaw 能在 60 天内拿到 25 万 GitHub stars</a>，不是偶然。它的三个核心产品决策叠在一起，产生了引爆效果。但每一个决策，背后都有明确的 trade-off。</p>
 
     <div class="decision-card">
@@ -290,14 +337,14 @@ category: 商业
       <p>OpenClaw 能读邮件、操作文件、跨 App 调用，权限范围极大。<a href="https://en.wikipedia.org/wiki/OpenClaw">Cisco 的 AI 安全团队测试了一个第三方 OpenClaw skill，发现它在用户无感知的情况下完成了数据窃取和提示词注入</a>。<a href="https://zhuanlan.zhihu.com/p/2012431646817813094">ClawHub 上一度有 12% 的 skill 包含恶意代码</a>。但这里有个值得想清楚的问题：如果把权限缩小，不能读邮件、不能操作文件，它还是"贾维斯"吗？能力边界和安全边界在这个产品上天然冲突。Steinberger 的选择是先用全权限把能力上限拉满，代价后置——这是清醒的策略选择，不是疏忽。</p>
     </div>
 
-    <h2>OpenClaw 走进 B 端的真实路径</h2>
+    <h2 id="sec-b2b" style="scroll-margin-top:60px">OpenClaw 走进 B 端的真实路径</h2>
     <p>OpenClaw 爆红之后，有一种声音说它会改变企业的工作方式。这个方向是对的，但路径值得仔细看。</p>
     <p>OpenClaw 原生版本直接走不进 B 端。<a href="https://www.53ai.com/news/Openclaw/2026030986915.html">企业级部署需要满足高安全、高稳定、高兼容、可管控四大核心需求，而 OpenClaw 原生部署在多终端兼容性、权限管控、审计链路上存在明显短板</a>。这些不是"模型更强"就能解决的。</p>
     <p>真正让 OpenClaw 触达 B 端的路径，是大厂的二次封装。<a href="https://finance.sina.com.cn/tech/roll/2026-03-10/doc-inhqpaep9999746.shtml">阿里云、腾讯云、中兴通讯、中关村科金几乎同步推出了各自的企业级 Claw 解决方案</a>，核心都是在原生 OpenClaw 之上加了一层：私有化部署、数据不出域、多租户隔离、审计链路。</p>
     <p>这个现象本身就值得认真看：OpenClaw 定义了品类，但真正落地 B 端的，是在它基础上做了一层产品化封装的方案。脚手架走不进企业，企业需要的是有人帮它把脚手架装好、调好、保好。</p>
     <p><strong>B 端的机会不在 OpenClaw 本身，而在"谁能把 OpenClaw 的能力包装成企业真正可用的形态"。</strong>目前来看，这个位置正在被云厂商快速占据。</p>
 
-    <h2>品类宿命：脚手架终将被基础设施吞并</h2>
+    <h2 id="sec-fate" style="scroll-margin-top:60px">品类宿命：脚手架终将被基础设施吞并</h2>
     <p>这是关于 OpenClaw 最值得想清楚的一个问题。</p>
     <p>它证明了一件事：<strong>用户对 personal agent 的需求是真实的，市场空白是真实的</strong>。但证明市场空白存在，和能长期占据这个市场，是两件事。</p>
     <p>脚手架类产品有一个结构性的天花板：一旦更底层的基础设施开始原生支持同类能力，脚手架的价值就会被快速压缩。</p>
@@ -330,6 +377,23 @@ category: 商业
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-inline-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

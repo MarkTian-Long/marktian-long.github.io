@@ -228,6 +228,43 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* TOC 内联目录 */
+  .toc-inline {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-inline-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .toc-inline-list {
+    margin: 0;
+    padding: 0 0 0 1.1em;
+    list-style: decimal;
+  }
+  .toc-inline-list li { margin: 0.2em 0; }
+  .toc-inline-list a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+    display: inline-block;
+  }
+  .toc-inline-list a:hover,
+  .toc-inline-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
   </style>
 </head>
 <body>
@@ -253,7 +290,16 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
     <hr class="divider" />
 
     <div class="post-body">
-        <h2>核心判断</h2>
+        <nav class="toc-inline" aria-label="本文目录">
+            <span class="toc-inline-label">本文目录</span>
+            <ol class="toc-inline-list">
+                <li><a href="#sec-core">核心判断</a></li>
+                <li><a href="#sec-two-types">两类技术的本质区别</a></li>
+                <li><a href="#sec-cot">为什么 CoT 会消亡，但合规规则不会</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="sec-core" style="scroll-margin-top:60px">核心判断</h2>
         <p>
             AI 技术的生命周期差异极大。有些技术会随着基础模型能力的提升被自然"吞掉"，有些则会持续演进、长期有效。判断一项技术的生存空间，比追踪技术本身更有价值。区分标准只有一个：这项技术解决的是<strong>模型的能力缺陷</strong>，还是<strong>领域知识的结构化</strong>？
         </p>
@@ -264,7 +310,7 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
             比值越高，随模型进化消亡越快；比值越低，越有持久投入价值。
         </div>
 
-        <h2>两类技术的本质区别</h2>
+        <h2 id="sec-two-types" style="scroll-margin-top:60px">两类技术的本质区别</h2>
         <p>
             <strong>补救缺陷型</strong>：为弥补当前模型不足而产生，是过渡方案而非根本性解决。一旦基础模型升级，这类技术的价值就会显著缩水。典型特征是：去掉它，用更强的模型就能达到相同效果。
         </p>
@@ -293,7 +339,7 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
             </div>
         </div>
 
-        <h2>为什么 CoT 会消亡，但合规规则不会</h2>
+        <h2 id="sec-cot" style="scroll-margin-top:60px">为什么 CoT 会消亡，但合规规则不会</h2>
         <p>
             思维链（CoT）的本质是"告诉模型要分步骤推理"，解决的是早期模型推理能力弱的问题。当 Claude Opus、GPT-5 这样的模型出现后，分步推理成了默认行为，显式的 CoT 提示自然失去价值。
         </p>
@@ -313,6 +359,23 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-inline-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

@@ -259,6 +259,43 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* TOC 内联目录 */
+  .toc-inline {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-inline-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .toc-inline-list {
+    margin: 0;
+    padding: 0 0 0 1.1em;
+    list-style: decimal;
+  }
+  .toc-inline-list li { margin: 0.2em 0; }
+  .toc-inline-list a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+    display: inline-block;
+  }
+  .toc-inline-list a:hover,
+  .toc-inline-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
   </style>
 </head>
 <body>
@@ -283,7 +320,17 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
     <hr class="divider" />
 
     <div class="post-body">
-        <h2>核心判断</h2>
+        <nav class="toc-inline" aria-label="本文目录">
+            <span class="toc-inline-label">本文目录</span>
+            <ol class="toc-inline-list">
+                <li><a href="#sec-core">核心判断</a></li>
+                <li><a href="#sec-three-layers">三层的本质区别</a></li>
+                <li><a href="#sec-shift">为什么关注层次会上移</a></li>
+                <li><a href="#sec-2026">2026 年的竞争格局</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="sec-core" style="scroll-margin-top:60px">核心判断</h2>
         <p>
             AI 工程经历了三个层次的演进，每个阶段关注的问题不同。目前正处于从 Context Engineering 向 Harness Engineering 过渡的节点。2026 年的竞争差距不在"谁的 Prompt 更优雅"，而在"谁的系统在生产环境里跑得更稳"。
         </p>
@@ -317,7 +364,7 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
             </div>
         </div>
 
-        <h2>三层的本质区别</h2>
+        <h2 id="sec-three-layers" style="scroll-margin-top:60px">三层的本质区别</h2>
         <div class="three-col">
             <div class="col-card">
                 <div class="col-title">Prompt Engineering</div>
@@ -333,7 +380,7 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
             </div>
         </div>
 
-        <h2>为什么关注层次会上移</h2>
+        <h2 id="sec-shift" style="scroll-margin-top:60px">为什么关注层次会上移</h2>
         <p>
             早期的 AI 应用以单次调用为主，"这次 Prompt 写得好不好"决定了产品体验的上限。当应用演进为多步骤 Agent 任务，单次调用的质量只占了一小部分——工具调用是否安全、中间结果如何传递、失败怎么恢复，这些成了主要瓶颈。
         </p>
@@ -341,7 +388,7 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
             Harness 解决的问题不能靠"换一个更强的模型"来绕过。即使模型能力翻倍，如果没有正确的工具抽象和错误恢复机制，Agent 系统在生产环境依然不稳定。这是层次上移的根本原因：<strong>上层问题不能被下层能力提升直接解决。</strong>
         </p>
 
-        <h2>2026 年的竞争格局</h2>
+        <h2 id="sec-2026" style="scroll-margin-top:60px">2026 年的竞争格局</h2>
         <p>
             当前市场上大多数 AI 产品的竞争差距来自两处：一是模型选型（用哪个基础模型），二是数据资产（是否有独家的领域知识）。Prompt 层的差距已经在快速收窄——随着最佳实践的公开化，写出一个"够用"的 Prompt 门槛越来越低。
         </p>
@@ -361,6 +408,23 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-inline-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

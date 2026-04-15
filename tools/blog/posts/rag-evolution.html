@@ -203,6 +203,43 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* TOC 内联目录 */
+  .toc-inline {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-inline-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .toc-inline-list {
+    margin: 0;
+    padding: 0 0 0 1.1em;
+    list-style: decimal;
+  }
+  .toc-inline-list li { margin: 0.2em 0; }
+  .toc-inline-list a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+    display: inline-block;
+  }
+  .toc-inline-list a:hover,
+  .toc-inline-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
   </style>
 </head>
 <body>
@@ -228,7 +265,16 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
     <hr class="divider" />
 
     <div class="post-body">
-        <h2>核心判断</h2>
+        <nav class="toc-inline" aria-label="本文目录">
+            <span class="toc-inline-label">本文目录</span>
+            <ol class="toc-inline-list">
+                <li><a href="#sec-core">核心判断</a></li>
+                <li><a href="#sec-problems">现有 RAG 的四大问题</a></li>
+                <li><a href="#sec-evolution">演进方向：五个维度</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="sec-core" style="scroll-margin-top:60px">核心判断</h2>
         <p>
             RAG（检索增强生成）是结构性需求——即使基模知识再完整，也永远无法处理私有数据和实时数据。但<strong>现有的 naive RAG 设计</strong>有四个根本性问题，这些问题推动着 RAG 向主动信息系统演进。
         </p>
@@ -237,7 +283,7 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
             <strong>为什么 RAG 永不消亡：</strong>私有数据（你的公司内部文档）、实时数据（今天的股价）、特定领域专有知识（内部合规手册）——这三类信息模型不可能从训练数据中获得，必须通过检索传入。基模越强，这个结构性需求不会消失，只会演进形态。
         </div>
 
-        <h2>现有 RAG 的四大问题</h2>
+        <h2 id="sec-problems" style="scroll-margin-top:60px">现有 RAG 的四大问题</h2>
 
         <div class="problem-list">
             <div class="problem-item">
@@ -258,7 +304,7 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
             </div>
         </div>
 
-        <h2>演进方向：五个维度</h2>
+        <h2 id="sec-evolution" style="scroll-margin-top:60px">演进方向：五个维度</h2>
 
         <div class="evolve-list">
             <div class="evolve-item">
@@ -295,6 +341,23 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-inline-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';

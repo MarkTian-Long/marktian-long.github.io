@@ -198,11 +198,63 @@ category: 产品
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap {
+    position: sticky;
+    top: 40px;
+  }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
   </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="top-bar">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
     <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
       <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -210,6 +262,21 @@ category: 产品
     </button>
   </div>
 
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-trap">用技术复杂度判断企业成熟度是认知陷阱</a></li>
+          <li><a href="#sec-stage1">第一层：探索期</a></li>
+          <li><a href="#sec-stage2">第二层：交付期</a></li>
+          <li><a href="#sec-stage3">第三层：迭代期</a></li>
+          <li><a href="#sec-compare">三层对照</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="content-col">
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
@@ -226,7 +293,7 @@ category: 产品
     <p>同样是讲RAG的设计细节，有的面试官听得很专注，有的却明显兴趣缺缺。起初我以为是表达问题，后来才意识到：不是我讲得好不好，是我们根本在说不同的事。</p>
     <p>这让我开始认真想一个问题：<strong>为什么同样是"要做AI"的公司，对AI PM的期待差异会这么大？</strong></p>
 
-    <h2>用技术复杂度判断企业成熟度，是一个常见的认知陷阱</h2>
+    <h2 id="sec-trap" style="scroll-margin-top:60px">用技术复杂度判断企业成熟度，是一个常见的认知陷阱</h2>
     <p>很多人（包括我自己）会下意识地用技术栈来给企业分级——直接调API是初级，用Coze/Dify是中级，内部自研RAG是高级。</p>
     <p>这个判断框架看起来合理，但其实有问题。</p>
     <p>技术复杂度描述的是企业"用了什么"，但没有回答更关键的问题：<strong>企业现在真正面对的不确定性是什么？</strong></p>
@@ -234,7 +301,7 @@ category: 产品
     <p>更有效的判断维度是：<strong>这家企业有没有明确的、可度量的AI产品化目标。</strong></p>
     <p>用这个维度来看，企业的AI应用现状自然分成三层，每一层面对的根本问题完全不同。</p>
 
-    <h2>第一层：探索期——真正的问题是"值不值得做"</h2>
+    <h2 id="sec-stage1" style="scroll-margin-top:60px">第一层：探索期——真正的问题是"值不值得做"</h2>
     <p>这类企业通常有明确的AI战略意图，但还没有落地成具体的产品目标。老板层面已经达成共识"要拥抱AI"，但往下问"做什么、先做哪个、投入多少合理"，往往没有清晰的答案。</p>
     <p><strong>企业的真实焦虑不是技术，是决策。</strong></p>
     <p>他们面对的核心不确定性是：哪个业务场景引入AI的ROI最高？现有的数据和流程条件支不支持？如果做错了方向，代价是什么？</p>
@@ -248,21 +315,21 @@ category: 产品
     <p>基于这三个维度，通常的结论是：执行层、重复性高、规则可标准化的任务，优先让AI接；涉及最终决策、影响较大、出错难以挽回的判断，必须留给人。</p>
     <p>这个阶段最常见的认知误区是：把"引入AI"本身当成目标，而不是手段。于是开始大量采购AI工具、搭建基础设施，却没有一个清晰的业务问题等待被解决。结果是投入了资源，但没有任何可度量的产出，热情在半年内消退。</p>
 
-    <h2>第二层：交付期——真正的问题是"出在哪一层"</h2>
+    <h2 id="sec-stage2" style="scroll-margin-top:60px">第二层：交付期——真正的问题是"出在哪一层"</h2>
     <p>这类企业已经有了明确的AI产品目标，也在跑了，但效果不稳定，始终达不到预期。团队知道自己想要什么，但不知道问题出在哪里。</p>
     <p><strong>企业的真实焦虑不是方向，是诊断。</strong></p>
     <p>效果上不去的原因可能有很多：数据质量不够、工程实现有缺陷、产品设计本身就错了、或者工具选型和业务需求不匹配。这几种原因表现出来的症状可能很像，但解法完全不同。诊断能力本身，才是这个阶段最稀缺的东西。</p>
     <p>一个典型的场景：用低代码平台搭了一个客服工作流，上线后效果不稳定，团队开始反复调Prompt，但始终没有明显改善。真正的问题可能出在工具选型阶段——当初没有认真评估平台能力边界和业务需求的匹配度，导致后续所有优化都在错误的层面上使劲。</p>
     <p>这个阶段最常见的认知误区是：<strong>把工具能力边界的问题，误诊成了使用姿势的问题。</strong>于是不断在Prompt上做文章，却始终没有触及真正的瓶颈。</p>
 
-    <h2>第三层：迭代期——真正的问题是"飞轮转起来了吗"</h2>
+    <h2 id="sec-stage3" style="scroll-margin-top:60px">第三层：迭代期——真正的问题是"飞轮转起来了吗"</h2>
     <p>这类企业已经有稳定交付，AI产品在跑，业务结果可度量。但产品往往在某个效果水位停滞——不是因为遇到了技术天花板，而是因为没有建立从用户反馈到持续优化的闭环。</p>
     <p><strong>企业的真实焦虑不是能不能做，是能不能持续变好。</strong></p>
     <p>AI产品和传统软件产品最不一样的地方在于：它不是一次设计完就固定的，而是动态收敛的。用户每一次对AI输出的修改和反馈，都是潜在的优化信号。如果这些信号没有被系统性地收集、分析和反哺到迭代中，产品就会停在一个局部最优点上，再怎么调也很难突破。</p>
     <p>数据飞轮的基本逻辑是：持续收集Bad Case，定期分析根因，反哺迭代，让AI的能力边界随着使用不断被校准。这个机制建立起来之前，讨论微调或更复杂的技术优化，往往是在错误的层面上使劲——基础没打稳，优化的方向本身就可能跑偏。</p>
     <p>这个阶段最常见的认知误区是：<strong>跳过飞轮直接谈技术升级。</strong>数据积累不足、反馈机制不完善，就开始讨论微调——结果优化的基础本身有问题，方向跑偏了却很难察觉。</p>
 
-    <h2>三层对照</h2>
+    <h2 id="sec-compare" style="scroll-margin-top:60px">三层对照</h2>
     <div class="stage-card">
       <div class="stage-label">第一层 · 探索期</div>
       <div class="stage-title">核心问题：值不值得做</div>
@@ -287,10 +354,29 @@ category: 产品
   <nav class="footer-nav">
     <a href="../index.html">← 返回列表</a>
   </nav>
-</div>
+    </div><!-- /.content-col -->
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
 
 
 <script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
 (function(){
   var saved = localStorage.getItem('blog_theme');
   var theme = (saved === 'dark') ? 'dark' : 'light';
