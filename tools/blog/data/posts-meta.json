@@ -2,6 +2,18 @@
   "version": 1,
   "posts": [
     {
+      "slug": "openclaw-brand-creation",
+      "date": "2026.04",
+      "title": "OpenClaw 爆红背后：一个品类的诞生与宿命",
+      "summary": "一个奥地利独立开发者用「危险」的开源项目验证了 personal agent 的市场需求，然后被 OpenAI 招走了。OpenClaw 的三个产品决策、B 端落地路径、以及脚手架类产品的品类宿命，比任何关于 Agent 未来的预测都更值得认真拆解。",
+      "tags": [
+        "行业洞察",
+        "Agent"
+      ],
+      "category": "商业",
+      "url": "posts/openclaw-brand-creation.html"
+    },
+    {
       "slug": "enterprise-ai-three-stages",
       "date": "2026.04",
       "title": "企业AI应用不是一条线，而是三个不同的战场",
@@ -60,7 +72,7 @@
     {
       "slug": "tech-obsolescence",
       "date": "2026.03",
-      "title": "技术消亡度框架：判断哪些 AI 技术値得长期投入",
+      "title": "技术消亡度框架：判断哪些 AI 技术值得长期投入",
       "summary": "不是所有 AI 技术都有相同的生命周期。区分补救缺降型和编码知识型是判断技术投资价值的核心框架。",
       "tags": [
         "产品框架",
@@ -96,7 +108,7 @@
     {
       "slug": "finetuning-evolution",
       "date": "2026.03",
-      "title": "微调的演进：哪些场景还値得做，哪些已被替代",
+      "title": "微调的演进：哪些场景还值得做，哪些已被替代",
       "summary": "能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。",
       "tags": [
         "技术判断",

@@ -116,8 +116,13 @@
             color: var(--text-3);
         }
         .cat-btn.active .cat-count { color: var(--clay); opacity: 0.7; }
+        .blog-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
         .theme-toggle {
-            margin-top: auto;
             width: 32px;
             height: 32px;
             border-radius: 6px;
@@ -128,6 +133,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
             transition: color 0.2s, border-color 0.2s;
         }
         .theme-toggle:hover { color: var(--clay); border-color: var(--clay); }
@@ -149,7 +155,7 @@
             margin: 8px 0 10px;
             line-height: 1.25;
         }
-        .blog-desc { font-size: 14px; color: var(--text-2); margin-bottom: 40px; }
+        .blog-desc { font-size: 14px; color: var(--text-2); }
 
         /* ── 文章列表 ── */
         .year-group { margin-bottom: 36px; }
@@ -265,21 +271,22 @@
             <button class="cat-btn" data-cat="技术">技术 <span class="cat-count" id="cnt-tech"></span></button>
             <button class="cat-btn" data-cat="产品">产品 <span class="cat-count" id="cnt-product"></span></button>
             <button class="cat-btn" data-cat="商业">商业 <span class="cat-count" id="cnt-biz"></span></button>
-            <button class="cat-btn" data-cat="生活">生活 <span class="cat-count" id="cnt-life"></span></button>
         </nav>
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
-            <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
     </aside>
 
     <!-- 右侧主区 -->
     <main class="blog-main">
-        <header>
-            <span class="blog-label">Writing</span>
-            <h1 class="blog-title">思考碎片</h1>
-            <p class="blog-desc">技术、产品、商业多角度拆解 AI 动态</p>
-        </header>
+        <div class="blog-header">
+            <header>
+                <span class="blog-label">Writing</span>
+                <h1 class="blog-title">思考碎片</h1>
+                <p class="blog-desc">技术、产品、商业多角度拆解 AI 动态</p>
+            </header>
+            <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+                <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
 
         <!-- 移动端控件 -->
         <div class="mobile-controls">
@@ -289,7 +296,6 @@
                 <button class="cat-tab" data-cat="技术">技术</button>
                 <button class="cat-tab" data-cat="产品">产品</button>
                 <button class="cat-tab" data-cat="商业">商业</button>
-                <button class="cat-tab" data-cat="生活">生活</button>
             </div>
         </div>
 
@@ -336,13 +342,12 @@
 
     // ── 分类计数 ──
     function updateCounts() {
-        const map = { all: posts.length, '技术': 0, '产品': 0, '商业': 0, '生活': 0 };
+        const map = { all: posts.length, '技术': 0, '产品': 0, '商业': 0 };
         posts.forEach(function (p) { if (p.category in map) map[p.category]++; });
         document.getElementById('cnt-all').textContent = map.all;
         document.getElementById('cnt-tech').textContent = map['技术'];
         document.getElementById('cnt-product').textContent = map['产品'];
         document.getElementById('cnt-biz').textContent = map['商业'];
-        document.getElementById('cnt-life').textContent = map['生活'];
     }
 
     // ── 过滤 ──
