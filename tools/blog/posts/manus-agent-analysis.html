@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   Manus：它卖的不是 Agent，是一次认知震撼
+tags:    [行业洞察, Agent]
+slug:    manus-agent-analysis
+summary: Manus 最火的时候，我没有付费进去。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manus：它卖的不是 Agent，是一次认知震撼 — Leo 的思考碎片</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .decision-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 20px 0;
+    }
+    .decision-card .decision-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+    .decision-card .decision-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .decision-card p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap { position: sticky; top: 40px; }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list { list-style: none; margin: 0; padding: 0; }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
+  </style>
+</head>
+<body>
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-why">为什么没有付费</a></li>
+          <li><a href="#sec-what">它到底是什么</a></li>
+          <li><a href="#sec-evolution">产品演进</a></li>
+          <li><a href="#sec-decisions">三个核心决策</a></li>
+          <li><a href="#sec-limits">局限在哪里</a></li>
+          <li><a href="#sec-meta">Meta 买的是什么</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.04</span>
+      <span class="tag">行业洞察</span>
+      <span class="tag">Agent</span>
+    </div>
+    <h1 class="post-title">Manus：它卖的不是 Agent，是一次认知震撼</h1>
+    <p class="post-summary">Manus 最火的时候，我没有付费进去。不是因为穷，而是因为我判断自己不需要它。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <h2 id="sec-why" style="scroll-margin-top:60px">我为什么没有付费</h2>
+    <p>2025 年 3 月，Manus 刷屏的时候，我作为一个有 LLM 产品经验的 AI PM，看完演示视频，做了一个决定：不付费，不进去。</p>
+    <p>理由很简单，两条。</p>
+    <p>第一，我用深度研究模式已经能满足日常需求——搜集信息、多轮推理、输出报告，这些 Manus 的演示场景我基本都有工具覆盖了。第二，我隐约感觉它被过度包装了。当时已经有媒体报告实际效果没有演示视频那么流畅，<a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/">MIT Technology Review 的实测</a>也写到 Manus 会在任务中途"偷懒"，用它自己的话说是"时间限制导致加速了研究过程"。</p>
+    <p>这个判断大体上是对的。但我后来意识到，我对 Manus 的理解停留在"它是一个更强的深度研究工具"这个层面——而这个理解本身就是错的。</p>
+
+    <h2 id="sec-what" style="scroll-margin-top:60px">它到底是什么</h2>
+    <p>Manus 由武汉团队 Butterfly Effect（母公司 Monica.im）开发，<a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/">于 2025 年 3 月 6 日正式上线</a>，自我定位为"全球首个 General AI Agent"。它没有自研大模型，底层调用 Anthropic 的 Claude 3.5 Sonnet 和阿里巴巴 Qwen 的微调版本，核心是一套多 Agent 协作的任务执行系统。</p>
+    <p>Manus 和深度研究的本质差异，不在于谁的报告写得更好，而在于<strong>一个只会读，一个还会动手</strong>。</p>
+    <p>深度研究的边界是信息世界：搜集网页 → 整理分析 → 输出文字。全程不触碰任何真实系统的状态。Manus 多出来的核心能力是：登录账号、填表、点按钮、执行代码、部署应用。它能改变外部世界的状态。</p>
+    <p>这个差异在我的日常任务里确实不重要——我要的是分析报告，不是让 AI 替我操作某个后台系统。但对另一类用户来说，这个差异是决定性的：那些有重复性跨平台操作任务、但没有技术能力把它工程化的人。跨境电商卖家监控多平台价格、HR 在不同招聘网站之间搬运候选人信息——这类任务深度研究做不了，Manus 能做。</p>
+    <p>技术架构上，Manus 的设计哲学是"少结构，多智能"：多个专职子 Agent 并发执行（规划、验证、搜索各司其职），通过工具调用体系接触外部世界，任务在云端后台异步运行，用户不需要盯着屏幕等。最有辨识度的交互是"Manus's Computer"侧边栏——用户可以实时观察 Agent 在做什么，并在任何环节介入干预。</p>
+
+    <h2 id="sec-evolution" style="scroll-margin-top:60px">产品演进：从爆红到被收购</h2>
+    <p><strong>2025 年 3 月，发布期。</strong>邀请码机制、极度有限的访问量、精心策划的 Demo 场景，<a href="https://www.infotech.com/research/assessing-manus-the-future-of-agentic-ai">上线 7 天候补名单突破 200 万人</a>。邀请码在社交媒体上被炒卖，Jack Dorsey、Hugging Face 产品负责人 Victor Mustar 等科技圈知名人士公开称赞。核心能力是网页研究、数据分析、基础代码任务，"Manus's Computer"作为核心交互创新亮相。</p>
+    <p><strong>2025 年 3—9 月，早期迭代。</strong>可靠性是这一阶段被批评最多的问题。<a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/">MIT Technology Review 实测记录了 Manus 在复杂任务中的"偷懒"行为</a>，暴露了 General Agent 的结构性困境：任务链越长，错误累积概率越高。这一阶段的迭代重点是稳定性和错误恢复，同期与阿里 Qwen 团队达成战略合作，补充算力基础设施。</p>
+    <p><strong>2025 年 10 月，1.5 版本。</strong>这是 Manus 迄今最重要的一次更新，官方将其描述为"对整个引擎的全面重新设计"。<a href="https://skywork.ai/blog/ai-agent/manus-1-5-vs-earlier-versions-2025-comparison/">平均任务完成时间从约 15 分钟降至不到 4 分钟，约提升 4 倍；内部基准测试显示任务质量提升 15%</a>（均为官方内部数据，未经独立验证）。最重磅的能力扩展是全栈应用构建：用户只需用自然语言描述需求，Manus 1.5 可以生成并部署一个带有后端数据库、用户认证、内嵌 AI 能力的完整 Web 应用。同时推出 Manus-1.5-Lite 对全部用户开放，完整版为订阅用户专属的 freemium 分层策略。</p>
+    <p><strong>2025 年 12 月，被 Meta 收购。</strong><a href="https://www.cnbc.com/2025/12/30/meta-acquires-singapore-ai-agent-firm-manus-china-butterfly-effect-monicai.html">Meta 以超过 20 亿美元收购 Manus，谈判历时约 10 天</a>。此前 Manus 已在上线 8 个月内实现年化经常性收入（ARR）超过 1 亿美元，<a href="https://techcrunch.com/2025/12/29/meta-just-bought-manus-an-ai-startup-everyone-has-been-talking-about/">Butterfly Effect 自称这是史上增速最快的 SaaS 产品之一</a>。</p>
+
+    <h2 id="sec-decisions" style="scroll-margin-top:60px">三个核心决策</h2>
+
+    <div class="decision-card">
+      <div class="decision-label">决策一</div>
+      <div class="decision-title">通用还是垂直：一个有意识的赌注</div>
+      <p>Manus 选择做 General AI Agent，而不是某个垂直场景的专用工具。通用的代价是结构性的：任务边界越模糊，失败模式越难预测；用户不知道它最擅长什么，信任建立的路径更长。但通用的收益也是结构性的：可寻址市场远大于任何垂直场景，更重要的是——<strong>第一个让大众感知到"AI 原来可以这样用"的产品，本身就是巨大的市场教育价值</strong>。Manus 赌的不是"通用 Agent 比垂直 Agent 更好用"，而是"成为那个打开认知的产品，本身就是足够大的价值"。</p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">决策二</div>
+      <div class="decision-title">过程可视化：信任保险，不是功能</div>
+      <p>"Manus's Computer"侧边栏让用户实时看到 Agent 在做什么。大多数用户不会真的盯着看完整个执行过程，顶多瞄一眼几个大步骤是否在正确方向上。但如果这个窗口不存在，焦虑感会完全不同——你不知道它在做什么，不知道要等多久，不知道出了问题怎么介入。可视化的作用是一种"信任保险"：不是因为用户会用它，而是因为不可以没有它。代价是沙盒可视化本身消耗大量资源，但这个成本是值得付的。</p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">决策三</div>
+      <div class="decision-title">新加坡注册、Benchmark 投资：退出路径的前期设计</div>
+      <p>Butterfly Effect 原本注册在北京，后来迁移到新加坡。主打英文界面，放弃国内市场，<a href="https://techcrunch.com/2025/12/29/meta-just-bought-manus-an-ai-startup-everyone-has-been-talking-about/">接受美国顶级 VC Benchmark 领投的 7500 万美元 A 轮</a>，同时逐步清理中国股东结构。把这几个动作放在一起看，指向一个清晰的逻辑：从一开始就把"被美国大厂收购"设计为可能的退出路径。更准确的描述是：Manus 在认真做产品的同时，也在认真设计退出，这两件事不矛盾，后者是前者的商业理性。而且这个退出有时间压力——没有自研模型意味着基模厂商自己下场只是时间问题，估值窗口不会永远开着。</p>
+    </div>
+
+    <h2 id="sec-limits" style="scroll-margin-top:60px">局限在哪里</h2>
+    <p><strong>成本结构不可持续。</strong>Manus 没有自研大模型，底层调用成本加上沙盒运行、多 Agent 并发的基础设施开销，单任务成本极高。1 亿美元 ARR 在这个成本结构下，大概率是亏损运营的，这不是靠规模效应能解决的结构性问题。</p>
+    <p><strong>可靠性天花板。</strong>General Agent 的可靠性问题是结构性的。任务链越长，错误累积概率越高；任务越通用，边界条件越难穷举。企业客户对任务失败的容忍度远低于个人用户，这是 Manus 往 B 端走的根本障碍。</p>
+    <p><strong>模型依赖是估值窗口有限的根本原因。</strong>Manus 没有自研大模型，底层跑在 Anthropic 的 Claude 和阿里的 Qwen 上。<a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/">OpenAI 的 Operator、Google 的 Mariner、Anthropic 的 Computer Use</a> 都在做 Agent 产品，它们天然拥有模型加执行一体化的优势，不需要依赖外部授权。当基模厂商自己下场，纯 execution layer 的独立价值会被持续压缩——不是因为 Manus 做得不好，而是因为上游供应商本身就是最强的潜在竞争者。这个逻辑也解释了为什么 Manus 必须在估值窗口最高点完成退出：基模厂商还没有成熟 Agent 产品、但市场已经验证了需求的这个时间段，才是 execution layer 作为独立资产估值最高的时刻。</p>
+
+    <h2 id="sec-meta" style="scroll-margin-top:60px">更大的判断：Meta 买的是什么</h2>
+    <p><a href="https://www.bloomberg.com/news/articles/2025-12-29/meta-acquires-startup-manus-to-bolster-ai-business">Meta 以超过 20 亿美元收购 Manus，谈判历时约 10 天</a>，同时承诺收购完成后不存在任何中国所有权利益，并关闭在中国的运营。</p>
+    <p>Meta 买到的不是大模型——Manus 没有自研模型。买到的是三样东西：一套经过大规模真实任务压力测试的 execution layer，<a href="https://manus.im/blog/manus-joins-meta-for-next-era-of-innovation">处理了超过 147 万亿 tokens、运行了超过 8000 万个虚拟计算机实例</a>；1 亿美元 ARR 和数百万付费用户；以及进入 Agent 赛道的时间。</p>
+    <p>最后这一点是关键。Meta 的 AI Agent 能力本可以自研，但自研的时间成本太高，竞争窗口正在关闭。Manus 用 8 个月完成了从 0 到市场验证的全套动作，Meta 用 20 亿买走的，本质上是这 8 个月。</p>
+    <p>这笔收购也在更大的层面上发出了一个信号：<strong>AI 时代的价值，正在从"谁的模型更强"向"谁能把模型能力可靠地转化为真实任务完成结果"转移</strong>。Manus 没有自己的模型，但它证明了 execution layer 可以独立成为一个 20 亿美元的资产。</p>
+
+    <div class="callout">
+      <strong>对 AI PM 的启示：</strong>Manus 最终的价值，不在于它的 Agent 有多强，而在于它是第一个让足够多的普通人感受到"AI 原来可以替我把事情做完"的产品。这个认知一旦打开，就不会再关上——哪怕 Manus 本身被收购、被整合、被迭代替代。我当时没有付费进去，从个人需求的角度判断是对的。但如果问这个产品值不值得认真分析，答案是值得——不是因为它的技术有多先进，而是因为它完整走完了一条从认知创造到商业变现的路径，而且这条路径从一开始就是设计好的。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://techcrunch.com/2025/03/09/manus-probably-isnt-chinas-second-deepseek-moment/">TechCrunch: Manus probably isn't China's second 'DeepSeek moment'</a></li>
+        <li><a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/">MIT Technology Review: Everyone in AI is talking about Manus. We put it to the test.</a></li>
+        <li><a href="https://techcrunch.com/2025/12/29/meta-just-bought-manus-an-ai-startup-everyone-has-been-talking-about/">TechCrunch: Meta just bought Manus, an AI startup everyone has been talking about</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2025-12-29/meta-acquires-startup-manus-to-bolster-ai-business">Bloomberg: Meta Acquires Startup Manus to Bolster AI Business</a></li>
+        <li><a href="https://www.cnbc.com/2025/12/30/meta-acquires-singapore-ai-agent-firm-manus-china-butterfly-effect-monicai.html">CNBC: Meta acquires intelligent agent firm Manus</a></li>
+        <li><a href="https://www.infotech.com/research/assessing-manus-the-future-of-agentic-ai">Info-Tech Research Group: Assessing Manus: The Future of Agentic AI</a></li>
+        <li><a href="https://manus.im/blog/manus-joins-meta-for-next-era-of-innovation">Manus 官方博客: Manus Joins Meta for Next Era of Innovation</a></li>
+        <li><a href="https://skywork.ai/blog/ai-agent/manus-1-5-vs-earlier-versions-2025-comparison/">Skywork: Manus 1.5 vs Earlier Versions</a></li>
+        <li><a href="https://www.leanware.co/insights/manus-ai-agent">Leanware: Manus AI Agent</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

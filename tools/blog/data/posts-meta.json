@@ -2,6 +2,18 @@
   "version": 1,
   "posts": [
     {
+      "slug": "manus-agent-analysis",
+      "date": "2026.04",
+      "title": "Manus：它卖的不是 Agent，是一次认知震撼",
+      "summary": "Manus 最火的时候，我没有付费进去。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。",
+      "tags": [
+        "行业洞察",
+        "Agent"
+      ],
+      "category": "商业",
+      "url": "posts/manus-agent-analysis.html"
+    },
+    {
       "slug": "openclaw-brand-creation",
       "date": "2026.04",
       "title": "OpenClaw 爆红背后：一个品类的诞生与宿命",
