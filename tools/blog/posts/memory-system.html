@@ -2305,6 +2305,89 @@ else:
     }
   });
 })();
+
+// ── 章节切换 ──
+// stage-toggle 展开/折叠（HTML onclick 调用此函数）
+function toggleStage(stageId) {
+  var toggle = document.querySelector('#stage-' + stageId + ' .stage-toggle');
+  var chapters = document.getElementById('chapters-' + stageId);
+  if (!toggle || !chapters) return;
+  toggle.classList.toggle('collapsed');
+  chapters.classList.toggle('collapsed');
+}
+// 每个 chapter-btn 对应一个 panel-<id>；sub-link 点击先切换 panel 再滚动到锚点
+
+// 找出某个锚点 id 所属的 panel id
+function getPanelForAnchor(anchorId) {
+  var el = document.getElementById(anchorId);
+  if (!el) return null;
+  var panel = el.closest('.chapter-panel');
+  return panel ? panel.id.replace('panel-', '') : null;
+}
+
+function showChapter(chId) {
+  // 隐藏所有 panel
+  document.querySelectorAll('.chapter-panel').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  // 显示目标 panel
+  var target = document.getElementById('panel-' + chId);
+  if (target) target.classList.add('active');
+
+  // 更新左侧章节按钮高亮
+  document.querySelectorAll('.chapter-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  var activeItem = document.querySelector('[data-ch="' + chId + '"]');
+  if (activeItem) activeItem.classList.add('active');
+
+  // 滚动内容区回顶部
+  var col = document.querySelector('.content-col');
+  if (col) col.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 给每个 chapter-item 打上 data-ch 属性，方便高亮
+  document.querySelectorAll('.chapter-item').forEach(function(item) {
+    var btn = item.querySelector('.chapter-btn');
+    if (!btn) return;
+    var m = btn.getAttribute('onclick').match(/showChapter\('([^']+)'\)/);
+    if (m) item.setAttribute('data-ch', m[1]);
+  });
+
+  // 高亮当前 active panel 对应的 chapter-item
+  var activePanel = document.querySelector('.chapter-panel.active');
+  if (activePanel) {
+    var chId = activePanel.id.replace('panel-', '');
+    var item = document.querySelector('[data-ch="' + chId + '"]');
+    if (item) item.classList.add('active');
+  }
+
+  // sub-link 点击：切换 panel 后再滚动到锚点
+  document.querySelectorAll('.sub-link').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var anchorId = (link.getAttribute('href') || '').replace('#', '');
+      if (!anchorId) return;
+
+      var chId = getPanelForAnchor(anchorId);
+      if (chId) showChapter(chId);
+
+      // 等 display 切换生效后再滚动
+      setTimeout(function() {
+        var el = document.getElementById(anchorId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // 更新 sub-link 高亮
+          document.querySelectorAll('.sub-link').forEach(function(l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      }, 30);
+    });
+  });
+
+});
 </script>
 </body>
 </html>
