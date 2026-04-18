@@ -6,10 +6,8 @@
       "date": "2026.04",
       "title": "Manus：它卖的不是 Agent，是一次认知震撼",
       "summary": "Manus 最火的时候，我没有付费进去。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。",
-      "tags": [
-        "行业洞察",
-        "Agent"
-      ],
+      "tags": ["行业洞察", "Agent"],
+      "topics": ["Agent"],
       "category": "商业",
       "url": "posts/manus-agent-analysis.html"
     },
@@ -18,10 +16,8 @@
       "date": "2026.04",
       "title": "OpenClaw 爆红背后：一个品类的诞生与宿命",
       "summary": "一个奥地利独立开发者用「危险」的开源项目验证了 personal agent 的市场需求，然后被 OpenAI 招走了。OpenClaw 的三个产品决策、B 端落地路径、以及脚手架类产品的品类宿命，比任何关于 Agent 未来的预测都更值得认真拆解。",
-      "tags": [
-        "行业洞察",
-        "Agent"
-      ],
+      "tags": ["行业洞察", "Agent"],
+      "topics": ["产品设计"],
       "category": "商业",
       "url": "posts/openclaw-brand-creation.html"
     },
@@ -30,9 +26,8 @@
       "date": "2026.04",
       "title": "企业AI应用不是一条线，而是三个不同的战场",
       "summary": "用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。",
-      "tags": [
-        "产品框架"
-      ],
+      "tags": ["产品框架"],
+      "topics": ["企业AI"],
       "category": "产品",
       "url": "posts/enterprise-ai-three-stages.html"
     },
@@ -41,9 +36,8 @@
       "date": "2026.04",
       "title": "AI产品记忆系统：从四阶段演进到怎么做对",
       "summary": "记忆系统的价值不在于套住用户，而在于让 AI 真正理解用户。从演进阶段到投入决策，这篇文章梳理 AI PM 在记忆系统上最需要看清的判断。",
-      "tags": [
-        "产品框架"
-      ],
+      "tags": ["产品框架"],
+      "topics": ["Agent"],
       "category": "产品",
       "url": "posts/memory-system.html"
     },
@@ -52,9 +46,8 @@
       "date": "2026.04",
       "title": "工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里",
       "summary": "Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移，2026 年的竞争重心已不在谁的 Prompt 写得好。",
-      "tags": [
-        "工程演进"
-      ],
+      "tags": ["工程演进"],
+      "topics": ["Agent"],
       "category": "技术",
       "url": "posts/harness-engineering.html"
     },
@@ -63,10 +56,8 @@
       "date": "2026.04",
       "title": "Agent 现在面临的三大工程问题",
       "summary": "Agent 当前的瓶颈不在智能，而在工程：可靠性、成本和可控性，这三个问题决定了 Agent 的落地质量。",
-      "tags": [
-        "Agent",
-        "工程演进"
-      ],
+      "tags": ["Agent", "工程演进"],
+      "topics": ["Agent"],
       "category": "技术",
       "url": "posts/agent-three-problems.html"
     },
@@ -75,9 +66,8 @@
       "date": "2026.04",
       "title": "2026 年 AI Agent 市场格局：开放 vs 封闭的博弈",
       "summary": "Anthropic 的策略转变揭示了平台战的底层逻辑：谁控制了 Harness 层，谁就控制了 Agent 生态的价值分配。",
-      "tags": [
-        "市场格局"
-      ],
+      "tags": ["市场格局"],
+      "topics": ["企业AI"],
       "category": "商业",
       "url": "posts/market-landscape-2026.html"
     },
@@ -86,10 +76,8 @@
       "date": "2026.03",
       "title": "技术消亡度框架：判断哪些 AI 技术值得长期投入",
       "summary": "不是所有 AI 技术都有相同的生命周期。区分补救缺降型和编码知识型是判断技术投资价值的核心框架。",
-      "tags": [
-        "产品框架",
-        "技术判断"
-      ],
+      "tags": ["产品框架", "技术判断"],
+      "topics": ["企业AI"],
       "category": "产品",
       "url": "posts/tech-obsolescence.html"
     },
@@ -98,10 +86,8 @@
       "date": "2026.03",
       "title": "RAG 的演进：从被动检索到主动信息系统",
       "summary": "现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。",
-      "tags": [
-        "技术判断",
-        "架构设计"
-      ],
+      "tags": ["技术判断", "架构设计"],
+      "topics": ["RAG"],
       "category": "技术",
       "url": "posts/rag-evolution.html"
     },
@@ -110,10 +96,8 @@
       "date": "2026.03",
       "title": "Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑",
       "summary": "Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。",
-      "tags": [
-        "工程演进",
-        "产品框架"
-      ],
+      "tags": ["工程演进", "产品框架"],
+      "topics": ["Agent"],
       "category": "技术",
       "url": "posts/skill-system-and-harness.html"
     },
@@ -122,10 +106,8 @@
       "date": "2026.03",
       "title": "微调的演进：哪些场景还值得做，哪些已被替代",
       "summary": "能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。",
-      "tags": [
-        "技术判断",
-        "架构设计"
-      ],
+      "tags": ["技术判断", "架构设计"],
+      "topics": ["Fine-tuning"],
       "category": "技术",
       "url": "posts/finetuning-evolution.html"
     },
@@ -134,10 +116,8 @@
       "date": "2026.03",
       "title": "Prompt Engineering 的生命周期：哪些会消亡，哪些会留下",
       "summary": "补救模型缺降的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
-      "tags": [
-        "工程演进",
-        "技术判断"
-      ],
+      "tags": ["工程演进", "技术判断"],
+      "topics": ["提示工程"],
       "category": "技术",
       "url": "posts/prompt-engineering-lifecycle.html"
     }

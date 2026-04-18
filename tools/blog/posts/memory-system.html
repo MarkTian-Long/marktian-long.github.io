@@ -12,6 +12,13 @@ category: 产品
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI产品记忆系统 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="AI产品记忆系统：从四阶段演进到怎么做对" />
+  <meta property="og:description" content="记忆系统的价值不在于套住用户，而在于让 AI 真正理解用户。从演进阶段到投入决策，这篇文章梳理 AI PM 在记忆系统上最需要看清的判断。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/memory-system.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="AI产品记忆系统：从四阶段演进到怎么做对" />
+  <meta name="twitter:description" content="记忆系统的价值不在于套住用户，而在于让 AI 真正理解用户。从演进阶段到投入决策，这篇文章梳理 AI PM 在记忆系统上最需要看清的判断。" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -430,11 +437,34 @@ category: 产品
     flex-shrink: 0;
   }
   .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+  /* 相关文章 */
+  .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+  .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+  .related-item:hover .related-item-title { color: var(--clay); }
+  .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+  .related-item-title { font-size: .9rem; color: var(--text-1); }
+  /* 上下篇导航 */
+  .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+  .post-nav-next { align-items: flex-end; margin-left: auto; }
+  .nav-label { font-size: .75rem; color: var(--text-2); }
+  .nav-title { font-size: .875rem; color: var(--text-1); }
+  .post-nav a:hover .nav-title { color: var(--clay); }
+  /* 分享按钮 */
+  .share-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: .25rem; display: flex; align-items: center; }
+  .share-btn:hover { color: var(--text-1); }
   </style>
 </head>
 <body>
 <div class="top-bar" style="max-width:calc(var(--sidebar-w) + var(--content-max) + 80px);margin:0 auto 0;padding:12px 20px;">
   <a href="../index.html" class="back-link sidebar-back">← 返回列表</a>
+  <button class="share-btn" id="shareBtn" title="复制链接">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+  </button>
   <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
     <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -2275,6 +2305,24 @@ else:
 </section>
     </div>
 
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
   </div><!-- .content-col -->
 </div><!-- .page-layout -->
 
@@ -2388,6 +2436,67 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 });
+
+// 复制链接
+document.getElementById('shareBtn').addEventListener('click', function() {
+  navigator.clipboard.writeText(window.location.href).then(function() {
+    var btn = document.getElementById('shareBtn');
+    btn.setAttribute('title', '已复制！');
+    setTimeout(function() { btn.setAttribute('title', '复制链接'); }, 2000);
+  });
+});
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'memory-system',
+  tags: ['产品框架'],
+  topics: ['Agent'],
+  category: '产品'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url;
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url;
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
 </script>
 </body>
 </html>
