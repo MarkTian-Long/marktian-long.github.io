@@ -18,7 +18,9 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
     <meta name="twitter:card"       content="summary" />
     <meta name="twitter:title"      content="RAG 的演进：从被动检索到主动信息系统" />
     <meta name="twitter:description" content="现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+        <meta property="og:image"        content="https://liu-yang.me/assets/images/og-cover.png" />
+    <meta name="twitter:image"       content="https://liu-yang.me/assets/images/og-cover.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -269,21 +271,12 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
   .nav-label { font-size: .75rem; color: var(--text-2); }
   .nav-title { font-size: .875rem; color: var(--text-1); }
   .post-nav a:hover .nav-title { color: var(--clay); }
-  /* 分享按钮 */
-  .share-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: .25rem; display: flex; align-items: center; }
-  .share-btn:hover { color: var(--text-1); }
   </style>
 </head>
 <body>
 <div class="page-outer" style="padding: 40px 20px 80px;">
   <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
-    <button class="share-btn" id="shareBtn" title="复制链接">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-      </svg>
-    </button>
     <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
       <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -444,13 +437,6 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
   });
 })();
 
-// 复制链接
-document.getElementById('shareBtn').addEventListener('click', function() {
-  navigator.clipboard.writeText(window.location.href).then(function() {
-    var btn = document.getElementById('shareBtn');
-    btn.setAttribute('title', '已复制！');
-    setTimeout(function() { btn.setAttribute('title', '复制链接'); }, 2000);
-  });
 });
 
 // 相关文章 + 上下篇导航
