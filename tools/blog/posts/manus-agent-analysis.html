@@ -522,7 +522,7 @@ var POST_META = {
     if (scored.length) {
       var list = document.getElementById('relatedList');
       list.innerHTML = scored.map(function(p) {
-        return '<a class="related-item" href="' + p.url + '">' +
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
           '<span class="related-item-date">' + p.date + '</span>' +
           '<span class="related-item-title">' + p.title + '</span>' +
           '</a>';
@@ -537,13 +537,13 @@ var POST_META = {
   var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
   if (prev) {
     var el = document.getElementById('navPrev');
-    el.href = prev.url;
+    el.href = prev.url.split('/').pop();
     document.getElementById('navPrevTitle').textContent = prev.title;
     el.style.display = 'flex';
   }
   if (next) {
     var el2 = document.getElementById('navNext');
-    el2.href = next.url;
+    el2.href = next.url.split('/').pop();
     document.getElementById('navNextTitle').textContent = next.title;
     el2.style.display = 'flex';
   }
