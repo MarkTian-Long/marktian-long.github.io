@@ -348,3 +348,282 @@ GitHub Pages 部署后无此问题。
 })();
 </script>
 ```
+
+---
+
+## 标签体系扩展规范
+
+**背景：** 原有 `tags` 字段只有「视角类型」一个维度，无法精准驱动相关文章推荐。扩展为两个维度并行打标，新文章起使用。
+
+### 双维度标签体系
+
+| 维度 | 字段 | 用途 | 每篇数量 |
+|------|------|------|----------|
+| 视角类型 | `tags`（现有） | 描述文章的思维框架，「怎么想」 | 1 个 |
+| 话题领域 | `topics`（新增） | 描述文章讨论的具体方向，「想什么」 | 1-2 个 |
+
+**话题领域标签库（`topics` 字段可选值）：**
+
+| 标签 | 适用方向 |
+|------|----------|
+| `RAG` | 检索增强生成、知识库架构 |
+| `Agent` | Agent 设计、工作流编排、多 Agent |
+| `Fine-tuning` | 微调策略、数据工程、模型定制 |
+| `企业AI` | 企业 AI 落地、采购决策、部署策略 |
+| `产品设计` | 产品方法论、功能设计、用户体验 |
+| `职业思考` | 职业判断、个人策略、行业机会 |
+| `提示工程` | Prompt 设计、提示生命周期 |
+
+**`posts-meta.json` 新文章条目格式：**
+
+```json
+{
+  "slug": "your-slug",
+  "date": "YYYY.MM",
+  "title": "...",
+  "summary": "...",
+  "tags": ["工程演进"],
+  "topics": ["RAG", "Agent"],
+  "category": "技术",
+  "url": "posts/your-slug.html"
+}
+```
+
+**标签使用建议：**
+- 优先复用现有标签库，确需新标签时在本节末尾补充并说明语义
+- 视角标签侧重「怎么想」（判断/框架/演进），话题标签侧重「想什么」（RAG/Agent）
+- 建议用英文或简短中文，不用拼音，不用过于具体的产品名（不用「Claude」，用「Agent」）
+
+**存量文章处理：** 无需立即补 `topics` 字段，相关推荐模块会在该字段缺失时自动降级用 `tags` 匹配。
+
+> **待完善：** 话题标签库现在只有 7 个，实际写作中可能发现分类粒度不合适，按需增删即可。两个维度的划分可根据实际使用感受调整，不必强行对齐。
+
+---
+
+## 相关文章推荐规范
+
+**触发条件：** `posts-meta.json` 中 `posts` 数组长度 ≥ 5 时，文章底部显示推荐模块；< 5 篇时不显示。
+
+### 推荐评分策略
+
+```
+同 topics 标签，每个 +3 分
+同 tags 标签，每个   +2 分
+同 category           +1 分
+当前文章本身          排除
+```
+
+取分最高的 2 篇，分数相同时取 `date` 更近的。最低展示分数 ≥ 1（0 分时不显示推荐模块，宁缺毋滥）。
+
+> **待完善：** 评分权重可根据实际推荐效果调整。
+
+### HTML 模板
+
+插入位置：`.post-body` 闭合标签之后、`</main>` 之前。
+
+```html
+<!-- 相关文章 -->
+<div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+</div>
+```
+
+### CSS（加入文章 inline `<style>`）
+
+```css
+.related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+.related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+.related-item:hover .related-item-title { color: var(--clay); }
+.related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+.related-item-title { font-size: .9rem; color: var(--text-1); }
+```
+
+### JS 模板
+
+在文章 `<head>` 内定义 `POST_META`（每篇填写），JS 逻辑与上下篇导航共用一次 fetch（见下节）。
+
+```javascript
+// 放在 <head> 内或 <script> 顶部
+var POST_META = {
+    slug: 'current-slug',        // 当前文章 slug
+    tags: ['工程演进'],           // 同 posts-meta.json tags 字段
+    topics: ['RAG'],              // 同 posts-meta.json topics 字段
+    category: '技术'              // 技术 | 产品 | 商业
+};
+```
+
+---
+
+## 上一篇 / 下一篇导航规范
+
+**触发条件：** 文章详情页始终尝试渲染；文章数 ≥ 2 时才有实际链接。
+
+**实现方式：** fetch `../data/posts-meta.json`，按 `date` 字段倒序排列，找到当前 slug 的前后两篇（与相关推荐共用同一次 fetch，见下方完整 JS 模板）。
+
+### HTML 模板
+
+插入位置：`.related-posts` 之后。
+
+```html
+<!-- 上下篇导航 -->
+<nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+        <span class="nav-label">← 上一篇</span>
+        <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+        <span class="nav-label">下一篇 →</span>
+        <span class="nav-title" id="navNextTitle"></span>
+    </a>
+</nav>
+```
+
+### CSS（加入文章 inline `<style>`）
+
+```css
+.post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+.post-nav-next { align-items: flex-end; margin-left: auto; }
+.nav-label { font-size: .75rem; color: var(--text-2); }
+.nav-title { font-size: .875rem; color: var(--text-1); }
+.post-nav a:hover .nav-title { color: var(--clay); }
+```
+
+### 完整 JS 模板（相关推荐 + 上下篇合并，放在 `</body>` 前）
+
+```javascript
+(async function() {
+    var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+    var posts = data.posts;
+
+    // 相关文章推荐
+    if (posts.length >= 5) {
+        var scored = posts
+            .filter(function(p) { return p.slug !== POST_META.slug; })
+            .map(function(p) {
+                var score = 0;
+                (p.topics || []).forEach(function(t) { if ((POST_META.topics || []).includes(t)) score += 3; });
+                (p.tags || []).forEach(function(t) { if ((POST_META.tags || []).includes(t)) score += 2; });
+                if (p.category === POST_META.category) score += 1;
+                return Object.assign({}, p, { score: score });
+            })
+            .filter(function(p) { return p.score >= 1; })
+            .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+            .slice(0, 2);
+
+        if (scored.length) {
+            var list = document.getElementById('relatedList');
+            list.innerHTML = scored.map(function(p) {
+                // 注意：p.url 是 "posts/xxx.html"，文章页在 posts/ 目录下，只取文件名避免路径重复
+                return '<a class="related-item" href="' + p.url.split('/').pop() + '">'
+                    + '<span class="related-item-date">' + p.date + '</span>'
+                    + '<span class="related-item-title">' + p.title + '</span>'
+                    + '</a>';
+            }).join('');
+            document.getElementById('relatedPosts').style.display = 'block';
+        }
+    }
+
+    // 上下篇导航
+    var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+    var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+    var prev = idx > 0 ? sorted[idx - 1] : null;
+    var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+    if (prev) {
+        var elPrev = document.getElementById('navPrev');
+        elPrev.href = prev.url.split('/').pop();  // 只取文件名，避免 posts/posts/ 双层路径
+        document.getElementById('navPrevTitle').textContent = prev.title;
+        elPrev.style.display = 'flex';
+    }
+    if (next) {
+        var elNext = document.getElementById('navNext');
+        elNext.href = next.url.split('/').pop();  // 只取文件名，避免 posts/posts/ 双层路径
+        document.getElementById('navNextTitle').textContent = next.title;
+        elNext.style.display = 'flex';
+    }
+})();
+```
+
+> **待完善：** 上下篇目前按 `date` 字段字符串排序，如果将来日期格式变化需同步调整；可考虑在导航里加分类小徽章，帮助读者判断跳转内容。
+
+---
+
+## 分享功能规范
+
+参考 Medium、少数派的做法：OG meta 保证链接分享预览，页面内提供「复制链接」按钮，不做浮动分享栏。
+
+### OG meta 模板（加入每篇文章 `<head>`）
+
+```html
+<meta property="og:type"         content="article" />
+<meta property="og:title"        content="文章标题" />
+<meta property="og:description"  content="文章摘要（同 posts-meta.json summary 字段）" />
+<meta property="og:url"          content="https://liu-yang.me/tools/blog/posts/slug.html" />
+<meta name="twitter:card"        content="summary" />
+<meta name="twitter:title"       content="文章标题" />
+<meta name="twitter:description" content="文章摘要" />
+```
+
+> `og:url` 域名以实际部署地址为准。
+
+### 复制链接按钮
+
+插入位置：`.top-bar` 内，主题切换按钮左侧。
+
+**HTML：**
+```html
+<button class="share-btn" id="shareBtn" title="复制链接">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+</button>
+```
+
+**CSS（加入 inline `<style>`）：**
+```css
+.share-btn { background: none; border: none; cursor: pointer; color: var(--text-2); padding: .25rem; display: flex; align-items: center; }
+.share-btn:hover { color: var(--text-1); }
+```
+
+**JS（加入文章底部 `<script>`）：**
+```javascript
+document.getElementById('shareBtn').addEventListener('click', function() {
+    navigator.clipboard.writeText(window.location.href).then(function() {
+        var btn = document.getElementById('shareBtn');
+        btn.setAttribute('title', '已复制！');
+        setTimeout(function() { btn.setAttribute('title', '复制链接'); }, 2000);
+    });
+});
+```
+
+---
+
+## 分页规范
+
+**触发条件：** `posts-meta.json` 中 `posts` 数组长度 > 20 时，列表页启用分页。**当前 12 篇，暂不需要。**
+
+**实现约定（供将来执行）：**
+- 每页展示 10 篇（`PAGE_SIZE = 10`，可根据阅读习惯调整为 15 或 20）
+- 分页状态用 URL hash 记录：`index.html#page=2`，支持刷新/分享还原当前页
+- 分页控件放在文章列表底部，样式参照现有 `.cat-nav` 按钮风格
+- 搜索框输入或分类切换时自动重置到第 1 页
+- 分页在 `filtered()` 函数返回结果的基础上切片，不改数据层
+- 实现时在 `index.html` JS 区新增 `paginate(list, page)` 纯函数
+
+> **待完善：** URL hash 方案在 iframe 嵌入主页时可能有路由冲突，届时可改用 `?page=2` query 参数方案。
+
+---
+
+## 未来考虑
+
+以下功能当前不实现，记录候选方案备用：
+
+| 功能 | 候选方案 | 备注 |
+|------|----------|------|
+| 阅读量统计 | 不蒜子（一行引入）/ Umami（自托管） | 不蒜子数据在第三方，Umami 数据自有 |
+| 点赞 / 评论 | Giscus（GitHub Discussions）/ Cusdis | Giscus 需登录 GitHub，Cusdis 无需登录 |
+| RSS Feed | 从 `posts-meta.json` 生成 XML | 适合未来读者订阅需求 |
+| 全文搜索 | Lunr.js 客户端索引 | 建议文章 > 50 篇后再考虑 |
