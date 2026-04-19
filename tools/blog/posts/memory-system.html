@@ -455,7 +455,7 @@ category: 产品
   .post-nav a:hover .nav-title { color: var(--clay); }
   </style>
 </head>
-<body>
+<body data-theme="light">
 <div class="top-bar" style="max-width:calc(var(--sidebar-w) + var(--content-max) + 80px);margin:0 auto 0;padding:12px 20px;">
   <a href="../index.html" class="back-link sidebar-back">← 返回列表</a>
   <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
@@ -2482,6 +2482,12 @@ var POST_META = {
     document.getElementById('navNextTitle').textContent = next.title;
     el2.style.display = 'flex';
   }
+})();
+</script>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
 })();
 </script>
 </body>

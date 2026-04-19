@@ -266,7 +266,7 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
   .post-nav a:hover .nav-title { color: var(--clay); }
   </style>
 </head>
-<body>
+<body data-theme="light">
 <div class="page-outer" style="padding: 40px 20px 80px;">
   <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
@@ -496,6 +496,12 @@ var POST_META = {
     document.getElementById('navNextTitle').textContent = next.title;
     el2.style.display = 'flex';
   }
+})();
+</script>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
 })();
 </script>
 </body>
