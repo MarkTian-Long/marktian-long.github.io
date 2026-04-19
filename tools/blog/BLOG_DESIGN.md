@@ -115,28 +115,13 @@ var label = ym.replace('.', ' · ');
 
 ---
 
-## 八、列表页：摘要默认折叠
+## 八、列表页：摘要展示方式
 
-**现状（问题）：** 每行展示标题 + 完整摘要 + 标签，13 篇以上一屏滚不完，不利于快速扫标题。
+**结论：摘要保持静态展示（始终可见），不做 hover 折叠。**
 
-**规范（目标状态）：** `.post-summary` 默认隐藏，hover 时以 `max-height` transition 展开。
+hover 折叠动效在实际使用中体验较差：鼠标滑过列表时内容持续跳动，反而影响阅读效率。摘要的价值在于帮助快速判断是否值得点进去，静态展示更直接。
 
-**实现（`index.html` CSS）：**
-
-```css
-.post-summary {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.2s ease, opacity 0.15s ease;
-    margin-bottom: 0;
-}
-.post-row:hover .post-summary {
-    max-height: 80px;
-    opacity: 1;
-    margin-bottom: 8px;
-}
-```
+如文章数量增多（> 30 篇）导致列表过长，优先考虑分页方案（见 WRITING_GUIDE.md"未来考虑"节），而非折叠摘要。
 
 ---
 
