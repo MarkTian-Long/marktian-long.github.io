@@ -2,6 +2,16 @@
   "version": 1,
   "posts": [
     {
+      "slug": "claude-design-blog",
+      "date": "2026.04",
+      "title": "Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？",
+      "summary": "Claude Design不只是一个新设计工具。它是Anthropic用工作流闭环重新划定势力范围的信号——当基模公司开始系统性地补全上下游工具链，没有护城河的工具层，只是时间问题。",
+      "tags": ["行业洞察", "产品分析"],
+      "topics": ["产品设计"],
+      "category": "商业",
+      "url": "posts/claude-design-blog.html"
+    },
+    {
       "slug": "manus-agent-analysis",
       "date": "2026.04",
       "title": "Manus：它卖的不是 Agent，是一次认知震撼",
