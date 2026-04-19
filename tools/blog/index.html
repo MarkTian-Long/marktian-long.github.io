@@ -199,15 +199,6 @@
             font-size: 13px;
             color: var(--text-2);
             line-height: 1.55;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            margin-bottom: 0;
-            transition: max-height 0.2s ease, opacity 0.15s ease, margin-bottom 0.15s ease;
-        }
-        .post-row:hover .post-summary {
-            max-height: 80px;
-            opacity: 1;
             margin-bottom: 8px;
         }
         .post-tags { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -418,7 +409,7 @@
             if (!byYM[ym]) byYM[ym] = [];
             byYM[ym].push(p);
         });
-        root.innerHTML = Object.keys(byYM).sort(function (a, b) { return b > a ? 1 : -1; }).reverse().map(function (ym) {
+        root.innerHTML = Object.keys(byYM).sort(function (a, b) { return b > a ? -1 : 1; }).reverse().map(function (ym) {
             var label = ym.replace('.', ' · ');
             return '<div class="year-group">' +
                 '<div class="year-label">' + label + '</div>' +
