@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   你叫它智能体，但它可能只是个工作流
+tags:    [行业洞察, Agent]
+slug:    agent-vs-workflow
+summary: 89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你叫它智能体，但它可能只是个工作流 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="你叫它智能体，但它可能只是个工作流" />
+  <meta property="og:description" content="89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/agent-vs-workflow.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="你叫它智能体，但它可能只是个工作流" />
+  <meta name="twitter:description" content="89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .level-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 16px 0;
+    }
+    .level-card .level-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+    .level-card .level-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .level-card p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap { position: sticky; top: 40px; }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list { list-style: none; margin: 0; padding: 0; }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
+  /* 相关文章 */
+  .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+  .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+  .related-item:hover .related-item-title { color: var(--clay); }
+  .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+  .related-item-title { font-size: .9rem; color: var(--text-1); }
+  /* 上下篇导航 */
+  .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+  .post-nav-next { align-items: flex-end; margin-left: auto; }
+  .nav-label { font-size: .75rem; color: var(--text-2); }
+  .nav-title { font-size: .875rem; color: var(--text-1); }
+  .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-phenomenon">两个并行的现象</a></li>
+          <li><a href="#sec-definition">智能体的定义</a></li>
+          <li><a href="#sec-reality">企业真实在做什么</a></li>
+          <li><a href="#sec-why-overused">为何"智能体"被用滥</a></li>
+          <li><a href="#sec-workflow-enough">工作流够用吗</a></li>
+          <li><a href="#sec-barriers">真智能体为何还很远</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.04</span>
+      <span class="tag">行业洞察</span>
+      <span class="tag">Agent</span>
+    </div>
+    <h1 class="post-title">你叫它智能体，但它可能只是个工作流</h1>
+    <p class="post-summary">当"智能体"成为招聘关键词和社媒热词，真正值得追问的是：你以为自己在做的那个东西，到底是什么？</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <h2 id="sec-phenomenon" style="scroll-margin-top:60px">两个并行的现象</h2>
+    <p>最近打开招聘平台，AI PM 的岗位描述里有一个词出现频率极高：智能体。与此同时，社交媒体上关于智能体的博文也从未停止——某公司上线了多智能体协作系统，某平台发布了新的 agent 框架，某创业公司用智能体把人工成本砍掉了一半。</p>
+    <p>声量很大。但有一组数据让我觉得值得停下来想一想。</p>
+    <p>这个现象不只发生在国外。<a href="https://m.bjnews.com.cn/detail/1753782186129556.html">《中国企业家人工智能应用调研报告（2025）》</a>显示，89.84% 的受访企业声称已在实际业务中部署 AI 应用。但细看具体场景，率先落地的主要是智能客服、知识库问答、内容生成——这些基本都是流程固定的工作流形态。国际上也是类似的情况，根据 <a href="https://towardsdatascience.com/a-developers-guide-to-building-scalable-ai-workflows-vs-agents/">Bain 2024 年的调查</a>，79% 的企业声称正在实施 AI agent，但其中只有 1% 认为这些实施是"成熟的"。<a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner 预测</a> 2026 年底将有 40% 的企业应用集成 task-specific agent，同时也预测超过 <a href="https://www.outreach.io/resources/blog/agent-washing-ai-projects-fail-guide">40% 的 agentic AI 项目</a>将在 2027 年底前被取消，原因是成本失控、商业价值不清晰、风险控制不足。市场预期很高，失败率也很高，两个数字并排放在一起，本身就说明了问题。</p>
+    <p>这个落差不是偶然的。它指向一个更基础的问题：大家在说"智能体"的时候，说的是同一件事吗？</p>
+
+    <h2 id="sec-definition" style="scroll-margin-top:60px">智能体到底是什么</h2>
+    <p>在讨论企业在做什么之前，需要先把概念说清楚。</p>
+    <p>判断一个系统是不是智能体，核心标准不是它用了什么技术栈，也不是节点数量，而是<strong>决策权在哪里</strong>，以及<strong>有没有自我反馈回路</strong>。</p>
+    <p>用这个标准，可以区分出三个层级：</p>
+
+    <div class="level-card">
+      <div class="level-label">第一层</div>
+      <div class="level-title">工作流</div>
+      <p>路径由人预先定义，AI 在固定节点上执行任务。整个流程是有向的、单向的，出了分支按规则走，不会自己调整方向。Coze、Dify 上大多数"智能体"本质上属于这一类，只是把 if-else 换成了 LLM 判断，但流程还是人工设计好的。</p>
+    </div>
+
+    <div class="level-card">
+      <div class="level-label">第二层</div>
+      <div class="level-title">伪智能体</div>
+      <p>能自主选择调用哪个工具，但没有真正的自我评估机制。执行完一步不会主动判断结果是否达标，更不会根据反馈回溯重来。看起来比工作流"智能"，但缺少关键的闭环。</p>
+    </div>
+
+    <div class="level-card">
+      <div class="level-label">第三层</div>
+      <div class="level-title">真智能体</div>
+      <p>有完整的感知-决策-执行-反馈循环。执行后会评估输出是否达到目标，不达标则调整策略，必要时重新执行。决策路径在运行时动态生成，而不是事先规划好的。</p>
+    </div>
+
+    <p>有一个常见误解值得单独说：很多人认为单个 agent 不算智能体，必须多个 agent 协作才算。这个判断不太准确。Multi-agent 系统解决的是分工和协作问题，是在单 agent 基础上的扩展，不是智能体的必要条件。反过来也成立：多个 agent 协作，如果每个 agent 本身没有反馈回路，只是把工作流拆成了多段分布式执行，本质还是工作流，不因为数量多就变成真智能体。</p>
+    <p>举个例子：一个代码审查 agent，接收一个 PR 后，自己决定先读代码、再查相关文档、发现问题后回溯重新检查、最终输出报告。整个过程是单个 agent，但它有完整的反馈回路，跟直接调用一次 API 有本质区别。大多数"单 agent 等于 API 调用"的感知，来自于实现得过于简陋，把 LLM 加固定 prompt 就当成了 agent。</p>
+
+    <h2 id="sec-reality" style="scroll-margin-top:60px">企业里真实在做的是什么</h2>
+    <p>理解了定义之后，再来看企业侧的实际情况。</p>
+    <p>我在某金融科技公司参与过一套 RAG 系统的开发。业务场景是金融信息的跨源汇聚与比对——数据来自三个方向：API 数据厂商的结构化行情数据、需要实时联网抓取的新闻资讯，以及历史研报、政府公告等非结构化文件。这三类数据的格式、更新频率、可信度完全不同，核心问题是怎么把它们整合成可以被查询和推理的知识库。技术实现上，整套流程由工程师预先设计好：数据清洗、分块、向量化、检索、LLM 做内容理解和提取，每一步做什么、输出给谁，都是提前定义好的有向图。LLM 在里面是"聪明的执行者"，负责理解和生成，不负责决策流程走向。</p>
+    <p>按照上面的三级标准，这套系统最多算伪智能体。但它在当时的业务场景里解决了真实问题，运行稳定，交付了可验证的价值。用"伪"来定性，不是说它没用，而是说它的实际架构和"智能体"这个词所暗示的能力之间，存在明显的距离。</p>
+    <p>根据 <a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner 2025 年 8 月的数据</a>，真正自主运行的 agent 在企业生产环境中渗透率不足 5%，AI 工作流已经相当普遍。这不是技术限制造成的，更多是企业自身准备度的问题——场景没想清楚、数据质量差、基础应用效果就已经不稳定，在这个基础上谈真智能体，链路只会更长，问题只会更难定位。</p>
+
+    <h2 id="sec-why-overused" style="scroll-margin-top:60px">为什么"智能体"这个词被用滥了</h2>
+    <p>落差存在，但原因不是单一的。</p>
+    <p>供应商侧有明确的动机。"智能体"是当前企业科技市场最热的标签，打上这个标签可以提高产品溢价、进入更高预算的采购决策。<a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner 把这种现象定义为"Agentwashing"</a>，专指把 AI 助手、聊天机器人、规则自动化系统包装成 agent 出售的行为，本质是用市场热度掩盖产品能力的实际边界。这不一定是恶意的，但结果是一样的：企业买到的和预期的不是同一件事。</p>
+    <p>企业侧的情况略有不同。很多决策者并不真正理解工作流和智能体的区别，看到"智能体"这个词觉得足够先进，就拿来描述自己正在做或计划做的事。这更多是被概念带跑，而不是主动欺骗。但效果类似：实际推进的项目和对外描述的目标之间存在明显落差，内部资源的分配也因此容易失准。</p>
+    <p>两种情况叠加，造成了今天这个局面：招聘 JD 写智能体，社媒热词是智能体，但落地的大多数是工作流，能跑通的更少。</p>
+
+    <h2 id="sec-workflow-enough" style="scroll-margin-top:60px">工作流够用吗</h2>
+    <p>在讨论企业为什么没有准备好之前，有一个问题值得先回答：对于当前大多数企业，工作流到底够不够用？</p>
+    <p>答案是：在很多场景下，够用，而且是更合适的选择。</p>
+    <p>流程固定、输入规范、容错成本低的场景——合同信息提取、客服问题分类、报告自动生成——工作流的稳定性和可控性反而是优势。真智能体的动态决策能力在这类场景里是过度设计，带来的是更高的工程复杂度和更难预测的输出结果。</p>
+    <p>真正需要真智能体的场景，是任务目标明确但路径不固定、中间步骤需要根据结果动态调整的情况。这类场景在企业里存在，但比想象中少，而且对数据质量和系统可观测性的要求更高。</p>
+    <p>所以更准确的判断不是"工作流会被智能体替代"，而是——在想清楚场景之前，先把工作流做稳，是更务实的路径。</p>
+
+    <h2 id="sec-barriers" style="scroll-margin-top:60px">为什么真智能体在企业侧还很远</h2>
+    <p>即便场景合适，真智能体的落地也面临几个比技术更基础的障碍。</p>
+    <p><strong>数据质量。</strong>真智能体需要在运行时做动态判断，低质量的输入会被放大成更不可控的输出。但大多数企业内部的数据现状，连支撑稳定的工作流都勉强，遑论更高要求的动态决策。</p>
+    <p><strong>链路长度带来的风险累积。</strong>真智能体意味着更多的自主决策节点，每增加一个动态决策点就增加一层不确定性。链路越长，出问题的概率越高，问题定位也越难。在没有完善的可观测性工具和回滚机制之前，这个风险很难被企业接受。</p>
+    <p><strong>成本问题。</strong>真智能体需要多轮推理和工具调用，<a href="https://adg.csdn.net/696f3883437a6b403369af2d.html">Token 消耗量较传统对话式应用提升上百倍</a>，直接推高运行成本。对于缺乏精细化成本管控能力的中小企业，这是一道实际的门槛，不是优化一下 prompt 就能解决的。</p>
+    <p><strong>商业价值的量化难度。</strong>工作流的收益相对容易衡量——处理速度提升了多少、人工成本降低了多少。真智能体因为路径动态、结果多样，收益的归因更复杂，在向决策层证明投入产出比的时候，这是一个实际的障碍。</p>
+    <p>这四个问题不是模型能力的问题，是企业自身准备度的问题。</p>
+
+    <div class="callout">
+      <strong>工作流不是贬义词：</strong>在大多数企业的当前阶段，一个运行稳定、交付可验证价值的工作流，比一个概念上更先进但跑不稳的"智能体"有用得多。Agentwashing 是一个认知和利益的混合问题，不会因为模型变强就自动消失。概念的混乱不会阻止技术进步，但会让很多企业在错误的期待里浪费掉本可以验证的机会。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://towardsdatascience.com/a-developers-guide-to-building-scalable-ai-workflows-vs-agents/">A Developer's Guide to Building Scalable AI: Workflows vs Agents</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner Predicts 40% of Enterprise Apps Will Feature Task-Specific AI Agents by 2026</a></li>
+        <li><a href="https://www.outreach.io/resources/blog/agent-washing-ai-projects-fail-guide">Agent washing exposed: Why 40% of AI projects fail in 2025</a></li>
+        <li><a href="https://intuitionlabs.ai/articles/ai-agent-vs-ai-workflow">AI Agents vs. AI Workflows: Why Pipelines Dominate in 2025</a></li>
+        <li><a href="https://www.thoughtworks.com/en-us/insights/blog/generative-ai/Agentwashing-and-how-AI-agents-fail-us">The dangers of AI agentwashing</a></li>
+        <li><a href="https://m.bjnews.com.cn/detail/1753782186129556.html">中国企业家人工智能应用调研报告（2025）</a></li>
+        <li><a href="https://adg.csdn.net/696f3883437a6b403369af2d.html">2025年中国企业AI应用落地深度研究</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'agent-vs-workflow',
+  tags: ['行业洞察', 'Agent'],
+  topics: ['Agent'],
+  category: '商业'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  // 相关文章推荐
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  // 上下篇导航
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
+</body>
+</html>

@@ -2,6 +2,16 @@
   "version": 1,
   "posts": [
     {
+      "slug": "agent-vs-workflow",
+      "date": "2026.04",
+      "title": "你叫它智能体，但它可能只是个工作流",
+      "summary": "89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。",
+      "tags": ["行业洞察", "Agent"],
+      "topics": ["Agent"],
+      "category": "商业",
+      "url": "posts/agent-vs-workflow.html"
+    },
+    {
       "slug": "claude-design-blog",
       "date": "2026.04",
       "title": "Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？",
