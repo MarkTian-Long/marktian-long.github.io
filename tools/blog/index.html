@@ -387,7 +387,8 @@
             r = r.filter(function (p) {
                 return p.title.toLowerCase().includes(q) ||
                     p.summary.toLowerCase().includes(q) ||
-                    p.tags.some(function (t) { return t.toLowerCase().includes(q); });
+                    p.tags.some(function (t) { return t.toLowerCase().includes(q); }) ||
+                    (p.topics || []).some(function (t) { return t.toLowerCase().includes(q); });
             });
         }
         return r;
@@ -419,7 +420,7 @@
                         '<div class="post-content">' +
                         '<div class="post-title">' + p.title + '</div>' +
                         '<div class="post-summary">' + p.summary + '</div>' +
-                        '<div class="post-tags">' + p.tags.map(function (t) {
+                        '<div class="post-tags">' + (p.tags || []).concat(p.topics || []).map(function (t) {
                             return '<span class="post-tag">' + t + '</span>';
                         }).join('') + '</div>' +
                         '</div>' +

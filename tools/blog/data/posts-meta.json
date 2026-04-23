@@ -6,7 +6,7 @@
       "date": "2026.04",
       "title": "企业引入大模型 API，数据真的安全吗",
       "summary": "同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。",
-      "tags": ["行业洞察", "技术判断"],
+      "tags": ["技术判断"],
       "topics": ["企业AI"],
       "category": "商业",
       "url": "posts/enterprise-ai-data-security.html"
@@ -16,7 +16,7 @@
       "date": "2026.04",
       "title": "你叫它智能体，但它可能只是个工作流",
       "summary": "89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。",
-      "tags": ["行业洞察", "Agent"],
+      "tags": ["决策框架"],
       "topics": ["Agent"],
       "category": "商业",
       "url": "posts/agent-vs-workflow.html"
@@ -26,7 +26,7 @@
       "date": "2026.04",
       "title": "Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？",
       "summary": "Claude Design不只是一个新设计工具。它是Anthropic用工作流闭环重新划定势力范围的信号——当基模公司开始系统性地补全上下游工具链，没有护城河的工具层，只是时间问题。",
-      "tags": ["行业洞察", "产品分析"],
+      "tags": ["竞争判断"],
       "topics": ["产品设计"],
       "category": "商业",
       "url": "posts/claude-design-blog.html"
@@ -36,7 +36,7 @@
       "date": "2026.04",
       "title": "Manus：它卖的不是 Agent，是一次认知震撼",
       "summary": "Manus 最火的时候，我没有付费进去。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。",
-      "tags": ["行业洞察", "Agent"],
+      "tags": ["竞争判断"],
       "topics": ["Agent"],
       "category": "商业",
       "url": "posts/manus-agent-analysis.html"
@@ -46,7 +46,7 @@
       "date": "2026.04",
       "title": "OpenClaw 爆红背后：一个品类的诞生与宿命",
       "summary": "一个奥地利独立开发者用「危险」的开源项目验证了 personal agent 的市场需求，然后被 OpenAI 招走了。OpenClaw 的三个产品决策、B 端落地路径、以及脚手架类产品的品类宿命，比任何关于 Agent 未来的预测都更值得认真拆解。",
-      "tags": ["行业洞察", "Agent"],
+      "tags": ["竞争判断"],
       "topics": ["产品设计"],
       "category": "商业",
       "url": "posts/openclaw-brand-creation.html"
@@ -56,7 +56,7 @@
       "date": "2026.04",
       "title": "企业AI应用不是一条线，而是三个不同的战场",
       "summary": "用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。",
-      "tags": ["产品框架"],
+      "tags": ["决策框架"],
       "topics": ["企业AI"],
       "category": "产品",
       "url": "posts/enterprise-ai-three-stages.html"
@@ -66,7 +66,7 @@
       "date": "2026.04",
       "title": "AI产品记忆系统：从四阶段演进到怎么做对",
       "summary": "记忆系统的价值不在于套住用户，而在于让 AI 真正理解用户。从演进阶段到投入决策，这篇文章梳理 AI PM 在记忆系统上最需要看清的判断。",
-      "tags": ["产品框架"],
+      "tags": ["决策框架"],
       "topics": ["Agent"],
       "category": "产品",
       "url": "posts/memory-system.html"
@@ -86,7 +86,7 @@
       "date": "2026.04",
       "title": "Agent 现在面临的三大工程问题",
       "summary": "Agent 当前的瓶颈不在智能，而在工程：可靠性、成本和可控性，这三个问题决定了 Agent 的落地质量。",
-      "tags": ["Agent", "工程演进"],
+      "tags": ["工程演进"],
       "topics": ["Agent"],
       "category": "技术",
       "url": "posts/agent-three-problems.html"
@@ -106,7 +106,7 @@
       "date": "2026.03",
       "title": "技术消亡度框架：判断哪些 AI 技术值得长期投入",
       "summary": "不是所有 AI 技术都有相同的生命周期。区分补救缺降型和编码知识型是判断技术投资价值的核心框架。",
-      "tags": ["产品框架", "技术判断"],
+      "tags": ["决策框架", "技术判断"],
       "topics": ["企业AI"],
       "category": "产品",
       "url": "posts/tech-obsolescence.html"
@@ -116,7 +116,7 @@
       "date": "2026.03",
       "title": "RAG 的演进：从被动检索到主动信息系统",
       "summary": "现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。",
-      "tags": ["技术判断", "架构设计"],
+      "tags": ["技术判断"],
       "topics": ["RAG"],
       "category": "技术",
       "url": "posts/rag-evolution.html"
@@ -126,7 +126,7 @@
       "date": "2026.03",
       "title": "Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑",
       "summary": "Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。",
-      "tags": ["工程演进", "产品框架"],
+      "tags": ["工程演进", "决策框架"],
       "topics": ["Agent"],
       "category": "技术",
       "url": "posts/skill-system-and-harness.html"
@@ -136,7 +136,7 @@
       "date": "2026.03",
       "title": "微调的演进：哪些场景还值得做，哪些已被替代",
       "summary": "能力补救类微调正在被 RAG 和少样本学习替代，但成本优化和可控性微调永不消亡——两类微调的命运截然不同。",
-      "tags": ["技术判断", "架构设计"],
+      "tags": ["技术判断"],
       "topics": ["Fine-tuning"],
       "category": "技术",
       "url": "posts/finetuning-evolution.html"
