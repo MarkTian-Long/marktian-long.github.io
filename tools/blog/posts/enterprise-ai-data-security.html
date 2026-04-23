@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<!--
+date:    2026.04
+title:   企业引入大模型 API，数据真的安全吗
+tags:    [行业洞察, 技术判断]
+slug:    enterprise-ai-data-security
+summary: 同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企业引入大模型 API，数据真的安全吗 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="企业引入大模型 API，数据真的安全吗" />
+  <meta property="og:description" content="同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/enterprise-ai-data-security.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="企业引入大模型 API，数据真的安全吗" />
+  <meta name="twitter:description" content="同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap { position: sticky; top: 40px; }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc-list li { margin-bottom: 6px; }
+  .toc-list a {
+    font-size: 12.5px;
+    color: var(--text-2);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+    transition: color 0.2s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active { color: var(--clay); }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
+
+  /* 相关文章 */
+  .related-posts { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .related-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+  .related-list { display: flex; flex-direction: column; gap: 10px; }
+  .related-item { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+  .related-item-date { font-size: 11px; color: var(--text-3); flex-shrink: 0; }
+  .related-item-title { font-size: 13px; color: var(--text-2); transition: color 0.2s; }
+  .related-item:hover .related-item-title { color: var(--clay); }
+
+  /* 上下篇导航 */
+  .post-nav { display: flex; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); gap: 24px; }
+  .post-nav a { display: flex; flex-direction: column; gap: 4px; text-decoration: none; max-width: 45%; }
+  .post-nav-next { align-items: flex-end; margin-left: auto; }
+  .nav-label { font-size: .75rem; color: var(--text-2); }
+  .nav-title { font-size: .875rem; color: var(--text-1); }
+  .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-two-concerns">两个顾虑，一个困境</a></li>
+          <li><a href="#sec-regulated">强监管行业：合规硬约束</a></li>
+          <li><a href="#sec-gray-zone">其他行业：灰色地带</a></li>
+          <li><a href="#sec-solutions">实际在跑的解法</a></li>
+          <li><a href="#sec-employee-risk">员工行为侧的风险</a></li>
+          <li><a href="#sec-future">这个顾虑怎么被解决</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.04</span>
+      <span class="tag">行业洞察</span>
+      <span class="tag">技术判断</span>
+    </div>
+    <h1 class="post-title">企业引入大模型 API，数据真的安全吗</h1>
+    <p class="post-summary">这个问题被讨论得很多，但被理解得很少。同样的顾虑，在不同行业性质和解法完全不同；而企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <p>前段时间和一位在某大型互联网公司做开发的朋友聊天，他提到公司内部给员工提供了非常充裕的大模型 API 额度，Claude、GPT 都可以用。我当时顺口问了一句：用国外厂商的 API，不担心公司内部数据泄露吗？</p>
+    <p>他想了想，说不太清楚，他的关注点是怎么用 AI 提升效率，内部怎么考虑安全这块他没参与过。</p>
+    <p>这个回答让我觉得有点意思。不是因为他不关心安全，而是因为这个状态本身就说明了一些事情：风险是真实存在的，但大多数人并没有在认真面对它，或者说，面对它的人和使用它的人根本不是同一批人。</p>
+    <p>我在某金融科技公司做过 RAG 系统，也在不同场合和不同行业的人聊过这个话题。我的判断是，"企业用大模型 API 安不安全"这个问题，被讨论得很多，但经常被当成一个统一的技术问题在处理，而实际上它在不同行业、不同场景下性质完全不同，解法也完全不同。</p>
+
+    <h2 id="sec-two-concerns" style="scroll-margin-top:60px">两个核心顾虑，一个共同困境</h2>
+    <p>企业对大模型 API 的数据安全担忧，通常集中在两点：第一，数据会不会被厂商拿去训练模型；第二，厂商内部员工能不能看到请求内容。</p>
+    <p>这两个顾虑都可以通过合同约束来管理——数据不用于训练、访问控制要求、违规追责条款都可以写进协议。但合同约束的是行为规范，不是可验证性本身。你可以要求厂商承诺"员工不得访问客户数据"，却无法实时验证这个承诺是否被执行。</p>
+    <p>这才是这两个顾虑共同指向的底层困境：企业真正需要的是事前可验证，而市场上提供的几乎全是事后追责机制。SOC 2 认证、数据保密协议、访问日志审计，解决的是"出了事谁负责"，而不是"怎么证明没出事"。对于一家把商业机密或客户数据发给外部 API 的企业来说，协议再完善，数据一旦泄露，损失是即时且可能不可逆的；事后打官司滞后，时间战线很长，结果也不确定。这是一个风险不对称的问题。</p>
+    <p>目前 <a href="https://www.anthropic.com/privacy">Anthropic</a> 和 OpenAI 的企业版协议都承诺 API 数据默认不用于训练，也有基于角色的访问控制和多因素认证。但这些保证来自厂商自述，企业客户无法独立验证，这才是这个顾虑真正难以消解的地方。</p>
+
+    <h2 id="sec-regulated" style="scroll-margin-top:60px">强监管行业：不是信任问题，是合规硬约束</h2>
+    <p>如果把"企业用 AI API 的数据安全顾虑"当成一个统一问题来讨论，第一个需要打破的认知是：对于金融、医疗、政务这类强监管行业，这根本不是信任问题。</p>
+    <p>我在某金融科技公司参与 RAG 系统建设时，感受最深的一点是：数据在哪里处理，不是产品决策，是合规前提。核心业务系统封闭部署，外部 API 的接入有严格的审批流程，涉及客户数据的场景根本不会走外部网络。这不是因为大家不信任某个厂商，而是监管本身就不允许核心数据出企业边界。</p>
+    <p><a href="https://news.sina.cn/sx/2024-09-25/detail-incqirix0863058.d.html">银保监会 2016 年发布的云计算监管指导意见</a>明确要求金融机构对敏感数据采用私有云部署，这套逻辑直接延伸到了 AI 场景。这类机构对外部大模型 API 的态度大致是：非核心、非敏感的场景可以用，核心业务数据不会出去。</p>
+    <p>海外顶级基模厂商（OpenAI、Anthropic）目前也基本不提供真正意义上的私有化部署，他们的策略是通过 AWS Bedrock、Google Vertex 这类云合作伙伴做隔离托管，数据承诺不用于训练、有访问控制，但物理上还是跑在对方的基础设施上。对强监管行业来说，这条路从合规层面就走不通。</p>
+
+    <h2 id="sec-gray-zone" style="scroll-margin-top:60px">其他行业：灰色地带里的博弈</h2>
+    <p>强监管行业之外，情况完全不同。</p>
+    <p><a href="https://www.thepaper.cn/newsDetail_forward_22632495">2023 年 3 月，三星在内部引入 ChatGPT 后，短短数周内发生了三起机密数据泄露事件</a>。涉事员工把芯片测量数据、内部会议记录、专有程序源代码直接输入 ChatGPT 获取帮助，这些内容随即上传到了 OpenAI 的服务器。三件事的共同点是：员工不是在刻意泄密，只是在用顺手的工具解决眼前的问题。事件曝光后三星随即发布内部禁令，但数据已经无法收回。</p>
+    <p>这个案例说明了灰色地带里的核心矛盾：员工的生产力诉求是真实的，风险也是真实的，但两者之间没有一个清晰的管控边界。<a href="https://www.secrss.com/articles/74228">据 Cyberhaven 的报告，2024 年企业员工上传到生成式 AI 工具的敏感数据较上年增长了 485%</a>，其中包括客户支持信息、源代码和研发数据。这个数字来自安全厂商，有一定选择性偏差，但趋势方向大概率是真实的。</p>
+    <p>对大多数互联网公司、咨询公司、科技公司来说，引入大模型 API 并没有明确的监管红线，更多是在观望——用着，但没人愿意正式拍板说"可以用"。这就形成了一种典型的组织内部博弈：合规部门没有明确说不行，业务部门默认可以用；出了事是业务部门的问题，合规部门可以说我没批准过。风险被稀释在组织结构里，没有人真正承担。</p>
+
+    <h2 id="sec-solutions" style="scroll-margin-top:60px">目前实际在跑的解法</h2>
+    <p>技术层面，TEE（可信执行环境）和同态加密都被讨论过，但各有局限：TEE 的性能开销在大模型推理场景下还没有大规模验证；同态加密的计算成本目前不现实。短期内没有哪个技术路径能一劳永逸地解决可验证性问题。</p>
+    <p>目前跑得通的务实路径是数据分层处理：敏感数据走本地部署的小模型，非敏感数据走公有云大模型 API。这个方案在工程上可行，在合规上说得通，代价是能力上限受本地小模型约束，而且"哪些数据算敏感"这个判断本身也需要额外的分类机制来支撑。</p>
+    <p>市场上也出现了一类专门坐在用户和大模型之间的安全网关产品，比如 <a href="https://www.harmonic.security">Harmonic Security</a>、Lakera 等。它们在员工发给大模型的内容里做实时检测，发现敏感信息后进行脱敏替换或直接拦截。脱敏替换的做法是把"张三的账户余额 128 万"替换成"[客户姓名]的账户余额[金额]"发出去，返回结果后再还原。这对逻辑类任务影响不大，但对需要对敏感数据本身做分析的场景会失真，延迟增加在大多数对话场景下可接受。这类产品的真实目标客户不是大型金融机构——后者直接从网络层封锁，根本不需要这层——而是管控没那么严、员工已经在自发使用 AI 的中型企业。</p>
+
+    <h2 id="sec-employee-risk" style="scroll-margin-top:60px">员工行为侧的风险同样值得重视</h2>
+    <p>三星的案例也提醒了另一个容易被忽视的维度：和厂商侧风险并列，员工主动把不该发的内容发出去，同样是真实的风险来源，而且往往更难防范。</p>
+    <p><a href="https://www.harmonic.security/resources/what-22-million-enterprise-ai-prompts-reveal-about-shadow-ai-in-2025">Harmonic Security 分析了 2025 年全年超过 2200 万条企业员工发给 AI 工具的真实 prompt</a>，发现超过 90% 的企业员工在使用 AI 工具，但只有约 40% 的公司购买了官方企业版订阅（官方声称，未经独立验证）。这意味着大量员工在用个人账号访问 AI，完全在企业 IT 管控之外。这个数据来自一家卖安全产品的公司，存在选择性偏差，结论需要打折理解，但员工通过个人账号使用 AI 这个现象本身，从常识角度也说得通。</p>
+    <p>这个风险在不同行业分布很不均匀。大型金融机构通常直接在网络层封锁 ChatGPT、Claude 等域名，员工在公司网络里根本访问不了，这条路从源头切断。但在管控相对宽松的行业，这类行为既难以全面监控，责任边界也很模糊。</p>
+    <p>厂商侧风险和员工行为侧风险，是两个需要分开应对的问题，前者靠合同、合规框架和产品选型，后者靠内部管控、员工培训和使用规范。把两者混为一谈，往往导致在技术方案上过度投入，在员工行为管理上反而疏忽。</p>
+
+    <h2 id="sec-future" style="scroll-margin-top:60px">这个顾虑最终会怎么被解决</h2>
+    <p>强监管行业的路径反而更清晰，因为合规边界早就划定了，现在等的是国内模型能力和私有化部署成本跟上来。海外顶级模型在这个市场里没有太多空间，这一点大概不会变。</p>
+    <p>其他行业卡在另一个地方。员工层面已经在自发使用了，但企业层面的正式决策还在观望——不是技术不够，而是"合规的 AI 使用姿势"还没有人定义清楚。</p>
+    <p>监管侧其实已经在动。<a href="https://www.sangfor.com.cn/news/7e15f443a67e42b4b84efc13d559d6e5">2025 年 1 月《网络数据安全管理条例》正式施行</a>，要求重要数据处理者在委托处理、共同处理重要数据前进行风险评估，并每年度更新。《个人信息保护法》也已明确，企业把含有个人信息的数据交给第三方处理，需要满足告知同意等合规要求。网络安全等级保护制度（等保 2.0）则从系统安全防护层面提出了分级要求。但这些法规针对的是数据处理的通用场景，还没有细化到"企业通过 API 调用外部大模型处理业务数据"这个具体场景的合规指引。</p>
+    <p>这个缺口迟早会被填上。历史上云计算在金融行业的普及，是监管明确给出"合规上云姿势"之后才真正加速的。AI 数据安全的合规细则一旦落地，企业就有了正式采购决策的依据，灰色地带才会开始收窄。</p>
+    <p>在这个细则出来之前，大多数企业的真实状态大概还是：知道有风险，但竞争压力摆在那里，睁一只眼闭一只眼。</p>
+
+    <div class="callout">
+      <strong>从业者视角：</strong>厂商侧风险和员工行为侧风险是两条完全不同的治理链路，需要分开建账。把精力都砸在技术方案上、忽略员工使用规范，是当前企业在这个问题上最常见的失衡。在合规细则到来之前，先把"哪些数据不该出企业边界"这条红线内部说清楚，比等一个完美方案更实际。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://www.anthropic.com/privacy">Anthropic Privacy Policy</a></li>
+        <li><a href="https://news.sina.cn/sx/2024-09-25/detail-incqirix0863058.d.html">中国银行业信息科技"十三五"发展规划监管指导意见（新浪财经）</a></li>
+        <li><a href="https://www.thepaper.cn/newsDetail_forward_22632495">从ChatGPT数据泄露事件，看组织安全稳定自动化的重要性（澎湃新闻）</a></li>
+        <li><a href="https://www.secrss.com/articles/74228">2024年人工智能安全五大热点回顾（安全内参）</a></li>
+        <li><a href="https://www.sangfor.com.cn/news/7e15f443a67e42b4b84efc13d559d6e5">网络数据安全管理条例相关解读（深信服）</a></li>
+        <li><a href="https://www.harmonic.security/resources/what-22-million-enterprise-ai-prompts-reveal-about-shadow-ai-in-2025">Harmonic Security: What 22 Million Enterprise AI Prompts Reveal About Shadow AI in 2025</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'enterprise-ai-data-security',
+  tags: ['行业洞察', '技术判断'],
+  topics: ['企业AI'],
+  category: '商业'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  // 相关文章推荐
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  // 上下篇导航
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
+</body>
+</html>

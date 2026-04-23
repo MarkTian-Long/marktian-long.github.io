@@ -2,6 +2,16 @@
   "version": 1,
   "posts": [
     {
+      "slug": "enterprise-ai-data-security",
+      "date": "2026.04",
+      "title": "企业引入大模型 API，数据真的安全吗",
+      "summary": "同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。",
+      "tags": ["行业洞察", "技术判断"],
+      "topics": ["企业AI"],
+      "category": "商业",
+      "url": "posts/enterprise-ai-data-security.html"
+    },
+    {
       "slug": "agent-vs-workflow",
       "date": "2026.04",
       "title": "你叫它智能体，但它可能只是个工作流",
