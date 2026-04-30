@@ -37,7 +37,24 @@
       "Bash(rmdir D:/CS/Coding/qiuzhi/docs/plans/service-agent)",
       "Bash(cp -r . ~/.claude/skills/gstack.bak)",
       "Bash(./setup)",
-      "Bash(~/.claude/skills/gstack/*)"
+      "Bash(~/.claude/skills/gstack/*)",
+      "WebFetch(domain:www.charles-cheng.com)",
+      "WebFetch(domain:paulgraham.com)",
+      "WebFetch(domain:danwang.co)",
+      "WebFetch(domain:lennyrachitsky.com)",
+      "WebFetch(domain:www.shreyasrdoshi.com)",
+      "Bash(rm:*)",
+      "WebFetch(domain:getdesign.md)",
+      "WebFetch(domain:zara.faces.site)",
+      "Bash(dir:*)",
+      "WebFetch(domain:impeccable.style)",
+      "Bash(cp index.html index.html.bak)",
+      "Bash(cp assets/css/style.css assets/css/style.bak.css)",
+      "Bash(cp index-preview.html index.html)",
+      "Bash(cp assets/css/style-light.css assets/css/style.css)",
+      "Bash(sed \"s/.*tags: //g\")",
+      "Bash(awk '{print $9, $5}')",
+      "Bash(echo \"孤立}\\);数量: $?\")"
     ],
     "defaultMode": "auto"
   }

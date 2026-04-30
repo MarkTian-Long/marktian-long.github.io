@@ -47,7 +47,7 @@ tools/<tool-name>/
 在 `tool-tabs` div 中添加 Tab 按钮：
 ```html
 <button class="tool-tab" id="tab-<name>" onclick="switchTool('<name>')">
-  [合适的 emoji] 工具名称ed
+  [合适的 emoji] 工具名称
 </button>
 ```
 
@@ -73,7 +73,13 @@ tools/<tool-name>/
 - [ ] 工具页面可独立打开（不依赖主页面）
 - [ ] index.html 中 Tab 按钮和 Panel 都已添加
 - [ ] 没有硬编码颜色值（使用 CSS 变量）
-- [ ] localStorage Key 符合命名规范
+- [ ] localStorage Key 符合命名规范（`qiuzhi_<toolname>_v1`）
+- [ ] 工具目录已 `git add`（否则 GitHub Pages 部署后 404）
+- [ ] `<head>` 有 favicon 引用（`<link rel="icon" href="...">`）
+- [ ] iframe 高度是否合适（默认 `height: 600px`，内容多则需调大）
+- [ ] 独立窗口（直接在浏览器打开 `tools/<name>/index.html`）验证功能正常
+- [ ] 所有资源路径使用绝对路径或正确相对路径（避免 iframe 嵌套层级导致路径错误）
+- [ ] 如果工具有 API Key，提醒用户在 GitHub Secrets 添加对应 Key 并更新 deploy.yml
 
 ### 第六步：告知用户
 说明创建了哪些文件，如何在浏览器中查看效果。

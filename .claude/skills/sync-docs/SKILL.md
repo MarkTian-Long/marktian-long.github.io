@@ -31,6 +31,11 @@ description: 代码变更后同步更新项目文档，确保 README.md、CONVEN
 - 是否存在？内容是否完整？
 - 功能描述、数据来源、文件结构、维护指南四项是否都有？
 
+**如果新增或修改了博客文章/博客功能，检查博客相关文档**：
+- `tools/blog/data/posts-meta.json`：新文章是否已追加条目（slug/date/title/summary/tags/category/url 齐全）？
+- `tools/blog/WRITING_GUIDE.md`：写作规范是否需要更新（新增标签、callout 格式变化等）？
+- `CONVENTIONS.md` 第七章「博客内容规范」：字段规范或分类原则是否需要更新？
+
 **如果修改了命名规范、目录规范等，检查 CONVENTIONS.md**：
 - 对应章节是否需要更新示例或规则？
 

@@ -66,7 +66,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
-- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评
+- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评；或直接 `/update-trends` 联网全量搜索更新
 - ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
 - A股助手 key 配置在 `tools/stock/config.local.js`（不进 git），修改此文件而非 index.html
 - 线上部署的 key 存在 GitHub Secrets，由 `.github/workflows/deploy.yml` 在构建时注入：
@@ -78,7 +78,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - UI 视觉美化时：先 `/impeccable` 加载设计知识，再用 `/audit` 诊断，用 `/polish`、`/typeset`、`/layout` 等子命令定向改动
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
-- **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本；注意 Windows 环境下 `/tmp` 不可用，须用项目内路径
+- **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本（Windows 下 `/tmp` 不可用，统一用项目内路径）
 - **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点
 
 ## 危险操作 HITL 清单（必须暂停等用户确认）
@@ -98,6 +98,8 @@ docs/                           # 个人文档（.gitignore 排除）
 | 遇到 bug | /systematic-debugging 或 /investigate，禁止不调查直接改代码 |
 | 添加新工具页面 | /add-tool |
 | 采集 AI 产品数据 | /analyze-product 产品名 |
+| 更新热点快照 | /update-trends |
+| 套用品牌设计风格 | /brand-design-md 品牌名 |
 | 声称完成前 | /verification-before-completion |
 | 提交代码前 | /review |
 | 代码质量存疑 | /code-health-check |
@@ -105,3 +107,23 @@ docs/                           # 个人文档（.gitignore 排除）
 | 样式/UI 改动后 | /design-review 或 /impeccable audit（更细致的设计审查） |
 | 安全相关改动 | /insecure-defaults 加 /sharp-edges |
 | 2+ 独立并行任务 | /dispatching-parallel-agents |
+
+## Skill 管理（项目级 skill 维护指南）
+
+项目级 skill 定义在 `.claude/skills/<name>/SKILL.md`，共 6 个：
+
+| Skill | 用途 | 最近更新 |
+|-------|------|----------|
+| `add-tool` | 新建工具页面完整流程 | 2026-04 |
+| `analyze-product` | 联网采集 AI 产品数据→写入 products.json | 2026-04 |
+| `brand-design-md` | 获取品牌 DESIGN.md 规范并生成 UI | 2026-04 |
+| `code-health-check` | 代码规范检查（含博客双主题） | 2026-04 |
+| `sync-docs` | 代码变更后同步 README/CLAUDE/CONVENTIONS（含博客文档） | 2026-04 |
+| `update-trends` | 五大平台热榜联网搜索 → trends.json | 2026-04 |
+
+**维护规则：**
+- skill 文件必须是 `.claude/skills/<name>/SKILL.md` 目录结构（不能是根目录裸 `.md` 文件）
+- 每个 SKILL.md 必须有 `---` frontmatter，包含 `name`/`description`/`type` 字段
+- Windows 环境下路径限制：skill 内的 shell 命令禁止使用 `/tmp`，统一用项目内路径（如 `tools/.design-tmp/`）
+- 系统级 skill（pbakaus/impeccable 的 17 个设计 skill）由 `skills-lock.json` 哈希锁管理，更新用：`npx skills-manager@latest update`（或重新 install）；不要手动编辑 `.claude/skills/adapt/` 等目录
+- 当 skill 的检查项/流程与项目规范出现偏差时，优先更新 skill 文件，同步更新本表格的「最近更新」日期
