@@ -433,7 +433,7 @@
                     </div>
                     <div class="writing-post-tags">
                         ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
-                        ${(p.topics||[]).map(t => `<span class="writing-tag writing-tag--topic">${t}</span>`).join('')}
+                        ${(p.topics||[]).map(t => `<span class="writing-tag">${t}</span>`).join('')}
                     </div>
                 </a>
             `).join('');
