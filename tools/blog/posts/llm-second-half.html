@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   大模型的下半场：当预训练不再是唯一战场
+tags:    [竞争判断]
+slug:    llm-second-half
+summary: Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大模型的下半场：当预训练不再是唯一战场 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="大模型的下半场：当预训练不再是唯一战场" />
+  <meta property="og:description" content="Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/llm-second-half.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="大模型的下半场：当预训练不再是唯一战场" />
+  <meta name="twitter:description" content="Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay);
+      padding: 10px 16px;
+      margin: 20px 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block;
+      padding: 5px 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover,
+    .toc-list a.toc-active {
+      color: var(--clay);
+      border-left-color: var(--clay);
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-awakening">凌晨两点的觉醒</a></li>
+          <li><a href="#sec-howmade">大模型是怎么炼成的</a></li>
+          <li><a href="#sec-allocation">算力分配表的变迁</a></li>
+          <li><a href="#sec-benchmark">评测标尺失效</a></li>
+          <li><a href="#sec-coevolution">模型与框架互相进化</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span class="tag">竞争判断</span>
+    </div>
+    <h1 class="post-title">大模型的下半场：当预训练不再是唯一战场</h1>
+    <p class="post-summary">Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <p>最近读了一篇访谈，来自播客《张小珺商业访谈录》——财经媒体人张小珺对小米大模型团队负责人罗福莉的<a href="https://mp.weixin.qq.com/s/zqnJuv5OVsNGEefM7RguqQ">长篇对话</a>。罗福莉曾参与训练 DeepSeek V3，目前主导研发 MiMo-V2 系列模型，这是她第一次接受长时间的技术访谈。读完之后有些想法想整理出来，这篇文章算是一个读后延伸。</p>
+
+    <h2 id="sec-awakening" style="scroll-margin-top:60px">一、凌晨两点的觉醒</h2>
+
+    <p>2026 年春节期间，罗福莉在深夜装上了 OpenClaw。她原本对这个产品充满抵触——创始人的运营风格太过玄幻，本地化、24 小时这些卖点在她看来不过是产品定义而已。但当她第一次真正开始对话，时间从凌晨两点一直走到天亮。</p>
+
+    <p>她后来这样描述那一晚："不知道是多巴胺还是内啡肽，持续在分泌，让我兴奋到完全睡不着觉。"</p>
+
+    <p>这个细节值得一提，不是因为它罕见。类似的"第一次体验"在过去几年里发生过很多次——ChatGPT 横空出世时有，DeepSeek R1 刷屏时有。但罗福莉不是普通用户，她是亲手参与训练过 DeepSeek V3、主导研发 MiMo-V2 系列的一线研究者。让一个清楚知道模型是怎么被造出来的人彻夜兴奋，意味着她感受到的不只是产品体验的跃升，而是某种更底层的东西变了。</p>
+
+    <p>那个"更底层的东西"，正是这篇文章想聊的。</p>
+
+    <p>要理解它，需要先搞清楚一件事：一个大模型，究竟是怎么被造出来的。</p>
+
+    <h2 id="sec-howmade" style="scroll-margin-top:60px">二、大模型是怎么炼成的</h2>
+
+    <p>大模型的生产链条，大致可以分成三层：预训练、后训练和推理。三层各司其职，但权重正在悄悄发生变化。</p>
+
+    <p><strong>预训练（Pre-train）：打基础教育</strong></p>
+
+    <p>预训练是整个流程最重、最烧钱的一环。简单理解，就是用海量文本——网页、书籍、代码——反复喂给模型，让它在这个过程中学会语言的规律、世界的常识和基本的推理逻辑。这个阶段的竞争核心是三件事：数据质量够不够好、模型架构设计得够不够高效、能堆多少算力进去。</p>
+
+    <p>预训练结束后，产出的是一个"基座模型"。它博览群书，但不一定听话，也不一定能帮你干什么具体的事。</p>
+
+    <p><strong>后训练（Post-train）：职业培训加价值观塑造</strong></p>
+
+    <p>后训练在基座之上进行，目标是让模型从"能说话"变成"有用"。这个阶段通常包含几种方法：SFT（监督微调）让模型看人类示范的好答案，学会怎么好好回答问题；RL（强化学习）让模型通过大量尝试和反馈，学会在有标准答案的领域（比如数学、代码）自己想清楚再说。</p>
+
+    <p>在大模型发展的早期，后训练是相对短暂的收尾工作，主要目的是让模型"变得礼貌"。但现在，这一层正在成为真正的战场，原因后面会讲到。</p>
+
+    <p><strong>推理（Inference）：模型被实际使用的过程</strong></p>
+
+    <p>推理是模型训练完成之后，面向真实用户提供服务的阶段。它不属于训练体系，而是部署侧的事——决定了模型跑多快、每次调用多贵、能不能扛住大规模并发。MTP 加速、KV Cache 优化这些技术，都发生在这一层。</p>
+
+    <p>罗福莉在访谈中提到，MiMo-V2-Pro 的推理速度能达到 60 至 100 TPS（每秒处理的 token 数量），这在当前一代模型里属于较快的水平（官方声称，未经独立验证）。这个数字背后，是预训练阶段就做好的架构选择——为推理效率预留了足够的空间。</p>
+
+    <p>三层的关系可以这样理解：预训练决定模型的知识上限，后训练决定它在真实任务中的实际可用性，推理决定这个能力能否被规模化地交付出去。</p>
+
+    <p>在大模型发展的前几年，竞争基本集中在第一层。谁的预训练数据更好、架构更先进、算力更充足，谁就能训出更强的基座，后面的事几乎是顺理成章。但这个逻辑正在松动——各家基座模型之间的能力差距在收窄，预训练的边际收益在下降。在罗福莉看来，现在各家在这个维度上已经没有明显代差了。</p>
+
+    <p>这种收窄，从一组算力分配数字上体现得最为清楚。</p>
+
+    <h2 id="sec-allocation" style="scroll-margin-top:60px">三、一张算力分配表的变迁</h2>
+
+    <p>罗福莉在访谈中分享了她对训练侧算力分配变化的个人观察——这是她基于自身经历的判断，不代表行业共识：</p>
+
+    <blockquote><p>"至少在 Chat 时代，for 研究、for Pre-train 和 for Post-train 的用卡比例非常夸张，比如 3:5:1，现在一个非常合理的用卡比例可能是 3:1:1。"</p></blockquote>
+
+    <p>这里的"卡"指的是训练侧的 GPU 资源，和面向用户服务的推理卡是完全独立的两本账。她还补充："预训练跟后训练一个比例，这是今年可能发生的很大变化。顶尖团队应该都是 1:1 了。"</p>
+
+    <p>表面上看，这组数字说的是 Pre-train 和 Post-train 之间的权重变化。但按此比例推算，还有一层变化更值得关注：研究算力的相对占比。</p>
+
+    <p>Chat 时代，研究:Pre-train:Post-train 是 3:5:1，研究占总量约三分之一。到了 Agent 时代变成 3:1:1，研究占总量接近五分之三。Pre-train 从占大头变成和 Post-train 持平，而研究的相对权重反而大幅上升——这是罗福莉原话中没有直接点出、但比例数字背后隐含的另一重变化。</p>
+
+    <p>这背后的逻辑不难理解。罗福莉在访谈中说，在 Agent 框架的辅助下，一个研究想法从冒出来到跑完实验验证，以前需要一两周，现在可能一两个小时就能完成。速度上来了，能并行跑的实验数量就上去了，研究侧对 GPU 的消耗自然随之增加。与此同时，各家基座模型的能力差距在收窄，继续在 Pre-train 上无限堆卡的边际收益正在下降。真正的分化，开始发生在谁能更快验证新的 Post-train 方向。</p>
+
+    <p>换句话说，这场竞争的节奏变了。以前拼的是谁能把基座训得更大更好，现在拼的是谁能更快地在 Post-train 和 Agent 方向上跑出新的结果。</p>
+
+    <h2 id="sec-benchmark" style="scroll-margin-top:60px">四、当评测标尺本身失效</h2>
+
+    <p>说到竞争格局的变化，有一个案例很能说明问题。</p>
+
+    <p><a href="https://techcrunch.com/2026/03/31/yupp-ai-shuts-down-33m-a16z-crypto-chris-dixon/">2026 年 3 月底，AI 模型评测初创公司 Yupp 宣布关闭</a>，平台于 4 月 15 日正式下线。这家公司的开局堪称梦幻：3300 万美元种子轮，由 a16z crypto 的 Chris Dixon 领投，Google DeepMind 首席科学家 Jeff Dean、Twitter 联合创始人 Biz Stone 等 45 位知名人士跟投，积累了 130 万注册用户，还签下了几家 AI 实验室作为付费客户。从成立到关门，不到 22 个月。</p>
+
+    <p>Yupp 做的事情，逻辑上并不复杂：让用户免费使用 800 多个 AI 模型并对结果评分，把这些偏好数据卖给 AI 厂商。本质上是用众包方式生产 RLHF（基于人类反馈的强化学习）所需要的训练数据。</p>
+
+    <p>创始人 Pankaj Gupta 在关闭公告中写道："AI 模型能力的格局在过去一年里发生了剧烈变化，未来还会继续快速变化。未来不只是模型，而是 Agent 系统。"</p>
+
+    <p>这句话几乎把 Yupp 的死因说清楚了。它同时撞上了三堵墙：</p>
+
+    <p>其一，顶尖模型之间的能力差距在缩小，用户专门去一个平台做多模型对比评测的需求自然下降。其二，AI 厂商对训练数据的口味变了，从"量大的众包偏好"转向 <a href="https://scale.com/rlhf">Scale AI</a> 这类公司提供的"领域专家精标数据"——Scale AI 官方明确将语言学、编程、数学等领域的专业化标注团队作为核心竞争力，普通用户点一下"这个回答更好"的价值大幅贬值。其三，也是最根本的一点，用户的需求本身变了——从"哪个模型回答得好"转向"哪个 Agent 能帮我把任务做完"。Yupp 测量的东西，不再是行业最需要被测量的东西。</p>
+
+    <p>旧的尺子，量不了新的竞争。</p>
+
+    <p>Yupp 的遭遇不是个例。它暴露的是一个更大的结构性困境：静态 Benchmark 在顶尖模型之间已接近饱和，分不出高下；而 Agent 场景下的动态评估——如何衡量一个模型在真实的多轮任务、跨工具调用、长程规划中的实际完成质量——目前还没有任何团队给出公认的解法。评测这个赛道本身，正站在一个没有地图的路口。</p>
+
+    <p>这个话题值得单独展开，这里先放下。但它指向的问题，和接下来要说的事紧密相连：当旧的评估标准失效，竞争的真正战场在哪里？</p>
+
+    <h2 id="sec-coevolution" style="scroll-margin-top:60px">五、模型和框架开始互相进化</h2>
+
+    <p>说回罗福莉最开始那个问题：她在 OpenClaw 上感受到的"底层变化"，究竟是什么？</p>
+
+    <p>她给出的答案，是一套她之前从未见过的双向进化机制。</p>
+
+    <p>她用 Claude Opus 4.6 反复调整 OpenClaw 的框架，包括重新设计记忆系统、重写多智能体协作逻辑。框架改好之后，她把自己团队正在训练的 MiMo-V2-Pro 接进去，发现在这套精心编排的框架下，一个尚未针对 Agent 场景专门优化的模型，表现出乎意料地好。框架补上了模型的短板，让它在绝大多数场景里发挥出接近顶级水平的表现。</p>
+
+    <p>这是飞轮的第一圈：顶尖模型帮你把框架设计好，好框架让普通模型也能好用。</p>
+
+    <p>但飞轮不止转一圈。更好的框架意味着更丰富的真实使用场景，这些场景产生的交互数据，可以转化成新的 Post-train 训练素材，反过来提升模型在 Agent 环境中的稳定性和泛化能力，进一步推动框架的迭代。</p>
+
+    <p>对于这个过程，罗福莉有一个判断：</p>
+
+    <blockquote><p>"你确实需要这个模型跟你这个 Agent 的架构本身，同步往前走。"</p></blockquote>
+
+    <p>这意味着，单纯拼 Pre-train 参数规模的时代，正在让位于一个更复杂的竞争维度。1T 参数的基座，在她看来是当前阶段做到接近 Claude Opus 4.6 水准的入场券，但入场之后的竞争是另一回事。</p>
+
+    <p>她还有一句话，某种程度上是对整个行业现状最直接的判断：</p>
+
+    <blockquote><p>"上一个时代的成功并不意味着下一个时代的领先，现在基本上大家在同一水平线。"</p></blockquote>
+
+    <p>Pre-train 时代积累的优势，在 Agent 时代的新起跑线面前，折旧得比大多数人预期的快。</p>
+
+    <hr class="divider" />
+
+    <p>这场竞争还在进行中，结果远未确定。罗福莉在访谈里说"接下来两三个月会非常精彩"，这句话本身就是最诚实的态度——连最接近一线的人，也只能看到未来两三个月，而不是两三年。</p>
+
+    <p>我自己读完这篇访谈的感受是：技术范式的转折期，往往比人们预期的更短、更剧烈。Yupp 用不到两年证明了，站错了浪就什么都没有。而罗福莉在春节深夜装上 OpenClaw、从凌晨两点聊到天亮的那个时刻，或许正是她感受到浪头要来的瞬间。</p>
+
+    <p>至于浪打到哪里，还需要时间来回答。</p>
+
+    <div class="callout">
+      <strong>关于这篇文章：</strong>本文是对张小珺对罗福莉访谈的读后延伸，所有关于算力分配比例、MiMo-V2-Pro 性能的数字，均来自罗福莉个人的经验判断，不代表行业共识，也未经独立验证。Yupp 关闭的相关数据来自 TechCrunch 报道和官方公告。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://mp.weixin.qq.com/s/zqnJuv5OVsNGEefM7RguqQ">独家对话罗福莉：AI 范式已然巨变！（张小珺商业访谈录）</a></li>
+        <li><a href="https://techcrunch.com/2026/03/31/yupp-ai-shuts-down-33m-a16z-crypto-chris-dixon/">Yupp shuts down after raising $33M from a16z crypto's Chris Dixon（TechCrunch）</a></li>
+        <li><a href="https://blog.yupp.ai/winddown/">Yupp is winding down（官方公告）</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'llm-second-half',
+  tags: ['竞争判断'],
+  topics: ['Agent'],
+  category: '商业'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+<script>
+(function(){
+    var saved = localStorage.getItem('blog_theme');
+    document.body.dataset.theme = (saved === 'dark') ? 'dark' : 'light';
+})();
+</script>
+</body>
+</html>

@@ -2,12 +2,30 @@
   "version": 1,
   "posts": [
     {
+      "slug": "llm-second-half",
+      "date": "2026.05",
+      "title": "大模型的下半场：当预训练不再是唯一战场",
+      "summary": "Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。",
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "category": "商业",
+      "url": "posts/llm-second-half.html"
+    },
+    {
       "slug": "enterprise-ai-data-security",
       "date": "2026.04",
       "title": "企业引入大模型 API，数据真的安全吗",
       "summary": "同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。",
-      "tags": ["技术判断"],
-      "topics": ["企业AI"],
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "企业AI"
+      ],
       "category": "商业",
       "url": "posts/enterprise-ai-data-security.html"
     },
@@ -16,8 +34,12 @@
       "date": "2026.04",
       "title": "你叫它智能体，但它可能只是个工作流",
       "summary": "89% 的企业说自己在用 AI，但细看落地场景大多是工作流而非真智能体。这个落差背后是什么？工作流和智能体的本质区别在哪里？以及企业侧离真智能体到底还有多远。",
-      "tags": ["决策框架"],
-      "topics": ["Agent"],
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "商业",
       "url": "posts/agent-vs-workflow.html"
     },
@@ -26,8 +48,12 @@
       "date": "2026.04",
       "title": "Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？",
       "summary": "Claude Design不只是一个新设计工具。它是Anthropic用工作流闭环重新划定势力范围的信号——当基模公司开始系统性地补全上下游工具链，没有护城河的工具层，只是时间问题。",
-      "tags": ["竞争判断"],
-      "topics": ["产品设计"],
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "产品设计"
+      ],
       "category": "商业",
       "url": "posts/claude-design-blog.html"
     },
@@ -36,8 +62,12 @@
       "date": "2026.04",
       "title": "Manus：它卖的不是 Agent，是一次认知震撼",
       "summary": "Manus 最火的时候，我没有付费进去。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。",
-      "tags": ["竞争判断"],
-      "topics": ["Agent"],
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "商业",
       "url": "posts/manus-agent-analysis.html"
     },
@@ -46,8 +76,12 @@
       "date": "2026.04",
       "title": "OpenClaw 爆红背后：一个品类的诞生与宿命",
       "summary": "一个奥地利独立开发者用「危险」的开源项目验证了 personal agent 的市场需求，然后被 OpenAI 招走了。OpenClaw 的三个产品决策、B 端落地路径、以及脚手架类产品的品类宿命，比任何关于 Agent 未来的预测都更值得认真拆解。",
-      "tags": ["竞争判断"],
-      "topics": ["产品设计"],
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "产品设计"
+      ],
       "category": "商业",
       "url": "posts/openclaw-brand-creation.html"
     },
@@ -56,8 +90,12 @@
       "date": "2026.04",
       "title": "企业AI应用不是一条线，而是三个不同的战场",
       "summary": "用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。",
-      "tags": ["决策框架"],
-      "topics": ["企业AI"],
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "企业AI"
+      ],
       "category": "产品",
       "url": "posts/enterprise-ai-three-stages.html"
     },
@@ -66,8 +104,12 @@
       "date": "2026.04",
       "title": "AI产品记忆系统：从四阶段演进到怎么做对",
       "summary": "记忆系统的设计陷阱，通常不在实现，而在目标设定——很多团队把'让 AI 记住用户'当成留存手段而非理解工具，这两个出发点导向完全不同的架构决策。这篇梳理 AI PM 在记忆系统上最需要看清的判断框架。",
-      "tags": ["决策框架"],
-      "topics": ["Agent"],
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "产品",
       "url": "posts/memory-system.html"
     },
@@ -76,8 +118,12 @@
       "date": "2026.04",
       "title": "工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里",
       "summary": "Prompt 写得再好，也解决不了 Agent 系统在生产环境里不稳定的问题。AI 工程的关注层次已经上移到 Harness 层——工具抽象、错误恢复、状态管理，这些才是 2026 年竞争差距的来源。",
-      "tags": ["工程演进"],
-      "topics": ["Agent"],
+      "tags": [
+        "工程演进"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "技术",
       "url": "posts/harness-engineering.html"
     },
@@ -86,8 +132,12 @@
       "date": "2026.04",
       "title": "Agent 现在面临的三大工程问题",
       "summary": "57% 的企业已经有 Agent 在生产环境跑，但 32% 的人说质量是进不了生产的最大障碍。Agent 不是不够聪明，是不够可靠——这两件事的解法完全不同。",
-      "tags": ["工程演进"],
-      "topics": ["Agent"],
+      "tags": [
+        "工程演进"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "技术",
       "url": "posts/agent-three-problems.html"
     },
@@ -96,8 +146,12 @@
       "date": "2026.04",
       "title": "2026 年 AI Agent 市场格局：开放 vs 封闭的博弈",
       "summary": "Anthropic 阻止第三方 Agent 工具使用订阅配额，一次看似商业决策的动作，揭示了平台战的底层逻辑：谁控制 Harness 层，谁就控制 Agent 生态的价值分配。",
-      "tags": ["市场格局"],
-      "topics": ["企业AI"],
+      "tags": [
+        "市场格局"
+      ],
+      "topics": [
+        "企业AI"
+      ],
       "category": "商业",
       "url": "posts/market-landscape-2026.html"
     },
@@ -106,8 +160,13 @@
       "date": "2026.03",
       "title": "技术消亡度框架：判断哪些 AI 技术值得长期投入",
       "summary": "AI 技术的生命周期差异极大。判断标准只有一个：这项技术解决的是模型的能力缺陷，还是领域知识的结构化？前者随基模变强自动消亡，后者不会。在投入前先做这个判断，比优化本身更重要。",
-      "tags": ["决策框架", "技术判断"],
-      "topics": ["企业AI"],
+      "tags": [
+        "决策框架",
+        "技术判断"
+      ],
+      "topics": [
+        "企业AI"
+      ],
       "category": "产品",
       "url": "posts/tech-obsolescence.html"
     },
@@ -116,8 +175,12 @@
       "date": "2026.03",
       "title": "RAG 的演进：从被动检索到主动信息系统",
       "summary": "大多数 RAG 系统在生产环境表现不如预期，根本原因不是实现质量，而是 naive RAG 的设计本身有四个结构性缺陷。这些缺陷决定了现有设计的天花板，也推动着 RAG 向主动信息系统演进。",
-      "tags": ["技术判断"],
-      "topics": ["RAG"],
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "RAG"
+      ],
       "category": "技术",
       "url": "posts/rag-evolution.html"
     },
@@ -126,8 +189,13 @@
       "date": "2026.03",
       "title": "Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑",
       "summary": "Skill 不是'更工程化的 Prompt'，两者解决的是完全不同层次的问题。Skill 系统被创造出来是为了解决 Agent 在生产环境里的可靠性问题——可观察、可复用、可评估，这些属性 Prompt Engineering 从来没有提供过。",
-      "tags": ["工程演进", "决策框架"],
-      "topics": ["Agent"],
+      "tags": [
+        "工程演进",
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
       "category": "技术",
       "url": "posts/skill-system-and-harness.html"
     },
@@ -136,8 +204,12 @@
       "date": "2026.03",
       "title": "微调的演进：哪些场景还值得做，哪些已被替代",
       "summary": "能力补救类微调正在被 RAG 和少样本学习快速替代，但成本优化和可控性微调有完全不同的命运。在技术选型前先判断你要做的是哪类，比讨论'要不要微调'更有价值。",
-      "tags": ["技术判断"],
-      "topics": ["Fine-tuning"],
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "Fine-tuning"
+      ],
       "category": "技术",
       "url": "posts/finetuning-evolution.html"
     },
@@ -146,8 +218,13 @@
       "date": "2026.03",
       "title": "Prompt Engineering 的生命周期：哪些会消亡，哪些会留下",
       "summary": "补救模型缺降的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
-      "tags": ["工程演进", "技术判断"],
-      "topics": ["提示工程"],
+      "tags": [
+        "工程演进",
+        "技术判断"
+      ],
+      "topics": [
+        "提示工程"
+      ],
       "category": "技术",
       "url": "posts/prompt-engineering-lifecycle.html"
     }
