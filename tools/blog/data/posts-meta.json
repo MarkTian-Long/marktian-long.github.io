@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "fde-blog-v3",
+      "date": "2026.05",
+      "title": "OpenAI 和 Anthropic 同一周下场做咨询，FDE 时代来了？",
+      "summary": "大模型厂商相继成立企业部署合资公司，表面是商业扩张，实质是在宣告 AI 竞争主战场的迁移——从模型能力到落地能力。FDE 是第一批响应者，FDX 可能是这个逻辑的完整形态。",
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "category": "商业",
+      "url": "posts/fde-blog-v3.html"
+    },
+    {
       "slug": "llm-second-half",
       "date": "2026.05",
       "title": "大模型的下半场：当预训练不再是唯一战场",
