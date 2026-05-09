@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "automated-research",
+      "date": "2026.05",
+      "title": "AI能大量生产方向，但还不会判断什么重要",
+      "summary": "自动化科研让AI第一次跑完了整条研究链路。但这件事真正的意义不在于它能产出多少论文，而在于它把AI最难突破的边界暴露得足够清楚：执行可以工业化，判断还不行。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "AI工具"
+      ],
+      "category": "技术",
+      "url": "posts/automated-research.html"
+    },
+    {
       "slug": "ai-coding-hardware",
       "date": "2026.05",
       "title": "让 AI 写代码这件事，为什么到硬件就不行了",
