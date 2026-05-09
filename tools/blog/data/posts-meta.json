@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "ai-coding-hardware",
+      "date": "2026.05",
+      "title": "让 AI 写代码这件事，为什么到硬件就不行了",
+      "summary": "在软件世界里效果极强的 AI 写代码工具，到了硬件开发面前几乎完全失效。不是因为工具不够好，而是因为硬件的反馈回路从根本上就不是数字闭环——物理世界的不确定性会污染 AI 的判断链条，让推理从根本上断掉。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "AI工具"
+      ],
+      "category": "技术",
+      "url": "posts/ai-coding-hardware.html"
+    },
+    {
       "slug": "fde-blog-v3",
       "date": "2026.05",
       "title": "OpenAI 和 Anthropic 同一周下场做咨询，FDE 时代来了？",
