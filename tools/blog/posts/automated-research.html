@@ -330,11 +330,11 @@ category: 技术
 
     <h2 id="sec-fars" style="scroll-margin-top:60px">FARS是什么</h2>
 
-    <p><a href="https://analemma.ai/blog/introducing-fars/">FARS</a>是一个端到端的自动化科研系统，由四个专职Agent组成：Ideation负责文献调研和假设生成，Planning制定实验方案，Experiment执行实验，Writing完成论文写作。整个流程无需人工干预，相关代码完全开源在GitLab。</p>
+    <p><a href="https://analemma.ai/blog/introducing-fars/">FARS</a>是一个端到端的自动化科研系统，由四个专职Agent组成：Ideation负责文献调研和假设生成，Planning制定实验方案，Experiment执行实验，Writing完成论文写作。整个流程无需人工干预，研究提案、实验代码和完整论文均已公开在<a href="https://analemma.ai/fars">官网</a>，实验代码同步托管于<a href="https://gitlab.com/fars-a">GitLab</a>。</p>
 
     <p>这次直播的目标是产出100篇完整论文。<a href="https://x.com/AnalemmaAI/status/2025822814633423189">据Analemma官方公告</a>，系统在启动后228小时28分33秒完成了这一目标，期间全程无人值守，自主生成了244个研究假设，平均每篇论文约2小时17分钟，每篇成本约1000美元。完成100篇后直播继续运行，直到2026年3月3日才正式结束。</p>
 
-    <p>有几点边界需要说清楚：FARS目前主要针对机器学习领域的研究，它能全流程自动化的前提是实验可以在代码层面完成，不需要湿实验室。生物、化学、材料科学等依赖物理实验的领域，暂时无法复制这套模式。</p>
+    <p>有几点边界需要说清楚：FARS目前主要针对机器学习领域的研究，它能全流程自动化的前提是实验可以在代码层面完成，不依赖真实物理实验。生物、化学、材料科学等需要真实物理实验的领域，暂时无法复制这套模式。</p>
 
     <h2 id="sec-ecosystem" style="scroll-margin-top:60px">这个生态里还有哪些工具</h2>
 
@@ -342,7 +342,7 @@ category: 技术
 
     <p><strong>辅助型工具</strong>处于这个生态的基础层，帮研究者完成文献密集型工作。<a href="https://www.undermind.ai">Undermind</a>通过语义搜索和引用图谱遍历，在数亿篇论文中定位真正相关的研究，定位是加速文献检索，人类研究者依然主导判断。<a href="https://arxiv.org/abs/2411.14199">OpenScholar</a>由Allen Institute for AI开发，专门针对科学文献问答，相关研究已发表于Nature，在多个学科的文献综合准确性上超过了GPT-4o。这类工具的共同特点是：AI负责加速信息处理，人类继续做判断。</p>
 
-    <p><strong>假设生成型工具</strong>往前迈了一步，开始介入研究方向的提议环节。<a href="https://research.google/blog/accelerating-scientific-breakthroughs-with-an-ai-co-scientist/">Google AI co-scientist</a>基于Gemini 2.0构建，通过多个专职Agent持续生成、辩论和改进研究假设。它已在生物医学领域得到实际验证：与Imperial College London合作的抗菌素耐药性研究中，系统在数天内得出了传统方式需要数年才能推进的结论；在急性髓系白血病的药物重定向研究中，它提出的候选药物经湿实验室验证得到证实。Google明确将其定位为辅助工具，强调需要"科学家持续介入和引导"。</p>
+    <p><strong>假设生成型工具</strong>往前迈了一步，开始介入研究方向的提议环节。<a href="https://research.google/blog/accelerating-scientific-breakthroughs-with-an-ai-co-scientist/">Google AI co-scientist</a>基于Gemini 2.0构建，通过多个专职Agent持续生成、辩论和改进研究假设。它已在生物医学领域得到实际验证：与Imperial College London合作的抗菌素耐药性研究中，系统在数天内得出了传统方式需要数年才能推进的结论；在急性髓系白血病的药物重定向研究中，它提出的候选药物经实验验证得到证实。Google明确将其定位为辅助工具，强调需要"科学家持续介入和引导"。</p>
 
     <p><strong>全流程自动化</strong>是目前最激进的方向。Sakana AI的<a href="https://arxiv.org/abs/2408.06292">The AI Scientist</a>于2024年8月率先发布，其v2版本已将一篇完全AI生成的论文送进ICLR 2025研讨会并通过同行评审，这是AI生成论文首次通过正式评审流程。FARS在此基础上更进一步，将整个过程以直播形式公开，并通过大规模产出测试系统的稳定性。</p>
 
@@ -408,6 +408,8 @@ category: 技术
       <h2>参考资料</h2>
       <ul>
         <li><a href="https://analemma.ai/blog/introducing-fars/">Introducing FARS — Analemma</a></li>
+        <li><a href="https://analemma.ai/fars">FARS研究成果页 — Analemma</a></li>
+        <li><a href="https://gitlab.com/fars-a">FARS GitLab代码仓库 — Analemma</a></li>
         <li><a href="https://x.com/AnalemmaAI/status/2025822814633423189">FARS官方公告推文 — Analemma</a></li>
         <li><a href="https://arxiv.org/abs/2408.06292">The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery — Sakana AI, 2024</a></li>
         <li><a href="https://arxiv.org/abs/2504.08066">The AI Scientist-v2 — Sakana AI, 2025</a></li>
