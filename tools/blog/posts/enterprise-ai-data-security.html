@@ -255,7 +255,11 @@ category: 商业
     transition: color 0.2s;
   }
   .toc-list a:hover,
-  .toc-list a.toc-active { color: var(--clay); }
+  .toc-list a.toc-active {
+    color: var(--clay);
+    background: var(--clay-soft);
+    border-radius: 4px;
+  }
 
   @media (max-width: 700px) {
     .two-col { grid-template-columns: 1fr; }

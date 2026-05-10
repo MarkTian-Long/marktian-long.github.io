@@ -195,7 +195,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
     ├── aside.toc-wrap（position: sticky; top: 40px）
     │   └── nav.toc-card（目录卡片，--bg-subtle 底色，1px border，圆角 8px）
     │       ├── span.toc-card-label（"本文目录" 小标题）
-    │       └── ul.toc-list > li > a（目录条目，hover/active 用 clay 色 + 左竖线）
+    │       └── ul.toc-list > li > a（目录条目，hover/active 用 clay 色 + 左竖线 + clay-soft 背景）
     └── main（文章内容区）
         ├── header.post-header
         ├── hr.divider
@@ -224,7 +224,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 })();
 ```
 
-- 目录链接 hover / active 用 `var(--clay)` 高亮 + 左侧 3px 竖线
+- 目录链接 hover / active 用 `var(--clay)` 高亮 + 左侧竖线 + `background: var(--clay-soft)` + `border-radius: 4px`
 - `h2` 需加 `id` 属性供锚点跳转，同时加 `scroll-margin-top: 60px`
 
 ### 响应式规则
