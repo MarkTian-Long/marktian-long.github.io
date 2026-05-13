@@ -80,6 +80,7 @@
         "市场格局"
       ],
       "topics": [
+        "模型能力",
         "Agent"
       ],
       "category": "技术",
@@ -136,7 +137,8 @@
         "竞争判断"
       ],
       "topics": [
-        "Agent"
+        "Agent",
+        "产品设计"
       ],
       "category": "商业",
       "url": "posts/manus-agent-analysis.html"
@@ -178,7 +180,8 @@
         "决策框架"
       ],
       "topics": [
-        "Agent"
+        "Agent",
+        "产品设计"
       ],
       "category": "产品",
       "url": "posts/memory-system.html"
@@ -220,6 +223,7 @@
         "市场格局"
       ],
       "topics": [
+        "Agent",
         "企业AI"
       ],
       "category": "商业",
