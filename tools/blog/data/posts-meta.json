@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "llm-soft-quality",
+      "date": "2026.05",
+      "title": "大模型的分越来越高，但有些差距只用几天就能感觉到",
+      "summary": "benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "AI工具"
+      ],
+      "category": "技术",
+      "url": "posts/llm-soft-quality.html"
+    },
+    {
       "slug": "automated-research",
       "date": "2026.05",
       "title": "AI能大量生产方向，但还不会判断什么重要",

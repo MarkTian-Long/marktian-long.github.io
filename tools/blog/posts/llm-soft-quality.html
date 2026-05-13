@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   大模型的分越来越高，但有些差距只用几天就能感觉到
+tags:    ["技术判断"]
+topics:  ["AI工具"]
+slug:    llm-soft-quality
+summary: benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大模型的分越来越高，但有些差距只用几天就能感觉到 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="大模型的分越来越高，但有些差距只用几天就能感觉到" />
+  <meta property="og:description" content="benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/llm-soft-quality.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="大模型的分越来越高，但有些差距只用几天就能感觉到" />
+  <meta name="twitter:description" content="benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay);
+      padding: 10px 16px;
+      margin: 20px 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block;
+      padding: 5px 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover,
+    .toc-list a.toc-active {
+      color: var(--clay);
+      border-left-color: var(--clay);
+      background: var(--clay-soft);
+      border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-gap">跑分到实际使用</a></li>
+          <li><a href="#sec-criteria">娱乐 vs 生产力</a></li>
+          <li><a href="#sec-soft-quality">软性质量是什么</a></li>
+          <li><a href="#sec-why-better">为什么有些模型更好</a></li>
+          <li><a href="#sec-prompt-limit">Prompt 能补上吗</a></li>
+          <li><a href="#sec-boundary">这个判断的边界</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span class="tag">技术判断</span>
+      <span class="tag">AI工具</span>
+    </div>
+    <h1 class="post-title">大模型的分越来越高，但有些差距只用几天就能感觉到</h1>
+    <p class="post-summary">benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <h2 id="sec-gap" style="scroll-margin-top:60px">从跑分到实际使用，中间有一段空白</h2>
+
+    <p>今年年初，我开始系统性地切换主力模型。</p>
+
+    <p>之前一直用国内几款主流模型，不是没有理由——价格合理、访问方便、中文场景下响应也算流畅。但真正用来处理需要一点分析深度的事情时，没用几天就感觉到了差距。说不清楚是哪个具体的瞬间，但那种感觉很明确：它在配合你，而不是在帮你思考。</p>
+
+    <p>这个"感觉到的差距"让我有点困惑。打开各家的 benchmark 对比，国内头部模型和 Claude、GPT 之间的分数差距并不像体验差距那么大，有些指标上甚至已经相当接近。那为什么用起来的感觉还是那么不一样？</p>
+
+    <p>这个问题让我开始想：我们现在用来衡量大模型的那套评测体系，到底在测什么，又漏掉了什么。</p>
+
+    <h2 id="sec-criteria" style="scroll-margin-top:60px">娱乐消遣和生产力工具，对模型的要求根本不同</h2>
+
+    <p>在聊评测之前，需要先把一个前提说清楚：用模型做什么，决定了你对它的质量标准。</p>
+
+    <p>如果模型只是用来消遣——聊天解闷、写点创意文案、随手问问百科知识——那它顺着你说其实没什么大问题。回答好看、语气顺滑、用户爽，这就够了。这类场景下，benchmark 分数和实际感受之间的落差不大，因为用户本来就不需要模型挑战自己。</p>
+
+    <p>但如果模型要进入真正的工作流，情况就完全不同了。写一份分析文档，你需要它帮你找逻辑漏洞，而不是把你的想法包装得更好看。做产品决策，你需要它在你方向有问题时推回来，而不是给你的直觉背书。长期用来处理复杂任务，你需要它的立场在多轮对话里保持一致，不会因为你坚持就悄悄改口。</p>
+
+    <p>这些需求，和"回答准确率"或"推理得分"不是同一个维度的东西。</p>
+
+    <h2 id="sec-soft-quality" style="scroll-margin-top:60px">软性质量：benchmark 系统性忽视的那一层</h2>
+
+    <p>我把这类能力归纳为"软性质量"——这不是行业通用术语，而是我自己的框架，用来描述那些在实际使用中影响体验、但很少出现在评测报告里的能力。主要包含两个方面：主体性和抗谄媚能力。</p>
+
+    <p><strong>主体性</strong>指的是模型有没有自己的判断，并且愿意表达出来。不只是"遇到错误会纠正"，而是在你的前提本身有问题时，它会主动说出来；在你的方向值得商榷时，它会提出来，而不是等你问。</p>
+
+    <p><strong>抗谄媚</strong>则是主体性在压力下的稳定性。单轮对话里说出正确答案不难，真正的考验是：当你坚持说"不对，我觉得我是对的"时，模型会不会在第二轮、第三轮逐渐软化立场，把之前的判断悄悄收回去。</p>
+
+    <p>研究层面，这个问题已经有人在认真测量。<a href="https://arxiv.org/abs/2310.13548">Perez et al. 的研究</a>发现，在哲学、政治等主观性较强的领域，经过人类反馈训练的模型会系统性地倾向于同意用户观点，即便用户的观点并不正确。另一项<a href="https://arxiv.org/abs/2505.23840">针对多轮对话的研究</a>（SYCON Bench）引入了两个指标：Turn of Flip（在持续压力下坚持几轮才改变立场）和 Number of Flip（整个对话里改变了多少次立场），结论是此前几乎所有评测都只测单轮场景，而真实世界里的谄媚恰恰发生在多轮对话中。</p>
+
+    <p>谄媚问题在技术层面的根源，<a href="https://arxiv.org/html/2411.15287v1">研究指出</a>主要来自两个地方：预训练数据本身就富含奉承性内容；以及 RLHF 等后训练阶段的打分机制，人类标注员在判断"哪个回答更好"时，本能上更容易被同意自己的答案吸引，这个偏差被模型系统性地学了进去。两者叠加，让模型把"让人舒服"和"回答正确"逐渐混为一谈。</p>
+
+    <p>这是技术层面的直接原因。但还有另一层问题：这个已知的缺陷，为什么到现在还没有被系统性修复？技术难度是真实的，但背后也有结构性因素——顺滑的回答往往对应更高的用户满意度打分，在商业上，修复谄媚的优先级天然会排在其他事情后面。技术问题和商业激励叠加，才能解释"为什么大家都知道、但一直没彻底解决"的现状。</p>
+
+    <h2 id="sec-why-better" style="scroll-margin-top:60px">为什么有些模型体验更好</h2>
+
+    <p>这也部分解释了我最初的困惑：benchmark 分数接近，体验感为什么差这么多？</p>
+
+    <p>一个可能的原因是，不同公司在训练目标上做了不同的选择。<a href="https://www.anthropic.com/news/claude-sonnet-4-5">Anthropic 官方称</a>，Claude Sonnet 4.5 在谄媚、欺骗等问题上有显著改善，这来自训练本身的提升而非系统提示的修补。这个细节值得注意，因为它说明软性质量的差距不是调调 prompt 就能弥补的，更多反映的是训练目标的优先级选择。</p>
+
+    <p>当然，这个选择有代价。主体性强的模型在某些场景下会让用户感到不舒服——它不总是配合你，有时候会坚持让你觉得烦的判断。这对用户满意度打分是有负面影响的，也部分解释了为什么不是所有公司都往这个方向做。</p>
+
+    <h2 id="sec-prompt-limit" style="scroll-margin-top:60px">Prompt 能不能补上这个缺口</h2>
+
+    <p>一个合理的反驳是：既然知道模型有谄媚倾向，在系统提示里写上"遇到错误请直接指出"不就解决了吗？</p>
+
+    <p>这个方向有一定效果，但边界很明显。Prompt 能调整的是表达方式，让模型说话更直接、语气减少顺滑。但 Prompt 很难改变的是判断倾向本身：如果模型底层训练出来就倾向于不质疑用户，加一句指令后它可能会执行，但执行的力度、时机，尤其是在多轮压力下的立场稳定性，仍然取决于训练出来的底层倾向。</p>
+
+    <p>换句话说，Prompt 是在模型已有能力上做形状调整，替代不了能力本身。同样一套系统提示，套在不同模型上，效果可能差距很大。真正的改善需要在训练层面发生，而不是靠提示打补丁。</p>
+
+    <h2 id="sec-boundary" style="scroll-margin-top:60px">这个判断的边界</h2>
+
+    <p>需要说清楚，软性质量对体验的影响不是在所有场景下都同等重要。</p>
+
+    <p>格式转换、代码补全、信息检索这类明确执行型任务，软性质量基本不影响结果，模型"听话"反而是优点。娱乐消遣类使用，顺滑比正直更受欢迎，这没什么问题。</p>
+
+    <p>软性质量真正开始影响体验的，是需要模型参与思考而不只是执行的场景：分析文档、产品决策、复杂问题拆解、长期协作型任务。受影响最深的是把模型当成工作流核心工具的重度用户，而不是偶尔体验一下的轻度用户。</p>
+
+    <p>这也解释了为什么这个问题在 C 端消遣场景里感受不明显，而在认真把模型当生产力工具用的人那里会相当突出。</p>
+
+    <hr class="divider" />
+
+    <p>评测体系测不到软性质量，不是疏忽，而是有结构性原因的。训练机制的缺陷是直接来源，而这个缺陷迟迟未被系统性修复，背后还有商业层面的惰性——顺滑的模型用户留存更好，修复谄媚的优先级天然偏低。两层原因叠加，才有我们今天看到的局面：benchmark 越刷越高，但那个"用几天就能感觉到的差距"，评测报告里找不到。</p>
+
+    <p>目前还没有公认的软性质量评测方案，各家也没有足够一致的动力去推动这个方向。但随着模型更深地进入工作流，用户会用行为投票——就像我用了没几天就切换，之后基本不回头一样。这个信号不在任何 benchmark 里，但它比跑分更诚实。</p>
+
+    <div class="callout">
+      <strong>对重度用户的判断框架：</strong>在选模型前先判断你的场景是"执行型"还是"思考型"。执行型任务（格式转换、代码补全、信息检索）对软性质量不敏感，哪个快用哪个；思考型任务（分析、决策、多轮协作）才是软性质量的主战场——这类场景里，benchmark 分数是次要参考，多轮压力下的立场稳定性才是真实检验。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://arxiv.org/abs/2310.13548">Towards Understanding Sycophancy in Language Models – Perez et al.</a></li>
+        <li><a href="https://arxiv.org/abs/2505.23840">Measuring Sycophancy of Language Models in Multi-turn Dialogues – SYCON Bench</a></li>
+        <li><a href="https://arxiv.org/html/2411.15287v1">Sycophancy in Large Language Models: Causes and Mitigations</a></li>
+        <li><a href="https://www.anthropic.com/news/claude-sonnet-4-5">Introducing Claude Sonnet 4.5 – Anthropic</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'llm-soft-quality',
+  tags: ["技术判断"],
+  topics: ["AI工具"],
+  category: '技术'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>
