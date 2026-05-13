@@ -10,8 +10,7 @@
         "评测体系"
       ],
       "topics": [
-        "AI治理",
-        "AI工具"
+        "评测体系"
       ],
       "category": "技术",
       "url": "posts/ai-benchmark-failure.html"
@@ -25,7 +24,7 @@
         "技术判断"
       ],
       "topics": [
-        "AI工具"
+        "模型能力"
       ],
       "category": "技术",
       "url": "posts/llm-soft-quality.html"
@@ -53,7 +52,7 @@
         "技术判断"
       ],
       "topics": [
-        "AI工具"
+        "模型能力"
       ],
       "category": "技术",
       "url": "posts/ai-coding-hardware.html"
