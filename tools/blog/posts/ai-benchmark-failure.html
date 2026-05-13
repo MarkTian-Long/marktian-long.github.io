@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   模型跑出了测量边界，评测体系跟不上了
+tags:    ["评测体系"]
+topics:  ["AI治理","AI工具"]
+slug:    ai-benchmark-failure
+summary: 静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模型跑出了测量边界，评测体系跟不上了 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="模型跑出了测量边界，评测体系跟不上了" />
+  <meta property="og:description" content="静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。" />
+  <meta property="og:url"         content="https://liu-yang.me/tools/blog/posts/ai-benchmark-failure.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="模型跑出了测量边界，评测体系跟不上了" />
+  <meta name="twitter:description" content="静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay);
+      padding: 10px 16px;
+      margin: 20px 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block;
+      padding: 5px 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover,
+    .toc-list a.toc-active {
+      color: var(--clay);
+      border-left-color: var(--clay);
+      background: var(--clay-soft);
+      border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-yupp">一个不该倒的公司倒了</a></li>
+          <li><a href="#sec-saturation">静态 benchmark 跑出了边界</a></li>
+          <li><a href="#sec-agent-eval">agent 评测范式还没有共识</a></li>
+          <li><a href="#sec-bigtech">大厂填真空，但带来新问题</a></li>
+          <li><a href="#sec-conclusion">确定的和不确定的</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span class="tag">评测体系</span>
+      <span class="tag">AI治理</span>
+    </div>
+    <h1 class="post-title">模型跑出了测量边界，评测体系跟不上了</h1>
+    <p class="post-summary">静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <h2 id="sec-yupp" style="scroll-margin-top:60px">一个不该倒的公司倒了</h2>
+
+    <p>2026 年 3 月 31 日，Yupp.ai 宣布关闭。</p>
+
+    <p>这家公司的死不太像一般的创业失败。<a href="https://www.prismnews.com/news/crowdsourced-ai-feedback-startup-yuppai-shuts-down-less">它在 2025 年 6 月上线</a>，融了 a16z 领投的 3300 万美元种子轮，投资人名单里有 Google DeepMind 的 Jeff Dean、Perplexity CEO Aravind Srinivas。产品逻辑是让用户免费使用 800 多个 AI 模型，通过众包偏好数据帮助 AI 实验室评测模型表现，数据再卖给各大实验室。上线不到一年，累计 130 万用户，付费客户包括多家实验室。</p>
+
+    <p>按通常的创业逻辑，这不是一家做得烂的公司。</p>
+
+    <p>关闭声明里，联合创始人 Pankaj Gupta 写道："AI 模型的能力格局在过去一年里发生了根本性的变化，未来也会继续快速演变。未来不只是模型，而是 agentic 系统。在那个世界里，chatbot 层面的众包模型评测变得越来越不重要。"</p>
+
+    <p>这段话值得细读。Yupp.ai 死掉不是因为执行差，而是因为它试图填补的那个空间本身正在消失，或者更准确地说，正在被重新定义。它的倒闭是一个截面，切到的是大模型评测体系目前正在经历的一场结构性危机。</p>
+
+    <h2 id="sec-saturation" style="scroll-margin-top:60px">静态 benchmark 跑出了测量边界</h2>
+
+    <p>传统静态 benchmark 的天花板问题不是新鲜话题，但 2025–2026 年的数据让这个问题从"趋势"变成了"已完成的事实"。<a href="https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance">MMLU 满分区间已经是 90% 以上</a>，前沿模型之间差 2 个百分点，这个数字已经没有区分能力；HumanEval 的 Pass@1 接近 99%，作为编程评测基准事实上已经退休。研究者用来描述这段时期的词是"benchmark 饱和时代"。</p>
+
+    <p>更重要的问题不是"题不够难"，而是能力增长速度超过了评测体系的刷新速度。</p>
+
+    <p>METR（一家专注 AI 风险评估的独立机构）从 2019 年开始追踪"任务完成时间地平线"：测量 AI agent 在 50% 成功率下能完成的任务时长，用人类专家完成同一任务所需时间来校准。<a href="https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/">这个指标从 2019 年到 2025 年保持约 7 个月翻倍一次的增速</a>，2024 年之后加速到约 105 天翻倍一次。</p>
+
+    <p>然后 Claude Mythos Preview 出现了。</p>
+
+    <p><a href="https://metr.org/time-horizons/">METR 在 2026 年 5 月 8 日更新了追踪页面</a>，同时加上了一条注释："16 小时以上的测量结果在当前任务集下不可靠。"Mythos 的 50% 时间地平线估计为至少 16 小时，95% 置信区间是 8.5 小时到 55 小时——区间跨度 6 倍多。不是因为模型表现不稳定，而是因为 METR 的 228 个任务里只有 5 个被标注为 16 小时以上，样本太少，曲线失去了统计意义。</p>
+
+    <p>这不是"评测集快被打穿了"，是评测集已经跑出了测量边界。METR 自己承认，要可靠地测量 Mythos 这个级别的能力，需要"新的任务、新的人类基线，以及大幅增加的评测资源"。</p>
+
+    <p>这里有一个细节值得单独拎出来。METR 在 2025 年 8 月做了一组对比实验，发现算法自动评分测出的时间地平线，和真实开发者生产力随机对照实验里观察到的结果之间存在系统性缺口：<a href="https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/">算法评分高估了 AI 的真实能力，因为 agent 经常能通过自动化测试，但代码质量差、测试覆盖不足、不符合生产标准</a>。即便是 METR 这样专门为 agent 时代设计的评测框架，算法评分这个核心工具也已经被发现存在系统性偏差。</p>
+
+    <h2 id="sec-agent-eval" style="scroll-margin-top:60px">agent 时代的评测范式还没有共识</h2>
+
+    <p>结果指标测的不是真实能力，只是"能通过自动评分的能力"——这个问题在 agent 时代不是细节，是范式层面的缺陷。因为 agent 评测面临的根本问题不是旧尺子不够用，而是<strong>尺子本身还没有被发明出来</strong>。</p>
+
+    <p>现有的 agent benchmark，SWE-bench 测真实 GitHub issue 的修复，WebArena 测网页导航，OSWorld 测跨应用的桌面操作，都是局部解。<a href="https://arxiv.org/html/2511.14136v1">一项对 12 个主要 agent benchmark 的系统性分析发现，10 个中有 7 个存在有效性问题，成本估算误差最高达 100%</a>。WebArena 的 substring matching 评分方式会系统性高估成功率 1.4–5.2%；OSWorld 的评测环境对新型 agent 架构适配性差。</p>
+
+    <p>但这些还不是核心问题。核心问题在于，单步任务和多步骤任务的评测逻辑根本不同。单步任务的答案空间是封闭的，对错相对清晰。多步骤 agent 任务里，同一个目标可以有多条有效路径，中间步骤的"对错"依赖上下文，失败可能发生在第 5 步但根因在第 1 步的决策，而且真实业务场景里的成功标准往往无法被算法自动评分。</p>
+
+    <p>公开的大模型评测体系长期停留在单一维度的技术指标上，连"这个指标服务于什么业务目标"这个问题都没有被系统性地问过。这个缺口在 chatbot 时代还能接受，因为用户场景相对简单，偏好可以被众包。到了 agent 时代，一个 agent 在真实业务环境里是否可靠，涉及的维度远超现有任何公开评测框架能回答的范围。Yupp.ai 的死法之所以有代表性，正是因为它的商业模式建立在"chatbot 层面的偏好数据有价值"这个前提上，而这个前提已经被 agent 范式的切换给架空了。</p>
+
+    <h2 id="sec-bigtech" style="scroll-margin-top:60px">大厂填真空，但带来新问题</h2>
+
+    <p>agent 评测框架的空白不会一直空着。正是因为外部机构越来越难以设计有效的评测，大厂有了充分的理由和空间自己来填。但填真空这件事本身，带来了两种性质不同的新问题。</p>
+
+    <p><strong>第一种问题是叙事控制。</strong>随着模型能力进入更深水区，评测的专业门槛在提高，能设计出有区分度的任务的人，越来越集中在模型研发团队内部。OpenAI 的 PaperBench 让 agent 从零复现 ICML 论文，Anthropic 用内部性能工程考试测 Opus 系列。这些评测本身不一定有问题，问题是当评测的设计者和被评测的对象是同一家公司时，"选择测什么"本身就已经是一种叙事控制。</p>
+
+    <p><strong>第二种问题是独立平台被渗透。</strong><a href="https://blog.collinear.ai/p/gaming-the-system-goodharts-law-exemplified-in-ai-leaderboard-controversy">Cohere、Stanford、MIT、Allen AI 等多家机构联合发表的论文《The Leaderboard Illusion》揭示</a>，Meta 在 Llama-4 发布前在 LMSYS Chatbot Arena 上私下测试了 27 个模型变体，选择性披露最佳结果。Arena 原本是学术机构运营的独立评测平台，这个案例说明，即便评测平台本身没有主动妥协，大厂也可以通过私测和选择性披露来扭曲排名。Cohere 研究副总裁 Sara Hooker 事后写道："科学诚信的关键是我们能信任进步的衡量标准。"</p>
+
+    <p>两种问题指向同一个结构：能力集中和利益冲突相互强化。正因为外部机构越来越难以设计有效的评测，大厂的自建评测才更难被外部质疑；正因为难以被质疑，选择性披露的代价才更低。OpenAI 和 Anthropic 在 2025 年做了一次互相评测对方模型的联合实验，测试 sycophancy、自我保护倾向等对齐指标。这个举动可以解读为两家公司都意识到单边自评公信力不足，但它同时也说明，独立评测的职能正在被大厂之间的"互评"所替代。</p>
+
+    <p><a href="https://aievaluation.substack.com/p/2025-august-ai-evaluation-digest">研究者已经明确指出，独立机构在评测节奏上已经形成了对大厂的依赖关系，"无法跟上大厂的速度和资源"</a>。METR 对 Mythos 的评测，评测结果主要服务于 Anthropic 的部署前风险评估流程，评测窗口和任务选择都受到了约束。独立评测的空间不是一夜消失的，是被资源差距和速度差距慢慢挤压的。</p>
+
+    <h2 id="sec-conclusion" style="scroll-margin-top:60px">确定的和不确定的</h2>
+
+    <p>有一件事现在是确定的：评测体系已经落后于能力增长，而且在 agent 时代，这个差距的性质变了，不再是"题不够难"，而是测量范式本身需要重建。</p>
+
+    <p>不确定的是谁来重建，以及按照谁的利益来建。下一套评测标准有三条可能的路：METR 这样的独立机构获得足够资源，把任务集扩展到能覆盖 agent 时代的复杂度；政府监管框架介入，强制要求独立评测作为部署前提；或者大厂主导的"联合评测"成为新的行业默认，就像 OpenAI 和 Anthropic 那次互测所暗示的方向。</p>
+
+    <p>这三条路的结果差异很大。前两条保留了外部监督的结构，第三条本质上是把裁判权交还给运动员，只是从单边自评变成了双边互评。</p>
+
+    <p>Yupp.ai 的 3300 万美元回答了一个否定版本：分散的众包平台走不通。正确答案还没有出现，但谁先建立起被行业接受的评测基础设施，谁就掌握了定义"AI 能力"的话语权。这不只是技术问题。</p>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://metr.org/time-horizons/">METR: Task-Completion Time Horizons of Frontier AI Models</a></li>
+        <li><a href="https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/">METR: Measuring AI Ability to Complete Long Tasks (March 2025)</a></li>
+        <li><a href="https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/">METR: Research Update – Algorithmic vs. Holistic Evaluation (August 2025)</a></li>
+        <li><a href="https://blog.yupp.ai/winddown/">Yupp.ai 关闭公告</a></li>
+        <li><a href="https://www.prismnews.com/news/crowdsourced-ai-feedback-startup-yuppai-shuts-down-less">Prism News: Yupp.ai Shuts Down Less Than a Year After Launch</a></li>
+        <li><a href="https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance">Stanford HAI: 2025 AI Index – Technical Performance</a></li>
+        <li><a href="https://blog.collinear.ai/p/gaming-the-system-goodharts-law-exemplified-in-ai-leaderboard-controversy">The Leaderboard Illusion – Collinear AI 解析</a></li>
+        <li><a href="https://aievaluation.substack.com/p/2025-august-ai-evaluation-digest">2025 August AI Evaluation Digest</a></li>
+        <li><a href="https://arxiv.org/html/2511.14136v1">Beyond Accuracy: A Multi-Dimensional Framework for Evaluating Enterprise Agentic AI Systems</a></li>
+        <li><a href="https://the-decoder.com/metr-says-it-can-barely-measure-claude-mythos-palo-alto-networks-warns-of-autonomous-ai-attackers/">METR evaluates Claude Mythos Preview at 16-hour time horizon</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'ai-benchmark-failure',
+  tags: ["评测体系"],
+  topics: ["AI治理","AI工具"],
+  category: '技术'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>

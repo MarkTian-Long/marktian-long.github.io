@@ -240,6 +240,34 @@
         }
         .chip-clear:hover { opacity: 1; }
 
+        /* ── 分页 ── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .page-btn {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            font-family: 'Source Sans 3', -apple-system, sans-serif;
+            font-size: 13px;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+        .page-btn:hover { background: var(--bg-hover); color: var(--text-1); }
+        .page-btn.active { background: var(--clay-soft); color: var(--clay); border-color: transparent; font-weight: 600; }
+        .page-btn:disabled { opacity: 0.35; cursor: default; }
+        .page-ellipsis { font-size: 13px; color: var(--text-3); padding: 0 4px; }
+
         /* ── 移动端控件（桌面隐藏）── */
         .mobile-controls { display: none; }
 
@@ -335,7 +363,8 @@
 
 <script>
 (function () {
-    let posts = [], cat = 'all', query = '', timer;
+    let posts = [], cat = 'all', query = '', timer, page = 1;
+    const PAGE_SIZE = 10;
 
     // ── 主题初始化 ──
     const savedTheme = localStorage.getItem('blog_theme');
@@ -403,14 +432,21 @@
             root.innerHTML = '<p class="empty">没有符合条件的文章。</p>';
             return;
         }
+
+        var totalPages = Math.ceil(list.length / PAGE_SIZE);
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+
+        var pageList = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
         // 按 YYYY.MM 分组（保留月份粒度）
         var byYM = {};
-        list.forEach(function (p) {
+        pageList.forEach(function (p) {
             var ym = p.date;
             if (!byYM[ym]) byYM[ym] = [];
             byYM[ym].push(p);
         });
-        root.innerHTML = Object.keys(byYM).sort(function (a, b) { return b > a ? -1 : 1; }).reverse().map(function (ym) {
+        var groupsHtml = Object.keys(byYM).sort(function (a, b) { return b > a ? -1 : 1; }).reverse().map(function (ym) {
             var label = ym.replace('.', ' · ');
             return '<div class="year-group">' +
                 '<div class="year-label">' + label + '</div>' +
@@ -428,6 +464,34 @@
                 }).join('') +
                 '</div>';
         }).join('');
+
+        var paginationHtml = '';
+        if (totalPages > 1) {
+            var btns = [];
+            btns.push('<button class="page-btn" ' + (page === 1 ? 'disabled' : '') + ' data-goto="' + (page - 1) + '">←</button>');
+            for (var i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || Math.abs(i - page) <= 1) {
+                    btns.push('<button class="page-btn' + (i === page ? ' active' : '') + '" data-goto="' + i + '">' + i + '</button>');
+                } else if (Math.abs(i - page) === 2) {
+                    btns.push('<span class="page-ellipsis">…</span>');
+                }
+            }
+            btns.push('<button class="page-btn" ' + (page === totalPages ? 'disabled' : '') + ' data-goto="' + (page + 1) + '">→</button>');
+            paginationHtml = '<div class="pagination">' + btns.join('') + '</div>';
+        }
+
+        root.innerHTML = groupsHtml + paginationHtml;
+
+        root.querySelectorAll('.page-btn[data-goto]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var g = parseInt(btn.dataset.goto);
+                if (!isNaN(g) && g >= 1 && g <= totalPages && !btn.disabled) {
+                    page = g;
+                    render();
+                    document.getElementById('archiveRoot').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
     }
 
     // ── 过滤状态 chip ──
@@ -457,6 +521,7 @@
     // ── 分类切换 ──
     function setCategory(c) {
         cat = c;
+        page = 1;
         document.querySelectorAll('[data-cat]').forEach(function (el) {
             el.classList.toggle('active', el.dataset.cat === c);
         });
@@ -466,6 +531,7 @@
     // ── 搜索防抖 ──
     function onSearch(val) {
         query = val;
+        page = 1;
         var desktop = document.getElementById('searchInput');
         var mobile = document.getElementById('searchInputMobile');
         if (desktop && desktop.value !== val) desktop.value = val;

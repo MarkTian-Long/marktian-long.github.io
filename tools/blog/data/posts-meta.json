@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "ai-benchmark-failure",
+      "date": "2026.05",
+      "title": "模型跑出了测量边界，评测体系跟不上了",
+      "summary": "静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。",
+      "tags": [
+        "评测体系"
+      ],
+      "topics": [
+        "AI治理",
+        "AI工具"
+      ],
+      "category": "技术",
+      "url": "posts/ai-benchmark-failure.html"
+    },
+    {
       "slug": "llm-soft-quality",
       "date": "2026.05",
       "title": "大模型的分越来越高，但有些差距只用几天就能感觉到",
