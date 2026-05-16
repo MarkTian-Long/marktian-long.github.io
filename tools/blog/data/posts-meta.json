@@ -13,8 +13,7 @@
         "算力基础设施"
       ],
       "category": "技术",
-      "url": "posts/training-vs-inference.html",
-      "order": 2
+      "url": "posts/training-vs-inference.html"
     },
     {
       "slug": "ai-chips-explainer",
@@ -28,8 +27,7 @@
         "算力基础设施"
       ],
       "category": "技术",
-      "url": "posts/ai-chips-explainer.html",
-      "order": 1
+      "url": "posts/ai-chips-explainer.html"
     },
     {
       "slug": "ai-benchmark-failure",
