@@ -2,20 +2,6 @@
   "version": 1,
   "posts": [
     {
-      "slug": "training-vs-inference",
-      "date": "2026.05",
-      "title": "训练和推理，是两件不同的事",
-      "summary": "训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。",
-      "tags": [
-        "技术判断"
-      ],
-      "topics": [
-        "算力基础设施"
-      ],
-      "category": "技术",
-      "url": "posts/training-vs-inference.html"
-    },
-    {
       "slug": "ai-chips-explainer",
       "date": "2026.05",
       "title": "芯片战争背后，藏着一张分工地图",
@@ -28,6 +14,20 @@
       ],
       "category": "技术",
       "url": "posts/ai-chips-explainer.html"
+    },
+    {
+      "slug": "training-vs-inference",
+      "date": "2026.05",
+      "title": "训练和推理，是两件不同的事",
+      "summary": "训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "算力基础设施"
+      ],
+      "category": "技术",
+      "url": "posts/training-vs-inference.html"
     },
     {
       "slug": "ai-benchmark-failure",
