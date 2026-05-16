@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   训练和推理，是两件不同的事
+tags:    ["技术判断"]
+topics:  ["算力基础设施"]
+slug:    training-vs-inference
+summary: 训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>训练和推理，是两件不同的事 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="训练和推理，是两件不同的事" />
+  <meta property="og:description" content="训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="训练和推理，是两件不同的事" />
+  <meta name="twitter:description" content="训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-2); text-decoration: none; font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px; padding: 3px 9px; border-radius: 20px;
+      background: var(--tag-bg); color: var(--tag-text); font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif); font-size: 26px; font-weight: 700;
+      line-height: 1.35; color: var(--text-1); margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px; color: var(--text-2); line-height: 1.65;
+      padding-left: 14px; border-left: 3px solid var(--clay);
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .post-body h2 {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+      margin: 40px 0 14px;
+      padding-left: 10px; border-left: 3px solid var(--accent);
+      line-height: 1.35;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body h3 {
+      font-size: 16px; font-weight: 700; color: var(--text-1);
+      margin: 28px 0 10px;
+    }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a { color: var(--accent); text-decoration: none; }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay); padding: 10px 16px;
+      margin: 20px 0; color: var(--text-2); font-size: 14px; line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft); border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius); padding: 16px 18px;
+      margin: 24px 0; font-size: 14px; color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important; font-weight: 600;
+      color: var(--text-3) !important; text-transform: uppercase;
+      letter-spacing: 0.06em; margin: 0 0 12px !important;
+      padding-left: 0 !important; border-left: none !important;
+    }
+    .refs ul { padding-left: 0; list-style: none; }
+    .refs li { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+    .refs a { color: var(--text-3) !important; text-decoration: none; }
+    .refs a:hover { color: var(--clay) !important; text-decoration: underline !important; }
+    .footer-nav {
+      margin-top: 56px; padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2); text-decoration: none; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+    .top-bar {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px; height: 32px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      cursor: pointer; color: var(--text-3);
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 48px; align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3); display: block; margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block; padding: 5px 8px; color: var(--text-2);
+      text-decoration: none; font-size: 0.85rem; line-height: 1.4;
+      border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover, .toc-list a.toc-active {
+      color: var(--clay); border-left-color: var(--clay);
+      background: var(--clay-soft); border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-what">训练和推理是什么</a></li>
+          <li><a href="#sec-training">训练在意什么：吞吐量</a></li>
+          <li><a href="#sec-inference">推理在意什么：延迟和内存带宽</a></li>
+          <li><a href="#sec-products">需求差异开始在产品上留下痕迹</a></li>
+          <li><a href="#sec-hbm">推理规模化如何传导到内存价格</a></li>
+          <li><a href="#sec-chain">这条链条，现在还在运转</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span class="tag">技术判断</span>
+      <span class="tag">算力基础设施</span>
+    </div>
+    <h1 class="post-title">训练和推理，是两件不同的事</h1>
+    <p class="post-summary">训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <p>上一篇梳理了各类芯片的分工关系，结尾留了一个问题：训练和推理为什么对芯片的要求不同，这又怎么解释内存价格的上涨？</p>
+
+    <p>这篇来回答这两个问题。</p>
+
+    <h2 id="sec-what" style="scroll-margin-top:60px">先说清楚：训练和推理是什么</h2>
+
+    <p>如果你直接从这篇开始读，先用一分钟建立基础认知。</p>
+
+    <p>训练，是让模型从数据里学习的过程。给模型喂几千亿个词、几十亿张图，让它反复调整内部参数，直到能准确预测下一个词、识别图里的内容。这个过程计算量极大，通常要跑几周甚至几个月，用的是数据中心里几百上千块 GPU 组成的集群。</p>
+
+    <p>推理，是用训练好的模型回答问题的过程。你在 ChatGPT 或者 Claude 里发一条消息，背后就是推理：模型接收你的输入，一个词一个词地生成回答。这个过程计算量比训练小得多，但对速度要求极高——没有人愿意等三十秒才收到回复。</p>
+
+    <p>一个粗糙但有用的类比：训练像备考，可以慢慢来，错了重来，目标是把知识装进脑子；推理像考试，必须在规定时间内作答，慢了就扣分。备考和考试需要的东西不完全一样，训练和推理对芯片的需求，有类似的差异。</p>
+
+    <h2 id="sec-training" style="scroll-margin-top:60px">训练在意什么：吞吐量</h2>
+
+    <p>训练的核心操作是矩阵乘法——把大量数字组成的矩阵反复相乘、迭代更新。这是一种极其适合并行处理的计算：几百亿次运算可以拆成很多小块同时跑，每一块之间基本互不依赖。</p>
+
+    <p>在这个场景下，芯片最重要的指标是<strong>吞吐量</strong>：单位时间内能完成多少次浮点运算。速度不够快不是灾难，慢就是慢，训练多跑几天而已。精度要求也比较高——训练时参数的细微差异会累积影响最终效果，通常用 FP16 或 BF16 这类较高精度的浮点格式。</p>
+
+    <p>GPU 非常适合训练，原因上一篇说过：它有几千个小核心同时工作，天然擅长大规模并行计算。英伟达的 H100、H200，就是在这个方向上做到极致的芯片。</p>
+
+    <h2 id="sec-inference" style="scroll-margin-top:60px">推理在意什么：延迟和内存带宽</h2>
+
+    <p>推理的情况完全不同。</p>
+
+    <p>模型生成回答的方式，是一个词一个词地往后预测：先生成第一个词，再基于第一个词生成第二个词，再基于前两个词生成第三个词……这个过程是严格串行的，没办法像训练那样拆成很多块同时跑。</p>
+
+    <p>这带来两个核心需求：</p>
+
+    <p>第一是<strong>低延迟</strong>。每生成一个词都要等上一个词完成，串行结构决定了单步速度直接影响用户体验。芯片能多快完成一次运算，比总吞吐量更重要。</p>
+
+    <p>第二是<strong>内存带宽</strong>。模型在生成每个词的时候，需要把之前所有词的上下文状态从内存里读出来参考——上下文越长、同时服务的用户越多，需要频繁读写的数据量就越大。这时候决定速度的不是计算能力，而是内存能多快把数据传给芯片。</p>
+
+    <p>GPU 做推理完全可以，英伟达的 H100 每天都在跑推理服务。但 GPU 的设计重心是吞吐量，在推理所需的低延迟和高内存带宽上并不是最优解。这个差距在推理量小的时候感知不强，但当服务规模扩大、每天要处理几百亿次用户请求时，效率的差异会被放大成真实的成本压力。</p>
+
+    <h2 id="sec-products" style="scroll-margin-top:60px">需求差异，开始在产品上留下痕迹</h2>
+
+    <p>推理规模爆发之前，GPU 同时做训练和推理是这个行业的默认选择——早期推理量不大，专门为推理优化一套芯片，不太划算。但随着推理需求持续增长，这笔账开始算不过来了。</p>
+
+    <p>一个具体的例子是华为昇腾的产品路线。华为<a href="https://ascendai.csdn.net/69d716f30a2f6a37c59df6df.html" target="_blank" rel="noopener">正在把训练和推理分成两条独立的芯片线</a>：昇腾 950PR 是推理专用芯片，针对低延迟和高内存带宽优化，2026 年 3 月正式量产；昇腾 950DT 是训练专用芯片，预期 2026 年第四季度推出。同一家公司、同一个系列，专门拆成两条线来做，本身说明两种需求的差异大到值得用独立的产品来应对。</p>
+
+    <p><a href="https://finance.sina.com.cn/wm/2026-04-24/doc-inhvqrvy4414689.shtml" target="_blank" rel="noopener">DeepSeek V4 在 2026 年 4 月发布时</a>，选择了昇腾 950PR 作为主力推理硬件。这个决定有供应链背景——英伟达高端芯片受出口管制，国产替代是现实压力下的选择。但抛开这层背景，昇腾 950PR 也确实符合推理场景的需求逻辑：它是目前国内唯一已商用且明确支持 FP4 低精度推理的芯片。所谓低精度，是指推理时不需要训练阶段那么精确的数值格式，用更少的位数表示权重，换来更高的内存利用效率和更低的单次请求成本。</p>
+
+    <p>值得说清楚的是：DeepSeek 的训练阶段仍然依赖英伟达的 GPU 和 CUDA 生态，推理才迁移到昇腾。训练和推理用不同芯片，不是某种新奇的架构创新，而是两种需求分开处理的自然结果。</p>
+
+    <h2 id="sec-hbm" style="scroll-margin-top:60px">推理规模化，如何传导到内存价格</h2>
+
+    <p>理解了推理对内存带宽的依赖，就能理解 HBM 为什么变得如此重要。</p>
+
+    <p>HBM（高带宽内存，High Bandwidth Memory）是一种专门焊在 GPU 和 AI 芯片上的高性能内存，通过三维堆叠的方式实现极高的内存带宽，正是推理场景最需要的那个指标。英伟达 H100 上装的是 HBM3，每块 80GB，带宽远超普通内存。</p>
+
+    <p>推理服务和训练任务有一个关键区别：训练是项目制的（一个模型训完了可以暂停，下一个版本开始再重新启动），本质上是间歇性需求；推理是服务制的，只要产品在运行服务就要持续跑，HBM 就要持续被占用。随着大模型用户数量爆发，全球数据中心里跑推理的芯片越来越多，对 HBM 的需求从间歇性变成了持续性。</p>
+
+    <p>SK 海力士是全球最大的 HBM 供应商，<a href="https://www.astutegroup.com/news/general/sk-hynix-holds-62-of-hbm-micron-overtakes-samsung-2026-battle-pivots-to-hbm4/" target="_blank" rel="noopener">据 Counterpoint Research 数据</a>，2025 年第二季度市占率约为 62%，是英伟达 H100、H200 系列最主要的内存供应商。HBM 需求的爆发直接反映在了财务数据上：<a href="https://news.skhynix.com/sk-hynix-announces-fy25-financial-results/" target="_blank" rel="noopener">据 SK 海力士官方财报</a>，2025 年全年 HBM 收入同比翻倍以上，全年营业利润达 47.2 万亿韩元，同比增长约 101%，创历史新高。SK 海力士在这份财报中也写道（译自英文原文）："AI 市场正在从训练向推理转型，随着对分布式架构需求的扩大，内存的作用将变得越来越关键。"</p>
+
+    <p>HBM 的需求溢出，还带来了一个间接影响：HBM 和普通消费级内存（DDR4/DDR5）的生产工艺有重叠。当内存厂商把大量产能转向利润更高的 HBM，消费级内存的供给就相应收紧，<a href="https://www.cnbc.com/2026/01/28/sk-hynix-smashes-earnings-estimates-as-ai-memory-demand-drives-record-profit.html" target="_blank" rel="noopener">价格跟着上涨</a>。两者不是同一个东西，但共用了部分产能——这是 AI 算力需求传导到消费市场的路径。Counterpoint Research 分析师在 2026 年一季度也指出（译自英文原文）："推理所需的内存远超预期，各公司争相确保供应。"</p>
+
+    <h2 id="sec-chain" style="scroll-margin-top:60px">这条链条，现在还在运转</h2>
+
+    <p>从训练和推理的计算特征差异，到专用芯片开始出现，到 HBM 持续短缺，到普通内存价格上涨，这是一条比较长的因果链，但每一步都有实际的逻辑支撑。</p>
+
+    <p>说实话，我最初关注这个问题的时候，没想到内存涨价和推理需求之间的联系会这么直接。通常人们谈 AI 对硬件的影响，说的是 GPU 供不应求，内存只是个配角。但从这条链条来看，内存才是推理规模化最先触到天花板的地方。</p>
+
+    <p>目前有几件事还不确定：HBM 的供给会不会在未来几年赶上需求（三星正在追赶，美光也在扩产）；推理专用芯片的方向是否会成为主流，还是 GPU 凭借软件生态继续统治全场；消费级内存的价格还会涨多久。</p>
+
+    <p>这些问题现在没有确定的答案。但有一件事，从这条链条来看比较清晰：推理，正在成为 AI 基础设施里的主角，而不再只是训练的附属品。</p>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-fy25-financial-results/" target="_blank" rel="noopener">SK hynix Announces FY25 Financial Results</a></li>
+        <li><a href="https://www.cnbc.com/2026/04/23/sk-hynix-earnings-ai-memory-shortage-hbm-demand.html" target="_blank" rel="noopener">SK hynix Q1 2026 Earnings: AI Memory Shortage Drives Record Profit</a></li>
+        <li><a href="https://www.astutegroup.com/news/general/sk-hynix-holds-62-of-hbm-micron-overtakes-samsung-2026-battle-pivots-to-hbm4/" target="_blank" rel="noopener">SK hynix holds 62% of HBM, Micron overtakes Samsung</a></li>
+        <li><a href="https://finance.sina.com.cn/wm/2026-04-24/doc-inhvqrvy4414689.shtml" target="_blank" rel="noopener">DeepSeek V4 发布，昇腾950PR 成主力推理硬件</a></li>
+        <li><a href="https://ascendai.csdn.net/69d716f30a2f6a37c59df6df.html" target="_blank" rel="noopener">DeepSeek V4 全面换装华为昇腾950PR</a></li>
+        <li><a href="https://finance.sina.com.cn/jjxw/2026-05-02/doc-inhwmrev0228144.shtml" target="_blank" rel="noopener">DeepSeek+华为昇腾全国产AI生态突围</a></li>
+        <li><a href="https://www.fool.com/investing/2025/11/24/why-micron-and-sk-hynix-could-quietly-become-the-r/" target="_blank" rel="noopener">Why Micron and SK Hynix Could Quietly Become the Real AI Winners</a></li>
+      </ul>
+    </div>
+
+    <div class="related-posts">
+      <div class="related-title">相关文章</div>
+      <a class="related-item" href="ai-chips-explainer.html">
+        <span class="related-item-date">2026.05</span>
+        <span class="related-item-title">芯片战争背后，藏着一张分工地图</span>
+      </a>
+      <a class="related-item" href="llm-second-half.html">
+        <span class="related-item-date">2026.05</span>
+        <span class="related-item-title">大模型的下半场：当预训练不再是唯一战场</span>
+      </a>
+    </div>
+
+    <div class="post-nav">
+      <a href="ai-chips-explainer.html">
+        <span class="nav-label">← 上一篇</span>
+        <span class="nav-title">芯片战争背后，藏着一张分工地图</span>
+      </a>
+    </div>
+
+  </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('themeToggleBtn');
+  const sunIcon = document.getElementById('ptIconSun');
+  const moonIcon = document.getElementById('ptIconMoon');
+  const body = document.body;
+
+  function applyTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+      sunIcon.style.display = 'none';
+      moonIcon.style.display = 'block';
+    } else {
+      sunIcon.style.display = 'block';
+      moonIcon.style.display = 'none';
+    }
+  }
+
+  const saved = localStorage.getItem('blog-theme') || 'light';
+  applyTheme(saved);
+
+  btn.addEventListener('click', () => {
+    const current = body.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    localStorage.setItem('blog-theme', next);
+    applyTheme(next);
+  });
+
+  // TOC active state
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  const sections = document.querySelectorAll('h2[id]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('toc-active'));
+        const active = document.querySelector('.toc-list a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('toc-active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
