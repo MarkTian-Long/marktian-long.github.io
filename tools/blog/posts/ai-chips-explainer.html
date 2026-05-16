@@ -877,7 +877,14 @@ var POST_META = {
       document.getElementById('relatedPosts').style.display = 'block';
     }
   }
-  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var sorted = posts.slice().sort(function(a, b) {
+    var dateCmp = b.date.localeCompare(a.date);
+    if (dateCmp !== 0) return dateCmp;
+    // 同月文章按 order 升序（order 小的更旧，排在后面）
+    var ao = a.order != null ? a.order : 9999;
+    var bo = b.order != null ? b.order : 9999;
+    return bo - ao;
+  });
   var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
   if (idx > 0) {
     var prev = sorted[idx - 1];
