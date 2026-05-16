@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   芯片战争背后，藏着一张分工地图
+tags:    ["技术判断"]
+topics:  ["算力基础设施"]
+slug:    ai-chips-explainer
+summary: 华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在"任务覆盖范围"和"硬件灵活性"两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>芯片战争背后，藏着一张分工地图 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="芯片战争背后，藏着一张分工地图" />
+  <meta property="og:description" content="华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在"任务覆盖范围"和"硬件灵活性"两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="芯片战争背后，藏着一张分工地图" />
+  <meta name="twitter:description" content="华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在"任务覆盖范围"和"硬件灵活性"两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+
+      /* 图表专用变量 */
+      --chip-badge-general-bg:   rgba(79,143,255,0.15);
+      --chip-badge-general-text: #4f8fff;
+      --chip-badge-mid-bg:       rgba(160,120,255,0.15);
+      --chip-badge-mid-text:     #a078ff;
+      --chip-badge-narrow-bg:    rgba(217,119,87,0.15);
+      --chip-badge-narrow-text:  #d97757;
+      --chip-tbl-head-bg:        rgba(255,255,255,0.05);
+      --chip-tbl-row-alt:        rgba(255,255,255,0.025);
+      --chip-tbl-border:         rgba(255,255,255,0.08);
+      --chip-diagram-bg:         rgba(255,255,255,0.03);
+      --chip-diagram-border:     rgba(255,255,255,0.10);
+      --chip-node-bg:            rgba(255,255,255,0.07);
+      --chip-node-border:        rgba(255,255,255,0.18);
+      --chip-asic-zone-bg:       rgba(217,119,87,0.07);
+      --chip-asic-zone-border:   rgba(217,119,87,0.35);
+      --chip-axis-color:         rgba(255,255,255,0.15);
+      --chip-axis-label:         #4a5270;
+      --chip-arrow-color:        rgba(255,255,255,0.20);
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+
+      --chip-badge-general-bg:   rgba(37,99,235,0.10);
+      --chip-badge-general-text: #2563eb;
+      --chip-badge-mid-bg:       rgba(109,40,217,0.10);
+      --chip-badge-mid-text:     #6d28d9;
+      --chip-badge-narrow-bg:    rgba(201,100,66,0.10);
+      --chip-badge-narrow-text:  #c96442;
+      --chip-tbl-head-bg:        #e8e6dc;
+      --chip-tbl-row-alt:        rgba(0,0,0,0.025);
+      --chip-tbl-border:         #e8e6dc;
+      --chip-diagram-bg:         #faf9f5;
+      --chip-diagram-border:     #e8e6dc;
+      --chip-node-bg:            #ffffff;
+      --chip-node-border:        #d0cec4;
+      --chip-asic-zone-bg:       rgba(201,100,66,0.06);
+      --chip-asic-zone-border:   rgba(201,100,66,0.30);
+      --chip-axis-color:         #d0cec4;
+      --chip-axis-label:         #87867f;
+      --chip-arrow-color:        #c8c6bc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-2); text-decoration: none; font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px; padding: 3px 9px; border-radius: 20px;
+      background: var(--tag-bg); color: var(--tag-text); font-weight: 500;
+    }
+    .post-title {
+      font-family: var(--font-serif); font-size: 26px; font-weight: 700;
+      line-height: 1.35; color: var(--text-1); margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px; color: var(--text-2); line-height: 1.65;
+      padding-left: 14px; border-left: 3px solid var(--clay);
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .post-body h2 {
+      font-size: 17px; font-weight: 600; color: var(--text-1);
+      margin: 36px 0 12px;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body h3 {
+      font-size: 15px; font-weight: 600; color: var(--text-1);
+      margin: 28px 0 10px;
+    }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a { color: var(--accent); text-decoration: none; }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay); padding: 10px 16px;
+      margin: 20px 0; color: var(--text-2); font-size: 14px; line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft); border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius); padding: 16px 18px;
+      margin: 24px 0; font-size: 14px; color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important; font-weight: 600;
+      color: var(--text-3) !important; text-transform: uppercase;
+      letter-spacing: 0.06em; margin: 0 0 12px !important;
+    }
+    .refs ul { padding-left: 0; list-style: none; }
+    .refs li { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+    .refs a { color: var(--text-3) !important; text-decoration: none; }
+    .refs a:hover { color: var(--clay) !important; text-decoration: underline !important; }
+    .footer-nav {
+      margin-top: 56px; padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2); text-decoration: none; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+    .top-bar {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px; height: 32px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      cursor: pointer; color: var(--text-3);
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 48px; align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3); display: block; margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block; padding: 5px 8px; color: var(--text-2);
+      text-decoration: none; font-size: 0.85rem; line-height: 1.4;
+      border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover, .toc-list a.toc-active {
+      color: var(--clay); border-left-color: var(--clay);
+      background: var(--clay-soft); border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+
+    /* ── 图表样式 ── */
+    .chip-chart { margin: 28px 0; overflow-x: auto; }
+
+    /* 对比总览表 */
+    .chip-table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+      background: var(--chip-diagram-bg);
+      border: 1px solid var(--chip-tbl-border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .chip-table thead tr {
+      background: var(--chip-tbl-head-bg);
+    }
+    .chip-table th {
+      padding: 10px 12px; text-align: left; font-weight: 600;
+      color: var(--text-2); font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.06em; border-bottom: 1px solid var(--chip-tbl-border);
+      white-space: nowrap;
+    }
+    .chip-table td {
+      padding: 10px 12px; color: var(--text-1);
+      border-bottom: 1px solid var(--chip-tbl-border); vertical-align: top;
+    }
+    .chip-table tbody tr:last-child td { border-bottom: none; }
+    .chip-table tbody tr:nth-child(even) { background: var(--chip-tbl-row-alt); }
+    .chip-table .chip-name { font-weight: 600; white-space: nowrap; }
+    .chip-table .chip-full { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .chip-table .chip-scene { font-size: 12px; color: var(--text-2); }
+    .chip-table .chip-product { font-size: 12px; color: var(--text-3); }
+    .chip-table-note {
+      font-size: 11px; color: var(--text-3); margin-top: 8px;
+      padding: 0 2px; line-height: 1.6;
+    }
+
+    /* 任务范围 badge */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    }
+    .badge-wide {
+      background: var(--chip-badge-general-bg);
+      color: var(--chip-badge-general-text);
+    }
+    .badge-mid {
+      background: var(--chip-badge-mid-bg);
+      color: var(--chip-badge-mid-text);
+    }
+    .badge-narrow {
+      background: var(--chip-badge-narrow-bg);
+      color: var(--chip-badge-narrow-text);
+    }
+
+    /* 可改变标记 */
+    .yn { font-size: 13px; }
+    .yn-yes { color: #4ade80; }
+    .yn-no  { color: var(--text-3); }
+
+    /* 定位图 */
+    .chip-diagram-wrap {
+      background: var(--chip-diagram-bg);
+      border: 1px solid var(--chip-diagram-border);
+      border-radius: 8px; padding: 24px 20px 20px;
+      margin: 28px 0;
+    }
+    .chip-diagram-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3); margin-bottom: 16px;
+    }
+    .chip-diagram-inner {
+      position: relative; width: 100%; min-width: 300px;
+      aspect-ratio: 16/9; max-height: 340px;
+    }
+    /* 坐标轴 */
+    .cd-axis-x, .cd-axis-y {
+      position: absolute; background: var(--chip-axis-color);
+    }
+    .cd-axis-x { left: 48px; right: 20px; bottom: 36px; height: 1px; }
+    .cd-axis-y { left: 48px; top: 12px; bottom: 36px; width: 1px; }
+    /* 箭头 */
+    .cd-arrow {
+      position: absolute; font-size: 10px;
+      color: var(--chip-arrow-color); line-height: 1;
+    }
+    .cd-arrow-x { bottom: 30px; right: 12px; }
+    .cd-arrow-y { top: 6px; left: 42px; }
+    /* 轴标签 */
+    .cd-label {
+      position: absolute; font-size: 10px;
+      color: var(--chip-axis-label); white-space: nowrap; line-height: 1.3;
+    }
+    .cd-label-x-left  { bottom: 18px; left: 50px; }
+    .cd-label-x-right { bottom: 18px; right: 20px; text-align: right; }
+    .cd-label-y-top   { top: 12px; left: 4px; writing-mode: vertical-rl; transform: rotate(180deg); }
+    .cd-label-y-bottom{ bottom: 40px; left: 4px; writing-mode: vertical-rl; transform: rotate(180deg); }
+    /* 图例区域（绘图区） */
+    .cd-plot {
+      position: absolute;
+      left: 52px; right: 20px; top: 12px; bottom: 40px;
+    }
+    /* ASIC 虚线框 */
+    .cd-asic-zone {
+      position: absolute;
+      background: var(--chip-asic-zone-bg);
+      border: 1.5px dashed var(--chip-asic-zone-border);
+      border-radius: 8px;
+    }
+    .cd-asic-label {
+      position: absolute; font-size: 10px; font-weight: 600;
+      color: var(--chip-badge-narrow-text); white-space: nowrap;
+    }
+    /* 节点 */
+    .cd-node {
+      position: absolute; transform: translate(-50%, -50%);
+      background: var(--chip-node-bg);
+      border: 1px solid var(--chip-node-border);
+      border-radius: 6px; padding: 4px 9px;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-1); white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      cursor: default;
+    }
+    .cd-node-highlight {
+      border-color: var(--clay); color: var(--clay);
+      background: var(--chip-asic-zone-bg);
+    }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-cpu">CPU：全才</a></li>
+          <li><a href="#sec-gpu">GPU：意外的AI主角</a></li>
+          <li><a href="#sec-two-dims">两个维度定位所有芯片</a></li>
+          <li><a href="#sec-tpu">TPU：谷歌专属工具</a></li>
+          <li><a href="#sec-npu">NPU：推理引擎</a></li>
+          <li><a href="#sec-fpga">FPGA：可变形芯片</a></li>
+          <li><a href="#sec-dpu">DPU：数据中心管道工</a></li>
+          <li><a href="#sec-asic">ASIC：大类统称</a></li>
+          <li><a href="#sec-map">芯片定位地图</a></li>
+          <li><a href="#sec-division">分工关系，不是替代</a></li>
+          <li><a href="#sec-future">越来越混合的未来</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span class="tag">技术判断</span>
+      <span class="tag">算力基础设施</span>
+    </div>
+    <h1 class="post-title">芯片战争背后，藏着一张分工地图</h1>
+    <p class="post-summary">华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在"任务覆盖范围"和"硬件灵活性"两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <blockquote><p>过去一两年里，"XX芯片将冲击英伟达"这类新闻反复出现，但每次看完都没真正搞清楚这些芯片之间的关系。它们到底有什么区别？所谓的"冲击"又是在冲击什么？这篇文章试着把这张地图画清楚。</p></blockquote>
+
+    <p>过去一两年，我陆续看到不少这样的标题：华为昇腾冲击英伟达、谷歌TPU要颠覆GPU市场、苹果NPU重新定义端侧AI……</p>
+
+    <p>每次看完都有一种模糊的感觉：好像懂了，又好像没懂。这些芯片之间到底是什么关系？它们真的在争同一块蛋糕吗？</p>
+
+    <p>带着这个问题，我把这些芯片的来龙去脉梳理了一遍。结论先放在这里：<strong>它们看起来是竞争关系，但本质上更接近分工关系</strong>。</p>
+
+    <h2 id="sec-cpu" style="scroll-margin-top:60px">CPU：任务最广、灵活性最高的全才</h2>
+
+    <p>理解AI芯片的起点，是先搞清楚CPU是什么，以及它的局限在哪里。</p>
+
+    <p>CPU（Central Processing Unit，中央处理器）是计算机里历史最悠久的核心部件。它的设计哲学是<strong>通用性</strong>——无论是打开浏览器、运行Excel、处理文件还是播放音乐，CPU都能应对。它擅长处理复杂的逻辑判断，能在不同任务之间快速切换，像一个什么都懂的全才。</p>
+
+    <p>从两个维度来看：CPU能做的任务范围极宽，几乎没有限制；部署后可以随时重新编程，灵活性最高。这两个特点让它成为所有计算系统的"大脑"，但也决定了它的短板——为了兼顾所有任务，它无法对任何一类任务做深度优化。</p>
+
+    <p>AI训练的核心操作是<strong>矩阵乘法</strong>——把大量数字组成的矩阵相乘，反复迭代。一个中等规模的神经网络层，一次前向传播就需要数十亿次乘加运算。现代CPU通常只有几个到几十个核心，面对这种规模的并行需求，像是让几十个人徒手搬一座山。</p>
+
+    <h2 id="sec-gpu" style="scroll-margin-top:60px">GPU：意外成为AI主角的图形芯片</h2>
+
+    <p>GPU（Graphics Processing Unit，图形处理器）最初的设计任务，是在屏幕上实时渲染3D画面。</p>
+
+    <p>游戏画面的本质是什么？是把屏幕上的几百万个像素，每秒更新几十次，每个像素都要独立计算光线、阴影、颜色。这是一个极其适合并行处理的任务——每个像素的计算基本互不依赖，可以同时进行。</p>
+
+    <p>所以GPU的设计走了一条和CPU完全不同的路：<strong>用数量换能力</strong>。一块现代GPU有数千甚至上万个小核心，每个核心单独看并不强大，但胜在数量多、可以同时工作。</p>
+
+    <p>从两个维度来看：GPU能做的任务范围比CPU窄（它特别擅长并行计算，但对复杂逻辑判断不在行），但仍然属于可编程的通用芯片，部署后可以随时改变用途。</p>
+
+    <p>这个并行特点在AI领域产生了一个意外的化学反应：神经网络训练的核心——矩阵乘法——在数学结构上和图形渲染高度相似，都是把大量独立的简单计算同时跑完。有多大差距？在大规模矩阵乘法测试中，GPU相比单线程CPU的速度提升约593倍，相比经过优化的多核CPU也快约45倍。</p>
+
+    <p>2007年，英伟达发布了CUDA（Compute Unified Device Architecture），一套让开发者可以用GPU进行通用计算的编程框架。从这一刻起，GPU开始从"图形芯片"变成"AI计算的基础设施"。这个转变并非计划中的，而是GPU的并行架构碰巧与AI计算需求高度吻合的结果。英伟达抓住了这个偶然，并在此后把它变成了护城河。</p>
+
+    <h2 id="sec-two-dims" style="scroll-margin-top:60px">从两个问题出发，理解其余所有芯片</h2>
+
+    <p>GPU称霸之后，一个自然的问题出现了：既然可以专门为AI设计芯片，能不能做得比GPU更好？</p>
+
+    <p>答案是可以——但这批芯片之间的关系，并不是一条简单的"通用到专用"的线，而是由两个维度共同决定的：</p>
+
+    <p><strong>它能做多少种事？</strong>（任务覆盖范围）有些芯片只能做一类运算，有些则可以处理各种不同任务。</p>
+
+    <p><strong>它能不能在部署后被改变？</strong>（硬件灵活性）有些芯片出厂后电路固定，有些则可以重新配置甚至重新编程。</p>
+
+    <p>用这两个问题来看CPU和GPU——它们都属于高灵活性、宽任务范围的通用芯片。从这里往外延伸，就是一批任务范围更窄、专用程度更高的芯片，各自占据不同的位置。</p>
+
+    <h2 id="sec-tpu" style="scroll-margin-top:60px">TPU：谷歌为自己造的专属工具</h2>
+
+    <p>TPU（Tensor Processing Unit，张量处理器）是谷歌从2016年开始自研的AI芯片，专门为神经网络中最核心的张量运算（本质上是矩阵乘法的推广）设计。</p>
+
+    <p>TPU采用了一种叫做<strong>脉动阵列（Systolic Array）</strong>的架构：数据在处理单元之间像心跳一样有节奏地流动，每经过一个单元就完成一次计算，减少了大量反复读写内存的开销。这在特定AI任务上比GPU效率更高。</p>
+
+    <p>谷歌把TPU用在了自己的搜索、翻译、图片识别等服务里，也通过Google Cloud开放给外部用户使用。目前最新的两代是Trillium（v6）和Ironwood（v7），后者专门针对大规模推理场景优化。TPU在大规模训练任务上速度很快，但适用范围基本限于谷歌自己的生态系统。</p>
+
+    <p>TPU本质上属于下面要介绍的ASIC大类——专为特定任务定制、出厂后不可更改。</p>
+
+    <h2 id="sec-npu" style="scroll-margin-top:60px">NPU：从手机到数据中心的AI推理引擎</h2>
+
+    <p>NPU（Neural Processing Unit，神经处理器）是专门为<strong>神经网络推理</strong>设计的芯片。</p>
+
+    <p>这里有一个区分值得说清楚：AI的工作分为两个阶段。<strong>训练</strong>是让模型从海量数据中学习，计算量极大，主要在数据中心的GPU集群上完成；<strong>推理</strong>是用训练好的模型回答具体问题，对延迟和功耗更敏感。NPU专门针对推理这个阶段设计，不需要参与训练。</p>
+
+    <p>这个分工直接决定了NPU出现的地方：一类是<strong>端侧设备</strong>——手机、平板、智能摄像头。你手机上的人脸识别、拍照美化、语音唤醒，背后大概率都是NPU在工作。各家叫法不同：苹果称为"Neural Engine"，高通叫"Hexagon"，但本质相同，都是做到极省电、延迟极低。</p>
+
+    <p>另一类是<strong>数据中心推理</strong>——华为昇腾系列芯片本质上也是NPU，只是面向云端的大规模推理服务，规模和功耗比手机NPU大得多，是用来承接用户请求、实时返回AI结果的基础设施。</p>
+
+    <p>NPU属于ASIC大类，专门为神经网络推理这一类任务定制，出厂后不可更改。</p>
+
+    <h2 id="sec-fpga" style="scroll-margin-top:60px">FPGA：可以重新编程的"可变形芯片"</h2>
+
+    <p>FPGA（Field-Programmable Gate Array，现场可编程门阵列）是这几类芯片里最特殊的一个。</p>
+
+    <p>它的电路可以在<strong>出厂后被重新配置</strong>，根据任务需要"变形"成不同的专用形态——任务覆盖范围相对窄（需要专门针对特定任务配置），但硬件灵活性比NPU、TPU这类固定芯片高得多。这让它处于一个独特的中间地带：不像GPU那样通用，也不像ASIC那样完全固定。</p>
+
+    <p>代价是编程门槛高，需要用硬件描述语言（而不是Python这类常见语言）来配置，开发难度大，成本也相对高。</p>
+
+    <p>FPGA更多出现在金融交易系统的实时风控、通信基站的信号处理、工业自动化控制等对延迟要求极高、又需要一定灵活性的场景。在AI领域主要用于推理加速的原型验证，或特殊定制部署场景。</p>
+
+    <h2 id="sec-dpu" style="scroll-margin-top:60px">DPU：数据中心里的"管道工"</h2>
+
+    <p>DPU（Data Processing Unit，数据处理器）是近年来数据中心里越来越常见的一类芯片，但在科技新闻里存在感不高。</p>
+
+    <p>它的职责是处理数据中心里大量繁琐但必须完成的"搬运工作"：网络数据包的收发和转发、存储读写的调度、安全加密和解密等。这些任务如果交给CPU来做，会占用大量计算资源，拖慢AI训练和推理的正常工作。DPU的作用，是把这些"杂务"从CPU和GPU上剥离出来，让主力芯片专注于真正的计算任务。</p>
+
+    <p>英伟达的BlueField系列是目前最主流的DPU产品。从两个维度来看：DPU的任务范围窄（专注于网络和存储处理），出厂后基本固定，属于ASIC大类的一种形态。</p>
+
+    <h2 id="sec-asic" style="scroll-margin-top:60px">ASIC：一个大类，不是一个具体产品</h2>
+
+    <p>ASIC（Application-Specific Integrated Circuit，专用集成电路）是<strong>一个芯片类别的统称</strong>，不是某个具体产品的名字。</p>
+
+    <p>凡是从设计之初就只为一个特定任务服务、出厂后不可更改的芯片，都叫ASIC。TPU是ASIC，NPU是ASIC，DPU也是ASIC。除此之外，还有很多你可能没有想到的ASIC：挖矿芯片、网络交换芯片、特斯拉自动驾驶芯片……它们的共同逻辑是：前期设计成本极高，但一旦规模足够大，单位成本和能耗会远低于通用芯片。所以自研ASIC通常只有业务规模极大的公司才会考虑。</p>
+
+    <h2 id="sec-map" style="scroll-margin-top:60px">用两个维度给所有芯片定位</h2>
+
+    <!-- 图表1：芯片对比总览表 -->
+    <div class="chip-chart">
+      <table class="chip-table">
+        <thead>
+          <tr>
+            <th style="min-width:110px">芯片</th>
+            <th style="min-width:110px">任务覆盖范围</th>
+            <th style="min-width:90px">部署后可改变</th>
+            <th style="min-width:150px">典型使用场景</th>
+            <th style="min-width:140px">代表产品</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="chip-name">CPU</div>
+              <div class="chip-full">中央处理器</div>
+            </td>
+            <td><span class="badge badge-wide">极宽（通用）</span></td>
+            <td><span class="yn yn-yes">● 可随时重编程</span></td>
+            <td><span class="chip-scene">操作系统、业务逻辑、控制调度</span></td>
+            <td><span class="chip-product">Intel Xeon、AMD EPYC</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">GPU</div>
+              <div class="chip-full">图形处理器</div>
+            </td>
+            <td><span class="badge badge-wide">宽（并行计算）</span></td>
+            <td><span class="yn yn-yes">● 可随时重编程</span></td>
+            <td><span class="chip-scene">AI训练、图形渲染、科学计算</span></td>
+            <td><span class="chip-product">NVIDIA H100/B200、AMD MI300</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">FPGA</div>
+              <div class="chip-full">现场可编程门阵列</div>
+            </td>
+            <td><span class="badge badge-mid">中（按需配置）</span></td>
+            <td><span class="yn yn-yes">● 出厂后可重配置</span></td>
+            <td><span class="chip-scene">金融风控、通信基站、原型验证</span></td>
+            <td><span class="chip-product">Xilinx Alveo、Intel Agilex</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">NPU</div>
+              <div class="chip-full">神经处理器（ASIC）</div>
+            </td>
+            <td><span class="badge badge-narrow">窄（神经网络推理）</span></td>
+            <td><span class="yn yn-no">— 出厂固定</span></td>
+            <td><span class="chip-scene">手机端侧AI推理、云端推理服务</span></td>
+            <td><span class="chip-product">Apple Neural Engine、华为昇腾、高通Hexagon</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">TPU</div>
+              <div class="chip-full">张量处理器（ASIC）</div>
+            </td>
+            <td><span class="badge badge-narrow">窄（张量运算）</span></td>
+            <td><span class="yn yn-no">— 出厂固定</span></td>
+            <td><span class="chip-scene">谷歌自有服务训练与推理</span></td>
+            <td><span class="chip-product">Google Trillium（v6）、Ironwood（v7）</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">DPU</div>
+              <div class="chip-full">数据处理器（ASIC）</div>
+            </td>
+            <td><span class="badge badge-narrow">窄（网络与存储）</span></td>
+            <td><span class="yn yn-no">— 出厂固定</span></td>
+            <td><span class="chip-scene">数据中心网络调度、安全加密</span></td>
+            <td><span class="chip-product">NVIDIA BlueField</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="chip-name">ASIC（大类）</div>
+              <div class="chip-full">专用集成电路</div>
+            </td>
+            <td><span class="badge badge-narrow">极窄（单一用途）</span></td>
+            <td><span class="yn yn-no">— 出厂固定</span></td>
+            <td><span class="chip-scene">挖矿、自动驾驶、网络交换等专用场景</span></td>
+            <td><span class="chip-product">比特大陆矿机芯片、特斯拉FSD、AWS Trainium</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="chip-table-note">注：NPU、TPU、DPU 均属于 ASIC 的具体形态，单独列出是因为这几个缩写在新闻和产品中更常见，使用频率远高于"ASIC"这个大类名称。</p>
+    </div>
+
+    <p>把所有芯片放在"任务覆盖范围"和"硬件灵活性"这两个维度上，就能得到一张比"通用到专用"更准确的地图。</p>
+
+    <!-- 图表2：二维定位图 -->
+    <div class="chip-diagram-wrap">
+      <div class="chip-diagram-title">芯片定位图：任务覆盖范围 × 硬件灵活性</div>
+      <div class="chip-diagram-inner">
+        <!-- 坐标轴 -->
+        <div class="cd-axis-x"></div>
+        <div class="cd-axis-y"></div>
+        <span class="cd-arrow cd-arrow-x">▶</span>
+        <span class="cd-arrow cd-arrow-y">▲</span>
+        <!-- 轴标签 -->
+        <span class="cd-label cd-label-x-left">任务范围：宽</span>
+        <span class="cd-label cd-label-x-right">窄 →</span>
+        <span class="cd-label cd-label-y-top">灵活性：高</span>
+        <span class="cd-label cd-label-y-bottom">低 ↓</span>
+        <!-- 绘图区（相对于 cd-plot 定位） -->
+        <div class="cd-plot">
+          <!-- ASIC 虚线圈 -->
+          <div class="cd-asic-zone" style="left:62%;right:2%;top:52%;bottom:4%;">
+            <span class="cd-asic-label" style="top:-18px;left:4px;">ASIC 大类</span>
+          </div>
+          <!-- 节点 -->
+          <!-- CPU: 左上 (宽任务, 高灵活) -->
+          <div class="cd-node" style="left:8%;top:8%;">CPU</div>
+          <!-- GPU: 中偏左上 (较宽任务, 高灵活) -->
+          <div class="cd-node" style="left:30%;top:16%;">GPU</div>
+          <!-- FPGA: 中右偏上 (中等任务, 中等灵活) -->
+          <div class="cd-node" style="left:55%;top:35%;">FPGA</div>
+          <!-- ASIC节点组：右下 -->
+          <div class="cd-node cd-node-highlight" style="left:70%;top:65%;">NPU</div>
+          <div class="cd-node cd-node-highlight" style="left:83%;top:72%;">TPU</div>
+          <div class="cd-node cd-node-highlight" style="left:70%;top:82%;">DPU</div>
+          <div class="cd-node cd-node-highlight" style="left:84%;top:58%;">其他ASIC</div>
+        </div>
+      </div>
+    </div>
+
+    <p>几个关键点值得注意：</p>
+    <ul>
+      <li>CPU和GPU都处于高灵活性区间，可以随时重新编程做不同的事，但GPU的任务范围比CPU窄</li>
+      <li>FPGA是独特的中间地带：任务范围窄，但硬件出厂后仍可重新配置</li>
+      <li>TPU、NPU、DPU都是ASIC的具体形态，任务最窄、灵活性最低，但在各自场景下效率最高</li>
+      <li>ASIC不是某种芯片，而是一类芯片的统称</li>
+    </ul>
+
+    <h2 id="sec-division" style="scroll-margin-top:60px">它们是分工关系，不是替代关系</h2>
+
+    <p>理解了这张地图，"冲击英伟达"这类新闻就有了更准确的解读方式。</p>
+
+    <p>所谓冲击，并不是某款芯片在所有场景下都比GPU更好。更准确的描述是：<strong>在某些特定场景下，专用芯片比通用GPU更合适</strong>——手机端的实时推理用NPU，大厂自己的推理集群用自研ASIC，延迟敏感的工业控制用FPGA，数据中心的网络处理用DPU，大规模训练仍然用GPU。</p>
+
+    <p>英伟达GPU的真正护城河，不只是芯片本身，而是围绕GPU建立起来的<strong>CUDA软件生态</strong>。CUDA经过超过十五年的积累，深度整合进了PyTorch、TensorFlow等主流AI框架，积累了数百万熟悉这套工具链的开发者。竞争对手要挑战英伟达，不只是造出性能相当的硬件，还需要建立同样深厚的软件生态——而这需要时间，不是一两年能解决的事。</p>
+
+    <p>DeepSeek V4选择把推理部署在华为昇腾上，正是这个分工逻辑的体现：训练阶段依赖英伟达的GPU和CUDA生态，推理阶段迁移到国产芯片，两者并不互斥。</p>
+
+    <h2 id="sec-future" style="scroll-margin-top:60px">越来越混合的未来</h2>
+
+    <p>这些芯片之间的分工，正在催生一种叫做<strong>异构计算</strong>的趋势：同一个系统里，不同类型的芯片各司其职，协同工作。</p>
+
+    <p>你的手机里已经是这样：CPU处理日常逻辑，GPU渲染画面，NPU跑AI功能。数据中心也在朝这个方向走——GPU做大规模训练，专用推理芯片处理线上服务，DPU承担网络和存储的调度，CPU做整体控制。</p>
+
+    <p>所以"冲击英伟达"这个叙事，捕捉到了真实的产业变化，但描述方式有些误导——不是某块芯片要全面取代GPU，而是整个行业正在从"用GPU做所有事情"向"每种任务找最合适的芯片"演进。</p>
+
+    <p>英伟达的位置会不会变？会。但它失去的，大概率不是整个市场，而是原本不该属于GPU的那部分份额。</p>
+
+    <p><em>下一篇，我们来看训练和推理为什么对芯片的要求如此不同——以及这个差异如何解释了内存价格在过去一年里的大幅上涨。</em></p>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://jasonwhatson.com/posts/gpu-vs-cpu-performance-for-matrix-multiplication/">GPU vs CPU Performance for Matrix Multiplication</a></li>
+        <li><a href="https://arxiv.org/abs/2507.19723">Accelerating Matrix Multiplication: A Performance Comparison Between Multi-Core CPU and GPU</a></li>
+        <li><a href="https://www.thepurplestruct.com/blog/cpu-vs-gpu-vs-tpu-vs-npu-ai-hardware-architecture-guide-2025">CPU vs GPU vs TPU vs NPU: AI Hardware Architecture Guide 2025</a></li>
+        <li><a href="https://www.vellex.ai/blogs/why-your-ai-is-slow-and-how-the-right-chip-can-fix-it">Best AI Chips 2025: Compare GPU, TPU, FPGA, ASIC</a></li>
+        <li><a href="https://resources.l-p.com/knowledge-center/cpu-vs-gpu-vs-tpu-vs-npu-architecture-computation-explained">Understanding CPU vs GPU vs TPU vs NPU in Modern AI Systems</a></li>
+        <li><a href="https://www.geniatech.com/ai-hardware-2025/">Global AI Hardware Landscape 2025</a></li>
+        <li><a href="https://medium.com/@productbrief/nvidias-cuda-moat-how-developer-lock-in-built-a-trillion-dollar-ai-empire-40d2f7f7dca2">NVIDIA's CUDA Moat: How Developer Lock-In Built a Trillion-Dollar AI Empire</a></li>
+        <li><a href="https://medium.com/@aidanpak/the-cuda-advantage-how-nvidia-came-to-dominate-ai-and-the-role-of-gpu-memory-in-large-scale-model-e0cdb98a14a0">The CUDA Advantage: How NVIDIA Came to Dominate AI</a></li>
+        <li><a href="https://andrewbaker.ninja/2026/05/06/why-is-nvidia-the-most-valuable-company-in-the-world-the-ai-stack-the-cuda-moat-and-the-threats-that-could-unseat-it/">Why NVIDIA Dominates AI: The Full Stack and CUDA Moat</a></li>
+        <li><a href="https://www.bestgpusforai.com/blog/ai-accelerators">AI and Deep Learning Accelerators Beyond GPUs in 2026</a></li>
+        <li><a href="https://arxiv.org/pdf/2205.07149">Robotic Computing on FPGAs</a></li>
+        <li><a href="https://docs.cloud.google.com/tpu/docs/release-notes">Google Cloud TPU Trillium (v6e) Release Notes</a></li>
+        <li><a href="https://cloud.google.com/blog/products/compute/introducing-trillium-6th-gen-tpus">Introducing Trillium, sixth-generation TPUs</a></li>
+        <li><a href="https://www.datacenterknowledge.com/data-center-chips/ces-2026-nvidia-launches-rubin-to-maintain-data-center-stronghold">NVIDIA Launches Rubin AI Compute Platform</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+var POST_META = {
+  slug: 'ai-chips-explainer',
+  tags: ['技术判断'],
+  topics: ['算力基础设施'],
+  category: '技术'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>
