@@ -415,8 +415,6 @@ category: 技术
 
   <div class="post-body">
 
-    <blockquote><p>过去一两年里，"XX芯片将冲击英伟达"这类新闻反复出现，但每次看完都没真正搞清楚这些芯片之间的关系。它们到底有什么区别？所谓的"冲击"又是在冲击什么？这篇文章试着把这张地图画清楚。</p></blockquote>
-
     <p>过去一两年，我陆续看到不少这样的标题：华为昇腾冲击英伟达、谷歌TPU要颠覆GPU市场、苹果NPU重新定义端侧AI……</p>
 
     <p>每次看完都有一种模糊的感觉：好像懂了，又好像没懂。这些芯片之间到底是什么关系？它们真的在争同一块蛋糕吗？</p>
@@ -597,40 +595,125 @@ category: 技术
 
     <p>把所有芯片放在"任务覆盖范围"和"硬件灵活性"这两个维度上，就能得到一张比"通用到专用"更准确的地图。</p>
 
-    <!-- 图表2：二维定位图 -->
+    <!-- 图表2：二维定位图（SVG） -->
     <div class="chip-diagram-wrap">
       <div class="chip-diagram-title">芯片定位图：任务覆盖范围 × 硬件灵活性</div>
-      <div class="chip-diagram-inner">
-        <!-- 坐标轴 -->
-        <div class="cd-axis-x"></div>
-        <div class="cd-axis-y"></div>
-        <span class="cd-arrow cd-arrow-x">▶</span>
-        <span class="cd-arrow cd-arrow-y">▲</span>
-        <!-- 轴标签 -->
-        <span class="cd-label cd-label-x-left">任务范围：宽</span>
-        <span class="cd-label cd-label-x-right">窄 →</span>
-        <span class="cd-label cd-label-y-top">灵活性：高</span>
-        <span class="cd-label cd-label-y-bottom">低 ↓</span>
-        <!-- 绘图区（相对于 cd-plot 定位） -->
-        <div class="cd-plot">
-          <!-- ASIC 虚线圈 -->
-          <div class="cd-asic-zone" style="left:62%;right:2%;top:52%;bottom:4%;">
-            <span class="cd-asic-label" style="top:-18px;left:4px;">ASIC 大类</span>
-          </div>
-          <!-- 节点 -->
-          <!-- CPU: 左上 (宽任务, 高灵活) -->
-          <div class="cd-node" style="left:8%;top:8%;">CPU</div>
-          <!-- GPU: 中偏左上 (较宽任务, 高灵活) -->
-          <div class="cd-node" style="left:30%;top:16%;">GPU</div>
-          <!-- FPGA: 中右偏上 (中等任务, 中等灵活) -->
-          <div class="cd-node" style="left:55%;top:35%;">FPGA</div>
-          <!-- ASIC节点组：右下 -->
-          <div class="cd-node cd-node-highlight" style="left:70%;top:65%;">NPU</div>
-          <div class="cd-node cd-node-highlight" style="left:83%;top:72%;">TPU</div>
-          <div class="cd-node cd-node-highlight" style="left:70%;top:82%;">DPU</div>
-          <div class="cd-node cd-node-highlight" style="left:84%;top:58%;">其他ASIC</div>
-        </div>
-      </div>
+      <svg id="chipDiagramSvg" viewBox="0 0 560 340" width="100%" style="display:block;overflow:visible;">
+        <!-- 背景 -->
+        <rect width="560" height="340" fill="transparent"/>
+
+        <!-- ── 坐标区域：x 60→520，y 20→280 ── -->
+
+        <!-- 象限淡色背景提示 -->
+        <!-- 左上：通用高灵活 -->
+        <rect x="60" y="20" width="230" height="130" rx="6" fill="var(--chip-badge-general-bg)" opacity="0.4"/>
+        <!-- 中：FPGA过渡区 -->
+        <rect x="290" y="90" width="110" height="120" rx="6" fill="var(--chip-badge-mid-bg)" opacity="0.25"/>
+        <!-- 右下：ASIC区 -->
+        <rect x="370" y="170" width="148" height="110" rx="8"
+              fill="var(--chip-asic-zone-bg)"
+              stroke="var(--chip-asic-zone-border)" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- ASIC大类标签 -->
+        <text x="374" y="165" font-size="10" font-weight="600"
+              fill="var(--chip-badge-narrow-text)" font-family="var(--font)">ASIC 大类</text>
+
+        <!-- X 轴 -->
+        <line x1="60" y1="280" x2="520" y2="280" stroke="var(--chip-axis-color)" stroke-width="1.5"/>
+        <polygon points="520,276 528,280 520,284" fill="var(--chip-axis-color)"/>
+        <!-- X 轴标签 -->
+        <text x="60" y="300" font-size="11" fill="var(--chip-axis-label)" font-family="var(--font)">← 任务覆盖范围：宽</text>
+        <text x="528" y="300" font-size="11" fill="var(--chip-axis-label)" font-family="var(--font)" text-anchor="end">窄 →</text>
+
+        <!-- Y 轴 -->
+        <line x1="60" y1="280" x2="60" y2="20" stroke="var(--chip-axis-color)" stroke-width="1.5"/>
+        <polygon points="56,20 60,12 64,20" fill="var(--chip-axis-color)"/>
+        <!-- Y 轴标签（旋转） -->
+        <text x="18" y="280" font-size="11" fill="var(--chip-axis-label)" font-family="var(--font)"
+              transform="rotate(-90,18,280)" text-anchor="end">低 ↓</text>
+        <text x="18" y="30" font-size="11" fill="var(--chip-axis-label)" font-family="var(--font)"
+              transform="rotate(-90,18,30)" text-anchor="start">硬件灵活性：高 ↑</text>
+
+        <!-- ── 节点 ──
+             坐标逻辑：
+               x轴：越靠左=任务越宽（通用），越靠右=任务越窄（专用）
+               y轴：越靠上=灵活性越高，越靠下=灵活性越低
+             节点列表：
+               CPU    x=100  y=60   （极宽任务，最高灵活）
+               GPU    x=200  y=90   （宽任务，高灵活，比CPU窄一些）
+               FPGA   x=330  y=170  （中等任务，中等灵活，出厂后可重配）
+               NPU    x=410  y=215  （窄任务，低灵活）
+               TPU    x=460  y=230  （窄任务，低灵活）
+               DPU    x=415  y=255  （窄任务，低灵活）
+               其他ASIC x=480 y=205 （极窄任务，最低灵活）
+        -->
+
+        <!-- CPU -->
+        <g>
+          <rect x="68" y="44" width="64" height="28" rx="5"
+                fill="var(--chip-node-bg)" stroke="var(--chip-badge-general-text)" stroke-width="1.2"/>
+          <text x="100" y="62" text-anchor="middle" font-size="12" font-weight="600"
+                fill="var(--chip-badge-general-text)" font-family="var(--font)">CPU</text>
+        </g>
+
+        <!-- GPU -->
+        <g>
+          <rect x="168" y="74" width="64" height="28" rx="5"
+                fill="var(--chip-node-bg)" stroke="var(--chip-badge-general-text)" stroke-width="1.2"/>
+          <text x="200" y="92" text-anchor="middle" font-size="12" font-weight="600"
+                fill="var(--chip-badge-general-text)" font-family="var(--font)">GPU</text>
+        </g>
+
+        <!-- FPGA -->
+        <g>
+          <rect x="298" y="154" width="64" height="28" rx="5"
+                fill="var(--chip-node-bg)" stroke="var(--chip-badge-mid-text)" stroke-width="1.2"/>
+          <text x="330" y="172" text-anchor="middle" font-size="12" font-weight="600"
+                fill="var(--chip-badge-mid-text)" font-family="var(--font)">FPGA</text>
+        </g>
+
+        <!-- NPU -->
+        <g>
+          <rect x="381" y="199" width="58" height="26" rx="5"
+                fill="var(--chip-asic-zone-bg)" stroke="var(--chip-badge-narrow-text)" stroke-width="1.2"/>
+          <text x="410" y="216" text-anchor="middle" font-size="11" font-weight="600"
+                fill="var(--chip-badge-narrow-text)" font-family="var(--font)">NPU</text>
+        </g>
+
+        <!-- TPU -->
+        <g>
+          <rect x="431" y="215" width="58" height="26" rx="5"
+                fill="var(--chip-asic-zone-bg)" stroke="var(--chip-badge-narrow-text)" stroke-width="1.2"/>
+          <text x="460" y="232" text-anchor="middle" font-size="11" font-weight="600"
+                fill="var(--chip-badge-narrow-text)" font-family="var(--font)">TPU</text>
+        </g>
+
+        <!-- DPU -->
+        <g>
+          <rect x="381" y="240" width="58" height="26" rx="5"
+                fill="var(--chip-asic-zone-bg)" stroke="var(--chip-badge-narrow-text)" stroke-width="1.2"/>
+          <text x="410" y="257" text-anchor="middle" font-size="11" font-weight="600"
+                fill="var(--chip-badge-narrow-text)" font-family="var(--font)">DPU</text>
+        </g>
+
+        <!-- 其他ASIC -->
+        <g>
+          <rect x="440" y="182" width="74" height="26" rx="5"
+                fill="var(--chip-asic-zone-bg)" stroke="var(--chip-badge-narrow-text)" stroke-width="1.2" stroke-dasharray="4,2"/>
+          <text x="477" y="199" text-anchor="middle" font-size="10" font-weight="600"
+                fill="var(--chip-badge-narrow-text)" font-family="var(--font)">其他 ASIC</text>
+        </g>
+
+        <!-- ── 图例 ── -->
+        <g transform="translate(62,308)">
+          <rect width="12" height="12" rx="2" fill="var(--chip-badge-general-bg)" stroke="var(--chip-badge-general-text)" stroke-width="1"/>
+          <text x="16" y="10" font-size="10" fill="var(--chip-axis-label)" font-family="var(--font)">通用可编程</text>
+          <rect x="88" width="12" height="12" rx="2" fill="var(--chip-badge-mid-bg)" stroke="var(--chip-badge-mid-text)" stroke-width="1"/>
+          <text x="104" y="10" font-size="10" fill="var(--chip-axis-label)" font-family="var(--font)">可重配置</text>
+          <rect x="164" width="12" height="12" rx="2" fill="var(--chip-asic-zone-bg)" stroke="var(--chip-badge-narrow-text)" stroke-width="1"/>
+          <text x="180" y="10" font-size="10" fill="var(--chip-axis-label)" font-family="var(--font)">ASIC（出厂固定）</text>
+        </g>
+      </svg>
     </div>
 
     <p>几个关键点值得注意：</p>
