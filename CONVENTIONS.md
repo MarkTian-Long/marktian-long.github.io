@@ -177,27 +177,19 @@ tools/
 如何添加新内容、修改配置等。
 ```
 
-### 2. 在 index.html 中注册 Tab
+### 2. 在 index.html 中注册直链卡片
+
+主页工具区采用 `works-list` 直链卡片模式，分两组：PM 作品（上）、信息工具（下）。在对应分组的 `<div class="works-list">` 中追加：
 
 ```html
-<!-- 在 tool-tabs div 中添加新 Tab 按钮 -->
-<button class="tool-tab" id="tab-<name>" onclick="switchTool('<name>')">
-  🎯 工具名称
-</button>
-
-<!-- 添加对应的 Panel -->
-<div class="tool-panel hidden" id="panel-<name>">
-  <div class="dashboard-wrapper reveal">
-    <div class="dashboard-topbar">
-      <span class="dashboard-label">描述文字</span>
-      <a href="tools/<name>/index.html" target="_blank"
-         class="btn btn-ghost dashboard-open-btn">↗ 独立窗口打开</a>
-    </div>
-    <iframe src="tools/<name>/index.html"
-            class="dashboard-iframe"
-            loading="lazy"></iframe>
+<a class="works-item" href="tools/<name>/index.html" target="_blank">
+  <span class="works-icon">🎯</span>
+  <div class="works-body">
+    <span class="works-title">工具名称</span>
+    <span class="works-desc">一句话描述，突出核心能力</span>
   </div>
-</div>
+  <span class="works-arrow">↗</span>
+</a>
 ```
 
 ### 3. 设计原则

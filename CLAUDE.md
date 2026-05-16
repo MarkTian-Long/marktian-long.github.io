@@ -43,6 +43,8 @@ docs/                           # 个人文档（.gitignore 排除）
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
 | A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
 | 智能客服中台 Demo | `tools/service-agent/index.html` | 5-Tab：意图路由+多 Agent 协作+HITL，两列视角布局（用户视角/系统视角） | PM 作品 |
+| ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（15节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
+| Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
@@ -51,7 +53,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - CSS 颜色/间距**必须用 CSS 变量**，禁止硬编码色值
 - 新工具放 `tools/<name>/`，必须能独立运行
 - 每个工具必须有 `README.md`
-- 工具注册到 `index.html` 的 tab 系统（`switchTool()` 函数）
+- 工具注册到 `index.html` 的 `works-list` 直链卡片区（PM 作品 / 信息工具两组）
 - Commit 格式：`feat/fix/style/refactor/docs/chore: 描述`
 
 ## 常见修改位置
@@ -62,6 +64,7 @@ docs/                           # 个人文档（.gitignore 排除）
 - 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
 
 ## 给 Claude 的工作指令
+- **月度维护提醒**：每次对话开始时，检查 `C:\Users\15517\.claude\projects\D--CS-Coding-qiuzhi\memory\MEMORY.md` 第 3 行的 `<!-- monthly-review: last=... next=YYYY-MM-DD -->` 注释。若今天日期 ≥ next 日期，在第一条回复末尾追加提示：「📋 月度维护已到期（next=YYYY-MM-DD），可输入 /monthly-review 执行。」
 - 修改代码前先读相关文件，不要靠猜
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
@@ -107,6 +110,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 样式/UI 改动后 | /design-review 或 /impeccable audit（更细致的设计审查） |
 | 安全相关改动 | /insecure-defaults 加 /sharp-edges |
 | 2+ 独立并行任务 | /dispatching-parallel-agents |
+| 月度维护（记忆+规范+架构） | /monthly-review |
 
 ## Skill 管理（项目级 skill 维护指南）
 
@@ -120,6 +124,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | `code-health-check` | 代码规范检查（含博客双主题） | 2026-04 |
 | `sync-docs` | 代码变更后同步 README/CLAUDE/CONVENTIONS（含博客文档） | 2026-04 |
 | `update-trends` | 五大平台热榜联网搜索 → trends.json | 2026-04 |
+| `monthly-review` | 月度维护：记忆清理 + 规范文档同步 + 季度架构快照 | 2026-05-13 |
 
 **维护规则：**
 - skill 文件必须是 `.claude/skills/<name>/SKILL.md` 目录结构（不能是根目录裸 `.md` 文件）

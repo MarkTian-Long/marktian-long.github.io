@@ -54,7 +54,20 @@
       "Bash(cp assets/css/style-light.css assets/css/style.css)",
       "Bash(sed \"s/.*tags: //g\")",
       "Bash(awk '{print $9, $5}')",
-      "Bash(echo \"孤立}\\);数量: $?\")"
+      "Bash(echo \"孤立}\\);数量: $?\")",
+      "Bash(Remove-Item *)",
+      "Bash(del *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(cp \"D:\\\\CS\\\\Coding\\\\qiuzhi\\\\tools\\\\blog\\\\posts\\\\tech-obsolescence.html\" \"D:\\\\CS\\\\Coding\\\\qiuzhi\\\\tools\\\\blog\\\\posts\\\\tech-obsolescence-b.html\")",
+      "Bash(cp \"D:\\\\CS\\\\Coding\\\\qiuzhi\\\\tools\\\\blog\\\\posts\\\\tech-obsolescence.html\" \"D:\\\\CS\\\\Coding\\\\qiuzhi\\\\tools\\\\blog\\\\posts\\\\tech-obsolescence-bc.html\")",
+      "PowerShell(ls D:\\\\CS\\\\Coding\\\\qiuzhi\\\\scripts\\\\ -File | Where-Object { $_.Name -notmatch \"node_modules\" })",
+      "PowerShell(node D:\\\\CS\\\\Coding\\\\qiuzhi\\\\tools\\\\blog\\\\gen_llm_soft_quality.js)",
+      "PowerShell(git *)",
+      "Bash(cd /d)",
+      "Bash(ls -la \"C:/Users/15517/.claude/projects/D--CS-Coding-qiuzhi/memory/\")",
+      "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse goto *)",
+      "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse viewport *)",
+      "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse screenshot *)"
     ],
     "defaultMode": "auto"
   }
