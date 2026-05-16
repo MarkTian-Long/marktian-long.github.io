@@ -2,20 +2,6 @@
   "version": 1,
   "posts": [
     {
-      "slug": "ai-chips-explainer",
-      "date": "2026.05",
-      "title": "芯片战争背后，藏着一张分工地图",
-      "summary": "华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在任务覆盖范围和硬件灵活性两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。",
-      "tags": [
-        "技术判断"
-      ],
-      "topics": [
-        "算力基础设施"
-      ],
-      "category": "技术",
-      "url": "posts/ai-chips-explainer.html"
-    },
-    {
       "slug": "training-vs-inference",
       "date": "2026.05",
       "title": "训练和推理，是两件不同的事",
@@ -28,6 +14,20 @@
       ],
       "category": "技术",
       "url": "posts/training-vs-inference.html"
+    },
+    {
+      "slug": "ai-chips-explainer",
+      "date": "2026.05",
+      "title": "芯片战争背后，藏着一张分工地图",
+      "summary": "华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在任务覆盖范围和硬件灵活性两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "算力基础设施"
+      ],
+      "category": "技术",
+      "url": "posts/ai-chips-explainer.html"
     },
     {
       "slug": "ai-benchmark-failure",
