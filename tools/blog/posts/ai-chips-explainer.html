@@ -772,6 +772,16 @@ category: 技术
   </div>
 
   <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
 
   <nav class="footer-nav">
     <a href="../index.html">← 返回列表</a>
@@ -865,7 +875,22 @@ var POST_META = {
       document.getElementById('relatedPosts').style.display = 'block';
     }
   }
-
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
 })();
 </script>
 </body>

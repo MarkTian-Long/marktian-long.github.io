@@ -327,18 +327,21 @@ category: 技术
       </ul>
     </div>
 
-    <div class="related-posts">
+    <div class="related-posts" id="relatedPosts" style="display:none">
       <div class="related-title">相关文章</div>
-      <a class="related-item" href="ai-chips-explainer.html">
-        <span class="related-item-date">2026.05</span>
-        <span class="related-item-title">芯片战争背后，藏着一张分工地图</span>
-      </a>
-      <a class="related-item" href="llm-second-half.html">
-        <span class="related-item-date">2026.05</span>
-        <span class="related-item-title">大模型的下半场：当预训练不再是唯一战场</span>
-      </a>
+      <div class="related-list" id="relatedList"></div>
     </div>
 
+    <nav class="post-nav" id="postNav">
+      <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+        <span class="nav-label">← 上一篇</span>
+        <span class="nav-title" id="navPrevTitle"></span>
+      </a>
+      <a class="post-nav-next" id="navNext" style="display:none" href="#">
+        <span class="nav-label">下一篇 →</span>
+        <span class="nav-title" id="navNextTitle"></span>
+      </a>
+    </nav>
 
   </div>
     </main>
@@ -346,45 +349,107 @@ category: 技术
 </div>
 
 <script>
-  const btn = document.getElementById('themeToggleBtn');
-  const sunIcon = document.getElementById('ptIconSun');
-  const moonIcon = document.getElementById('ptIconMoon');
-  const body = document.body;
-
-  function applyTheme(theme) {
-    body.setAttribute('data-theme', theme);
-    if (theme === 'light') {
-      sunIcon.style.display = 'none';
-      moonIcon.style.display = 'block';
-    } else {
-      sunIcon.style.display = 'block';
-      moonIcon.style.display = 'none';
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+var POST_META = {
+  slug: 'training-vs-inference',
+  tags: [],
+  topics: [],
+  category: '技术'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    var tagsEl = document.getElementById('post-tags');
+    if (tagsEl) tagsEl.innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
     }
   }
-
-  const saved = localStorage.getItem('blog-theme') || 'light';
-  applyTheme(saved);
-
-  btn.addEventListener('click', () => {
-    const current = body.getAttribute('data-theme');
-    const next = current === 'light' ? 'dark' : 'light';
-    localStorage.setItem('blog-theme', next);
-    applyTheme(next);
-  });
-
-  // TOC active state
-  const tocLinks = document.querySelectorAll('.toc-list a');
-  const sections = document.querySelectorAll('h2[id]');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        tocLinks.forEach(a => a.classList.remove('toc-active'));
-        const active = document.querySelector('.toc-list a[href="#' + entry.target.id + '"]');
-        if (active) active.classList.add('toc-active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-  sections.forEach(s => observer.observe(s));
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
 </script>
 </body>
 </html>
