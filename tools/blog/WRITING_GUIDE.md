@@ -387,6 +387,8 @@ GitHub Pages 部署后无此问题。
 |------|------|
 | `.post-title` | `font-family: var(--font-serif)` |
 | `.post-summary` | `border-left: 3px solid var(--clay)` |
+| `.post-body h2` | `font-size: 20px; font-weight: 700; color: var(--text-1); border-left: 3px solid var(--accent); padding-left: 10px; margin: 40px 0 14px` |
+| `.post-body h3` | `font-size: 16px; font-weight: 700; color: var(--text-1); margin: 28px 0 10px` |
 | `.tag` | `background: var(--tag-bg); color: var(--tag-text)` |
 | `.callout` | `background: var(--clay-soft); border: clay 色系` |
 | `.callout strong` | `color: var(--clay)` |
