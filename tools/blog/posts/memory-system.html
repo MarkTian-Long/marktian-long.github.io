@@ -239,6 +239,7 @@ category: 产品
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 24px;
@@ -617,8 +618,8 @@ category: 产品
     <header class="doc-header">
       <div class="post-meta">
         <span class="post-date">2026.04</span>
-        <span class="tag">产品框架</span>
-      </div>
+      <span id="post-tags"></span>
+    </div>
       <h1 class="post-title">AI产品记忆系统：从四阶段演进到怎么做对</h1>
       <p class="post-summary">记忆系统的价值不在于套住用户，而在于让 AI 真正理解用户。从演进阶段到投入决策，这篇文章梳理 AI PM 在记忆系统上最需要看清的判断。</p>
     </header>
@@ -2429,13 +2430,23 @@ document.addEventListener('DOMContentLoaded', function() {
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'memory-system',
-  tags: ['产品框架'],
-  topics: ['Agent'],
+  tags: [],
+  topics: [],
   category: '产品'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

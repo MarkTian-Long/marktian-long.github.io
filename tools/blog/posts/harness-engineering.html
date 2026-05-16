@@ -104,7 +104,8 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
             color: var(--tag-text);
             font-weight: 500;
         }
-        .post-title {
+        #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
             font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
@@ -356,8 +357,8 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.04</span>
-            <span class="tag">工程演进</span>
-        </div>
+      <span id="post-tags"></span>
+    </div>
         <h1 class="post-title">工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里</h1>
         <p class="post-summary">Prompt Engineering → Context Engineering → Harness Engineering，AI 工程的关注层次持续上移，2026 年的竞争重心已不在"谁的 Prompt 写得好"。</p>
     </header>
@@ -509,13 +510,23 @@ summary: Prompt Engineering → Context Engineering → Harness Engineering，AI
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'harness-engineering',
-  tags: ["工程演进"],
-  topics: ["Agent"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

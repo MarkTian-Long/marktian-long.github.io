@@ -127,6 +127,7 @@ category: 技术
       font-size: 11px; padding: 3px 9px; border-radius: 20px;
       background: var(--tag-bg); color: var(--tag-text); font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif); font-size: 26px; font-weight: 700;
       line-height: 1.35; color: var(--text-1); margin-bottom: 14px;
@@ -406,8 +407,7 @@ category: 技术
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.05</span>
-      <span class="tag">技术判断</span>
-      <span class="tag">算力基础设施</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">芯片战争背后，藏着一张分工地图</h1>
     <p class="post-summary">华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在"任务覆盖范围"和"硬件灵活性"两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。</p>
@@ -836,13 +836,23 @@ category: 技术
 })();
 var POST_META = {
   slug: 'ai-chips-explainer',
-  tags: ['技术判断'],
-  topics: ['算力基础设施'],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

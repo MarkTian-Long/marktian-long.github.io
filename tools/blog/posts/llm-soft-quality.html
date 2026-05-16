@@ -99,6 +99,7 @@ category: 技术
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -315,8 +316,7 @@ category: 技术
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.05</span>
-      <span class="tag">技术判断</span>
-      <span class="tag">AI工具</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">大模型的分越来越高，但有些差距只用几天就能感觉到</h1>
     <p class="post-summary">benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。</p>
@@ -478,13 +478,23 @@ category: 技术
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'llm-soft-quality',
-  tags: ["技术判断"],
-  topics: ["AI工具"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

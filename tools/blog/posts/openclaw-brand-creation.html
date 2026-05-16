@@ -98,6 +98,7 @@ category: 商业
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -330,8 +331,7 @@ category: 商业
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
-      <span class="tag">行业洞察</span>
-      <span class="tag">Agent</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">OpenClaw 爆红背后：一个品类的诞生与宿命</h1>
     <p class="post-summary">一个奥地利独立开发者用"危险"的开源项目验证了 personal agent 的市场需求，然后被 OpenAI 招走了。OpenClaw 的三个产品决策、B 端落地路径、以及脚手架类产品的品类宿命，比任何关于 Agent 未来的预测都更值得认真拆解。</p>
@@ -478,13 +478,23 @@ category: 商业
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'openclaw-brand-creation',
-  tags: ['行业洞察', 'Agent'],
-  topics: ['产品设计'],
+  tags: [],
+  topics: [],
   category: '商业'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

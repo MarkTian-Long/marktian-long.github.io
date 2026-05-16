@@ -88,6 +88,7 @@ category: 技术
       font-size: 11px; padding: 3px 9px; border-radius: 20px;
       background: var(--tag-bg); color: var(--tag-text); font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif); font-size: 26px; font-weight: 700;
       line-height: 1.35; color: var(--text-1); margin-bottom: 14px;
@@ -237,8 +238,7 @@ category: 技术
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.05</span>
-      <span class="tag">技术判断</span>
-      <span class="tag">算力基础设施</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">训练和推理，是两件不同的事</h1>
     <p class="post-summary">训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。</p>

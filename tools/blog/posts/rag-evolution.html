@@ -98,7 +98,8 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
             color: var(--tag-text);
             font-weight: 500;
         }
-        .post-title {
+        #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
             font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
@@ -299,9 +300,8 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.03</span>
-            <span class="tag">技术判断</span>
-            <span class="tag">架构设计</span>
-        </div>
+      <span id="post-tags"></span>
+    </div>
         <h1 class="post-title">RAG 的演进：从"被动检索"到"主动信息系统"</h1>
         <p class="post-summary">现有 RAG 设计的四大问题揭示了演进方向：向量相似度不等于业务相关性，真正的 RAG 需要主动的、多跳的信息系统。</p>
     </header>
@@ -442,13 +442,23 @@ summary: 现有 RAG 设计的四大问题揭示了演进方向：向量相似度
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'rag-evolution',
-  tags: ["技术判断", "架构设计"],
-  topics: ["RAG"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

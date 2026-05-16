@@ -98,6 +98,7 @@ category: 商业
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -311,8 +312,7 @@ category: 商业
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
-      <span class="tag">行业洞察</span>
-      <span class="tag">技术判断</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">企业引入大模型 API，数据真的安全吗</h1>
     <p class="post-summary">这个问题被讨论得很多，但被理解得很少。同样的顾虑，在不同行业性质和解法完全不同；而企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。</p>
@@ -451,13 +451,23 @@ category: 商业
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'enterprise-ai-data-security',
-  tags: ['行业洞察', '技术判断'],
-  topics: ['企业AI'],
+  tags: [],
+  topics: [],
   category: '商业'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   // 相关文章推荐
   if (posts.length >= 5) {
     var scored = posts

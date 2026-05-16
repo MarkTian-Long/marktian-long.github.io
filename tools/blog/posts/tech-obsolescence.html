@@ -104,7 +104,8 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
             color: var(--tag-text);
             font-weight: 500;
         }
-        .post-title {
+        #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
             font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
@@ -324,9 +325,8 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.03</span>
-            <span class="tag">产品框架</span>
-            <span class="tag">技术判断</span>
-        </div>
+      <span id="post-tags"></span>
+    </div>
         <h1 class="post-title">技术消亡度框架：判断哪些 AI 技术值得长期投入</h1>
         <p class="post-summary">不是所有 AI 技术都有相同的生命周期。区分"补救缺陷型"和"编码知识型"是判断技术投资价值的核心框架。</p>
     </header>
@@ -461,13 +461,23 @@ summary: 不是所有 AI 技术都有相同的生命周期。区分"补救缺陷
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'tech-obsolescence',
-  tags: ["产品框架", "技术判断"],
-  topics: ["企业AI"],
+  tags: [],
+  topics: [],
   category: '产品'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

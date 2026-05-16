@@ -98,6 +98,7 @@ category: 商业
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -326,8 +327,7 @@ category: 商业
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
-      <span class="tag">行业洞察</span>
-      <span class="tag">产品分析</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？</h1>
     <p class="post-summary">Claude Design不只是一个新设计工具。它是Anthropic用工作流闭环重新划定势力范围的信号——当基模公司开始系统性地补全上下游工具链，没有护城河的工具层，只是时间问题。</p>
@@ -477,13 +477,23 @@ category: 商业
 
 var POST_META = {
   slug: 'claude-design-blog',
-  tags: ['行业洞察', '产品分析'],
-  topics: ['产品设计'],
+  tags: [],
+  topics: [],
   category: '商业'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

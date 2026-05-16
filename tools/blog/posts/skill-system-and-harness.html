@@ -98,7 +98,8 @@ summary: Skill 不是 Prompt Engineering 的工程化产物，而是为了解决
             color: var(--tag-text);
             font-weight: 500;
         }
-        .post-title {
+        #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
             font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
@@ -314,9 +315,8 @@ summary: Skill 不是 Prompt Engineering 的工程化产物，而是为了解决
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.03</span>
-            <span class="tag">工程演进</span>
-            <span class="tag">产品框架</span>
-        </div>
+      <span id="post-tags"></span>
+    </div>
         <h1 class="post-title">Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑</h1>
         <p class="post-summary">Skill 不是 Prompt Engineering 的工程化产物，而是为了解决 Agent 可靠性而被创造的标准化执行单元。</p>
     </header>
@@ -474,13 +474,23 @@ summary: Skill 不是 Prompt Engineering 的工程化产物，而是为了解决
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'skill-system-and-harness',
-  tags: ["工程演进", "产品框架"],
-  topics: ["Agent"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

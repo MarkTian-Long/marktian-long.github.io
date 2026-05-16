@@ -98,6 +98,7 @@ category: 产品
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -305,7 +306,7 @@ category: 产品
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
-      <span class="tag">产品框架</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">企业AI应用不是一条线，而是三个不同的战场</h1>
     <p class="post-summary">用技术复杂度判断企业AI成熟度，是个认知陷阱。更有效的维度是：这家企业有没有明确的、可度量的AI产品化目标——由此分出探索期、交付期、迭代期三层，每层面对的根本问题完全不同。</p>
@@ -448,13 +449,23 @@ category: 产品
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'enterprise-ai-three-stages',
-  tags: ['产品框架'],
-  topics: ['企业AI'],
+  tags: [],
+  topics: [],
   category: '产品'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

@@ -99,6 +99,7 @@ category: 技术
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -314,8 +315,7 @@ category: 技术
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.05</span>
-      <span class="tag">评测体系</span>
-      <span class="tag">AI治理</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">模型跑出了测量边界，评测体系跟不上了</h1>
     <p class="post-summary">静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。</p>
@@ -473,13 +473,23 @@ category: 技术
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'ai-benchmark-failure',
-  tags: ["评测体系"],
-  topics: ["AI治理","AI工具"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })

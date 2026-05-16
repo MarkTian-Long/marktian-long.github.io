@@ -98,6 +98,7 @@ category: 商业
       color: var(--tag-text);
       font-weight: 500;
     }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
     .post-title {
       font-family: var(--font-serif);
       font-size: 26px;
@@ -332,8 +333,7 @@ category: 商业
   <header class="post-header">
     <div class="post-meta">
       <span class="post-date">2026.04</span>
-      <span class="tag">行业洞察</span>
-      <span class="tag">Agent</span>
+      <span id="post-tags"></span>
     </div>
     <h1 class="post-title">Manus：它卖的不是 Agent，是一次认知震撼</h1>
     <p class="post-summary">Manus 最火的时候，我没有付费进去。不是因为穷，而是因为我判断自己不需要它。这篇文章是事后复盘这个判断——哪里对了，哪里想浅了，以及它被 Meta 以 20 亿美元买走这件事，究竟说明了什么。</p>
@@ -484,13 +484,23 @@ category: 商业
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'manus-agent-analysis',
-  tags: ['行业洞察', 'Agent'],
-  topics: ['Agent'],
+  tags: [],
+  topics: [],
   category: '商业'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   // 相关文章推荐
   if (posts.length >= 5) {
     var scored = posts

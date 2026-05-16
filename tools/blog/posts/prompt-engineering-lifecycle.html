@@ -98,7 +98,8 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
             color: var(--tag-text);
             font-weight: 500;
         }
-        .post-title {
+        #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
             font-family: var(--font-serif);
             font-size: 26px;
             font-weight: 700;
@@ -293,9 +294,8 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
     <header class="post-header">
         <div class="post-meta">
             <span class="post-date">2026.03</span>
-            <span class="tag">工程演进</span>
-            <span class="tag">技术判断</span>
-        </div>
+      <span id="post-tags"></span>
+    </div>
         <h1 class="post-title">Prompt Engineering 的生命周期：哪些会消亡，哪些会留下</h1>
         <p class="post-summary">补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。</p>
     </header>
@@ -449,13 +449,23 @@ summary: 补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编
 // 相关文章 + 上下篇导航
 var POST_META = {
   slug: 'prompt-engineering-lifecycle',
-  tags: ["工程演进", "技术判断"],
-  topics: ["提示工程"],
+  tags: [],
+  topics: [],
   category: '技术'
 };
 (async function() {
   var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
   var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
   if (posts.length >= 5) {
     var scored = posts
       .filter(function(p) { return p.slug !== POST_META.slug; })
