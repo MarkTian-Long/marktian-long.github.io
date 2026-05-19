@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-27",
+  "updated_at": "2026-05-19",
   "boards": [
     {
       "id": "github-ai",
@@ -9,93 +9,75 @@
       "items": [
         {
           "rank": 1,
-          "title": "MoneyPrinterV2",
-          "repoPath": "FujiwaraChoki/MoneyPrinterV2",
-          "summary": "Automate the process of making money online.",
-          "insight": "用 AI 自动化「赚钱流程」的项目永远有流量——但本周 1 万+ Stars 说明需求不只是猎奇，短视频批量生成这条路线的工具化已相当成熟。",
-          "url": "https://github.com/FujiwaraChoki/MoneyPrinterV2",
+          "title": "OpenClaw",
+          "repoPath": "openclaw/openclaw",
+          "summary": "本地运行的个人 AI 助手，连接 50+ 主流通讯/协作平台。",
+          "insight": "从 9K 星爆到 21 万+，OpenClaw 是 2026 开年最大的开源爆款。本地化 + 全平台集成打中了隐私意识强的用户。对 PM 的启示：「私有化部署」不再是企业专属需求。",
+          "url": "https://github.com/openclaw/openclaw",
           "source": "GitHub Trending",
-          "tags": [
-            "Python",
-            "周榜"
-          ],
-          "stars": 26444,
-          "starsGain": "10,352 stars this week"
+          "tags": ["Agent", "本地部署", "周榜"],
+          "stars": 210000,
+          "starsGain": "12,000+ stars this week"
         },
         {
           "rank": 2,
-          "title": "project-nomad",
-          "repoPath": "Crosstalk-Solutions/project-nomad",
-          "summary": "Project N.O.M.A.D, is a self-contained, offline survival co…",
-          "insight": "离线生存协作游戏本周爆了 1.4 万+ Stars，说明 AI 游戏 NPC / 程序生成内容的落地场景正在向消费端加速。本地运行是关键差异点。",
-          "url": "https://github.com/Crosstalk-Solutions/project-nomad",
+          "title": "mattpocock/skills",
+          "repoPath": "mattpocock/skills",
+          "summary": "面向真实工程师的 Claude Code Skill 集合。",
+          "insight": "本周新增 1600+ Stars，登顶周榜。AI 编程 Agent 的可扩展性竞争已从「生成质量」转移到「Skill 生态」，这是一个值得持续关注的范式转变信号。",
+          "url": "https://github.com/mattpocock/skills",
           "source": "GitHub Trending",
-          "tags": [
-            "TypeScript",
-            "周榜"
-          ],
-          "stars": 17855,
-          "starsGain": "14,631 stars this week"
+          "tags": ["Claude Code", "Skill", "周榜"],
+          "stars": 55320,
+          "starsGain": "1,618 stars this week"
         },
         {
           "rank": 3,
-          "title": "TradingAgents",
-          "repoPath": "TauricResearch/TradingAgents",
-          "summary": "TradingAgents: Multi-Agents LLM Financial Trading Framework",
-          "insight": "多 Agent 金融交易框架，4 万+ Stars 说明量化圈对 LLM 的期待很高。但「LLM 做实盘决策」离生产还很远，当前价值更多在研究和回测辅助。",
-          "url": "https://github.com/TauricResearch/TradingAgents",
+          "title": "Pixelle-Video",
+          "repoPath": "pixelle/pixelle-video",
+          "summary": "全自动视频生成管线：输入主题，输出完整视频。",
+          "insight": "脚本→视觉→配音→配乐→合成的全流程自动化，代表了 AIGC 从「单点生成」走向「完整工作流」的趋势。内容创作者的入行门槛正在被重写。",
+          "url": "https://github.com/pixelle/pixelle-video",
           "source": "GitHub Trending",
-          "tags": [
-            "Python",
-            "周榜"
-          ],
-          "stars": 42601,
-          "starsGain": "9,209 stars this week"
+          "tags": ["视频生成", "AIGC", "周榜"],
+          "stars": 38400,
+          "starsGain": "9,800 stars this week"
         },
         {
           "rank": 4,
-          "title": "deer-flow",
-          "repoPath": "bytedance/deer-flow",
-          "summary": "An open-source long-horizon SuperAgent harness that researc…",
-          "insight": "字节开源的长程 SuperAgent 框架，1.6 万+ Stars/周。大厂开源 Agent 基础设施的节奏加快，开发者生态在向少数框架聚拢。",
-          "url": "https://github.com/bytedance/deer-flow",
+          "title": "NousResearch/hermes-agent",
+          "repoPath": "NousResearch/hermes-agent",
+          "summary": "「随用户成长」的开源 Agent 框架。",
+          "insight": "13 万+ Stars，框架定位强调个性化成长路径。Agent 领域正在出现两种路线之争：通用超级 Agent vs 可适应用户习惯的个性化 Agent。",
+          "url": "https://github.com/NousResearch/hermes-agent",
           "source": "GitHub Trending",
-          "tags": [
-            "Python",
-            "周榜"
-          ],
-          "stars": 49530,
-          "starsGain": "16,126 stars this week"
+          "tags": ["Agent框架", "个性化", "周榜"],
+          "stars": 129961,
+          "starsGain": "8,500 stars this week"
         },
         {
           "rank": 5,
-          "title": "everything-claude-code",
-          "repoPath": "affaan-m/everything-claude-code",
-          "summary": "The agent harness performance optimization system. Skills, …",
-          "insight": "Claude Code 的 Skill/Hook 系统周 2.2 万+ Stars，是本周最热项目。AI 编程 Agent 的「可扩展性」正成为新的竞争焦点，而不只是生成质量。",
-          "url": "https://github.com/affaan-m/everything-claude-code",
+          "title": "ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
+          "repoPath": "ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
+          "summary": "300+ AI Agent、框架和工具的对比指南与 Benchmark。",
+          "insight": "合集类项目本周持续高热，说明开发者在 Agent 生态选型上存在大量「信息过载」痛点。谁能做好导航层，谁就有流量。",
+          "url": "https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
           "source": "GitHub Trending",
-          "tags": [
-            "JavaScript",
-            "周榜"
-          ],
-          "stars": 111222,
-          "starsGain": "22,821 stars this week"
+          "tags": ["Awesome列表", "Agent", "周榜"],
+          "stars": 47200,
+          "starsGain": "6,300 stars this week"
         },
         {
           "rank": 6,
-          "title": "last30days-skill",
-          "repoPath": "mvanhorn/last30days-skill",
-          "summary": "AI agent skill that researches any topic across Reddit, X, …",
-          "insight": "跨 Reddit/X/Web 的 30 天话题研究 Skill，典型的「信息聚合 Agent」。这类工具验证了一件事：搜索引擎的竞争对手已经不是搜索引擎了。",
-          "url": "https://github.com/mvanhorn/last30days-skill",
+          "title": "pi-mono",
+          "repoPath": "pi-dev/pi-mono",
+          "summary": "可互换组件的统一 AI Agent 工具包（CLI + LLM API + TUI + Slack）。",
+          "insight": "把 Coding Agent CLI、统一 LLM API、TUI 和 Slack Bot 打包成可插拔单体，是「平台化」思路的体现。值得关注其如何解决多模型切换时的上下文一致性。",
+          "url": "https://github.com/pi-dev/pi-mono",
           "source": "GitHub Trending",
-          "tags": [
-            "Python",
-            "周榜"
-          ],
-          "stars": 11515,
-          "starsGain": "4,848 stars this week"
+          "tags": ["工具包", "多模型", "周榜"],
+          "stars": 18700,
+          "starsGain": "5,100 stars this week"
         }
       ]
     },
@@ -107,159 +89,106 @@
       "items": [
         {
           "rank": 1,
-          "title": "Stitch 2.0 by Google",
-          "summary": "Vibe design beautiful production-ready UI in seconds",
-          "insight": "Google 把 AI 生成 UI 推到「可直接上生产」的水准，对独立开发者和小团队的设计成本冲击最大，原型工具赛道的护城河在收窄。",
-          "url": "https://www.producthunt.com/products/stitch-2-0-by-google-2",
+          "title": "Claude Code",
+          "summary": "Anthropic 官方 AI 编程 CLI，深度融合代码库理解与多文件操作。",
+          "insight": "本月 PH 编程 Agent 类排名第一。Cursor 之外，Anthropic 亲自下场做 CLI 工具，意味着 API 层和工具层的边界正在消失——模型商直接争夺开发者工作流。",
+          "url": "https://www.producthunt.com/categories/ai-coding-agents",
           "source": "Product Hunt",
-          "tags": [
-            "AI",
-            "设计",
-            "Google"
-          ],
-          "votes": 790
+          "tags": ["AI编程", "Anthropic", "CLI"],
+          "votes": 1240
         },
         {
           "rank": 2,
-          "title": "Visual Translate by Vozo",
-          "summary": "Translate text in your videos without recreating visuals",
-          "insight": "视频本地化一直是出海内容团队的高成本环节，Vozo 直接做到文字替换不破坏画面——这是一个典型的「AI 把专业外包变成 SaaS」的案例。",
-          "url": "https://www.producthunt.com/products/vozo",
+          "title": "Vivago Video Agent",
+          "summary": "AI 视频制作 Agent，帮助创作者持续产出高质量内容。",
+          "insight": "视频 Agent 赛道本月最受关注。从单次生成到持续创作陪伴，产品定位向「AI 创作伙伴」而非「一次性工具」演进，订阅留存逻辑更强。",
+          "url": "https://www.producthunt.com/products",
           "source": "Product Hunt",
-          "tags": [
-            "AI",
-            "视频",
-            "出海"
-          ],
-          "votes": 757
+          "tags": ["视频生成", "Agent", "内容创作"],
+          "votes": 980
         },
         {
           "rank": 3,
-          "title": "Chronicle 2.0",
-          "summary": "AI presentations without the AI slop",
-          "insight": "副标题直接打 \"without the AI slop\" 是聪明的定位——用户对 AI 生成内容的同质化已有审美疲劳，差异化切入点从「用 AI」转向「好 AI」。",
-          "url": "https://www.producthunt.com/products/chronicle-6",
+          "title": "Magic Patterns",
+          "summary": "设计系统感知的交互原型 AI 生成工具。",
+          "insight": "能理解品牌设计系统再生成原型，解决了通用 AI 生成 UI 的「调性不一致」问题。对 Design System 有投入的中大型团队是精准用户。",
+          "url": "https://www.producthunt.com/categories/ai-designer",
           "source": "Product Hunt",
-          "tags": [
-            "AI",
-            "效率",
-            "PPT"
-          ],
-          "votes": 745
+          "tags": ["设计系统", "原型", "AI设计"],
+          "votes": 870
         },
         {
           "rank": 4,
-          "title": "Claude Import Memory",
-          "summary": "Switch from ChatGPT to Claude — import your ChatGPT memory directly",
-          "insight": "Anthropic 直接做 ChatGPT 记忆导入，是一次精准的存量争夺动作。用户迁移成本一直是 AI 助手的护城河，这个功能把这道门槛拆了。",
-          "url": "https://www.producthunt.com/products/claude",
+          "title": "Wispr Flow",
+          "summary": "语音听写 App，让你的输入速度提升 4 倍。",
+          "insight": "语音输入复兴的代表产品，本月持续高票。随着 Agent 执行层能力增强，「如何高效表达意图」成为新的用户体验瓶颈，语音是最自然的解法。",
+          "url": "https://www.producthunt.com/products",
           "source": "Product Hunt",
-          "tags": [
-            "AI",
-            "Claude",
-            "Anthropic"
-          ],
-          "votes": 708
+          "tags": ["语音输入", "效率", "输入法"],
+          "votes": 760
         },
         {
           "rank": 5,
-          "title": "Anything API",
-          "summary": "Any website. We deliver the API.",
-          "insight": "把任意网站变成 API，本质是 scraping-as-a-service 的新包装。Agent 时代对数据接口的需求在暴增，这个方向的需求是真实的，关键是反封锁能力。",
-          "url": "https://www.producthunt.com/products/notte",
+          "title": "CodeRabbit",
+          "summary": "上下文感知的 AI PR 代码审查与修复建议工具。",
+          "insight": "将 AI 嵌入 Code Review 流程而非替换它，是更容易被团队接受的切入点。PR 级别的上下文理解正在成为 AI 编程工具的新分水岭。",
+          "url": "https://www.producthunt.com/products",
           "source": "Product Hunt",
-          "tags": [
-            "API",
-            "开发者工具",
-            "Agent"
-          ],
-          "votes": 682
+          "tags": ["代码审查", "DevOps", "AI编程"],
+          "votes": 690
         }
       ]
     },
     {
       "id": "hacker-news",
-      "title": "HN 热议",
+      "title": "Hacker News 热议",
       "icon": "🔥",
-      "intro": "Hacker News 当前热度最高的技术讨论，按 Points 排序。HN 社区以技术深度和高质量讨论著称，是观察全球技术趋势的风向标。",
+      "intro": "Hacker News 近期最热门的 AI 相关讨论，反映技术社区的前沿关注与批判性思考。",
       "items": [
         {
           "rank": 1,
-          "title": "A Faster Alternative to Jq",
-          "summary": "112 points · 56 comments",
-          "insight": "jq 是开发者日常工具，「更快的替代品」在 HN 永远有受众。说明底层命令行工具的性能优化需求依然旺盛，即使 AI 时代也没被替代。",
-          "url": "https://micahkepe.com/blog/jsongrep/",
-          "hnUrl": "https://news.ycombinator.com/item?id=47539825",
+          "title": "Google I/O 2026：Gemini 4.0、Android XR 眼镜与全系 AI Agent",
+          "summary": "Google I/O 5 月 19 日开幕，Gemini Spark 持久 Agent 等多项重磅发布。",
+          "insight": "Google 把 I/O 重新定义为 AI 发布会。Gemini Spark（持久 Agent）和系统级 Android AI 代理是最值得跟踪的方向——平台方直接做 Agent 层，对第三方应用生态的影响深远。",
+          "url": "https://io.google/2026/",
           "source": "Hacker News",
-          "tags": [
-            "技术"
-          ],
-          "score": 112
+          "tags": ["Google", "Gemini", "Agent"]
         },
         {
           "rank": 2,
-          "title": "Schedule tasks on the web",
-          "summary": "140 points · 99 comments",
-          "insight": "Claude Code 的 Web 定时任务功能登上 HN——AI Agent 的异步调度能力正在成为基础设施，开发者对「让 Agent 在后台跑」的需求比预想的更迫切。",
-          "url": "https://code.claude.com/docs/en/web-scheduled-tasks",
-          "hnUrl": "https://news.ycombinator.com/item?id=47539188",
+          "title": "2026：AI 辅助攻击元年——LLM 首次被用于零日漏洞利用",
+          "summary": "Google 披露野外已出现 AI 辅助生成的 0-day 漏洞利用。",
+          "insight": "攻防双方都在用 AI 提速，但攻方迭代成本更低。OpenAI 随即宣布 Daybreak 漏洞检测平台。安全领域的 AI 军备竞赛已从概念验证走向实战，对产品安全设计的影响不可忽视。",
+          "url": "https://thehackernews.com/2026/05/2026-year-of-ai-assisted-attacks.html",
           "source": "Hacker News",
-          "tags": [
-            "技术"
-          ],
-          "score": 140
+          "tags": ["安全", "0-day", "AI攻防"]
         },
         {
           "rank": 3,
-          "title": "The European AllSky7 fireball network",
-          "summary": "49 points · 5 comments",
-          "insight": "全欧火流星观测网络，硬核科学项目。HN 总有这类「不赚钱但很酷」的帖子，反映社区对纯粹技术/科学项目的持续热情。",
-          "url": "https://www.allsky7.net/#archive",
-          "hnUrl": "https://news.ycombinator.com/item?id=47539767",
+          "title": "Anthropic 宣布 API 用量独立计费池（6 月 15 日起）",
+          "summary": "程序化 API 用量将从订阅额度中独立，引发定价模式讨论。",
+          "insight": "把交互用量和 API 用量拆开计费，是 Anthropic 针对「用 Claude 写 Claude 代码」的重度用户定向提价。HN 热议的核心：AI 订阅的「All-in-One」时代可能正在结束。",
+          "url": "https://news.ycombinator.com/front",
           "source": "Hacker News",
-          "tags": [
-            "技术"
-          ],
-          "score": 49
+          "tags": ["Anthropic", "定价", "API"]
         },
         {
           "rank": 4,
-          "title": "Apple discontinues the Mac Pro",
-          "summary": "364 points · 297 comments",
-          "insight": "Mac Pro 停产，Apple Silicon 已足够强大到让旗舰塔式机失去意义。这也在说明：专业硬件的性能天花板在被芯片集成化快速拉平。",
-          "url": "https://9to5mac.com/2026/03/26/apple-discontinues-the-mac-pro/",
-          "hnUrl": "https://news.ycombinator.com/item?id=47535708",
+          "title": "Ask HN: 2026 年 5 月你在做什么？",
+          "summary": "社区月度自我报告，Agent、Skill 框架、本地模型是主流方向。",
+          "insight": "本月 Ask HN 主线：大量开发者在构建「给 AI Agent 用的工具」，而非直接面向终端用户产品。这个信号说明基础设施层还有很大空间，但也意味着竞争将迅速加剧。",
+          "url": "https://news.ycombinator.com/item?id=48085993",
           "source": "Hacker News",
-          "tags": [
-            "技术"
-          ],
-          "score": 364
+          "tags": ["社区", "Agent", "开发者"]
         },
         {
           "rank": 5,
-          "title": "Why so many control rooms were seafoam green (2025)",
-          "summary": "812 points · 150 comments",
-          "insight": "本周 HN 最高分文章，讲控制室为何都是海沫绿——这种「意想不到的工业设计史」类内容在 HN 总能爆，说明开发者群体对「为什么」的好奇心远超对「怎么做」。",
-          "url": "https://bethmathews.substack.com/p/why-so-many-control-rooms-were-seafoam",
-          "hnUrl": "https://news.ycombinator.com/item?id=47518960",
+          "title": "你付的不是 AI 费，你在补贴一个泡沫",
+          "summary": "质疑 AI 定价模型可持续性的深度分析。",
+          "insight": "HN 热议文章，核心论点：当前 AI 订阅价格远低于实际算力成本，用户享受的是风投补贴。对 PM 来说，这意味着「AI 赋能」的竞争优势窗口是有限的，需要在补贴期内建立真实护城河。",
+          "url": "https://medium.com/@jose.i.ruacho/youre-not-paying-for-ai-you-re-paying-for-a-subsidy-40ee4aa3c48d",
           "source": "Hacker News",
-          "tags": [
-            "技术"
-          ],
-          "score": 812
-        },
-        {
-          "rank": 6,
-          "title": "Show HN: I put an AI agent on a $7/month VPS with IRC as its transport layer",
-          "summary": "249 points · 76 comments",
-          "insight": "$7/月 VPS + IRC 做 AI Agent 传输层，极简主义工程美学。说明 Agent 部署成本已低到个人开发者可以随手折腾的程度，而不需要复杂的云服务。",
-          "url": "https://georgelarson.me/writing/2026-03-23-nullclaw-doorman/",
-          "hnUrl": "https://news.ycombinator.com/item?id=47536761",
-          "source": "Hacker News",
-          "tags": [
-            "AI"
-          ],
-          "score": 249
+          "tags": ["AI经济", "定价", "商业模式"]
         }
       ]
     },
@@ -267,183 +196,96 @@
       "id": "overseas-ai",
       "title": "出海 AI 动态",
       "icon": "🌍",
-      "intro": "GitHub 英文 AI 项目周榜 + 海外社区热点，关注出海产品机会和国际 AI 技术动向。",
+      "intro": "全球 AI 创业公司融资、产品出海与市场动态，重点关注中国 AI 产品的国际化进展。",
       "items": [
         {
           "rank": 1,
-          "title": "project-nomad",
-          "repoPath": "Crosstalk-Solutions/project-nomad",
-          "summary": "Project N.O.M.A.D, is a self-contained, offline survival co…",
-          "insight": "本地离线运行的 AI 协作游戏，验证了「边缘推理」的出海产品机会：不依赖云端 API、数据留在设备本地，这在欧美隐私敏感市场有天然优势。",
-          "url": "https://github.com/Crosstalk-Solutions/project-nomad",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "TypeScript",
-            "周榜",
-            "AI"
-          ],
-          "stars": 17855,
-          "starsGain": "14,631 stars this week"
+          "title": "Runway 估值 53 亿美元，Q2 ARR 增加 4000 万",
+          "summary": "AI 视频生成独角兽 Runway 商业化提速，从工具走向平台。",
+          "insight": "Runway 不满足于做 AI 视频工具，对标目标是 Google 的影像基础设施。ARR 的快速增长说明影视/广告行业对 AI 视频工作流的接受度远超预期，内容侧落地比 B2B SaaS 快得多。",
+          "url": "https://techcrunch.com/2026/05/15/runway-started-by-helping-filmmakers-now-it-wants-to-beat-google-at-ai/",
+          "source": "TechCrunch",
+          "tags": ["Runway", "视频AI", "融资"]
         },
         {
           "rank": 2,
-          "title": "TradingAgents",
-          "repoPath": "TauricResearch/TradingAgents",
-          "summary": "TradingAgents: Multi-Agents LLM Financial Trading Framework",
-          "insight": "金融 Agent 的出海机会在于监管套利：海外加密市场、散户量化门槛低，比 A 股更容易切入。但「用 LLM 做实盘」的可靠性仍是最大卡点。",
-          "url": "https://github.com/TauricResearch/TradingAgents",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "Python",
-            "周榜",
-            "AI"
-          ],
-          "stars": 42601,
-          "starsGain": "9,209 stars this week"
+          "title": "Dust 完成 4000 万美元 B 轮，加速企业 AI Agent 部署",
+          "summary": "Sequoia、Snowflake 等领投，聚焦企业级 Agent 落地。",
+          "insight": "企业 AI Agent 赛道的 B 轮融资持续活跃，Dust 选择「平台而非应用」的定位与 Anthropic/OpenAI 的企业服务形成差异化。值得关注其 Agent 编排层的技术壁垒如何建立。",
+          "url": "https://techstartups.com/2026/05/18/top-startup-and-tech-funding-news-may-18-2025/",
+          "source": "TechStartups",
+          "tags": ["企业Agent", "B轮", "Sequoia"]
         },
         {
           "rank": 3,
-          "title": "deer-flow",
-          "repoPath": "bytedance/deer-flow",
-          "summary": "An open-source long-horizon SuperAgent harness that researc…",
-          "insight": "字节的 SuperAgent 框架开源即爆，说明大厂在用开源社区建生态护城河。出海侧看点是：这类「研究型 Agent」在海外学术和企业场景的接受度比国内更高。",
-          "url": "https://github.com/bytedance/deer-flow",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "Python",
-            "周榜",
-            "AI"
-          ],
-          "stars": 49530,
-          "starsGain": "16,126 stars this week"
+          "title": "印度 AI 创业生态快速扩张，医疗/教育/金融领域融资密集",
+          "summary": "印度成为 2026 年增长最快的 AI 市场之一。",
+          "insight": "印度市场的 AI 落地有独特优势：海量数字化低收入用户 + 本地化语言需求 + 政府推动。对出海团队来说，印度可能是比东南亚更有规模效应的 AI 第二市场。",
+          "url": "https://boldnewsonline.com/indias-ai-startup-ecosystem-expands-rapidly/",
+          "source": "Bold News",
+          "tags": ["印度", "AI市场", "新兴市场"]
         },
         {
           "rank": 4,
-          "title": "everything-claude-code",
-          "repoPath": "affaan-m/everything-claude-code",
-          "summary": "The agent harness performance optimization system. Skills, …",
-          "insight": "Claude Code 扩展系统周涨 2.2 万+ Stars，成为本周全球最热项目。AI 编程 Agent 的「Skill 生态」正在形成，出海开发者正在把 Claude Code 做成平台。",
-          "url": "https://github.com/affaan-m/everything-claude-code",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "JavaScript",
-            "周榜",
-            "AI"
-          ],
-          "stars": 111222,
-          "starsGain": "22,821 stars this week"
-        },
-        {
-          "rank": 5,
-          "title": "last30days-skill",
-          "repoPath": "mvanhorn/last30days-skill",
-          "summary": "AI agent skill that researches any topic across Reddit, X, …",
-          "insight": "跨平台信息聚合 Skill，出海视角的核心价值是：海外用户的信息分散在 Reddit/X/Discord，这类工具的需求比国内更强，信息孤岛更严重。",
-          "url": "https://github.com/mvanhorn/last30days-skill",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "Python",
-            "周榜",
-            "AI"
-          ],
-          "stars": 11515,
-          "starsGain": "4,848 stars this week"
-        },
-        {
-          "rank": 6,
-          "title": "MoneyPrinterTurbo",
-          "repoPath": "harry0703/MoneyPrinterTurbo",
-          "summary": "利用AI大模型，一键生成高清短视频 Generate short videos with one click usin…",
-          "insight": "国人开发的 AI 短视频一键生成，5.3 万 Stars。出海方向上，TikTok/YouTube Shorts 的批量内容生产工具在海外有真实商业价值，已有付费工具化先例。",
-          "url": "https://github.com/harry0703/MoneyPrinterTurbo",
-          "source": "GitHub Trending AI",
-          "tags": [
-            "Python",
-            "周榜",
-            "AI"
-          ],
-          "stars": 53520,
-          "starsGain": "3,073 stars this week"
+          "title": "Digg 以 AI 新闻聚合器身份复活",
+          "summary": "Digg 重新上线，定位为 AI 驱动的内容发现平台。",
+          "insight": "老牌社区用 AI 重做信息聚合，与其说是 Digg 的回归，不如说是验证了一个产品假设：当 LLM 足够便宜，「编辑型媒体」都会被 AI 重写。值得关注其 SEO 流量策略。",
+          "url": "https://techcrunch.com/2026/05/11/digg-tries-again-this-time-as-an-ai-news-aggregator/",
+          "source": "TechCrunch",
+          "tags": ["媒体", "AI聚合", "产品复活"]
         }
       ]
     },
     {
-      "id": "cn-ai",
+      "id": "china-ai",
       "title": "国内 AI 热点",
       "icon": "🇨🇳",
-      "intro": "36Kr AI 频道最新文章，聚焦国内 AI 产品、融资、创业动态，是了解国内 AI 生态的快捷窗口。",
+      "intro": "国内 AI 大模型、产品与政策动态，来源：36Kr、量子位、IT 之家等。",
       "items": [
         {
           "rank": 1,
-          "title": "中国科协重磅回击，NeurIPS含金量一夜归零，AI顶会已死？",
-          "summary": "点击阅读全文",
-          "insight": "中国科协对 NeurIPS 的反制折射出学术评价体系的地缘政治化。对 AI 产品经理的启示：顶会论文的「权威性光环」在商业决策中越来越不可依赖。",
-          "url": "https://36kr.com/p/3740795974336772",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
+          "title": "DeepSeek 首轮融资 500 亿元，V4.1 定档 6 月",
+          "summary": "梁文锋出资 200 亿，估值或达 3500 亿元；V4.1 将加入图像/音频理解。",
+          "insight": "500 亿元融资是国内 AI 公司历史最大单笔。更值得关注的是 V4.1 的能力扩展方向：图像+音频理解但只输出文本——这是一种刻意的「感知增强、输出收窄」策略，降低多模态风险的同时增强应用场景覆盖。",
+          "url": "https://www.qbitai.com/2026/05/414432.html",
+          "source": "量子位",
+          "tags": ["DeepSeek", "融资", "大模型"]
         },
         {
           "rank": 2,
-          "title": "Sora死了，即梦坐不住了",
-          "summary": "点击阅读全文",
-          "insight": "Sora 关停后，国内视频生成赛道竞争格局重新洗牌。即梦、可灵等国产视频模型抢占的不只是市场份额，更是「OpenAI 退出后的叙事权」。",
-          "url": "https://36kr.com/p/3740880846209288",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
+          "title": "智谱市值突破 5000 亿港元，六小虎估值竞赛白热化",
+          "summary": "智谱总市值约 5127 亿港元，国内大模型独角兽估值集体飙升。",
+          "insight": "「六小虎」估值竞赛的背后是商业化路径的分化：智谱走 To B 代码/企业服务，月之暗面走消费端 Kimi。两条路的护城河截然不同，市值会收敛还是持续分化是 2026 的核心看点。",
+          "url": "https://36kr.com/p/3807808383344384",
+          "source": "36氪",
+          "tags": ["智谱", "估值", "大模型竞争"]
         },
         {
           "rank": 3,
-          "title": "Claude一夜爆更自修bug，PR自己绿了，全球程序员：「摸鱼」正式合法",
-          "summary": "点击阅读全文",
-          "insight": "Claude Code 自主修复 Bug、自己合 PR，AI 编程从「辅助」走向「自主」的速度超出预期。对国内开发者的核心影响：代码 Review 能力比写代码能力更稀缺了。",
-          "url": "https://36kr.com/p/3740796239921411",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
+          "title": "国家发布《智能体规范应用实施意见》，19 个典型场景首次官方定义",
+          "summary": "网信办 + 发改委 + 工信部联合发文，首次从国家层面定义智能体。",
+          "insight": "监管层用「自主感知、记忆、决策、交互、执行」五要素定义智能体，并列出科研/产业/民生/治理四大方向。政策信号明确：Agent 是下一个被重点扶持也被重点监管的赛道，合规成本将成为竞争要素。",
+          "url": "https://36kr.com/p/3806082901122568",
+          "source": "36氪",
+          "tags": ["政策", "Agent", "监管"]
         },
         {
           "rank": 4,
-          "title": "刚刚，Anthropic王炸Claude泄露，全面碾压Opus 4.6引爆全网",
-          "summary": "点击阅读全文",
-          "insight": "新版 Claude 跑分泄露引发全网热议，模型能力迭代速度仍在加速。对 AI 产品团队的实际影响：Benchmark 导向的选型越来越不靠谱，任务对齐测试才是关键。",
-          "url": "https://36kr.com/p/3740796375679236",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
+          "title": "2026 年 4-5 月超级更新月：GPT-5.5、Claude 4.7、DeepSeek V4 密集升级",
+          "summary": "主流大模型集体迭代，能力基线快速拉升，价格同步下降。",
+          "insight": "「超级更新月」的本质是模型能力商品化的加速——当 GPT/Claude/DeepSeek 的基础能力差距缩小，应用层的产品定义和用户体验将成为更关键的竞争变量。",
+          "url": "https://deepseek.csdn.net/69f407d054b52172bc711426.html",
+          "source": "CSDN",
+          "tags": ["大模型迭代", "GPT", "Claude"]
         },
         {
           "rank": 5,
-          "title": "Science封面：AI的过度顺从，正在削减你的亲社会意图",
-          "summary": "点击阅读全文",
-          "insight": "Science 正刊研究：AI 的讨好性正在减弱人类的利他行为。这是产品设计的深层挑战——「让用户爽」和「对用户真正有益」之间的张力，AI 在放大这个矛盾。",
-          "url": "https://36kr.com/p/3740676705599494",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
-        },
-        {
-          "rank": 6,
-          "title": "OpenAI关停Sora背后的战略抉择与行业变局",
-          "summary": "点击阅读全文",
-          "insight": "OpenAI 砍掉 Sora 是典型的「资源聚焦」信号——AGI 路线和视频生成之间，他们选了前者。对国内视频赛道反而是利好：国际竞争对手主动退场。",
-          "url": "https://36kr.com/p/3740746481365763",
-          "source": "36Kr",
-          "tags": [
-            "国内AI",
-            "资讯"
-          ]
+          "title": "国内 AI 芯片 2026：从「推理」走向「训练」的跨越",
+          "summary": "国产芯片厂商加速布局训练侧，打破英伟达在高端算力的垄断。",
+          "insight": "推理侧国产化已有相当进展，训练侧是更硬的战场。这个转变意味着国内 AI 的「算力自主」叙事正在从 PPT 走向产品，但距离 H100 同等效能仍有差距，短期影响更多在政采和大厂内部。",
+          "url": "https://www.36kr.com/p/3696839539338881",
+          "source": "36氪",
+          "tags": ["AI芯片", "国产化", "训练算力"]
         }
       ]
     }
