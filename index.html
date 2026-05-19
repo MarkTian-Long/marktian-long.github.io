@@ -496,6 +496,9 @@
         const next = current === 'dark' ? 'light' : 'dark';
         localStorage.setItem('qiuzhi_theme', next);
         applyTheme(next);
+        document.querySelectorAll('iframe').forEach(f => {
+            try { f.contentWindow.postMessage({ type: 'theme-change', theme: next }, '*'); } catch(e) {}
+        });
     });
     </script>
 </body>
