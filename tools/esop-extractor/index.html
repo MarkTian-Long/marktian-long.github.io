@@ -2542,8 +2542,14 @@ window.addEventListener('message', function(e) {
   }
 });
 try {
-  const parentTheme = window.parent.document.documentElement.getAttribute('data-theme') || 'light';
-  document.documentElement.setAttribute('data-theme', parentTheme);
+  if (window !== window.parent) {
+    // 在 iframe 中：跟随父页面主题
+    const parentTheme = window.parent.document.documentElement.getAttribute('data-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', parentTheme);
+  } else {
+    // 独立打开：默认深色
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
 } catch(e) {
   document.documentElement.setAttribute('data-theme', 'dark');
 }
