@@ -1042,7 +1042,7 @@
           <!-- Mode toggle -->
           <div class="api-mode-toggle">
             <button id="modeDefault" class="mode-btn active" onclick="setApiMode('default')">
-              ✦ 系统默认
+              ✦ 系统默认 <span style="font-size:10px;opacity:0.6;">Demo</span>
             </button>
             <button id="modeCustom" class="mode-btn" onclick="setApiMode('custom')">
               自定义 API
@@ -1744,6 +1744,26 @@ async function startExtraction() {
   if (hasError) return;
 
   setLoading(true);
+
+  if (state.apiMode === 'default') {
+    // Demo 模式：返回 mock 数据，无需 API
+    setTimeout(() => {
+      try {
+        const result = completeResult(JSON.parse(JSON.stringify(MOCK_PDF_RESULT)));
+        result._meta = {
+          extractedAt: new Date().toISOString(),
+          inputLength: textVal.length,
+          sourceMode: 'text'
+        };
+        state.result = result;
+        localStorage.setItem(STORAGE_KEY_RESULT, JSON.stringify(state.result));
+        renderOutput();
+      } finally {
+        setLoading(false);
+      }
+    }, 1800);
+    return;
+  }
 
   try {
     const userPrompt = USER_PROMPT_TEMPLATE.replace('{{TEXT}}', textVal);
