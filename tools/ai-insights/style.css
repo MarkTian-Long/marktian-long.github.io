@@ -1,48 +1,48 @@
 /* =============================================
    AI INSIGHTS - STYLE
-   Uses same design language as main site (dark theme)
+   Light theme
    ============================================= */
 :root {
-    --bg-primary: #080c18;
-    --bg-secondary: #0d1224;
-    --bg-card: rgba(255, 255, 255, 0.04);
-    --accent-blue: #4f8fff;
-    --accent-purple: #9b6dff;
-    --accent-cyan: #00d4ff;
-    --accent-green: #00e5a0;
-    --text-primary: #f0f4ff;
-    --text-secondary: #8a95b5;
-    --text-muted: #4a5270;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(79, 143, 255, 0.4);
+    --bg-primary: #f8f9fc;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(0, 0, 0, 0.03);
+    --accent-blue: #2563eb;
+    --accent-purple: #7c3aed;
+    --accent-cyan: #0891b2;
+    --accent-green: #059669;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(37, 99, 235, 0.35);
     --grad-primary: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-    --grad-text: linear-gradient(135deg, #4f8fff, #9b6dff, #00d4ff);
+    --grad-text: linear-gradient(135deg, #2563eb, #7c3aed, #0891b2);
     --radius-sm: 8px;
     --radius-md: 16px;
     --radius-lg: 24px;
     --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --font: 'Inter', -apple-system, sans-serif;
-    --accent-yellow: #f59e0b;
-    --accent-red: #ef4444;
+    --accent-yellow: #d97706;
+    --accent-red: #dc2626;
 
     /* Alpha 系列变量 */
-    --accent-blue-10: rgba(79, 143, 255, 0.10);
-    --accent-blue-12: rgba(79, 143, 255, 0.12);
-    --accent-blue-20: rgba(79, 143, 255, 0.20);
-    --accent-blue-25: rgba(79, 143, 255, 0.25);
-    --accent-purple-10: rgba(155, 109, 255, 0.10);
-    --accent-purple-12: rgba(155, 109, 255, 0.12);
-    --accent-purple-20: rgba(155, 109, 255, 0.20);
-    --accent-green-06: rgba(0, 229, 160, 0.06);
-    --accent-green-12: rgba(0, 229, 160, 0.12);
-    --accent-green-20: rgba(0, 229, 160, 0.20);
-    --accent-green-30: rgba(0, 229, 160, 0.30);
-    --accent-yellow-12: rgba(245, 158, 11, 0.12);
-    --accent-red-12: rgba(239, 68, 68, 0.12);
-    --bg-card-2: rgba(255, 255, 255, 0.02);
-    --bg-card-3: rgba(255, 255, 255, 0.03);
-    --overlay-dark-50: rgba(0, 0, 0, 0.50);
-    --overlay-dark-60: rgba(0, 0, 0, 0.60);
+    --accent-blue-10: rgba(37, 99, 235, 0.08);
+    --accent-blue-12: rgba(37, 99, 235, 0.10);
+    --accent-blue-20: rgba(37, 99, 235, 0.15);
+    --accent-blue-25: rgba(37, 99, 235, 0.20);
+    --accent-purple-10: rgba(124, 58, 237, 0.08);
+    --accent-purple-12: rgba(124, 58, 237, 0.10);
+    --accent-purple-20: rgba(124, 58, 237, 0.15);
+    --accent-green-06: rgba(5, 150, 105, 0.06);
+    --accent-green-12: rgba(5, 150, 105, 0.10);
+    --accent-green-20: rgba(5, 150, 105, 0.15);
+    --accent-green-30: rgba(5, 150, 105, 0.22);
+    --accent-yellow-12: rgba(217, 119, 6, 0.10);
+    --accent-red-12: rgba(220, 38, 38, 0.10);
+    --bg-card-2: rgba(0, 0, 0, 0.02);
+    --bg-card-3: rgba(0, 0, 0, 0.025);
+    --overlay-dark-50: rgba(15, 23, 42, 0.40);
+    --overlay-dark-60: rgba(15, 23, 42, 0.50);
     --text-on-gradient: #ffffff;
 }
 
@@ -342,7 +342,7 @@ body {
 .card-incomplete {
     font-size: 0.7rem;
     color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 1px 6px;
@@ -729,7 +729,7 @@ body {
     flex-shrink: 0;
     margin-top: 4px;
     margin-left: -27px;
-    border: 2px solid var(--bg-secondary);
+    border: 2px solid var(--bg-primary);
 }
 
 .timeline-dot--launch    { background: var(--accent-green); }

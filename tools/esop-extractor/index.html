@@ -8,31 +8,6 @@
   <style>
     /* ===== CSS Variables (tool-private) ===== */
     :root {
-      --bg:           #080c18;
-      --bg-sec:       #0d1224;
-      --card:         rgba(255,255,255,0.04);
-      --card-hover:   rgba(255,255,255,0.07);
-      --border:       rgba(255,255,255,0.08);
-      --border-hover: rgba(79,143,255,0.4);
-      --accent:       #4f8fff;
-      --accent-purple:#9b6dff;
-      --accent-cyan:  #00d4ff;
-      --grad:         linear-gradient(135deg, #4f8fff, #9b6dff);
-      --text:         #f0f4ff;
-      --text-sec:     #8a95b5;
-      --text-muted:   #4a5270;
-      --green:        #00e5a0;
-      --yellow:       #f59e0b;
-      --red:          #ef4444;
-      --radius-sm:    8px;
-      --radius-md:    16px;
-      --transition:   0.25s cubic-bezier(0.4,0,0.2,1);
-      --overlay:      rgba(8,12,24,0.82);
-      --overlay-modal:rgba(8,12,24,0.75);
-    }
-
-    /* ===== Light Theme ===== */
-    [data-theme="light"] {
       --bg:           #f5f4ed;
       --bg-sec:       #f0eee6;
       --card:         #faf9f5;
@@ -49,6 +24,9 @@
       --green:        #059669;
       --yellow:       #d97706;
       --red:          #dc2626;
+      --radius-sm:    8px;
+      --radius-md:    16px;
+      --transition:   0.25s cubic-bezier(0.4,0,0.2,1);
       --overlay:      rgba(245,244,237,0.88);
       --overlay-modal:rgba(245,244,237,0.80);
     }
@@ -2553,23 +2531,7 @@ function escapeHTML(str) {
 ================================================================ */
 document.addEventListener('DOMContentLoaded', init);
 
-/* ================================================================
-   THEME SYNC (跟随首页主题切换)
-================================================================ */
-window.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'theme-change') {
-    document.documentElement.setAttribute('data-theme', e.data.theme === 'light' ? 'light' : 'dark');
-  }
-});
-// 统一浅色；如果在 iframe 中则跟随父页面
-try {
-  const parentTheme = window !== window.parent
-    ? (window.parent.document.documentElement.getAttribute('data-theme') || 'light')
-    : 'light';
-  document.documentElement.setAttribute('data-theme', parentTheme);
-} catch(e) {
-  document.documentElement.setAttribute('data-theme', 'light');
-}
+/* 固定浅色主题 */
 </script>
 
 </body>

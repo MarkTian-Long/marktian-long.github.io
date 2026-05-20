@@ -7,18 +7,18 @@
 <link rel="icon" href="../../assets/images/favicon.ico">
 <style>
 :root {
-  --bg: #0d0d14;
-  --bg-card: #13131f;
-  --bg-card2: #1a1a2e;
-  --border: rgba(255,255,255,0.08);
-  --border-hover: rgba(99,179,237,0.4);
-  --text-primary: #f0f0f8;
-  --text-secondary: rgba(240,240,248,0.6);
-  --text-muted: rgba(240,240,248,0.4);
-  --accent: #63b3ed;
-  --accent2: #9f7aea;
-  --accent3: #68d391;
-  --accent-warn: #f6ad55;
+  --bg: #f8f9fc;
+  --bg-card: #ffffff;
+  --bg-card2: #f1f3f8;
+  --border: rgba(0,0,0,0.08);
+  --border-hover: rgba(37,99,235,0.35);
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --accent: #2563eb;
+  --accent2: #7c3aed;
+  --accent3: #059669;
+  --accent-warn: #d97706;
   --radius: 12px;
   --radius-sm: 8px;
   --transition: 0.2s ease;
@@ -56,7 +56,7 @@ body {
   transition: var(--transition);
   white-space: nowrap;
 }
-.tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+.tab-btn:hover { color: var(--text-primary); background: rgba(37,99,235,0.05); }
 .tab-btn.active {
   color: var(--accent);
   background: var(--bg);
@@ -95,7 +95,7 @@ body {
   font-size: 11px;
   padding: 2px 8px;
   border-radius: 20px;
-  background: rgba(99,179,237,0.15);
+  background: rgba(37,99,235,0.10);
   color: var(--accent);
   font-weight: 500;
 }
@@ -121,7 +121,7 @@ body {
   user-select: none;
 }
 .pill:hover { border-color: var(--accent); color: var(--accent); }
-.pill.active { background: rgba(99,179,237,0.15); border-color: var(--accent); color: var(--accent); }
+.pill.active { background: rgba(37,99,235,0.10); border-color: var(--accent); color: var(--accent); }
 
 .framework-grid {
   display: grid;
@@ -141,7 +141,7 @@ body {
 .fw-card:hover { border-color: var(--border-hover); }
 .fw-card.recommended {
   border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(99,179,237,0.15);
+  box-shadow: 0 0 12px rgba(37,99,235,0.10);
 }
 .fw-card.dimmed { opacity: 0.35; }
 .fw-card.open { border-color: var(--accent2); }
@@ -152,13 +152,13 @@ body {
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(37,99,235,0.04);
   color: var(--text-secondary);
 }
-.badge.green { background: rgba(104,211,145,0.15); color: var(--accent3); }
-.badge.blue { background: rgba(99,179,237,0.15); color: var(--accent); }
-.badge.purple { background: rgba(159,122,234,0.15); color: var(--accent2); }
-.badge.warn { background: rgba(246,173,85,0.15); color: var(--accent-warn); }
+.badge.green { background: rgba(5,150,105,0.12); color: var(--accent3); }
+.badge.blue { background: rgba(37,99,235,0.10); color: var(--accent); }
+.badge.purple { background: rgba(124,58,237,0.10); color: var(--accent2); }
+.badge.warn { background: rgba(217,119,6,0.10); color: var(--accent-warn); }
 .fw-recommend-badge {
   position: absolute;
   top: 8px; right: 8px;
@@ -198,11 +198,11 @@ body {
 }
 .compare-table td {
   padding: 9px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
   color: var(--text-secondary);
   vertical-align: top;
 }
-.compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+.compare-table tr:hover td { background: rgba(0,0,0,0.02); }
 .compare-table td.dim-row { opacity: 0.4; }
 .compare-table .fw-col { font-weight: 600; color: var(--text-primary); }
 
@@ -264,9 +264,9 @@ body {
   font-size: 11px;
   flex: 1;
 }
-.seq-msg.parallel { border-color: rgba(104,211,145,0.3); background: rgba(104,211,145,0.05); }
-.seq-msg.hitl { border-color: rgba(246,173,85,0.4); background: rgba(246,173,85,0.08); color: var(--accent-warn); font-weight: 500; }
-.seq-msg.retry { border-color: rgba(159,122,234,0.3); background: rgba(159,122,234,0.05); }
+.seq-msg.parallel { border-color: rgba(5,150,105,0.22); background: rgba(5,150,105,0.05); }
+.seq-msg.hitl { border-color: rgba(217,119,6,0.30); background: rgba(217,119,6,0.07); color: var(--accent-warn); font-weight: 500; }
+.seq-msg.retry { border-color: rgba(159,122,234,0.3); background: rgba(124,58,237,0.05); }
 .seq-label {
   font-size: 10px;
   color: var(--text-muted);
@@ -312,7 +312,7 @@ body {
 }
 .scene-header {
   padding: 12px 14px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(0,0,0,0.03);
   border-bottom: 1px solid var(--border);
 }
 .scene-dept {
@@ -347,8 +347,8 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(99,179,237,0.15);
-  border: 1px solid rgba(99,179,237,0.3);
+  background: rgba(37,99,235,0.10);
+  border: 1px solid rgba(37,99,235,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -358,14 +358,14 @@ body {
   margin-top: 1px;
 }
 .flow-hitl .flow-dot {
-  background: rgba(246,173,85,0.15);
-  border-color: rgba(246,173,85,0.4);
+  background: rgba(217,119,6,0.10);
+  border-color: rgba(217,119,6,0.30);
   color: var(--accent-warn);
 }
 .scene-roi {
   padding: 8px 10px;
-  background: rgba(104,211,145,0.06);
-  border: 1px solid rgba(104,211,145,0.2);
+  background: rgba(5,150,105,0.06);
+  border: 1px solid rgba(5,150,105,0.15);
   border-radius: var(--radius-sm);
 }
 .roi-num { font-size: 13px; font-weight: 700; color: var(--accent3); margin-bottom: 2px; }
@@ -393,7 +393,7 @@ body {
   font-size: 11px;
   padding: 2px 8px;
   border-radius: 20px;
-  background: rgba(99,179,237,0.15);
+  background: rgba(37,99,235,0.10);
   color: var(--accent);
   font-weight: 600;
   flex-shrink: 0;
@@ -438,8 +438,8 @@ body {
   margin-top: 8px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(159,122,234,0.05);
-  border: 1px solid rgba(159,122,234,0.2);
+  background: rgba(124,58,237,0.05);
+  border: 1px solid rgba(124,58,237,0.15);
   font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.6;
@@ -599,7 +599,7 @@ body {
     <p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">
       以下不是构建 Agent 的开发框架，而是直接交付给终端用户运行的 Agent 产品。列出它是为了说明 Agent 生态有「框架层」与「产品层」两个不同的演化方向——理解这个分层，是 PM 做 Agent 相关产品决策的前提。
     </p>
-    <div style="background:var(--bg-card2);border:1px solid rgba(246,173,85,0.25);border-radius:var(--radius-sm);padding:16px;">
+    <div style="background:var(--bg-card2);border:1px solid rgba(217,119,6,0.20);border-radius:var(--radius-sm);padding:16px;">
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
         <div>
           <div class="fw-name">OpenClaw</div>
@@ -625,7 +625,7 @@ body {
           </div>
         </div>
       </div>
-      <div style="padding:10px 12px;background:rgba(159,122,234,0.05);border:1px solid rgba(159,122,234,0.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);line-height:1.7">
+      <div style="padding:10px 12px;background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);line-height:1.7">
         <strong style="color:var(--accent2)">PM 视角：</strong>与 LangGraph/CrewAI 的本质差异在于——后者是给工程师<em>构建</em> Agent 用的工具，OpenClaw 是<em>交付给终端用户直接运行</em>的产品。选择消息平台而非独立 App 作为界面，是刻意降低信任建立成本的设计决策：用户已经信任 WhatsApp，比接受一个新 App 的心理门槛低得多。它代表的不是框架选型问题，而是「Agent 如何从 B 端工具演化为 C 端个人助手」这个产品层命题。
       </div>
     </div>
@@ -730,22 +730,22 @@ body {
         <h4>① 单 Agent + 工具链</h4>
         <div class="topo-desc">最简路径，工具数 ≤5，单一目标任务</div>
         <svg viewBox="0 0 220 100" height="90">
-          <rect x="80" y="10" width="60" height="30" rx="6" fill="#1a1a2e" stroke="#63b3ed" stroke-width="1.5"/>
-          <text x="110" y="30" text-anchor="middle" fill="#63b3ed" font-size="11" font-weight="600">Agent</text>
-          <line x1="20" y1="60" x2="55" y2="60" stroke="#444" stroke-width="1.5"/>
-          <circle cx="15" cy="60" r="8" fill="#1a1a2e" stroke="#68d391" stroke-width="1.5"/>
-          <text x="15" y="64" text-anchor="middle" fill="#68d391" font-size="8">T</text>
-          <line x1="55" y1="60" x2="55" y2="40" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="75" y1="60" x2="110" y2="60" stroke="#444" stroke-width="1.5"/>
-          <rect x="65" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="75" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
-          <line x1="130" y1="60" x2="170" y2="60" stroke="#444" stroke-width="1.5"/>
-          <rect x="155" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="165" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
-          <line x1="185" y1="60" x2="205" y2="60" stroke="#444" stroke-width="1.5"/>
-          <rect x="195" y="52" width="20" height="16" rx="3" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="205" y="63" text-anchor="middle" fill="#9f7aea" font-size="7">工具</text>
-          <text x="110" y="88" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：目标明确的单步任务</text>
+          <rect x="80" y="10" width="60" height="30" rx="6" fill="#f1f3f8" stroke="#2563eb" stroke-width="1.5"/>
+          <text x="110" y="30" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="600">Agent</text>
+          <line x1="20" y1="60" x2="55" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
+          <circle cx="15" cy="60" r="8" fill="#f1f3f8" stroke="#059669" stroke-width="1.5"/>
+          <text x="15" y="64" text-anchor="middle" fill="#059669" font-size="8">T</text>
+          <line x1="55" y1="60" x2="55" y2="40" stroke="#2563eb" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="75" y1="60" x2="110" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
+          <rect x="65" y="52" width="20" height="16" rx="3" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="75" y="63" text-anchor="middle" fill="#7c3aed" font-size="7">工具</text>
+          <line x1="130" y1="60" x2="170" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
+          <rect x="155" y="52" width="20" height="16" rx="3" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="165" y="63" text-anchor="middle" fill="#7c3aed" font-size="7">工具</text>
+          <line x1="185" y1="60" x2="205" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
+          <rect x="195" y="52" width="20" height="16" rx="3" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="205" y="63" text-anchor="middle" fill="#7c3aed" font-size="7">工具</text>
+          <text x="110" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">适合：目标明确的单步任务</text>
         </svg>
       </div>
 
@@ -754,18 +754,18 @@ body {
         <h4>② 主-从编排（Hub &amp; Spoke）</h4>
         <div class="topo-desc">有中央协调者，子任务可并行，适合统一质控</div>
         <svg viewBox="0 0 220 110" height="100">
-          <rect x="80" y="5" width="60" height="28" rx="6" fill="#1a1a2e" stroke="#63b3ed" stroke-width="1.5"/>
-          <text x="110" y="23" text-anchor="middle" fill="#63b3ed" font-size="10" font-weight="600">Orchestrator</text>
-          <line x1="50" y1="72" x2="90" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="110" y1="72" x2="110" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="170" y1="72" x2="130" y2="33" stroke="#63b3ed" stroke-width="1" stroke-dasharray="3,2"/>
-          <rect x="20" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="50" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent A</text>
-          <rect x="80" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="110" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent B</text>
-          <rect x="140" y="65" width="60" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="170" y="81" text-anchor="middle" fill="#9f7aea" font-size="10">Agent C</text>
-          <text x="110" y="103" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：需要统一质控的复杂任务</text>
+          <rect x="80" y="5" width="60" height="28" rx="6" fill="#f1f3f8" stroke="#2563eb" stroke-width="1.5"/>
+          <text x="110" y="23" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="600">Orchestrator</text>
+          <line x1="50" y1="72" x2="90" y2="33" stroke="#2563eb" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="110" y1="72" x2="110" y2="33" stroke="#2563eb" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="170" y1="72" x2="130" y2="33" stroke="#2563eb" stroke-width="1" stroke-dasharray="3,2"/>
+          <rect x="20" y="65" width="60" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="50" y="81" text-anchor="middle" fill="#7c3aed" font-size="10">Agent A</text>
+          <rect x="80" y="65" width="60" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="110" y="81" text-anchor="middle" fill="#7c3aed" font-size="10">Agent B</text>
+          <rect x="140" y="65" width="60" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="170" y="81" text-anchor="middle" fill="#7c3aed" font-size="10">Agent C</text>
+          <text x="110" y="103" text-anchor="middle" fill="#94a3b8" font-size="9">适合：需要统一质控的复杂任务</text>
         </svg>
       </div>
 
@@ -774,17 +774,17 @@ body {
         <h4>③ 对等协作（Peer-to-Peer）</h4>
         <div class="topo-desc">Agent 互相审查/辩论，创作/决策类任务</div>
         <svg viewBox="0 0 220 110" height="100">
-          <rect x="10" y="35" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="39" y="52" text-anchor="middle" fill="#9f7aea" font-size="10">写作 Agent</text>
-          <rect x="152" y="35" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="181" y="52" text-anchor="middle" fill="#9f7aea" font-size="10">审查 Agent</text>
-          <rect x="81" y="65" width="58" height="26" rx="5" fill="#1a1a2e" stroke="#68d391" stroke-width="1.5"/>
-          <text x="110" y="82" text-anchor="middle" fill="#68d391" font-size="10">决策 Agent</text>
-          <line x1="68" y1="48" x2="152" y2="48" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#arr)"/>
-          <line x1="152" y1="53" x2="68" y2="53" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <line x1="68" y1="58" x2="93" y2="65" stroke="#9f7aea" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="152" y1="58" x2="127" y2="65" stroke="#9f7aea" stroke-width="1" stroke-dasharray="3,2"/>
-          <text x="110" y="103" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：创作/高风险决策任务</text>
+          <rect x="10" y="35" width="58" height="26" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="39" y="52" text-anchor="middle" fill="#7c3aed" font-size="10">写作 Agent</text>
+          <rect x="152" y="35" width="58" height="26" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="181" y="52" text-anchor="middle" fill="#7c3aed" font-size="10">审查 Agent</text>
+          <rect x="81" y="65" width="58" height="26" rx="5" fill="#f1f3f8" stroke="#059669" stroke-width="1.5"/>
+          <text x="110" y="82" text-anchor="middle" fill="#059669" font-size="10">决策 Agent</text>
+          <line x1="68" y1="48" x2="152" y2="48" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="152" y1="53" x2="68" y2="53" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <line x1="68" y1="58" x2="93" y2="65" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="152" y1="58" x2="127" y2="65" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="110" y="103" text-anchor="middle" fill="#94a3b8" font-size="9">适合：创作/高风险决策任务</text>
         </svg>
       </div>
 
@@ -793,21 +793,21 @@ body {
         <h4>④ 流水线（Pipeline）</h4>
         <div class="topo-desc">线性流程，每步产出是下步输入，内容生产管线</div>
         <svg viewBox="0 0 220 90" height="80">
-          <rect x="5" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="27" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">采集</text>
-          <line x1="49" y1="42" x2="60" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
-          <polygon points="60,38 68,42 60,46" fill="#63b3ed"/>
-          <rect x="68" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="90" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">处理</text>
-          <line x1="112" y1="42" x2="123" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
-          <polygon points="123,38 131,42 123,46" fill="#63b3ed"/>
-          <rect x="131" y="30" width="44" height="24" rx="5" fill="#1a1a2e" stroke="#9f7aea" stroke-width="1.5"/>
-          <text x="153" y="46" text-anchor="middle" fill="#9f7aea" font-size="9">生成</text>
-          <line x1="175" y1="42" x2="186" y2="42" stroke="#63b3ed" stroke-width="1.5"/>
-          <polygon points="186,38 194,42 186,46" fill="#63b3ed"/>
-          <rect x="194" y="30" width="22" height="24" rx="5" fill="#1a1a2e" stroke="#f6ad55" stroke-width="1.5"/>
-          <text x="205" y="46" text-anchor="middle" fill="#f6ad55" font-size="8">审核</text>
-          <text x="110" y="78" text-anchor="middle" fill="rgba(240,240,248,0.4)" font-size="9">适合：内容生产、数据处理管线</text>
+          <rect x="5" y="30" width="44" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="27" y="46" text-anchor="middle" fill="#7c3aed" font-size="9">采集</text>
+          <line x1="49" y1="42" x2="60" y2="42" stroke="#2563eb" stroke-width="1.5"/>
+          <polygon points="60,38 68,42 60,46" fill="#2563eb"/>
+          <rect x="68" y="30" width="44" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="90" y="46" text-anchor="middle" fill="#7c3aed" font-size="9">处理</text>
+          <line x1="112" y1="42" x2="123" y2="42" stroke="#2563eb" stroke-width="1.5"/>
+          <polygon points="123,38 131,42 123,46" fill="#2563eb"/>
+          <rect x="131" y="30" width="44" height="24" rx="5" fill="#f1f3f8" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="153" y="46" text-anchor="middle" fill="#7c3aed" font-size="9">生成</text>
+          <line x1="175" y1="42" x2="186" y2="42" stroke="#2563eb" stroke-width="1.5"/>
+          <polygon points="186,38 194,42 186,46" fill="#2563eb"/>
+          <rect x="194" y="30" width="22" height="24" rx="5" fill="#f1f3f8" stroke="#d97706" stroke-width="1.5"/>
+          <text x="205" y="46" text-anchor="middle" fill="#d97706" font-size="8">审核</text>
+          <text x="110" y="78" text-anchor="middle" fill="#94a3b8" font-size="9">适合：内容生产、数据处理管线</text>
         </svg>
       </div>
 

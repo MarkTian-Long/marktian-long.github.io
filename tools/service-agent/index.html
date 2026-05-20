@@ -16,15 +16,15 @@ const CONFIG = {
 <style>
 /* ===== 颜色常量（不依赖外部 CSS 变量） ===== */
 :root {
-  --sa-bg:       #080c18;
-  --sa-surface:  #0d1224;
-  --sa-card:     #111827;
-  --sa-border:   rgba(255,255,255,0.08);
-  --sa-text:     #f0f4ff;
-  --sa-muted:    #8a95b5;
-  --sa-dimmed:   #4a5270;
-  --sa-accent:   #4f8fff;
-  --sa-hover:    rgba(255,255,255,0.05);
+  --sa-bg:       #f8f9fc;
+  --sa-surface:  #ffffff;
+  --sa-card:     #f1f3f8;
+  --sa-border:   rgba(0,0,0,0.08);
+  --sa-text:     #1e293b;
+  --sa-muted:    #64748b;
+  --sa-dimmed:   #94a3b8;
+  --sa-accent:   #2563eb;
+  --sa-hover:    rgba(37,99,235,0.05);
 }
 
 /* ===== 基础 ===== */
@@ -113,21 +113,21 @@ html, body {
 .flow-svg { width: 100%; flex-shrink: 0; }
 
 /* 流程图节点状态 */
-.fn-group.idle .fn-rect    { fill: #111827; stroke: rgba(255,255,255,0.1); }
-.fn-group.routing .fn-rect { fill: rgba(251,191,36,.12); stroke: #fbbf24; stroke-width: 2; }
-.fn-group.active .fn-rect  { fill: rgba(79,143,255,.18); stroke: #4f8fff; stroke-width: 2; }
-.fn-group.done .fn-rect    { fill: rgba(34,197,94,.12); stroke: #22c55e; stroke-width: 1.5; }
-.fn-group.escalated .fn-rect { fill: rgba(239,68,68,.12); stroke: #ef4444; stroke-width: 2; }
-.fn-text { font-size: 11px; fill: #8a95b5; font-family: sans-serif; transition: all .3s; }
-.fn-group.routing .fn-text { fill: #fbbf24; }
-.fn-group.active .fn-text  { fill: #93c5fd; }
-.fn-group.done .fn-text    { fill: #86efac; }
-.fn-group.escalated .fn-text { fill: #fca5a5; }
+.fn-group.idle .fn-rect    { fill: #f1f3f8; stroke: rgba(0,0,0,0.1); }
+.fn-group.routing .fn-rect { fill: rgba(217,119,6,.10); stroke: #d97706; stroke-width: 2; }
+.fn-group.active .fn-rect  { fill: rgba(37,99,235,.12); stroke: #2563eb; stroke-width: 2; }
+.fn-group.done .fn-rect    { fill: rgba(5,150,105,.10); stroke: #059669; stroke-width: 1.5; }
+.fn-group.escalated .fn-rect { fill: rgba(220,38,38,.10); stroke: #dc2626; stroke-width: 2; }
+.fn-text { font-size: 11px; fill: #64748b; font-family: sans-serif; transition: all .3s; }
+.fn-group.routing .fn-text { fill: #92400e; }
+.fn-group.active .fn-text  { fill: #1d4ed8; }
+.fn-group.done .fn-text    { fill: #065f46; }
+.fn-group.escalated .fn-text { fill: #991b1b; }
 
 /* 连接线动画 */
 @keyframes dash-flow { to { stroke-dashoffset: -20; } }
-.flow-line { stroke: rgba(255,255,255,0.1); stroke-width: 1.5; fill: none; transition: stroke .3s; }
-.flow-line.active { stroke: #4f8fff; stroke-dasharray: 5 3; animation: dash-flow .6s linear infinite; }
+.flow-line { stroke: rgba(0,0,0,0.12); stroke-width: 1.5; fill: none; transition: stroke .3s; }
+.flow-line.active { stroke: #2563eb; stroke-dasharray: 5 3; animation: dash-flow .6s linear infinite; }
 
 /* ===== 中间聊天面板 ===== */
 .chat-panel {
@@ -162,15 +162,15 @@ html, body {
 .step-card-name { font-weight: 600; color: var(--sa-text); font-size: 12px; }
 .step-card-badge {
   font-size: 10px; padding: 1px 7px; border-radius: 10px;
-  background: rgba(79,143,255,.2); color: #4f8fff;
+  background: rgba(37,99,235,.12); color: #2563eb;
 }
-.step-card-badge.mock { background: rgba(251,191,36,.15); color: #fbbf24; }
-.step-card-badge.hitl { background: rgba(239,68,68,.15); color: #ef4444; }
+.step-card-badge.mock { background: rgba(217,119,6,.12); color: #92400e; }
+.step-card-badge.hitl { background: rgba(220,38,38,.12); color: #dc2626; }
 .step-card.running .step-card-name::after { content: ' …'; animation: blink 1s infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .step-card-body { color: var(--sa-muted); line-height: 1.5; }
 .step-card-body pre {
-  background: rgba(0,0,0,.25); border-radius: 4px; padding: 6px; margin-top: 4px;
+  background: rgba(0,0,0,.04); border-radius: 4px; padding: 6px; margin-top: 4px;
   font-size: 11px; white-space: pre-wrap; word-break: break-all; color: var(--sa-muted);
 }
 
@@ -233,15 +233,15 @@ html, body {
 .asp-agent-name { font-size: 11px; font-weight: 600; color: var(--sa-text); margin-bottom: 2px; }
 .asp-agent-status { font-size: 10px; color: var(--sa-muted); display: flex; align-items: center; gap: 4px; }
 .asp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sa-border); flex-shrink: 0; transition: all .3s; }
-.asp-agent.routing .asp-dot  { background: #fbbf24; }
-.asp-agent.active .asp-dot   { background: #4f8fff; animation: pulse-dot .8s infinite; }
-.asp-agent.done .asp-dot     { background: #22c55e; }
-.asp-agent.escalated .asp-dot { background: #ef4444; animation: pulse-dot .8s infinite; }
+.asp-agent.routing .asp-dot  { background: #d97706; }
+.asp-agent.active .asp-dot   { background: #2563eb; animation: pulse-dot .8s infinite; }
+.asp-agent.done .asp-dot     { background: #059669; }
+.asp-agent.escalated .asp-dot { background: #dc2626; animation: pulse-dot .8s infinite; }
 @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .7; } }
-.asp-agent.routing { background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.3); }
-.asp-agent.active  { background: rgba(79,143,255,.08); border-color: rgba(79,143,255,.3); }
-.asp-agent.done    { background: rgba(34,197,94,.06); border-color: rgba(34,197,94,.2); }
-.asp-agent.escalated { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.3); }
+.asp-agent.routing { background: rgba(217,119,6,.07); border-color: rgba(217,119,6,.25); }
+.asp-agent.active  { background: rgba(37,99,235,.08); border-color: rgba(37,99,235,.25); }
+.asp-agent.done    { background: rgba(5,150,105,.07); border-color: rgba(5,150,105,.2); }
+.asp-agent.escalated { background: rgba(220,38,38,.07); border-color: rgba(220,38,38,.25); }
 
 /* 运行日志 */
 .asp-log { margin-top: 8px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
@@ -251,10 +251,10 @@ html, body {
   font-size: 10px; color: var(--sa-muted); flex: 1; overflow-y: auto;
   font-family: monospace; line-height: 1.6; min-height: 60px;
 }
-.log-line.info  { color: #93c5fd; }
-.log-line.ok    { color: #86efac; }
-.log-line.warn  { color: #fbbf24; }
-.log-line.error { color: #fca5a5; }
+.log-line.info  { color: #1d4ed8; }
+.log-line.ok    { color: #065f46; }
+.log-line.warn  { color: #92400e; }
+.log-line.error { color: #991b1b; }
 
 /* ===== 静态 Tab 内容 ===== */
 .static-tab { padding: 4px 0; max-width: 900px; }
@@ -266,7 +266,7 @@ html, body {
 .section-card p, .section-card li { font-size: 13px; color: var(--sa-muted); line-height: 1.7; }
 .section-card ul { padding-left: 18px; }
 .section-card strong { color: var(--sa-text); }
-.section-card code { background: rgba(79,143,255,.1); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.section-card code { background: rgba(37,99,235,.08); color: #1d4ed8; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
 
 /* 意图路由卡片 */
 .intent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -275,13 +275,13 @@ html, body {
 .intent-icon { font-size: 20px; }
 .intent-name { font-size: 13px; font-weight: 700; color: var(--sa-text); }
 .intent-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
-.intent-badge.faq       { background: rgba(34,197,94,.15); color: #22c55e; }
-.intent-badge.logistics { background: rgba(79,143,255,.15); color: #93c5fd; }
-.intent-badge.return    { background: rgba(251,191,36,.15); color: #fbbf24; }
-.intent-badge.complaint { background: rgba(239,68,68,.15); color: #ef4444; }
+.intent-badge.faq       { background: rgba(5,150,105,.12); color: #065f46; }
+.intent-badge.logistics { background: rgba(37,99,235,.12); color: #1d4ed8; }
+.intent-badge.return    { background: rgba(217,119,6,.12); color: #92400e; }
+.intent-badge.complaint { background: rgba(220,38,38,.12); color: #991b1b; }
 .intent-keywords { font-size: 11px; color: var(--sa-muted); margin-bottom: 8px; }
 .intent-chain { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.chain-node { font-size: 10px; padding: 3px 8px; border-radius: 12px; background: rgba(79,143,255,.1); color: #93c5fd; border: 1px solid rgba(79,143,255,.2); }
+.chain-node { font-size: 10px; padding: 3px 8px; border-radius: 12px; background: rgba(37,99,235,.08); color: #1d4ed8; border: 1px solid rgba(37,99,235,.18); }
 .chain-arrow { font-size: 10px; color: var(--sa-dimmed); }
 
 /* Agent 图谱 */
@@ -295,7 +295,7 @@ html, body {
 .agent-card-label { font-size: 10px; color: var(--sa-dimmed); min-width: 28px; }
 .agent-card-val { font-size: 11px; color: var(--sa-muted); }
 .agent-prompt {
-  margin-top: 8px; background: rgba(0,0,0,.2); border-radius: 6px; padding: 8px;
+  margin-top: 8px; background: rgba(0,0,0,.04); border-radius: 6px; padding: 8px;
   font-size: 10px; color: var(--sa-muted); font-family: monospace;
   white-space: pre-wrap; max-height: 90px; overflow-y: auto;
 }
@@ -303,7 +303,7 @@ html, body {
 /* 治理表格 */
 .gov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .gov-table th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--sa-border); color: var(--sa-muted); font-weight: 600; font-size: 11px; }
-.gov-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--sa-muted); }
+.gov-table td { padding: 8px 10px; border-bottom: 1px solid rgba(0,0,0,.04); color: var(--sa-muted); }
 .gov-table tr:last-child td { border-bottom: none; }
 
 /* 飞轮 */
