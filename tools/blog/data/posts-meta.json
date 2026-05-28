@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "human-ai-boundary-shift",
+      "date": "2026.05",
+      "title": "从模糊到确定：人机边界是怎么移动的",
+      "summary": "技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。这篇从一套反复救火的数据管道出发，回答边界由什么决定、为什么移动速度因场景而异，以及产品层面需要显式设计哪两个维度。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "category": "商业",
+      "url": "posts/human-ai-boundary-shift.html"
+    },
+    {
       "slug": "training-vs-inference",
       "date": "2026.05",
       "title": "训练和推理，是两件不同的事",

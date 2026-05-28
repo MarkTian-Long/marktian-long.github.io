@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<!--
+date:    2026.05
+title:   从模糊到确定：人机边界是怎么移动的
+tags:    [决策框架]
+topics:  [Agent]
+slug:    human-ai-boundary-shift
+summary: 技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。这篇从一套反复"救火"的数据管道出发，回答边界由什么决定、为什么移动速度因场景而异，以及产品层面需要显式设计哪两个维度。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>从模糊到确定：人机边界是怎么移动的 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="从模糊到确定：人机边界是怎么移动的" />
+  <meta property="og:description" content="技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="从模糊到确定：人机边界是怎么移动的" />
+  <meta name="twitter:description" content="技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+      margin: 40px 0 14px;
+      padding-left: 10px; border-left: 3px solid var(--accent);
+      line-height: 1.35;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+  /* 双栏布局 */
+  .page-outer { max-width: 1008px; margin: 0 auto; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc-wrap { position: sticky; top: 40px; }
+  .toc-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .toc-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .toc-list { list-style: none; margin: 0; padding: 0; }
+  .toc-list li { margin: 0; }
+  .toc-list a {
+    display: block;
+    padding: 5px 8px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc-list a:hover,
+  .toc-list a.toc-active {
+    color: var(--clay);
+    border-left-color: var(--clay);
+    background: var(--clay-soft);
+    border-radius: 4px;
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+    .toc-wrap { display: none; }
+  }
+  /* 相关文章 */
+  .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+  .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+  .related-item:hover .related-item-title { color: var(--clay); }
+  .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+  .related-item-title { font-size: .9rem; color: var(--text-1); }
+  /* 上下篇导航 */
+  .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+  .post-nav-next { align-items: flex-end; margin-left: auto; }
+  .nav-label { font-size: .75rem; color: var(--text-2); }
+  .nav-title { font-size: .875rem; color: var(--text-1); }
+  .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-system">一个反复维护的系统</a></li>
+          <li><a href="#sec-convergence">任务执行是收敛过程</a></li>
+          <li><a href="#sec-where">边界卡在哪里</a></li>
+          <li><a href="#sec-speed">技术能力与验证速度</a></li>
+          <li><a href="#sec-cost">边界失控的代价</a></li>
+          <li><a href="#sec-future">人的介入形式在变</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.05</span>
+      <span id="post-tags"></span>
+    </div>
+    <h1 class="post-title">从模糊到确定：人机边界是怎么移动的</h1>
+    <p class="post-summary"><a href="https://marktian-long.github.io/tools/blog/posts/agent-vs-workflow.html">上一篇</a>回答了"工作流和 Agent 是什么"。在这个基础上，这篇回答"Agent 执行任务时实际在做什么"——任务怎么从模糊变成确定，每一步的判断权该交给谁，这个边界由什么决定、又会怎么移动。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <h2 id="sec-system" style="scroll-margin-top:60px">一个让我反复维护的系统</h2>
+    <p>在某金融科技公司做 AI 产品的时候，我们搭过一套数据采集和处理的流程：人工定义要抓取哪些数据源、对应哪些网站，采集完之后按照预先写好的清洗规则处理，最后存入指定的数据仓库。意图分类那一层，我们用模型来判断——这条数据该走哪个处理路径。但路径本身是人写死的，清洗规则也是人维护的。</p>
+    <p>这套系统就是工作流。但它暴露的问题让我开始想一个更底层的问题：上游一个数据源改了字段格式，或者新增了一个数据类型，下游依赖这个节点的所有分支路径都要人工排查和更新。分支数量一多，维护成本不是线性增长，是指数级的。团队花了大量时间做的不是产品迭代，而是在"救火"——每次上游变动都要重新梳理一遍下游的分支逻辑。</p>
+    <p>这个维护成本，是一个更基本问题的症状：<strong>分支路径必须由人提前预设</strong>，系统没有能力自己处理没见过的情况。这条线——人必须提前结构化的边界——就是当时这套系统里人机边界的实际位置。</p>
+
+    <h2 id="sec-convergence" style="scroll-margin-top:60px">任务执行是一个收敛过程</h2>
+    <p>要回答边界由什么决定，需要先看清楚 Agent 执行任务的过程本身是什么结构。</p>
+    <p>不管是工作流还是 Agent，任务执行的过程本质上都是把一个开放的问题逐步变成确定的执行步骤。输入端越模糊，系统需要做的判断就越多；输出端越结构化，执行的确定性就越高。工作流和 Agent 不是两种东西，而是这个收敛过程里自主程度不同的两种实现方式：工作流把收敛的路径提前写死，Agent 在运行时动态生成路径。</p>
+    <p>我们的数据管道就是典型的工作流：意图分类节点用模型做判断，但后续路径是人预设好的——模型参与了收敛的早期，但收敛的主要工作还是由人提前完成的。</p>
+    <p>这个视角有一个重要的推论：工作流在确定性任务上往往比 Agent 更可靠，因为它引入的不确定性更少。在任务边界清晰的场景下，把路径提前写死反而是优势，不是局限。</p>
+
+    <h2 id="sec-where" style="scroll-margin-top:60px">边界卡在哪里，由什么决定</h2>
+    <p>理解了收敛过程，人机边界的问题就可以更精确地表述：<strong>在收敛过程里，哪些判断节点该由人来控制？</strong></p>
+    <p>现阶段的答案，基本可以归结为一条线：能被提前结构化的部分交给机器，不能被结构化的部分还得人来兜底。我们的数据管道卡在"分支预设权"——不是模型判断不了意图，而是"意图之后走哪条路"还没有办法让模型自己决定，必须人来提前定义好每一种可能性。</p>
+    <p>但这条线不是固定的。机器能参与结构化的深度在增加——那么，增加的速度由什么决定？</p>
+
+    <h2 id="sec-speed" style="scroll-margin-top:60px">技术能力是上限，验证反馈循环是速度</h2>
+    <p>Claude Code 的权限设计演化直接回答了这个问题。</p>
+    <p>早期版本里，Claude Code 对每一个文件编辑操作都要用户逐个确认。这个设计很保守，但 Anthropic 有意为之——<a href="https://www.techradar.com/pro/anthropic-gives-claude-code-new-auto-mode-which-lets-it-choose-its-own-permissions">官方承认</a>，默认权限是"刻意保守的"，因为他们发现有开发者为了效率直接使用 <code>--dangerously-skip-permissions</code> 绕过所有确认，而这在生产环境里有严重的数据安全风险。</p>
+    <p>后来 Anthropic 推出了 Auto Mode：<a href="https://smartscope.blog/en/generative-ai/claude/claude-code-auto-permission-guide/">用一个基于 Sonnet 的分类器对每次工具调用评估风险</a>，安全操作自动批准，危险操作（批量删除文件、数据泄露风险、恶意代码执行等）直接拦截，不再需要用户逐个点确认。</p>
+    <p>注意这个演化路径：模型执行文件编辑的能力，从一开始就有。但边界后移不是靠发布一个更强的模型触发的，而是靠用户行为数据——大量用户"逐个点同意"的行为，验证了在这个场景里模型判断的可靠性，Anthropic 才顺势把这个节点的控制权交给了分类器。</p>
+    <p><strong>技术能力划定了边界能移到哪里的上限，真实场景里的验证-反馈循环决定边界实际移动的速度。</strong>没有技术能力，信任无从建立；技术能力到位了，信任也不会自动到位，需要在真实场景里被反复验证、修正、再验证。</p>
+    <p>这个机制也解释了为什么同样的模型能力，在不同场景里边界位置不一样。据报道，众安保险的<a href="https://www.xhby.net/content/s69eb37f8e4b0680f6d541894.html">健康险自动化审核比例已超过 45%</a>，但剩下的 55% 依然有人介入。高频标准件（资料齐全、案例类型常见）天然构成高频低风险场景，验证循环跑得快，边界移动也快；剩下的低频复杂案件，验证数据积累慢，边界还没到位。</p>
+
+    <h2 id="sec-cost" style="scroll-margin-top:60px">边界失控的代价，以及 Agent 和自动驾驶的关键差异</h2>
+    <p>这个机制和自动驾驶的分级放权高度同构。自动驾驶的 L1 到 L5，每一级都代表着人把更多的判断权交给系统——从辅助转向，到自动跟车，到特定路况免手动，到完全无人驾驶。每一级的跨越，不是靠技术发布会宣布，而是靠大量真实里程的验证数据积累，加上监管机构的认证，才完成的。</p>
+    <p>Tesla 的案例提供了一个反面参照。据分析，<a href="https://www.notateslaapp.com/news/3383/tesla-introduces-early-eyes-off-feature-allows-to-text-and-drive">Tesla 在放开"眼离"功能时</a>，技术行为上已接近 L3 的自主程度，但有观点认为它没有正式申请 L3 认证，也没有承担对应的责任。结果是技术能力和信任边界之间产生了缺口：系统给了用户不看路的自由，但用户依然承担全部风险。当技术能力跑得太快、验证还没跟上的时候，这个缺口会变成真实的事故。</p>
+    <p>Agent 领域也有类似的教训，而且两个案例指向不同维度的问题。</p>
+    <p>第一个是<strong>不可逆操作的边界失控</strong>。2025 年 7 月，<a href="https://www.ninetwothree.co/blog/ai-fails">某创业公司在"代码冻结"期间让一个自主编码 Agent 做例行维护，Agent 无视明确指令执行了 DROP DATABASE 命令，删除了生产数据库</a>。事后 Agent 还伪造了系统日志试图掩盖。这个案例说明的是：不可逆操作如果没有单独设计确认机制，验证失败的代价是无法回头的。</p>
+    <p>第二个是<strong>低风险越权的边界模糊</strong>。<a href="https://thefuturesociety.org/us-ai-incident-response/">2025 年 2 月，一个 Agent 被要求查询鸡蛋价格，结果在没有任何用户确认的情况下直接完成了购买</a>。这不是高风险操作，但它越出了用户授权的范围。即使单次操作代价不大，边界模糊本身就是问题——用户无法预测 Agent 会在哪里停下来。</p>
+    <p>两个案例的共通之处是：边界没设好，都不是因为模型能力不够，而是判断权在没有经过充分验证的情况下提前交出去了。</p>
+    <p>这里有一个自动驾驶类比里容易被忽略的关键差异：自动驾驶的"重要节点"是物理世界定义的——红灯、行人、路口，这些判断节点是客观存在的，相对容易形成共识，也相对容易被监管标准化。但 Agent 的判断节点是任务定义的：不同的业务场景、不同的风险偏好、不同的数据敏感程度，节点在哪里完全不一样。这意味着人机边界本身需要被产品化，没有通用答案可以直接套用。</p>
+    <p>具体来说，至少有两个维度需要在产品层面显式设计：一是<strong>可逆性</strong>，能撤销的操作（文件编辑、草稿生成）和不可逆的操作（发送邮件、提交订单、删除数据库）需要完全不同的确认机制；二是<strong>验证频率</strong>，高频低风险的任务可以快速积累信任、缩短确认链，低频高风险的任务则需要更长的验证周期，不能用前者的经验套后者。</p>
+
+    <h2 id="sec-future" style="scroll-margin-top:60px">人不会退场，但介入形式会一直在变</h2>
+    <p>我对这个方向的判断是确定的：边界会持续后移。模型能力在提高，验证工具在成熟，企业对 Agent 行为的可审计性要求也在倒逼产品把边界设计做得更精细。</p>
+    <p>但我对速度没有把握。<a href="https://www.theregister.com/2025/06/29/ai_agents_fail_a_lot/">卡内基梅隆大学 2025 年的研究显示</a>，表现最好的模型在真实工作场景里也只能独立完成约 30% 的任务。完成率低意味着很多任务类型还没有积累足够的成功样本，验证循环就无从跑完——边界自然也移动不了。</p>
+    <p>更确定的是：边界后移不等于人的退场，而是人的介入形式在持续升级。从人逐条维护分支规则（执行层兜底），到人逐个确认每一步操作（确认层把关），到用分类器替代人工确认（确认层自动化），到加一个审查 Agent 做最后兜底（监督层部分自动化）。每一步都在把更多的结构化工作交给机器，但验证责任从来没有消失，只是承载它的方式在变。</p>
+
+    <div class="callout">
+      <strong>判断边界设计的两个维度：</strong>可逆性决定确认机制的严格程度，验证频率决定信任积累的速度。在这两个维度上做出明确设计之前，"让 Agent 自主决策"不是进步，是风险前置。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><a href="https://marktian-long.github.io/tools/blog/posts/agent-vs-workflow.html">你叫它智能体，但它可能只是个工作流</a> — Leo 的思考碎片</li>
+        <li><a href="https://www.techradar.com/pro/anthropic-gives-claude-code-new-auto-mode-which-lets-it-choose-its-own-permissions">Anthropic gives Claude Code new 'auto mode' which lets it choose its own permissions</a> — TechRadar</li>
+        <li><a href="https://smartscope.blog/en/generative-ai/claude/claude-code-auto-permission-guide/">Claude Code Auto Approve Guide (2026)</a> — SmartScope</li>
+        <li><a href="https://www.notateslaapp.com/news/3383/tesla-introduces-early-eyes-off-feature-allows-to-text-and-drive">Tesla Introduces Early Eyes-Off Feature; Allows to Text and Drive</a> — Not a Tesla App</li>
+        <li><a href="https://www.ninetwothree.co/blog/ai-fails">The Biggest AI Fails of 2025</a> — NineTwoThree</li>
+        <li><a href="https://thefuturesociety.org/us-ai-incident-response/">AI Incidents Are Rising</a> — The Future Society</li>
+        <li><a href="https://www.theregister.com/2025/06/29/ai_agents_fail_a_lot/">AI agents wrong ~70% of time: Carnegie Mellon study</a> — The Register</li>
+        <li><a href="https://www.xhby.net/content/s69eb37f8e4b0680f6d541894.html">2026金融AI应用报告：智能风控理赔投顾三大场景深度评测</a> — 新华报业</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'human-ai-boundary-shift',
+  tags: [],
+  topics: [],
+  category: '商业'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
+  // 相关文章推荐
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  // 上下篇导航
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>
