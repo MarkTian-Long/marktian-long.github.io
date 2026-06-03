@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "perplexity-analysis",
+      "date": "2026.06",
+      "title": "Perplexity：做对了产品，但站错了位置",
+      "summary": "它在正确的时间解决了真实的问题，技术路径也没走错。但独立 AI 搜索这个品类本身，正在被一股更大的力量压缩——这篇拆解它的产品决策逻辑，以及结构性困境从哪里来。",
+      "tags": [
+        "竞争判断"
+      ],
+      "topics": [
+        "产品设计"
+      ],
+      "category": "产品",
+      "url": "posts/perplexity-analysis.html"
+    },
+    {
       "slug": "human-ai-boundary-shift",
       "date": "2026.05",
       "title": "从模糊到确定：人机边界是怎么移动的",
