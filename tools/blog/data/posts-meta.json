@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "llm-saas-moat-disruption",
+      "date": "2026.06",
+      "title": "AI coding 之后，哪些 B 端 SaaS 会死，哪些会活",
+      "summary": "LLM 让自研成本暴跌，动摇了“买不如建”的传统假设；但这个冲击是分化的——功能薄、行业知识浅的 B 端 SaaS 面临被替代压力，而深度沉淀了行业流程知识的产品，护城河在重构而非消失。",
+      "tags": [
+        "市场格局"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "category": "商业",
+      "url": "posts/llm-saas-moat-disruption.html"
+    },
+    {
       "slug": "perplexity-analysis",
       "date": "2026.06",
       "title": "Perplexity：做对了产品，但站错了位置",
