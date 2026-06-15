@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "spacex-ai-infrastructure-valuation",
+      "date": "2026.06",
+      "title": "一份招股书里，两种不同节奏的“AI”",
+      "summary": "SpaceX 招股书把 AI 写成了估值核心—26.5万亿的TAM里AI占92.9%。但拆开其中最可验证的一角（AI基础设施，2.4万亿），会发现这个标签下装着两种验证节奏完全不同的东西：一层已签合同、有审计数字，另一层招股书自己写着「技术未经证实」。两层被压进同一个数字，这个数字描述的就不再是现在，而是一种把未来提前折算进当下的计价方式。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "算力基础设施"
+      ],
+      "category": "商业",
+      "url": "posts/spacex-ai-infrastructure-valuation.html"
+    },
+    {
       "slug": "llm-saas-moat-disruption",
       "date": "2026.06",
       "title": "AI coding 之后，哪些 B 端 SaaS 会死，哪些会活",
