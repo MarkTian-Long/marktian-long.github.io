@@ -373,6 +373,16 @@ category: 商业
       color: var(--clay);
       opacity: 0.8;
     }
+    .tam-group-hint td { padding: 3px 12px; border-bottom: none; background: transparent !important; }
+    .tam-group-label {
+      font-size: 11px;
+      color: var(--text-3);
+      font-style: italic;
+      padding-left: 28px;
+    }
+    .tam-group-hint:hover td { background: transparent !important; }
+    /* 让 AI基础设施 badge 和 本文聚焦 label 保持同行 */
+    .focus-label { white-space: nowrap; }
 
     /* ── 两层对比表格 ── */
     .col-teal { color: #2a9d8f !important; }
@@ -585,17 +595,22 @@ category: 商业
           AI
         </td>
         <td class="tam-value">26.5 万亿美元</td>
-        <td class="tam-desc">占总 TAM 92.9%</td>
+        <td class="tam-desc">占总 TAM 92.9%；其余约 7.1% 为招股书其他分类</td>
+      </tr>
+      <tr class="tam-group-hint">
+        <td class="tam-level"></td>
+        <td colspan="3" class="tam-group-label">
+          <span class="tam-indent2"></span>↓ 以下四项为 AI（26.5 万亿）的内部拆解
+        </td>
       </tr>
       <tr class="tam-l3 tam-focus">
         <td class="tam-level">第三层</td>
         <td class="tam-item">
           <span class="tam-indent2"></span>
           <span class="badge badge-amber">AI 基础设施</span>
-          <span class="focus-label">本文聚焦</span>
         </td>
         <td class="tam-value">2.4 万亿美元</td>
-        <td class="tam-desc">占 AI 的约 9%</td>
+        <td class="tam-desc">占 AI 的约 9%&nbsp;&nbsp;<span class="focus-label">本文聚焦</span></td>
       </tr>
       <tr class="tam-l3">
         <td class="tam-level">第三层</td>
