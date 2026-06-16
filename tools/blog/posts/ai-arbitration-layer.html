@@ -250,13 +250,35 @@ category: 产品
     .badge-coral {
       background: var(--c-coral-bg); color: var(--c-coral); border: 1px solid var(--c-coral-bd);
     }
-
-    /* ── 图表2：SVG 定位图 ── */
-    .chart-svg-wrap {
-      padding: 20px 16px 12px;
-      background: var(--bg-card);
+    .badge-amber {
+      background: var(--c-amber-bg); color: var(--c-amber); border: 1px solid var(--c-amber-bd);
     }
-    .chart-svg-wrap svg { width: 100%; height: auto; display: block; }
+    .badge-blue {
+      background: var(--c-blue-bg); color: var(--c-blue); border: 1px solid var(--c-blue-bd);
+    }
+
+    /* ── 图表2：产品定位表格 ── */
+    .landscape-table td:first-child { white-space: nowrap; }
+    .lp-dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; margin-right: 6px; vertical-align: middle; flex-shrink: 0;
+    }
+    .lp-predict-row td {
+      background: var(--bg-subtle);
+      border-top: 1px dashed var(--border) !important;
+      color: var(--text-3);
+      font-size: 12px;
+      font-style: italic;
+      padding: 10px 12px;
+    }
+    .lp-predict-label {
+      display: inline-block;
+      font-size: 10px; font-weight: 600; font-style: normal;
+      padding: 2px 7px; border-radius: 20px; margin-right: 8px;
+      border: 1px dashed var(--border);
+      color: var(--text-3); background: transparent;
+      vertical-align: middle; white-space: nowrap;
+    }
   </style>
 </head>
 <body data-theme="light">
@@ -377,102 +399,50 @@ category: 产品
     <!-- 图表2：二维定位图 -->
     <div class="chart-block" id="proactive-arbitration-landscape">
       <div class="chart-note-top">以下案例均为早期项目，定位基于公开介绍归纳，非效果数据</div>
-      <div class="chart-svg-wrap">
-        <!--
-          坐标系规划（viewBox 0 0 680 420）：
-          绘图区：x: 80~640, y: 20~320  (宽560, 高300)
-          横轴：y=320, x=80→640  → 右=B端·组织化，左=C端·个人化
-          纵轴：x=80, y=320→20   → 上=对用户可见，下=对用户隐形
-          四角象限标注放在绘图区四角（灰色小字）
-          轴标签放在轴末端箭头旁
-          节点坐标（绘图区内）：
-            Thennote:  C端(左)·隐形(下)  → x=140, y=280
-            Oki Home:  C端(左)·稍高       → x=170, y=235
-            Nominal:   B端(右)·可见(上)   → x=510, y=95
-            Slack:     B端(右)·最高可见   → x=575, y=60
-          虚线框覆盖4节点: x=110~600, y=45~300
-          预测文字（框外空白区，左侧中央偏上）: x=240~380, y=130~155
-        -->
-        <svg viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="主动仲裁产品二维定位图">
-          <defs>
-            <marker id="arrowH" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-              <path d="M0,0 L7,3.5 L0,7 Z" fill="currentColor" opacity="0.35"/>
-            </marker>
-            <marker id="arrowV" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
-              <path d="M0,7 L3.5,0 L7,7 Z" fill="currentColor" opacity="0.35"/>
-            </marker>
-          </defs>
-
-          <!-- 轴中线淡网格（帮助阅读象限） -->
-          <line x1="360" y1="20" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.06" stroke-width="1" stroke-dasharray="4 4"/>
-          <line x1="80" y1="170" x2="640" y2="170" stroke="currentColor" stroke-opacity="0.06" stroke-width="1" stroke-dasharray="4 4"/>
-
-          <!-- 横轴（应用场景：左=C端 右=B端） -->
-          <line x1="80" y1="320" x2="638" y2="320"
-                stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"
-                marker-end="url(#arrowH)"/>
-          <!-- 纵轴（可见性：下=隐形 上=可见） -->
-          <line x1="80" y1="320" x2="80" y2="22"
-                stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"
-                marker-end="url(#arrowV)"/>
-
-          <!-- 横轴标签：左端 C端·个人化，右端 B端·组织化 -->
-          <text x="82" y="338" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">C端·个人化</text>
-          <text x="560" y="338" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">B端·组织化</text>
-          <!-- 横轴中心标题 -->
-          <text x="360" y="352" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.35" font-family="sans-serif">← 应用场景 →</text>
-
-          <!-- 纵轴标签：旋转，放在轴左侧 -->
-          <!-- 上端：对用户可见 -->
-          <text transform="translate(14,20) rotate(90)" text-anchor="start" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">对用户可见、需要解释 ↑</text>
-          <!-- 下端：对用户隐形 -->
-          <text transform="translate(14,280) rotate(90)" text-anchor="end" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">对用户隐形、自动发生 ↓</text>
-
-          <!-- 四角象限提示（极浅） -->
-          <text x="88" y="38" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">C端·可见</text>
-          <text x="570" y="38" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">B端·可见</text>
-          <text x="88" y="312" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">C端·隐形</text>
-          <text x="570" y="312" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">B端·隐形</text>
-
-          <!-- 虚线框：圈出4个真实案例节点 -->
-          <rect x="110" y="45" width="490" height="262"
-                fill="none"
-                stroke="currentColor" stroke-opacity="0.2"
-                stroke-width="1.5" stroke-dasharray="6 4"
-                rx="8"/>
-          <text x="120" y="63" font-size="10" fill="currentColor" opacity="0.38" font-family="sans-serif">现状：单点产品设计或人工搭建的仲裁</text>
-
-          <!-- 节点1：Thennote — C端·隐形(左下) — teal -->
-          <circle cx="148" cy="278" r="9" fill="#2a9d8f" opacity="0.88"/>
-          <text x="163" y="274" font-size="12" font-weight="600" fill="#2a9d8f" font-family="sans-serif">Thennote</text>
-          <text x="163" y="287" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">主动Agent驱动的AI工作空间</text>
-
-          <!-- 节点2：Oki Home — C端·稍高(隐形偏中) — amber -->
-          <circle cx="188" cy="232" r="9" fill="#e9a84c" opacity="0.88"/>
-          <text x="203" y="228" font-size="12" font-weight="600" fill="#e9a84c" font-family="sans-serif">Oki Home</text>
-          <text x="203" y="241" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">本地个人助理，持续记忆</text>
-
-          <!-- 节点3：Nominal — B端·可见(右上) — coral，标签放左侧避开Slack -->
-          <circle cx="510" cy="98" r="9" fill="#e76f51" opacity="0.88"/>
-          <text x="380" y="88" font-size="12" font-weight="600" fill="#e76f51" font-family="sans-serif">Nominal</text>
-          <text x="368" y="101" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">Transaction Patrol</text>
-          <text x="368" y="114" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">财务持续监控agent</text>
-          <!-- 连接线：标签→节点 -->
-          <line x1="499" y1="96" x2="468" y2="101" stroke="#e76f51" stroke-opacity="0.25" stroke-width="1" stroke-dasharray="3 2"/>
-
-          <!-- 节点4：Slack多agent — B端·最高可见(右上偏右) — blue -->
-          <circle cx="578" cy="62" r="9" fill="#4f8fff" opacity="0.88"/>
-          <text x="520" y="50" font-size="12" font-weight="600" fill="#4f8fff" font-family="sans-serif">Slack 多agent</text>
-          <text x="506" y="63" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">多个agent通知汇总到IM</text>
-
-          <!-- 预测性提示（虚线框外，左侧中央偏上的空白区） -->
-          <rect x="88" y="120" width="152" height="38"
-                fill="none" stroke="currentColor" stroke-opacity="0.12"
-                stroke-width="1" stroke-dasharray="3 3" rx="4"/>
-          <text x="164" y="137" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.25" font-family="sans-serif" font-style="italic">统一仲裁层？</text>
-          <text x="164" y="151" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif" font-style="italic">（预测，尚未出现）</text>
-        </svg>
-      </div>
+      <table class="chart-table landscape-table">
+        <thead>
+          <tr>
+            <th>产品</th>
+            <th>应用场景</th>
+            <th>仲裁层可见性</th>
+            <th>产品描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lp-dot" style="background:#2a9d8f"></span><strong style="color:var(--c-teal)">Thennote</strong></td>
+            <td><span class="badge badge-teal">C端·个人化</span></td>
+            <td><span class="badge badge-teal">低可见·隐形</span></td>
+            <td>主动Agent驱动的AI工作空间，自动选择模型和工具，用户无需感知切换</td>
+          </tr>
+          <tr>
+            <td><span class="lp-dot" style="background:#e9a84c"></span><strong style="color:var(--c-amber)">Oki Home</strong></td>
+            <td><span class="badge badge-teal">C端·个人化</span></td>
+            <td><span class="badge badge-amber">低可见·半主动</span></td>
+            <td>本地个人助理，持续记忆个人上下文，主动替用户行动，数据留本地</td>
+          </tr>
+          <tr>
+            <td><span class="lp-dot" style="background:#e76f51"></span><strong style="color:var(--c-coral)">Nominal</strong></td>
+            <td><span class="badge badge-coral">B端·组织化</span></td>
+            <td><span class="badge badge-coral">高可见·可追溯</span></td>
+            <td>财务持续监控agent，全程标记异常并附可审查依据，判断过程对团队可见</td>
+          </tr>
+          <tr>
+            <td><span class="lp-dot" style="background:#4f8fff"></span><strong style="color:var(--c-blue)">Slack 多agent</strong></td>
+            <td><span class="badge badge-blue">B端·组织化</span></td>
+            <td><span class="badge badge-blue">高可见·人工汇总</span></td>
+            <td>将多个agent通知汇总到IM，由人扫描判断优先级，编排规则需手动配置</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="lp-predict-row">
+            <td colspan="4">
+              <span class="lp-predict-label">预测（尚未出现）</span>
+              统一仲裁层：横跨C/B端、由AI自动判断优先级并递交给用户的独立软件层——目前四个案例均停留在各自象限内，尚无此类产品出现
+            </td>
+          </tr>
+        </tfoot>
+      </table>
       <div class="chart-caption">四个案例目前分布在各自象限，尚未出现横跨C/B端、统一承担排序功能的产品——"仲裁层"目前是预测，不是已存在的东西</div>
     </div>
 
