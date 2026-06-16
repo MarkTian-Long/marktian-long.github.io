@@ -378,84 +378,99 @@ category: 产品
     <div class="chart-block" id="proactive-arbitration-landscape">
       <div class="chart-note-top">以下案例均为早期项目，定位基于公开介绍归纳，非效果数据</div>
       <div class="chart-svg-wrap">
-        <svg viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="主动仲裁产品二维定位图">
+        <!--
+          坐标系规划（viewBox 0 0 680 420）：
+          绘图区：x: 80~640, y: 20~320  (宽560, 高300)
+          横轴：y=320, x=80→640  → 右=B端·组织化，左=C端·个人化
+          纵轴：x=80, y=320→20   → 上=对用户可见，下=对用户隐形
+          四角象限标注放在绘图区四角（灰色小字）
+          轴标签放在轴末端箭头旁
+          节点坐标（绘图区内）：
+            Thennote:  C端(左)·隐形(下)  → x=140, y=280
+            Oki Home:  C端(左)·稍高       → x=170, y=235
+            Nominal:   B端(右)·可见(上)   → x=510, y=95
+            Slack:     B端(右)·最高可见   → x=575, y=60
+          虚线框覆盖4节点: x=110~600, y=45~300
+          预测文字（框外空白区，左侧中央偏上）: x=240~380, y=130~155
+        -->
+        <svg viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="主动仲裁产品二维定位图">
           <defs>
-            <!-- 虚线框用于圈出4个真实案例 -->
+            <marker id="arrowH" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <path d="M0,0 L7,3.5 L0,7 Z" fill="currentColor" opacity="0.35"/>
+            </marker>
+            <marker id="arrowV" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+              <path d="M0,7 L3.5,0 L7,7 Z" fill="currentColor" opacity="0.35"/>
+            </marker>
           </defs>
 
-          <!-- 坐标轴背景网格线（淡） -->
-          <line x1="60" y1="40" x2="60" y2="340" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
-          <line x1="620" y1="40" x2="620" y2="340" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
-          <line x1="60" y1="190" x2="620" y2="190" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
+          <!-- 轴中线淡网格（帮助阅读象限） -->
+          <line x1="360" y1="20" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.06" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="80" y1="170" x2="640" y2="170" stroke="currentColor" stroke-opacity="0.06" stroke-width="1" stroke-dasharray="4 4"/>
 
-          <!-- 横轴 -->
-          <line x1="60" y1="340" x2="620" y2="340" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" marker-end="url(#ah)"/>
-          <!-- 纵轴 -->
-          <line x1="340" y1="360" x2="340" y2="30" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" marker-end="url(#av)"/>
+          <!-- 横轴（应用场景：左=C端 右=B端） -->
+          <line x1="80" y1="320" x2="638" y2="320"
+                stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"
+                marker-end="url(#arrowH)"/>
+          <!-- 纵轴（可见性：下=隐形 上=可见） -->
+          <line x1="80" y1="320" x2="80" y2="22"
+                stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"
+                marker-end="url(#arrowV)"/>
 
-          <!-- 箭头 marker -->
-          <defs>
-            <marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" opacity="0.3"/>
-            </marker>
-            <marker id="av" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" opacity="0.3"/>
-            </marker>
-          </defs>
+          <!-- 横轴标签：左端 C端·个人化，右端 B端·组织化 -->
+          <text x="82" y="338" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">C端·个人化</text>
+          <text x="560" y="338" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">B端·组织化</text>
+          <!-- 横轴中心标题 -->
+          <text x="360" y="352" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.35" font-family="sans-serif">← 应用场景 →</text>
 
-          <!-- 轴标签 -->
-          <!-- 横轴两端 -->
-          <text x="68" y="362" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">C端·个人化</text>
-          <text x="510" y="362" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">B端·组织化</text>
-          <!-- 纵轴两端 -->
-          <text x="350" y="44" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">对用户可见、需要解释</text>
-          <text x="350" y="356" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif" dy="-328">对用户隐形、自动发生</text>
-          <!-- 纵轴下方标签单独处理 -->
-          <text x="350" y="328" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">对用户隐形、自动发生</text>
+          <!-- 纵轴标签：旋转，放在轴左侧 -->
+          <!-- 上端：对用户可见 -->
+          <text transform="translate(14,20) rotate(90)" text-anchor="start" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">对用户可见、需要解释 ↑</text>
+          <!-- 下端：对用户隐形 -->
+          <text transform="translate(14,280) rotate(90)" text-anchor="end" font-size="11" fill="currentColor" opacity="0.5" font-family="sans-serif">对用户隐形、自动发生 ↓</text>
+
+          <!-- 四角象限提示（极浅） -->
+          <text x="88" y="38" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">C端·可见</text>
+          <text x="570" y="38" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">B端·可见</text>
+          <text x="88" y="312" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">C端·隐形</text>
+          <text x="570" y="312" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif">B端·隐形</text>
 
           <!-- 虚线框：圈出4个真实案例节点 -->
-          <!-- 覆盖范围：x 80~580, y 60~310，稍留余量 -->
-          <rect x="78" y="58" width="502" height="256"
+          <rect x="110" y="45" width="490" height="262"
                 fill="none"
-                stroke="currentColor" stroke-opacity="0.22"
+                stroke="currentColor" stroke-opacity="0.2"
                 stroke-width="1.5" stroke-dasharray="6 4"
                 rx="8"/>
-          <!-- 虚线框标签 -->
-          <text x="90" y="76" font-size="10" fill="currentColor" opacity="0.4" font-family="sans-serif">现状：单点产品设计或人工搭建的仲裁</text>
+          <text x="120" y="63" font-size="10" fill="currentColor" opacity="0.38" font-family="sans-serif">现状：单点产品设计或人工搭建的仲裁</text>
 
-          <!-- 节点1：Thennote — 左下 (C端、隐形) — teal -->
-          <!-- 坐标：x≈140, y≈290 -->
-          <circle cx="140" cy="290" r="9" fill="#2a9d8f" opacity="0.85"/>
-          <text x="155" y="287" font-size="12" font-weight="600" fill="#2a9d8f" font-family="sans-serif">Thennote</text>
-          <text x="155" y="301" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">主动Agent驱动的AI工作空间</text>
+          <!-- 节点1：Thennote — C端·隐形(左下) — teal -->
+          <circle cx="148" cy="278" r="9" fill="#2a9d8f" opacity="0.88"/>
+          <text x="163" y="274" font-size="12" font-weight="600" fill="#2a9d8f" font-family="sans-serif">Thennote</text>
+          <text x="163" y="287" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">主动Agent驱动的AI工作空间</text>
 
-          <!-- 节点2：Oki Home — 左下偏中 (C端，稍高) — amber -->
-          <!-- 坐标：x≈185, y≈248 -->
-          <circle cx="185" cy="248" r="9" fill="#e9a84c" opacity="0.85"/>
-          <text x="200" y="245" font-size="12" font-weight="600" fill="#e9a84c" font-family="sans-serif">Oki Home</text>
-          <text x="200" y="259" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">本地个人助理，持续记忆</text>
+          <!-- 节点2：Oki Home — C端·稍高(隐形偏中) — amber -->
+          <circle cx="188" cy="232" r="9" fill="#e9a84c" opacity="0.88"/>
+          <text x="203" y="228" font-size="12" font-weight="600" fill="#e9a84c" font-family="sans-serif">Oki Home</text>
+          <text x="203" y="241" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">本地个人助理，持续记忆</text>
 
-          <!-- 节点3：Nominal — 右上 (B端、可见) — coral -->
-          <!-- 坐标：x≈490, y≈110 -->
-          <circle cx="490" cy="110" r="9" fill="#e76f51" opacity="0.85"/>
-          <text x="430" y="96" font-size="12" font-weight="600" fill="#e76f51" font-family="sans-serif">Nominal</text>
-          <text x="418" y="110" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">Transaction Patrol</text>
-          <text x="420" y="124" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">财务持续监控agent</text>
+          <!-- 节点3：Nominal — B端·可见(右上) — coral，标签放左侧避开Slack -->
+          <circle cx="510" cy="98" r="9" fill="#e76f51" opacity="0.88"/>
+          <text x="380" y="88" font-size="12" font-weight="600" fill="#e76f51" font-family="sans-serif">Nominal</text>
+          <text x="368" y="101" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">Transaction Patrol</text>
+          <text x="368" y="114" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">财务持续监控agent</text>
+          <!-- 连接线：标签→节点 -->
+          <line x1="499" y1="96" x2="468" y2="101" stroke="#e76f51" stroke-opacity="0.25" stroke-width="1" stroke-dasharray="3 2"/>
 
-          <!-- 节点4：Slack多agent — 右上偏右 (B端、最高可见) — blue -->
-          <!-- 坐标：x≈555, y≈80 -->
-          <circle cx="555" cy="80" r="9" fill="#4f8fff" opacity="0.85"/>
-          <text x="490" y="68" font-size="12" font-weight="600" fill="#4f8fff" font-family="sans-serif">Slack 多agent</text>
-          <text x="490" y="82" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">将多个agent通知汇总到IM</text>
+          <!-- 节点4：Slack多agent — B端·最高可见(右上偏右) — blue -->
+          <circle cx="578" cy="62" r="9" fill="#4f8fff" opacity="0.88"/>
+          <text x="520" y="50" font-size="12" font-weight="600" fill="#4f8fff" font-family="sans-serif">Slack 多agent</text>
+          <text x="506" y="63" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">多个agent通知汇总到IM</text>
 
-          <!-- 预测性提示文字（非节点，虚线框外，中心偏右偏上） -->
-          <!-- 位置：图中心偏右偏上方空白区，x≈340, y≈170 -->
-          <text x="285" y="168" font-size="11" fill="currentColor" opacity="0.28" font-family="sans-serif" font-style="italic">统一仲裁层？</text>
-          <text x="285" y="182" font-size="10" fill="currentColor" opacity="0.22" font-family="sans-serif" font-style="italic">（预测，尚未出现）</text>
-          <!-- 预测性虚线边框 -->
-          <rect x="278" y="155" width="148" height="36"
-                fill="none" stroke="currentColor" stroke-opacity="0.15"
+          <!-- 预测性提示（虚线框外，左侧中央偏上的空白区） -->
+          <rect x="88" y="120" width="152" height="38"
+                fill="none" stroke="currentColor" stroke-opacity="0.12"
                 stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+          <text x="164" y="137" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.25" font-family="sans-serif" font-style="italic">统一仲裁层？</text>
+          <text x="164" y="151" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.2" font-family="sans-serif" font-style="italic">（预测，尚未出现）</text>
         </svg>
       </div>
       <div class="chart-caption">四个案例目前分布在各自象限，尚未出现横跨C/B端、统一承担排序功能的产品——"仲裁层"目前是预测，不是已存在的东西</div>
