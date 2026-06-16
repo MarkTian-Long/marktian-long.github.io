@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<!--
+date:    2026.06
+title:   当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层
+tags:    [决策框架]
+topics:  [Agent]
+slug:    ai-arbitration-layer
+summary: AI对软件的改变不会停在"AI能自己搞定一切"。它会停在一个更现实的位置——AI主动发现问题、把决策权递到你面前，你来拍板。但这个变化本身会催生一种新的软件形态：专门负责排序和过滤这些"AI主动请求"的层，它可能比下一代agent的能力本身更值得关注。
+category: 产品
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层" />
+  <meta property="og:description" content="AI主动性渗透到哪里会停下，以及当所有软件都开始"主动"之后，会催生一种专门负责排序AI请求的新软件层。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层" />
+  <meta name="twitter:description" content="AI主动性渗透到哪里会停下，以及当所有软件都开始"主动"之后，会催生一种专门负责排序AI请求的新软件层。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+      /* 图表专用色 */
+      --c-teal:      #2a9d8f;
+      --c-teal-bg:   rgba(42,157,143,0.12);
+      --c-teal-bd:   rgba(42,157,143,0.35);
+      --c-amber:     #e9a84c;
+      --c-amber-bg:  rgba(233,168,76,0.12);
+      --c-amber-bd:  rgba(233,168,76,0.35);
+      --c-coral:     #e76f51;
+      --c-coral-bg:  rgba(231,111,81,0.12);
+      --c-coral-bd:  rgba(231,111,81,0.35);
+      --c-blue:      #4f8fff;
+      --c-blue-bg:   rgba(79,143,255,0.12);
+      --c-blue-bd:   rgba(79,143,255,0.35);
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+      --c-teal:      #1a7a6e;
+      --c-teal-bg:   rgba(26,122,110,0.10);
+      --c-teal-bd:   rgba(26,122,110,0.30);
+      --c-amber:     #b87d1a;
+      --c-amber-bg:  rgba(184,125,26,0.10);
+      --c-amber-bd:  rgba(184,125,26,0.30);
+      --c-coral:     #c85533;
+      --c-coral-bg:  rgba(200,85,51,0.10);
+      --c-coral-bd:  rgba(200,85,51,0.30);
+      --c-blue:      #2563eb;
+      --c-blue-bg:   rgba(37,99,235,0.08);
+      --c-blue-bd:   rgba(37,99,235,0.25);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-2); text-decoration: none; font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px; padding: 3px 9px; border-radius: 20px;
+      background: var(--tag-bg); color: var(--tag-text); font-weight: 500;
+    }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
+      font-family: var(--font-serif); font-size: 26px; font-weight: 700;
+      line-height: 1.35; color: var(--text-1); margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px; color: var(--text-2); line-height: 1.65;
+      padding-left: 14px; border-left: 3px solid var(--clay);
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .post-body h2 {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+      margin: 40px 0 14px; padding-left: 10px; border-left: 3px solid var(--accent);
+      line-height: 1.35;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a { color: var(--accent); text-decoration: none; }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body code {
+      background: var(--code-bg); padding: 2px 6px;
+      border-radius: 4px; font-size: 0.88em;
+    }
+    .callout {
+      background: var(--clay-soft); border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius); padding: 16px 18px; margin: 24px 0;
+      font-size: 14px; color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .refs h2 {
+      font-size: 13px !important; font-weight: 600; color: var(--text-3) !important;
+      text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 12px !important;
+      border-left: none !important; padding-left: 0 !important;
+    }
+    .refs ul { padding-left: 0; list-style: none; }
+    .refs li { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+    .refs a { color: var(--text-3) !important; text-decoration: none; }
+    .refs a:hover { color: var(--clay) !important; text-decoration: underline !important; }
+
+    /* 顶栏 */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; cursor: pointer; color: var(--text-3);
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 48px; align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3); display: block; margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block; padding: 5px 8px; color: var(--text-2); text-decoration: none;
+      font-size: 0.85rem; line-height: 1.4; border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover, .toc-list a.toc-active {
+      color: var(--clay); border-left-color: var(--clay);
+      background: var(--clay-soft); border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+
+    /* 相关文章 / 上下篇 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+
+    /* ── 图表公共 ── */
+    .chart-block {
+      margin: 28px 0 32px; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; font-size: 13px;
+    }
+    .chart-note-top {
+      background: var(--bg-subtle); color: var(--text-3); font-size: 11px;
+      padding: 6px 14px; border-bottom: 1px solid var(--border); letter-spacing: 0.03em;
+    }
+    .chart-caption {
+      background: var(--bg-subtle); color: var(--text-3); font-size: 11px;
+      padding: 6px 14px; border-top: 1px solid var(--border);
+    }
+
+    /* ── 图表1：对比表格 ── */
+    .chart-table { width: 100%; border-collapse: collapse; }
+    .chart-table th {
+      background: var(--bg-card); color: var(--text-2); font-size: 11px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border);
+    }
+    .chart-table td {
+      padding: 10px 12px; border-bottom: 1px solid var(--border);
+      color: var(--text-1); vertical-align: middle;
+    }
+    .chart-table tr:last-child td { border-bottom: none; }
+    .chart-table tr:hover td { background: var(--bg-subtle); }
+    .row-label { font-weight: 600; white-space: nowrap; }
+    .row-sub { display: block; font-size: 11px; color: var(--text-3); font-weight: 400; margin-top: 2px; }
+    .badge {
+      display: inline-block; font-size: 11px; padding: 3px 9px;
+      border-radius: 20px; font-weight: 500; vertical-align: middle;
+    }
+    .badge-teal {
+      background: var(--c-teal-bg); color: var(--c-teal); border: 1px solid var(--c-teal-bd);
+    }
+    .badge-coral {
+      background: var(--c-coral-bg); color: var(--c-coral); border: 1px solid var(--c-coral-bd);
+    }
+
+    /* ── 图表2：SVG 定位图 ── */
+    .chart-svg-wrap {
+      padding: 20px 16px 12px;
+      background: var(--bg-card);
+    }
+    .chart-svg-wrap svg { width: 100%; height: auto; display: block; }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-1">"AI从被动到主动"已经不需要再证明</a></li>
+          <li><a href="#sec-2">L1到L5分级，没回答这个问题</a></li>
+          <li><a href="#sec-3">AI的"主动"和推荐算法不是一回事</a></li>
+          <li><a href="#sec-4">同一种"主动"，在C端和B端长得不一样</a></li>
+          <li><a href="#sec-5">当"判断"本身变得拥挤，谁来排序？</a></li>
+          <li><a href="#sec-6">有些地方，这条路径可能走不到头</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.06</span>
+      <span id="post-tags"></span>
+    </div>
+    <h1 class="post-title">当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层</h1>
+    <p class="post-summary">AI对软件的改变，我认为不会停在"AI能自己搞定一切"（行业常说的L5自主）。它会停在一个更现实的位置——AI主动发现问题、把决策权递到你面前，你来拍板。但这个变化本身会催生一种新的软件形态：专门负责排序和过滤这些"AI主动请求"的层，它可能比下一代agent的能力本身更值得关注。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <p>最近半年我用各种AI工具时，养成了一个习惯：遇到一个具体需求，先问"有没有现成的skill能用"。这个动作本身值得停下来想一想——市面上的skill已经多到没法自己一个个去查，我把"找到合适工具"这个判断，外包给了大模型。</p>
+    <p>这个外包动作目前还是我主动发起的。但我隐约觉得，这只是个过渡状态——参考prompt engineering这几年的变化（早期写prompt要"扮演角色+列限制"，现在只需要描述需求，模型自己会推断该用什么"角色画像"去处理），skill这件事很可能也会走向同一个终点：不是我变得更会用skill，而是"该用什么"这个判断本身，从我手里转移到了系统手里，我甚至不需要意识到它发生了。</p>
+    <p>这个转移——<strong>"判断该做什么"这件事的发起权，从人转移到AI</strong>——我觉得是理解AI对软件行业影响的一个更小、但更准确的观察单位。</p>
+
+    <h2 id="sec-1" style="scroll-margin-top:60px">一、"AI从被动到主动"已经不需要再证明</h2>
+    <p>从ChatGPT开始的"聊天功能"到单点任务提效，再到agent执行长链条任务，这条演进路径本身在2026年已经被反复讨论。<a href="https://curiouscompass.substack.com/p/ambient-ai-enterprise-invisible-ai-agents">ambient agent（环境智能体）被认为是2026年企业AI的核心叙事</a>，<a href="https://blog.buildbetter.ai/ai-agents-that-watch-you-work-how-personal-ai-learns-from-observation-in-2026/">观察式AI也被认为已经取代基于提示的聊天机器人，成为2026年个人AI的代表性类别</a>——不再等待提示，而是持续观察上下文，主动把洞察呈现给你。学术界也在研究这个转变本身怎么实现，<a href="https://arxiv.org/html/2605.24900v1">一篇被ACL 2026接收的论文专门研究agent该如何学会判断"什么时候主动行动、行动是否及时"</a>。</p>
+    <p>国内也有类似方向的探索：据中文科技媒体报道，<a href="https://zhuanlan.zhihu.com/p/9739863725">清华大学联合面壁智能提出了"主动Agent交互范式"</a>，通过构建环境模拟器和ProactiveBench数据集，尝试让agent从"被动接受指令"转向"主动观察环境、预判用户需求"。</p>
+    <p>这一层判断我不打算重复展开，它已经是行业共识而非预测。我想往前走一步的问题是：这个"主动"渗透到什么程度会停下来，以及当所有软件都开始"主动"之后，会发生什么。</p>
+
+    <h2 id="sec-2" style="scroll-margin-top:60px">二、agent自主性的"L1到L5"，其实没回答这个问题</h2>
+    <p>agent autonomy领域有一套已经成型的分级方式：<a href="https://arxiv.org/pdf/2602.17753">操作者→协作者→顾问→审批者→观察者（对应L1到L5）</a>——一个agent该被授予多大的自主权，从"完全听指令"到"自己定目标、自己干"。国内一些介绍ambient agent的文章里，"审批者"这一层也被称为"<a href="https://www.53ai.com/news/langchain/2025012131054.html">审核模式</a>"：agent先把方案准备好，用户只需要确认或拒绝。</p>
+    <p>我自己琢磨这个问题时，第一反应也是往"自动驾驶分级"这个方向类比——后来发现行业里已经有几乎一样的提法，这至少说明这个类比不是凭空想出来的，但也说明它本身不算新鲜。</p>
+    <p>但这套框架问的是<strong>单个agent</strong>的问题："这一个AI，我该给它多大权限"。它没回答的是：当世界上同时存在成百上千个L2、L3、L4级别的agent/skill，每一个都觉得自己有事要向你汇报、有判断需要你拍板时——<strong>谁来决定"现在哪件事最该被你看到"？</strong></p>
+    <p>开头说的skill例子，其实已经有真实产品在往这个方向走。<a href="https://zhuanlan.zhihu.com/p/2047380758130582982">奇绩创坛2026年春季路演里有一个叫Thennote的项目</a>，介绍里写的是"用户不需要理解不同模型和工具的适用边界，也不需要在多个AI产品之间切换"——系统会根据任务自动选择合适的模型和工具。这正是我设想的终态："该用什么"这个判断，已经不需要我来发起了。当然这是一个刚路演完的早期项目，产品形态和效果都还没经过市场验证，但它说明这个方向上已经有人在做。</p>
+    <p>这是一个发生在agent之上的、元层面的问题。我后面想说的"主动性渗透到哪里会停下"和"会催生什么新东西"，答案都和这个元层面问题有关——而且这个渗透不会是均匀的，后面会展开说它在什么地方会停下来，以及为什么。</p>
+
+    <h2 id="sec-3" style="scroll-margin-top:60px">三、AI的"主动"，和推荐算法的"主动推送"不是一回事</h2>
+    <p>这里需要先做一个区分，否则容易把"AI主动找你"等同于"推荐算法变强了"。</p>
+    <p>推荐算法的逻辑是被动响应+统计相关性。前提是你已经打开了App——交互发起权始终在人手里，算法只是在"货架"上重新排序。逻辑上你随时可以选择不打开App。</p>
+    <p>AI预测需求的逻辑不同：它基于对当前任务/状态的推理，判断"此刻有件事需要你介入"。它改变的不是"展示什么"，而是<strong>"交互什么时候发生"</strong>。终局形态下，你能控制的是"如何响应"，不是"是否被找到"。</p>
+    <p>这是发起权本身的转移，不是排序精度的提升——程度上的差异最终会变成性质上的差异。</p>
+    <p>这种发起权转移会以什么形态出现，在C端和B端并不一样——这是下一节要讨论的。</p>
+
+    <h2 id="sec-4" style="scroll-margin-top:60px">四、同一种"主动"，在C端和B端长得不一样</h2>
+    <p>C端场景下，这种"主动"大概率会是隐形基础设施。像skill自动加载这种判断，用户最终可能感觉不到这个层存在。</p>
+    <p>B端可能反过来，需要更强的可见性和可追溯性。一个早期苗头的例子在财务/审计场景：<a href="https://nominal.so/blog/anomaly-detection-agent/">据一家财务工具厂商介绍</a>，他们的产品让agent全程跑在每个账户上，持续标记异常，在问题刚出现、上下文还新鲜、修复成本还低的时候就被处理，把审计准备从周期性的"救火"变成持续的"控制"。</p>
+    <p>这类场景下，agent的"主动"不会是隐形的——财务团队需要知道"为什么这条被标记了""数据来源是什么"，判断过程本身要可见、可回溯。这和我自己在金融数据处理里的经验是一致的：核心要求是准确和合规，合规的前提之一就是过程可追溯。<strong>所以B端的"主动"，更可能表现为"系统持续在跑、持续在标记，但每一次标记都带着可审查的依据"，而不是"系统悄悄把事情都办了"</strong>。</p>
+    <p>下面这张表对比一下这两种场景下"主动"的不同表现：</p>
+
+    <!-- 图表1：C/B端仲裁对比表格 -->
+    <div class="chart-block" id="cb-arbitration-comparison">
+      <div class="chart-note-top">以下为本文对两种场景下"主动"形态的归纳，非行业统一分类</div>
+      <table class="chart-table">
+        <thead>
+          <tr>
+            <th>场景</th>
+            <th>仲裁层可见性</th>
+            <th>核心约束</th>
+            <th>典型早期案例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="row-label">C端</span>
+              <span class="row-sub">个人场景</span>
+            </td>
+            <td><span class="badge badge-teal">低可见</span></td>
+            <td>流畅自然，少打扰</td>
+            <td>Thennote、Oki Home</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="row-label">B端</span>
+              <span class="row-sub">企业、组织场景</span>
+            </td>
+            <td><span class="badge badge-coral">高可见</span></td>
+            <td>可追溯、合规留痕</td>
+            <td>Nominal 持续监控</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="chart-caption">可见性高低取决于该场景下判断过程是否需要被审查，而非技术实现难度差异——C端的"隐形"不代表更简单，B端的"可见"也不代表更复杂。</div>
+    </div>
+
+    <p>这两种形态——C端的隐形和B端的可追溯——目前都还只是单点产品内部的设计选择。当这些主动的判断从单个产品扩散到你日常接触的所有软件时，第二节提出的那个元层面问题就会变得现实起来。</p>
+
+    <h2 id="sec-5" style="scroll-margin-top:60px">五、当"判断"本身变得拥挤，谁来排序？</h2>
+    <p>回到第二节提出的元层面问题。</p>
+    <p>这个问题成立的前提，是agent的数量会持续增长到"拥挤"的程度。<a href="https://zhuanlan.zhihu.com/p/2047380758130582982">奇绩创坛创始人陆奇在2026年春季路演开场提到</a>，以Claude Code为代表的能动性智能体已经能独立操作各类认知工具，认知工作的边际成本正在趋近于零——如果这个判断方向是对的，意味着获得一个agent的门槛会持续走低，每个人面对的agent数量会从个位数变成两位数、三位数。</p>
+    <p>这里有一层值得说清楚的因果：agent的数量可以随着开发成本下降几乎无限增长，但你的注意力总量不会跟着增长。"被你看到"本身，会变成一种不会扩容的稀缺资源。</p>
+    <p>现在已经能看到一些早期形态：<a href="https://www.saastr.com/the-agent-orchestration-problem-how-we-wire-20-ai-agents-together-without-losing-our-minds/">有团队把多个agent的输出都汇总到一个IM工具里</a>，把它当作几十个agent的"神经系统"，扫一眼就能感知所有agent在做什么，不需要分别登录十几个独立的dashboard。<a href="https://www.computerworld.com/article/4153622/slacks-ai-updates-signal-shift-towards-agent-orchestration.html">据分析师解读</a>，Slack近期的一系列更新也在往这个方向重新定位自己——从协作工具转向agent协调任务的操作层，目标是连接流程、数据和应用的系统，而不是单点工具。</p>
+    <p>但目前这套方案本身是人工搭建的仲裁——是人配置好通知规则，人去IM里扫一眼。而且效果并不理想：<a href="https://www.builder.io/blog/ai-agent-orchestration">有从业者直接把当前的agent编排状态描述为"broken"</a>，点击通知后经常找不到该去哪个窗口，需要在多个终端和浏览器标签之间来回切换才能弄清楚是哪个agent需要介入、为什么需要。</p>
+    <p>C端也有早期尝试。<a href="https://hub.baai.ac.cn/view/55384">奇绩创坛同一届路演里，还有一个叫Oki Home的项目</a>，连接照片、文件、聊天记录、日程等个人数据，强调"持续理解、整理并记住个人上下文"，并"主动、个性化地替用户行动"，且数据留在本地。这类产品目前还是单点的个人助理，离"仲裁多个agent的请求"还有距离，同样是刚路演完、未经市场验证的早期项目——但有意思的是，前面提到的Thennote也来自这场路演，两个独立团队在差不多的时间点上不约而同地往类似方向走，这本身可能比单个案例更说明问题。</p>
+    <p>我倾向于认为，这个"仲裁"动作本身，最终会被AI化。现在是"人在IM里手动扫描+判断优先级"，下一步可能是"AI判断优先级，只把真正需要你拍板的东西递给你"。<strong>这个负责仲裁的层，如果真的出现，会成为新的软件入口</strong>——不是因为它功能多强大，而是因为它会是你和"成百上千个主动agent"之间唯一的接触面。"打开App"这个动作的意义会逐渐消失，取而代之的是"这个仲裁层决定了你今天会看到什么"。</p>
+    <p>这里可以再往前推一层：如果"被看到"是稀缺资源，而仲裁层掌握了这个资源的分配权，软件之间的竞争可能会发生一次错位——现在的竞争是争夺"用户主动打开App的频率"（日活、使用时长这类指标背后的逻辑），但如果交互发起权转移到仲裁层手里，竞争对象就会变成"能不能被仲裁层判断为'值得递给用户'"。某种意义上，仲裁层会变成新的流量入口，其他agent和软件，会变成在这个入口之下争取曝光的"内容"。这一层推论目前还没有明确的产品或市场证据支撑，更像是"如果前面的判断成立，顺着推下去会是什么样"——值得记在这里，但还不能当作已经发生的事实。</p>
+    <p>下面这张图把目前能看到的早期案例，放在两个维度上定位一下：</p>
+
+    <!-- 图表2：二维定位图 -->
+    <div class="chart-block" id="proactive-arbitration-landscape">
+      <div class="chart-note-top">以下案例均为早期项目，定位基于公开介绍归纳，非效果数据</div>
+      <div class="chart-svg-wrap">
+        <svg viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="主动仲裁产品二维定位图">
+          <defs>
+            <!-- 虚线框用于圈出4个真实案例 -->
+          </defs>
+
+          <!-- 坐标轴背景网格线（淡） -->
+          <line x1="60" y1="40" x2="60" y2="340" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
+          <line x1="620" y1="40" x2="620" y2="340" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
+          <line x1="60" y1="190" x2="620" y2="190" stroke="currentColor" stroke-opacity="0.08" stroke-width="1"/>
+
+          <!-- 横轴 -->
+          <line x1="60" y1="340" x2="620" y2="340" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" marker-end="url(#ah)"/>
+          <!-- 纵轴 -->
+          <line x1="340" y1="360" x2="340" y2="30" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" marker-end="url(#av)"/>
+
+          <!-- 箭头 marker -->
+          <defs>
+            <marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" opacity="0.3"/>
+            </marker>
+            <marker id="av" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" opacity="0.3"/>
+            </marker>
+          </defs>
+
+          <!-- 轴标签 -->
+          <!-- 横轴两端 -->
+          <text x="68" y="362" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">C端·个人化</text>
+          <text x="510" y="362" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">B端·组织化</text>
+          <!-- 纵轴两端 -->
+          <text x="350" y="44" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">对用户可见、需要解释</text>
+          <text x="350" y="356" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif" dy="-328">对用户隐形、自动发生</text>
+          <!-- 纵轴下方标签单独处理 -->
+          <text x="350" y="328" font-size="11" fill="currentColor" opacity="0.55" font-family="sans-serif">对用户隐形、自动发生</text>
+
+          <!-- 虚线框：圈出4个真实案例节点 -->
+          <!-- 覆盖范围：x 80~580, y 60~310，稍留余量 -->
+          <rect x="78" y="58" width="502" height="256"
+                fill="none"
+                stroke="currentColor" stroke-opacity="0.22"
+                stroke-width="1.5" stroke-dasharray="6 4"
+                rx="8"/>
+          <!-- 虚线框标签 -->
+          <text x="90" y="76" font-size="10" fill="currentColor" opacity="0.4" font-family="sans-serif">现状：单点产品设计或人工搭建的仲裁</text>
+
+          <!-- 节点1：Thennote — 左下 (C端、隐形) — teal -->
+          <!-- 坐标：x≈140, y≈290 -->
+          <circle cx="140" cy="290" r="9" fill="#2a9d8f" opacity="0.85"/>
+          <text x="155" y="287" font-size="12" font-weight="600" fill="#2a9d8f" font-family="sans-serif">Thennote</text>
+          <text x="155" y="301" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">主动Agent驱动的AI工作空间</text>
+
+          <!-- 节点2：Oki Home — 左下偏中 (C端，稍高) — amber -->
+          <!-- 坐标：x≈185, y≈248 -->
+          <circle cx="185" cy="248" r="9" fill="#e9a84c" opacity="0.85"/>
+          <text x="200" y="245" font-size="12" font-weight="600" fill="#e9a84c" font-family="sans-serif">Oki Home</text>
+          <text x="200" y="259" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">本地个人助理，持续记忆</text>
+
+          <!-- 节点3：Nominal — 右上 (B端、可见) — coral -->
+          <!-- 坐标：x≈490, y≈110 -->
+          <circle cx="490" cy="110" r="9" fill="#e76f51" opacity="0.85"/>
+          <text x="430" y="96" font-size="12" font-weight="600" fill="#e76f51" font-family="sans-serif">Nominal</text>
+          <text x="418" y="110" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">Transaction Patrol</text>
+          <text x="420" y="124" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">财务持续监控agent</text>
+
+          <!-- 节点4：Slack多agent — 右上偏右 (B端、最高可见) — blue -->
+          <!-- 坐标：x≈555, y≈80 -->
+          <circle cx="555" cy="80" r="9" fill="#4f8fff" opacity="0.85"/>
+          <text x="490" y="68" font-size="12" font-weight="600" fill="#4f8fff" font-family="sans-serif">Slack 多agent</text>
+          <text x="490" y="82" font-size="10" fill="currentColor" opacity="0.5" font-family="sans-serif">将多个agent通知汇总到IM</text>
+
+          <!-- 预测性提示文字（非节点，虚线框外，中心偏右偏上） -->
+          <!-- 位置：图中心偏右偏上方空白区，x≈340, y≈170 -->
+          <text x="285" y="168" font-size="11" fill="currentColor" opacity="0.28" font-family="sans-serif" font-style="italic">统一仲裁层？</text>
+          <text x="285" y="182" font-size="10" fill="currentColor" opacity="0.22" font-family="sans-serif" font-style="italic">（预测，尚未出现）</text>
+          <!-- 预测性虚线边框 -->
+          <rect x="278" y="155" width="148" height="36"
+                fill="none" stroke="currentColor" stroke-opacity="0.15"
+                stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+        </svg>
+      </div>
+      <div class="chart-caption">四个案例目前分布在各自象限，尚未出现横跨C/B端、统一承担排序功能的产品——"仲裁层"目前是预测，不是已存在的东西</div>
+    </div>
+
+    <p>几个早期案例目前都还停留在各自的象限里，还没有出现真正横跨C/B端、统一承担排序功能的产品——这正是我说的"仲裁层"目前还只是一个预测，而不是已经存在的东西。但这个预测要成立，还需要回答一个问题：是不是所有场景的判断，都会沿着这条路径，走向"AI主动+人拍板"甚至更进一步？</p>
+
+    <h2 id="sec-6" style="scroll-margin-top:60px">六、有些地方，这条路径可能走不到头</h2>
+    <p><a href="https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy">据一篇关于Agentic AI自主性分级的分析文章作者判断</a>，完全自主（L5）目前不适合企业部署，所需的控制机制还不存在，应该被当作研究问题而非部署选项——这是这位作者明确表达的个人立场，而不是行业的统一结论。但这个判断目前更多被处理成"现在做不到，以后可能行"——一个时间问题。</p>
+    <p>我想加一层区分：有些场景，即使技术能力到了，也可能永远走不到"AI判断+AI执行"这一步——因为卡住的不是能力，是责任归属机制。<a href="https://www.weforum.org/stories/2026/03/ai-agent-autonomy-governance/">世界经济论坛一篇关于agent治理的文章也提到</a>，治理是agent从"聊天机器人"演变为"助理"过程中的关键议题——这和我想说的"责任框架决定边界"是同一个方向的问题，只是我更想从"两类不同的止步原因"这个角度拆开看。</p>
+    <p>这里需要拆成两类经常被混在一起说的"止步"原因：</p>
+    <p><strong>第一类是能力不足型</strong>：行业特有的业务编码、内部规则，AI目前缺乏足够的上下文，需要人工补充输入。这类问题理论上会随着系统接入更多数据、积累更多上下文而逐渐缓解。</p>
+    <p><strong>第二类是责任不允许型</strong>：在金融这类场景里，某个结论能不能进入下一个环节、能不能被当作"已确认"的事实，背后对应的是审计链条上"谁签字"的问题。如果AI主动执行（哪怕只是"主动提醒+一键确认"），一旦出错，责任链条就会变得模糊——这不是AI判断力够不够的问题，是监管和责任框架本身决定了发起权必须留在人手里。</p>
+    <p>第一类会随时间改善，第二类未必会——除非责任框架本身发生变化（这是另一个话题）。<strong>所以"主动性渗透到哪里会停"这个问题，答案不是一个统一的边界，而是要看具体环节卡在哪一类原因上</strong>。</p>
+
+    <hr class="divider" />
+
+    <p>回到开头的skill例子，以及第二节提到的Thennote。"我问AI该用哪个skill"这件小事，如果按本文的逻辑往后推：这个判断会逐渐从"我主动发起"变成"系统持续在做、我基本不感知"——类似第四节说的C端隐形基础设施，Thennote和Oki Home这类早期项目，已经是这个方向上的具体尝试，只是还没到能验证终态的阶段。</p>
+    <p>但放大到整个软件生态，当成百上千个这样的"判断"同时在发生、都想被你看到时，真正稀缺的不是判断能力，而是"谁的判断该被优先呈现给你"。这个排序本身，我认为会成为新的软件入口——一个介于你和所有AI agent之间的仲裁层，也可能成为软件之间竞争的新焦点。</p>
+    <p>比较确定的是：发起权从人到AI的转移方向，以及这个转移会催生一个新的"层"。不确定的是：这个层会以多快的速度出现、会是哪种产品形态（独立App、操作系统级功能，还是现有IM工具的演化），仲裁层是否会重塑软件竞争的焦点，以及在B端，这个层会不会反而因为可追溯性要求，变成一个比C端更复杂、更"显眼"的东西。</p>
+    <p>另外可以确定的是，这个转移不会均匀发生——哪些环节会先到、哪些环节可能永远不会到，取决于具体卡在"能力"还是"责任"这两类不同性质的问题上。</p>
+
+    <div class="callout">
+      <strong>判断这件事：</strong>下次遇到一个"AI主动帮你做了什么"的产品，先问它的"主动"是否带着可审查的依据——C端愿意隐形不代表能隐形，B端需要可见不代表更复杂。真正决定主动性渗透边界的，不是技术能力够不够，而是这个场景里"谁来承担判断错了的责任"。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <ul>
+        <li><strong>一手研究/学术</strong></li>
+        <li><a href="https://arxiv.org/pdf/2602.17753">AI Agent Index：agent autonomy L1-L5分级</a></li>
+        <li><a href="https://arxiv.org/pdf/2506.12469">Levels of Autonomy for AI Agents</a></li>
+        <li><a href="https://arxiv.org/html/2605.24900v1">ProActor：主动式任务调度强化学习框架，ACL 2026</a></li>
+        <li><a href="https://zhuanlan.zhihu.com/p/9739863725">清华&amp;面壁"主动Agent交互范式"与ProactiveBench（中文媒体报道）</a></li>
+        <li><strong>行业机构分析</strong></li>
+        <li><a href="https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy">Cloud Security Alliance：Agentic AI自主性分级，作者判断L5不适合当前企业部署</a></li>
+        <li><a href="https://www.weforum.org/stories/2026/03/ai-agent-autonomy-governance/">World Economic Forum：从聊天机器人到助理，治理是agent关键议题</a></li>
+        <li><strong>科技媒体/行业博客</strong></li>
+        <li><a href="https://curiouscompass.substack.com/p/ambient-ai-enterprise-invisible-ai-agents">Ambient agents的崛起，2026企业AI核心叙事</a></li>
+        <li><a href="https://blog.buildbetter.ai/ai-agents-that-watch-you-work-how-personal-ai-learns-from-observation-in-2026/">观察式AI：2026年个人AI代表性类别</a></li>
+        <li><a href="https://www.computerworld.com/article/4153622/slacks-ai-updates-signal-shift-towards-agent-orchestration.html">Slack向agent编排操作层转型，分析师解读，Computerworld</a></li>
+        <li><a href="https://www.builder.io/blog/ai-agent-orchestration">Agent编排现状"broken"，Builder.io</a></li>
+        <li><a href="https://www.53ai.com/news/langchain/2025012131054.html">Ambient Agent中的"审核模式"概念介绍，53AI</a></li>
+        <li><strong>中文行业信息（创业项目/路演，代表项目自身立场，早期未经市场验证）</strong></li>
+        <li><a href="https://zhuanlan.zhihu.com/p/2047380758130582982">奇绩创坛2026春季路演：陆奇发言、Thennote项目介绍</a></li>
+        <li><a href="https://hub.baai.ac.cn/view/55384">奇绩创坛2026春季路演：Oki Home项目介绍</a></li>
+        <li><strong>案例/厂商博客</strong></li>
+        <li><a href="https://www.saastr.com/the-agent-orchestration-problem-how-we-wire-20-ai-agents-together-without-losing-our-minds/">SaaStr：20+ agent编排实践，Slack作为"神经系统"</a></li>
+        <li><a href="https://nominal.so/blog/anomaly-detection-agent/">Nominal：财务持续监控agent案例</a></li>
+      </ul>
+    </div>
+
+    <div class="refs" style="margin-top:20px">
+      <h2>来源可信度说明</h2>
+      <ul>
+        <li style="color:var(--text-2);font-size:13px">L1-L5自主性分级及相关安全/治理判断来自学术论文和行业机构（CSA、WEF），其中CSA对L5的判断是该文作者本人的明确立场，非行业共识，已在正文标注。Ambient agent及Slack编排相关判断来自2026年内多篇科技媒体和行业博客，反映当前行业讨论热点和早期实践，而非长期验证的结论。中文部分引用了奇绩创坛2026年春季路演的项目介绍（Thennote、Oki Home）和陆奇本人发言，这些项目代表创业者自身对产品方向的描述，是早期、未经市场验证的信号，不作为效果数据使用，已在正文注明；清华&amp;面壁的研究内容来自中文科技媒体的转述报道，非论文原文。厂商案例（如Nominal）代表厂商立场，仅用于说明早期产品形态。第五节关于"竞争焦点转移"的推论，标注为逻辑延伸而非已验证事实。</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  const btn = document.getElementById('themeToggleBtn');
+  const sun = document.getElementById('ptIconSun');
+  const moon = document.getElementById('ptIconMoon');
+  const DARK = 'dark'; const LIGHT = 'light';
+  let theme = localStorage.getItem('blog-theme') || LIGHT;
+  function applyTheme(t){
+    document.body.setAttribute('data-theme', t);
+    sun.style.display  = t === DARK  ? 'block' : 'none';
+    moon.style.display = t === LIGHT ? 'block' : 'none';
+  }
+  applyTheme(theme);
+  btn.addEventListener('click', function(){
+    theme = theme === LIGHT ? DARK : LIGHT;
+    localStorage.setItem('blog-theme', theme);
+    applyTheme(theme);
+  });
+
+  // 标签渲染
+  const tags = ['决策框架'];
+  const topics = ['Agent'];
+  const container = document.getElementById('post-tags');
+  [...tags, ...topics].forEach(function(t){
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = t;
+    container.appendChild(span);
+  });
+
+  // TOC 高亮
+  const headings = document.querySelectorAll('.post-body h2[id]');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  if(headings.length && tocLinks.length){
+    const obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          tocLinks.forEach(function(a){ a.classList.remove('toc-active'); });
+          const active = document.querySelector('.toc-list a[href="#'+e.target.id+'"]');
+          if(active) active.classList.add('toc-active');
+        }
+      });
+    }, {rootMargin:'-20% 0px -70% 0px'});
+    headings.forEach(function(h){ obs.observe(h); });
+  }
+
+  // 上下篇 + 相关文章
+  const SLUG = 'ai-arbitration-layer';
+  const META_URL = '../data/posts-meta.json';
+  fetch(META_URL).then(function(r){ return r.json(); }).then(function(data){
+    const posts = data.posts || [];
+    const idx = posts.findIndex(function(p){ return p.slug === SLUG; });
+
+    // 上下篇
+    if(idx > 0){
+      const prev = posts[idx-1];
+      const el = document.getElementById('navPrev');
+      el.style.display = 'flex';
+      el.href = prev.url.split('/').pop();
+      document.getElementById('navPrevTitle').textContent = prev.title;
+    }
+    if(idx < posts.length-1){
+      const next = posts[idx+1];
+      const el = document.getElementById('navNext');
+      el.style.display = 'flex';
+      el.href = next.url.split('/').pop();
+      document.getElementById('navNextTitle').textContent = next.title;
+    }
+
+    // 相关文章（同 tag/topic，最多3篇）
+    if(idx >= 0){
+      const cur = posts[idx];
+      const curKeys = [...(cur.tags||[]), ...(cur.topics||[])];
+      const related = posts.filter(function(p, i){
+        if(i === idx) return false;
+        const keys = [...(p.tags||[]), ...(p.topics||[])];
+        return keys.some(function(k){ return curKeys.includes(k); });
+      }).slice(0,3);
+      if(related.length){
+        const wrap = document.getElementById('relatedPosts');
+        wrap.style.display = '';
+        const list = document.getElementById('relatedList');
+        related.forEach(function(p){
+          const a = document.createElement('a');
+          a.className = 'related-item';
+          a.href = p.url.split('/').pop();
+          a.innerHTML = '<span class="related-item-date">'+p.date+'</span><span class="related-item-title">'+p.title+'</span>';
+          list.appendChild(a);
+        });
+      }
+    }
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
