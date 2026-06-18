@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<!--
+date:    2026.06
+title:   LLM 重构职场：不是谁消失，是每个人都在变
+tags:    [职业判断]
+topics:  [企业AI]
+slug:    llm-reshapes-software-roles
+summary: LLM 对软件团队的冲击不是"执行岗消失、协调岗幸存"。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以"让事情发生"为输出的工作，面对的是另一种性质的重构。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM 重构职场：不是谁消失，是每个人都在变 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="LLM 重构职场：不是谁消失，是每个人都在变" />
+  <meta property="og:description" content="LLM 对软件团队的冲击不是"执行岗消失、协调岗幸存"。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以"让事情发生"为输出的工作，面对的是另一种性质的重构。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="LLM 重构职场：不是谁消失，是每个人都在变" />
+  <meta name="twitter:description" content="LLM 对软件团队的冲击不是"执行岗消失、协调岗幸存"。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以"让事情发生"为输出的工作，面对的是另一种性质的重构。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+      margin: 40px 0 14px;
+      padding-left: 10px; border-left: 3px solid var(--accent);
+      line-height: 1.35;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .post-body code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+      margin: 14px 0 8px;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .refs .refs-note {
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.6;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block;
+      padding: 5px 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a:hover,
+    .toc-list a.toc-active {
+      color: var(--clay);
+      border-left-color: var(--clay);
+      background: var(--clay-soft);
+      border-radius: 4px;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#sec-framework">分析框架：按工作性质分类</a></li>
+          <li><a href="#sec-type1">第一类：专业技术执行类</a></li>
+          <li><a href="#sec-type2">第二类：流程协调类</a></li>
+          <li><a href="#sec-conclusion">重构，不是消失</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.06</span>
+      <span id="post-tags"></span>
+    </div>
+    <h1 class="post-title">LLM 重构职场：不是谁消失，是每个人都在变</h1>
+    <p class="post-summary">LLM 对软件团队的冲击，不是简单的“执行岗消失、协调岗幸存”。真正的分野在于工作性质：输入越标准化、输出越可验证的工作，被压缩得越直接；而以人为输入、以“让事情发生”为输出的工作，面对的是另一种性质的重构。没有人能置身事外，但每个人遭遇的是不同方式的变化。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+    <p>作为一个同时做过产品经理和项目经理的人，我最近开始认真想一个问题：身边这些岗位，哪些在 LLM 时代会真正被压缩，哪些只是看起来危险？</p>
+    <p>直觉上，开发、测试这类技术执行岗位首当其冲，这个判断大家基本都有。但另一个问题更模糊：像项目经理、PMO 这样偏流程协调的岗位，会不会反而因为“执行层被替代”变得更重要？</p>
+    <p>我的结论是：这个问题问错了方向。不是“谁更重要”，而是不同性质的工作，在 LLM 冲击下遭遇的是完全不同的变化。</p>
+
+    <h2 id="sec-framework" style="scroll-margin-top:60px">先建立一个分析框架</h2>
+    <p>与其按岗位名称逐个分析，不如先按工作性质分类。这是我自己归纳的框架，不是行业通用术语，但我觉得它比岗位名称更能说明问题。我把软件团队里的工作大致分成三类：</p>
+    <p><strong>第一类：专业技术执行类。</strong> 开发、测试、设计、UI 等。这类工作的共同特征是：输入相对结构化（需求文档、测试用例、设计规范），输出可以被客观验证（代码跑不跑得通、测试通不通过、视觉稿符不符合规范），反馈闭环快。</p>
+    <p><strong>第二类：流程协调类。</strong> 项目经理、PMO 等。这类工作的输入是人——人的状态、利益诉求、组织政治；输出不是一份文档，而是“让事情发生”——让一个决策落地，让两个团队对齐，让一个项目推进下去。</p>
+    <p><strong>第三类：对外关系类。</strong> 销售、客户成功、商务等。输入是外部市场和客户，输出是信任和关系。这类工作受 LLM 冲击最小，不是本文的重点，点到为止。</p>
+    <p>这个分类不是非此即彼的——同一个人身上往往同时有多类工作。产品经理是典型例子：写 PRD 和拆解需求属于第一类，内部对齐和优先级判断属于第二类。接下来按这个框架逐类分析，产品经理的工作拆分会在第一类里展开。</p>
+
+    <h2 id="sec-type1" style="scroll-margin-top:60px">第一类：专业技术执行类——冲击最直接</h2>
+    <p>这类工作被压缩，不是因为 LLM 有多聪明，而是因为它们本身的结构特征让 LLM 介入的条件全部成立。</p>
+    <p>输入结构化，意味着 LLM 能读懂任务；输出可验证，意味着错误可以被快速发现和纠正；反馈闭环快，意味着 LLM 能在迭代中自我修正。这三个条件叠加在一起，效果是可观的。</p>
+    <p>数据已经反映出这种趋势。<a href="https://stackoverflow.blog/2025/12/26/ai-vs-gen-z/">据 Stack Overflow 2025 年开发者调查</a>，84% 的开发者现在使用 AI 工具，AI 生成的代码占所有提交代码的比例接近 46%。<a href="https://www.quantumrun.com/consulting/github-copilot-statistics/">GitHub Copilot 在受控实验中显示</a>，开发者完成任务的速度可以提升约 55%（官方声称，基于 4800 名开发者的实验，未经独立全面验证）。与此同时，<a href="https://www.softwareseni.com/what-the-data-actually-shows-about-ai-and-junior-developer-employment-decline/">美国软件开发职位招聘量从 2022 年 2 月的峰值下降了近 49%</a>，初级开发者（22-25 岁）的就业率从 2022 年末的峰值下降了约 20%。</p>
+    <p>需要说明的是，这些趋势并不意味着开发岗位会整体消失。<a href="https://sqmagazine.co.uk/software-engineer-layoff-statistics/">美国劳工统计局的预测显示</a>，软件开发者就业仍预计在 2024 到 2034 年间增长 15%。据行业普遍分析，这个增长更可能集中在系统设计、架构判断和 AI 输出验证等更高层次的工作，而不是基础代码编写——但 BLS 原文并未直接说明增长集中在哪些层次，这是外部推断，不是官方结论。<strong>被压缩的是执行层，留下来的是判断层。</strong></p>
+    <p>测试岗位的处境类似。<a href="https://dev.to/morrismoses149/best-ai-test-case-generation-tools-2025-guide-35b9">据行业数据，目前超过 40% 的 QA 团队已经采用 AI 测试工具</a>，AI 能自动生成测试用例、执行回归测试、识别常见 bug 模式——这些曾经是测试工程师大量时间的去处。设计和 UI 方面，<a href="https://www.figma.com/reports/ai-2025/">Figma 2025 年调查显示</a>，22% 的设计师已经在用 AI 生成界面初稿，21% 用 AI 探索不同布局和视觉风格；但 40% 的设计师和开发者表示尚不完全信任 AI 生成的输出，最终的审美判断和用户体验决策仍需要人来做。</p>
+    <p>产品经理的工作同样横跨两类，这里先说属于第一类的部分。需求文档的撰写、需求拆解、会议纪要整理——这些是 PM 工作里最接近执行类的部分，LLM 已经能处理相当一部分。<strong>但产品方向的判断、功能优先级的取舍、用户洞察的解读，不是信息整合，而是在不确定性下做决策，LLM 给不了答案</strong>——这部分属于第二类，放到下一节讨论。</p>
+
+    <h2 id="sec-type2" style="scroll-margin-top:60px">第二类：流程协调类——冲击有限，但内部有分化</h2>
+    <p>第一类工作面临的是直接压缩，第二类遭遇的是不同性质的冲击。这类工作为什么相对稳定？有两个结构性原因。</p>
+    <p>第一，<strong>输入是非标准化的人</strong>。项目经理和 PMO 每天处理的，是各种状态的人——有的团队进度落后但不愿承认，有的部门之间存在利益冲突但没有明说，有的问题表面是技术分歧实际是资源争夺。这些输入不能被标准化成一份文档，因为大量信息存在于语气、关系、组织政治的隐性层面。LLM 能处理显性信息，处理不了这些。</p>
+    <p>第二，<strong>输出是“让事情发生”，不是“产出内容”</strong>。开发测试产出的是可验证的交付物，判断好坏有客观标准。但流程协调类工作的价值在于：一个决策有没有真正落地，两个团队有没有真正对齐，一个项目有没有实际推进。这个价值依赖人对人的影响力，依赖在场的权威和信任，LLM 无法替代。</p>
+    <p><strong>但这类工作内部有分化，不能一概而论。</strong></p>
+    <p>流程协调类工作里，有一层是<strong>信息整合</strong>——收集各团队进度、汇总风险、出状态报告。这一层和第一类工作的性质很接近：输入是结构化的项目数据，输出是可验证的报表。这一层同样面临 LLM 的直接冲击。<a href="https://thepersimmongroup.com/ai-is-changing-the-pm-job-description-heres-how-pmos-can-lead-the-shift/">相关研究表明</a>，AI 自动化正在隐去 60-80% 的传统 PM 可见性信号，状态报告、进度追踪这类工作正在被工具取代。</p>
+    <p>真正稳定的，是<strong>协调推进层和治理决策层</strong>——处理跨团队冲突、资源优先级排序、在组织政治下推动决策落地。这些才是流程协调类工作的护城河。</p>
+    <p>明确了这个内部分化之后，项目经理和 PMO 受到的冲击方式就很不一样了，值得分开说。</p>
+    <p><strong>项目经理</strong>的工作实际上横跨第二类和第三类。对外跟客户、供应商打交道的部分——关系维护、预期管理、合同协商——属于第三类对外关系工作，受 LLM 冲击最小，原因和销售、客户成功相同：核心是信任，无法标准化。内部的信息汇总和状态更新部分属于第二类的信息整合层，LLM 能替代的比例在增加。与某头部互联网大厂 PMO 岗位人员的访谈也印证了这一判断：项目经理的核心是“跟人打交道的工作，AI 很难取代”，AI 能做的是生成会议纪要、输出项目计划、辅助合同评审这类提效工具，协调推进的本质没有变。净效果是：一个项目经理能处理的项目复杂度在上升，但不需要那么多人了。</p>
+    <p>同样，产品经理属于第二类的部分——优先级判断和产品方向决策——也适用这个逻辑：输入是业务理解和用户洞察，输出是在不确定性下的取舍，LLM 能提供信息，但给不了判断本身。</p>
+    <p><strong>PMO</strong> 的情况更复杂，因为不同公司里 PMO 的实际工作内容差异很大——而这个差异直接决定了它面对 LLM 冲击的脆弱程度。</p>
+    <p>我在一家大型金融科技公司观察到的 PMO，实际上更像“流程进度整理员”——收集各部门进度、维护项目台账、整理会议记录。这类 PMO 做的恰恰是信息整合层的工作，是最容易被 LLM 替代的那一类。</p>
+    <p>同样是与头部互联网大厂 PMO 的访谈里，呈现的是完全不同的画像。他们的工作涉及跨部门治理机制设计、度量体系建设、知识平台规划，甚至需要判断“这件事现在要不要做、谁来做、往轻了做还是往重了做”——这些判断不是信息整合，是在复杂组织环境下的决策，LLM 辅助不了。</p>
+    <p><strong>PMO 这个岗位在不同规模、不同定位的公司里，实际工作内容可能完全不同。</strong> 如果一个 PMO 的日常工作以信息整合为主，它面对 AI 的处境并不比初级开发者好多少；如果它真正在做治理和决策支撑，护城河要厚得多。</p>
+
+    <h2 id="sec-conclusion" style="scroll-margin-top:60px">重构，不是消失</h2>
+    <p>把上面的分析整合起来，结论不是“谁安全谁危险”，而是：<strong>LLM 压缩的是工作性质，不是岗位名称。</strong></p>
+    <p>同一个产品经理身上，PRD 撰写被压缩，产品判断被放大；同一个项目经理身上，状态汇报被自动化，跨团队推进变得更核心；同一个 PMO，如果还停留在信息整合层，处境并不乐观，如果真正在做治理，AI 反而可能为它创造新的工作——比如设计人机协作的流程规范，比如建立知识复用平台。</p>
+    <p>还有一个更大的结构性变化值得关注。过去软件团队的流程和机制，是为人设计的——每个节点的参与者是人，考虑了人的信息处理能力上限、人的沟通成本、人的注意力局限。当这些节点开始变成 AI agent 之后，原有的流程不是“人被替换了”，而是整个机制的设计逻辑需要被重新思考。</p>
+    <p>这也催生了新的岗位需求。FDE（Field Deployment Engineer）是一个例子——它的核心不是替代原有岗位，而是解决“每个项目的经验如何被沉淀和复用”这个新问题，这个问题在纯人工时代也存在，但 AI 让它变得更紧迫，也提供了新的解决可能。</p>
+    <p>AI 时代没有稳定的岗位，只有持续演化的工作性质。值得问自己的，不是“我的岗位会不会消失”，而是“我现在的工作里，哪些部分是信息整合，哪些部分是判断和推进”——前者在被压缩，后者在被放大。</p>
+
+    <div class="callout">
+      <strong>职业判断框架：</strong>评估自己在 LLM 时代的处境，核心问题只有一个——你现在的工作里，有多少比例是“输入标准化、输出可验证”的信息整合，又有多少是以人为输入、以“让事情发生”为输出的判断与推进？前者在被压缩，后者在被放大。
+    </div>
+
+    <div class="refs">
+      <h2>参考资料</h2>
+      <h3>一手文件 / 官方发布</h3>
+      <ul>
+        <li><a href="https://stackoverflow.blog/2025/12/26/ai-vs-gen-z/">Stack Overflow 2025 Developer Survey: AI vs Gen Z</a></li>
+        <li><a href="https://www.figma.com/reports/ai-2025/">Figma 2025 AI Report</a></li>
+      </ul>
+      <h3>行业分析 / 聚合站</h3>
+      <ul>
+        <li><a href="https://www.softwareseni.com/what-the-data-actually-shows-about-ai-and-junior-developer-employment-decline/">SoftwareSeni: What the Data Actually Shows About AI and Junior Developer Employment Decline</a></li>
+        <li><a href="https://sqmagazine.co.uk/software-engineer-layoff-statistics/">SQ Magazine: Software Engineer Layoff Statistics 2026</a></li>
+        <li><a href="https://www.quantumrun.com/consulting/github-copilot-statistics/">Quantumrun: GitHub Copilot Statistics</a></li>
+        <li><a href="https://thepersimmongroup.com/ai-is-changing-the-pm-job-description-heres-how-pmos-can-lead-the-shift/">The Persimmon Group: AI Is Changing the PM Job Description</a></li>
+        <li><a href="https://dev.to/morrismoses149/best-ai-test-case-generation-tools-2025-guide-35b9">DEV Community: Best AI Test Case Generation Tools 2025</a></li>
+      </ul>
+      <h3>一手访谈（受访者匿名）</h3>
+      <ul>
+        <li>与某头部互联网大厂 PMO 岗位人员的访谈，共两位受访者（2026 年 6 月）</li>
+      </ul>
+      <p class="refs-note"><strong>来源可信度说明：</strong>开发岗位招聘量下降 49% 的数据，来自 SoftwareSeni 引用 Indeed Hiring Lab 的统计，属于二手引用，原始来源为 Indeed 官方数据。GitHub Copilot 效率提升 55% 为官方实验数据，实验条件为特定任务场景（JavaScript HTTP Server），不代表所有开发场景。BLS 软件开发者就业增长 15% 的预测为官方数据，但“增长集中在判断层”为行业普遍推断，非 BLS 原文结论。测试工具数据（40% QA 团队采用 AI）来自行业聚合站，属于方向性参考，非独立核实数据。Figma 数据来自其官方年度调查报告，为自述数据。PMO 相关判断综合了两位从业者的一手访谈，属于观察性描述，不构成统计意义上的代表性样本。</p>
+    </div>
+
+  </div>
+
+  <!-- 相关文章 -->
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'llm-reshapes-software-roles',
+  tags: [],
+  topics: [],
+  category: '商业'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  var prev = idx > 0 ? sorted[idx - 1] : null;
+  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+  if (prev) {
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (next) {
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>

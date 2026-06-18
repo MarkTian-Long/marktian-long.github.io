@@ -2,6 +2,20 @@
   "version": 1,
   "posts": [
     {
+      "slug": "llm-reshapes-software-roles",
+      "date": "2026.06",
+      "title": "LLM 重构职场：不是谁消失，是每个人都在变",
+      "summary": "LLM 对软件团队的冲击不是“执行岗消失、协调岗幸存”。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以“让事情发生”为输出的工作，面对的是另一种性质的重构。",
+      "tags": [
+        "职业判断"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "category": "商业",
+      "url": "posts/llm-reshapes-software-roles.html"
+    },
+    {
       "slug": "ai-arbitration-layer",
       "date": "2026.06",
       "title": "当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层",
