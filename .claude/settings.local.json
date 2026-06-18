@@ -67,7 +67,9 @@
       "Bash(ls -la \"C:/Users/15517/.claude/projects/D--CS-Coding-qiuzhi/memory/\")",
       "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse goto *)",
       "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse viewport *)",
-      "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse screenshot *)"
+      "Bash(/c/Users/15517/.claude/skills/gstack/browse/dist/browse screenshot *)",
+      "Bash(Read tools/ai-insights/style.css)",
+      "Bash(echo \"EXIT:$?\")"
     ],
     "defaultMode": "auto"
   }
