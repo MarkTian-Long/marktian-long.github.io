@@ -13,6 +13,8 @@ tools/blog/
     ├── spacex-ai-infrastructure-valuation.html  一份招股书里，两种不同节奏的"AI"（2026.06）
     ├── llm-saas-moat-disruption.html            AI coding 之后，哪些 B 端 SaaS 会死，哪些会活（2026.06）
     ├── perplexity-analysis.html                 Perplexity：做对了产品，但站错了位置（2026.06）
+    ├── ai-arbitration-layer.html                当AI开始主动找你：仲裁层范式的产品机会（2026.06）
+    ├── ai-chips-explainer.html                  搞懂 AI 芯片这件事（2026.06）
     ├── human-ai-boundary-shift.html             从模糊到确定：人机边界是怎么移动的（2026.05）
     ├── training-vs-inference.html               训练和推理，是两件不同的事（2026.05）
     ├── ai-benchmark-failure.html                模型跑出了测量边界，评测体系跟不上了（2026.05）

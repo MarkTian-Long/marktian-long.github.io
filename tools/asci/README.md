@@ -16,7 +16,7 @@
 tools/asci/
 ├── index.html    — HTML 骨架（三屏布局，约 192 行）
 ├── asci.css      — 全部样式（浅色配色，约 2811 行）
-├── data.js       — 数据层：NODE_REGISTRY（15 节点）、PIPELINE_TEMPLATES（3 模板）、MOCK 数据
+├── data.js       — 数据层：NODE_REGISTRY（14 节点）、PIPELINE_TEMPLATES（3 模板）、MOCK 数据
 ├── main.js       — 全局状态 + Screen 1 流程配置器逻辑
 ├── engine.js     — 执行引擎：runNode/finishNode/handleBack/降级策略/非线性扩展
 ├── ui.js         — UI 渲染层：renderTree/renderNodeResult/renderScreen3 等

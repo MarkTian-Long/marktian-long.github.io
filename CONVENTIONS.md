@@ -78,14 +78,18 @@ background: rgba(255, 255, 255, 0.04);
 
 ### 当前 Token 体系
 
-| 类别 | 变量前缀 | 示例 |
-|------|----------|------|
-| 背景色 | `--bg-` | `--bg-primary`, `--bg-card` |
-| 强调色 | `--accent-` | `--accent-blue`, `--accent-purple` |
-| 文字色 | `--text-` | `--text-primary`, `--text-secondary` |
-| 边框 | `--border` | `--border`, `--border-hover` |
+| 类别 | 变量前缀 | 完整列表 |
+|------|----------|----------|
+| 背景色 | `--bg-` | `--bg-primary`, `--bg-secondary`, `--bg-card`, `--bg-card-hover` |
+| 强调色（实色） | `--accent-` | `--accent-blue`, `--accent-purple`, `--accent-cyan`, `--accent-green`, `--accent-clay`, `--accent-coral`, `--accent-yellow`, `--accent-red` |
+| 强调色（Alpha·蓝） | `--accent-blue-NN` | `--accent-blue-06`, `-08`, `-10`, `-12`, `-15`, `-20`, `-25`, `-30`, `-35`, `-40`, `-50` |
+| 强调色（Alpha·陶） | `--accent-clay-NN` | `--accent-clay-06`, `-10`, `-15`, `-25`, `-35` |
+| 文字色 | `--text-` | `--text-primary`, `--text-secondary`, `--text-muted`, `--text-on-gradient` |
+| 边框 | `--border` | `--border`, `--border-warm`, `--border-hover` |
 | 渐变 | `--grad-` | `--grad-primary`, `--grad-text` |
-| 圆角 | `--radius-` | `--radius-sm`, `--radius-lg` |
+| 阴影 | `--shadow-` | `--shadow-glow`, `--shadow-card` |
+| 圆角 | `--radius-` | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl` |
+| 字体 | `--font` | `--font`（无衬线）, `--font-serif`（衬线） |
 | 过渡 | `--transition` | 统一动画曲线 |
 
 ### 通用组件类

@@ -30,7 +30,7 @@ FAQ 链:       Router → FAQ Agent                               (1次LLM)
 ```js
 window.SERVICE_AGENT_CONFIG = {
   openrouterKey: 'sk-or-xxxx',
-  model: 'stepfun/step-3.5-flash:free'
+  model: 'anthropic/claude-3-haiku'
 };
 ```
 
