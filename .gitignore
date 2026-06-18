@@ -39,7 +39,7 @@ scripts/node_modules/
 # Third-party tool directories
 .codebuddy/
 .agents/
-skills/
+/skills/
 .claude/worktrees/
 
 # Preview / backup files
