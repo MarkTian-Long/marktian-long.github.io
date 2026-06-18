@@ -1,0 +1,121 @@
+/* =============================================
+   DESIGN TOKENS — qiuzhi 项目提炼
+   Claude 风格：羊皮纸暖色调 · 双轨强调色
+   =============================================
+
+   色彩逻辑：
+   - 背景：Parchment 羊皮纸系（--bg-*）
+   - 强调色双轨：蓝色（行动性元素 CTA）+ 陶土色（思想性内容标签）
+   - 文字：暖灰系（无冷蓝灰）
+   - Alpha 系列：供半透明叠加使用
+
+   使用方法：
+   1. 将此 :root 块复制到新项目 CSS 文件顶部
+   2. 所有颜色/间距/圆角 必须使用变量，禁止硬编码
+   ============================================= */
+
+:root {
+  /* ── 背景：Parchment 羊皮纸系 ── */
+  --bg-primary:    #f5f4ed;   /* 温暖羊皮纸，核心背景 */
+  --bg-secondary:  #f0eee6;   /* 次级分区背景（about/contact 等交替区块） */
+  --bg-card:       #faf9f5;   /* 卡片表面 */
+  --bg-card-hover: #f0eee6;   /* 卡片 hover 状态 */
+
+  /* ── 强调色：双轨策略 ── */
+  --accent-blue:   #2563eb;   /* 蓝：CTA 按钮、外链、行动性元素 */
+  --accent-purple: #7c3aed;
+  --accent-cyan:   #0891b2;
+  --accent-green:  #059669;
+  --accent-clay:   #c96442;   /* 陶土：section-label、观点边框、思想性元素 */
+  --accent-coral:  #d97757;   /* 珊瑚次色：链接 hover 点缀 */
+  --accent-yellow: #d97706;
+  --accent-red:    #dc2626;
+
+  /* ── 文字：暖灰系（无冷蓝灰）── */
+  --text-primary:   #141413;  /* Near Black：主文字 */
+  --text-secondary: #5e5d59;  /* Olive Gray：次要文字 */
+  --text-muted:     #87867f;  /* Stone Gray：时间戳、三级信息 */
+  --text-on-gradient: #ffffff; /* 渐变背景上的文字 */
+
+  /* ── 边框 ── */
+  --border:        #f0eee6;   /* 轻边框 */
+  --border-warm:   #e8e6dc;   /* 重边框、分割线 */
+  --border-hover:  rgba(201, 100, 66, 0.4);  /* clay hover 边框 */
+
+  /* ── 渐变 ── */
+  --grad-primary:  linear-gradient(135deg, #2563eb, #7c3aed);
+  --grad-text:     #2563eb;   /* 用于 background-clip: text 的纯色（非渐变） */
+
+  /* ── 阴影 ── */
+  --shadow-glow:   0 0 0 1px #e8e6dc;                         /* ring shadow */
+  --shadow-card:   rgba(0, 0, 0, 0.05) 0px 4px 24px;          /* whisper shadow */
+
+  /* ── 圆角 ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 32px;
+
+  /* ── 过渡 ── */
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── 字体 ── */
+  --font:       'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Libre Baskerville', Georgia, serif; /* 标题用衬线字体 */
+
+  /* ── Alpha：蓝色（行动性元素叠加）── */
+  --accent-blue-06:  rgba(37, 99, 235, 0.06);
+  --accent-blue-08:  rgba(37, 99, 235, 0.08);
+  --accent-blue-10:  rgba(37, 99, 235, 0.10);
+  --accent-blue-12:  rgba(37, 99, 235, 0.12);
+  --accent-blue-15:  rgba(37, 99, 235, 0.15);
+  --accent-blue-20:  rgba(37, 99, 235, 0.20);
+  --accent-blue-25:  rgba(37, 99, 235, 0.25);
+  --accent-blue-30:  rgba(37, 99, 235, 0.30);
+  --accent-blue-35:  rgba(37, 99, 235, 0.35);
+  --accent-blue-40:  rgba(37, 99, 235, 0.40);
+  --accent-blue-50:  rgba(37, 99, 235, 0.50);
+
+  /* ── Alpha：陶土色（思想性元素叠加）── */
+  --accent-clay-06:  rgba(201, 100, 66, 0.06);
+  --accent-clay-10:  rgba(201, 100, 66, 0.10);
+  --accent-clay-15:  rgba(201, 100, 66, 0.15);
+  --accent-clay-25:  rgba(201, 100, 66, 0.25);
+  --accent-clay-35:  rgba(201, 100, 66, 0.35);
+}
+
+/* ── Reset 基础 ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font);
+  border: none;
+}

@@ -1,0 +1,110 @@
+/* =============================================
+   ANIMATION SYSTEM — qiuzhi 提炼
+   依赖：01-design-tokens.css
+   =============================================
+   包含：滚动入场动画 / 常用 keyframe /
+         easing 曲线变量 / 时长规范
+   ============================================= */
+
+/* ── 推荐 easing 曲线（语义化命名）── */
+:root {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);    /* 平滑进入，推荐默认 */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);   /* 略有戏剧感 */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);    /* 弹性，自信 */
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);   /* 状态切换双向 */
+}
+
+/* ── 时长规范（注释说明场景）──
+   100-150ms  : 即时反馈（按钮/toggle/颜色变）
+   200-300ms  : 状态变化（菜单/tooltip/hover）
+   300-500ms  : 布局变化（accordion/drawer/modal）
+   500-800ms  : 入场动画（页面加载/hero reveals）
+   退场 = 进场 × 75%
+─────────────────────────────────────────── */
+
+/* =============================================
+   REVEAL — 滚动入场（IntersectionObserver 触发）
+   用法：给元素加 .reveal，JS 触发后加 .visible
+   ============================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 延迟变体（用于同组多元素错开入场） */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+
+/* 触发 reveal 的 JS 片段：
+   const observer = new IntersectionObserver(entries => {
+     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+   }, { threshold: 0.1 });
+   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+*/
+
+/* =============================================
+   KEYFRAMES
+   ============================================= */
+
+/* 通用淡入 + 上移（弹窗/卡片出现） */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 脉冲（在线状态绿点） */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* 滚动鼠标提示轮子 */
+@keyframes scrollDown {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50%       { opacity: 0; transform: translateY(6px); }
+}
+
+/* 向下弹跳（滚动提示容器） */
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
+}
+
+/* CSS Stagger 通用写法（配合 style="--i: 0/1/2"）
+   .list-item { animation-delay: calc(var(--i, 0) * 50ms); }
+   上限：10 个 × 50ms = 500ms，超过则减小 delay 值
+*/
+
+/* =============================================
+   ACCORDION 折叠（height 动画最佳实践）
+   用 grid-template-rows: 0fr → 1fr 代替 height
+   ============================================= */
+.accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--ease-out-quart);
+}
+.accordion-body.open {
+  grid-template-rows: 1fr;
+}
+.accordion-inner {
+  overflow: hidden;
+}
+
+/* =============================================
+   REDUCED MOTION — 必须支持
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* 进度条/加载指示器仍可保留（减慢即可） */
+}

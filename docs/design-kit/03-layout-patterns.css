@@ -1,0 +1,333 @@
+/* =============================================
+   LAYOUT PATTERNS — qiuzhi 提炼
+   依赖：01-design-tokens.css
+   =============================================
+   包含：Hero / Section 通用 / About 双栏 /
+         卡片列表行 / 响应式断点
+   ============================================= */
+
+/* =============================================
+   HERO SECTION
+   ============================================= */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+
+/* 大字母装饰背景（右侧漂浮字符） */
+.hero-deco-char {
+  position: absolute;
+  right: -1vw;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-serif);
+  font-size: clamp(20rem, 38vw, 32rem);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--accent-clay);
+  opacity: 0.045;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  max-width: 1100px;
+  width: 100%;
+  padding: 0 24px;
+  margin: 0 auto;
+}
+
+/* 顶部状态徽章（小胶囊，蓝色，带绿点） */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: var(--accent-blue-10);
+  border: 1px solid var(--accent-blue-30);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  color: var(--accent-blue);
+  margin-bottom: 28px;
+}
+.badge-dot {
+  width: 8px; height: 8px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* 眉标文字（全大写，陶土色，字间距大） */
+.hero-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-clay);
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+/* Hero 大标题：衬线字体 + fluid */
+.hero-title {
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  font-weight: 700;
+  font-family: var(--font-serif);
+  line-height: 1.05;
+  margin-bottom: 32px;
+  letter-spacing: -0.03em;
+  max-width: 700px;
+}
+
+.hero-sub {
+  font-size: clamp(0.95rem, 1.8vw, 1.08rem);
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.7;
+  max-width: 500px;
+}
+
+/* 手写体斜体副句（陶土色，衬线字体，低调） */
+.hero-manifesto {
+  font-size: clamp(0.88rem, 1.4vw, 0.98rem);
+  color: var(--accent-clay);
+  font-family: var(--font-serif);
+  font-style: italic;
+  margin-bottom: 40px;
+  max-width: 500px;
+  opacity: 0.75;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* 滚动提示（底部鼠标图标） */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bounce 2s ease-in-out infinite;
+}
+.scroll-mouse {
+  width: 24px; height: 36px;
+  border: 2px solid var(--text-muted);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+.scroll-wheel {
+  width: 4px; height: 8px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  animation: scrollDown 1.5s ease-in-out infinite;
+}
+
+/* =============================================
+   ABOUT — 双栏布局
+   ============================================= */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* 左栏：头像卡片 */
+.about-card {
+  padding: 36px;
+  text-align: center;
+}
+.about-avatar {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+.avatar-inner {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-on-gradient);
+  position: relative;
+  z-index: 1;
+}
+.avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  z-index: 0;
+  opacity: 0.2;
+}
+
+/* 简介行：标签 + 文字 */
+.bio-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.bio-label {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent-blue);
+  background: var(--accent-blue-10);
+  border: 1px solid var(--accent-blue-20);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+.bio-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+/* =============================================
+   CASE ROW（案例列表行）
+   ============================================= */
+.cases-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.case-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition);
+}
+.case-row:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-warm);
+}
+.case-row-icon { font-size: 1.4rem; width: 40px; text-align: center; flex-shrink: 0; padding-top: 2px; }
+.case-row-body { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.case-row-tag {
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--accent-clay);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.case-row-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; margin: 0; }
+.case-row-desc  { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.6; margin-top: 2px; }
+.case-row-arrow {
+  font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; padding-top: 4px;
+  transition: color var(--transition), transform var(--transition);
+}
+.case-row:hover .case-row-arrow { color: var(--accent-clay); transform: translate(2px, -2px); }
+
+/* 展开详情折叠体 */
+.case-detail-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.case-detail-body.open { max-height: 800px; }
+
+/* =============================================
+   CONTACT SECTION
+   ============================================= */
+.contact-body { max-width: 680px; }
+.contact-eyebrow {
+  font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent-clay); margin-bottom: 20px; opacity: 0.9;
+}
+.contact-title {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 700;
+  font-family: var(--font-serif);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.contact-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  align-items: center;
+}
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  transition: color var(--transition);
+}
+.contact-link:hover { color: var(--text-primary); }
+.contact-label {
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent-clay); opacity: 0.75; min-width: 36px;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer p { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 4px; }
+
+/* =============================================
+   RESPONSIVE — 768px 断点
+   ============================================= */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    flex-direction: column;
+    background: rgba(245, 244, 237, 0.97);
+    backdrop-filter: blur(20px);
+    padding: 24px;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links.open { display: flex; }
+  .nav-toggle { display: flex; }
+
+  .about-grid { grid-template-columns: 1fr; }
+
+  .section { padding: 70px 0; }
+
+  .hero { padding: 100px 0 60px; }
+  .hero-deco-char {
+    font-size: clamp(12rem, 55vw, 20rem);
+    opacity: 0.035;
+  }
+  .hero-manifesto { margin-bottom: 32px; }
+
+  .dashboard-iframe { height: 900px; }
+}
