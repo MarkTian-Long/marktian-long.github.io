@@ -36,5 +36,15 @@ scripts/node_modules/
 *.local.js
 .gstack/
 
+# Third-party tool directories
+.codebuddy/
+.agents/
+skills/
+.claude/worktrees/
+
+# Preview / backup files
+index-preview.html
+docs/blog/files.zip
+
 docs/personal/
 docs/*.html
