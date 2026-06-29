@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<!--
+date:    2026.06
+title:   从零搭建一个LLM智能客服：完整技术链路与关键决策
+tags:    [技术判断, 架构设计]
+slug:    llm-customer-service-tech-guide
+summary: 智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大——从一个简单的关键词匹配机器人，到一套有完整评估闭环的生产级系统，技术栈的厚度可以相差十倍不止。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>从零搭建一个LLM智能客服：完整技术链路与关键决策 — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="从零搭建一个LLM智能客服：完整技术链路与关键决策" />
+  <meta property="og:description" content="智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大——从一个简单的关键词匹配机器人，到一套有完整评估闭环的生产级系统，技术栈的厚度可以相差十倍不止。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="从零搭建一个LLM智能客服：完整技术链路与关键决策" />
+  <meta name="twitter:description" content="智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大——从一个简单的关键词匹配机器人，到一套有完整评估闭环的生产级系统，技术栈的厚度可以相差十倍不止。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text-1); font-family: var(--font); font-size: 15px; line-height: 1.75; padding: 40px 20px 80px; transition: background 0.2s, color 0.2s; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--tag-bg); color: var(--tag-text); font-weight: 500; }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title { font-family: var(--font-serif); font-size: 26px; font-weight: 700; line-height: 1.35; color: var(--text-1); margin-bottom: 14px; }
+    .post-summary { font-size: 15px; color: var(--text-2); line-height: 1.65; padding-left: 14px; border-left: 3px solid var(--clay); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .post-body h2 { font-size: 20px; font-weight: 700; color: var(--text-1); margin: 40px 0 14px; padding-left: 10px; border-left: 3px solid var(--accent); line-height: 1.35; }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body h3 { font-size: 16px; font-weight: 600; color: var(--text-1); margin: 28px 0 10px; }
+    .post-body h4 { font-size: 13px; font-weight: 600; color: var(--text-3); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .post-body h5 { font-size: 14px; font-weight: 600; color: var(--text-2); margin: 18px 0 8px; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { font-style: italic; color: var(--text-2); }
+    .post-body code { font-size: 13px; background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-family: 'Consolas','Menlo',monospace; }
+    .post-body a { color: var(--accent); text-decoration: none; }
+    .post-body a:hover { text-decoration: underline; }
+    blockquote.callout { background: var(--clay-soft); border-left: 3px solid var(--clay); border-radius: var(--radius); padding: 14px 18px; margin: 24px 0; font-size: 14px; color: var(--text-2); }
+    blockquote.callout strong { color: var(--clay); }
+    pre.code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin: 20px 0; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+    pre.code-block code { background: none; padding: 0; border-radius: 0; font-family: 'Consolas','Menlo',monospace; color: var(--text-2); white-space: pre; }
+    .table-wrap { overflow-x: auto; margin: 16px 0; }
+    .post-body table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .post-body th, .post-body td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    .post-body th { background: var(--bg-subtle); font-weight: 600; color: var(--text-1); }
+    .post-body td { color: var(--text-2); }
+    .chart-container { margin: 24px 0; overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+    [data-theme="light"] .chart-container { background: #faf9f5; }
+    .footer-nav { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .footer-nav a { color: var(--text-2); text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .footer-nav a:hover { color: var(--clay); }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+    .theme-toggle-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--text-3); display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; flex-shrink: 0; }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col { display: grid; grid-template-columns: 220px 1fr; gap: 48px; align-items: start; }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .toc-card-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); display: block; margin-bottom: 10px; }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a { display: block; padding: 5px 8px; color: var(--text-2); text-decoration: none; font-size: 0.85rem; line-height: 1.4; border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+    .toc-list a:hover, .toc-list a.toc-active { color: var(--clay); border-left-color: var(--clay); background: var(--clay-soft); border-radius: 4px; }
+    @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } .toc-wrap { display: none; } }
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#智能客服的复杂度分层">智能客服的复杂度分层</a></li>
+          <li><a href="#业务特性分类场景取舍的共同语言">业务特性分类：场景取舍的共同语言</a></li>
+          <li><a href="#冷启动期的最小可行系统" style="padding-left:18px;font-size:0.78rem">冷启动期的最小可行系统</a></li>
+          <li><a href="#一数据层知识从哪里来">一、数据层：知识从哪里来</a></li>
+          <li><a href="#1.1-知识库来源与文档解析" style="padding-left:18px;font-size:0.78rem">1.1 知识库来源与文档解析</a></li>
+          <li><a href="#1.2-chunking策略" style="padding-left:18px;font-size:0.78rem">1.2 Chunking策略</a></li>
+          <li><a href="#1.3-embedding模型选型" style="padding-left:18px;font-size:0.78rem">1.3 Embedding模型选型</a></li>
+          <li><a href="#1.4-向量数据库选型" style="padding-left:18px;font-size:0.78rem">1.4 向量数据库选型</a></li>
+          <li><a href="#数据层协作要点" style="padding-left:18px;font-size:0.78rem">数据层协作要点</a></li>
+          <li><a href="#二意图路由层请求走哪条路径">二、意图路由层：请求走哪条路径</a></li>
+          <li><a href="#2.1-意图识别与路由" style="padding-left:18px;font-size:0.78rem">2.1 意图识别与路由</a></li>
+          <li><a href="#三检索层怎么找到对的内容">三、检索层：怎么找到对的内容</a></li>
+          <li><a href="#3.1-查询改写query-rewriting" style="padding-left:18px;font-size:0.78rem">3.1 查询改写（Query Rewriting）</a></li>
+          <li><a href="#3.2-稠密检索稀疏检索与混合检索" style="padding-left:18px;font-size:0.78rem">3.2 稠密检索、稀疏检索与混合检索</a></li>
+          <li><a href="#3.3-重排序reranker" style="padding-left:18px;font-size:0.78rem">3.3 重排序（Reranker）</a></li>
+          <li><a href="#3.4-text-to-sql结构化数据的检索路径" style="padding-left:18px;font-size:0.78rem">3.4 Text-to-SQL：结构化数据的检索路径</a></li>
+          <li><a href="#检索层协作要点" style="padding-left:18px;font-size:0.78rem">检索层协作要点</a></li>
+          <li><a href="#四生成层怎么生成好答案">四、生成层：怎么生成好答案</a></li>
+          <li><a href="#4.1-主模型选型与评估框架" style="padding-left:18px;font-size:0.78rem">4.1 主模型选型与评估框架</a></li>
+          <li><a href="#4.2-prompt工程" style="padding-left:18px;font-size:0.78rem">4.2 Prompt工程</a></li>
+          <li><a href="#4.3-幻觉控制" style="padding-left:18px;font-size:0.78rem">4.3 幻觉控制</a></li>
+          <li><a href="#生成层协作要点" style="padding-left:18px;font-size:0.78rem">生成层协作要点</a></li>
+          <li><a href="#五对话管理层怎么管理一次完整对话">五、对话管理层：怎么管理一次完整对话</a></li>
+          <li><a href="#5.1-上下文窗口管理" style="padding-left:18px;font-size:0.78rem">5.1 上下文窗口管理</a></li>
+          <li><a href="#5.2-多轮对话状态管理" style="padding-left:18px;font-size:0.78rem">5.2 多轮对话状态管理</a></li>
+          <li><a href="#5.3-人工接管触发机制" style="padding-left:18px;font-size:0.78rem">5.3 人工接管触发机制</a></li>
+          <li><a href="#对话管理层协作要点" style="padding-left:18px;font-size:0.78rem">对话管理层协作要点</a></li>
+          <li><a href="#六评估层怎么知道系统够不够好">六、评估层：怎么知道系统够不够好</a></li>
+          <li><a href="#6.1-离线评估指标体系ragas框架" style="padding-left:18px;font-size:0.78rem">6.1 离线评估指标体系（RAGAS框架）</a></li>
+          <li><a href="#6.2-在线评估与ab测试" style="padding-left:18px;font-size:0.78rem">6.2 在线评估与A/B测试</a></li>
+          <li><a href="#6.3-持续监控与漂移检测" style="padding-left:18px;font-size:0.78rem">6.3 持续监控与漂移检测</a></li>
+          <li><a href="#评估层协作要点" style="padding-left:18px;font-size:0.78rem">评估层协作要点</a></li>
+          <li><a href="#七工程层怎么让系统跑得起来">七、工程层：怎么让系统跑得起来</a></li>
+          <li><a href="#7.1-延迟优化" style="padding-left:18px;font-size:0.78rem">7.1 延迟优化</a></li>
+          <li><a href="#7.2-数据安全与权限管控" style="padding-left:18px;font-size:0.78rem">7.2 数据安全与权限管控</a></li>
+          <li><a href="#7.3-可观测性与成本监控" style="padding-left:18px;font-size:0.78rem">7.3 可观测性与成本监控</a></li>
+          <li><a href="#工程层协作要点" style="padding-left:18px;font-size:0.78rem">工程层协作要点</a></li>
+          <li><a href="#八迭代闭环层系统怎么持续变好">八、迭代闭环层：系统怎么持续变好</a></li>
+          <li><a href="#8.1-badcase发现与归因" style="padding-left:18px;font-size:0.78rem">8.1 Badcase发现与归因</a></li>
+          <li><a href="#8.2-评估数据集的构建与维护" style="padding-left:18px;font-size:0.78rem">8.2 评估数据集的构建与维护</a></li>
+          <li><a href="#8.3-数据飞轮从用户反馈到系统迭代" style="padding-left:18px;font-size:0.78rem">8.3 数据飞轮：从用户反馈到系统迭代</a></li>
+          <li><a href="#总结ai-pm的决策地图">总结：AI PM的决策地图</a></li>
+          <li><a href="#参考资料">参考资料</a></li>
+          <li><a href="#一手文件-官方发布" style="padding-left:18px;font-size:0.78rem">一手文件 / 官方发布</a></li>
+          <li><a href="#法律案例" style="padding-left:18px;font-size:0.78rem">法律案例</a></li>
+          <li><a href="#学术研究同行评审或接近同行评审" style="padding-left:18px;font-size:0.78rem">学术研究（同行评审或接近同行评审）</a></li>
+          <li><a href="#工具厂商数据官方声称未经独立验证" style="padding-left:18px;font-size:0.78rem">工具厂商数据（官方声称，未经独立验证）</a></li>
+          <li><a href="#行业博客-分析文章非同行评审供参考" style="padding-left:18px;font-size:0.78rem">行业博客 / 分析文章（非同行评审，供参考）</a></li>
+          <li><a href="#工具文档" style="padding-left:18px;font-size:0.78rem">工具文档</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-date">2026.06</span>
+        <span id="post-tags"></span>
+      </div>
+      <h1 class="post-title">从零搭建一个LLM智能客服：完整技术链路与关键决策</h1>
+      <p class="post-summary">智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大——从一个简单的关键词匹配机器人，到一套有完整评估闭环的生产级系统，技术栈的厚度可以相差十倍不止。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协作分工。目标是作为一份可查阅的决策手册，而不是参数配置指南。</p>
+    </header>
+
+    <hr class="divider" />
+
+    <div class="post-body">
+<hr class="divider" />
+<p><strong>如何阅读本文</strong>：</p>
+<p>本文按八个技术层级组织，每层包含"是什么→评估维度→场景取舍→PM与算法协作"四个部分，结构一致，可以通读也可以按需跳转。</p>
+<ul>
+<li><strong>通读</strong>：按顺序阅读，建议先读"业务特性分类"和"L4系统请求执行顺序"两节，建立整体框架后再进入各层细节</li>
+<li><strong>按需查阅</strong>：直接跳到目标章节。每层的"协作要点"表格是快速决策参考；"场景取舍"是按自身业务特性打标后的选型建议</li>
+<li><strong>决策地图</strong>：文末"总结：AI PM的决策地图"是全文的一页纸概览，适合在项目推进中快速定位"当前处于哪层、该问什么问题"</li>
+</ul>
+<blockquote class="callout"><strong>本文范围说明</strong>：本文覆盖文本模态的完整技术链路。多模态场景（用户上传图片、语音交互）涉及额外的视觉理解和语音识别层，不在本文讨论范围内。</blockquote>
+<h2 id="智能客服的复杂度分层" style="scroll-margin-top:60px">智能客服的复杂度分层</h2>
+<p>在进入技术细节之前，先建立一个复杂度坐标系。市面上的"智能客服"大致可以分为四个层级：</p>
+<p><strong>L1：规则型机器人</strong>。基于关键词匹配或决策树，无LLM参与。能处理固定格式的问题，无法理解语义变体。适合问题类型极少、答案完全固定的场景（如"营业时间是几点"）。</p>
+<p><strong>L2：单轮RAG客服</strong>。引入LLM和知识库，能理解自然语言、检索相关文档并生成回答。但每次对话独立，不记忆上下文。适合问题类型多样、答案来源于文档库的场景。</p>
+<p><strong>L3：多轮对话+RAG</strong>。在L2基础上加入上下文管理，支持多轮追问和指代消解（如"那这个怎么退款"中的"这个"指代前文提到的商品）。</p>
+<p><strong>L4：完整生产级系统</strong>。在L3基础上叠加意图识别与路由、人工接管机制、完整的离线+在线评估体系、延迟优化、权限管控、可观测性监控。这是真实企业级部署的形态。</p>
+<p><strong>本文覆盖L4的完整链路。</strong></p>
+<p><strong>L4系统的请求执行顺序</strong>：本文按技术层级组织，但实际运行时各层的执行顺序与章节顺序不完全一致。下图展示了一条请求的完整路径：</p>
+<div class="chart-container">
+<svg width="100%" viewBox="0 0 680 620" role="img">
+<title>L4智能客服系统请求执行顺序</title>
+<desc>展示用户请求的完整处理路径，包含输入侧和输出侧合规检测，Text-to-SQL与RAG两条并行路径，以及横切基础设施三层</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="270" y="16" width="140" height="38" rx="8" fill="#f5f5f0" stroke="#888780" stroke-width="0.5"/>
+<text x="340" y="38" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#2c2c2a">用户请求</text>
+<line x1="340" y1="54" x2="340" y2="72" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="210" y="72" width="260" height="44" rx="8" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.5"/>
+<text x="340" y="89" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#791f1f">输入侧合规检测</text>
+<text x="340" y="107" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#a32d2d">PII脱敏 / Prompt注入过滤 / 违禁词</text>
+<line x1="340" y1="116" x2="340" y2="134" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="240" y="134" width="200" height="36" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="340" y="152" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#26215c">意图识别与路由</text>
+<line x1="290" y1="170" x2="130" y2="196" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="340" y1="170" x2="340" y2="196" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="390" y1="170" x2="550" y2="196" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="44" y="196" width="172" height="36" rx="8" fill="#faece7" stroke="#993c1d" stroke-width="0.5"/>
+<text x="130" y="214" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#4a1b0c">高风险 → 人工接管</text>
+<rect x="250" y="196" width="180" height="36" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="340" y="214" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#04342c">文档类 → RAG主链路</text>
+<rect x="464" y="196" width="172" height="36" rx="8" fill="#faeeda" stroke="#854f0b" stroke-width="0.5"/>
+<text x="550" y="214" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#412402">结构化查询 → SQL</text>
+<line x1="340" y1="232" x2="340" y2="250" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="258" y="250" width="164" height="32" rx="6" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="340" y="266" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#04342c">数据层（知识库）</text>
+<line x1="340" y1="282" x2="340" y2="300" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="258" y="300" width="164" height="32" rx="6" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="340" y="316" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#04342c">检索层（召回+排序）</text>
+<path d="M550 232 L550 350 L424 350" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="620" y="292" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#888780">SQL</text>
+<text x="620" y="308" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#888780">执行结果</text>
+<line x1="340" y1="332" x2="340" y2="350" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="200" y="350" width="224" height="32" rx="6" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="312" y="366" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#04342c">生成层（LLM组织回答）</text>
+<line x1="312" y1="382" x2="312" y2="400" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="192" y="400" width="240" height="44" rx="8" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.5"/>
+<text x="312" y="417" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#791f1f">输出侧合规检测</text>
+<text x="312" y="435" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#a32d2d">幻觉检测 / 违禁表述 / 越界承诺</text>
+<line x1="312" y1="444" x2="312" y2="462" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="222" y="462" width="180" height="32" rx="6" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="312" y="478" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#04342c">对话管理层</text>
+<line x1="312" y1="494" x2="312" y2="512" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="242" y="512" width="140" height="36" rx="8" fill="#f5f5f0" stroke="#888780" stroke-width="0.5"/>
+<text x="312" y="530" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#2c2c2a">返回用户</text>
+<rect x="30" y="340" width="160" height="250" rx="10" fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="110" y="358" text-anchor="middle" font-size="11" fill="#888780">横切基础设施</text>
+<text x="110" y="372" text-anchor="middle" font-size="11" fill="#888780">（持续运行）</text>
+<rect x="44" y="382" width="130" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text x="109" y="400" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#042c53">评估层</text>
+<text x="109" y="418" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">持续监测质量</text>
+<rect x="44" y="446" width="130" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text x="109" y="464" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#042c53">工程层</text>
+<text x="109" y="482" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">延迟/安全/成本</text>
+<rect x="44" y="510" width="130" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text x="109" y="528" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#042c53">迭代闭环层</text>
+<text x="109" y="546" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">驱动持续改进</text>
+</svg>
+</div>
+<p>几个关键点补充说明：输入侧合规检测（PII脱敏、Prompt注入过滤）在意图路由之前执行；Text-to-SQL的SQL执行结果在生成层与RAG主链路汇合，由LLM统一组织成自然语言；输出侧合规检测（幻觉检测、违禁表述过滤）在生成层之后、返回用户之前执行；查询改写（3.1节）发生在确认走RAG路径之后、向量检索之前，与意图识别是先后关系而非并列；评估层、工程层、迭代闭环层不在请求链路上，而是横切所有层持续运行的基础设施。</p>
+<hr class="divider" />
+<h2 id="业务特性分类场景取舍的共同语言" style="scroll-margin-top:60px">业务特性分类：场景取舍的共同语言</h2>
+<p>各技术节点的选型不存在绝对最优解，最终取决于产品所处的业务场景。为了避免在每个节点重复解释背景，这里先统一定义业务特性标签，后文中直接引用。以下分类是本文基于常见业务场景归纳的框架，非行业标准术语，供参考使用。</p>
+<p><strong>使用方式</strong>：标签按三个维度组织，每个维度下按需打标，可多选也可不选。没有命中任何标签的维度，说明该维度对你的场景没有特殊约束，按各节的通用建议执行即可。一个产品通常会同时命中多个标签，后文各节点的场景取舍遇到此情况，取各自约束的交集。</p>
+<p><strong>示例对照</strong>：</p>
+<ul>
+<li>银行智能客服 = <strong>准确率敏感型</strong>（维度一）+ <strong>延迟敏感型</strong>（维度二）+ <strong>隐私合规型</strong>（维度三）</li>
+<li>新创业公司FAQ机器人 = <strong>冷启动期</strong>（维度三），维度一和二无特殊约束</li>
+<li>大型电商促销期客服 = <strong>延迟敏感型</strong> + <strong>吞吐量敏感型</strong>（维度二）+ <strong>知识更新频繁型</strong>（维度三）</li>
+<li>企业内部低频知识库 = 三个维度均无特殊约束，按通用建议执行</li>
+</ul>
+<hr class="divider" />
+<p><strong>维度一：对错误的容忍边界</strong></p>
+<p><strong>准确率敏感型</strong>：约束来源是"答错了有直接的法律、财务或医疗代价"，对幻觉容忍度接近于零，宁可拒答也不能答错。典型行业：金融（投资建议、合规判断）、医疗（诊断辅助、用药指导）、法律（条款解释、合同审查）。</p>
+<p><em>如果你的场景在维度一没有命中任何标签，说明错误代价在可接受范围内，系统可以容忍一定的幻觉率，优先关注用户体验和覆盖率。</em></p>
+<hr class="divider" />
+<p><strong>维度二：对系统性能的约束</strong></p>
+<p><strong>延迟敏感型</strong>：用户在实时交互中等待，超过阈值就会流失或体验崩坏。典型场景：ToC实时文字客服（容忍首token延迟通常＜2秒）、语音交互（更严格，通常＜500ms）、直播答疑。</p>
+<p><strong>吞吐量敏感型</strong>：并发量大，成本压力高，系统需要在有限预算内服务大量请求。典型场景：大型平台的自助客服、批量文档处理、高频低复杂度的问答。</p>
+<p><em>延迟敏感型和吞吐量敏感型可以同时命中（如大型ToC实时客服），也可以都不命中（如低频企业内部工具）。两者同时命中时，延迟约束优先于成本优化。</em></p>
+<hr class="divider" />
+<p><strong>维度三：运营与合规约束</strong></p>
+<p><strong>隐私合规型</strong>：约束来源是"数据不能流出特定边界"，受监管要求或企业安全策略约束，对第三方API有合规限制。典型行业：政务系统、医院核心系统、银行核心业务系统、金融机构内部知识库、涉密企业内部系统。</p>
+<p><strong>知识更新频繁型</strong>：知识库内容变更频率高，系统需要快速同步，否则容易产生"过时回答"类幻觉。典型场景：电商（SKU、促销规则频繁变动）、政策类客服（法规更新）、SaaS产品文档（版本迭代快）。</p>
+<p><strong>冷启动期</strong>：产品早期，标注数据极少，业务规则尚不稳定。典型场景：新产品上线初期、小团队快速验证MVP。这类阶段工程简单性和可迭代性优先于极致性能。注意这是产品生命周期阶段标签，会随时间变化——系统稳定、数据积累足够后，这个标签自然退出。</p>
+<hr class="divider" />
+<h3 id="冷启动期的最小可行系统" style="scroll-margin-top:60px">冷启动期的最小可行系统</h3>
+<p>如果你当前处于冷启动期，不需要从L4开始搭建。以下是一个能快速上线、后续可逐步升级的最小可行配置，覆盖L2-L3之间的能力：</p>
+<ul>
+<li><strong>数据层</strong>：固定分块，商业Embedding API（无需自托管），pgvector或Chroma（无需独立向量数据库）</li>
+<li><strong>检索层</strong>：纯向量检索起步（暂不引入BM25混合，暂不加Reranker）</li>
+<li><strong>生成层</strong>：闭源商业API，Prompt中加强制引用约束，暂不做成本路由</li>
+<li><strong>对话管理层</strong>：滑动窗口上下文管理，规则触发人工接管（暂不做情绪识别）</li>
+<li><strong>评估层</strong>：从第一天起收集用户反馈信号（Thumbs down），人工抽检，暂不搭建自动化RAGAS评估</li>
+<li><strong>工程层</strong>：默认启用Streaming输出，暂不做语义缓存</li>
+</ul>
+<p>当月API费用超过预算阈值、或评估数据积累到100条以上时，再逐层引入更复杂的组件。后文各节的"冷启动期"场景取舍是对这个基础配置的细化补充。</p>
+<hr class="divider" />
+<h2 id="一数据层知识从哪里来" style="scroll-margin-top:60px">一、数据层：知识从哪里来</h2>
+<h3 id="1.1-知识库来源与文档解析" style="scroll-margin-top:60px">1.1 知识库来源与文档解析</h3>
+<p>智能客服的知识来源通常是异构的。一个典型的企业客服知识库可能包含：产品说明书（PDF）、常见问题文档（Word/HTML）、政策文件（PDF/内部Wiki）、工单历史记录（结构化数据库）、实时更新的价格和库存信息（数据库/API接口）。</p>
+<p>不同来源对应不同的技术路径：非结构化文档（PDF、Word、HTML）走向量检索路径（见3.2节）；结构化数据（订单数据库、库存表）走Text-to-SQL路径（见3.4节）。两条路径在完整系统中并存，由意图路由层决定走哪条。</p>
+<p><strong>主流解析工具</strong>：<a href="https://unstructured.io/" target="_blank" rel="noopener">Unstructured.io</a>专为非结构化文档设计，对PDF表格和复杂排版处理能力强，目前是生产级RAG系统的主流选择；<a href="https://www.llamaindex.ai/llamaparse" target="_blank" rel="noopener">LlamaParse</a>针对RAG场景优化，对含图表的PDF支持较好；<a href="https://tika.apache.org/" target="_blank" rel="noopener">Apache Tika</a>格式支持最广，适合多格式混合场景。扫描件PDF需额外引入OCR（开源选项：<a href="https://github.com/tesseract-ocr/tesseract" target="_blank" rel="noopener">Tesseract</a>；商业选项：AWS Textract、Azure Document Intelligence）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>解析完整性</strong>：关键内容（表格数据、页眉页脚、多栏文字）是否被正确提取，而不是乱码或丢失</li>
+<li><strong>格式保留度</strong>：表格结构、列表层级是否在解析后仍可被识别，影响后续Chunking的语义完整性</li>
+<li><strong>处理速度</strong>：大批量入库时的吞吐能力，影响知识库更新的及时性</li>
+<li><strong>错误率</strong>：解析失败或解析结果严重错误的文档比例，需要人工兜底的成本</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先关注</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>解析完整性优先</td><td>哪怕处理速度慢、需要人工审查也值得</td></tr>
+<tr><td>知识更新频繁型</td><td>处理速度同等重要</td><td>慢解析会让知识库更新滞后，产生"过时回答"幻觉</td></tr>
+<tr><td>冷启动期</td><td>优先选用托管服务</td><td>不要在解析层花太多工程时间，先跑通再优化</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h3 id="1.2-chunking策略" style="scroll-margin-top:60px">1.2 Chunking策略</h3>
+<p>文档解析完成后，需要将长文本切割成更小的片段（chunk）用于检索。<strong>Chunking是RAG链路中最容易被忽视、但对最终质量影响最大的环节之一。</strong></p>
+<p>切得太大：每个chunk包含太多无关内容，检索噪音高，LLM需要从大量冗余信息中提取答案，容易跑偏。切得太小：语义完整性被破坏，一段完整的政策说明被切成碎片，检索时只能召回片段而非完整逻辑。</p>
+<p><strong>三种主要策略</strong>：</p>
+<p><strong>固定分块</strong>：按token数量切割，相邻块保留一定比例的重叠（overlap），避免语义在边界被截断。实现最简单，适合文本结构规律、语义单元边界不明显的场景（如工单历史）。overlap是固定分块的必要参数，完全不重叠会导致边界处的信息丢失。</p>
+<blockquote class="callout">案例：某电商平台将产品说明书按固定大小切割，退换货政策横跨两个chunk边界——第一个chunk以"支持7天无理由退换"结尾，第二个从"但以下情形不适用"开始。用户问"能退货吗"，系统只召回了第一个chunk，遗漏了关键排除条款，导致客诉。引入chunk重叠后问题消失。</blockquote>
+<p><strong>语义分块</strong>：计算相邻句子之间的语义相似度，在相似度骤降的位置切割，确保每个chunk内部语义连贯。适合叙述性文本和FAQ文档，实现成本高于固定分块。语义分块的切割点选在语义边界，天然减少了边界截断问题，但部分实现中仍会在切割点附近保留轻量级的上下文窗口（即轻量overlap），以应对语义相似度判断不准确的情况。</p>
+<p><strong>层级分块</strong>：同时维护父chunk（完整段落/章节）和子chunk（具体句子），检索时用子chunk定位，生成时补充父chunk的完整上下文。适合结构化文档（有章节层级的政策手册、产品文档）。层级分块本质上是一种结构化的overlap机制——父chunk始终作为子chunk的上下文补充存在，解决了固定分块中overlap范围固定、无法感知语义结构的问题。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>召回率（Recall）</strong>：正确答案所在的chunk能否被检索到。切片边界不合理是召回失败的高频原因</li>
+<li><strong>上下文完整性</strong>：被召回的chunk是否包含回答问题所需的完整信息，还是只有半截</li>
+<li><strong>噪音比</strong>：召回结果中与问题无关的内容占比，影响LLM生成质量</li>
+<li><strong>入库效率</strong>：分块策略的计算成本，影响知识库大规模更新时的处理时间</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先关注</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>上下文完整性优先</td><td>宁可chunk大一些、噪音高一些，也不能让关键信息被切断</td></tr>
+<tr><td>延迟敏感型</td><td>chunk不宜过大</td><td>LLM处理更多token带来额外延迟</td></tr>
+<tr><td>知识更新频繁型</td><td>入库效率同等重要</td><td>分块耗时影响知识库更新的及时性</td></tr>
+<tr><td>冷启动期</td><td>用固定分块起步</td><td>不要在分块策略上过度投入，先跑通再优化</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：PM的职责是提供代表性的badcase样本（哪类问题的回答明显残缺或跑偏），算法据此判断是切片问题还是检索问题。切片策略的调整需要重新入库，成本较高，PM需要在"投入优化"和"先上线再迭代"之间做优先级判断。验收标准建议定义为：在代表性评估集上，召回率不低于目标阈值（参考值：冷启动期可先设70%，稳定期提升至85%以上；具体阈值需根据业务场景和知识库特性调整，无通用标准）。</p>
+<hr class="divider" />
+<h3 id="1.3-embedding模型选型" style="scroll-margin-top:60px">1.3 Embedding模型选型</h3>
+<p>Embedding模型将文本转换为向量，是语义检索的基础。<strong>模型的选择直接决定检索能力的天花板</strong>——再好的检索策略，也无法弥补embedding本身的语义理解缺陷。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>检索质量</strong>：在业务相关的问答对上，模型能否将语义相近的query和document映射到相近的向量空间。<a href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank" rel="noopener">MTEB榜单</a>是通用参考，但<strong>MTEB是通用测试集，专业领域（法律、金融、医疗）的真实表现可能与榜单排名有较大偏差</strong>，自有数据集上的测试比榜单更重要</li>
+<li><strong>多语言支持</strong>：中英文混合、多语言场景下的跨语言语义对齐能力</li>
+<li><strong>上下文窗口</strong>：支持的最大输入长度，影响长chunk的处理能力，窗口短则长chunk需截断</li>
+<li><strong>推理延迟</strong>：每次embedding的耗时，影响实时检索的响应速度</li>
+<li><strong>成本</strong>：API调用费用（商业模型）或GPU推理成本（开源自托管），规模化后差异显著</li>
+<li><strong>数据安全</strong>：文本是否需要发往第三方服务器，隐私合规型场景的硬性约束</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先方向</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>隐私合规型</td><td>开源自托管（一票否决）</td><td>数据不能发往第三方服务器</td></tr>
+<tr><td>准确率敏感型</td><td>必须在自有领域数据上评估</td><td>通用榜单排名不代表垂直领域表现</td></tr>
+<tr><td>多语言/中文为主</td><td>优先评估多语言模型</td><td>英文优先模型在中文场景表现差距明显</td></tr>
+<tr><td>吞吐量敏感型</td><td>规模化后考虑自托管</td><td>规模化后自托管性价比显著高于API计费</td></tr>
+<tr><td>冷启动期</td><td>商业API优先</td><td>生态成熟、文档完善，降低工程调试成本</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：PM主导"数据安全要求"和"多语言需求"这两个维度的决策，因为这是业务和合规侧的约束；算法主导具体模型的技术评估（在业务数据集上跑benchmark）。PM需要帮助构建评估用的问答对数据集，这是算法无法独立完成的——算法不了解哪些问题是业务上的高频重要问题。</p>
+<blockquote class="callout">补充：自托管Embedding模型中，<a href="https://huggingface.co/BAAI/bge-m3" target="_blank" rel="noopener">bge-m3</a>原生支持稀疏+稠密双模式输出，可以直接用于2.1节的混合检索，无需额外引入独立的BM25索引，是自托管混合检索场景的高性价比选择。</blockquote>
+<hr class="divider" />
+<h3 id="1.4-向量数据库选型" style="scroll-margin-top:60px">1.4 向量数据库选型</h3>
+<p>向量数据库负责存储embedding向量并支持高效相似度检索。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>检索延迟</strong>：p50/p99延迟，影响用户感知的响应速度</li>
+<li><strong>并发能力</strong>：同时处理多少查询请求而不显著降级，影响高峰期的系统稳定性</li>
+<li><strong>混合检索支持</strong>：是否原生支持向量+关键词（BM25）混合检索，影响检索质量（详见第二章）</li>
+<li><strong>数据规模上限</strong>：能支持多少向量条目而不显著影响性能</li>
+<li><strong>运维复杂度</strong>：自托管的运维成本，有无托管SaaS选项</li>
+<li><strong>多租户隔离</strong>：同一实例下不同业务线或客户的数据隔离能力，企业级部署的重要需求</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先关注</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td><strong>延迟敏感型</strong></td><td><strong>p99延迟而非平均延迟</strong></td><td>最慢的请求最容易触发用户投诉</td></tr>
+<tr><td>吞吐量敏感型</td><td>并发能力上限</td><td>高峰期不触发限流</td></tr>
+<tr><td>隐私合规型</td><td>必须自托管（一票否决）</td><td>数据不能发往第三方</td></tr>
+<tr><td>知识更新频繁型</td><td>写入性能</td><td>评估向量索引的更新吞吐能力</td></tr>
+<tr><td>冷启动期</td><td>运维简单性</td><td>托管SaaS或复用现有PostgreSQL（pgvector）</td></tr>
+</tbody></table></div>
+<p>主流选项定位：<a href="https://www.pinecone.io/" target="_blank" rel="noopener">Pinecone</a>全托管SaaS，运维成本最低；<a href="https://qdrant.tech/" target="_blank" rel="noopener">Qdrant</a>自托管/云，延迟低、原生支持混合检索；<a href="https://weaviate.io/" target="_blank" rel="noopener">Weaviate</a>生态丰富、模块化；<a href="https://github.com/pgvector/pgvector" target="_blank" rel="noopener">pgvector</a>复用现有PostgreSQL，向量规模较小时的最简方案；<a href="https://www.trychroma.com/" target="_blank" rel="noopener">Chroma</a>本地开发首选，不适合生产。</p>
+<hr class="divider" />
+<blockquote class="callout">结构化数据（订单数据库、库存表）通过Text-to-SQL路径访问，详见3.4节。</blockquote>
+<h3 id="数据层协作要点" style="scroll-margin-top:60px">数据层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>知识库来源和范围</td><td>✓</td><td></td><td></td></tr>
+<tr><td>数据安全/合规要求</td><td>✓</td><td></td><td></td></tr>
+<tr><td>解析工具选型</td><td></td><td>✓</td><td></td></tr>
+<tr><td>Chunking策略选择</td><td></td><td>✓</td><td></td></tr>
+<tr><td>Embedding模型技术评估</td><td></td><td>✓</td><td></td></tr>
+<tr><td>评估数据集的问答对构建</td><td></td><td></td><td>✓</td></tr>
+<tr><td>召回率验收阈值</td><td></td><td></td><td>✓</td></tr>
+<tr><td>向量数据库选型</td><td></td><td></td><td>✓（成本/合规PM主导，技术性能算法主导）</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h2 id="二意图路由层请求走哪条路径" style="scroll-margin-top:60px">二、意图路由层：请求走哪条路径</h2>
+<h3 id="2.1-意图识别与路由" style="scroll-margin-top:60px">2.1 意图识别与路由</h3>
+<p>并非所有用户问题都适合同一条处理路径。生产级系统在最前端设置意图识别层，先于任何检索或生成执行，将请求分发到对应路径：</p>
+<ul>
+<li><strong>知识检索路径</strong>：可以在知识库中找到答案的问题 → RAG流程</li>
+<li><strong>数据查询路径</strong>：需要查询订单、账户等结构化数据 → Text-to-SQL流程</li>
+<li><strong>业务操作路径</strong>：需要调用后端系统执行操作（发起退款、修改订单）→ API调用/Agent流程</li>
+<li><strong>情感响应路径</strong>：用户表达情绪、进行闲聊 → 情感回应逻辑，不触发检索</li>
+<li><strong>人工转接路径</strong>：超出系统能力或高风险场景 → 触发人工接管</li>
+<li><strong>拒绝路径</strong>：恶意输入、无关问题 → 礼貌拒绝</li>
+</ul>
+<p>上述六条路径是完整的意图分类体系；流程图中为简洁起见仅展示了三条主要分支（RAG主链路、Text-to-SQL、人工接管），业务操作、情感响应、拒绝路径的处理逻辑与此一致。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>意图分类准确率</strong>：路由判断的正确率，错误路由会导致用户在错误的路径里循环</li>
+<li><strong>边界问题处理</strong>：意图模糊时（问题可能属于多个类别）的处理逻辑是否合理</li>
+<li><strong>分类延迟</strong>：意图识别必须足够快，不能成为整体响应的瓶颈</li>
+</ul>
+<p><strong>AI PM与算法协作</strong>：意图的类别定义和边界划分是PM主导的业务决策——"什么算超出系统能力"、"什么算高风险场景"，不是技术判断。PM需要提供覆盖各类意图的测试用例，算法负责分类器的实现和优化。</p>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>重点关注</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>高风险路径的识别准确率</td><td>漏判高风险场景（该转人工但未转）是最严重的失误</td></tr>
+<tr><td>延迟敏感型</td><td>分类延迟须控制在50ms以内</td><td>意图识别是所有后续链路的前置步骤，延迟直接叠加</td></tr>
+<tr><td>冷启动期</td><td>先用规则做简单分类</td><td>意图类别少时规则足够，无需训练分类器</td></tr>
+<tr><td>知识更新频繁型</td><td>新增意图类型的快速覆盖</td><td>业务变化带来新类型问题，分类器需能快速更新</td></tr>
+</tbody></table></div>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>意图类别的业务定义与边界划分</td><td>✓</td><td></td><td></td></tr>
+<tr><td>高风险场景的认定标准</td><td>✓</td><td></td><td></td></tr>
+<tr><td>意图分类测试用例设计</td><td></td><td></td><td>✓</td></tr>
+<tr><td>意图分类器的实现与调优</td><td></td><td>✓</td><td></td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h2 id="三检索层怎么找到对的内容" style="scroll-margin-top:60px">三、检索层：怎么找到对的内容</h2>
+<p>检索层包含四个子节，执行顺序为：<strong>3.1查询改写</strong>（优化query表达）→ <strong>3.2向量/关键词混合检索</strong>（从非结构化文档库找内容）→ <strong>3.3 Reranker</strong>（精排候选结果，可选）。<strong>3.4 Text-to-SQL</strong>是并行的另一条路径，面向结构化数据库查询，由意图路由层决定与3.2走哪条——两条路径共同构成检索层的完整全集，分别覆盖非结构化文档和结构化数据两类数据形态。</p>
+<h3 id="3.1-查询改写query-rewriting" style="scroll-margin-top:60px">3.1 查询改写（Query Rewriting）</h3>
+<p>查询改写发生在意图识别确认走RAG路径之后、向量检索之前——它解决的不是"走哪条路"，而是"怎么把query表达得更利于检索"。与意图识别是先后关系，不是并列关系。<strong>查询改写是可选组件</strong>：如果用户表达规范、以单轮问答为主，直接用原始query检索也能达到较好效果；多轮对话场景中，指代消解部分是必须的。</p>
+<p>用户输入的query往往不是检索友好的形式，有两类主要问题：</p>
+<p><strong>指代不明</strong>：多轮对话中，用户常用"这个"、"那个"指代前文提到的对象，含指代词的query无法直接检索。解决方式是在检索前用LLM将query改写为独立完整的检索语句。</p>
+<p>例：用户在第3轮问"那退款需要多久？"→改写为"申请退换货之后，退款到账需要多少个工作日？"</p>
+<p><strong>表达不精确</strong>：用户描述问题的方式与知识库表达不匹配（"快递丢了" vs 知识库中的"物流异常"）。解决方式包括同义词扩展、或让LLM生成假设性回答再用回答去检索（HyDE技术）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>改写准确率</strong>：改写后的query是否准确保留了用户的原始意图，没有偏移或遗漏关键信息</li>
+<li><strong>召回率提升</strong>：改写后相比直接用原始query，检索召回率的提升幅度</li>
+<li><strong>改写延迟</strong>：额外引入的LLM调用耗时，对整体响应时间的影响</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>建议</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>多轮对话（L3/L4）</td><td><strong>指代消解必须实现</strong></td><td>含指代词的query无法直接检索，是必要功能</td></tr>
+<tr><td>延迟敏感型</td><td>用轻量小模型承担改写</td><td>避免主力大模型的延迟叠加</td></tr>
+<tr><td>冷启动期</td><td>先用规则做简单指代消解</td><td>跳过HyDE等复杂方案，先跑通再优化</td></tr>
+<tr><td>其他场景</td><td>根据badcase分析决定是否引入</td><td>改写收益视query表达质量而定</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：PM的核心贡献是提供"哪些问题因为表达问题没有找到答案"的badcase样本，这是算法判断是否需要引入改写、以及改写哪种类型的依据。PM同时负责定义指代消解的业务优先级（多轮场景是否是核心场景），算法负责改写方案的实现和延迟优化。</p>
+<hr class="divider" />
+<h3 id="3.2-稠密检索稀疏检索与混合检索" style="scroll-margin-top:60px">3.2 稠密检索、稀疏检索与混合检索</h3>
+<p><strong>稠密检索（Dense Retrieval）</strong>：将用户query转换成向量，在数据库中找语义最相近的chunk，能理解语义变体但有一个固有盲区——<strong>精确关键词匹配</strong>。订单号、产品SKU、法律条款编号这类精确字符串，语义相似度无法保证准确命中。</p>
+<p><strong>稀疏检索（Sparse Retrieval，以BM25算法为代表）</strong>：本质是升级版关键词匹配，对精确词汇的召回率高，但无法理解语义变体（"退货"和"退换货"在BM25看来是不同词）。</p>
+<p><strong>混合检索</strong>将两路并行，通过加权融合合并结果，<strong>兼顾语义理解和精确匹配，是生产场景的标准配置</strong>。</p>
+<blockquote class="callout">以保险合同类客服场景为例：用户问"第7条责任免除条款的赔付上限"时，含有条款编号的精确字符串正是纯向量检索的盲区——系统容易召回与"赔付"语义相关但不含"第7条"编号的文档。引入混合检索后，BM25路径能准确命中含该编号的文档。<a href="https://dev.to/pooyagolchian/rag-pipelines-in-production-vector-database-benchmarks-chunking-strategies-and-hybrid-search-data-gbl" target="_blank" rel="noopener">据生产RAG系统对比研究，混合检索相比纯向量检索，召回率从约78%提升至91%</a>，精确字符串查询场景的提升幅度尤为显著。</blockquote>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>召回率@K</strong>：前K个结果中包含正确答案的比例，衡量"找没找到"</li>
+<li><strong>MRR（平均倒数排名）</strong>：正确答案排在第几位的平均倒数，衡量"找到了排多靠前"</li>
+<li><strong>精确匹配率</strong>：对含有精确字符串（编号、代码）的问题，准确命中的比例</li>
+<li><strong>融合权重敏感性</strong>：稠密/稀疏两路权重调整对结果的影响幅度，权重太敏感说明系统不稳定</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>融合权重建议</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型（金融、法律）</td><td>BM25权重适当提高</td><td>精确条款编号的命中比语义相似度更关键</td></tr>
+<tr><td>语义理解为主（口语描述复杂问题）</td><td>稠密检索权重更高</td><td>用户表达多样，关键词匹配覆盖率低</td></tr>
+<tr><td>知识更新频繁型</td><td>注意两路索引同步</td><td>向量索引和BM25索引需同步更新，避免时间差</td></tr>
+<tr><td>其他场景</td><td>稠密0.7/稀疏0.3起步</td><td>通用基线，再根据评估集结果调整</td></tr>
+</tbody></table></div>
+<p><a href="https://dev.to/pooyagolchian/rag-pipelines-in-production-vector-database-benchmarks-chunking-strategies-and-hybrid-search-data-gbl" target="_blank" rel="noopener">生产数据参考：据对比研究，稠密检索召回率@10约78%，BM25约65%，混合检索约91%</a>，绝对数值因数据集不同差异较大。</p>
+<p><strong>AI PM与算法协作</strong>：混合检索几乎在所有生产场景下都值得启用，PM不需要纠结"要不要用"，而是关注验收标准——在评估集上，召回率和MRR相比baseline有没有显著提升。融合权重的调整由算法主导，PM提供业务判断（"这个产品里精确查询和语义查询哪类更多"）。</p>
+<hr class="divider" />
+<h3 id="3.3-重排序reranker" style="scroll-margin-top:60px">3.3 重排序（Reranker）</h3>
+<p>混合检索通常召回top-20到top-50个候选chunk，最终送入LLM的往往只有top-3到top-5。<strong>Reranker负责在这两步之间精排</strong>，判断每个候选chunk对当前query的真实相关度。</p>
+<p>Reranker与检索阶段的向量相似度的核心区别：向量检索是独立编码query和document再比较（快但精度有限）；Reranker是将query和document拼接后一起编码（精度高但计算成本大，所以只用于候选集精排）。</p>
+<p>主流Reranker选项：<a href="https://cohere.com/rerank" target="_blank" rel="noopener">Cohere Rerank</a>（商业API，接入方便）；<a href="https://huggingface.co/BAAI/bge-reranker-v2-m3" target="_blank" rel="noopener">BGE-Reranker-v2-m3</a>（BAAI开源，支持中文，自托管首选）；<a href="https://jina.ai/reranker/" target="_blank" rel="noopener">Jina Reranker</a>（支持长文档输入）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>NDCG@K（归一化折损累积增益）</strong>：综合衡量精排后结果的相关性排序质量</li>
+<li><strong>精排后Top-K准确率</strong>：精排后最终送入LLM的K个chunk，包含正确答案的比例</li>
+<li><strong>延迟增量</strong>：Reranker带来的额外延迟，是否在可接受范围内</li>
+<li><strong>边际收益</strong>：相比不加Reranker，质量提升幅度与延迟增加是否值得</li>
+</ul>
+<p><strong>Reranker是可选组件，不是标配</strong>。引入前需先通过A/B对比量化收益：对比有/无Reranker时Top-K准确率和最终回答质量的差异。如果差异不显著，引入Reranker只会增加延迟和维护成本。</p>
+<p><strong>值得引入Reranker的情况</strong>：</p>
+<ul>
+<li>知识库体量大（万级以上chunk），候选集噪音高，召回的top-20里有大量不相关结果</li>
+<li>问题语义复杂，同一query对应多种可能意图，向量相似度无法区分</li>
+<li>评估集上Context Precision（上下文精确性）指标持续偏低</li>
+</ul>
+<p><strong>可以先不加Reranker的情况</strong>：</p>
+<ul>
+<li>知识库体量小（千级以下chunk），候选集噪音天然低</li>
+<li>延迟敏感型场景，Reranker的50-200ms增量超出预算</li>
+<li>冷启动期，评估数据不足以支撑有效的A/B对比</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>建议</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>优先评估引入</td><td>精排质量对最终答案影响大，值得承担延迟代价</td></tr>
+<tr><td>延迟敏感型</td><td>谨慎，需量化延迟增量</td><td>Reranker是请求链路延迟的主要来源之一</td></tr>
+<tr><td>吞吐量敏感型</td><td>评估成本/收益比</td><td>每次请求都增加计算成本，需核算性价比</td></tr>
+<tr><td>冷启动期</td><td>先跳过，有足够数据后再评估</td><td>无足够数据支撑A/B决策，引入无从验证</td></tr>
+<tr><td>知识更新频繁型</td><td>无特殊影响，正常评估</td><td>频繁更新不影响Reranker是否有用</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：引入Reranker是需要数据说话的决策——PM提出"当前检索结果有多少比例召回了正确答案但排名靠后"的业务问题，算法给出有/无Reranker的量化对比。PM根据质量收益和延迟/成本代价共同决定是否引入，不应基于"这个技术更先进"来决定。</p>
+<hr class="divider" />
+<h3 id="3.4-text-to-sql结构化数据的检索路径" style="scroll-margin-top:60px">3.4 Text-to-SQL：结构化数据的检索路径</h3>
+<p>3.2节介绍的稠密/稀疏/混合检索，解决的是<strong>非结构化文档</strong>（PDF、Word、FAQ等）的语义检索问题，找到的是文本片段。但智能客服中有一类高频需求，答案不在文档里，而在<strong>结构化数据库</strong>的表里：查订单状态、查账户余额、查物流信息、查库存数量。</p>
+<p><strong>两条路径构成检索层的完整全集</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>3.2 向量/关键词检索</th><th>3.4 Text-to-SQL</th></tr></thead>
+<tbody>
+<tr><td>数据形态</td><td>非结构化文档（文本片段）</td><td>结构化数据库（行列数据）</td></tr>
+<tr><td>检索方式</td><td>语义相似度 + 关键词匹配</td><td>LLM生成SQL → 数据库执行</td></tr>
+<tr><td>典型问题</td><td>"退换货政策是什么"</td><td>"我的订单2024-88888在哪里"</td></tr>
+<tr><td>返回内容</td><td>相关文本chunk</td><td>精确数据记录</td></tr>
+<tr><td>路由判断</td><td>由意图路由层（第二章）决定走哪条</td><td>← 同左</td></tr>
+</tbody></table></div>
+<p><strong>Text-to-SQL的工作原理</strong>：LLM理解用户的自然语言问题，自动生成SQL查询语句，执行后将结果返回给LLM，再组织成自然语言回答。</p>
+<pre class="code-block"><code>用户问题：&quot;我的订单2024-88888现在在哪里？&quot;
+       ↓
+LLM生成SQL：SELECT status, location FROM orders WHERE order_id = '2024-88888'
+       ↓
+数据库返回：{status: &quot;运输中&quot;, location: &quot;上海转运中心&quot;}
+       ↓
+LLM生成回答：&quot;您的订单目前正在上海转运中心，处于运输中状态。&quot;
+</code></pre>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>SQL准确率</strong>：生成的SQL是否能正确返回用户想要的数据</li>
+<li><strong>执行安全性</strong>：是否有可能生成破坏性SQL（DELETE、UPDATE），<strong>必须有硬性拦截机制，这是SQL路径的一票否决项</strong></li>
+<li><strong>Schema理解能力</strong>：数据库表结构复杂时（多表关联、字段命名不规范），LLM能否生成正确的JOIN逻辑</li>
+<li><strong>延迟</strong>：SQL生成+执行的总耗时，数据库查询本身可能成为瓶颈</li>
+<li><strong>权限控制</strong>：用户只能查自己的数据，不能通过自然语言绕过权限查到他人数据</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先关注</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>SQL准确率+执行安全性（一票否决）</td><td>错误的数据查询可能造成直接财务或法律损失</td></tr>
+<tr><td>延迟敏感型</td><td>数据库查询性能</td><td>慢查询会阻塞整个响应链路</td></tr>
+<tr><td>隐私合规型</td><td>权限控制必须在数据库层实现</td><td>不能只靠Prompt约束LLM，需要系统级防护</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：PM需要提供数据库的业务语义描述（哪张表存什么、字段的业务含义是什么），这些描述会注入到LLM的context中帮助SQL生成，算法无法独立完成这部分工作。SQL准确率的验收需要PM参与定义测试用例（"用户会问哪些典型的数据查询问题"）。</p>
+<hr class="divider" />
+<h3 id="检索层协作要点" style="scroll-margin-top:60px">检索层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>召回率验收阈值</td><td></td><td></td><td>✓</td></tr>
+<tr><td>混合检索权重调优</td><td></td><td>✓</td><td></td></tr>
+<tr><td>查询改写策略选择</td><td></td><td>✓</td><td></td></tr>
+<tr><td>Reranker引入决策</td><td></td><td></td><td>✓（PM评估质量收益，算法评估延迟代价）</td></tr>
+<tr><td>精确匹配 vs 语义检索的业务侧权重</td><td>✓</td><td></td><td></td></tr>
+<tr><td>数据库业务语义描述（供Text-to-SQL使用）</td><td>✓</td><td></td><td></td></tr>
+<tr><td>badcase中"找不到"的样本提供</td><td>✓</td><td></td><td></td></tr>
+<tr><td>召回失败的技术归因</td><td></td><td>✓</td><td></td></tr>
+</tbody></table></div>
+<p>检索层的优化是一个迭代过程：PM提供"哪些问题没找到正确答案"的样本，算法判断是混合检索权重、查询改写还是Reranker的问题，两者共同决定验收阈值和是否引入新组件。</p>
+<hr class="divider" />
+<h2 id="四生成层怎么生成好答案" style="scroll-margin-top:60px">四、生成层：怎么生成好答案</h2>
+<h3 id="4.1-主模型选型与评估框架" style="scroll-margin-top:60px">4.1 主模型选型与评估框架</h3>
+<p>召回的相关chunk和用户的问题共同构成送给LLM的输入，LLM负责生成最终回答。<strong>主模型的选择是整个系统最核心的决策之一</strong>，但它不应该是一个纯技术决策。</p>
+<p><strong>四个评估维度</strong>（本文归纳）：</p>
+<p><strong>质量维度</strong>——模型能力本身：</p>
+<ul>
+<li><strong>指令遵循能力</strong>：模型是否能严格按照系统Prompt中规定的格式、语气、禁区生成回答，不越界、不跑偏。客服场景中这点尤为关键（"不能承诺退款金额"这类约束，模型必须严格遵守）</li>
+<li><strong>幻觉率</strong>：在没有检索依据的情况下，模型主动捏造信息的概率</li>
+<li><strong>推理能力</strong>：对于需要多步推理的问题（如计费规则计算、多条款组合判断），模型能否给出正确结论</li>
+<li><strong>领域适配性</strong>：在特定专业领域（金融、医疗、法律）的表现，通用榜单排名高不代表垂直领域表现好</li>
+</ul>
+<p><strong>成本维度</strong>——规模化后的经济账：</p>
+<ul>
+<li><strong>推理延迟</strong>：首token时延（TTFT）和完整响应时间</li>
+<li><strong>Token单价</strong>：输入/输出token的费用，规模化后差距悬殊</li>
+<li><strong>自托管门槛</strong>：如果考虑开源自托管，所需GPU资源和MLOps人力的固定成本</li>
+<li><strong>成本路由可行性</strong>：是否支持用轻量版本处理简单问题、大模型处理复杂问题的分层策略</li>
+</ul>
+<p><strong>合规维度</strong>——数据和法规约束：</p>
+<ul>
+<li><strong>数据驻留</strong>：用户数据是否会发往境外服务器，涉及跨境数据合规</li>
+<li><strong>服务协议</strong>：服务商是否会用用户数据训练模型（部分商业API有此条款）</li>
+</ul>
+<p><strong>工程维度</strong>——系统集成层面：</p>
+<ul>
+<li><strong>API稳定性</strong>：服务可用性SLA，历史故障频率</li>
+<li><strong>上下文窗口大小</strong>：影响多轮对话历史和长文档的处理能力</li>
+<li><strong>并发限制</strong>：API的并发请求上限，高峰期是否会触发限流</li>
+<li><strong>静默更新风险</strong>（闭源API特有）：服务商在不通知的情况下更新模型，导致系统行为变化</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先维度</th><th>可接受的取舍</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>质量（指令遵循+幻觉率）> 合规</td><td>成本较高可接受</td></tr>
+<tr><td>延迟敏感型</td><td>成本（推理延迟）> 质量</td><td>能力稍弱的快速模型优先</td></tr>
+<tr><td>吞吐量敏感型</td><td>成本（Token单价+并发）> 质量</td><td>批量场景可用异步调用降低成本</td></tr>
+<tr><td>隐私合规型</td><td>合规（数据驻留）> 其他所有</td><td>自托管工程复杂度可接受</td></tr>
+<tr><td>冷启动型</td><td>工程（API成熟度+上手速度）> 成本</td><td>早期规模小，成本不是主要矛盾</td></tr>
+<tr><td>知识更新频繁型</td><td>质量（指令遵循）> 成本</td><td>需要模型准确执行"只基于最新文档回答"的约束</td></tr>
+</tbody></table></div>
+<p><strong>成本路由策略</strong>：不是所有问题都需要最强的模型。实践中常见的做法是将问题按复杂度分层，简单问题（单跳事实查询、格式化信息提取）交给轻量模型，复杂问题（多步推理、政策组合判断）交给大模型。<strong>这种分层策略可以显著降低整体成本，但引入了路由判断的额外复杂度，需要在系统稳定后再考虑引入。</strong></p>
+<p><strong>AI PM与算法协作</strong>：合规维度由PM/法务主导，是硬性过滤条件，在此之前算法评估没有意义；质量维度的评估需要PM参与提供业务场景测试用例，不能只用通用benchmark；成本维度是PM和算法共同核算的，PM提供预算约束，算法核算技术方案的成本；工程维度由算法主导评估。</p>
+<p><strong>关于Fine-tuning（模型微调）</strong>：算法团队有时会提议对基础模型做Fine-tuning来提升领域表现。在智能客服场景中，随着基础大模型能力的持续增强，目前业界的普遍实践倾向是纯RAG方案在大多数场景下已经足够，Fine-tuning的必要性显著降低（作者判断，供参考）。Fine-tuning更适合以下特定情况：需要固化特定输出格式或语气风格（Prompt难以稳定控制）、特定领域术语的理解一致性要求极高、以及对推理延迟有极致要求需要用小模型替代大模型的场景。Fine-tuning不能替代RAG——微调改善的是模型的行为模式，而不是知识更新问题，知识仍然需要RAG来动态注入。Fine-tuning的完整流程（数据准备、训练、评估、部署）不在本文范围内。</p>
+<hr class="divider" />
+<h3 id="4.2-prompt工程" style="scroll-margin-top:60px">4.2 Prompt工程</h3>
+<p>系统Prompt（System Prompt）是控制模型行为的主要手段，也是PM可以直接参与设计的核心环节之一。本节专指主模型的System Prompt设计——意图识别、查询改写、摘要压缩等其他节点同样需要Prompt，但那些Prompt的设计主要是算法实现细节，不需要PM深度介入。一个完整的客服系统Prompt通常包含：角色定义（"你是XX公司的客服助手，只回答与XX产品相关的问题"）、行为约束（不得承诺退款、不得回答竞品相关问题、知识库中没有的信息必须告知用户而不是猜测）、检索结果注入格式（规定文档如何呈现给模型）、输出格式控制（回答长度、是否引用来源）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>约束遵守率</strong>：模型在多大比例的情况下严格遵守了系统Prompt中的行为约束，尤其是禁止性约束</li>
+<li><strong>格式一致性</strong>：输出格式是否稳定，不会在某些输入下突然改变结构</li>
+<li><strong>Few-shot效果</strong>：加入示范问答对后，模型输出风格与示范的对齐程度</li>
+</ul>
+<p><strong>AI PM与算法协作</strong>：Prompt的设计是PM可以深度参与的环节——业务约束的定义（"什么不能说"）、品牌语气的把握、输出格式的需求，都是产品侧的判断，不是技术判断。Prompt版本需要和代码一样做版本管理，任何改动都需要在评估集上验证，不能直接上线。</p>
+<hr class="divider" />
+<h3 id="4.3-幻觉控制" style="scroll-margin-top:60px">4.3 幻觉控制</h3>
+<p>幻觉是LLM在没有依据的情况下生成听起来合理但实际错误的信息，在客服场景中代价直接。幻觉控制是一个跨层机制：检索层的召回质量直接影响幻觉概率（召回了错误文档，生成层再好也无力回天），生成层的Prompt约束和输出验证是主要的控制手段。本节从生成层视角讲控制手段，检索质量对幻觉的影响见第三章。</p>
+<blockquote class="callout"><strong>真实案例</strong>：2024年2月，加拿大卑诗省民事解决裁判所裁定，<a href="https://aibusiness.com/nlp/air-canada-held-responsible-for-chatbot-s-hallucinations-" target="_blank" rel="noopener">加拿大航空因其客服机器人错误告知乘客可在购票后90天内追溯申请丧亲优惠票价（实际政策要求购票前申请），被判赔偿812.02加元</a>。裁判所驳回了Air Canada"机器人是独立法律实体"的辩护，裁定（译自英文裁决原文）"公司对其网站上所有信息负责，无论信息来自静态页面还是聊天机器人"。<strong>这一判决确立了企业对AI客服输出承担法律责任的先例</strong>，也说明幻觉不只是技术问题，而是业务风险。</blockquote>
+<p>幻觉控制需要在输入侧（预防）和输出侧（检测）双管齐下：</p>
+<p><strong>输入侧</strong>（在生成层触发之前执行）：强制引用约束（Prompt中明确"只能基于知识库内容回答，没有依据则告知用户无法回答"）；检索质量保障（幻觉的根源之一是检索失败，模型只好猜测）；置信度阈值（检索相关性低于阈值时直接返回"未找到相关信息"，不进入生成环节）。</p>
+<p><strong>输出侧</strong>：引用一致性验证（检查回答中的关键表述是否能在召回文档中找到对应依据）；关键词黑名单（绝对不能出现的表述用规则过滤，比LLM判断更可靠）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>Faithfulness（忠实度）</strong>：回答中每个陈述有多少比例能在检索文档中找到依据，核心的幻觉检测指标（对应RAGAS框架的Faithfulness指标，见6.1节）</li>
+<li><strong>拒答率</strong>：当问题超出知识库范围时，系统选择"告知无法回答"而非猜测的比例</li>
+<li><strong>约束违反率</strong>：系统Prompt中的禁止性约束被违反的频率</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>重点指标</th><th>处理方向</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>Faithfulness + 约束违反率（一票否决）</td><td>必须达到极高标准，宁可拒答也不能答错</td></tr>
+<tr><td>知识更新频繁型</td><td>过时幻觉</td><td>建立知识库更新触发的自动重评估机制</td></tr>
+<tr><td>冷启动期</td><td>拒答率（可接受偏高）</td><td>宁可多拒答，也不要轻易生成没有依据的回答</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：幻觉的业务影响由PM评估（什么类型的错误会带来法律风险或直接客诉），幻觉的技术检测和缓解由算法主导。PM需要定义哪些类别的幻觉是"高危"（如金额承诺、政策误读），哪些是"可接受"（如语气措辞的细微差异），对应不同的处理优先级。</p>
+<hr class="divider" />
+<h3 id="生成层协作要点" style="scroll-margin-top:60px">生成层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>合规维度（数据驻留、服务协议）</td><td>✓</td><td></td><td></td></tr>
+<tr><td>业务约束定义（什么不能说）</td><td>✓</td><td></td><td></td></tr>
+<tr><td>Prompt语气与品牌风格</td><td>✓</td><td></td><td></td></tr>
+<tr><td>幻觉风险的业务影响评级</td><td>✓</td><td></td><td></td></tr>
+<tr><td>模型技术评估（垂直领域benchmark）</td><td></td><td>✓</td><td></td></tr>
+<tr><td>幻觉检测机制实现</td><td></td><td>✓</td><td></td></tr>
+<tr><td>模型最终选型</td><td></td><td></td><td>✓（合规和质量均达标后共同决定）</td></tr>
+<tr><td>成本预算约束与成本路由策略</td><td></td><td></td><td>✓</td></tr>
+<tr><td>业务场景测试用例设计</td><td></td><td></td><td>✓</td></tr>
+</tbody></table></div>
+<p>生成层是PM参与度最高的一层。Prompt设计、约束定义、幻觉风险的业务影响评估，都需要PM主导。算法负责技术实现和量化评估，但"什么样的回答是好的回答"这个判断标准，只有PM能定义清楚。</p>
+<hr class="divider" />
+<hr class="divider" />
+<h2 id="五对话管理层怎么管理一次完整对话" style="scroll-margin-top:60px">五、对话管理层：怎么管理一次完整对话</h2>
+<h3 id="5.1-上下文窗口管理" style="scroll-margin-top:60px">5.1 上下文窗口管理</h3>
+<p>多轮对话中，每次调用LLM都需要携带历史对话记录。对话轮数增加会带来两个问题：超出上下文窗口上限，以及成本随token数线性增长。</p>
+<p><strong>主要策略及评估维度</strong>：</p>
+<p><strong>滑动窗口</strong>：只保留最近N轮。简单，但会丢失早期重要信息（如用户在第1轮提供的订单号到第10轮可能已被截断）。评估维度：关键信息保留率（早期提供的关键实体在多轮后是否还在上下文中）。</p>
+<p><strong>摘要压缩</strong>：定期用LLM将历史对话压缩成摘要。保留信息，但引入额外调用延迟，且摘要本身有信息损失风险。评估维度：摘要后的信息完整度（关键实体、问题背景是否被保留）。</p>
+<p><strong>关键信息提取（Entity Memory）</strong>：从对话中提取关键实体（订单号、用户姓名、问题类型）存为结构化记忆，始终携带，解决滑动窗口丢失早期关键信息的问题，通常与滑动窗口配合使用。评估维度：实体提取准确率和覆盖率。</p>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>建议策略</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>大多数客服场景（≤15轮）</td><td>滑动窗口+实体提取</td><td>通常足够，无需引入摘要压缩的复杂度</td></tr>
+<tr><td>长会话场景（>15轮，复杂投诉）</td><td>引入摘要压缩</td><td>滑动窗口会丢失早期关键信息</td></tr>
+<tr><td>延迟敏感型</td><td>避免每轮触发摘要压缩</td><td>摘要调用增加额外LLM延迟</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h3 id="5.2-多轮对话状态管理" style="scroll-margin-top:60px">5.2 多轮对话状态管理</h3>
+<p>多轮对话的挑战不只是上下文窗口，还涉及：</p>
+<p><strong>Session管理</strong>：每次完整对话有唯一session ID，所有轮次记录与此绑定，支持会话历史回溯和问题复现。</p>
+<p><strong>指代消解</strong>：用户说"它的保修期是多少"中的"它"指代什么，需要在检索前解析（通常由查询改写环节处理）。</p>
+<p><strong>话题切换检测</strong>：用户在同一对话中从询问A产品切换到B产品时，需要适当降权旧话题的上下文，避免混淆。</p>
+<p><strong>评估维度</strong>：关键实体跨轮保留率、话题切换检测准确率、指代消解准确率。</p>
+<hr class="divider" />
+<h3 id="5.3-人工接管触发机制" style="scroll-margin-top:60px">5.3 人工接管触发机制</h3>
+<p>人工接管是客服系统的安全阀。触发条件建议同时实现：置信度不足（系统判断无法给出可靠回答）、情绪识别（用户表达强烈负面情绪）、问题循环检测（同一问题被追问超过N次）、高风险场景（大额退款、账户安全、法律纠纷）、用户主动请求（无条件响应）。</p>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>该转未转率</strong>：应该触发人工但没有触发的比例，这是最严重的失误，直接影响用户体验</li>
+<li><strong>误转率</strong>：系统能处理但错误地转人工的比例，影响人工客服成本</li>
+<li><strong>转接后解决率</strong>：转人工后问题是否被解决，如果转完还没解决，说明问题可能不在系统而在流程</li>
+</ul>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>重点控制指标</th><th>取舍方向</th></tr></thead>
+<tbody>
+<tr><td>准确率敏感型</td><td>该转未转率</td><td>误转率可偏高，宁可多转人工也不能让AI给出高风险错误回答</td></tr>
+<tr><td>吞吐量敏感型</td><td>两率都需严控</td><td>人工客服是成本中心，过多误转直接影响运营成本</td></tr>
+<tr><td>冷启动期</td><td>该转未转率</td><td>初期误转率天然偏高，先保障兜底机制可靠，再逐步收紧阈值</td></tr>
+</tbody></table></div>
+<p><strong>AI PM与算法协作</strong>：触发阈值是业务决策，PM主导。算法提供各触发条件的置信度分数，PM决定阈值设在哪里——这个设定直接影响人工成本和用户满意度之间的平衡，是典型的需要PM持续监控和调整的指标。</p>
+<hr class="divider" />
+<h3 id="对话管理层协作要点" style="scroll-margin-top:60px">对话管理层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>人工接管触发阈值</td><td>✓</td><td></td><td></td></tr>
+<tr><td>话题切换/指代消解的技术方案</td><td></td><td>✓</td><td></td></tr>
+<tr><td>误转率与该转未转率的平衡点</td><td></td><td></td><td>✓（PM定成本约束，算法给技术可行域）</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h2 id="六评估层怎么知道系统够不够好" style="scroll-margin-top:60px">六、评估层：怎么知道系统够不够好</h2>
+<h3 id="6.1-离线评估指标体系ragas框架" style="scroll-margin-top:60px">6.1 离线评估指标体系（RAGAS框架）</h3>
+<p>前五层描述的是系统的构建方式，但系统搭好不等于系统好用——评估层解决的是"怎么知道够不够好"的问题。评估是构建可靠LLM系统最容易被低估也最容易被跳过的环节。没有评估体系就没有迭代方向，只能靠直觉猜系统好不好。</p>
+<p><a href="https://docs.ragas.io/" target="_blank" rel="noopener">RAGAS（RAG Assessment）</a>框架是目前最常用的RAG离线评估框架，四个核心指标分别对应不同的失效模式：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>指标</th><th>衡量内容</th><th>对应的失效模式</th></tr></thead>
+<tbody>
+<tr><td><strong>Faithfulness（忠实度）</strong></td><td>回答中有多少陈述能在检索文档中找到依据</td><td>幻觉：模型捏造了不在文档中的信息</td></tr>
+<tr><td><strong>Answer Relevancy（答案相关性）</strong></td><td>回答是否切中了用户的实际问题</td><td>答非所问：回答准确但没有解决用户的问题</td></tr>
+<tr><td><strong>Context Recall（上下文召回）</strong></td><td>应该被检索到的文档有多少被实际召回</td><td>检索遗漏：正确答案在知识库中但没被找到</td></tr>
+<tr><td><strong>Context Precision（上下文精确性）</strong></td><td>检索到的文档中有多少是真正有用的</td><td>噪音过多：召回了大量无关内容干扰生成</td></tr>
+</tbody></table></div>
+<p>这四个指标指向不同的优化方向，也直接对应前面各层的技术决策：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>RAGAS指标偏低</th><th>首先排查的层</th><th>典型根因</th></tr></thead>
+<tbody>
+<tr><td>Context Recall低</td><td>数据层 + 检索层</td><td>Chunking边界截断关键信息；混合检索召回不足；Embedding模型语义对齐差</td></tr>
+<tr><td>Context Precision低</td><td>检索层</td><td>Reranker未过滤噪音；Chunk粒度太粗，相关内容与无关内容混在一起</td></tr>
+<tr><td>Faithfulness低</td><td>生成层</td><td>Prompt约束不够；模型未严格基于文档回答；知识库过时导致检索到错误文档</td></tr>
+<tr><td>Answer Relevancy低</td><td>意图路由层 + 检索层</td><td>查询改写偏移了用户意图；意图路由走错路径</td></tr>
+</tbody></table></div>
+<p><strong>这个映射关系是RAGAS指标从"数字"变成"行动"的关键桥梁</strong>——单看指标分数没有意义，必须对应到具体的技术层才能驱动改进。</p>
+<p><strong>评估集的构建</strong>：RAGAS需要"Golden Dataset"——人工标注的"问题-正确答案-相关文档"三元组。构建成本高，但没有它就无法做有意义的量化评估。实践建议：从生产日志中抽样100-300条，人工标注，形成初始评估集，后续随业务迭代持续扩充（每次发现重要badcase都加入评估集）。</p>
+<p><strong>AI PM与算法协作</strong>：评估集的构建是PM不可缺席的工作——哪些问题有代表性、正确答案应该是什么，算法无法独立判断。PM参与标注的比例越高，评估集的业务相关性越强。</p>
+<hr class="divider" />
+<h3 id="6.2-在线评估与ab测试" style="scroll-margin-top:60px">6.2 在线评估与A/B测试</h3>
+<p>离线评估是静态快照，无法替代真实用户的反馈。</p>
+<p><strong>用户反馈信号</strong>（应从第一天起收集）：显式反馈（"有帮助/没有帮助"按钮，收集率有限但信号质量高）；隐式反馈（用户是否追问同一问题、是否触发人工转接、会话完成率）。隐式信号量大但有歧义，需要结合多个信号综合判断。</p>
+<p><strong>A/B测试</strong>：修改系统某个环节后（更换Reranker、调整Prompt），通过流量分割量化变更效果，而不是依赖直觉。<strong>北极星指标建议是"用户在不转人工的情况下问题得到解决的比率"</strong>，而不是单纯的点赞率（用户可能对流利的错误回答点赞）。</p>
+<p><strong>AI PM与算法协作</strong>：A/B测试的指标定义和显著性判断标准由PM主导（需要多少样本、提升多少才算显著），流量分割和统计分析由算法执行。PM需要明确"什么改变值得做A/B测试"——不是每次调整都需要，小改动可以直接上线观察，大改动和关键路径的修改必须走A/B。</p>
+<hr class="divider" />
+<h3 id="6.3-持续监控与漂移检测" style="scroll-margin-top:60px">6.3 持续监控与漂移检测</h3>
+<p>系统上线后，质量不是静态的。三类主要漂移来源：</p>
+<p><strong>知识库漂移</strong>：业务规则更新但知识库未同步，系统基于旧知识给出过时回答（Air Canada案例的本质原因）。应对：建立知识库更新触发机制，任何业务变更文档入库后，自动触发相关评估集重新跑分。</p>
+<p><strong>模型漂移</strong>：使用闭源API时，服务商静默更新模型，导致系统行为变化。应对：在固定评估集上定期（每周）跑基准测试，捕捉异常分数变化。</p>
+<p><strong>分布漂移</strong>：用户提问模式随时间变化（新功能上线带来新类型问题）。监控：追踪拒答率和意图分类置信度分布，出现明显变化时人工审查。</p>
+<hr class="divider" />
+<h3 id="评估层协作要点" style="scroll-margin-top:60px">评估层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>北极星指标定义</td><td>✓</td><td></td><td></td></tr>
+<tr><td>评估集问题的代表性确认</td><td>✓</td><td></td><td></td></tr>
+<tr><td>Golden Answer的业务正确性审核</td><td>✓</td><td></td><td></td></tr>
+<tr><td>A/B测试触发标准（什么改动必须走A/B）</td><td>✓</td><td></td><td></td></tr>
+<tr><td>RAGAS各指标的评估自动化</td><td></td><td>✓</td><td></td></tr>
+<tr><td>统计显著性分析</td><td></td><td>✓</td><td></td></tr>
+<tr><td>漂移检测技术实现</td><td></td><td>✓</td><td></td></tr>
+<tr><td>评估指标阈值设定</td><td></td><td></td><td>✓</td></tr>
+<tr><td>A/B测试样本量与显著性标准</td><td></td><td></td><td>✓</td></tr>
+</tbody></table></div>
+<blockquote class="callout"><strong>评估层与迭代闭环层的关系</strong>：评估层提供的RAGAS指标和在线信号，是第七章迭代闭环层badcase归因的量化输入——Context Recall持续偏低触发检索层归因，Faithfulness异常触发生成层归因，拒答率上升触发知识库覆盖度审查。评估层是"发现问题的仪表盘"，迭代闭环层是"修复问题的操作流程"，两者共同构成系统持续改进的完整闭环。</blockquote>
+<hr class="divider" />
+<h2 id="七工程层怎么让系统跑得起来" style="scroll-margin-top:60px">七、工程层：怎么让系统跑得起来</h2>
+<h3 id="7.1-延迟优化" style="scroll-margin-top:60px">7.1 延迟优化</h3>
+<p><a href="https://redis.io/blog/rag-at-scale/" target="_blank" rel="noopener">生产标准通常要求首token时延（TTFT）的p90低于2秒</a>。一次完整RAG+生成请求的延迟来源分布在各环节（query embedding约20-50ms、向量检索约5-20ms、Reranker约50-200ms、LLM首token约200-800ms），优化需要针对瓶颈环节。</p>
+<p><strong>核心优化手段及评估维度</strong>：</p>
+<p><strong>Streaming输出</strong>：LLM生成时逐token流式输出，用户感知的等待时间从"完整回答生成完毕"变为"第一个字出现"，体感大幅改善。评估维度：TTFT（首token时延），而不是完整响应时间。<strong>几乎所有生产系统都应默认启用Streaming输出。</strong></p>
+<p><strong>语义缓存</strong>：对语义相近的问题复用已有回答，而不是每次重走完整检索+生成流程。评估维度：缓存命中率、命中情况下的响应延迟、误命中率（语义相近但正确答案不同的问题被错误复用）。<a href="https://redis.io/blog/rag-at-scale/" target="_blank" rel="noopener">据生产数据，语义缓存可将LLM API成本降低约68.8%</a>。需要注意知识库更新时相关缓存要主动清除。</p>
+<p><strong>并行执行</strong>：向量检索和BM25检索并行执行，而不是串行；意图识别和query embedding并行执行。评估维度：并行化后的总耗时相比串行的压缩比。</p>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>优先措施</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>延迟敏感型</td><td>Streaming必须启用+优先评估语义缓存</td><td>Streaming是成本最低的体验改善手段</td></tr>
+<tr><td>吞吐量敏感型</td><td>语义缓存是核心优化手段</td><td>高重复率场景下缓存命中率高，成本收益最显著</td></tr>
+<tr><td>知识更新频繁型</td><td>语义缓存需配套失效机制</td><td>缓存旧内容比没有缓存更危险，更新时必须清除相关缓存</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h3 id="7.2-数据安全与权限管控" style="scroll-margin-top:60px">7.2 数据安全与权限管控</h3>
+<p><strong>检索时权限过滤</strong>：在向量数据库查询时，加入基于用户角色的过滤条件，确保只召回该用户有权限访问的文档。这是成本最低也最可靠的权限控制方式，权限逻辑在数据层实现，不依赖LLM判断。</p>
+<p><strong>Prompt注入防护</strong>：恶意用户可能构造特殊输入诱导LLM泄露系统Prompt或绕过约束（Prompt Injection攻击）。防护：系统Prompt中明确指令拒绝此类请求、对用户输入做内容过滤、不在系统Prompt中存放敏感信息。</p>
+<p><strong>PII脱敏</strong>：用户输入中的个人身份信息（手机号、身份证号）在送入LLM前应识别并替换为占位符，避免第三方API接触用户隐私。</p>
+<p><strong>评估维度</strong>：权限绕过测试通过率（模拟恶意输入后，系统是否正确拦截）、PII脱敏覆盖率、Prompt注入成功率（攻击测试中的防护成功比例）。</p>
+<hr class="divider" />
+<h3 id="7.3-可观测性与成本监控" style="scroll-margin-top:60px">7.3 可观测性与成本监控</h3>
+<p><strong>链路追踪</strong>：每次请求的完整调用链（query→检索→改写→生成→输出）应被记录，包含每个环节的输入输出、耗时、token用量。这是排查问题（"为什么这个问题的回答不对"）的必要基础。主流工具：<a href="https://www.langchain.com/langsmith" target="_blank" rel="noopener">LangSmith</a>（LangChain生态）、<a href="https://langfuse.com/" target="_blank" rel="noopener">LangFuse</a>（开源，更灵活）。</p>
+<p><strong>核心监控指标</strong>：</p>
+<ul>
+<li><strong>延迟</strong>：TTFT p50/p90/p99，完整响应时间</li>
+<li><strong>成功率</strong>：请求失败率（API超时、context exceeded等）</li>
+<li><strong>成本</strong>：每请求token用量，日/月总费用，成本异常告警</li>
+<li><strong>质量代理指标</strong>：Thumbs down率、转人工率、会话完成率、拒答率</li>
+<li><strong>安全指标</strong>：Prompt注入尝试次数、权限绕过尝试次数</li>
+</ul>
+<p><strong>AI PM与算法协作</strong>：监控指标的定义和告警阈值由PM和算法共同决定。PM关注质量代理指标和成本，算法关注技术性指标（延迟、失败率）。关键是建立"指标异常→问题归因→修复"的响应机制，而不是只有监控没有行动。</p>
+<hr class="divider" />
+<h3 id="工程层协作要点" style="scroll-margin-top:60px">工程层协作要点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>决策</th><th>PM主导</th><th>算法主导</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>成本预算上限</td><td>✓</td><td></td><td></td></tr>
+<tr><td>数据安全与合规要求</td><td>✓</td><td></td><td></td></tr>
+<tr><td>延迟优化的技术实现</td><td></td><td>✓</td><td></td></tr>
+<tr><td>语义缓存的技术方案</td><td></td><td>✓</td><td></td></tr>
+<tr><td>权限管控的技术实现</td><td></td><td>✓</td><td></td></tr>
+<tr><td>延迟SLA目标（p90阈值）</td><td></td><td></td><td>✓（PM定用户体验下限，算法给技术可行域）</td></tr>
+<tr><td>监控告警阈值</td><td></td><td></td><td>✓</td></tr>
+<tr><td>语义缓存失效策略</td><td></td><td></td><td>✓（知识库更新由PM触发，失效机制由算法实现）</td></tr>
+</tbody></table></div>
+<hr class="divider" />
+<h2 id="八迭代闭环层系统怎么持续变好" style="scroll-margin-top:60px">八、迭代闭环层：系统怎么持续变好</h2>
+<p>这是整个链路中最容易被忽视、但对系统长期质量影响最大的一层。一个没有迭代闭环的LLM系统，质量会随时间衰减而不是提升。<strong>这也是AI PM在整个技术栈中参与度最高、最难被替代的环节。</strong></p>
+<h3 id="8.1-badcase发现与归因" style="scroll-margin-top:60px">8.1 Badcase发现与归因</h3>
+<p>Badcase是指系统给出了不符合预期的回答。发现渠道包括：用户的显式负反馈（Thumbs down）、触发人工接管后客服人员标记的问题、定期的人工抽检、自动化的Faithfulness评分异常告警。</p>
+<p><strong>归因决策树</strong>：发现badcase后，需要沿链路逐层定位根因，不同的根因对应不同的修复动作。</p>
+<pre class="code-block"><code>Badcase现象
+  │
+  ├─ 回答内容有误/有幻觉
+  │    ├─ 检索到的文档是正确的 → 根因在生成层（Prompt约束不足/模型能力问题）
+  │    └─ 检索到的文档是错误/过时的
+  │         ├─ 知识库中有正确答案 → 根因在检索层（召回失败/排序错误）
+  │         └─ 知识库中没有正确答案 → 根因在数据层（知识库缺失/未更新）
+  │
+  ├─ 回答答非所问
+  │    ├─ query含指代词/表达不清 → 根因在查询改写层
+  │    └─ 意图判断错误，走了错误路径 → 根因在意图路由层
+  │
+  ├─ 回答正确但格式/语气不符合要求 → 根因在Prompt工程
+  │
+  └─ 系统拒答（但应该能回答）
+       ├─ 知识库中有答案但未被召回 → 根因在检索层
+       └─ 置信度阈值设置过严 → 根因在阈值配置
+</code></pre>
+<p><strong>AI PM与算法协作</strong>：PM负责badcase的业务影响评级（这个错误是高危还是低危），决定修复优先级；算法负责技术归因（具体在哪一层出了问题）。<strong>这个分工很重要——算法判断不了"哪个错误更严重"，PM判断不了"哪一层出了问题"，需要真正协作。</strong></p>
+<hr class="divider" />
+<h3 id="8.2-评估数据集的构建与维护" style="scroll-margin-top:60px">8.2 评估数据集的构建与维护</h3>
+<p>评估数据集（Golden Dataset）是系统迭代的基础设施，没有它就无法量化任何改进。它的质量决定了整个评估体系的可信度。</p>
+<p><strong>构建原则</strong>：</p>
+<ul>
+<li><strong>代表性</strong>：覆盖真实用户问题的分布，不能只收集容易回答的问题。从生产日志中随机抽样比人工设计的题目更有代表性</li>
+<li><strong>覆盖性</strong>：包含各类意图（知识查询、数据查询、边界场景、刁难型问题）和各类难度</li>
+<li><strong>持续扩充</strong>：每次出现重要badcase，应将其加入评估集。评估集应该随系统上线时间增长而增长</li>
+<li><strong>版本管理</strong>：评估集本身需要版本管理，确保不同时间点的评估结果可对比</li>
+</ul>
+<p><strong>评估维度</strong>：</p>
+<ul>
+<li><strong>评估集覆盖率</strong>：评估集中的问题类型分布是否与生产流量分布一致</li>
+<li><strong>标注一致性</strong>：多人标注同一问题的答案，一致率是否足够高（低一致率说明标注标准不清晰）</li>
+<li><strong>评估集新鲜度</strong>：评估集中的问题和答案是否还反映当前业务状态（知识库更新后，旧的Golden Answer可能已经过时）</li>
+</ul>
+<p><strong>AI PM与算法协作</strong>：评估集的构建是PM必须深度参与的工作，无法完全委托给算法。PM负责：确认哪些问题有代表性、提供或审核正确答案（业务知识）、定义评估标准（什么样的回答算"正确"）。算法负责：评估集的自动化运行、指标计算、结果分析。</p>
+<hr class="divider" />
+<h3 id="8.3-数据飞轮从用户反馈到系统迭代" style="scroll-margin-top:60px">8.3 数据飞轮：从用户反馈到系统迭代</h3>
+<p>数据飞轮是指用户使用系统产生的数据，经过处理后反过来改善系统质量的正向循环。这是LLM系统区别于传统软件系统最重要的特性之一——系统应该越用越好，而不是上线后就静止。</p>
+<pre class="code-block"><code>用户使用系统
+     │
+     ▼
+收集反馈信号（显式/隐式）
+     │
+     ▼
+Badcase筛选与归因
+     │
+     ├──→ 知识库缺失 ──→ 补充文档入库 ──→ 重新embedding入向量库
+     │
+     ├──→ 检索问题 ──→ 调整Chunking/检索策略 ──→ 重新评估
+     │
+     ├──→ 生成问题 ──→ 优化Prompt/更换模型 ──→ 重新评估
+     │
+     └──→ 加入评估数据集 ──→ 评估集扩充 ──→ 下次迭代基准更准确
+     │
+     ▼
+系统质量提升 → 更少Badcase → 飞轮加速
+</code></pre>
+<p><strong>让飞轮转起来的关键条件</strong>：</p>
+<ul>
+<li><strong>反馈信号的可操作性</strong>：收集到的反馈要能被归因到具体的技术层，否则反馈是死数据</li>
+<li><strong>归因到修复的响应速度</strong>：从发现问题到修复上线的周期越短，飞轮转得越快</li>
+<li><strong>修复的系统化而非个案化</strong>：不是每个badcase都单独修复，而是找到共性根因，做系统性改进</li>
+<li><strong>评估集同步更新</strong>：每次修复后，评估集要同步加入该类badcase，确保不退化</li>
+</ul>
+<p><strong>从Badcase到安全上线的完整流程</strong>：</p>
+<p>发现和归因只是第一步，修复能否安全上线需要经过完整的验证链路：</p>
+<pre class="code-block"><code>① Badcase确认与优先级评级（PM）
+         ↓
+② 技术归因，制定修复方案（算法）
+         ↓
+③ 隔离环境验证
+   - 目标badcase是否已解决？
+   - 是否引入新的badcase？
+         ↓
+④ 回归测试（防退化）
+   - 在完整评估集上跑分
+   - 确认修复前正确的case，修复后仍然正确
+   - 关键指标（Faithfulness、召回率等）不低于修复前基线
+         ↓
+⑤ 灰度上线（小流量，如5%-10%）
+   - 观察线上质量代理指标：Thumbs down率、转人工率、拒答率
+   - 观察工程指标：延迟、成功率
+   - 时间窗口：通常观察24-72小时，覆盖工作日+非工作日的流量模式
+         ↓
+⑥ 全量上线
+   - 灰度期间无异常，指标稳定后扩量
+   - 若灰度期间触发以下任一条件，立即回滚并排查：
+     · Thumbs down率相比对照组上升超过20%
+     · 转人工率相比对照组上升超过15%
+     · 拒答率相比对照组上升超过10%
+     · 请求失败率（API错误）超过1%
+   - 具体阈值需根据业务基线设定，以上为参考量级，不是通用标准
+         ↓
+⑦ 上线后观察期
+   - 全量后继续监控3-7天
+   - 将本次修复覆盖的badcase类型加入评估集，作为后续的防退化基准
+</code></pre>
+<p><strong>回归测试的核心原则</strong>：每次修复一个问题，都可能在其他场景引入新问题，这在LLM系统中尤为常见——调整Prompt修复了A类问题，可能导致B类问题的指令遵循变差。<strong>评估集的价值之一正是作为"防退化基准线"：只要修复后的评估集分数不低于修复前，就可以认为没有引入系统性退化。</strong>这也是评估集持续扩充的重要原因——覆盖越全面，防退化的保护就越完整。</p>
+<p><strong>场景取舍</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景类型</th><th>重点关注</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>知识更新频繁型</td><td>知识库更新环节高度自动化</td><td>人工维护高频变更的成本不可持续</td></tr>
+<tr><td>冷启动期</td><td>主动设计反馈收集机制</td><td>冷启动期自然反馈信号极少，需主动触发（如要求客服标注转人工原因）</td></tr>
+<tr><td>准确率敏感型</td><td>每次修复必须经过评估集验证</td><td>不能为速度跳过验证，修复一个问题可能引入新问题</td></tr>
+</tbody></table></div>
+<p><strong>AI PM在飞轮中的核心角色</strong>：PM是飞轮的"编辑"——决定哪些反馈值得投入修复资源、哪些badcase代表的问题需要优先处理、飞轮的每一圈应该重点改善哪个环节。算法是飞轮的"执行"——完成技术归因和修复实施。没有PM的优先级判断，飞轮会退化成"什么都改一点，什么都没有显著改善"；没有算法的技术执行，PM的判断只是纸上谈兵。</p>
+<hr class="divider" />
+<h2 id="总结ai-pm的决策地图" style="scroll-margin-top:60px">总结：AI PM的决策地图</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>层级</th><th>核心评估维度</th><th>PM主导的决策</th><th>算法主导的决策</th><th>共同决策</th></tr></thead>
+<tbody>
+<tr><td>一、数据层</td><td>解析完整性、文档解析质量</td><td>知识库范围、合规要求、业务语义描述</td><td>解析工具、Chunking策略、技术选型</td><td>评估集问答对构建、召回率验收阈值</td></tr>
+<tr><td>二、意图路由层</td><td>意图分类准确率、分类延迟</td><td>意图类别定义、高风险场景认定</td><td>分类器实现与调优</td><td>测试用例设计</td></tr>
+<tr><td>三、检索层</td><td>召回率@K、MRR、精确匹配率、SQL准确率</td><td>业务侧精确/语义权重偏好、badcase样本</td><td>混合权重调优、查询改写方案</td><td>Reranker引入决策、验收阈值</td></tr>
+<tr><td>四、生成层</td><td>指令遵循率、Faithfulness、拒答率</td><td>合规约束、Prompt设计、幻觉风险评级</td><td>模型技术评估、幻觉检测实现</td><td>模型最终选型、成本路由策略、测试用例设计</td></tr>
+<tr><td>五、对话管理层</td><td>该转未转率、误转率、关键实体保留率</td><td>触发阈值、人工接管场景认定</td><td>话题切换/指代消解技术方案</td><td>误转率与该转未转率平衡点</td></tr>
+<tr><td>六、评估层</td><td>RAGAS四指标、北极星指标</td><td>北极星指标、评估集代表性、A/B触发标准</td><td>评估自动化、统计分析、漂移检测</td><td>评估指标阈值、A/B样本量与显著性标准</td></tr>
+<tr><td>七、工程层</td><td>TTFT p90、成本/请求、缓存命中率</td><td>成本预算、数据安全合规要求</td><td>延迟优化实现、权限管控实现</td><td>延迟SLA目标、监控告警阈值、缓存失效策略</td></tr>
+<tr><td>八、迭代闭环层</td><td>Badcase修复率、回归通过率、评估集新鲜度</td><td>修复优先级与业务影响评级</td><td>技术归因、修复实施、灰度监控</td><td>评估集构建与Golden Answer审核</td></tr>
+</tbody></table></div>
+<p>理解这张地图的核心价值在于：<strong>每一层都有PM无法缺席的判断，也有PM不需要深入的技术细节</strong>。"共同决策"这一列尤其值得关注——这些决策既需要业务判断也需要技术可行性评估，是PM和算法最容易产生分歧、也最需要真正坐在一起讨论的地方。PM的工作不是替代算法做技术决策，而是确保技术决策服务于正确的业务目标。</p>
+<hr class="divider" />
+<h2 id="参考资料" style="scroll-margin-top:60px">参考资料</h2>
+<h3 id="一手文件-官方发布" style="scroll-margin-top:60px">一手文件 / 官方发布</h3>
+<ul>
+<li><a href="https://docs.ragas.io/" target="_blank" rel="noopener">RAGAS官方文档</a> — RAG评估框架</li>
+<li><a href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank" rel="noopener">MTEB排行榜</a> — Embedding模型通用评估榜单</li>
+<li><a href="https://github.com/pgvector/pgvector" target="_blank" rel="noopener">pgvector GitHub</a> — PostgreSQL向量扩展</li>
+<li><a href="https://huggingface.co/BAAI/bge-reranker-v2-m3" target="_blank" rel="noopener">BGE-Reranker-v2-m3 HuggingFace</a> — BAAI开源重排序模型</li>
+</ul>
+<h3 id="法律案例" style="scroll-margin-top:60px">法律案例</h3>
+<ul>
+<li><a href="https://aibusiness.com/nlp/air-canada-held-responsible-for-chatbot-s-hallucinations-" target="_blank" rel="noopener">Moffatt v. Air Canada, 2024 BCCRT 149（AI Business报道）</a> — AI客服幻觉的法律责任先例；原始裁定文件见卑诗省民事解决裁判所（2024 BCCRT 149）</li>
+<li><a href="https://www.mccarthy.ca/en/insights/blogs/techlex/moffatt-v-air-canada-misrepresentation-ai-chatbot" target="_blank" rel="noopener">McCarthy Tétrault法律分析</a> — 加拿大律所对该裁决法律意义的专业解读</li>
+</ul>
+<h3 id="学术研究同行评审或接近同行评审" style="scroll-margin-top:60px">学术研究（同行评审或接近同行评审）</h3>
+<ul>
+<li><a href="https://nandigamharikrishna.substack.com/p/rag-chunking-strategies-and-embeddings" target="_blank" rel="noopener">Chunking Strategies and Embeddings for RAG</a> — NAACL 2025会议论文的Substack综述（注：本文引用的为该Substack转述，非原始论文；原始论文为NAACL 2025会议收录，已经同行评审）</li>
+</ul>
+<h3 id="工具厂商数据官方声称未经独立验证" style="scroll-margin-top:60px">工具厂商数据（官方声称，未经独立验证）</h3>
+<ul>
+<li><a href="https://redis.io/blog/rag-at-scale/" target="_blank" rel="noopener">RAG at Scale: How to Build Production AI Systems in 2026</a> — Redis官方博客；语义缓存降本68.8%、TTFT p90标准等数据为Redis官方声称，未经独立第三方验证</li>
+</ul>
+<h3 id="行业博客-分析文章非同行评审供参考" style="scroll-margin-top:60px">行业博客 / 分析文章（非同行评审，供参考）</h3>
+<ul>
+<li><a href="https://dev.to/pooyagolchian/rag-pipelines-in-production-vector-database-benchmarks-chunking-strategies-and-hybrid-search-data-gbl" target="_blank" rel="noopener">RAG Pipelines in Production: Vector Database Benchmarks</a> — dev.to社区文章，混合检索召回率对比数据；来源为社区博客，非独立研究</li>
+<li><a href="https://letsdatascience.com/blog/open-source-vs-closed-llms-choosing-the-right-model-in-2026" target="_blank" rel="noopener">Open Source vs Closed LLMs: The 2026 Decision Framework</a> — 开源vs闭源LLM选型框架；行业博客，框架性参考价值高于具体数据</li>
+</ul>
+<h3 id="工具文档" style="scroll-margin-top:60px">工具文档</h3>
+<ul>
+<li><a href="https://unstructured.io/" target="_blank" rel="noopener">Unstructured.io</a>、<a href="https://www.llamaindex.ai/llamaparse" target="_blank" rel="noopener">LlamaParse</a>、<a href="https://tika.apache.org/" target="_blank" rel="noopener">Apache Tika</a> — 文档解析</li>
+<li><a href="https://www.langchain.com/langsmith" target="_blank" rel="noopener">LangSmith</a>、<a href="https://langfuse.com/" target="_blank" rel="noopener">LangFuse</a> — LLM链路追踪</li>
+<li><a href="https://cohere.com/rerank" target="_blank" rel="noopener">Cohere Rerank API</a>、<a href="https://jina.ai/reranker/" target="_blank" rel="noopener">Jina Reranker</a> — 商业重排序API</li>
+</ul>
+<hr class="divider" />
+<p><em>本文以智能客服为载体，梳理LLM应用的完整技术链路。文中涉及的具体数字来自引用研究，实际效果因业务场景和数据特性不同会有差异。评估维度和框架具有较高的跨场景复用性，具体指标阈值建议在自有数据集上验证后再应用。</em></p>
+    </div>
+
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+    <nav class="footer-nav">
+      <a href="../index.html">← 返回列表</a>
+    </nav>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a){a.classList.toggle('toc-active', a.getAttribute('href')==='#'+id);});
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s){observer.observe(s);});
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  document.body.dataset.theme = (saved==='dark') ? 'dark' : 'light';
+  function updateIcon(t) {
+    var sun=document.getElementById('ptIconSun'), moon=document.getElementById('ptIconMoon');
+    if (!sun||!moon) return;
+    sun.style.display=t==='dark'?'block':'none';
+    moon.style.display=t==='dark'?'none':'block';
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    updateIcon(document.body.dataset.theme);
+    var btn=document.getElementById('themeToggleBtn');
+    if (btn) btn.addEventListener('click', function(){
+      var next=document.body.dataset.theme==='dark'?'light':'dark';
+      document.body.dataset.theme=next;
+      localStorage.setItem('blog_theme',next);
+      updateIcon(next);
+    });
+  });
+})();
+
+var POST_META = { slug: 'llm-customer-service-tech-guide', tags: [], topics: [], category: '技术' };
+(async function(){
+  var data = await fetch('../data/posts-meta.json').then(function(r){return r.json();});
+  var posts = data.posts;
+  var selfMeta = posts.find(function(p){return p.slug===POST_META.slug;});
+  if (selfMeta) {
+    POST_META.tags=selfMeta.tags||[]; POST_META.topics=selfMeta.topics||[];
+    document.getElementById('post-tags').innerHTML=POST_META.tags.concat(POST_META.topics)
+      .map(function(t){return '<span class="tag">'+t+'</span>';}).join('');
+  }
+  if (posts.length>=5) {
+    var scored=posts.filter(function(p){return p.slug!==POST_META.slug;}).map(function(p){
+      var score=0;
+      (p.topics||[]).forEach(function(t){if((POST_META.topics||[]).includes(t))score+=3;});
+      (p.tags||[]).forEach(function(t){if((POST_META.tags||[]).includes(t))score+=2;});
+      if(p.category===POST_META.category)score+=1;
+      return Object.assign({},p,{score:score});
+    }).filter(function(p){return p.score>=1;})
+      .sort(function(a,b){return b.score-a.score||b.date.localeCompare(a.date);}).slice(0,2);
+    if (scored.length) {
+      document.getElementById('relatedList').innerHTML=scored.map(function(p){
+        return '<a class="related-item" href="'+p.url.split('/').pop()+'">'
+          +'<span class="related-item-date">'+p.date+'</span>'
+          +'<span class="related-item-title">'+p.title+'</span></a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display='block';
+    }
+  }
+  var sorted=posts.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+  var idx=sorted.findIndex(function(p){return p.slug===POST_META.slug;});
+  var prev=idx>0?sorted[idx-1]:null, next=idx<sorted.length-1?sorted[idx+1]:null;
+  if (prev){var el=document.getElementById('navPrev');el.href=prev.url.split('/').pop();document.getElementById('navPrevTitle').textContent=prev.title;el.style.display='flex';}
+  if (next){var el2=document.getElementById('navNext');el2.href=next.url.split('/').pop();document.getElementById('navNextTitle').textContent=next.title;el2.style.display='flex';}
+})();
+</script>
+<script>(function(){var saved=localStorage.getItem('blog_theme');document.body.dataset.theme=(saved==='dark')?'dark':'light';})();</script>
+</body>
+</html>
