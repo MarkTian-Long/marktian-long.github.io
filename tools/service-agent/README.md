@@ -1,44 +1,54 @@
-# 智能客服中台 Demo
+# 智能客服产品设计沙盘
 
-PM 作品：展示 **意图路由 + 多 Agent 协作 + Human-in-the-Loop** 的完整 AI 中台设计。
+PM 作品：一份面向产品总监的 **AI 智能客服产品决策推演**。不是技术综述，而是展示一个 AI PM 如何把模糊的业务问题，拆成清晰的产品决策——选什么、为什么这么选、代价是什么、**谁来拍板**。
 
-## 功能概览
+核心命题：**同一个智能客服，给银行做和给电商做，产品决策完全不同——而决定怎么变的，是 PM。**
 
-| Tab | 内容 |
-|-----|------|
-| 💬 对话演示 | 两列视角布局：左「用户视角」（干净对话）/ 右「系统视角」（流程图高亮 + Agent 状态 + 步骤日志） |
-| 🧭 路由逻辑 | 四类意图决策树可视化（PM 系统设计输出） |
-| 🤖 Agent 图谱 | 各 Agent 职责/输入/输出/System Prompt 展示 |
-| ⚙️ 中台治理 | HITL 触发条件、升级阈值、SLA 指标设计 |
-| 🔄 数据飞轮 | Bad Case 标注流程、训练数据闭环设计 |
+## 页面结构（单页 5 区块）
 
-## 四条 Agent 链路
+| 区块 | 内容 |
+|------|------|
+| Hero | 一句话定位 + 三步引导（选场景 → 看决策怎么变 → 跑真实对话） |
+| ① 业务场景选择器 | 银行 / 大型电商促销 / 创业公司 FAQ 三个场景，选中后点亮业务特性标签（错误容忍 / 性能约束 / 运营合规三维度） |
+| ② 产品决策矩阵 | 9 张决策卡，每张含：一句产品判断 + 评估维度 + 三场景取舍表 + **PM·算法分工徽章** + 证据（真实案例 / 数据）。选场景后自动高亮该场景的取舍行并改写卡顶结论 |
+| ③ L4 请求链路图 | 一条请求的完整路径（输入合规 → 意图路由 → RAG/Text-to-SQL 双轨 → 生成 → 输出合规 → 返回）+ 横切基础设施层；点节点跳到对应决策卡 |
+| ④ 实战对话 Demo | 两列视角（用户 / 系统），4 条链路（FAQ / 物流 Text-to-SQL / 退换货 / 投诉→HITL） |
 
+## 分工徽章（全站视觉锚点）
+
+每个决策标注由谁拍板，一眼看出「这个 PM 在多少决策上真正主导」：
+
+- 🟦 **PM 主导**（蓝实心）：意图边界、Prompt 约束、HITL 阈值、北极星指标、飞轮优先级…
+- 🟩 **算法主导**（绿描边）：解析 / Chunking、延迟优化…
+- 🟧 **共同决策**（蓝橙渐变）：Reranker 引入、主模型选型…
+
+## 对话引擎：Mock 预演
+
+对话 Demo 走预设脚本逐步播放 Agent 链路 + HITL 触发，**稳定、不耗 token、断网可演**，适合面试现场。零依赖、零 API key。
+
+**Demo 随顶部场景联动**：银行 / 电商 / 创业各有一套贴合行业的 mock 对话（如银行演「查账户余额」「盗刷触发 HITL」，电商演「查订单物流」「315 投诉」，创业演「查订阅」「数据丢失投诉」）。顶部选什么场景，下方 Demo 就演什么。
+
+四条链路：
 ```
-FAQ 链:       Router → FAQ Agent                               (1次LLM)
-物流链:       Router → 物流查询Agent(mock) → 回复生成Agent     (2次LLM)
-退换货链:     Router → 规则核查Agent → 方案生成Agent           (2次LLM)
-投诉链:       Router → 情绪识别Agent → 升级判断Agent
-              → [need_human=true] 暂停等待人工确认
-              → [else] 安抚回复Agent                          (2-3次LLM)
+FAQ 链:    Router → FAQ Agent
+物流链:    Router → 物流查询(Text-to-SQL→Mock库) → 回复生成
+退换货链:  Router → 规则核查 → 方案生成
+投诉链:    Router → 情绪识别 → 升级判断 → [need_human] 暂停等人工 / [else] 安抚回复
 ```
 
-## 本地配置
+预设脚本与 Agent 定义都在 `gen_index.js` 的 `MOCK_SCRIPT` / `buildAgents()` 中结构化定义，改内容后重跑生成脚本即可。
 
-创建 `config.local.js`（已被 .gitignore 排除）：
+## 设计依据
 
-```js
-window.SERVICE_AGENT_CONFIG = {
-  openrouterKey: 'sk-or-xxxx',
-  model: 'anthropic/claude-3-haiku'
-};
-```
+决策框架来自博客《从零搭建一个 LLM 智能客服：完整技术链路与关键决策》（`docs/blog/llm-customer-service-tech-guide.md`）。页面内的数据与案例均标注来源（如混合检索召回 78→91%、语义缓存降本 68.8%、Air Canada 客服幻觉判例）。
 
 ## 文件结构
 
 ```
 tools/service-agent/
-├── index.html        # 主文件（约 1100+ 行）
-├── config.local.js   # API key（不进 git）
+├── index.html        # 主文件（由 gen_index.js 生成，约 64KB）
+├── gen_index.js      # 生成源（数据驱动：决策卡 / 场景 / mock 脚本）
 └── README.md
 ```
+
+> `index.html` 由生成脚本产出。如需修改，编辑生成脚本逻辑后重新 `node gen_index.js`，或直接用 Edit 精确替换 `index.html`。

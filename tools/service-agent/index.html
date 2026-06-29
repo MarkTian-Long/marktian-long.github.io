@@ -3,1200 +3,1034 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>智能客服中台 Demo</title>
+<title>智能客服产品设计沙盘 · AI PM 决策推演</title>
+<meta name="description" content="一份面向产品总监的 AI 智能客服产品设计推演：选业务场景，看同一套系统的产品决策如何逐层改变，以及每个决策由 PM 还是算法拍板。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='url(%23g)'>客</text></svg>" />
-<link rel="stylesheet" href="../../assets/css/style.css">
-<script src="config.local.js" onerror="window.SERVICE_AGENT_CONFIG={}"></script>
-<script>
-const CONFIG = {
-  OPENROUTER_KEY: window.SERVICE_AGENT_CONFIG?.openrouterKey || '',
-  MODEL: window.SERVICE_AGENT_CONFIG?.model || 'anthropic/claude-3-haiku'
-};
-</script>
 <style>
-/* ===== 颜色常量（不依赖外部 CSS 变量） ===== */
-:root {
-  --sa-bg:       #f8f9fc;
-  --sa-surface:  #ffffff;
-  --sa-card:     #f1f3f8;
-  --sa-border:   rgba(0,0,0,0.08);
-  --sa-text:     #1e293b;
-  --sa-muted:    #64748b;
-  --sa-dimmed:   #94a3b8;
-  --sa-accent:   #2563eb;
-  --sa-hover:    rgba(37,99,235,0.05);
+:root{
+  /* 羊皮纸浅色系，与主页 Claude 风格一致 */
+  --sa-bg:#f5f4ed; --sa-bg2:#f0eee6; --sa-surface:#faf9f5; --sa-card:#f0eee6;
+  --sa-border:#e8e6dc; --sa-border2:#ddd9cb;
+  --sa-text:#141413; --sa-muted:#5e5d59; --sa-dim:#87867f;
+  --sa-accent:#2563eb; --sa-accent2:#7c3aed; --sa-grad:linear-gradient(135deg,#2563eb,#7c3aed);
+  --sa-clay:#c96442;
+  --sa-pm:#2563eb; --sa-algo:#059669; --sa-both:#c96442;
+  --sa-ok:#059669; --sa-warn:#d97706; --sa-danger:#dc2626;
+  --sa-hover:rgba(37,99,235,.06);
+  --sa-radius:14px; --sa-radius-sm:10px;
+  --sa-shadow:rgba(0,0,0,.05) 0px 4px 24px;
+  --sa-maxw:1080px;
 }
-
-/* ===== 基础 ===== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  height: 100%;
-  background: var(--sa-bg); color: var(--sa-text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.sa-wrapper { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--sa-bg);color:var(--sa-text);
+  font-family:'Source Sans 3',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  line-height:1.6;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{background:radial-gradient(1200px 600px at 80% -10%,rgba(124,58,237,.05),transparent),
+  radial-gradient(900px 500px at -10% 10%,rgba(37,99,235,.05),transparent),var(--sa-bg)}
+a{color:var(--sa-accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:var(--sa-maxw);margin:0 auto;padding:0 22px}
 
 /* ===== Topbar ===== */
-.sa-topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 20px; background: var(--sa-surface);
-  border-bottom: 1px solid var(--sa-border); flex-shrink: 0;
-}
-.sa-topbar-title { font-size: 14px; font-weight: 600; color: var(--sa-text); }
-.sa-topbar-meta { font-size: 12px; color: var(--sa-muted); }
-.sa-topbar-model { font-size: 11px; color: var(--sa-accent); background: rgba(79,143,255,.12); padding: 2px 8px; border-radius: 10px; }
+.topbar{position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);
+  background:rgba(245,244,237,.85);border-bottom:1px solid var(--sa-border)}
+.topbar-in{max-width:var(--sa-maxw);margin:0 auto;padding:11px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;letter-spacing:.2px}
+.brand .logo{width:24px;height:24px;border-radius:6px;background:var(--sa-grad);
+  display:grid;place-items:center;font-size:13px;color:#fff;flex-shrink:0}
+.topnav{display:flex;gap:4px}
+.topnav a{font-size:12.5px;color:var(--sa-muted);padding:5px 11px;border-radius:8px;transition:.15s}
+.topnav a:hover{background:var(--sa-hover,rgba(255,255,255,.06));color:var(--sa-text);text-decoration:none}
+.engine-badge{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.engine-badge.mock{background:rgba(245,158,11,.14);color:var(--sa-warn);border:1px solid rgba(245,158,11,.3)}
+.engine-badge.live{background:rgba(52,211,153,.14);color:var(--sa-ok);border:1px solid rgba(52,211,153,.3)}
+.engine-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;
+  box-shadow:0 0 0 0 currentColor;animation:bpulse 2s infinite}
+@keyframes bpulse{0%{box-shadow:0 0 0 0 rgba(5,150,105,.4)}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
 
-/* ===== Tab Nav ===== */
-.sa-tab-nav {
-  display: flex; gap: 4px; padding: 8px 16px;
-  background: var(--sa-surface); border-bottom: 1px solid var(--sa-border); flex-shrink: 0;
-}
-.sa-tab-btn {
-  padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;
-  font-size: 12px; font-weight: 500; background: transparent; color: var(--sa-muted);
-  transition: all .15s;
-}
-.sa-tab-btn:hover { background: var(--sa-hover); color: var(--sa-text); }
-.sa-tab-btn.active { background: var(--sa-accent); color: #fff; }
+/* ===== Hero ===== */
+.hero{padding:54px 0 26px;text-align:center}
+.hero .eyebrow{display:inline-block;font-size:12px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--sa-accent2);margin-bottom:14px;
+  padding:5px 13px;border:1px solid var(--sa-border2);border-radius:20px}
+.hero h1{font-size:38px;line-height:1.22;font-weight:800;letter-spacing:-.5px;margin-bottom:16px}
+.hero h1 .g{background:var(--sa-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .lead{font-size:16px;color:var(--sa-muted);max-width:660px;margin:0 auto 12px}
+.hero .thesis{font-size:14.5px;color:var(--sa-text);max-width:680px;margin:18px auto 0;
+  padding:14px 20px;background:var(--sa-surface);border:1px solid var(--sa-border);
+  border-left:3px solid var(--sa-accent2);border-radius:var(--sa-radius-sm);text-align:left}
+.hero .thesis b{color:var(--sa-accent2)}
+.steps{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.step-chip{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--sa-muted);
+  background:var(--sa-surface);border:1px solid var(--sa-border);padding:8px 14px;border-radius:30px}
+.step-chip .n{width:18px;height:18px;border-radius:50%;background:var(--sa-grad);color:#fff;
+  font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
 
-/* ===== Tab Content ===== */
-.sa-tab-content { flex: 1; overflow: hidden; min-height: 0; }
-/* 对话 tab：不滚动，靠内部列自己管 */
-.sa-tab-panel { display: none; height: 100%; }
-.sa-tab-panel.active { display: flex; flex-direction: column; }
-/* 静态 tab：整体可滚动 */
-.sa-tab-panel.scrollable { overflow-y: auto; padding: 16px; }
+/* ===== Section ===== */
+.section{padding:34px 0}
+.section-head{margin-bottom:20px}
+.section-head .kicker{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sa-dim)}
+.section-head h2{font-size:24px;font-weight:800;margin-top:5px;letter-spacing:-.3px}
+.section-head p{font-size:14px;color:var(--sa-muted);margin-top:7px;max-width:720px}
 
-/* ===== Tab 1: 两列布局 ===== */
-.chat-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 10px;
-  padding: 10px;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
+/* ===== 场景选择器 ===== */
+.scn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.scn-card{position:relative;background:var(--sa-surface);border:1px solid var(--sa-border);
+  border-radius:var(--sa-radius);padding:18px;cursor:pointer;transition:.18s;text-align:left}
+.scn-card:hover{border-color:var(--sa-border2);transform:translateY(-2px)}
+.scn-card.on{border-color:var(--sa-accent);box-shadow:0 0 0 1px var(--sa-accent),0 10px 30px rgba(79,143,255,.18);
+  background:linear-gradient(160deg,rgba(79,143,255,.10),var(--sa-surface))}
+.scn-card .ico{font-size:24px}
+.scn-card .nm{font-size:16px;font-weight:700;margin:8px 0 6px}
+.scn-card .ol{font-size:12.5px;color:var(--sa-muted);min-height:48px}
+.scn-card .pick{position:absolute;top:14px;right:14px;font-size:11px;font-weight:700;color:var(--sa-accent);opacity:0}
+.scn-card.on .pick{opacity:1}
+/* 标签条 */
+.scn-detail{margin-top:16px;background:var(--sa-card);border:1px solid var(--sa-border);
+  border-radius:var(--sa-radius);padding:16px 18px}
+.scn-detail .dt-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sa-dim);margin-bottom:10px}
+.tag-row{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.tag{font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;
+  background:rgba(124,58,237,.10);color:#6d28d9;border:1px solid rgba(124,58,237,.22);
+  display:inline-flex;flex-direction:column;line-height:1.3}
+.tag .td{font-size:9.5px;font-weight:500;color:var(--sa-dim);text-transform:uppercase;letter-spacing:.5px}
+.scn-detail .dt-con{font-size:13.5px;color:var(--sa-text)}
+.scn-detail .dt-con b{color:var(--sa-accent)}
 
-/* 视角标签 */
-.pane-label {
-  font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 8px;
-}
-.pane-label.user-pov  { background: rgba(79,143,255,.12); color: #4f8fff; }
-.pane-label.sys-pov   { background: rgba(155,109,255,.12); color: #9b6dff; }
+/* ===== 决策矩阵 ===== */
+.matrix-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px;
+  font-size:12.5px;color:var(--sa-muted)}
+.legend{display:flex;gap:12px;flex-wrap:wrap}
+.legend .lg{display:inline-flex;align-items:center;gap:6px}
+.dot-pm{width:11px;height:11px;border-radius:3px;background:var(--sa-pm)}
+.dot-algo{width:11px;height:11px;border-radius:3px;background:transparent;border:2px solid var(--sa-algo)}
+.dot-both{width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,var(--sa-pm),var(--sa-both))}
+.tally{margin-left:auto;font-size:12.5px;color:var(--sa-muted)}
+.tally b{color:var(--sa-pm)}
 
-/* 系统侧内部布局 */
-.sys-pane {
-  display: flex; flex-direction: column; min-height: 0; gap: 10px;
-}
-.sys-pane-inner {
-  display: flex; gap: 10px; flex: 1; min-height: 0;
-}
+.cards{display:flex;flex-direction:column;gap:14px}
+.grp-label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--sa-dim);margin:10px 0 -2px;padding-left:2px}
+.dcard{background:var(--sa-surface);border:1px solid var(--sa-border);border-radius:var(--sa-radius);
+  overflow:hidden;transition:.18s;scroll-margin-top:70px}
+.dcard:target,.dcard.flash{border-color:var(--sa-accent);box-shadow:0 0 0 1px var(--sa-accent)}
+.dcard-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer}
+.dcard-head .ttl{flex:1}
+.dcard-head .t1{font-size:16px;font-weight:700}
+.dcard-head .t2{font-size:11px;color:var(--sa-dim);margin-top:2px}
+.owner-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:7px;white-space:nowrap;flex-shrink:0}
+.owner-badge.own-pm{background:var(--sa-pm);color:#fff}
+.owner-badge.own-algo{background:transparent;color:var(--sa-algo);border:1.5px solid var(--sa-algo)}
+.owner-badge.own-both{background:linear-gradient(135deg,var(--sa-pm),var(--sa-both));color:#fff}
+.dcard-head .caret{color:var(--sa-dim);font-size:13px;transition:.2s;flex-shrink:0;margin-top:3px}
+.dcard.open .caret{transform:rotate(90deg)}
+.dcard .judge{padding:0 18px 14px;font-size:13.5px;color:var(--sa-text)}
+.dcard .judge .pin{color:var(--sa-accent);font-weight:700;font-size:12px;display:block;margin-bottom:3px}
+.dcard-body{display:none;border-top:1px solid var(--sa-border);padding:16px 18px;background:var(--sa-bg2)}
+.dcard.open .dcard-body{display:block}
+.blk{margin-bottom:16px}
+.blk:last-child{margin-bottom:0}
+.blk-h{font-size:12px;font-weight:700;color:var(--sa-muted);margin-bottom:8px;
+  display:flex;align-items:center;gap:7px}
+.blk-h::before{content:'';width:3px;height:13px;background:var(--sa-grad);border-radius:2px}
+.dims{list-style:none;display:flex;flex-direction:column;gap:6px}
+.dims li{font-size:13px;color:var(--sa-muted);padding-left:16px;position:relative}
+.dims li::before{content:'▸';position:absolute;left:0;color:var(--sa-accent)}
+.dims li b{color:var(--sa-text)}
+/* 取舍表 */
+.tradeoff{display:flex;flex-direction:column;gap:7px}
+.to-row{display:grid;grid-template-columns:140px 1fr;gap:12px;font-size:13px;
+  padding:9px 11px;border-radius:9px;border:1px solid transparent;transition:.18s}
+.to-row .to-scn{font-weight:700;color:var(--sa-muted);display:flex;align-items:center;gap:6px}
+.to-row .to-txt{color:var(--sa-muted)}
+.to-row.hot{background:linear-gradient(120deg,rgba(79,143,255,.12),transparent);
+  border-color:rgba(79,143,255,.3)}
+.to-row.hot .to-scn{color:var(--sa-accent)}
+.to-row.hot .to-txt{color:var(--sa-text)}
+.evid{font-size:12.5px;color:var(--sa-muted);background:var(--sa-card);border:1px solid var(--sa-border);
+  border-left:3px solid var(--sa-both);border-radius:8px;padding:11px 13px}
+.evid .et{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sa-both);margin-bottom:5px}
 
-/* ===== 流程图面板 ===== */
-.flow-panel {
-  background: var(--sa-surface); border: 1px solid var(--sa-border);
-  border-radius: 10px; padding: 12px; display: flex; flex-direction: column;
-  overflow-y: auto; min-height: 0; width: 200px; flex-shrink: 0;
-}
+/* ===== L4 链路图 ===== */
+.flow{background:var(--sa-surface);border:1px solid var(--sa-border);border-radius:var(--sa-radius);padding:22px 18px}
+.flow-track{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center}
+.fnode{position:relative;flex:0 0 auto;min-width:118px;max-width:140px;background:var(--sa-card);
+  border:1px solid var(--sa-border2);border-radius:11px;padding:11px 10px;text-align:center;
+  cursor:pointer;transition:.18s}
+.fnode.linkable:hover{border-color:var(--sa-accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(79,143,255,.2)}
+.fnode .fl{font-size:13px;font-weight:700}
+.fnode .fs{font-size:10.5px;color:var(--sa-dim);margin-top:3px;line-height:1.35}
+.fnode.guard{border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.07)}
+.fnode.guard .fl{color:#b91c1c}
+.fnode.branch{border-style:dashed;border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.06)}
+.farrow{display:flex;align-items:center;color:var(--sa-dim);font-size:16px;padding:0 4px;flex:0 0 auto}
+.fdual{display:flex;flex-direction:column;gap:8px}
+.flow-cross-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--sa-dim);margin:22px 0 11px;text-align:center}
+.cross-track{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cnode{flex:0 0 auto;min-width:150px;background:var(--sa-bg2);border:1px dashed var(--sa-border2);
+  border-radius:11px;padding:10px 13px;cursor:pointer;transition:.18s;text-align:center}
+.cnode:hover{border-color:var(--sa-accent2);border-style:solid;transform:translateY(-2px)}
+.cnode .fl{font-size:13px;font-weight:700}
+.cnode .fs{font-size:10.5px;color:var(--sa-dim);margin-top:2px}
+.flow-note{font-size:12px;color:var(--sa-dim);margin-top:16px;text-align:center;line-height:1.6}
 
-/* 步骤卡片流（系统侧） */
-.step-stream-panel {
-  background: var(--sa-surface); border: 1px solid var(--sa-border);
-  border-radius: 10px; padding: 10px 12px; flex-shrink: 0;
-  max-height: 140px; overflow-y: auto;
-}
-.step-stream { display: flex; flex-direction: column; gap: 6px; }
-.flow-panel-title { font-size: 10px; font-weight: 600; color: var(--sa-dimmed); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; flex-shrink: 0; }
-.flow-svg { width: 100%; flex-shrink: 0; }
+/* ===== 对话 Demo ===== */
+.demo-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.demo-bar .hint{font-size:12.5px;color:var(--sa-muted)}
+.btn{font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--sa-border2);background:var(--sa-surface);color:var(--sa-text);transition:.15s}
+.btn:hover:not(:disabled){border-color:var(--sa-accent);color:var(--sa-accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--sa-grad);border:none;color:#fff}
+.btn.primary:hover:not(:disabled){opacity:.9;color:#fff}
 
-/* 流程图节点状态 */
-.fn-group.idle .fn-rect    { fill: #f1f3f8; stroke: rgba(0,0,0,0.1); }
-.fn-group.routing .fn-rect { fill: rgba(217,119,6,.10); stroke: #d97706; stroke-width: 2; }
-.fn-group.active .fn-rect  { fill: rgba(37,99,235,.12); stroke: #2563eb; stroke-width: 2; }
-.fn-group.done .fn-rect    { fill: rgba(5,150,105,.10); stroke: #059669; stroke-width: 1.5; }
-.fn-group.escalated .fn-rect { fill: rgba(220,38,38,.10); stroke: #dc2626; stroke-width: 2; }
-.fn-text { font-size: 11px; fill: #64748b; font-family: sans-serif; transition: all .3s; }
-.fn-group.routing .fn-text { fill: #92400e; }
-.fn-group.active .fn-text  { fill: #1d4ed8; }
-.fn-group.done .fn-text    { fill: #065f46; }
-.fn-group.escalated .fn-text { fill: #991b1b; }
+.chat-layout{display:grid;grid-template-columns:1fr 340px;gap:14px}
+.pane{background:var(--sa-surface);border:1px solid var(--sa-border);border-radius:var(--sa-radius);
+  display:flex;flex-direction:column;min-height:0}
+.pane-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:9px 14px;border-bottom:1px solid var(--sa-border);display:flex;align-items:center;gap:7px}
+.pane-label.user{color:var(--sa-accent)}
+.pane-label.sys{color:var(--sa-accent2)}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
+  min-height:340px;max-height:460px}
+.chat-bubble{max-width:82%;padding:10px 13px;border-radius:12px;font-size:13.5px;white-space:pre-wrap;word-break:break-word}
+.chat-bubble.user{align-self:flex-end;background:var(--sa-grad);color:#fff;border-bottom-right-radius:4px}
+.chat-bubble.assistant{align-self:flex-start;background:var(--sa-card);border:1px solid var(--sa-border);border-bottom-left-radius:4px}
+.chat-bubble.layer-tag{align-self:center;background:transparent;border:1px dashed var(--sa-border2);
+  color:var(--sa-dim);font-size:11px;padding:4px 12px;border-radius:20px}
+.chat-bubble.typing{color:var(--sa-dim)}
+.quick-row{display:flex;gap:7px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--sa-border)}
+.quick-btn{font-size:11.5px;padding:6px 11px;border-radius:18px;cursor:pointer;
+  border:1px solid var(--sa-border2);background:transparent;color:var(--sa-muted);transition:.15s}
+.quick-btn:hover:not(:disabled){border-color:var(--sa-accent);color:var(--sa-accent)}
+.quick-btn:disabled{opacity:.4;cursor:not-allowed}
+.input-row{display:flex;gap:8px;padding:0 14px 14px}
+.input-row input{flex:1;background:var(--sa-bg2);border:1px solid var(--sa-border2);border-radius:10px;
+  padding:9px 13px;color:var(--sa-text);font-size:13.5px;font-family:inherit}
+.input-row input:focus{outline:none;border-color:var(--sa-accent)}
 
-/* 连接线动画 */
-@keyframes dash-flow { to { stroke-dashoffset: -20; } }
-.flow-line { stroke: rgba(0,0,0,0.12); stroke-width: 1.5; fill: none; transition: stroke .3s; }
-.flow-line.active { stroke: #2563eb; stroke-dasharray: 5 3; animation: dash-flow .6s linear infinite; }
-
-/* ===== 中间聊天面板 ===== */
-.chat-panel {
-  background: var(--sa-surface); border: 1px solid var(--sa-border);
-  border-radius: 10px; display: flex; flex-direction: column;
-  min-height: 0; overflow: hidden;
-}
-.chat-messages {
-  flex: 1; overflow-y: auto; padding: 12px;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.chat-bubble {
-  max-width: 85%; padding: 10px 13px; border-radius: 10px; font-size: 13px; line-height: 1.5;
-}
-.chat-bubble.user { align-self: flex-end; background: #4f8fff; color: #fff; }
-.chat-bubble.assistant {
-  align-self: flex-start; background: var(--sa-card);
-  border: 1px solid var(--sa-border); color: var(--sa-text);
-}
-.chat-bubble.system-msg {
-  align-self: center; background: transparent; border: 1px dashed var(--sa-border);
-  color: var(--sa-muted); font-size: 11px; max-width: 95%;
-}
-
-/* Agent 步骤卡片 */
-.step-card {
-  align-self: flex-start; width: 95%; background: var(--sa-card);
-  border: 1px solid var(--sa-border); border-radius: 8px; padding: 10px 12px; font-size: 12px;
-}
-.step-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.step-card-icon { font-size: 16px; }
-.step-card-name { font-weight: 600; color: var(--sa-text); font-size: 12px; }
-.step-card-badge {
-  font-size: 10px; padding: 1px 7px; border-radius: 10px;
-  background: rgba(37,99,235,.12); color: #2563eb;
-}
-.step-card-badge.mock { background: rgba(217,119,6,.12); color: #92400e; }
-.step-card-badge.hitl { background: rgba(220,38,38,.12); color: #dc2626; }
-.step-card.running .step-card-name::after { content: ' …'; animation: blink 1s infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.step-card-body { color: var(--sa-muted); line-height: 1.5; }
-.step-card-body pre {
-  background: rgba(0,0,0,.04); border-radius: 4px; padding: 6px; margin-top: 4px;
-  font-size: 11px; white-space: pre-wrap; word-break: break-all; color: var(--sa-muted);
-}
+/* 系统侧 */
+.sys-pane .sys-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:12px;max-height:540px}
+.sys-block-h{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--sa-dim);margin-bottom:7px}
+.asp-list{display:flex;flex-direction:column;gap:5px}
+.asp-agent{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 9px;border-radius:8px;
+  background:var(--sa-bg2);border:1px solid transparent;transition:.2s;color:var(--sa-muted)}
+.asp-agent .asp-dot{width:7px;height:7px;border-radius:50%;background:var(--sa-dim);flex-shrink:0}
+.asp-agent .asp-nm{flex:1}
+.asp-agent .asp-st{font-size:10.5px;color:var(--sa-dim)}
+.asp-agent.active{border-color:var(--sa-accent);color:var(--sa-text);background:rgba(79,143,255,.08)}
+.asp-agent.active .asp-dot{background:var(--sa-accent);animation:pulse-dot .8s infinite}
+.asp-agent.routing{border-color:var(--sa-warn);color:var(--sa-text)}
+.asp-agent.routing .asp-dot{background:var(--sa-warn);animation:pulse-dot .8s infinite}
+.asp-agent.done{color:var(--sa-text)}
+.asp-agent.done .asp-dot{background:var(--sa-ok)}
+.asp-agent.escalated{border-color:var(--sa-danger);color:var(--sa-text)}
+.asp-agent.escalated .asp-dot{background:var(--sa-danger);animation:pulse-dot .8s infinite}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.6}}
+.step-stream{display:flex;flex-direction:column;gap:7px}
+.step-card{background:var(--sa-bg2);border:1px solid var(--sa-border);border-radius:9px;padding:9px 11px;font-size:12px}
+.step-card-header{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.step-card-icon{font-size:13px}
+.step-card-name{font-weight:600;flex:1}
+.step-card-badge{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:6px;background:rgba(79,143,255,.15);color:var(--sa-accent)}
+.step-card-badge.mock{background:rgba(245,158,11,.15);color:var(--sa-warn)}
+.step-card-badge.hitl{background:rgba(248,113,113,.15);color:var(--sa-danger)}
+.step-card-body{color:var(--sa-muted);font-size:11.5px}
+.step-card-body pre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,Menlo,monospace;
+  font-size:11px;margin-top:4px;color:var(--sa-dim);background:var(--sa-bg);padding:6px 8px;border-radius:6px}
+.step-card.running .step-card-name::after{content:' …';animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0}}
+.run-log{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--sa-dim);
+  background:var(--sa-bg);border:1px solid var(--sa-border);border-radius:8px;padding:8px;max-height:120px;overflow-y:auto}
+.log-line{padding:1px 0}
+.log-line.ok{color:var(--sa-ok)}.log-line.warn{color:var(--sa-warn)}.log-line.error{color:var(--sa-danger)}
 
 /* HITL 卡片 */
-.hitl-card {
-  align-self: flex-start; width: 95%;
-  background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3);
-  border-radius: 8px; padding: 12px 14px;
-}
-.hitl-card-title { font-size: 13px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
-.hitl-card-body { font-size: 12px; color: var(--sa-muted); margin-bottom: 10px; }
-.hitl-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.hitl-btn {
-  padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer;
-  font-size: 12px; font-weight: 500; transition: all .15s;
-}
-.hitl-btn.approve { background: #22c55e; color: #fff; }
-.hitl-btn.reject  { background: #ef4444; color: #fff; }
-.hitl-btn.delegate { background: var(--sa-card); border: 1px solid var(--sa-border); color: var(--sa-text); }
-.hitl-btn:disabled { opacity: .5; cursor: not-allowed; }
+.hitl-card{align-self:stretch;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.35);
+  border-radius:12px;padding:13px 15px}
+.hitl-card-title{font-size:13px;font-weight:700;color:var(--sa-danger);margin-bottom:8px}
+.hitl-card-body{font-size:12.5px;color:var(--sa-muted);line-height:1.7;margin-bottom:11px}
+.hitl-card-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hitl-btn{font-size:12px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--sa-border2);background:var(--sa-surface);color:var(--sa-text);transition:.15s}
+.hitl-btn:hover:not(:disabled){transform:translateY(-1px)}
+.hitl-btn.approve:hover:not(:disabled){border-color:var(--sa-ok);color:var(--sa-ok)}
+.hitl-btn.reject:hover:not(:disabled){border-color:var(--sa-danger);color:var(--sa-danger)}
+.hitl-btn.delegate:hover:not(:disabled){border-color:var(--sa-warn);color:var(--sa-warn)}
+.hitl-btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* 输入区 */
-.chat-input-area {
-  padding: 10px 12px; border-top: 1px solid var(--sa-border); flex-shrink: 0;
-}
-.quick-questions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-.quick-btn {
-  padding: 4px 10px; border-radius: 16px; border: 1px solid var(--sa-border);
-  background: transparent; color: var(--sa-muted); font-size: 11px; cursor: pointer;
-  transition: all .15s; white-space: nowrap;
-}
-.quick-btn:hover { border-color: var(--sa-accent); color: var(--sa-accent); }
-.quick-btn:disabled { opacity: .4; cursor: not-allowed; }
-.chat-input-row { display: flex; gap: 8px; }
-.chat-input-row input {
-  flex: 1; padding: 8px 12px; border-radius: 8px;
-  border: 1px solid var(--sa-border); background: var(--sa-card);
-  color: var(--sa-text); font-size: 13px; outline: none;
-}
-.chat-input-row input:focus { border-color: var(--sa-accent); }
-.chat-input-row input:disabled { opacity: .5; }
-.chat-send-btn {
-  padding: 8px 16px; border-radius: 8px; border: none;
-  background: var(--sa-accent); color: #fff; font-size: 13px; cursor: pointer;
-  font-weight: 500; transition: opacity .15s;
-}
-.chat-send-btn:disabled { opacity: .5; cursor: not-allowed; }
+/* footer */
+.foot{text-align:center;padding:34px 0 50px;font-size:12.5px;color:var(--sa-dim);border-top:1px solid var(--sa-border);margin-top:20px}
+.foot a{color:var(--sa-muted)}
 
-/* ===== 右侧 Agent 状态面板 ===== */
-.agent-status-panel {
-  background: var(--sa-surface); border: 1px solid var(--sa-border);
-  border-radius: 10px; padding: 10px; display: flex; flex-direction: column;
-  overflow-y: auto; min-height: 0;
+/* 响应式 */
+@media(max-width:860px){
+  .hero h1{font-size:28px}
+  .scn-grid{grid-template-columns:1fr}
+  .chat-layout{grid-template-columns:1fr}
+  .to-row{grid-template-columns:96px 1fr}
+  .flow-track{flex-direction:column;align-items:center}
+  .farrow{transform:rotate(90deg)}
 }
-.asp-title { font-size: 10px; font-weight: 600; color: var(--sa-dimmed); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; flex-shrink: 0; }
-.asp-agent {
-  padding: 6px 8px; border-radius: 6px; border: 1px solid var(--sa-border);
-  margin-bottom: 4px; transition: all .3s; flex-shrink: 0;
-}
-.asp-agent-name { font-size: 11px; font-weight: 600; color: var(--sa-text); margin-bottom: 2px; }
-.asp-agent-status { font-size: 10px; color: var(--sa-muted); display: flex; align-items: center; gap: 4px; }
-.asp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sa-border); flex-shrink: 0; transition: all .3s; }
-.asp-agent.routing .asp-dot  { background: #d97706; }
-.asp-agent.active .asp-dot   { background: #2563eb; animation: pulse-dot .8s infinite; }
-.asp-agent.done .asp-dot     { background: #059669; }
-.asp-agent.escalated .asp-dot { background: #dc2626; animation: pulse-dot .8s infinite; }
-@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .7; } }
-.asp-agent.routing { background: rgba(217,119,6,.07); border-color: rgba(217,119,6,.25); }
-.asp-agent.active  { background: rgba(37,99,235,.08); border-color: rgba(37,99,235,.25); }
-.asp-agent.done    { background: rgba(5,150,105,.07); border-color: rgba(5,150,105,.2); }
-.asp-agent.escalated { background: rgba(220,38,38,.07); border-color: rgba(220,38,38,.25); }
-
-/* 运行日志 */
-.asp-log { margin-top: 8px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.asp-log-title { font-size: 10px; color: var(--sa-dimmed); margin-bottom: 4px; flex-shrink: 0; }
-.asp-log-body {
-  background: var(--sa-card); border-radius: 6px; padding: 6px;
-  font-size: 10px; color: var(--sa-muted); flex: 1; overflow-y: auto;
-  font-family: monospace; line-height: 1.6; min-height: 60px;
-}
-.log-line.info  { color: #1d4ed8; }
-.log-line.ok    { color: #065f46; }
-.log-line.warn  { color: #92400e; }
-.log-line.error { color: #991b1b; }
-
-/* ===== 静态 Tab 内容 ===== */
-.static-tab { padding: 4px 0; max-width: 900px; }
-.section-card {
-  background: var(--sa-surface); border: 1px solid var(--sa-border);
-  border-radius: 10px; padding: 16px 18px; margin-bottom: 14px;
-}
-.section-card h3 { font-size: 14px; font-weight: 700; color: var(--sa-text); margin-bottom: 10px; }
-.section-card p, .section-card li { font-size: 13px; color: var(--sa-muted); line-height: 1.7; }
-.section-card ul { padding-left: 18px; }
-.section-card strong { color: var(--sa-text); }
-.section-card code { background: rgba(37,99,235,.08); color: #1d4ed8; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
-
-/* 意图路由卡片 */
-.intent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.intent-card { background: var(--sa-card); border: 1px solid var(--sa-border); border-radius: 8px; padding: 14px; }
-.intent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.intent-icon { font-size: 20px; }
-.intent-name { font-size: 13px; font-weight: 700; color: var(--sa-text); }
-.intent-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
-.intent-badge.faq       { background: rgba(5,150,105,.12); color: #065f46; }
-.intent-badge.logistics { background: rgba(37,99,235,.12); color: #1d4ed8; }
-.intent-badge.return    { background: rgba(217,119,6,.12); color: #92400e; }
-.intent-badge.complaint { background: rgba(220,38,38,.12); color: #991b1b; }
-.intent-keywords { font-size: 11px; color: var(--sa-muted); margin-bottom: 8px; }
-.intent-chain { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.chain-node { font-size: 10px; padding: 3px 8px; border-radius: 12px; background: rgba(37,99,235,.08); color: #1d4ed8; border: 1px solid rgba(37,99,235,.18); }
-.chain-arrow { font-size: 10px; color: var(--sa-dimmed); }
-
-/* Agent 图谱 */
-.agent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.agent-card { background: var(--sa-card); border: 1px solid var(--sa-border); border-radius: 8px; padding: 14px; }
-.agent-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.agent-card-icon { font-size: 18px; }
-.agent-card-name { font-size: 13px; font-weight: 700; color: var(--sa-text); }
-.agent-card-role { font-size: 11px; color: var(--sa-muted); }
-.agent-card-row { display: flex; gap: 6px; margin-bottom: 5px; }
-.agent-card-label { font-size: 10px; color: var(--sa-dimmed); min-width: 28px; }
-.agent-card-val { font-size: 11px; color: var(--sa-muted); }
-.agent-prompt {
-  margin-top: 8px; background: rgba(0,0,0,.04); border-radius: 6px; padding: 8px;
-  font-size: 10px; color: var(--sa-muted); font-family: monospace;
-  white-space: pre-wrap; max-height: 90px; overflow-y: auto;
-}
-
-/* 治理表格 */
-.gov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.gov-table th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--sa-border); color: var(--sa-muted); font-weight: 600; font-size: 11px; }
-.gov-table td { padding: 8px 10px; border-bottom: 1px solid rgba(0,0,0,.04); color: var(--sa-muted); }
-.gov-table tr:last-child td { border-bottom: none; }
-
-/* 飞轮 */
-.flywheel { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.fw-step {
-  flex: 1; min-width: 110px; background: var(--sa-card);
-  border: 1px solid var(--sa-border); border-radius: 8px; padding: 12px 10px; text-align: center;
-  position: relative;
-}
-.fw-step:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--sa-dimmed); z-index: 1; }
-.fw-icon { font-size: 22px; margin-bottom: 6px; }
-.fw-name { font-size: 11px; font-weight: 600; color: var(--sa-text); margin-bottom: 3px; }
-.fw-desc { font-size: 10px; color: var(--sa-muted); }
 </style>
 </head>
 <body>
-<div class="sa-wrapper">
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><span class="logo">客</span> 智能客服产品设计沙盘</div>
+    <nav class="topnav">
+      <a href="#scenario">业务场景</a>
+      <a href="#matrix">决策矩阵</a>
+      <a href="#flow">请求链路</a>
+      <a href="#demo">实战 Demo</a>
+    </nav>
+    <span class="engine-badge mock"><span class="dot"></span>交互式 Demo</span>
+  </div>
+</div>
 
-  <!-- Topbar -->
-  <div class="sa-topbar">
-    <div>
-      <div class="sa-topbar-title">🤖 智能客服中台 Demo</div>
-      <div class="sa-topbar-meta">意图路由 · 多 Agent 协作 · Human-in-the-Loop</div>
+<!-- Hero -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">AI PM · 产品决策推演</span>
+    <h1>同一个智能客服，给银行做和给电商做，<br><span class="g">产品决策完全不同</span></h1>
+    <p class="lead">这不是一篇技术综述，而是一次产品决策推演——展示一个 AI PM 如何把模糊的业务问题，拆成清晰的产品决策。</p>
+    <div class="thesis">而决定这些决策怎么变的，是 <b>PM</b>：选什么、为什么这么选、代价是什么、谁来拍板。下面每个决策都标注了它由 <b>PM 主导</b>、算法主导，还是双方共同决策。</div>
+    <div class="steps">
+      <span class="step-chip"><span class="n">1</span>选一个业务场景</span>
+      <span class="step-chip"><span class="n">2</span>看决策如何随场景改变</span>
+      <span class="step-chip"><span class="n">3</span>跑一遍真实对话链路</span>
     </div>
-    <span class="sa-topbar-model" id="model-badge">模型加载中…</span>
   </div>
+</header>
 
-  <!-- Tab Nav -->
-  <div class="sa-tab-nav">
-    <button class="sa-tab-btn active" data-tab="chat" onclick="switchSaTab('chat')">💬 对话演示</button>
-    <button class="sa-tab-btn" data-tab="routing" onclick="switchSaTab('routing')">🧭 路由逻辑</button>
-    <button class="sa-tab-btn" data-tab="agents" onclick="switchSaTab('agents')">🤖 Agent 图谱</button>
-    <button class="sa-tab-btn" data-tab="gov" onclick="switchSaTab('gov')">⚙️ 中台治理</button>
-    <button class="sa-tab-btn" data-tab="flywheel" onclick="switchSaTab('flywheel')">🔄 数据飞轮</button>
+<!-- 区块1：业务场景 -->
+<section class="section" id="scenario">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">第一步 · 定义问题</div>
+      <h2>这个客服，是给谁做的？</h2>
+      <p>不同业务场景有不同的约束。选一个场景，系统会给它打上业务特性标签——这些标签会贯穿后面每一个产品决策。</p>
+    </div>
+    <div class="scn-grid">
+      <button class="scn-card" data-scn="bank" onclick="selectScenario('bank')">
+        <span class="pick">● 当前场景</span>
+        <span class="ico">🏦</span>
+        <div class="nm">银行智能客服</div>
+        <div class="ol">答错一句可能就是合规事故，系统的第一原则是「不许出错」。</div>
+      </button>
+      <button class="scn-card" data-scn="ecom" onclick="selectScenario('ecom')">
+        <span class="pick">● 当前场景</span>
+        <span class="ico">🛒</span>
+        <div class="nm">大型电商促销客服</div>
+        <div class="ol">大促当天百万并发，问题从「退货政策」到「我的订单到哪了」无所不包。</div>
+      </button>
+      <button class="scn-card" data-scn="startup" onclick="selectScenario('startup')">
+        <span class="pick">● 当前场景</span>
+        <span class="ico">🚀</span>
+        <div class="nm">创业公司 FAQ 机器人</div>
+        <div class="ol">三个人的团队，先用最小成本把客服自动化跑起来，能迭代比完美更重要。</div>
+      </button></div>
+    <div class="scn-detail" id="scn-detail">
+      <div class="dt-label">业务特性标签（这意味着什么约束）</div>
+      <div class="tag-row" id="scn-tags"></div>
+      <div class="dt-con" id="scn-constraint"></div>
+    </div>
   </div>
+</section>
 
-  <!-- Tab Content -->
-  <div class="sa-tab-content">
-
-    <!-- ===== Tab 1: 对话演示 ===== -->
-    <div class="sa-tab-panel active" id="sa-tab-chat">
-      <div class="chat-layout">
-
-        <!-- 左侧：用户视角 -->
-        <div style="display:flex;flex-direction:column;min-height:0;gap:8px;">
-          <span class="pane-label user-pov">👤 用户视角</span>
-          <div class="chat-panel" style="flex:1;min-height:0;">
-          <div class="chat-messages" id="chat-messages">
-            <div class="chat-bubble system-msg">👋 选择下方快捷问题，体验 AI 客服全流程（右侧可查看系统运行状态）</div>
+<!-- 区块2：决策矩阵 -->
+<section class="section" id="matrix">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">第二步 · 拆解决策</div>
+      <h2>端到端的产品决策矩阵</h2>
+      <p>从「接什么问题」到「怎么越用越好」，一套智能客服要做的关键产品决策。每张卡可展开看权衡、三场景取舍和证据。徽章标明谁来拍板。</p>
+    </div>
+    <div class="matrix-bar">
+      <div class="legend">
+        <span class="lg"><span class="dot-pm"></span>PM 主导</span>
+        <span class="lg"><span class="dot-algo"></span>算法主导</span>
+        <span class="lg"><span class="dot-both"></span>共同决策</span>
+      </div>
+      <span class="tally">本沙盘共 <b>9</b> 个关键决策，其中 <b>5</b> 个由 PM 主导、<b>2</b> 个需 PM 与算法共同拍板</span>
+    </div>
+    <div class="cards"><div class="grp-label">接什么问题</div>
+        <div class="dcard" id="card-意图怎么分流-1771582012" data-owner="pm">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">意图怎么分流</div>
+              <div class="t2">意图路由层</div>
+            </div>
+            <span class="owner-badge own-pm">PM 主导</span>
+            <span class="caret">▸</span>
           </div>
-          <div class="chat-input-area">
-            <div class="quick-questions">
-              <button class="quick-btn" onclick="sendQuick('退换货政策是什么？')">📦 退换货政策</button>
-              <button class="quick-btn" onclick="sendQuick('我的订单2024031001还没到，在哪里？')">🚚 查询物流</button>
-              <button class="quick-btn" onclick="sendQuick('我要退货，昨天买的手机质量太差了')">🔄 申请退货</button>
-              <button class="quick-btn" onclick="sendQuick('你们服务太差了！快递丢件还不处理，我要投诉！')">😤 愤怒投诉</button>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>在最前端加一道意图识别，把问题分到问答 / 查订单 / 办业务 / 转人工等不同路径，先分流再处理。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>分类准确率：</b>路由错了，用户会在错误路径里打转</li><li><b>高风险路径识别：</b>该转人工却没转，是最严重的失误</li><li><b>分类延迟：</b>它是所有后续步骤的前置，延迟会直接叠加</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">重点保高风险路径识别率——大额、账户安全、合规争议必须稳稳转人工，误转可以容忍。</div>
             </div>
-            <div class="chat-input-row">
-              <input type="text" id="chat-input" placeholder="输入问题，回车发送…" onkeydown="if(event.key==='Enter')sendChat()"/>
-              <button class="chat-send-btn" id="send-btn" onclick="sendChat()">发送</button>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">分类延迟压到 50ms 内，意图类别随促销活动快速增减，分类器要能快速更新。</div>
             </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">意图类别少，先用关键词规则做简单分类，不必训练分类器。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>意图边界（「什么算高风险」「什么算超出能力」）是业务决策，不是技术判断——必须 PM 来定。</div>
+          </div>
+          </div>
+        </div><div class="grp-label">答案从哪来</div>
+        <div class="dcard" id="card-知识怎么进系统-1246958660" data-owner="algo">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">知识怎么进系统</div>
+              <div class="t2">数据层 · 解析 + 切分</div>
+            </div>
+            <span class="owner-badge own-algo">算法主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>把 PDF/Word/网页解析进来，再切成检索片段（Chunk）。切分边界是 RAG 里最易被忽视、却最影响质量的一环。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>解析完整性：</b>表格、多栏文字有没有被正确提取</li><li><b>切分边界：</b>关键信息会不会被切成两半导致召回缺失</li><li><b>入库效率：</b>知识更新频繁时，慢解析会拖出过时回答</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">解析完整性优先，哪怕慢、哪怕要人工审查也值得；切分宁可块大、噪音高，也不能切断条款。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">入库效率同等重要——SKU/促销天天变，慢入库就等于回答过时。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">固定分块 + 托管解析服务起步，别在这层花太多工程时间，先跑通。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>真实案例：某电商退货政策横跨两个 Chunk，系统只召回前半句「支持7天无理由退换」，漏掉「但以下情形不适用」，引发客诉。加 Chunk 重叠后消失。</div>
+          </div>
           </div>
         </div>
-        </div><!-- /用户视角 -->
-
-        <!-- 右侧：系统视角 -->
-        <div class="sys-pane">
-          <span class="pane-label sys-pov">⚙️ 系统视角（面试官/PM 视角）</span>
-          <div class="sys-pane-inner">
-
-        <!-- 流程图 -->
-        <div class="flow-panel">
-          <div class="flow-panel-title">Workflow 状态</div>
-          <svg class="flow-svg" viewBox="0 0 220 560" xmlns="http://www.w3.org/2000/svg">
-            <g class="fn-group idle" id="node-router">
-              <rect class="fn-rect" x="30" y="10" width="160" height="44" rx="8" ry="8"/>
-              <text class="fn-text" x="110" y="30" text-anchor="middle" font-size="12">🧭</text>
-              <text class="fn-text" x="110" y="46" text-anchor="middle" font-size="11" font-weight="600">意图路由 Router</text>
-            </g>
-            <line class="flow-line" id="line-faq"      x1="80"  y1="54" x2="50"  y2="110"/>
-            <line class="flow-line" id="line-logistics" x1="110" y1="54" x2="110" y2="110"/>
-            <line class="flow-line" id="line-return"    x1="140" y1="54" x2="180" y2="110"/>
-            <g class="fn-group idle" id="node-faq">
-              <rect class="fn-rect" x="8" y="110" width="80" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="48" y="127" text-anchor="middle" font-size="11">📖</text>
-              <text class="fn-text" x="48" y="142" text-anchor="middle" font-size="10">FAQ Agent</text>
-            </g>
-            <g class="fn-group idle" id="node-logistics">
-              <rect class="fn-rect" x="70" y="110" width="80" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="110" y="127" text-anchor="middle" font-size="11">🚚</text>
-              <text class="fn-text" x="110" y="142" text-anchor="middle" font-size="10">物流查询</text>
-            </g>
-            <line class="flow-line" id="line-logi-reply" x1="110" y1="148" x2="110" y2="198"/>
-            <g class="fn-group idle" id="node-logi-reply">
-              <rect class="fn-rect" x="70" y="198" width="80" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="110" y="215" text-anchor="middle" font-size="11">✍️</text>
-              <text class="fn-text" x="110" y="230" text-anchor="middle" font-size="10">回复生成</text>
-            </g>
-            <g class="fn-group idle" id="node-return-check">
-              <rect class="fn-rect" x="140" y="110" width="76" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="178" y="127" text-anchor="middle" font-size="11">📋</text>
-              <text class="fn-text" x="178" y="142" text-anchor="middle" font-size="10">规则核查</text>
-            </g>
-            <line class="flow-line" id="line-return-sol" x1="178" y1="148" x2="178" y2="198"/>
-            <g class="fn-group idle" id="node-return-sol">
-              <rect class="fn-rect" x="140" y="198" width="76" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="178" y="215" text-anchor="middle" font-size="11">💡</text>
-              <text class="fn-text" x="178" y="230" text-anchor="middle" font-size="10">方案生成</text>
-            </g>
-            <line x1="10" y1="258" x2="210" y2="258" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-            <text x="110" y="272" text-anchor="middle" font-size="9" fill="#4b5563">— 投诉链 —</text>
-            <g class="fn-group idle" id="node-emotion">
-              <rect class="fn-rect" x="30" y="280" width="160" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="110" y="297" text-anchor="middle" font-size="11">😤</text>
-              <text class="fn-text" x="110" y="312" text-anchor="middle" font-size="10">情绪识别 Agent</text>
-            </g>
-            <line class="flow-line" id="line-emo-esc" x1="110" y1="318" x2="110" y2="360"/>
-            <g class="fn-group idle" id="node-escalation">
-              <rect class="fn-rect" x="30" y="360" width="160" height="38" rx="7" ry="7"/>
-              <text class="fn-text" x="110" y="377" text-anchor="middle" font-size="11">⚖️</text>
-              <text class="fn-text" x="110" y="392" text-anchor="middle" font-size="10">升级判断 Agent</text>
-            </g>
-            <line class="flow-line" id="line-esc-branch" x1="110" y1="398" x2="110" y2="438"/>
-            <g class="fn-group idle" id="node-hitl">
-              <rect class="fn-rect" x="20" y="438" width="80" height="36" rx="7" ry="7"/>
-              <text class="fn-text" x="60" y="454" text-anchor="middle" font-size="11">👤</text>
-              <text class="fn-text" x="60" y="468" text-anchor="middle" font-size="10">人工接入</text>
-            </g>
-            <g class="fn-group idle" id="node-soothe">
-              <rect class="fn-rect" x="120" y="438" width="80" height="36" rx="7" ry="7"/>
-              <text class="fn-text" x="160" y="454" text-anchor="middle" font-size="11">🌸</text>
-              <text class="fn-text" x="160" y="468" text-anchor="middle" font-size="10">安抚回复</text>
-            </g>
-          </svg>
+        <div class="dcard" id="card-怎么找到对的内容-375138133" data-owner="both">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">怎么找到对的内容</div>
+              <div class="t2">检索层 · 混合检索 + Reranker</div>
+            </div>
+            <span class="owner-badge own-both">共同决策</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>向量检索懂语义但漏精确词（订单号、条款编号），BM25 关键词检索相反——两路融合的混合检索是生产标配。Reranker 精排是可选项，要数据说话。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>召回率@K / MRR：</b>找没找到、排得靠不靠前</li><li><b>精确匹配率：</b>编号、SKU 这类字符串能不能命中</li><li><b>Reranker 边际收益：</b>精排提升是否值回 50-200ms 延迟</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">适当提高 BM25 权重——条款编号精确命中比语义相似更关键；准确率敏感，优先评估上 Reranker。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">稠密 0.7 / 稀疏 0.3 起步；延迟敏感，Reranker 要量化延迟增量再决定，谨慎引入。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">纯向量检索起步，先不上混合、不上 Reranker——数据不足以支撑 A/B 验证。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">真实案例 / 数据</div>据生产对比研究，混合检索把召回率从约 78% 提到 91%，精确字符串场景提升尤其明显。 <a href="https://dev.to/pooyagolchian/rag-pipelines-in-production-vector-database-benchmarks-chunking-strategies-and-hybrid-search-data-gbl" target="_blank" rel="noopener">查看来源 ↗</a></div>
+          </div>
+          </div>
         </div>
+        <div class="dcard" id="card-查订单这类硬数据怎么办-491253012" data-owner="pm">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">查订单这类硬数据怎么办</div>
+              <div class="t2">检索层 · Text-to-SQL</div>
+            </div>
+            <span class="owner-badge own-pm">PM 主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>「我的订单到哪了」答案不在文档里，在数据库表里。让 LLM 把自然语言转成 SQL 查询，再把结果组织成回答。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>SQL 准确率：</b>生成的查询能不能返回用户真正想要的数据</li><li><b>执行安全：</b>必须硬拦截 DELETE/UPDATE —— 这是一票否决项</li><li><b>权限控制：</b>用户只能查自己的数据，不能用自然语言绕过权限</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">SQL 准确率 + 执行安全一票否决；权限必须在数据库层实现，不能只靠 Prompt 约束 LLM。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">关注数据库查询性能——慢查询会阻塞整条响应链路。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">订单量小、表结构简单时可后置；先把文档型 FAQ 跑通再接数据库。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>数据库的业务语义（哪张表存什么、字段什么含义）要 PM 提供并注入 LLM context，算法无法独立完成。</div>
+          </div>
+          </div>
+        </div><div class="grp-label">怎么答好</div>
+        <div class="dcard" id="card-主模型怎么选答案约束-424331400" data-owner="both">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">主模型怎么选 + 答案约束</div>
+              <div class="t2">生成层 · 选型 + Prompt + 幻觉控制</div>
+            </div>
+            <span class="owner-badge own-both">共同决策</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>主模型选型不是纯技术决策——质量、成本、合规、工程四个维度，合规是硬过滤（先过合规再谈能力）。System Prompt 是 PM 能直接设计的核心，幻觉控制要输入侧预防 + 输出侧检测双管齐下。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>指令遵循 + 幻觉率：</b>能不能严守「不承诺退款」这类禁区、不捏造</li><li><b>数据驻留 / 服务协议：</b>数据会不会出境、会不会被拿去训练</li><li><b>成本与延迟：</b>Token 单价、首 token 时延，规模化后差距悬殊</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">质量（指令遵循 + 幻觉率）&gt; 合规 &gt; 成本；Faithfulness 与约束违反率必须极高，宁可拒答。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">延迟与成本优先——简单问题走轻量模型、复杂问题走大模型的成本路由，稳定后再上。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">工程成熟度优先——选生态完善的商业 API，早期规模小，成本不是主要矛盾。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">真实案例 / 数据</div>2024 年 Air Canada 因客服机器人编造退票政策被判赔 812.02 加元，法院认定企业要为 AI 输出担法律责任——幻觉不只是技术问题，是业务风险。 <a href="https://aibusiness.com/nlp/air-canada-held-responsible-for-chatbot-s-hallucinations-" target="_blank" rel="noopener">查看来源 ↗</a></div>
+          </div>
+          </div>
+        </div><div class="grp-label">怎么管对话 &amp; 兜底</div>
+        <div class="dcard" id="card-什么时候交给人-705168986" data-owner="pm">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">什么时候交给人</div>
+              <div class="t2">对话管理层 · HITL</div>
+            </div>
+            <span class="owner-badge own-pm">PM 主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>人工接管是系统的安全阀。置信度不足、情绪激动、问题循环、高风险场景、用户主动请求——满足任一就触发。阈值设在哪，是 PM 持续调的业务平衡。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>该转未转率：</b>应转人工却没转，最严重，直接砸体验</li><li><b>误转率：</b>能处理却转了人工，推高人工成本</li><li><b>转接后解决率：</b>转了还没解决，说明问题在流程不在系统</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">死守该转未转率——误转可以高，宁可多转人工也不能让 AI 给出高风险错误回答。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">两率都要严控——人工是成本中心，促销期过多误转直接冲击运营成本。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">先保该转未转率（兜底可靠），初期误转率天然偏高，之后再逐步收紧阈值。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>触发阈值是典型的「需要 PM 持续监控调整」的指标——它直接决定人工成本和用户满意度之间的平衡点。</div>
+          </div>
+          </div>
+        </div><div class="grp-label">怎么知道好不好</div>
+        <div class="dcard" id="card-怎么衡量系统够不够好-137112024" data-owner="pm">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">怎么衡量系统够不够好</div>
+              <div class="t2">评估层 · 北极星 + RAGAS</div>
+            </div>
+            <span class="owner-badge own-pm">PM 主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>没有评估就没有迭代方向，只能靠直觉猜。北极星指标建议是「不转人工就解决问题的比率」，而不是点赞率——用户会对流利的错误回答点赞。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>Faithfulness / 答案相关性：</b>有没有幻觉、有没有答非所问</li><li><b>Context 召回 / 精确：</b>该召回的有没有召回、召回的是不是噪音</li><li><b>RAGAS 指标 → 技术层映射：</b>指标偏低能定位到具体哪一层</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">每次修复必须过评估集验证，把 Faithfulness 当一票否决线。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">盯线上代理指标（Thumbs down 率、转人工率、会话完成率）+ A/B 量化每次变更。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">从第一天起收集 Thumbs down + 人工抽检，先不搭自动化 RAGAS，攒够 100 条再上。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>评估集（Golden Dataset）的代表性和 Golden Answer 的业务正确性，PM 必须深度参与——哪些问题有代表性、正确答案是什么，算法无法独立判断。</div>
+          </div>
+          </div>
+        </div><div class="grp-label">怎么越用越好</div>
+        <div class="dcard" id="card-怎么让系统持续变好-158993244" data-owner="pm">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">怎么让系统持续变好</div>
+              <div class="t2">迭代闭环层 · 数据飞轮</div>
+            </div>
+            <span class="owner-badge own-pm">PM 主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>一个没有迭代闭环的 LLM 系统，质量会随时间衰减而非提升。用户反馈 → Badcase 归因 → 修复 → 回归测试 → 灰度上线，让飞轮转起来。这是 AI PM 最难被替代的环节。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>反馈可操作性：</b>收上来的反馈能不能归因到具体技术层</li><li><b>归因到修复的速度：</b>周期越短，飞轮转得越快</li><li><b>系统化而非个案化：</b>找共性根因，而不是一个个打补丁</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">每次修复都要过评估集回归——修一个问题可能引入新问题，不能为速度跳过验证。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">知识库更新环节高度自动化——高频变更靠人工维护成本不可持续。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">主动设计反馈收集机制——冷启动期自然反馈少，要主动触发（如要求客服标注转人工原因）。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">PM 视角</div>PM 是飞轮的「编辑」——决定哪些反馈值得投入修复、哪些 Badcase 优先处理；算法是「执行」。少了 PM 的优先级判断，飞轮会退化成「什么都改一点、什么都没改善」。</div>
+          </div>
+          </div>
+        </div><div class="grp-label">怎么跑得起来</div>
+        <div class="dcard" id="card-上线工程底线-1370136965" data-owner="algo">
+          <div class="dcard-head" onclick="toggleCard(this)">
+            <div class="ttl">
+              <div class="t1">上线工程底线</div>
+              <div class="t2">工程层 · 延迟 / 缓存 / 可观测</div>
+            </div>
+            <span class="owner-badge own-algo">算法主导</span>
+            <span class="caret">▸</span>
+          </div>
+          <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>生产标准通常要求首 token 时延 p90 &lt; 2 秒。Streaming 几乎所有系统都该默认开；语义缓存对高重复场景降本显著，但知识更新时必须主动失效。</span></div>
+          <div class="dcard-body">
+            <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims"><li><b>TTFT p90：</b>用户感知的「第一个字多久出现」</li><li><b>语义缓存命中率 / 误命中率：</b>复用回答省钱，但别复用错</li><li><b>可观测性：</b>每次请求的完整调用链要可追踪，否则无法排障</li></ul></div>
+            <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">
+            <div class="to-row" data-scn="bank">
+              <div class="to-scn">🏦 银行</div>
+              <div class="to-txt">强权限过滤 + PII 脱敏 + Prompt 注入防护，安全指标纳入监控。</div>
+            </div>
+            <div class="to-row" data-scn="ecom">
+              <div class="to-scn">🛒 大型电商促销</div>
+              <div class="to-txt">语义缓存是核心降本手段（高重复率场景命中率高），但要配套失效机制。</div>
+            </div>
+            <div class="to-row" data-scn="startup">
+              <div class="to-scn">🚀 创业公司 FAQ </div>
+              <div class="to-txt">默认开 Streaming（成本最低的体验改善），暂不做语义缓存。</div>
+            </div></div></div>
+            
+          <div class="blk">
+            <div class="evid"><div class="et">真实案例 / 数据</div>据生产数据，语义缓存可将 LLM API 成本降低约 68.8%；缓存旧内容比没有缓存更危险，知识更新时必须清除相关缓存。 <a href="https://redis.io/blog/rag-at-scale/" target="_blank" rel="noopener">查看来源 ↗</a></div>
+          </div>
+          </div>
+        </div></div>
+  </div>
+</section>
 
-          <!-- 系统侧：Agent 状态 -->
-          <div class="agent-status-panel">
-            <div class="asp-title">Agent 状态</div>
-            <div class="asp-agent idle" id="asp-router">
-              <div class="asp-agent-name">🧭 意图路由 Router</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-router-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-faq">
-              <div class="asp-agent-name">📖 FAQ Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-faq-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-logistics">
-              <div class="asp-agent-name">🚚 物流查询 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-logistics-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-logi-reply">
-              <div class="asp-agent-name">✍️ 回复生成 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-logi-reply-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-return-check">
-              <div class="asp-agent-name">📋 规则核查 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-return-check-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-return-sol">
-              <div class="asp-agent-name">💡 方案生成 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-return-sol-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-emotion">
-              <div class="asp-agent-name">😤 情绪识别 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-emotion-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-escalation">
-              <div class="asp-agent-name">⚖️ 升级判断 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-escalation-status">待命</span></div>
-            </div>
-            <div class="asp-agent idle" id="asp-soothe">
-              <div class="asp-agent-name">🌸 安抚回复 Agent</div>
-              <div class="asp-agent-status"><span class="asp-dot"></span><span id="asp-soothe-status">待命</span></div>
-            </div>
-            <div class="asp-log">
-              <div class="asp-log-title">运行日志</div>
-              <div class="asp-log-body" id="run-log"></div>
+<!-- 区块3：链路图 -->
+<section class="section" id="flow">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">系统全貌</div>
+      <h2>一条请求，怎么流经整个系统</h2>
+      <p>上面的决策不是孤立的——它们串成一条完整的请求链路。这张图证明 PM 不只懂单点，更懂端到端怎么协同。</p>
+    </div>
+    
+      <div class="flow">
+        <div class="flow-track"><div class="fnode guard" data-fnode="guard-in"><div class="fl">输入合规检测</div><div class="fs">PII 脱敏 · 注入过滤</div></div><div class="farrow">→</div><div class="fnode linkable" data-fnode="router" onclick="jumpToCard('card-意图怎么分流-1771582012')"><div class="fl">意图路由</div><div class="fs">分流到对应路径</div></div><div class="farrow">→</div><div class="fnode branch" data-fnode="branch"><div class="fl">路径分发</div><div class="fs">RAG / SQL / 人工</div></div><div class="farrow">→</div><div class="fdual"><div class="fnode linkable" data-fnode="rag" onclick="jumpToCard('card-怎么找到对的内容-375138133')"><div class="fl">RAG 检索</div><div class="fs">改写→混合检索→精排</div></div><div class="fnode linkable" data-fnode="sql" onclick="jumpToCard('card-查订单这类硬数据怎么办-491253012')"><div class="fl">Text-to-SQL</div><div class="fs">生成 SQL→查库</div></div></div><div class="farrow">→</div><div class="fnode linkable" data-fnode="gen" onclick="jumpToCard('card-主模型怎么选答案约束-424331400')"><div class="fl">生成层</div><div class="fs">组织成自然语言回答</div></div><div class="farrow">→</div><div class="fnode guard" data-fnode="guard-out"><div class="fl">输出合规检测</div><div class="fs">幻觉检测 · 违禁过滤</div></div><div class="farrow">→</div><div class="fnode" data-fnode="reply"><div class="fl">返回用户</div><div class="fs">Streaming 输出</div></div></div>
+        <div class="flow-cross-label">↑ 横切基础设施层（不在单次请求链路上，持续运行）</div>
+        <div class="cross-track"><div class="cnode" data-fnode="eval" onclick="jumpToCard('card-怎么衡量系统够不够好-137112024')"><div class="fl">评估层</div><div class="fs">RAGAS · 北极星 · A/B</div></div><div class="cnode" data-fnode="infra" onclick="jumpToCard('card-上线工程底线-1370136965')"><div class="fl">工程层</div><div class="fs">延迟 · 缓存 · 可观测</div></div><div class="cnode" data-fnode="loop" onclick="jumpToCard('card-怎么让系统持续变好-158993244')"><div class="fl">迭代闭环层</div><div class="fs">Badcase 飞轮</div></div><div class="cnode" data-fnode="hitl" onclick="jumpToCard('card-什么时候交给人-705168986')"><div class="fl">人工接管</div><div class="fs">HITL 安全阀</div></div></div>
+        <div class="flow-note">输入合规检测在意图路由<b style="color:var(--sa-text)">之前</b>执行 · Text-to-SQL 的结果在<b style="color:var(--sa-text)">生成层</b>与 RAG 主链路合流 · 点击任一节点跳到对应决策卡</div>
+      </div>
+  </div>
+</section>
+
+<!-- 区块4：实战 Demo -->
+<section class="section" id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">第三步 · 动手验证</div>
+      <h2>实战对话：决策不是纸上谈兵</h2>
+      <p>左边是用户视角，右边是系统视角（各 Agent 状态 + 调用日志）。点击预设问题逐步播放意图路由 → 多 Agent 协作的完整链路；试试投诉链，会触发 HITL 人工接管。</p>
+    </div>
+    <div class="demo-bar">
+      <span class="hint">点击预设问题或直接输入：</span>
+      <button class="btn" onclick="restartDemo()">↻ 重置对话</button>
+    </div>
+    <div class="chat-layout">
+      <!-- 用户视角 -->
+      <div class="pane">
+        <div class="pane-label user">👤 用户视角</div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="quick-row" id="quick-row"></div>
+        <div class="input-row">
+          <input id="chat-input" type="text" placeholder="输入你的问题…" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn primary" id="send-btn" onclick="sendChat()">发送</button>
+        </div>
+      </div>
+      <!-- 系统视角 -->
+      <div class="pane sys-pane">
+        <div class="pane-label sys">⚙️ 系统视角</div>
+        <div class="sys-body">
+          <div>
+            <div class="sys-block-h">Agent 状态</div>
+            <div class="asp-list">
+              <div class="asp-agent idle" id="asp-router"><span class="asp-dot"></span><span class="asp-nm">🧭 意图路由 Router</span><span class="asp-st" id="asp-router-status">待命</span></div><div class="asp-agent idle" id="asp-faq"><span class="asp-dot"></span><span class="asp-nm">📖 FAQ Agent</span><span class="asp-st" id="asp-faq-status">待命</span></div><div class="asp-agent idle" id="asp-logistics"><span class="asp-dot"></span><span class="asp-nm">🚚 物流查询 Agent</span><span class="asp-st" id="asp-logistics-status">待命</span></div><div class="asp-agent idle" id="asp-logi-reply"><span class="asp-dot"></span><span class="asp-nm">✍️ 回复生成 Agent</span><span class="asp-st" id="asp-logi-reply-status">待命</span></div><div class="asp-agent idle" id="asp-return-check"><span class="asp-dot"></span><span class="asp-nm">📋 规则核查 Agent</span><span class="asp-st" id="asp-return-check-status">待命</span></div><div class="asp-agent idle" id="asp-return-sol"><span class="asp-dot"></span><span class="asp-nm">💡 方案生成 Agent</span><span class="asp-st" id="asp-return-sol-status">待命</span></div><div class="asp-agent idle" id="asp-emotion"><span class="asp-dot"></span><span class="asp-nm">😤 情绪识别 Agent</span><span class="asp-st" id="asp-emotion-status">待命</span></div><div class="asp-agent idle" id="asp-escalation"><span class="asp-dot"></span><span class="asp-nm">⚖️ 升级判断 Agent</span><span class="asp-st" id="asp-escalation-status">待命</span></div><div class="asp-agent idle" id="asp-hitl"><span class="asp-dot"></span><span class="asp-nm">👤 人工接管 HITL</span><span class="asp-st" id="asp-hitl-status">待命</span></div><div class="asp-agent idle" id="asp-soothe"><span class="asp-dot"></span><span class="asp-nm">🌸 安抚回复 Agent</span><span class="asp-st" id="asp-soothe-status">待命</span></div>
             </div>
           </div>
-          </div><!-- /sys-pane-inner -->
-
-          <!-- 系统侧：步骤卡片流 -->
-          <div class="step-stream-panel">
-            <div class="asp-title">Agent 执行步骤</div>
+          <div>
+            <div class="sys-block-h">步骤流</div>
             <div class="step-stream" id="step-stream"></div>
           </div>
-
-        </div><!-- /sys-pane -->
-
-      </div><!-- /chat-layout -->
-    </div><!-- /tab-chat -->
-
-    <!-- ===== Tab 2: 路由逻辑 ===== -->
-    <div class="sa-tab-panel scrollable" id="sa-tab-routing">
-      <div class="static-tab">
-        <div class="section-card">
-          <h3>🧭 意图路由设计原则</h3>
-          <p>路由是客服中台的核心决策节点。本设计将问题分为 4 类，通过 LLM 语义分类器进行路由（而非关键词匹配），分类置信度低时默认走 FAQ 链兜底。核心原则：<strong>确定化决策交给规则，模糊判断交给 LLM</strong>。</p>
-        </div>
-        <div class="intent-grid">
-          <div class="intent-card">
-            <div class="intent-card-header">
-              <span class="intent-icon">📖</span>
-              <div><div class="intent-name">FAQ 咨询</div><span class="intent-badge faq">1 次 LLM</span></div>
-            </div>
-            <div class="intent-keywords">典型问法：政策是什么、多少天、支持哪些支付…</div>
-            <div class="intent-chain">
-              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
-              <span class="chain-node">FAQ Agent</span><span class="chain-arrow">→</span>
-              <span class="chain-node">输出回复</span>
-            </div>
-          </div>
-          <div class="intent-card">
-            <div class="intent-card-header">
-              <span class="intent-icon">🚚</span>
-              <div><div class="intent-name">物流查询</div><span class="intent-badge logistics">2 次 LLM + 工具</span></div>
-            </div>
-            <div class="intent-keywords">典型问法：快递到哪了、订单发货了吗、几天到…</div>
-            <div class="intent-chain">
-              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
-              <span class="chain-node">物流查询🎭</span><span class="chain-arrow">→</span>
-              <span class="chain-node">回复生成</span>
-            </div>
-          </div>
-          <div class="intent-card">
-            <div class="intent-card-header">
-              <span class="intent-icon">🔄</span>
-              <div><div class="intent-name">退换货申请</div><span class="intent-badge return">2 次 LLM</span></div>
-            </div>
-            <div class="intent-keywords">典型问法：我要退货、质量有问题、能换货吗…</div>
-            <div class="intent-chain">
-              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
-              <span class="chain-node">规则核查</span><span class="chain-arrow">→</span>
-              <span class="chain-node">方案生成</span>
-            </div>
-          </div>
-          <div class="intent-card">
-            <div class="intent-card-header">
-              <span class="intent-icon">😤</span>
-              <div><div class="intent-name">投诉 / 维权</div><span class="intent-badge complaint">2–3 次 LLM + HITL</span></div>
-            </div>
-            <div class="intent-keywords">典型问法：太差了、要投诉、赔偿、曝光、维权…</div>
-            <div class="intent-chain">
-              <span class="chain-node">Router</span><span class="chain-arrow">→</span>
-              <span class="chain-node">情绪识别</span><span class="chain-arrow">→</span>
-              <span class="chain-node">升级判断</span><span class="chain-arrow">→</span>
-              <span class="chain-node">HITL/安抚</span>
-            </div>
-          </div>
-        </div>
-        <div class="section-card" style="margin-top:14px;">
-          <h3>Router System Prompt 设计要点</h3>
-          <p>Router 被严格约束只输出 4 个枚举值之一（<code>faq / logistics / return / complaint</code>），禁止解释和加标点。这是「确定化」的典型应用——当分类规则明确时，约束 LLM 输出格式，以保证下游解析的稳健性。</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== Tab 3: Agent 图谱 ===== -->
-    <div class="sa-tab-panel scrollable" id="sa-tab-agents">
-      <div class="static-tab">
-        <div class="section-card">
-          <h3>🤖 Agent 设计原则</h3>
-          <p>每个 Agent 职责单一、输入/输出明确、相互解耦。Router 只做分类，不做回复；回复 Agent 只做措辞，不做决策。这使每个节点可独立测试、替换、优化，也便于溯源问题。</p>
-        </div>
-        <div class="agent-grid">
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">🧭</span><div><div class="agent-card-name">意图路由 Router</div><div class="agent-card-role">分类器，不生成回复</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户原始消息</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">faq | logistics | return | complaint</span></div>
-            <div class="agent-prompt">你是一个客服意图分类器。根据用户消息，输出且仅输出以下标签之一：
-faq（政策咨询）
-logistics（物流查询）
-return（退换货申请）
-complaint（投诉维权）
-不要输出任何其他内容。</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">📖</span><div><div class="agent-card-name">FAQ Agent</div><div class="agent-card-role">知识库问答</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户问题</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">基于政策的标准回答</span></div>
-            <div class="agent-prompt">你是电商客服 FAQ 专员。政策：7天无理由退换，配送3-5个工作日，支持微信/支付宝/银行卡，客服工作日9:00-22:00。
-简洁准确，使用"您"的敬语，不超过100字。</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">🚚</span><div><div class="agent-card-name">物流查询 Agent 🎭</div><div class="agent-card-role">工具调用（模拟）</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户消息（含订单号）</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">结构化物流状态 JSON</span></div>
-            <div class="agent-prompt">从用户消息提取订单号（10位+数字），输出JSON：
-{"order_id":"xxx","status":"xxx","location":"xxx","eta":"xxx"}
-如无订单号，status设"需要订单号"。仅输出JSON。</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">✍️</span><div><div class="agent-card-name">回复生成 Agent</div><div class="agent-card-role">自然语言生成</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">物流查询结果 JSON</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">面向用户的友好回复</span></div>
-            <div class="agent-prompt">根据物流查询结果生成友好专业的客服回复。
-如结果显示需要订单号，礼貌引导用户提供。
-使用"您"敬语，80字以内。</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">📋</span><div><div class="agent-card-name">规则核查 Agent</div><div class="agent-card-role">政策合规判断</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">退换货诉求</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">是否符合政策 JSON</span></div>
-            <div class="agent-prompt">退换货规则：7天无理由退换，15天质量问题换货，超期或人为损坏不支持。
-输出JSON：{"eligible":true/false,"reason":"xxx","days_suggestion":"xxx"}</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">💡</span><div><div class="agent-card-name">方案生成 Agent</div><div class="agent-card-role">个性化方案输出</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">核查结果 + 用户诉求</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">处理方案文本</span></div>
-            <div class="agent-prompt">根据退换货核查结果生成处理方案。
-符合条件：具体操作步骤和时间节点。
-不符合：礼貌说明原因，提供替代方案（维修/折扣券）。
-使用"您"敬语，100字以内。</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">😤</span><div><div class="agent-card-name">情绪识别 Agent</div><div class="agent-card-role">情感分析</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">用户投诉消息</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">情绪强度分 + 诉求摘要 JSON</span></div>
-            <div class="agent-prompt">分析情绪强度（1=轻微不满，10=极度愤怒）。
-输出JSON：{"emotion_score":数字,"emotion_label":"不满/生气/愤怒/激烈","core_complaint":"xxx","tags":[]}</div>
-          </div>
-          <div class="agent-card">
-            <div class="agent-card-header"><span class="agent-card-icon">⚖️</span><div><div class="agent-card-name">升级判断 Agent</div><div class="agent-card-role">HITL 触发决策</div></div></div>
-            <div class="agent-card-row"><span class="agent-card-label">输入</span><span class="agent-card-val">情绪分析结果</span></div>
-            <div class="agent-card-row"><span class="agent-card-label">输出</span><span class="agent-card-val">是否触发人工 JSON</span></div>
-            <div class="agent-prompt">触发条件：情绪分≥7，或涉及"法律""曝光""媒体""投诉平台"。
-输出JSON：{"need_human":true/false,"reason":"xxx","priority":"high/medium/low","suggestion":"xxx"}</div>
+          <div>
+            <div class="sys-block-h">调用日志</div>
+            <div class="run-log" id="run-log"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- ===== Tab 4: 中台治理 ===== -->
-    <div class="sa-tab-panel scrollable" id="sa-tab-gov">
-      <div class="static-tab">
-        <div class="section-card">
-          <h3>⚙️ Human-in-the-Loop 触发设计</h3>
-          <p>HITL 是 AI 客服中台的核心安全机制。不是所有问题都应由 AI 全自动处理——高风险场景必须设计「暂停点」，让人工在关键决策前介入确认。</p>
-          <table class="gov-table" style="margin-top:12px;">
-            <thead><tr><th>触发条件</th><th>优先级</th><th>处理方式</th><th>SLA</th></tr></thead>
-            <tbody>
-              <tr><td>情绪分 ≥ 7（愤怒/激烈）</td><td>🔴 高</td><td>人工实时介入</td><td>90秒内响应</td></tr>
-              <tr><td>涉及法律/曝光/媒体关键词</td><td>🔴 高</td><td>升级客服主管</td><td>立即</td></tr>
-              <tr><td>退款金额 > 500元</td><td>🟠 中</td><td>人工审批后执行</td><td>5分钟</td></tr>
-              <tr><td>超时未解决（&gt;10min）</td><td>🟠 中</td><td>自动转人工</td><td>自动触发</td></tr>
-              <tr><td>用户主动要求人工</td><td>🟡 低</td><td>正常排队</td><td>3分钟</td></tr>
-              <tr><td>AI 置信度 &lt; 0.6</td><td>🟡 低</td><td>人工兜底</td><td>5分钟</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="section-card">
-          <h3>📊 SLA 指标体系</h3>
-          <table class="gov-table">
-            <thead><tr><th>指标</th><th>目标值</th><th>监控维度</th><th>说明</th></tr></thead>
-            <tbody>
-              <tr><td>首响应时间（FRT）</td><td>&lt; 5秒</td><td>P50/P95/P99</td><td>AI 自动回复时延</td></tr>
-              <tr><td>意图识别准确率</td><td>≥ 92%</td><td>按意图类型分桶</td><td>错误路由影响满意度</td></tr>
-              <tr><td>AI 自动化率</td><td>≥ 70%</td><td>按场景/时段</td><td>降低人工成本</td></tr>
-              <tr><td>用户满意度（CSAT）</td><td>≥ 4.2/5</td><td>AI vs 人工对比</td><td>衡量回复质量</td></tr>
-              <tr><td>HITL 误触发率</td><td>&lt; 8%</td><td>按触发条件</td><td>避免人工负担过重</td></tr>
-              <tr><td>人工接入时长</td><td>&lt; 3分钟</td><td>P50</td><td>HITL 后转接效率</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="section-card">
-          <h3>🏗 中台治理能力矩阵</h3>
-          <ul>
-            <li><strong>可观测性</strong>：每次 LLM 调用记录 token 消耗、延迟、输入/输出摘要，支持按场景 Drill-down</li>
-            <li><strong>灰度发布</strong>：新 Agent Prompt 版本先对 5% 流量生效，A/B 对比 CSAT 后全量</li>
-            <li><strong>降级策略</strong>：LLM 超时 &gt; 3s 时走规则引擎兜底，保证 SLA</li>
-            <li><strong>成本控制</strong>：FAQ 链优先走小模型（haiku），复杂链路才调大模型（sonnet）</li>
-            <li><strong>安全审查</strong>：输出经过敏感词过滤 + 品牌口吻校验后再发送给用户</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== Tab 5: 数据飞轮 ===== -->
-    <div class="sa-tab-panel scrollable" id="sa-tab-flywheel">
-      <div class="static-tab">
-        <div class="section-card">
-          <h3>🔄 数据飞轮：Bad Case 驱动持续优化</h3>
-          <p>AI 客服中台的核心竞争力不是上线时的准确率，而是<strong>持续迭代</strong>的能力。数据飞轮将每次失败案例转化为下一版本的训练信号，形成正向循环。</p>
-        </div>
-        <div class="flywheel">
-          <div class="fw-step"><div class="fw-icon">💬</div><div class="fw-name">用户对话</div><div class="fw-desc">实时采集全量对话日志</div></div>
-          <div class="fw-step"><div class="fw-icon">🔍</div><div class="fw-name">Bad Case 识别</div><div class="fw-desc">低评分、HITL触发、超时转人工</div></div>
-          <div class="fw-step"><div class="fw-icon">🏷️</div><div class="fw-name">人工标注</div><div class="fw-desc">客服专员标注正确意图和理想回复</div></div>
-          <div class="fw-step"><div class="fw-icon">🧬</div><div class="fw-name">Prompt 迭代</div><div class="fw-desc">PM+算法分析，优化 System Prompt</div></div>
-          <div class="fw-step"><div class="fw-icon">🚀</div><div class="fw-name">灰度验证</div><div class="fw-desc">A/B 测试新版本效果</div></div>
-        </div>
-        <div class="section-card" style="margin-top:14px;">
-          <h3>📋 Bad Case 分类与处理优先级</h3>
-          <table class="gov-table">
-            <thead><tr><th>Bad Case 类型</th><th>来源信号</th><th>优先级</th><th>处理方式</th></tr></thead>
-            <tbody>
-              <tr><td>意图误分类</td><td>人工接入后标注纠偏</td><td>🔴 P0</td><td>扩充 Router 训练集 / 优化分类 Prompt</td></tr>
-              <tr><td>回复内容错误</td><td>用户给 1 星评分</td><td>🔴 P0</td><td>审查知识库，更新 Agent Prompt</td></tr>
-              <tr><td>HITL 误触发</td><td>人工判断无需介入</td><td>🟠 P1</td><td>调整情绪分阈值，增加白名单规则</td></tr>
-              <tr><td>回复语气不佳</td><td>3 星以下 + 负向词</td><td>🟠 P1</td><td>优化回复 Agent 口吻要求</td></tr>
-              <tr><td>回复过长/过短</td><td>用户追问/反馈</td><td>🟡 P2</td><td>调整 max_tokens 和长度指令</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="section-card">
-          <h3>📈 PM 视角：飞轮加速的关键</h3>
-          <ul>
-            <li><strong>标注效率</strong>：设计清晰的标注界面，单条 Bad Case 标注时间 &lt; 30秒</li>
-            <li><strong>标注一致性</strong>：制定标注规范文档，定期校准（IAA ≥ 0.85）</li>
-            <li><strong>自动化扩充</strong>：用 LLM 生成语义相似变体，人工抽样验证 10%</li>
-            <li><strong>效果归因</strong>：每次 Prompt 迭代记录变更内容，便于回溯和对比</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /sa-tab-content -->
-</div><!-- /sa-wrapper -->
+<footer class="foot">
+  <div class="wrap">
+    本沙盘基于博客<a href="https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html" target="_blank" rel="noopener">《从零搭建一个 LLM 智能客服：完整技术链路与关键决策》</a>的决策框架构建 ·
+    数据与案例均标注来源 · <a href="../../index.html">← 返回 Leo Liu 主页</a>
+  </div>
+</footer>
 
 <script>
-// =============================================
-//  Tab 切换
-// =============================================
-function switchSaTab(name) {
-  document.querySelectorAll('.sa-tab-panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.sa-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('sa-tab-' + name).classList.add('active');
-  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
-}
+/* ---- 业务标签数据（供场景联动）---- */
+var TAGS = {"accuracy":{"label":"准确率敏感","dim":"错误容忍","desc":"答错有法律/财务/医疗代价，宁可拒答不可答错"},"latency":{"label":"延迟敏感","dim":"性能约束","desc":"用户实时等待，首 token 超 2 秒就流失"},"throughput":{"label":"吞吐量敏感","dim":"性能约束","desc":"高并发、成本压力大，要在预算内服务海量请求"},"privacy":{"label":"隐私合规","dim":"运营合规","desc":"数据不能出边界，第三方 API 受限"},"freshness":{"label":"知识更新频繁","dim":"运营合规","desc":"知识库变更快，慢同步就产生过时回答"},"coldstart":{"label":"冷启动期","dim":"运营合规","desc":"标注数据少、规则未稳，简单性优先于性能"}};
 
-// =============================================
-//  初始化
-// =============================================
-document.addEventListener('DOMContentLoaded', function() {
-  var badge = document.getElementById('model-badge');
-  if (CONFIG.OPENROUTER_KEY) {
-    badge.textContent = CONFIG.MODEL;
-    badge.style.background = 'rgba(34,197,94,.15)';
-    badge.style.color = '#22c55e';
-  } else {
-    badge.textContent = '未配置 API Key';
-    badge.style.background = 'rgba(239,68,68,.15)';
-    badge.style.color = '#ef4444';
-  }
-});
+/* ---- 全局状态 ---- */
+var currentScenario = 'ecom';   // 默认电商
+var isBusy = false;
 
-// =============================================
-//  Agent 定义
-// =============================================
-var AGENTS = {
-  router: {
-    name: '意图路由 Router', icon: '🧭',
-    system: '你是一个客服意图分类器。根据用户消息，输出且仅输出以下标签之一：\nfaq（政策咨询）\nlogistics（物流查询）\nreturn（退换货申请）\ncomplaint（投诉维权）\n不要输出任何其他内容，不要解释，不要加标点。'
-  },
-  faq: {
-    name: 'FAQ Agent', icon: '📖',
-    system: '你是电商客服 FAQ 专员。根据以下平台政策回答用户问题。\n政策：7天无理由退换，配送3-5个工作日，支持微信/支付宝/银行卡，客服工作日9:00-22:00。\n要求：简洁准确，使用"您"的敬语，不超过100字。'
-  },
-  logistics: {
-    name: '物流查询 Agent', icon: '🚚',
-    system: '从用户消息中提取订单号（通常是10位以上数字），输出JSON：{"order_id":"xxx或null","status":"已发货/运输中/已到达/需要订单号","location":"xxx或null","eta":"xxx或null"}。仅输出JSON。'
-  },
-  logiReply: {
-    name: '回复生成 Agent', icon: '✍️',
-    system: '根据物流查询结果，生成友好专业的客服回复。如结果显示需要订单号，礼貌引导用户提供完整订单号。使用"您"敬语，80字以内。'
-  },
-  returnCheck: {
-    name: '规则核查 Agent', icon: '📋',
-    system: '你是退换货规则核查员。规则：7天内无理由退换（商品未使用），15天内质量问题可换货，超出时限或人为损坏不支持。\n根据用户诉求判断。输出JSON：{"eligible":true或false,"reason":"判断依据20字内","days_suggestion":"建议操作"}'
-  },
-  returnSol: {
-    name: '方案生成 Agent', icon: '💡',
-    system: '根据退换货核查结果生成处理方案。\n符合条件：给出具体操作步骤（拍照→申请→寄回→退款周期）。\n不符合：礼貌说明，提供替代方案（维修/折扣券）。\n使用"您"敬语，100字以内。'
-  },
-  emotion: {
-    name: '情绪识别 Agent', icon: '😤',
-    system: '分析用户投诉消息的情绪强度（1=轻微不满，10=极度愤怒）。\n输出JSON（仅输出JSON）：{"emotion_score":数字1到10,"emotion_label":"不满/生气/愤怒/激烈","core_complaint":"核心诉求20字内","tags":["关键词"]}'
-  },
-  escalation: {
-    name: '升级判断 Agent', icon: '⚖️',
-    system: '根据情绪分析结果判断是否需要人工介入。\n触发条件（满足任一）：情绪分≥7，或涉及法律/曝光/媒体/投诉平台关键词。\n输出JSON（仅输出JSON）：{"need_human":true或false,"reason":"原因20字内","priority":"high/medium/low","suggestion":"建议处理方式"}'
-  },
-  soothe: {
-    name: '安抚回复 Agent', icon: '🌸',
-    system: '用户情绪激动，给出安抚性回复。要求：首先表达理解和歉意，明确承诺认真处理，给出具体后续跟进承诺，语气温和诚恳，100字以内，使用"您"敬语。'
-  }
-};
-
-// =============================================
-//  Mock 物流数据
-// =============================================
-var MOCK_ORDERS = {
-  '2024031001': { status: '运输中', location: '上海转运中心', carrier: '顺丰速运', eta: '明天下午送达' },
-  '2024030999': { status: '已签收', location: '已送达', carrier: '京东快递', eta: '已完成' },
-  '2024031100': { status: '已发货', location: '北京仓库发出', carrier: '中通快递', eta: '3-5个工作日' }
-};
-
-// =============================================
-//  OpenRouter LLM 调用
-// =============================================
-async function callLLM(systemPrompt, userContent) {
-  if (!CONFIG.OPENROUTER_KEY) {
-    throw new Error('未配置 API Key，请在 config.local.js 中填入 openrouterKey');
-  }
-  var resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + CONFIG.OPENROUTER_KEY,
-      'HTTP-Referer': location.href,
-      'X-Title': 'Service Agent Demo'
-    },
-    body: JSON.stringify({
-      model: CONFIG.MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userContent }
-      ],
-      max_tokens: 800
-    })
+/* ============ 场景选择器 ============ */
+function selectScenario(key){
+  currentScenario = key;
+  // 卡片高亮
+  document.querySelectorAll('.scn-card').forEach(function(el){
+    el.classList.toggle('on', el.dataset.scn === key);
   });
-  if (!resp.ok) {
-    var errText = await resp.text().catch(function() { return ''; });
-    throw new Error('OpenRouter 请求失败：HTTP ' + resp.status + ' ' + errText.slice(0, 200));
-  }
-  var json = await resp.json();
-  var msg = json.choices && json.choices[0] && json.choices[0].message;
-  var content = (msg && (msg.content || msg.reasoning_content)) || '';
-  if (!content) throw new Error('LLM 返回为空：' + JSON.stringify(json).slice(0, 300));
-  return content.trim();
+  renderScenarioDetail(key);
+  applyScenarioToMatrix(key);
+  renderQuickButtons();           // 快捷按钮随场景更新
+  if(!isBusy) restartDemo();      // 对话不在进行中时，重置为新场景的干净状态
 }
 
-// =============================================
-//  节点/状态管理
-// =============================================
-var LINE_MAP = {
-  'faq': 'line-faq',
-  'logistics': 'line-logistics',
-  'return-check': 'line-return',
-  'logi-reply': 'line-logi-reply',
-  'return-sol': 'line-return-sol',
-  'emotion': null,
-  'escalation': 'line-emo-esc',
-  'hitl': 'line-esc-branch',
-  'soothe': 'line-esc-branch'
-};
-
-function setNodeState(nodeId, state, statusText) {
-  var node = document.getElementById('node-' + nodeId);
-  if (node) node.className = 'fn-group ' + state;
-
-  var aspEl = document.getElementById('asp-' + nodeId);
-  if (aspEl) {
-    aspEl.className = 'asp-agent ' + state;
-    var statusSpan = document.getElementById('asp-' + nodeId + '-status');
-    if (statusSpan && statusText) statusSpan.textContent = statusText;
-  }
-
-  if (LINE_MAP[nodeId] && (state === 'active' || state === 'routing')) {
-    var line = document.getElementById(LINE_MAP[nodeId]);
-    if (line) line.classList.add('active');
-  }
+function renderScenarioDetail(key){
+  var S = {"bank":{"key":"bank","name":"银行智能客服","icon":"🏦","oneliner":"答错一句可能就是合规事故，系统的第一原则是「不许出错」。","tags":["accuracy","latency","privacy"],"constraint":"准确率与合规优先于体验和成本——宁可多转人工、多拒答，也不能给出错误的金融建议。"},"ecom":{"key":"ecom","name":"大型电商促销客服","icon":"🛒","oneliner":"大促当天百万并发，问题从「退货政策」到「我的订单到哪了」无所不包。","tags":["latency","throughput","freshness"],"constraint":"延迟与吞吐量是生死线，知识库（SKU/促销规则）天天变——成本与时效要同时扛住。"},"startup":{"key":"startup","name":"创业公司 FAQ 机器人","icon":"🚀","oneliner":"三个人的团队，先用最小成本把客服自动化跑起来，能迭代比完美更重要。","tags":["coldstart"],"constraint":"工程简单性和可迭代性优先——别一上来就堆 L4，先跑通 L2-L3，有数据再升级。"}}[key];
+  var box = document.getElementById('scn-detail');
+  if(!box) return;
+  var tagHtml = S.tags.map(function(t){
+    var T = TAGS[t];
+    return '<span class="tag"><span class="td">'+T.dim+'</span>'+T.label+'</span>';
+  }).join('');
+  // 用 class 联动而非重建含 ID 的容器（仅本块无下游 getElementById 依赖，可整体写）
+  document.getElementById('scn-tags').innerHTML = tagHtml;
+  document.getElementById('scn-constraint').innerHTML = '<b>'+S.name+'：</b>'+S.constraint;
 }
 
-function resetAllNodes() {
-  ['router','faq','logistics','logi-reply','return-check','return-sol','emotion','escalation','hitl','soothe'].forEach(function(id) {
-    setNodeState(id, 'idle', '待命');
+/* 把当前场景应用到决策矩阵：高亮取舍行 + 改写卡顶结论 */
+var CARD_DATA = [{"id":"card-意图怎么分流-1771582012","choices":{"bank":"重点保高风险路径识别率——大额、账户安全、合规争议必须稳稳转人工，误转可以容忍。","ecom":"分类延迟压到 50ms 内，意图类别随促销活动快速增减，分类器要能快速更新。","startup":"意图类别少，先用关键词规则做简单分类，不必训练分类器。"},"judge":"在最前端加一道意图识别，把问题分到问答 / 查订单 / 办业务 / 转人工等不同路径，先分流再处理。"},{"id":"card-知识怎么进系统-1246958660","choices":{"bank":"解析完整性优先，哪怕慢、哪怕要人工审查也值得；切分宁可块大、噪音高，也不能切断条款。","ecom":"入库效率同等重要——SKU/促销天天变，慢入库就等于回答过时。","startup":"固定分块 + 托管解析服务起步，别在这层花太多工程时间，先跑通。"},"judge":"把 PDF/Word/网页解析进来，再切成检索片段（Chunk）。切分边界是 RAG 里最易被忽视、却最影响质量的一环。"},{"id":"card-怎么找到对的内容-375138133","choices":{"bank":"适当提高 BM25 权重——条款编号精确命中比语义相似更关键；准确率敏感，优先评估上 Reranker。","ecom":"稠密 0.7 / 稀疏 0.3 起步；延迟敏感，Reranker 要量化延迟增量再决定，谨慎引入。","startup":"纯向量检索起步，先不上混合、不上 Reranker——数据不足以支撑 A/B 验证。"},"judge":"向量检索懂语义但漏精确词（订单号、条款编号），BM25 关键词检索相反——两路融合的混合检索是生产标配。Reranker 精排是可选项，要数据说话。"},{"id":"card-查订单这类硬数据怎么办-491253012","choices":{"bank":"SQL 准确率 + 执行安全一票否决；权限必须在数据库层实现，不能只靠 Prompt 约束 LLM。","ecom":"关注数据库查询性能——慢查询会阻塞整条响应链路。","startup":"订单量小、表结构简单时可后置；先把文档型 FAQ 跑通再接数据库。"},"judge":"「我的订单到哪了」答案不在文档里，在数据库表里。让 LLM 把自然语言转成 SQL 查询，再把结果组织成回答。"},{"id":"card-主模型怎么选答案约束-424331400","choices":{"bank":"质量（指令遵循 + 幻觉率）> 合规 > 成本；Faithfulness 与约束违反率必须极高，宁可拒答。","ecom":"延迟与成本优先——简单问题走轻量模型、复杂问题走大模型的成本路由，稳定后再上。","startup":"工程成熟度优先——选生态完善的商业 API，早期规模小，成本不是主要矛盾。"},"judge":"主模型选型不是纯技术决策——质量、成本、合规、工程四个维度，合规是硬过滤（先过合规再谈能力）。System Prompt 是 PM 能直接设计的核心，幻觉控制要输入侧预防 + 输出侧检测双管齐下。"},{"id":"card-什么时候交给人-705168986","choices":{"bank":"死守该转未转率——误转可以高，宁可多转人工也不能让 AI 给出高风险错误回答。","ecom":"两率都要严控——人工是成本中心，促销期过多误转直接冲击运营成本。","startup":"先保该转未转率（兜底可靠），初期误转率天然偏高，之后再逐步收紧阈值。"},"judge":"人工接管是系统的安全阀。置信度不足、情绪激动、问题循环、高风险场景、用户主动请求——满足任一就触发。阈值设在哪，是 PM 持续调的业务平衡。"},{"id":"card-怎么衡量系统够不够好-137112024","choices":{"bank":"每次修复必须过评估集验证，把 Faithfulness 当一票否决线。","ecom":"盯线上代理指标（Thumbs down 率、转人工率、会话完成率）+ A/B 量化每次变更。","startup":"从第一天起收集 Thumbs down + 人工抽检，先不搭自动化 RAGAS，攒够 100 条再上。"},"judge":"没有评估就没有迭代方向，只能靠直觉猜。北极星指标建议是「不转人工就解决问题的比率」，而不是点赞率——用户会对流利的错误回答点赞。"},{"id":"card-怎么让系统持续变好-158993244","choices":{"bank":"每次修复都要过评估集回归——修一个问题可能引入新问题，不能为速度跳过验证。","ecom":"知识库更新环节高度自动化——高频变更靠人工维护成本不可持续。","startup":"主动设计反馈收集机制——冷启动期自然反馈少，要主动触发（如要求客服标注转人工原因）。"},"judge":"一个没有迭代闭环的 LLM 系统，质量会随时间衰减而非提升。用户反馈 → Badcase 归因 → 修复 → 回归测试 → 灰度上线，让飞轮转起来。这是 AI PM 最难被替代的环节。"},{"id":"card-上线工程底线-1370136965","choices":{"bank":"强权限过滤 + PII 脱敏 + Prompt 注入防护，安全指标纳入监控。","ecom":"语义缓存是核心降本手段（高重复率场景命中率高），但要配套失效机制。","startup":"默认开 Streaming（成本最低的体验改善），暂不做语义缓存。"},"judge":"生产标准通常要求首 token 时延 p90 < 2 秒。Streaming 几乎所有系统都该默认开；语义缓存对高重复场景降本显著，但知识更新时必须主动失效。"}];
+function applyScenarioToMatrix(key){
+  document.querySelectorAll('.dcard').forEach(function(card){
+    card.querySelectorAll('.to-row').forEach(function(r){
+      r.classList.toggle('hot', r.dataset.scn === key);
+    });
   });
-  document.querySelectorAll('.flow-line').forEach(function(l) { l.classList.remove('active'); });
-  var stream = document.getElementById('step-stream');
-  if (stream) stream.innerHTML = '';
-  var log = document.getElementById('run-log');
-  if (log) log.innerHTML = '';
+  // 卡顶结论替换为该场景的取舍
+  CARD_DATA.forEach(function(c){
+    var card = document.getElementById(c.id);
+    if(!card) return;
+    var pin = card.querySelector('[data-scn-conclusion]');
+    var jud = card.querySelector('[data-judge]');
+    var scnName = {"bank":"银行智能客服","ecom":"大型电商促销客服","startup":"创业公司 FAQ 机器人"}[key];
+    if(pin) pin.textContent = '针对「'+scnName+'」';
+    if(jud) jud.textContent = c.choices[key];
+  });
 }
 
-// =============================================
-//  日志
-// =============================================
-function appendLog(msg, type) {
-  var log = document.getElementById('run-log');
-  if (!log) return;
-  var line = document.createElement('div');
-  line.className = 'log-line ' + (type || 'info');
-  var now = new Date();
-  var ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-  line.textContent = '[' + ts + '] ' + msg;
-  log.appendChild(line);
-  log.scrollTop = log.scrollHeight;
+/* ============ 决策卡展开 ============ */
+function toggleCard(head){
+  head.closest('.dcard').classList.toggle('open');
+}
+function jumpToCard(id){
+  var card = document.getElementById(id);
+  if(!card) return;
+  card.classList.add('open');
+  card.scrollIntoView({behavior:'smooth', block:'center'});
+  card.classList.add('flash');
+  setTimeout(function(){ card.classList.remove('flash'); }, 1400);
 }
 
-// =============================================
-//  消息渲染
-// =============================================
-function appendMessage(type, content) {
-  var msgs = document.getElementById('chat-messages');
-  var div = document.createElement('div');
-  div.className = 'chat-bubble ' + type;
-  div.textContent = content;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
-
+/* ============ Agent 定义（复用旧 demo） ============ */
+var AGENTS = {"router":{"name":"意图路由 Router","icon":"🧭","system":"你是一个客服意图分类器。根据用户消息，输出且仅输出以下标签之一：\nfaq（政策咨询）\nlogistics（物流查询）\nreturn（退换货申请）\ncomplaint（投诉维权）\n不要输出任何其他内容，不要解释，不要加标点。"},"faq":{"name":"FAQ Agent","icon":"📖","system":"你是电商客服 FAQ 专员。根据平台政策回答用户问题。政策：7天无理由退换，配送3-5个工作日，支持微信/支付宝/银行卡，客服工作日9:00-22:00。要求：简洁准确，使用\"您\"敬语，不超过100字。"},"logistics":{"name":"物流查询 Agent","icon":"🚚","system":"从用户消息中提取订单号（通常是10位以上数字），输出JSON：{\"order_id\":\"xxx或null\",\"status\":\"已发货/运输中/已到达/需要订单号\",\"location\":\"xxx或null\",\"eta\":\"xxx或null\"}。仅输出JSON。"},"logiReply":{"name":"回复生成 Agent","icon":"✍️","system":"根据物流查询结果，生成友好专业的客服回复。如结果显示需要订单号，礼貌引导用户提供完整订单号。使用\"您\"敬语，80字以内。"},"returnCheck":{"name":"规则核查 Agent","icon":"📋","system":"你是退换货规则核查员。规则：7天内无理由退换（商品未使用），15天内质量问题可换货，超出时限或人为损坏不支持。根据用户诉求判断。输出JSON：{\"eligible\":true或false,\"reason\":\"判断依据20字内\",\"days_suggestion\":\"建议操作\"}"},"returnSol":{"name":"方案生成 Agent","icon":"💡","system":"根据退换货核查结果生成处理方案。符合条件：给出操作步骤（拍照→申请→寄回→退款周期）。不符合：礼貌说明并提供替代方案（维修/折扣券）。使用\"您\"敬语，100字以内。"},"emotion":{"name":"情绪识别 Agent","icon":"😤","system":"分析用户投诉消息的情绪强度（1=轻微不满，10=极度愤怒）。输出JSON（仅JSON）：{\"emotion_score\":数字1到10,\"emotion_label\":\"不满/生气/愤怒/激烈\",\"core_complaint\":\"核心诉求20字内\",\"tags\":[\"关键词\"]}"},"escalation":{"name":"升级判断 Agent","icon":"⚖️","system":"根据情绪分析判断是否需要人工介入。触发条件（满足任一）：情绪分≥7，或涉及法律/曝光/媒体/投诉平台关键词。输出JSON（仅JSON）：{\"need_human\":true或false,\"reason\":\"原因20字内\",\"priority\":\"high/medium/low\",\"suggestion\":\"建议处理方式\"}"},"soothe":{"name":"安抚回复 Agent","icon":"🌸","system":"用户情绪激动，给出安抚性回复。要求：先表达理解和歉意，明确承诺认真处理，给出具体后续跟进承诺，语气温和诚恳，100字以内，使用\"您\"敬语。"},"hitl":{"name":"人工接管 HITL","icon":"👤","system":""}};
 var AGENT_KEY_MAP = {
-  'router': 'router', 'faq': 'faq', 'logistics': 'logistics',
-  'logi-reply': 'logiReply', 'return-check': 'returnCheck',
-  'return-sol': 'returnSol', 'emotion': 'emotion',
-  'escalation': 'escalation', 'hitl': 'hitl', 'soothe': 'soothe'
+  'router':'router','faq':'faq','logistics':'logistics','logi-reply':'logiReply',
+  'return-check':'returnCheck','return-sol':'returnSol','emotion':'emotion',
+  'escalation':'escalation','hitl':'hitl','soothe':'soothe'
 };
+var MOCK_ORDERS = {"2024030999":{"status":"已签收","location":"已送达","carrier":"京东快递","eta":"已完成"},"2024031001":{"status":"运输中","location":"上海转运中心","carrier":"顺丰速运","eta":"明天下午送达"},"2024031100":{"status":"已发货","location":"北京仓库发出","carrier":"中通快递","eta":"3-5个工作日"}};
 
-function appendStepCard(agentId, content, extra, badgeType) {
-  var agentKey = AGENT_KEY_MAP[agentId] || agentId;
-  var agent = AGENTS[agentKey] || { name: agentId, icon: '🤖' };
-  var msgs = document.getElementById('step-stream');
-  if (!msgs) msgs = document.getElementById('chat-messages');
-  var card = document.createElement('div');
-  card.className = 'step-card';
-  card.id = 'step-' + agentId;
+/* ============ Mock 预演脚本 ============ */
+/* 每条 = 一次完整链路的预设输出（断网可演、不耗 token） */
+var MOCK_SCRIPT = {"ecom":{"faq":{"qLabel":"退货政策？（FAQ）","q":"你们的退货政策是怎样的？","intent":"faq","faq":"您好，我们支持 7 天无理由退换（商品未使用、不影响二次销售）。如遇质量问题，15 天内可换货。退款一般在收到退货后 3-5 个工作日内原路退回，请您放心。"},"logistics":{"qLabel":"查订单物流（Text-to-SQL）","q":"帮我查下订单 2024031001 到哪了？","intent":"logistics","logistics":"{\"order_id\":\"2024031001\",\"status\":\"需要查询\",\"location\":null,\"eta\":null}","logiReply":"您好，您的订单 2024031001 目前正在运输中，已到达上海转运中心，由顺丰速运承运，预计明天下午送达，请您留意签收。"},"return":{"qLabel":"想退货（规则核查）","q":"我上周买的鞋子有点挤，想退货可以吗？","intent":"return","returnCheck":"{\"eligible\":true,\"reason\":\"7天内、商品未影响二次销售\",\"days_suggestion\":\"走无理由退货\"}","returnSol":"您好，您的情况符合 7 天无理由退换。操作步骤：1）在订单页点击\"申请退货\"；2）选择退货原因并拍照上传；3）按提示寄回（运费可走运费险）；4）我们收到后 3-5 个工作日内退款原路退回。"},"complaint":{"qLabel":"愤怒投诉（触发 HITL）","q":"你们这什么破服务！东西坏了还不给退，我要去315曝光！","intent":"complaint","emotion":"{\"emotion_score\":9,\"emotion_label\":\"愤怒\",\"core_complaint\":\"商品损坏拒退、扬言曝光\",\"tags\":[\"315\",\"曝光\",\"拒退\"]}","escalation":"{\"need_human\":true,\"reason\":\"情绪分9且涉及315曝光\",\"priority\":\"high\",\"suggestion\":\"立即转人工并安抚\"}","soothe":"非常抱歉给您带来这么糟糕的体验，您的心情我完全理解。商品损坏的问题我们一定认真核实处理，现在已为您安排专人优先跟进，会尽快给您一个满意的解决方案，请您稍候。"}},"bank":{"faq":{"qLabel":"跨行转账手续费？（FAQ）","q":"跨行转账的手续费和到账时间是怎样的？","intent":"faq","faq":"您好，手机银行跨行转账目前免手续费，普通转账一般实时到账；如选择次日到账则按\"普通\"渠道处理。单笔及单日限额可在\"安全中心\"查看与调整，如需提额需短信或人脸验证，请您知悉。"},"logistics":{"qLabel":"查账户余额（Text-to-SQL + 权限）","q":"帮我查一下我尾号 8888 账户的余额","intent":"logistics","logistics":"{\"account\":\"尾号8888\",\"query\":\"balance\",\"auth_passed\":true}","logiReply":"您好，已通过身份核验。您尾号 8888 的储蓄账户当前可用余额为 ¥38,520.66，含活期 ¥12,520.66、定期 ¥26,000.00。如需查看明细可在账单页查询。（提示：账户数据查询已在数据库层做用户权限隔离，仅返回本人账户）"},"return":{"qLabel":"申请提升信用卡额度（规则核查）","q":"我想把信用卡额度从 2 万提到 5 万，可以吗？","intent":"return","returnCheck":"{\"eligible\":false,\"reason\":\"近6月有1次逾期，暂不满足大额提额\",\"days_suggestion\":\"建议先结清并保持6期良好记录\"}","returnSol":"您好，根据当前征信与用卡记录，暂不满足一次性提额至 5 万的条件（近 6 个月有 1 次逾期）。建议：1）结清当前账单并保持 6 期良好还款；2）届时可在 APP 发起临时提额（最高 3 万）。涉及授信审批，最终以风控系统核定为准。"},"complaint":{"qLabel":"怀疑盗刷（触发 HITL）","q":"我卡里刚被划走 2 万块！我根本没消费！这是盗刷，你们必须马上处理！","intent":"complaint","emotion":"{\"emotion_score\":9,\"emotion_label\":\"恐慌愤怒\",\"core_complaint\":\"疑似盗刷，2万元非本人交易\",\"tags\":[\"盗刷\",\"大额\",\"资金安全\"]}","escalation":"{\"need_human\":true,\"reason\":\"涉及大额资金安全与盗刷，高风险\",\"priority\":\"high\",\"suggestion\":\"立即转人工并引导冻结账户\"}","soothe":"非常理解您现在的着急，资金安全是我们的第一要务。我已为您将工单标记为最高优先级并转接反欺诈专员，同时建议您立即在 APP「安全中心」临时冻结该卡。专员会在第一时间与您核实交易并启动争议处理流程，请您稍候。"}},"startup":{"faq":{"qLabel":"产品怎么收费？（FAQ）","q":"你们这个工具怎么收费的？有免费版吗？","intent":"faq","faq":"您好，我们提供免费版（含核心功能，单项目）。专业版 ¥39/月，支持多项目与团队协作；年付 8 折。所有付费版均有 14 天免费试用，随时可取消，不自动续费，请您放心试用。"},"logistics":{"qLabel":"查我的订阅状态（Text-to-SQL）","q":"帮我看下我的账号现在是什么套餐、什么时候到期","intent":"logistics","logistics":"{\"user\":\"current\",\"query\":\"subscription\"}","logiReply":"您好，您当前为「专业版（月付）」，下次扣费日为 2026-07-15，本周期还剩 16 天。如需切换年付（约省 20%）可在「账户设置 → 订阅」中操作。"},"return":{"qLabel":"想退订并退款（规则核查）","q":"我刚开了月付但用不上，能退款吗？","intent":"return","returnCheck":"{\"eligible\":true,\"reason\":\"开通在14天试用期内，未超量使用\",\"days_suggestion\":\"全额退款\"}","returnSol":"您好，您在 14 天无理由试用期内，符合全额退款。我已为您发起退款，款项 3-5 个工作日原路退回；账号将保留至本周期结束，期间仍可正常使用。如方便，也欢迎告诉我们不合适的地方，帮助我们改进。"},"complaint":{"qLabel":"功能报错很生气（触发 HITL）","q":"你们这破软件天天崩，我重要数据都丢了，再不解决我就去退款+到处给差评！","intent":"complaint","emotion":"{\"emotion_score\":8,\"emotion_label\":\"愤怒\",\"core_complaint\":\"频繁崩溃疑似丢数据、扬言差评\",\"tags\":[\"崩溃\",\"数据丢失\",\"差评\"]}","escalation":"{\"need_human\":true,\"reason\":\"情绪分8且涉及数据丢失与公开差评风险\",\"priority\":\"high\",\"suggestion\":\"转人工，优先排查数据是否可恢复\"}","soothe":"非常抱歉给您添了这么大的麻烦，数据问题我们绝不敢怠慢。我已把您的问题升级给技术负责人优先排查，多数情况下我们有自动备份可恢复。请您先不要重复操作，我们会尽快联系您确认数据状态并给出解决方案。"}}};
 
-  var badgeText = badgeType === 'mock' ? '🎭 模拟工具' : badgeType === 'hitl' ? '👤 HITL' : 'LLM 调用';
-  var badgeClass = badgeType || '';
+/* ============ 引擎层：mock 预演 ============ */
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
-  card.innerHTML =
-    '<div class="step-card-header">' +
-      '<span class="step-card-icon">' + agent.icon + '</span>' +
-      '<span class="step-card-name">' + agent.name + '</span>' +
-      '<span class="step-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
-    '</div>' +
-    '<div class="step-card-body">' + escHtml(content) + (extra ? '<pre>' + escHtml(extra) + '</pre>' : '') + '</div>';
-  msgs.appendChild(card);
-  msgs.scrollTop = msgs.scrollHeight;
-  return card;
+/* ============ 节点状态机 ============ */
+function setNodeState(nodeId, state, statusText){
+  var aspEl = document.getElementById('asp-'+nodeId);
+  if(aspEl){
+    aspEl.className = 'asp-agent '+state;
+    var st = document.getElementById('asp-'+nodeId+'-status');
+    if(st && statusText) st.textContent = statusText;
+  }
+}
+function resetAllNodes(){
+  Object.keys(AGENT_KEY_MAP).forEach(function(id){ setNodeState(id,'idle','待命'); });
+  var stream=document.getElementById('step-stream'); if(stream) stream.innerHTML='';
+  var log=document.getElementById('run-log'); if(log) log.innerHTML='';
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* ============ 渲染辅助 ============ */
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function appendLog(msg,type){
+  var log=document.getElementById('run-log'); if(!log) return;
+  var line=document.createElement('div'); line.className='log-line '+(type||'info');
+  var n=new Date(); var ts=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  line.textContent='['+ts+'] '+msg; log.appendChild(line); log.scrollTop=log.scrollHeight;
+}
+function appendMessage(type,content){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div'); div.className='chat-bubble '+type; div.textContent=content;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight; return div;
+}
+function appendLayerTag(text){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div'); div.className='chat-bubble layer-tag'; div.textContent=text;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+function appendStepCard(agentId,content,badgeType){
+  var agent=AGENTS[AGENT_KEY_MAP[agentId]||agentId]||{name:agentId,icon:'🤖'};
+  var msgs=document.getElementById('step-stream')||document.getElementById('chat-messages');
+  var card=document.createElement('div'); card.className='step-card';
+  var bt=badgeType==='mock'?'🎭 模拟工具':badgeType==='hitl'?'👤 HITL':'LLM 调用';
+  card.innerHTML='<div class="step-card-header"><span class="step-card-icon">'+agent.icon+'</span>'+
+    '<span class="step-card-name">'+escH(agent.name)+'</span>'+
+    '<span class="step-card-badge '+(badgeType||'')+'">'+bt+'</span></div>'+
+    '<div class="step-card-body">'+escH(content)+'</div>';
+  msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight; return card;
 }
 
-// =============================================
-//  Agent 调用封装
-// =============================================
-async function callAgent(agentId, userContent, badgeType) {
-  var agentKey = AGENT_KEY_MAP[agentId] || agentId;
-  var agent = AGENTS[agentKey];
-  if (!agent) throw new Error('未知 Agent: ' + agentId);
-
-  setNodeState(agentId, 'active', '处理中…');
-  appendLog('调用 ' + agent.name, 'info');
-
-  var card = appendStepCard(agentId, '正在处理…', null, badgeType);
-  card.classList.add('running');
-
+/* ============ Agent 调用（双模式）============ */
+/* mockOut: mock 模式下该 agent 的预设输出（来自脚本） */
+async function callAgent(agentId, userContent, badgeType, mockOut){
+  var agent=AGENTS[AGENT_KEY_MAP[agentId]||agentId];
+  if(!agent) throw new Error('未知 Agent: '+agentId);
+  setNodeState(agentId,'active','处理中…');
+  appendLog('调用 '+agent.name,'info');
+  var card=appendStepCard(agentId,'正在处理…',badgeType); card.classList.add('running');
   var result;
-  try {
-    result = await callLLM(agent.system, userContent);
+  try{
+    await sleep(550); result=mockOut;
     card.classList.remove('running');
-    var bodyEl = card.querySelector('.step-card-body');
-    var preview = result.length > 300 ? result.slice(0, 300) + '…' : result;
-    if (bodyEl) bodyEl.innerHTML = '输出：<pre>' + escHtml(preview) + '</pre>';
-    setNodeState(agentId, 'done', '完成');
-    appendLog(agent.name + ' 完成', 'ok');
-  } catch (e) {
+    var body=card.querySelector('.step-card-body');
+    var prev=String(result).length>240?String(result).slice(0,240)+'…':String(result);
+    if(body) body.innerHTML='输出：<pre>'+escH(prev)+'</pre>';
+    setNodeState(agentId,'done','完成'); appendLog(agent.name+' 完成','ok');
+  }catch(e){
     card.classList.remove('running');
-    var bodyEl2 = card.querySelector('.step-card-body');
-    if (bodyEl2) bodyEl2.textContent = '❌ ' + e.message;
-    setNodeState(agentId, 'idle', '错误');
-    appendLog(agent.name + ' 失败: ' + e.message, 'error');
-    throw e;
+    var b2=card.querySelector('.step-card-body'); if(b2) b2.textContent='❌ '+e.message;
+    setNodeState(agentId,'idle','错误'); appendLog(agent.name+' 失败: '+e.message,'error'); throw e;
   }
   return result;
 }
 
-// =============================================
-//  4 条 Agent 链路
-// =============================================
-async function runFaqChain(userMsg) {
-  appendLog('→ FAQ 链路', 'info');
-  var reply = await callAgent('faq', userMsg);
-  appendMessage('assistant', reply);
+/* ============ 主流程（脚本驱动）============ */
+async function runChat(userMsg, scriptItem){
+  if(isBusy) return;
+  disableInput(); resetAllNodes();
+  appendMessage('user', userMsg);
+  var hitlTriggered=false;
+  try{
+    setNodeState('router','routing','分类中…');
+    appendLog('开始路由：'+userMsg.slice(0,18),'info');
+    appendLayerTag('① 意图路由层 · 正在分流');
+    var intentRaw = await callAgent('router', userMsg, null, scriptItem?scriptItem.intent:null);
+    var intent = scriptItem.intent;
+    setNodeState('router','done',intent);
+    appendLog('路由结果：'+intent,'ok');
+
+    if(intent==='faq'){ await chainFaq(userMsg,scriptItem); }
+    else if(intent==='logistics'){ await chainLogistics(userMsg,scriptItem); }
+    else if(intent==='return'){ await chainReturn(userMsg,scriptItem); }
+    else if(intent==='complaint'){ hitlTriggered = await chainComplaint(userMsg,scriptItem); }
+  }catch(e){
+    appendMessage('assistant','❌ 处理出错：'+e.message); appendLog('错误：'+e.message,'error');
+  }
+  if(!hitlTriggered) enableInput();
 }
 
-async function runLogisticsChain(userMsg) {
-  appendLog('→ 物流链路', 'info');
-  var logiRaw = await callAgent('logistics', userMsg, 'mock');
-  var logiData;
-  try {
-    var jsonMatch = logiRaw.match(/\{[\s\S]*?\}/);
-    logiData = jsonMatch ? JSON.parse(jsonMatch[0]) : { status: '解析失败' };
-  } catch (e) {
-    logiData = { status: '解析失败' };
-  }
-
-  if (logiData.order_id && MOCK_ORDERS[logiData.order_id]) {
-    var mock = MOCK_ORDERS[logiData.order_id];
-    logiData.status = mock.status;
-    logiData.location = mock.location;
-    logiData.eta = mock.eta;
-    logiData.carrier = mock.carrier;
-    appendLog('🎭 模拟物流 API：' + logiData.status + ' / ' + logiData.location, 'warn');
-  }
-
-  var replyContent = '物流查询结果：' + JSON.stringify(logiData, null, 0);
-  var reply = await callAgent('logi-reply', replyContent);
-  appendMessage('assistant', reply);
+async function chainFaq(userMsg,sc){
+  appendLayerTag('④ 生成层 · 基于知识库回答');
+  var reply=await callAgent('faq',userMsg,null,sc?sc.faq:null);
+  appendMessage('assistant',reply);
 }
-
-async function runReturnChain(userMsg) {
-  appendLog('→ 退换货链路', 'info');
-  var checkRaw = await callAgent('return-check', userMsg);
-  var checkData;
-  try {
-    var jsonMatch = checkRaw.match(/\{[\s\S]*?\}/);
-    checkData = jsonMatch ? JSON.parse(jsonMatch[0]) : { eligible: true, reason: '政策内' };
-  } catch (e) {
-    checkData = { eligible: true, reason: '政策内' };
+async function chainLogistics(userMsg,sc){
+  appendLayerTag('③ 检索层 · Text-to-SQL 查订单');
+  var raw=await callAgent('logistics',userMsg,'mock',sc?sc.logistics:null);
+  var data; try{var m=raw.match(/\{[\s\S]*?\}/);data=m?JSON.parse(m[0]):{};}catch(e){data={};}
+  if(data.order_id && MOCK_ORDERS[data.order_id]){
+    var mk=MOCK_ORDERS[data.order_id];
+    data.status=mk.status;data.location=mk.location;data.eta=mk.eta;data.carrier=mk.carrier;
+    appendLog('🎭 模拟物流 API：'+data.status+' / '+data.location,'warn');
   }
-
-  var solInput = '用户诉求：' + userMsg + '\n核查结果：' + JSON.stringify(checkData);
-  var reply = await callAgent('return-sol', solInput);
-  appendMessage('assistant', reply);
+  appendLayerTag('④ 生成层 · 组织成自然语言');
+  var reply=await callAgent('logi-reply','物流查询结果：'+JSON.stringify(data),null,sc?sc.logiReply:null);
+  appendMessage('assistant',reply);
 }
-
-async function runComplaintChain(userMsg) {
-  appendLog('→ 投诉链路', 'info');
-  var emotionRaw = await callAgent('emotion', userMsg);
-  var emotionData;
-  try {
-    var jsonMatch = emotionRaw.match(/\{[\s\S]*?\}/);
-    emotionData = jsonMatch ? JSON.parse(jsonMatch[0]) : { emotion_score: 5 };
-  } catch (e) {
-    emotionData = { emotion_score: 5 };
-  }
-
-  var escalInput = '情绪分析：' + JSON.stringify(emotionData) + '\n用户原话：' + userMsg;
-  var escalRaw = await callAgent('escalation', escalInput);
-  var escalData;
-  try {
-    var jsonMatch2 = escalRaw.match(/\{[\s\S]*?\}/);
-    escalData = jsonMatch2 ? JSON.parse(jsonMatch2[0]) : { need_human: false };
-  } catch (e) {
-    escalData = { need_human: false };
-  }
-
-  if (escalData.need_human) {
-    setNodeState('escalation', 'done', '触发 HITL');
-    setNodeState('hitl', 'escalated', '等待人工');
-    appendLog('⚠️ 触发 HITL：' + (escalData.reason || ''), 'warn');
-    showHumanIntervention(emotionData, escalData, userMsg);
-    return; // 不调用 enableInput，等待人工操作
-  } else {
-    setNodeState('escalation', 'done', '无需升级');
-    var sootheInput = '用户原话：' + userMsg + '\n情绪分析：' + JSON.stringify(emotionData);
-    var reply = await callAgent('soothe', sootheInput);
-    appendMessage('assistant', reply);
+async function chainReturn(userMsg,sc){
+  appendLayerTag('③ 检索层 · 退换货规则核查');
+  var raw=await callAgent('return-check',userMsg,null,sc?sc.returnCheck:null);
+  var data;try{var m=raw.match(/\{[\s\S]*?\}/);data=m?JSON.parse(m[0]):{eligible:true};}catch(e){data={eligible:true};}
+  appendLayerTag('④ 生成层 · 生成处理方案');
+  var reply=await callAgent('return-sol','用户诉求：'+userMsg+'\n核查：'+JSON.stringify(data),null,sc?sc.returnSol:null);
+  appendMessage('assistant',reply);
+}
+async function chainComplaint(userMsg,sc){
+  appendLayerTag('⑤ 对话管理层 · 情绪识别 + 升级判断');
+  var emoRaw=await callAgent('emotion',userMsg,null,sc?sc.emotion:null);
+  var emo;try{var m=emoRaw.match(/\{[\s\S]*?\}/);emo=m?JSON.parse(m[0]):{emotion_score:5};}catch(e){emo={emotion_score:5};}
+  var escRaw=await callAgent('escalation','情绪：'+JSON.stringify(emo)+'\n原话：'+userMsg,null,sc?sc.escalation:null);
+  var es;try{var m2=escRaw.match(/\{[\s\S]*?\}/);es=m2?JSON.parse(m2[0]):{need_human:false};}catch(e){es={need_human:false};}
+  if(es.need_human){
+    setNodeState('escalation','done','触发 HITL');
+    setNodeState('hitl','escalated','等待人工');
+    appendLog('⚠️ 触发 HITL：'+(es.reason||''),'warn');
+    appendLayerTag('⑤ HITL · 高风险，等待人工决策');
+    showHumanIntervention(emo,es,userMsg,sc);
+    return true; // 暂停等人工
+  }else{
+    setNodeState('escalation','done','无需升级');
+    appendLayerTag('④ 生成层 · AI 安抚回复');
+    var reply=await callAgent('soothe','原话：'+userMsg+'\n情绪：'+JSON.stringify(emo),null,sc?sc.soothe:null);
+    appendMessage('assistant',reply);
+    return false;
   }
 }
 
-// =============================================
-//  HITL 卡片
-// =============================================
-function showHumanIntervention(emotionData, escalData, originalMsg) {
-  var msgs = document.getElementById('chat-messages');
-  var card = document.createElement('div');
-  card.className = 'hitl-card';
-  card.dataset.originalMsg = originalMsg;
-  card.innerHTML =
-    '<div class="hitl-card-title">⚠️ 已触发人工审核</div>' +
-    '<div class="hitl-card-body">' +
-      '情绪强度：' + escHtml(String(emotionData.emotion_score || 'N/A')) + '/10 · ' + escHtml(emotionData.emotion_label || '') + '<br>' +
-      '核心诉求：' + escHtml(emotionData.core_complaint || originalMsg.slice(0, 30)) + '<br>' +
-      '优先级：' + escHtml(escalData.priority || 'medium') + ' · ' + escHtml(escalData.reason || '') +
-    '</div>' +
-    '<div class="hitl-card-actions">' +
-      '<button class="hitl-btn approve" onclick="handleHITL(this,\'approve\')">✅ 批准 AI 安抚</button>' +
-      '<button class="hitl-btn reject" onclick="handleHITL(this,\'reject\')">🚫 直接转人工</button>' +
-      '<button class="hitl-btn delegate" onclick="handleHITL(this,\'delegate\')">📞 升级主管</button>' +
+/* ============ HITL ============ */
+var _hitlScript=null;
+function showHumanIntervention(emo,es,originalMsg,sc){
+  _hitlScript = sc;
+  var msgs=document.getElementById('chat-messages');
+  var card=document.createElement('div'); card.className='hitl-card'; card.dataset.originalMsg=originalMsg;
+  card.innerHTML='<div class="hitl-card-title">⚠️ 已触发人工审核（HITL 安全阀）</div>'+
+    '<div class="hitl-card-body">情绪强度：'+escH(String(emo.emotion_score||'N/A'))+'/10 · '+escH(emo.emotion_label||'')+'<br>'+
+    '核心诉求：'+escH(emo.core_complaint||originalMsg.slice(0,30))+'<br>'+
+    '优先级：'+escH(es.priority||'medium')+' · '+escH(es.reason||'')+'</div>'+
+    '<div class="hitl-card-actions">'+
+      '<button class="hitl-btn approve" onclick="handleHITL(this,\'approve\')">✅ 批准 AI 安抚</button>'+
+      '<button class="hitl-btn reject" onclick="handleHITL(this,\'reject\')">🚫 直接转人工</button>'+
+      '<button class="hitl-btn delegate" onclick="handleHITL(this,\'delegate\')">📞 升级主管</button>'+
     '</div>';
-  msgs.appendChild(card);
-  msgs.scrollTop = msgs.scrollHeight;
+  msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight;
 }
-
-async function handleHITL(btn, action) {
-  var card = btn.closest('.hitl-card');
-  card.querySelectorAll('.hitl-btn').forEach(function(b) { b.disabled = true; });
-  var originalMsg = card.dataset.originalMsg || '';
-
-  try {
-    if (action === 'approve') {
-      appendLog('👤 人工批准 → AI 安抚', 'ok');
-      setNodeState('hitl', 'done', '已处理');
-      setNodeState('soothe', 'active', '安抚中…');
-      var reply = await callAgent('soothe', '用户原话：' + originalMsg + '（已经过人工审核确认安抚策略）');
-      appendMessage('assistant', reply);
-    } else if (action === 'reject') {
-      appendLog('👤 人工接管', 'ok');
-      setNodeState('hitl', 'done', '人工接管');
-      appendMessage('assistant', '您好，已为您转接专属客服，稍后会有专人与您联系，请稍候。');
-    } else {
-      appendLog('👤 升级至主管', 'warn');
-      setNodeState('hitl', 'escalated', '升级主管');
-      appendMessage('assistant', '您的问题已升级至客服主管处理，预计30分钟内会有专员回电，感谢您的耐心等待。');
+async function handleHITL(btn,action){
+  var card=btn.closest('.hitl-card');
+  card.querySelectorAll('.hitl-btn').forEach(function(b){b.disabled=true;});
+  var originalMsg=card.dataset.originalMsg||'';
+  try{
+    if(action==='approve'){
+      appendLog('👤 人工批准 → AI 安抚','ok');
+      setNodeState('hitl','done','已处理'); setNodeState('soothe','active','安抚中…');
+      var reply=await callAgent('soothe','原话：'+originalMsg+'（已人工审核确认安抚策略）',null,_hitlScript?_hitlScript.soothe:null);
+      appendMessage('assistant',reply);
+    }else if(action==='reject'){
+      appendLog('👤 人工接管','ok'); setNodeState('hitl','done','人工接管');
+      appendMessage('assistant','您好，已为您转接专属客服，稍后会有专人与您联系，请稍候。');
+    }else{
+      appendLog('👤 升级至主管','warn'); setNodeState('hitl','escalated','升级主管');
+      appendMessage('assistant','您的问题已升级至客服主管处理，预计30分钟内会有专员回电，感谢您的耐心等待。');
     }
-  } catch (e) {
-    appendMessage('assistant', '❌ 处理出错：' + e.message);
-    appendLog('HITL 错误：' + e.message, 'error');
-  }
+  }catch(e){ appendMessage('assistant','❌ 处理出错：'+e.message); }
   enableInput();
 }
 
-// =============================================
-//  主流程控制
-// =============================================
-var isBusy = false;
-
-function enableInput() {
-  isBusy = false;
-  document.getElementById('send-btn').disabled = false;
-  document.getElementById('chat-input').disabled = false;
-  document.querySelectorAll('.quick-btn').forEach(function(b) { b.disabled = false; });
+/* ============ 输入控制 ============ */
+function enableInput(){
+  isBusy=false;
+  document.getElementById('send-btn').disabled=false;
+  document.getElementById('chat-input').disabled=false;
+  document.querySelectorAll('.quick-btn').forEach(function(b){b.disabled=false;});
 }
-
-function disableInput() {
-  isBusy = true;
-  document.getElementById('send-btn').disabled = true;
-  document.getElementById('chat-input').disabled = true;
-  document.querySelectorAll('.quick-btn').forEach(function(b) { b.disabled = true; });
+function disableInput(){
+  isBusy=true;
+  document.getElementById('send-btn').disabled=true;
+  document.getElementById('chat-input').disabled=true;
+  document.querySelectorAll('.quick-btn').forEach(function(b){b.disabled=true;});
 }
-
-async function runChat(userMsg) {
-  if (isBusy) return;
-  if (!CONFIG.OPENROUTER_KEY) {
-    appendMessage('assistant', '⚠️ 未配置 API Key，请在 tools/service-agent/config.local.js 中填入 openrouterKey。');
-    return;
-  }
-
-  disableInput();
+var SCN_NAMES = {"bank":"银行智能客服","ecom":"大型电商促销客服","startup":"创业公司 FAQ 机器人"};
+function restartDemo(){
+  // 重置全部全局流程状态（feedback_global_state_reset）
+  isBusy=false; _hitlScript=null;
   resetAllNodes();
-  appendMessage('user', userMsg);
-
-  var hitlTriggered = false;
-  try {
-    setNodeState('router', 'routing', '分类中…');
-    appendLog('开始路由：' + userMsg.slice(0, 20) + (userMsg.length > 20 ? '…' : ''), 'info');
-
-    var intentRaw = await callAgent('router', userMsg);
-    var intent = intentRaw.toLowerCase().replace(/[^a-z]/g, '').trim();
-    if (intent.indexOf('faq') >= 0)       intent = 'faq';
-    else if (intent.indexOf('logistics') >= 0) intent = 'logistics';
-    else if (intent.indexOf('return') >= 0)    intent = 'return';
-    else if (intent.indexOf('complaint') >= 0) intent = 'complaint';
-    else intent = 'faq';
-
-    setNodeState('router', 'done', intent);
-    appendLog('路由结果：' + intent, 'ok');
-
-    if (intent === 'faq') {
-      await runFaqChain(userMsg);
-    } else if (intent === 'logistics') {
-      await runLogisticsChain(userMsg);
-    } else if (intent === 'return') {
-      await runReturnChain(userMsg);
-    } else if (intent === 'complaint') {
-      // 投诉链内部如果触发 HITL，会 return 提前退出且不调用 enableInput
-      // 需要标记
-      var prevHitlNode = document.getElementById('node-hitl');
-      var prevClass = prevHitlNode ? prevHitlNode.className : '';
-      await runComplaintChain(userMsg);
-      var afterClass = prevHitlNode ? (prevHitlNode.className.baseVal || prevHitlNode.className) : '';
-      if (String(afterClass).indexOf('escalated') >= 0) hitlTriggered = true;
-    }
-  } catch (e) {
-    appendMessage('assistant', '❌ 处理出错：' + e.message);
-    appendLog('错误：' + e.message, 'error');
-  }
-
-  if (!hitlTriggered) enableInput();
+  document.getElementById('chat-messages').innerHTML='';
+  appendMessage('assistant','你好，这里是「'+(SCN_NAMES[currentScenario]||'')+'」。试试下面的预设问题，看请求如何流经各层。');
+  enableInput();
 }
 
-function sendChat() {
-  var input = document.getElementById('chat-input');
-  var msg = input.value.trim();
-  if (!msg || isBusy) return;
-  input.value = '';
-  runChat(msg);
+/* quick / send：按当前场景取对应脚本 */
+function currentScripts(){ return MOCK_SCRIPT[currentScenario] || MOCK_SCRIPT.ecom; }
+
+function renderQuickButtons(){
+  var row=document.getElementById('quick-row'); if(!row) return;
+  var s=currentScripts();
+  var order=['faq','logistics','return','complaint'];
+  row.innerHTML=order.map(function(k){
+    return '<button class="quick-btn" onclick="sendQuick(\''+k+'\')">'+escH(s[k].qLabel)+'</button>';
+  }).join('');
+}
+function sendQuick(key){
+  if(isBusy) return;
+  var sc = currentScripts()[key];
+  document.getElementById('chat-input').value='';
+  runChat(sc.q, sc);
+}
+function sendChat(){
+  var input=document.getElementById('chat-input');
+  var msg=input.value.trim(); if(!msg||isBusy) return;
+  input.value='';
+  // 关键词粗匹配到当前场景的预设脚本（演示路由分流逻辑）
+  var key='faq';
+  if(/物流|快递|订单|到哪|发货|余额|账单|账户|订阅|套餐/.test(msg)) key='logistics';
+  else if(/退|换货|退款|提额|额度|退订/.test(msg)) key='return';
+  else if(/投诉|曝光|媒体|愤怒|差评|315|工商|盗刷|崩|丢/.test(msg)) key='complaint';
+  var sc=Object.assign({},currentScripts()[key],{q:msg});
+  runChat(msg,sc);
 }
 
-function sendQuick(msg) {
-  if (isBusy) return;
-  document.getElementById('chat-input').value = '';
-  runChat(msg);
-}
+/* ============ 初始化 ============ */
+document.addEventListener('DOMContentLoaded',function(){
+  selectScenario('ecom');         // 默认场景（内部已渲染按钮 + 初始化对话）
+});
 </script>
 </body>
 </html>

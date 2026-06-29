@@ -42,7 +42,7 @@ docs/                           # 个人文档（.gitignore 排除）
 | 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 | 信息工具 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
 | A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
-| 智能客服中台 Demo | `tools/service-agent/index.html` | 5-Tab：意图路由+多 Agent 协作+HITL，两列视角布局（用户视角/系统视角） | PM 作品 |
+| 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 单页决策沙盘：选业务场景（银行/电商/创业）→ 9 张产品决策卡 + L4 链路图 + mock 对话 Demo 全部随场景联动（决策卡高亮该场景取舍、Demo 演该行业四链路含 HITL）。决策卡含评估维度/三场景取舍/PM·算法分工徽章/证据。浅色主题，由 gen_index.js 数据驱动生成 | PM 作品 |
 | ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（14节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
 | Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
 | 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（28篇，按年份分组，双主题） | 信息工具（直链） |
