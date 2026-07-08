@@ -426,7 +426,7 @@
         const root = document.getElementById('writingArchive');
         if (!root) return;
         try {
-            const data = await fetch('tools/blog/data/posts-meta.json').then(r => r.json());
+            const data = await fetch('tools/blog/data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
             root.innerHTML = data.posts.slice(0, 3).map(p => `
                 <a class="writing-post-row" href="tools/blog/${p.url}" target="_blank" aria-label="${p.title}">
                     <span class="writing-post-date">${p.date}</span>

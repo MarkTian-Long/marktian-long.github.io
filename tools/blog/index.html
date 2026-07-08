@@ -388,7 +388,7 @@
     // ── 数据加载 ──
     async function load() {
         try {
-            const data = await fetch('data/posts-meta.json').then(r => r.json());
+            const data = await fetch('data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
             posts = data.posts;
             updateCounts();
             render();
