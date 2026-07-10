@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<!--
+date:    2026.07
+title:   物理世界会有自己的 LLM 时刻吗？
+tags:    [技术判断]
+slug:    physical-world-llm
+summary: LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物理世界会有自己的 LLM 时刻吗？ — Leo 的思考碎片</title>
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="物理世界会有自己的 LLM 时刻吗？" />
+  <meta property="og:description" content="LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。" />
+  <meta property="og:url"         content="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" />
+  <meta name="twitter:card"       content="summary" />
+  <meta name="twitter:title"      content="物理世界会有自己的 LLM 时刻吗？" />
+  <meta name="twitter:description" content="LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。" />
+  <meta property="og:image"        content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080c18;
+      --bg-card:     rgba(255,255,255,0.04);
+      --bg-subtle:   rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
+      --text-1:      #f0f4ff;
+      --text-2:      #8a95b5;
+      --text-3:      #4a5270;
+      --accent:      #4f8fff;
+      --clay:        #d97757;
+      --clay-soft:   rgba(217,119,87,0.12);
+      --tag-bg:      rgba(217,119,87,0.12);
+      --tag-text:    #d97757;
+      --code-bg:     #0a0f1e;
+      --font:        'Source Sans 3', -apple-system, sans-serif;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --radius:      10px;
+      --max-width:   720px;
+    }
+    [data-theme="light"] {
+      --bg:          #f5f4ed;
+      --bg-card:     #faf9f5;
+      --bg-subtle:   #f0eee6;
+      --border:      #e8e6dc;
+      --text-1:      #141413;
+      --text-2:      #5e5d59;
+      --text-3:      #87867f;
+      --accent:      #2563eb;
+      --clay:        #c96442;
+      --clay-soft:   rgba(201,100,66,0.10);
+      --tag-bg:      rgba(201,100,66,0.10);
+      --tag-text:    #c96442;
+      --code-bg:     #ece9e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 40px 20px 80px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .wrapper { max-width: var(--max-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clay); }
+    .post-header { margin-bottom: 36px; }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date { font-size: 13px; color: var(--text-3); }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+    #post-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .post-summary {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 3px solid var(--clay);
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .post-body h2 {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+      margin: 40px 0 14px;
+      padding-left: 10px; border-left: 3px solid var(--accent);
+      line-height: 1.35;
+    }
+    .post-body h2:first-child { margin-top: 0; }
+    .post-body p { margin-bottom: 16px; color: var(--text-1); }
+    .post-body ul, .post-body ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .post-body li { margin-bottom: 8px; }
+    .post-body strong { color: var(--text-1); font-weight: 600; }
+    .post-body em { color: var(--text-2); font-style: normal; }
+    .post-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .post-body a:hover { text-decoration: underline; }
+    .table-wrap { overflow-x: auto; margin: 16px 0; }
+    .post-body table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .post-body th, .post-body td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    .post-body th { background: var(--bg-subtle); font-weight: 600; color: var(--text-1); }
+    .post-body td { color: var(--text-2); }
+    .post-body blockquote {
+      border-left: 3px solid var(--clay);
+      padding: 10px 16px;
+      margin: 20px 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .post-body blockquote p { color: var(--text-2); margin-bottom: 0; }
+    .callout {
+      background: var(--clay-soft);
+      border: 1px solid rgba(201,100,66,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .callout strong { color: var(--clay); }
+    .refs {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refs h2 {
+      font-size: 13px !important;
+      font-weight: 600;
+      color: var(--text-3) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 12px !important;
+    }
+    .refs ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .refs li {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .refs a {
+      color: var(--text-3) !important;
+      text-decoration: none;
+    }
+    .refs a:hover {
+      color: var(--clay) !important;
+      text-decoration: underline !important;
+    }
+    .footer-nav {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--clay); }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .theme-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
+
+    /* 双栏布局 */
+    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .toc-wrap { position: sticky; top: 40px; }
+    .toc-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .toc-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list li { margin: 0; }
+    .toc-list a {
+      display: block;
+      padding: 5px 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-list a.sub-link {
+      margin-left: 10px;
+      padding: 4px 8px 4px 12px;
+      color: var(--text-3);
+      font-size: 0.78rem;
+      line-height: 1.35;
+      border-left-color: var(--border);
+    }
+    .toc-list a:hover,
+    .toc-list a.toc-active {
+      color: var(--clay);
+      border-left-color: var(--clay);
+      background: var(--clay-soft);
+      border-radius: 4px;
+    }
+    .toc-list a.sub-link:hover,
+    .toc-list a.sub-link.toc-active {
+      background: transparent;
+      color: var(--clay);
+      border-left-color: var(--clay);
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .toc-wrap { display: none; }
+    }
+    /* 相关文章 */
+    .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
+    .related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
+    .related-item:hover .related-item-title { color: var(--clay); }
+    .related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
+    .related-item-title { font-size: .9rem; color: var(--text-1); }
+    /* 上下篇导航 */
+    .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
+    .post-nav-next { align-items: flex-end; margin-left: auto; }
+    .nav-label { font-size: .75rem; color: var(--text-2); }
+    .nav-title { font-size: .875rem; color: var(--text-1); }
+    .post-nav a:hover .nav-title { color: var(--clay); }
+  </style>
+</head>
+<body data-theme="light">
+<div class="page-outer" style="padding: 40px 20px 80px;">
+  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+    <a href="../index.html" class="back-link">← 返回列表</a>
+    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
+      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="two-col page-outer">
+    <aside class="toc-wrap">
+      <nav class="toc-card" aria-label="本文目录">
+        <span class="toc-card-label">本文目录</span>
+        <ul class="toc-list">
+          <li><a href="#屏幕内工作为什么更容易被-LLM-改造">屏幕内工作为什么更容易被 LLM 改造</a></li>
+          <li><a href="#物理世界缺的是行动数据，不是互联网语料">物理世界缺的是行动数据，不是互联网语料</a></li>
+          <li><a href="#物理世界-AI-闭环缺的不是一个模型，而是六层能力">物理世界 AI 闭环缺的不是一个模型，而是六层能力</a></li>
+          <li><a href="#世界模型不一定是更大的语言模型">世界模型不一定是更大的语言模型</a></li>
+          <li><a href="#最难的不是预测，而是验证与归因">最难的不是预测，而是验证与归因</a></li>
+          <li><a href="#哪些物理世界任务会先被影响">哪些物理世界任务会先被影响</a></li>
+          <li><a href="#物理世界的-LLM-时刻，拼的是世界被数字化的程度">物理世界的 LLM 时刻，拼的是世界被数字化的程度</a></li>
+          <li><a href="#参考资料">参考资料</a></li>
+          <li><a href="#相关前文" class="sub-link">相关前文</a></li>
+          <li><a href="#近期商业信号-/-主流媒体报道" class="sub-link">近期商业信号 / 主流媒体报道</a></li>
+          <li><a href="#公司官方披露" class="sub-link">公司官方披露</a></li>
+          <li><a href="#平台-/-厂商使用数据" class="sub-link">平台 / 厂商使用数据</a></li>
+          <li><a href="#学术研究-/-预印本" class="sub-link">学术研究 / 预印本</a></li>
+          <li><a href="#机构定义-/-官方资料" class="sub-link">机构定义 / 官方资料</a></li>
+          <li><a href="#综述-/-背景材料" class="sub-link">综述 / 背景材料</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main>
+  <header class="post-header">
+    <div class="post-meta">
+      <span class="post-date">2026.07</span>
+      <span id="post-tags"></span>
+    </div>
+    <h1 class="post-title">物理世界会有自己的 LLM 时刻吗？</h1>
+    <p class="post-summary">LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。</p>
+  </header>
+
+  <hr class="divider" />
+
+  <div class="post-body">
+
+<p>2026 年 7 月，自动驾驶公司 Momenta 在港交所上市。这条新闻本身不意外，过去几年自动驾驶公司上市、融资、商业化试点已经不是新鲜事。但它让我重新想起一个问题：如果 LLM 的爆发依赖互联网文本和数字反馈，那么像自动驾驶车队这样的真实世界数据网络，是否也可能孕育出某种“物理世界的基础模型时刻”？</p>
+
+<p><a href="https://www.reuters.com/world/asia-pacific/chinese-autonomous-driving-firm-momenta-set-open-slightly-higher-hong-kong-debut-2026-07-08/" target="_blank" rel="noopener">Reuters 报道</a>，Momenta 这次 IPO 募资约 58.9 亿港元，软件截至 2025 年底已经部署在超过 68 万辆车上；它的<a href="https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0629/2026062900057.pdf" target="_blank" rel="noopener">招股书</a>也把公司定位为面向整车厂提供驾驶自动化软件解决方案的公司。</p>
+
+<p>这不是说 Momenta 就代表“物理世界的 LLM 时刻”已经来了。自动驾驶仍然是一个高度垂直的场景，离通用物理世界智能还很远。但它至少说明了一件事：<strong>在自动驾驶这个垂直场景里，真实车辆正在成为物理世界数据采集网络的一部分。</strong></p>
+
+<p>这其实延续了我<a href="https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html" target="_blank" rel="noopener">上一篇关于 AI 为什么写不好硬件代码</a>的讨论。那篇文章里，我把问题归结为反馈回路：软件里的 AI coding agent 能跑起来，是因为代码、测试、日志都在数字世界里闭合；硬件开发卡住，不只是因为代码难写，而是因为反馈要经过真实物理世界，慢、脏、不可复现，也更难归因。顺着这个问题往下走，这篇文章想追问的是：如果硬件和物理世界的瓶颈在反馈闭环，那么世界模型、具身智能、数字孪生这些技术，到底是在补哪一段闭环？它们有没有可能让物理世界也出现类似 LLM 的基础模型时刻？</p>
+
+<p>这里说的“物理世界的 LLM 时刻”，不是指某个机器人也能像 ChatGPT 一样聊天，而是指物理世界里也出现一种基础模型和工具链，可以像 LLM 处理文本、代码、表格那样，规模化处理感知、动作、预测和反馈任务。</p>
+
+<h2 id="屏幕内工作为什么更容易被-LLM-改造" style="scroll-margin-top:60px">屏幕内工作为什么更容易被 LLM 改造</h2>
+
+<p>LLM 的爆发，很容易被理解成“模型能力突然变强了”。这当然没错，但只看模型本身，会漏掉另一个更底层的前提：<strong>数字世界早就为 LLM 准备好了训练数据和反馈环境。</strong></p>
+
+<p>互联网过去几十年积累了海量文本、网页、论坛、文档、代码仓库、问答内容。一篇 2024 年 FAccT 论文把 <a href="https://facctconference.org/static/papers24/facct24-148.pdf" target="_blank" rel="noopener">Common Crawl</a> 称为生成式 AI 预训练中最重要的开放 Web 数据来源之一，虽然它也带来了数据治理、偏见和透明度问题。LLM 能够大规模训练，一个基础条件就是这些人类活动的文本痕迹已经被数字化、可复制、可清洗、可 token 化。</p>
+
+<p>代码也是类似的情况。代码仓库本身就是结构化文本，编译器、测试、日志、CI/CD 又提供了相对清晰的反馈。写错了，编译器报错；测试没过，日志输出；接口异常，有 trace 和 stack。AI agent 可以读取这些反馈，再继续修改。</p>
+
+<p>这也是为什么 AI coding agent 在软件开发里推进得这么快。它不是只会“写代码”，而是能进入一个完整循环：</p>
+
+<p>读取代码仓库<br />
+→ 理解上下文<br />
+→ 制定修改计划<br />
+→ 写代码<br />
+→ 执行测试<br />
+→ 读取报错<br />
+→ 修改<br />
+→ 再执行</p>
+
+<p>这个循环成立的关键，不是模型会写 for 循环，而是反馈可以在数字世界里闭合。文档、表格、行政流程也是类似逻辑：文档可以审阅，表格可以用公式和规则交叉验证，客服回答可以对照知识库和工单结果。它们未必像代码测试那样严格，但至少都在屏幕内，AI 可以读取、生成、修改、再读取。</p>
+
+<p>所以，我把这类任务暂且称为“屏幕内工作”：输入、处理、输出基本都发生在数字世界里。程序员写代码，行政写文档，财务处理表格，客服回复问题，运营生成内容，它们表面上属于不同职业，但底层有一个共同点：工作对象已经被转成了文本、代码、表格、图片、日志、流程系统里的数字对象。</p>
+
+<p><strong>凡是工作对象已经高度数字化、反馈可以被机器读取、错误成本相对可控的任务，都会更容易被 AI 改造。</strong></p>
+
+<p>这也是为什么“软件开发被 AI 影响”只是一个局部现象。更大的现象是：屏幕内的数字化工作正在被重新组织。行政文档、财务表格、客服话术、运营方案、法务初稿、销售邮件、会议纪要，这些大量使用电脑完成的基础性工作，也都在被 AI 改写。</p>
+
+<p><a href="https://www.anthropic.com/news/the-anthropic-economic-index" target="_blank" rel="noopener">Anthropic 在 2025 年发布的 Economic Index</a> 提到，Claude 的使用集中在软件开发和写作任务上，但并不局限于这两个领域；对应的<a href="https://arxiv.org/abs/2503.04761" target="_blank" rel="noopener">研究论文</a>也显示，在样本中，约 36% 的职业已经有至少四分之一的任务被 AI 使用场景覆盖，57% 的使用更偏“增强人类能力”，43% 更偏“自动化执行”。不过，这类数据只代表 Claude 平台上的真实使用样本，不能直接等同于整个劳动力市场的岗位替代程度。</p>
+
+<p>微软基于 Bing Copilot 对话数据做的 <a href="https://arxiv.org/abs/2507.07935" target="_blank" rel="noopener">Working with AI</a> 研究也有类似指向。它分析了 20 万条经过匿名和隐私处理的 Bing Copilot 对话，发现生成式 AI 的高适用性职业组不仅包括计算机和数学类，也包括办公室和行政支持、销售等以信息处理和沟通为核心的工作。同样，这说明的是“任务适用性”和“使用方式”，而不是这些岗位已经被整体替代。</p>
+
+<p>所以，真正的分界线可能不是“软件岗位”和“硬件岗位”，而是另一条线：<strong>LLM 改造的是已经被数字化包住的工作。</strong></p>
+
+<h2 id="物理世界缺的是行动数据，不是互联网语料" style="scroll-margin-top:60px">物理世界缺的是行动数据，不是互联网语料</h2>
+
+<p>把这个逻辑搬到物理世界，问题马上就变复杂了。LLM 吃掉的是互联网留下的文本残影，但物理世界没有一个同等规模、同等标准化的“行动互联网”。</p>
+
+<p>互联网上有很多视频。看起来，视频似乎可以成为物理世界模型的训练数据。一个模型看过足够多的人走路、拿杯子、开门、搬东西，是不是就能理解物理世界？</p>
+
+<p>方向上是对的，但视频和文本有一个关键差异：<strong>视频记录了“看起来发生了什么”，但没有完整记录“行动是如何发生的”。</strong></p>
+
+<p>一个人拿起杯子，视频里能看到手、杯子、桌面和动作轨迹，但模型通常看不到他的手指受力、触觉反馈、杯子重量、摩擦系数、肌肉控制、失败尝试，也不知道这个动作背后的意图和约束。更重要的是，它不知道如果换成一个机器人手臂、换一个夹爪、换一种桌面材质、换一个湿度环境，同样动作会发生什么。</p>
+
+<p>文本世界的数据是人类天然留下来的副产品。我们写文章、写代码、发邮件、发帖，本来就是在生产可训练语料。物理世界的数据不是这样。机器人抓取失败、工程师调板子的波形、产线设备的异常噪声、传感器漂移、结构件磨损，这些过去很少被系统记录成可以训练基础模型的数据。</p>
+
+<p>这就是物理世界和数字世界最大的不同：<strong>LLM 的 scaling 是“网页已经在那里”；物理世界模型的 scaling 是“必须先把物理经验采集出来”。</strong></p>
+
+<p>现在确实已经有一些早期迹象。Google、DeepMind 和多家研究机构合作的 <a href="https://robotics-transformer-x.github.io/" target="_blank" rel="noopener">Open X-Embodiment</a> 数据集，汇集了 22 种机器人形态、100 万以上真实机器人轨迹。Meta 的 <a href="https://arxiv.org/abs/2506.09985" target="_blank" rel="noopener">V-JEPA 2</a> 则尝试把超过 100 万小时互联网视频和少量机器人轨迹结合，让模型具备理解、预测和规划物理世界的能力；论文还提到，它用少于 62 小时的 DROID 机器人视频后训练了动作条件世界模型，并在两个实验室的 Franka 机械臂上做了零样本抓取与放置演示。</p>
+
+<p>自动驾驶是另一个更商业化的信号。Momenta 的例子之所以值得放进来，不是因为它证明了通用物理智能已经成熟，而是因为它代表了一种不同于实验室机器人的数据路径：<strong>在真实商业系统里持续采集物理世界的行动数据。</strong></p>
+
+<p>汽车天然带有摄像头、雷达、定位、控制和驾驶反馈。车队规模越大，长尾场景越多，真实世界数据越丰富。这也是自动驾驶公司长期强调数据闭环的原因：它们不只是卖软件，也在争夺真实道路上的反馈网络。</p>
+
+<p>但这个案例也要保持边界。自动驾驶的数据飞轮很强，是因为道路交通是相对明确的垂直场景，有清晰的任务、传感器配置和安全边界。它不能直接外推到“所有物理任务都能被模型统一处理”。一个能开车的系统，并不等于能修机器、调产线、做硬件设计、搬仓库或操作实验室设备。</p>
+
+<p>所以物理世界不会简单重复 LLM 的发展路径。它也需要 scaling，但它要 scale 的不是 token，而是感知、动作、反馈和失败经验。</p>
+
+<h2 id="物理世界-AI-闭环缺的不是一个模型，而是六层能力" style="scroll-margin-top:60px">物理世界 AI 闭环缺的不是一个模型，而是六层能力</h2>
+
+<p>讨论到这里，数字孪生、世界模型、具身智能这些词就会出现。它们听起来都在说“让 AI 理解物理世界”，但其实不是同一层级的东西。更准确地说，它们分别在补物理世界 AI 闭环里的不同环节。为了服务本文的分析，我暂且把物理世界 AI 闭环归纳成六层能力。这个“六层”不是行业标准分类，而是本文为了说明概念关系做的归纳。</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>层级</th><th>代表概念</th><th>补齐的能力</th><th>没有它会怎样</th></tr></thead>
+<tbody><tr><td>数据层</td><td>传感器、IoT、机器人轨迹、车队数据、硬件调试数据</td><td>记录物理状态和动作结果</td><td>AI 没有物理语料</td></tr>
+<tr><td>映射层</td><td>数字孪生、数字线程</td><td>把真实系统映射成数字对象</td><td>物理对象不可读、不可追踪</td></tr>
+<tr><td>仿真层</td><td>Simulation、Sim-to-real</td><td>在虚拟环境低成本试错</td><td>每次验证都要上真实设备</td></tr>
+<tr><td>预测层</td><td>世界模型、JEPA</td><td>预测动作之后世界如何变化</td><td>AI 只能反应，不能预演</td></tr>
+<tr><td>执行层</td><td>VLA、机器人、具身智能</td><td>把决策变成物理动作</td><td>AI 无法进入真实世界</td></tr>
+<tr><td>验证层</td><td>HIL、真实反馈、异常归因系统</td><td>判断成败并回流经验</td><td>无法形成 agent 闭环</td></tr></tbody>
+</table></div>
+
+<p>这张表的重点不是给概念排座次，而是说明：物理世界的 AI 自动化，必须同时解决“看得见、想得到、试得起、做得出、验得准”这几件事。</p>
+
+<p>数字孪生更像工程基础设施。美国国家科学院对 <a href="https://www.nationalacademies.org/read/26894/chapter/2" target="_blank" rel="noopener">digital twin</a> 的定义强调，它是对真实系统结构、上下文和行为的虚拟信息构造，会被物理对象数据动态更新，具备预测能力，并通过虚实双向交互支持决策。IBM 的 <a href="https://www.ibm.com/think/topics/digital-twin" target="_blank" rel="noopener">定义</a> 也强调，数字孪生依赖实时数据来反映真实对象的行为、性能和状态。</p>
+
+<p>所以数字孪生解决的是“物理对象如何变得可读”。一台设备、一条产线、一块板子、一个仓库，只有被传感器、数据结构和模型持续映射之后，AI 才能知道它现在是什么状态。</p>
+
+<p>世界模型更偏智能体内部的预测机制。一篇关于 embodied AI 世界模型的<a href="https://arxiv.org/abs/2510.16732" target="_blank" rel="noopener">综述</a>把世界模型放在环境动态预测、规划和智能体决策的语境中讨论。换句话说，世界模型关心的不是“这个设备现在是什么状态”，而是“如果我做这个动作，接下来会发生什么”。</p>
+
+<p>具身智能则是更大的系统形态。它不是单个模型，也不是单个数据库，而是让 AI 通过传感器感知环境，通过执行器采取动作，再通过真实反馈修正行为。VLA 模型，也就是 Vision-Language-Action 模型，可以看成具身智能中的一种重要模型路线。2025 年一篇 <a href="https://arxiv.org/html/2505.04769v1" target="_blank" rel="noopener">VLA 综述</a> 把这类模型描述为把视觉、语言和动作统一起来，让机器人能够感知、理解指令并执行动作。</p>
+
+<p>所以这几个词的关系可以简单概括为：<strong>数字孪生让物理世界可观测，世界模型让物理后果可预测，具身智能让 AI 的决策可执行。</strong> 它们不是谁替代谁，而是共同补一条闭环。</p>
+
+<h2 id="世界模型不一定是更大的语言模型" style="scroll-margin-top:60px">世界模型不一定是更大的语言模型</h2>
+
+<p>这里可以顺便说一下 JEPA。</p>
+
+<p>JEPA 是 Yann LeCun 提出的 Joint Embedding Predictive Architecture。它之所以值得关注，不是因为它是又一个时髦缩写，而是因为它代表了一种和 LLM 主流路线不同的直觉：<strong>智能体不一定要生成下一个 token，也不一定要重建每个像素，它更需要在抽象表征空间里预测世界。</strong></p>
+
+<p>Meta 在介绍 <a href="https://ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/" target="_blank" rel="noopener">V-JEPA</a> 时明确说，它是一个 non-generative model，学习方式是在抽象表征空间里预测视频中被遮住或缺失的部分，而不是直接生成像素。早一点的 <a href="https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/" target="_blank" rel="noopener">I-JEPA</a> 也是类似思路：从图像的一部分预测另一部分的抽象表示，而不是做像素级重建。</p>
+
+<p>这个思路真正反驳的，不是 Transformer 完全没用，也不是 LLM 没价值。它反驳的是一种更强的假设：只要把 next-token prediction 继续 scale 下去，就自然会得到对物理世界的理解、常识、规划和行动能力。</p>
+
+<p>这点和本文主线是相关的。LLM 的成功证明了大规模自监督学习的力量，但物理世界模型未必会沿着完全相同的路线前进。物理世界里，重要的可能不是“下一个词是什么”，而是“这个动作之后，杯子会不会掉，电机会不会过热，传感器读数为什么漂移”。所以 JEPA 适合作为一个支线放进来：它提醒我们，<strong>物理世界的基础模型，可能不是更大的语言模型，而是能在抽象空间里预测行动后果的模型。</strong> 但 JEPA 还不是答案本身，它仍然要面对物理数据稀缺、长时序一致性、真实环境迁移和反馈验证的问题。</p>
+
+<h2 id="最难的不是预测，而是验证与归因" style="scroll-margin-top:60px">最难的不是预测，而是验证与归因</h2>
+
+<p>如果只看世界模型这个词，很容易以为物理世界 AI 的关键就是“预测”。模型只要能预测未来，就能规划动作；能规划动作，就能自动执行任务。</p>
+
+<p>但放到真实工程场景里，预测只是闭环中间的一环。更难的是：<strong>执行之后，系统能不能判断结果对不对；结果不对时，能不能知道为什么不对。</strong></p>
+
+<p>软件世界里，这件事相对容易。代码跑不过，编译器会报错；测试失败，日志会输出；接口异常，有 trace 和 stack。反馈不一定完美，但它是数字化的、可读取的、可复现的。</p>
+
+<p>物理世界不一样。一个机器人抓取失败，可能是视觉识别错了，也可能是夹爪角度错了、摩擦系数估计错了、物体重心变化、桌面材质不同、执行器精度不足。一个嵌入式系统运行异常，可能是代码逻辑错了，也可能是电源噪声、时序偏差、外设初始化顺序、传感器漂移、接触不良。一个自动驾驶系统遇到 corner case，也可能不是模型“不认识”，而是感知、预测、规划、控制、地图、规则约束共同作用后的结果。这就是验证层和归因系统的重要性。</p>
+
+<p>我之前写 AI 为什么到硬件开发就失效时，最核心的感受也是这个：硬件不是不会写代码，而是“跑一下”这件事本身不再简单。代码编译成功，不等于真实硬件运行正确。</p>
+
+<p>2026 年一篇关于 <a href="https://arxiv.org/abs/2603.19583" target="_blank" rel="noopener">嵌入式和 IoT 系统 AI agent</a> 的论文也指出，硬件在环开发的难点在于软件逻辑和物理硬件行为紧耦合，代码编译成功后仍可能因为时序约束、外设初始化要求或硬件特定行为失败。</p>
+
+<p>更近的 <a href="https://arxiv.org/abs/2606.16190" target="_blank" rel="noopener">Embedded Arena</a> 研究则把这个问题推得更直接：让 LLM agent 在真实硬件反馈下编译、烧录、测量并迭代优化模型和固件。论文摘要提到，在它定义的硬件在环 agent arena 中，前沿模型没有硬件反馈时部署成功率为 0%；引入硬件反馈后，可以在三轮内实现首次成功部署，并在七轮内超过人类专家结果。</p>
+
+<p>但这个结果不能外推成“硬件研发已经可以自动化”。它聚焦的是资源受限设备上的模型与固件部署优化任务，而不是完整硬件系统设计。它真正有启发的地方是另一件事：</p>
+
+<p><strong>一旦真实硬件反馈被接入 agent，AI 在硬件任务中的能力边界会明显前移。</strong></p>
+
+<p>换句话说，物理世界的 LLM 时刻，不会只靠一个更会预测的模型出现。它需要预测、执行、验证和归因一起成熟：没有预测，AI 只能反应；没有执行，AI 只能建议；没有验证，AI 不知道自己做得对不对；没有归因，AI 就无法从失败里稳定学习。</p>
+
+<p>这也是物理世界比屏幕内工作慢的原因。屏幕内工作的问题，大多已经被数字化系统包住了；物理世界的问题，还需要把真实世界重新接入一个可读、可控、可回流的闭环。</p>
+
+<h2 id="哪些物理世界任务会先被影响" style="scroll-margin-top:60px">哪些物理世界任务会先被影响</h2>
+
+<p>回到最初的问题：物理世界的岗位会不会被 AI 改造？我觉得会，但不会简单复制屏幕内工作的路径。</p>
+
+<p>软件、文档、表格类工作之所以更容易被冲击，是因为它们的输入输出已经数字化，反馈成本低，错误可恢复。物理世界任务不一样。一个财务公式错了可以重算，一段代码错了可以回滚，但一个机器人动作错了可能撞坏设备，一次电源设计错误可能烧板，一次产线参数错误可能造成批量损失。</p>
+
+<p>所以物理世界里的 AI 自动化会先从低风险、标准化、可验证的任务开始。</p>
+
+<p>先被影响的，可能是这些任务：</p>
+
+<ul>
+<li>测试脚本生成</li>
+<li>日志和波形辅助分析</li>
+<li>固件模板和外设初始化代码</li>
+<li>仿真配置和测试用例生成</li>
+<li>产线数据分析</li>
+<li>设备状态监控</li>
+<li>预测性维护</li>
+<li>标准化巡检</li>
+<li>简单抓取、搬运、分拣</li>
+<li>硬件文档、BOM、规格书对照</li>
+</ul>
+
+<p>这些任务的共同点是：边界相对清楚，错误成本可控，结果可以被某种方式验证。</p>
+
+<p>短期更难被自动化的是另一类任务：</p>
+
+<ul>
+<li>系统架构权衡</li>
+<li>复杂硬件故障归因</li>
+<li>跨硬件、软件、结构、热、电磁兼容的综合判断</li>
+<li>供应链替代和量产良率问题</li>
+<li>安全责任和认证</li>
+<li>现场非标准问题处理</li>
+<li>多部门工程决策</li>
+</ul>
+
+<p>这些任务的难点不是“有没有知识”，而是复杂约束下的判断、经验和责任。AI 可以辅助，但很难在短期内独立承担闭环。</p>
+
+<p>所以，“硬件工程师会不会被替代”这个问题本身太粗了。更好的问法是：<strong>这个任务能不能被数字化？反馈能不能被机器读取？错误能不能低成本恢复？成败能不能被验证？失败原因能不能被归因？</strong> 如果答案越接近“能”，它越容易被 AI 改造；如果答案越接近“不能”，它就越依赖人类工程师在现实世界中的经验、判断和责任承担。</p>
+
+<h2 id="物理世界的-LLM-时刻，拼的是世界被数字化的程度" style="scroll-margin-top:60px">物理世界的 LLM 时刻，拼的是世界被数字化的程度</h2>
+
+<p>现在回头看，LLM 重塑屏幕内工作，并不是因为屏幕内工作更低级，也不是因为软件、文档、表格天然比硬件简单。</p>
+
+<p>更底层的原因是：屏幕内工作已经被过去几十年的互联网、办公软件、开发工具和企业系统充分数字化了。</p>
+
+<p>LLM 不是凭空降临到软件世界的。它吃掉的是已经存在的互联网语料，接入的是已经成熟的数字工具，利用的是已经标准化的反馈系统。</p>
+
+<p>物理世界要出现自己的 LLM 时刻，也不会只靠一个更大的模型突然降临。</p>
+
+<p>它需要的是另一套基础设施：物理交互数据、数字孪生、仿真环境、世界模型、具身执行、硬件在环、反馈归因、经验回流。只有这些东西逐渐成熟，AI 才可能像今天读写文本和代码一样，读写一部分物理世界。</p>
+
+<p>所以我现在更倾向于这样判断：<strong>LLM 改造的是已经数字化的世界；世界模型要改造的，是尚未充分数字化的物理世界。</strong> 前者的速度很快，因为路已经铺好了；后者的速度会慢很多，因为它不是简单的模型问题，而是传感器、机器人、仿真、数据标准、测试系统、工程责任共同组成的基础设施问题。</p>
+
+<p>这也是为什么我不太相信“硬件岗位马上会被 AI 大规模替代”的说法，但也不相信“物理世界岗位很安全”的说法。</p>
+
+<p>真正的分界线不是行业，而是闭环。当一个物理任务可以被观测、预测、执行、验证、归因，它就会进入 AI 自动化的范围；当一个物理任务仍然依赖隐性经验、现场判断、跨系统权衡和责任承担，它就还会留在人类工程师手里更久。</p>
+
+<p>物理世界会不会有自己的 LLM 时刻？我觉得方向上会有，但它不会像 ChatGPT 那样突然从浏览器里冒出来。它更可能先出现在工厂、实验室、机器人训练场、自动化测试台、硬件在环系统、自动驾驶车队里。不是一个模型宣布“我理解了世界”，而是越来越多物理任务，开始被接入可观测、可预测、可试错、可执行、可验证的闭环。到了那个时候，我们可能才会真正意识到：AI 改造工作的顺序，从来不是按职业名称排的，而是按世界被数字化的程度排的。</p>
+
+<hr class="divider" />
+
+<h2 id="参考资料" style="scroll-margin-top:60px">参考资料</h2>
+
+<h3 id="相关前文" style="scroll-margin-top:60px">相关前文</h3>
+
+<ul>
+<li><a href="https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html" target="_blank" rel="noopener">让 AI 写代码这件事，为什么到硬件就不行了</a></li>
+</ul>
+
+<h3 id="近期商业信号-/-主流媒体报道" style="scroll-margin-top:60px">近期商业信号 / 主流媒体报道</h3>
+
+<ul>
+<li><a href="https://www.reuters.com/world/asia-pacific/chinese-autonomous-driving-firm-momenta-set-open-slightly-higher-hong-kong-debut-2026-07-08/" target="_blank" rel="noopener">China's Momenta debuts flat in Hong Kong as IPO caution grips AI listings</a><br />注：主流媒体报道，用作“自动驾驶商业化和资本市场信号”，不作为技术成熟证明。</li>
+</ul>
+
+<h3 id="公司官方披露" style="scroll-margin-top:60px">公司官方披露</h3>
+
+<ul>
+<li><a href="https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0629/2026062900057.pdf" target="_blank" rel="noopener">Momenta Global Limited Global Offering Prospectus</a><br />注：招股书属于公司官方披露材料，可用于公司定位、募资、业务描述等事实，但商业前景和技术效果仍需谨慎解读。</li>
+</ul>
+
+<h3 id="平台-/-厂商使用数据" style="scroll-margin-top:60px">平台 / 厂商使用数据</h3>
+
+<ul>
+<li><a href="https://www.anthropic.com/news/the-anthropic-economic-index" target="_blank" rel="noopener">Anthropic Economic Index</a><br />注：Claude 平台使用数据，能反映真实使用场景，但不能直接等同于全行业就业替代。</li>
+<li><a href="https://arxiv.org/abs/2503.04761" target="_blank" rel="noopener">Which Economic Tasks are Performed with AI? Evidence from Millions of Claude Conversations</a><br />注：基于 Claude.ai 对话样本的任务与职业分析，样本边界同上。</li>
+<li><a href="https://arxiv.org/abs/2507.07935" target="_blank" rel="noopener">Working with AI: Measuring the Applicability of Generative AI to Occupations</a><br />注：基于 Bing Copilot 匿名对话的任务适用性研究，适合支撑“任务影响”，不直接推出“岗位消失”。</li>
+</ul>
+
+<h3 id="学术研究-/-预印本" style="scroll-margin-top:60px">学术研究 / 预印本</h3>
+
+<ul>
+<li><a href="https://facctconference.org/static/papers24/facct24-148.pdf" target="_blank" rel="noopener">A Critical Analysis of the Largest Source for Generative AI Training Data: Common Crawl</a></li>
+<li><a href="https://arxiv.org/html/2310.08864v4" target="_blank" rel="noopener">Open X-Embodiment: Robotic Learning Datasets and RT-X Models</a></li>
+<li><a href="https://arxiv.org/abs/2506.09985" target="_blank" rel="noopener">V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning</a></li>
+<li><a href="https://arxiv.org/abs/2603.19583" target="_blank" rel="noopener">Skilled AI Agents for Embedded and IoT Systems Development</a></li>
+<li><a href="https://arxiv.org/abs/2606.16190" target="_blank" rel="noopener">Embedded Arena: Iterative Optimization via Hardware Feedback</a></li>
+</ul>
+
+<h3 id="机构定义-/-官方资料" style="scroll-margin-top:60px">机构定义 / 官方资料</h3>
+
+<ul>
+<li><a href="https://www.nationalacademies.org/read/26894/chapter/2" target="_blank" rel="noopener">National Academies: Definition of a Digital Twin</a></li>
+<li><a href="https://www.ibm.com/think/topics/digital-twin" target="_blank" rel="noopener">IBM: What Is a Digital Twin?</a></li>
+<li><a href="https://ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/" target="_blank" rel="noopener">Meta: V-JEPA</a></li>
+<li><a href="https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/" target="_blank" rel="noopener">Meta: I-JEPA</a></li>
+</ul>
+
+<h3 id="综述-/-背景材料" style="scroll-margin-top:60px">综述 / 背景材料</h3>
+
+<ul>
+<li><a href="https://arxiv.org/abs/2510.16732" target="_blank" rel="noopener">A Comprehensive Survey on World Models for Embodied AI</a></li>
+<li><a href="https://arxiv.org/html/2505.04769v1" target="_blank" rel="noopener">Vision-Language-Action Models: Concepts, Progress, Applications and Challenges</a></li>
+</ul>
+    </div>
+
+  <div class="related-posts" id="relatedPosts" style="display:none">
+    <div class="related-title">相关文章</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- 上下篇导航 -->
+  <nav class="post-nav" id="postNav">
+    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title" id="navPrevTitle"></span>
+    </a>
+    <a class="post-nav-next" id="navNext" style="display:none" href="#">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title" id="navNextTitle"></span>
+    </a>
+  </nav>
+
+  <nav class="footer-nav">
+    <a href="../index.html">← 返回列表</a>
+  </nav>
+    </main>
+  </div><!-- /.two-col -->
+</div><!-- /.page-outer -->
+
+<script>
+(function(){
+  var sections = document.querySelectorAll('.post-body h2[id]');
+  var links = document.querySelectorAll('.toc-list a');
+  if (sections.length && links.length) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          links.forEach(function(a) {
+            a.classList.toggle('toc-active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(function(s) { observer.observe(s); });
+  }
+})();
+(function(){
+  var saved = localStorage.getItem('blog_theme');
+  var theme = (saved === 'dark') ? 'dark' : 'light';
+  document.body.dataset.theme = theme;
+  function updateIcon(t) {
+    var sun = document.getElementById('ptIconSun');
+    var moon = document.getElementById('ptIconMoon');
+    if (!sun || !moon) return;
+    sun.style.display = t === 'dark' ? 'block' : 'none';
+    moon.style.display = t === 'dark' ? 'none' : 'block';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateIcon(document.body.dataset.theme);
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.body.dataset.theme = next;
+        localStorage.setItem('blog_theme', next);
+        updateIcon(next);
+      });
+    }
+  });
+})();
+
+// 相关文章 + 上下篇导航
+var POST_META = {
+  slug: 'physical-world-llm',
+  tags: [],
+  topics: [],
+  category: '技术'
+};
+(async function() {
+  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
+  var posts = data.posts;
+  // 从 JSON 读取标签，注入 header
+  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
+  if (selfMeta) {
+    POST_META.tags = selfMeta.tags || [];
+    POST_META.topics = selfMeta.topics || [];
+    var allTags = POST_META.tags.concat(POST_META.topics);
+    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+  }
+  if (posts.length >= 5) {
+    var scored = posts
+      .filter(function(p) { return p.slug !== POST_META.slug; })
+      .map(function(p) {
+        var score = 0;
+        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
+        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
+        if (p.category === POST_META.category) score += 1;
+        return Object.assign({}, p, { score: score });
+      })
+      .filter(function(p) { return p.score >= 1; })
+      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
+      .slice(0, 2);
+    if (scored.length) {
+      var list = document.getElementById('relatedList');
+      list.innerHTML = scored.map(function(p) {
+        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
+          '<span class="related-item-date">' + p.date + '</span>' +
+          '<span class="related-item-title">' + p.title + '</span>' +
+          '</a>';
+      }).join('');
+      document.getElementById('relatedPosts').style.display = 'block';
+    }
+  }
+  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
+  if (idx > 0) {
+    var prev = sorted[idx - 1];
+    var el = document.getElementById('navPrev');
+    el.href = prev.url.split('/').pop();
+    document.getElementById('navPrevTitle').textContent = prev.title;
+    el.style.display = 'flex';
+  }
+  if (idx >= 0 && idx < sorted.length - 1) {
+    var next = sorted[idx + 1];
+    var el2 = document.getElementById('navNext');
+    el2.href = next.url.split('/').pop();
+    document.getElementById('navNextTitle').textContent = next.title;
+    el2.style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>

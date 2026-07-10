@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "physical-world-llm",
+      "date": "2026.07",
+      "title": "物理世界会有自己的 LLM 时刻吗？",
+      "summary": "LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "前沿研究",
+        "模型能力"
+      ],
+      "category": "技术",
+      "url": "posts/physical-world-llm.html"
+    },
+    {
       "slug": "llm-customer-service-tech-guide",
       "date": "2026.07",
       "title": "从零搭建一个LLM智能客服：完整技术链路与关键决策",

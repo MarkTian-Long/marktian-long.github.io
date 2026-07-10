@@ -205,7 +205,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
     ├── aside.toc-wrap（position: sticky; top: 40px）
     │   └── nav.toc-card（目录卡片，--bg-subtle 底色，1px border，圆角 8px）
     │       ├── span.toc-card-label（"本文目录" 小标题）
-    │       └── ul.toc-list > li > a（目录条目，hover/active 用 clay 色 + 左竖线 + clay-soft 背景）
+    │       └── ul.toc-list > li > a（目录条目，hover/active 用 clay 色 + 左竖线 + clay-soft 背景；h3 子项用 .sub-link 降级）
     └── main（文章内容区）
         ├── header.post-header
         ├── hr.divider
@@ -236,6 +236,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 - 目录链接 hover / active 用 `var(--clay)` 高亮 + 左侧竖线 + `background: var(--clay-soft)` + `border-radius: 4px`
 - `h2` 需加 `id` 属性供锚点跳转，同时加 `scroll-margin-top: 60px`
+- 若文章目录包含 `h3`（常见于「参考资料」下的小节），对应链接必须加 `.sub-link`，视觉上降级：缩进、字号更小、颜色更弱；active/hover 不使用整块背景，只保留左侧竖线和 clay 色。不要用 `1/2/3` 编号解决层级问题，窄侧栏中编号会增加换行和报告感。
 
 ### 响应式规则
 
@@ -279,6 +280,16 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 3. 主页和列表页自动从 JSON 读取，**无需改动任何 HTML 文件**
 4. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json`
    （新文件必须显式 add，否则 GitHub Pages 404）
+
+### Markdown 转 HTML 发布 QA
+
+从 `docs/blog/*.md` 转成 `tools/blog/posts/*.html` 时，发布前必须做以下检查：
+
+- 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
+- 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
+- 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
+- 检查左侧目录层级：正文主章节用一级目录；「参考资料」下的来源分类等 h3 子项用 `.sub-link` 降级显示。
+- 在浏览器中至少查看一次文章页的正文末尾和参考资料区；只做 JSON/HTML 静态校验不足以发现可见转义文本和目录层级问题。
 
 ---
 
