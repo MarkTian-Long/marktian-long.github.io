@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "enterprise-agent-fde",
+      "date": "2026.07",
+      "title": "从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？",
+      "summary": "企业 Agent 进入真实组织后，竞争不再只是模型能力，还会被工作入口、软件商业模式和组织落地方式重新塑形。真正决定它能否规模化的，是能否把一次次落地沉淀成可复用产品能力。",
+      "tags": [
+        "市场格局"
+      ],
+      "topics": [
+        "Agent",
+        "企业AI"
+      ],
+      "category": "商业",
+      "url": "posts/enterprise-agent-fde.html"
+    },
+    {
       "slug": "physical-world-llm",
       "date": "2026.07",
       "title": "物理世界会有自己的 LLM 时刻吗？",
