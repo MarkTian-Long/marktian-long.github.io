@@ -284,6 +284,16 @@ refactor: 迁移文件到 assets/ 目录结构
 ### 本地开发注意
 - `fetch` 在 `file://` 协议下因 CORS 失败，需用 HTTP server：`python -m http.server 8080`
 
+### GitHub 推送网络排查
+- 本地 `git commit` 成功但 `git push` 报 `Failed to connect to github.com port 443`、`Recv failure: Connection was reset` 时，通常是 **Git CLI 网络链路问题**，不是 GitHub 权限问题。
+- 先检查状态：`git status --short --branch`。若显示 `main...origin/main [ahead 1]`，说明本地提交已存在，只是还没推到远端。
+- 若浏览器能访问 GitHub，但 Git CLI 不能访问，优先检查本机代理。常见 Clash Verge/Mihomo 端口如 `127.0.0.1:7897`。
+- 可用临时代理推送，不改全局 Git 配置：
+  ```bash
+  git -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 push origin main
+  ```
+- 推送成功后确认：`git status --short --branch` 不再显示 ahead，`git log -1 --oneline --decorate` 中应同时出现 `HEAD -> main, origin/main`。
+
 ---
 
 ## 九、Skill 管理规范
