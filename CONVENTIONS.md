@@ -269,6 +269,7 @@ refactor: 迁移文件到 assets/ 目录结构
 | title | string | 完整标题 |
 | summary | string | 一句话摘要（用于搜索和主页展示） |
 | tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
+| topics | string[] | 话题领域标签，见 WRITING_GUIDE.md 标签库 |
 | category | string | 大分类：`技术` / `产品` / `商业` / `生活` |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
 

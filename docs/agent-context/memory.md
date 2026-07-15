@@ -95,7 +95,9 @@ initial migration.
 
 ### Blog system
 
-- Validate `tags` and `topics` against the writing guide before writing them.
+- Validate `tags` and `topics` against the writing guide before writing them: a
+  topic must be central to the title, summary, and conclusion, rather than an
+  example, implementation path, or frequently mentioned technology.
 - `tags` and `topics` should not duplicate the same terms.
 - Blog publishing follows: Markdown, generation script, metadata JSON update,
   product maturity check when applicable, then delivery.
