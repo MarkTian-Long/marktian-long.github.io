@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!--
+date:    2026.07
+title:   从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测
+tags:    [技术判断]
+slug:    ontology-business-semantic-layer
+summary: 企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测 — Leo 的思考碎片</title>
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测" />
+  <meta property="og:description" content="企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。" />
+  <meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html" />
+  <meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测" />
+  <meta name="twitter:description" content="企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。" />
+  <meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:40px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-list a.sub-link { padding-left:18px; color:var(--text-3); font-size:.76rem; } .toc-list a.sub-link:hover { border-left-color:var(--clay); background:transparent; color:var(--clay); }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .related-posts { margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .related-title { margin-bottom:1rem; color:var(--text-2); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; } .related-item { display:flex; align-items:baseline; gap:.75rem; padding:.5rem 0; text-decoration:none; } .related-item:hover .related-item-title { color:var(--clay); } .related-item-date { color:var(--text-2); font-size:.75rem; white-space:nowrap; } .related-item-title { color:var(--text-1); font-size:.9rem; }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#real-information">真实信息，仍可能误解</a></li>
+<li><a href="#ontology-semantic-layer">本体与业务语义层</a></li>
+<li><a href="#semantic-4-plus-1">业务语义的 4+1 层</a></li>
+<li><a href="#application-chain">如何进入 AI 链路</a></li>
+<li><a href="#what-ontology-cannot-solve">能解决与不能解决</a></li>
+<li><a href="#stronger-models">模型越强，还需要吗</a></li>
+<li><a href="#when-to-unify">何时统一建设</a></li>
+<li><a href="#definition-ownership">谁拥有定义权</a></li>
+<li><a href="#references">参考资料</a></li>
+<li><a class="sub-link" href="#reference-5">标准与权威定义</a></li>
+<li><a class="sub-link" href="#reference-6">同行评审研究</a></li>
+<li><a class="sub-link" href="#reference-7">研究基准与预印本</a></li>
+<li><a class="sub-link" href="#reference-8">工具厂商官方文档</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.07</span><span id="post-tags"></span></div><h1 class="post-title">从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测</h1><p class="post-summary">企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><hr class="section-break" />
+<p>在之前的一个企业 AI 项目中，大模型对行业内部术语的理解并不稳定。同一个业务概念，在制度文件、数据库字段和业务人员口中，可能使用完全不同的表达。为了提高模型对行业术语的识别和归一化能力，我们单独建立了一张同义词表，将简称、旧称和内部说法映射到标准术语。</p>
+<p>当时，我把它归类为 Prompt 工程的一部分：通过提示词和映射规则，把行业内部表达与标准概念的对应关系显式交给模型。</p>
+<p>后来和一位金融行业从业者交流时，我第一次认真接触到 Ontology，也就是“本体”。继续研究后我才意识到，那张同义词表虽然远不是一套完整本体，却指向了一个更大的系统问题：</p>
+<p><strong>企业 AI 是否拥有一套明确、可复用的业务语义，还是由每个模型和应用分别理解同一套业务含义？</strong></p>
+<p>把视角从单个 Prompt 扩展到 RAG 和结构化数据查询后，这个问题并没有消失，只是从“这个词是什么意思”，扩展到了“系统谈论的是哪个对象、使用的是哪组关系、采用的是哪种业务口径”。</p>
+<p>同义词表、数据字典、指标平台、知识图谱和业务规则，通常被视为不同的工程资产。把它们放在一起看，本体提供了一套理解框架：这些建设都在尝试将原本隐含在人脑、文档、数据库和代码里的业务含义显式化。</p>
+<h2 id="real-information">一、取得了真实信息，仍然可能理解错业务</h2>
+<p>最初的 <a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html" target="_blank" rel="noopener noreferrer">RAG 论文</a>将模型的参数化知识与可检索的非参数化知识结合，让模型在生成时使用检索得到的信息。在今天的企业应用中，RAG 的一个常见目标，是让模型在回答问题时利用企业知识源，而不是只依赖训练阶段学到的内容。</p>
+<p>这解决了“相关资料在哪里”的问题，却不自动等于系统理解了资料背后的业务。</p>
+<p>用一个简化的保险理赔假设场景来看，用户可能会问：<strong>“这个客户刚提交的车辆理赔，能不能自动通过？”</strong></p>
+<p>系统可以通过文档检索找到保险条款、理赔制度、材料清单和历史案例。这些资料可能都是真实的，引用的段落也可能准确，但系统仍然需要判断：“这个客户”具体是谁，他对应哪张保单，这张保单覆盖哪辆车，事故发生时保单是否有效，以及检索到的条款是否适用于当前险种和案件状态。</p>
+<p>只要其中一个对象或关系映射错误，模型就可能引用真实条款，给出错误结论。</p>
+<p>类似问题也存在于结构化数据查询中。假设业务人员问：<strong>“去年深圳地区新能源车险的赔付率是多少？”</strong></p>
+<p>Text-to-SQL 系统可能生成一条语法正确、能够正常执行的 SQL，但它仍可能把“深圳地区”映射成客户所在地，而业务真正需要的是出险地；把“去年”映射成结案日期，而不是事故发生日期；漏掉部分新能源车险产品代码；或者使用签单保费计算赔付率，而公司的权威口径要求使用已赚保费。</p>
+<p>这不是 SQL 语法错误，查询结果也未必是假数据。问题在于，系统对“深圳地区”“去年”“新能源车险”和“赔付率”的业务含义作出了错误映射。</p>
+<p>基于真实企业数据仓库构建的 <a href="https://arxiv.org/abs/2409.02038" target="_blank" rel="noopener noreferrer">BEAVER Text-to-SQL Benchmark</a>也显示，企业数据库的 Schema 和业务问题通常比公共数据集复杂，需要处理跨表关联、聚合与嵌套查询，而通用模型又无法从公开训练数据中预先学会企业的私有数据结构。论文中的现成模型即使结合常规 Prompt 工程和 RAG，表现仍然明显下降。</p>
+<p><strong>企业 AI 的错误不一定表现为凭空编造。它也可能读取了真实文档、查询了真实数据，却理解错这些信息在当前企业中的含义。</strong></p>
+<p>这类错误不能全部归入狭义的模型幻觉。它还可能来自检索错误、实体映射错误、指标口径错误、业务规则遗漏或数据质量问题。本文只关注其中一部分：系统取得信息以后，因为缺少明确的业务语义而作出的错误理解。</p>
+<h2 id="ontology-semantic-layer">二、本体提供建模骨架，业务语义层描述工程落地</h2>
+<p>在知识工程中，本体通常用于显式描述一个领域中存在哪些概念和对象，以及它们之间有哪些属性、关系和约束。<a href="https://protege.stanford.edu/publications/ontology_development/ontology101-noy-mcguinness.html" target="_blank" rel="noopener noreferrer">斯坦福的经典本体工程入门材料</a>将本体描述为领域共享词汇，以及对基本概念和关系的机器可解释定义；在 <a href="https://www.w3.org/TR/owl2-primer/" target="_blank" rel="noopener noreferrer">OWL 2</a> 中，对象、类别和关系分别被表示为 Individual、Class 和 Property。</p>
+<p><strong>本文采用的工作定义是：本体是对一个行业或组织业务世界的显式建模——这里存在哪些概念和对象，它们具有哪些属性、如何关联，以及受到哪些语义约束。</strong></p>
+<p>但本文不会把本体与“业务语义层”完全画等号。</p>
+<p>本体更接近一套建模骨架，重点是将概念、对象、属性、关系和约束显式化。业务语义层则是本文采用的一个更宽泛的企业工程表达。除了本体模型，它还可能包含指标口径、数据映射、业务规则、权威数据源，以及面向实际应用的接口和权限设计。</p>
+<p>前者帮助我们系统地描述业务世界，后者描述这些定义如何在企业系统中被不同应用消费。</p>
+<p>本文主要讨论两类常见的信息访问场景：一类是文档等非结构化信息检索，例如关键词检索、向量检索和文档 RAG；另一类是结构化数据查询，例如 SQL、Text-to-SQL、图查询、指标平台和业务 API。这不是对企业 AI 信息来源的穷尽分类，只是与本文问题最相关的两类路径。</p>
+<p>知识图谱是一种以实体和关系组织知识的结构化表示形式。它既可以整合数据库中的结构化数据，也可以承接从文档等非结构化信息中抽取出的实体、关系和事实。需要区分的是，知识图谱本身是结构化结果，真正完成“从非结构化信息到结构化知识”转换的，是实体识别、关系抽取、实体对齐和人工治理等构建流程。由此，知识图谱可以成为原始文档与可查询知识之间的一座桥梁，也可以被直接查询或作为 RAG 的信息源。</p>
+<p>本体则可以为知识图谱中的对象类型、关系含义和约束提供定义，也可以服务于关系数据库、文档检索和其他业务系统。现实项目对“知识图谱”和“本体”的命名边界并不总是一致，但二者在本文中并不处于同一个分类维度。</p>
+<p><strong>因此，本体不是与文档检索、结构化数据查询并列的第三条信息访问路径，而是帮助这些路径使用一致业务概念、关系和约束的一套语义模型。</strong></p>
+<h2 id="semantic-4-plus-1">三、从一张同义词表，到业务语义的 4+1 层建设</h2>
+<p>企业很少会在第一天就宣布建设一套完整本体。更常见的情况是，团队先遇到一个具体问题：模型不理解行业术语，于是建立同义词表；不同系统字段无法对齐，于是维护数据字典；Text-to-SQL 频繁选错表和字段，于是补充字段说明、术语映射和 Schema Linking（模式链接）信息；不同部门计算结果不同，于是统一指标口径；当单纯的文本检索难以稳定保留复杂实体关系时，团队可能进一步引入实体标注、结构化查询或知识图谱。</p>
+<p>这些工程资产不等于完整本体，却具有相同的出发点：不再让每个模型和应用分别解释同一套企业业务含义。</p>
+<p>为了理解这些建设之间的关系，本文暂且将业务语义建设归纳为“4+1”层。这是本文的分析框架，不是行业标准，也不是企业必须依次经历的成熟度路线。相邻层之间可能重叠，企业也可能只建设其中一部分。</p>
+<div class="blog-table">
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>代表资产</th>
+<th>主要进入节点</th>
+<th>缺失后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>词汇层</td>
+<td>同义词表、术语库</td>
+<td>问题理解、查询改写</td>
+<td>术语误解</td>
+</tr>
+<tr>
+<td>对象层</td>
+<td>实体模型、主数据</td>
+<td>入库标注、实体链接</td>
+<td>对象错配</td>
+</tr>
+<tr>
+<td>关系层</td>
+<td>Schema、知识图谱</td>
+<td>查询、上下文组织</td>
+<td>关系错配</td>
+</tr>
+<tr>
+<td>口径与规则层</td>
+<td>指标定义、规则库</td>
+<td>数据查询、业务校验</td>
+<td>口径或规则错误</td>
+</tr>
+<tr>
+<td>执行扩展</td>
+<td>工具契约、权限、审批</td>
+<td>Agent 动作执行</td>
+<td>非法或越权操作</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="chart-note">注：前四层是本文归纳的业务语义核心；“执行扩展”是 AI 应用，特别是 Agent 进入真实业务流程后经常增加的一层，并非所有本体都必须包含。各层之间也不是严格互斥关系。</p>
+<p>这张表同时说明了两件事：企业需要显式定义什么，以及这些定义通常会在哪些系统节点发挥作用。</p>
+<p>以保险理赔为例，词汇层需要判断“车险报案”和“车辆出险申报”是否指向同一个业务概念；对象层需要区分投保人、被保险人、受益人和实际提交申请的人；关系层需要确认客户、保单、车辆和理赔案件之间的关联；口径与规则层需要定义保单何时有效、赔付率如何计算，以及哪些案件可以自动审核。</p>
+<p>在知识组织领域，<a href="https://www.w3.org/TR/skos-reference/" target="_blank" rel="noopener noreferrer">SKOS</a>允许为同一个概念设置首选标签和替代标签。企业同义词表不等于 SKOS 词表，但二者处理的是相近的词汇对齐问题：不同文字表达如何稳定地指向同一个标准概念。</p>
+<p>当 AI 进一步参与业务执行时，系统还需要增加一层执行约束：它只能解释案件、请求补充材料，还是可以修改案件状态、转交审核甚至发起赔付。这一层与传统本体建模有关联，但同时涉及 API、权限、审批和审计等更广泛的应用治理。</p>
+<p>在数据分析领域，<a href="https://docs.getdbt.com/docs/use-dbt-semantic-layer/sl-faqs" target="_blank" rel="noopener noreferrer">dbt Semantic Layer</a>提供了一个更局部的产品例子：团队可以集中定义关键指标，并让不同下游工具使用同一套指标定义；<a href="https://docs.getdbt.com/docs/build/join-logic" target="_blank" rel="noopener noreferrer">MetricFlow</a>还会根据语义模型中定义的实体和键构建可用的表关联路径。</p>
+<p>它不是完整的领域本体，但说明指标口径和关系定义可以从单个应用中抽离，成为多种工具共同消费的语义资产。</p>
+<p><strong>企业未必会突然建设一个名为 Ontology 的平台。更多时候，它从一张同义词表、一个指标口径或一次字段映射开始，随着关系复杂度和复用范围扩大，逐渐显露出统一管理业务语义的必要性。</strong></p>
+<h2 id="application-chain">四、业务语义如何进入 AI 应用链路？</h2>
+<p>理解了要显式定义什么，下一步的问题是：这些术语、对象、关系和规则，具体怎样进入 RAG、Text-to-SQL 和 Agent 等应用？</p>
+<p>业务语义层通常不会只表现为架构图中的一个独立方框。沿着一次请求的执行顺序来看，不同语义资产会分别进入数据准备、问题理解与信息访问、上下文组织与业务校验，以及动作执行。并不是每个项目都需要覆盖所有环节，实际建设范围应由错误类型和业务风险决定。</p>
+<h3 id="data-preparation">数据准备：保留来源、版本和适用范围</h3>
+<p>很多 RAG 项目的索引流程近似于“文档切分—向量化（Embedding）—写入向量库”。但文档被切成独立文本块（Chunk）后，原本依赖完整上下文才能理解的信息可能被削弱，例如这段内容属于哪个产品、何时生效、是否已经被新版本替代，以及它究竟是正式规则、解释说明还是历史案例。</p>
+<p>因此，语义建设可以从入库阶段开始。对于很多应用，不需要立即建设知识图谱；先将文档类型、适用对象、生效时间和来源权威性做成可检索的元数据（Metadata），往往更接近一条最小可行路径。</p>
+<p>Microsoft 的 <a href="https://microsoft.github.io/graphrag/index/overview/" target="_blank" rel="noopener noreferrer">GraphRAG 索引流程</a>提供了一个更复杂的实现例子：它从原始文本中抽取实体、关系以及可选的事实性陈述，并将结构化结果与文本索引一同保存。这个案例不是所有 RAG 项目的标准答案，但说明实体和关系不一定要等到生成阶段再临时识别，也可以在索引阶段提前建设。</p>
+<h3 id="query-understanding">问题理解与信息访问：从术语归一到 Schema Linking</h3>
+<p>这是同义词表最直接进入工程链路的位置。用户说“报事故”“车辆出险申报”或某个内部简称时，系统可以先将其映射到标准概念，再进入后续检索。</p>
+<p>问题理解不只是同义词替换，还包括实体链接和歧义识别。系统不仅要识别“张伟”是一个客户名称，还要确认他对应哪个客户 ID；当用户询问“深圳地区的赔付率”时，系统也应识别“地区”可能对应客户所在地、承保地或出险地。</p>
+<p>遇到无法消除的歧义，系统可以采用已经明确的默认口径、向用户补问，或者在回答中说明采用了哪个定义。显式业务语义的价值，不只是帮助系统找到答案，也包括让系统知道什么时候不应该直接猜答案。</p>
+<p>在文档检索中，标准概念和业务对象可以用于查询扩展、元数据过滤、生效时间筛选和权威来源排序；在 Text-to-SQL 中，模型需要的也不应只有表名、字段名和字段类型，还可能包括字段的业务含义、指标公式、允许的表关联、默认时间字段和已经废弃的字段。</p>
+<p>这正是 Schema Linking 与业务语义的连接点：前者负责把自然语言问题关联到表、字段和关系，后者说明这种关联采用什么业务含义、在哪些场景下有效。</p>
+<p>知识图谱和图查询可以服务于复杂实体关系，但建设本体并不等于必须采用图数据库。如果关系数据库和确定的表关联已经能稳定表达业务关系，就没有必要为了形式上的完整额外引入图系统。</p>
+<h3 id="context-validation">上下文组织与业务校验：让正确信息形成正确案件</h3>
+<p>即使系统找到了正确资料，将相似度最高的若干文本块直接拼接起来，也可能形成错误上下文：A 客户的申请材料、B 客户的保单、另一个险种的条款和已经失效的审核制度，每个片段单独都是真的，组合后却描述了一个不存在的案件。</p>
+<p>检索之后，系统可以按照实体 ID、对象关系、时间和版本组织上下文，并区分事实、规则和历史案例。<a href="https://microsoft.github.io/graphrag/query/local_search/" target="_blank" rel="noopener noreferrer">GraphRAG 的 Local Search</a>会将知识图谱中的结构化数据与输入文档中的非结构化文本结合，为模型构建包含相关实体信息的上下文。</p>
+<p>它展示的不是唯一实现，而是一种重要思路：检索后的信息可以按照实体和关系组织，而不只是按照文本相似度排列。</p>
+<p>完成信息组织后，确定性的业务判断也不适合全部交给语言模型。例如，事故日期是否位于保单有效期内、材料是否齐全、金额是否超过阈值，通常更适合由规则引擎或程序代码执行。</p>
+<p>本体模型可以说明规则涉及哪些对象、属性和关系；指标定义和规则库负责明确具体业务含义；规则引擎或代码则负责在运行时执行判断。前两者不能代替后者。模型可以负责理解问题、抽取参数和解释结果，但不需要依靠自然语言生成重新计算所有确定性规则。</p>
+<h3 id="action-execution">动作执行：将语义扩展为工具和权限契约</h3>
+<p>如果 AI 只负责问答，前面的语义建设已经可能产生明显价值。当系统开始调用工具和改变业务状态时，还需要进一步明确：哪些对象可以被修改，当前状态允许哪些动作，每个动作需要什么参数，谁可以调用，以及是否需要人工审批。</p>
+<p>保险理赔 Agent 不应获得一个可以任意修改数据库的通用工具，而应调用边界明确的业务动作，例如请求补充材料、转交人工审核或提交赔付申请。每个动作再定义适用对象、允许状态、必填参数和权限条件。</p>
+<p>Palantir 的 <a href="https://palantir.com/docs/foundry/ontology/overview/" target="_blank" rel="noopener noreferrer">Foundry Ontology</a>是这种产品化方向的一个例子。其 Ontology 除了对象、属性和关系，还包含 Action Types；<a href="https://palantir.com/docs/foundry/action-types/overview/" target="_blank" rel="noopener noreferrer">Action Type</a>用于定义可以一次性对对象、属性和关系进行的一组修改。</p>
+<p>这个厂商案例说明，企业 Agent 的语义模型可以进一步扩展到可执行动作，但它属于具体平台的产品化设计，并不是所有传统本体都必须具备的组成部分。</p>
+<h2 id="what-ontology-cannot-solve">五、本体能减少哪些错误，不能减少哪些错误？</h2>
+<p>说本体可以“抑制幻觉”并没有错，但这个说法很容易被理解得过于宽泛。</p>
+<p>显式的本体模型、业务语义资产和相关校验机制，更容易约束的是：把内部简称理解成错误产品，将问题关联到错误客户或保单，混淆客户、投保人和被保险人，使用错误的指标计算口径，或者忽略已经显式定义的业务状态和前置条件。</p>
+<p>它们很难单独解决的则包括：模型在解释中添加不存在的原因，模型拿到正确事实后仍然推理错误，权威系统本身记录了错误数据，业务规则没有及时更新，或者用户的问题超出了当前语义模型的覆盖范围。</p>
+<p>2025 年发表于 EMNLP 的 <a href="https://aclanthology.org/2025.emnlp-main.1674/" target="_blank" rel="noopener noreferrer">OG-RAG 研究</a>尝试利用领域本体组织文档中的事实和关系，再为模型检索规模更小、结构更完整的上下文。论文作者在其特定实验设置中报告了事实召回、答案正确性和事实推理表现的提升。</p>
+<p>这说明本体化检索具有潜力，但不能直接外推为所有企业场景都能获得同样收益。</p>
+<p>本体的作用并不是让语言模型失去编造的能力，而是减少一些本不应该交给模型自由推测的内容。模型不应在每次回答时都重新判断“有效保单”是什么意思、“赔付率”采用哪个公式、哪个字段代表出险地，以及哪个系统中的状态才是权威状态。</p>
+<p>这些定义被显式管理后，错误更容易被定位到具体环节：是术语映射错了、实体关联错了、指标定义错了，还是底层数据本身有问题。</p>
+<p><strong>本体没有让错误消失，而是把一部分隐蔽在模型临时解释中的错误，转化为能够定位到术语、关系、口径或规则的系统问题。</strong></p>
+<p>但这也有另一面。如果统一定义本身就是错的，多个 RAG、数据问答和 Agent 可能会稳定地以同一种方式犯错。本体减少了模型临时解释的自由度，却也可能把局部定义错误放大成跨应用的系统性错误。</p>
+<p>因此，本体的价值不只取决于建模是否完整，还取决于企业是否具备维护、版本管理和纠错能力。</p>
+<h2 id="stronger-models">六、模型越强，还需要显式业务语义吗？</h2>
+<p>对于本体最有力的反驳是：当模型足够强，它是否可以直接阅读企业文档、数据库 Schema 和 API 定义，动态理解业务，不再需要人工维护一套语义模型？</p>
+<p>这个方向确实正在发展。大模型已经可以辅助发现候选术语和同义词、生成字段映射、识别实体关系、从制度中抽取规则，以及检查不同系统之间的定义冲突。</p>
+<p>2025 年的一篇 <a href="https://arxiv.org/abs/2503.05388" target="_blank" rel="noopener noreferrer">LLM 本体生成预印本</a>研究了模型根据用户故事和能力问题生成 OWL 本体草稿的能力。论文作者报告，其方法在特定基准中能够超过初级本体工程人员的建模表现；但研究也记录了常见错误和结果波动，并强调多维评估和专家审查的重要性。</p>
+<p>由于该研究是预印本，其结论仍需要更多独立研究验证。</p>
+<p>模型能力升级很可能会降低业务语义建设的人工成本，但模型能够从现有材料中发现候选结构，不等于它有权决定哪套结构应成为企业标准。</p>
+<p>例如，“深圳地区”究竟采用客户所在地、承保地还是出险地，“收入”采用签约、开票还是回款口径，两个相似概念应该合并还是必须区分，以及哪个业务系统是权威事实来源，这些问题背后都包含组织选择，而不只是语言理解。</p>
+<p><strong>模型可以帮助企业发现和描述业务结构，但企业仍然需要决定这个业务世界应当如何被定义。</strong></p>
+<p>因此，模型升级更可能改变本体和业务语义层的建设方式，而不是自动消除业务定义的必要性。</p>
+<h2 id="when-to-unify">七、什么时候值得统一管理，而不是继续局部修补？</h2>
+<p>不是所有企业 AI 应用都需要完整的业务语义层。</p>
+<p>如果一个系统只回答少量制度问题，数据源单一，术语稳定，不涉及复杂关系和业务动作，那么文档 RAG、权限过滤、少量同义词、字段说明和明确引用可能已经足够。为了建设本体而建设本体，只会增加新的建模和维护成本。</p>
+<p>真正需要关注的是：哪些业务定义已经不能继续由每个应用分别维护？</p>
+<p>从 AI PM 的视角，我会把判断压缩为四个信号：</p>
+<ol>
+<li><strong>语义冲突是否频繁发生？</strong> 不同系统或部门是否在使用含义不同的同名概念，或者用多个名称描述同一个对象？</li>
+<li><strong>对象、关系和状态是否足够复杂？</strong> 一个问题是否需要跨多个实体、系统、时间条件和业务状态才能回答？</li>
+<li><strong>错误后果是否足够高？</strong> 错误只影响一次内部搜索，还是可能引发错误决策、资金损失、合规风险或实际操作？</li>
+<li><strong>同一套定义是否被长期复用？</strong> 多个 RAG、数据问答、分析工具或 Agent 是否在重复维护同样的术语、指标和规则？</li>
+</ol>
+<p>当多个系统描述同一个业务对象，不同团队长期维护冲突口径，一个问题需要跨表或跨实体查询，业务状态直接决定答案，并且同一套定义会被多个应用反复使用时，局部修补的成本可能逐渐高于统一建设。</p>
+<p>工程落地更适合从错误样本开始。先找出系统中反复出现的术语、实体、字段、口径和规则错误；再围绕一个高价值任务建设最小语义集合；最后将这些定义接入检索、查询、校验和动作链路，并分别评测术语理解、实体链接、查询映射、规则执行和动作约束。</p>
+<p>在保险理赔中，可以先定义完成某类审核所必需的客户、保单、车辆、案件、状态和规则，而不是试图一次性建立覆盖整家保险公司的宏大本体。</p>
+<p><strong>本体化建设不是先画出一张完整的业务世界地图，而是在 AI 链路中找到仍由模型临时解释的语义节点，再把最关键的定义逐步显式化。</strong></p>
+<h2 id="definition-ownership">八、更困难的问题，是谁拥有定义权</h2>
+<p>从技术上看，本体建设似乎是在定义实体、关系和规则。进入真实组织后，更困难的问题往往是：谁有权决定这些定义？</p>
+<p>不同部门可能分别拥有合理但适用场景不同的客户定义、地区口径和指标公式。需要解决的并不总是将它们强行统一，而是明确每个定义适用于什么场景，不同口径之间如何转换，哪个系统是权威来源，以及业务定义改变后哪些应用需要同步。</p>
+<p>这些问题无法通过模型从文档中自动抽取出唯一答案，因为企业文档本身可能互相矛盾，定义背后还包含部门权责、风险承担和业务决策。</p>
+<p><strong>本体建设不仅是知识工程，也是在编码一个组织对业务世界的共同理解和权责关系。</strong></p>
+<p>模型可以自动化知识整理和候选建模，但不能替组织完成业务裁决，也不能替组织承担错误定义带来的责任。</p>
+<hr class="section-break" />
+<p>回到最初那张同义词表，它当然不是一套完整本体，但它体现了一个重要原则：对企业内部关键业务含义，系统不应一直依赖模型根据通用语言概率临时判断。</p>
+<p>对企业 AI 团队来说，本体化建设也不意味着先搭建一个覆盖整个公司的宏大平台。更现实的起点，是从反复出现的错误中找出仍被模型临时解释的术语、对象、关系、口径和规则，再围绕高价值任务，将其中最关键的定义逐步变成可复用、可测试和可维护的系统资产。</p>
+<p>随着 AI 从检索文档走向查询业务数据、辅助判断和执行业务，业务语义也会从一个 Prompt 中的局部映射问题，逐渐成为多个应用共同依赖的基础能力。当这个业务世界逐渐被定义后，才有基础继续讨论 Agent 可以知道什么、判断什么和改变什么。</p>
+<div class="callout"><strong>企业真正需要的，不一定是一个名为 Ontology 的庞大平台，而是停止让每个 AI 应用各自猜测同一套业务含义。</strong></div>
+<h2 id="references">参考资料</h2>
+<h3 id="reference-5">标准与权威定义</h3>
+<ul>
+<li><a href="https://www.w3.org/TR/owl2-primer/" target="_blank" rel="noopener noreferrer">OWL 2 Web Ontology Language Primer</a></li>
+<li><a href="https://www.w3.org/TR/skos-reference/" target="_blank" rel="noopener noreferrer">SKOS Simple Knowledge Organization System Reference</a></li>
+<li><a href="https://protege.stanford.edu/publications/ontology_development/ontology101-noy-mcguinness.html" target="_blank" rel="noopener noreferrer">Ontology Development 101</a></li>
+</ul>
+<h3 id="reference-6">同行评审研究</h3>
+<ul>
+<li><a href="https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html" target="_blank" rel="noopener noreferrer">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>（NeurIPS 2020）</li>
+<li><a href="https://aclanthology.org/2025.emnlp-main.1674/" target="_blank" rel="noopener noreferrer">OG-RAG: Ontology-grounded Retrieval-Augmented Generation for Large Language Models</a>（EMNLP 2025）</li>
+</ul>
+<h3 id="reference-7">研究基准与预印本</h3>
+<ul>
+<li><a href="https://arxiv.org/abs/2409.02038" target="_blank" rel="noopener noreferrer">BEAVER: An Enterprise Benchmark for Text-to-SQL</a></li>
+<li><a href="https://arxiv.org/abs/2503.05388" target="_blank" rel="noopener noreferrer">Ontology Generation Using Large Language Models</a>（预印本，未经同行评审）</li>
+</ul>
+<h3 id="reference-8">工具厂商官方文档</h3>
+<p>以下资料用于说明具体产品和工程机制，不作为这些方案具有普遍效果的独立证据。</p>
+<ul>
+<li><a href="https://microsoft.github.io/graphrag/index/overview/" target="_blank" rel="noopener noreferrer">Microsoft GraphRAG：Indexing Overview</a></li>
+<li><a href="https://microsoft.github.io/graphrag/query/local_search/" target="_blank" rel="noopener noreferrer">Microsoft GraphRAG：Local Search</a></li>
+<li><a href="https://docs.getdbt.com/docs/use-dbt-semantic-layer/sl-faqs" target="_blank" rel="noopener noreferrer">dbt Semantic Layer FAQs</a></li>
+<li><a href="https://docs.getdbt.com/docs/build/join-logic" target="_blank" rel="noopener noreferrer">MetricFlow Join Logic</a></li>
+<li><a href="https://palantir.com/docs/foundry/ontology/overview/" target="_blank" rel="noopener noreferrer">Palantir Foundry Ontology</a></li>
+<li><a href="https://palantir.com/docs/foundry/action-types/overview/" target="_blank" rel="noopener noreferrer">Palantir Action Types</a></li>
+</ul></div>
+        <div class="related-posts" id="relatedPosts" style="display:none"><div class="related-title">相关文章</div><div class="related-list" id="relatedList"></div></div>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){ var saved = localStorage.getItem('blog_theme'); document.body.dataset.theme = saved === 'dark' ? 'dark' : 'light'; })();
+    (function(){ var sections = document.querySelectorAll('.post-body h2[id]'); var links = document.querySelectorAll('.toc-list a'); if (!sections.length || !links.length) return; var observer = new IntersectionObserver(function(entries){ entries.forEach(function(entry){ if (entry.isIntersecting) { var id = entry.target.id; links.forEach(function(link){ link.classList.toggle('toc-active', link.getAttribute('href') === '#' + id); }); } }); }, { rootMargin:'-20% 0px -70% 0px' }); sections.forEach(function(section){ observer.observe(section); }); })();
+    var POST_META = { slug:'ontology-business-semantic-layer', tags:[], topics:[], category:'技术' };
+    (async function(){ var data = await fetch('../data/posts-meta.json').then(function(response){ return response.json(); }); var posts = data.posts; var self = posts.find(function(post){ return post.slug === POST_META.slug; }); if (self) { POST_META.tags = self.tags || []; POST_META.topics = self.topics || []; document.getElementById('post-tags').innerHTML = POST_META.tags.concat(POST_META.topics).map(function(tag){ return '<span class="tag">' + tag + '</span>'; }).join(''); } if (posts.length >= 5) { var scored = posts.filter(function(post){ return post.slug !== POST_META.slug; }).map(function(post){ var score = 0; (post.topics || []).forEach(function(topic){ if (POST_META.topics.includes(topic)) score += 3; }); (post.tags || []).forEach(function(tag){ if (POST_META.tags.includes(tag)) score += 2; }); if (post.category === POST_META.category) score += 1; return Object.assign({}, post, { score:score }); }).filter(function(post){ return post.score >= 1; }).sort(function(a,b){ return b.score - a.score || b.date.localeCompare(a.date); }).slice(0,2); if (scored.length) { document.getElementById('relatedList').innerHTML = scored.map(function(post){ return '<a class="related-item" href="' + post.url.split('/').pop() + '"><span class="related-item-date">' + post.date + '</span><span class="related-item-title">' + post.title + '</span></a>'; }).join(''); document.getElementById('relatedPosts').style.display = 'block'; } } var sorted = posts.slice().sort(function(a,b){ return b.date.localeCompare(a.date); }); var index = sorted.findIndex(function(post){ return post.slug === POST_META.slug; }); var prev = index > 0 ? sorted[index - 1] : null; var next = index < sorted.length - 1 ? sorted[index + 1] : null; if (prev) { document.getElementById('navPrev').href = prev.url.split('/').pop(); document.getElementById('navPrevTitle').textContent = prev.title; document.getElementById('navPrev').style.display = 'flex'; } if (next) { document.getElementById('navNext').href = next.url.split('/').pop(); document.getElementById('navNextTitle').textContent = next.title; document.getElementById('navNext').style.display = 'flex'; } })();
+  </script>
+</body>
+</html>

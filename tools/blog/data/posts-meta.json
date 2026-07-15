@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "ontology-business-semantic-layer",
+      "date": "2026.07",
+      "title": "从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测",
+      "summary": "企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "企业AI",
+        "RAG"
+      ],
+      "category": "技术",
+      "url": "posts/ontology-business-semantic-layer.html"
+    },
+    {
       "slug": "enterprise-agent-fde",
       "date": "2026.07",
       "title": "从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？",

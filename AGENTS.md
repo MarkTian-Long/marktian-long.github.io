@@ -10,7 +10,7 @@
 5. `docs/agent-context/maintenance.md`
 6. 当前任务相关的 `.agents/skills/<name>/SKILL.md`
 
-`CLAUDE.md` 是 Claude Code 入口适配层；跨 Agent 的长期规范、skill 规则、memory 沉淀必须写回 `docs/agent-context/` 或 `CONVENTIONS.md`，不能只留在 Claude 私有记忆里。
+`AGENTS.md` 是 Codex 入口适配层；跨 Agent 的长期规范、skill 规则、memory 沉淀必须写回 `docs/agent-context/` 或 `CONVENTIONS.md`，不能只留在 Codex 私有记忆里。
 
 ## 项目概览
 Leo Liu（刘洋）的个人品牌站，定位为 AI · Product · Builder 的长期思想输出站。纯前端，零依赖，无构建工具。
@@ -34,7 +34,7 @@ tools/dashboard/                # 求职追踪 Dashboard
 tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
 tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
-tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
+tools/trends/                   # 热点快照（五大平台热榜 + Codex 点评）
 tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
 tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
@@ -52,13 +52,13 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 |------|------|------|------|
 | AI 产品拆解 | `tools/ai-insights/index.html` | 产品卡片 + 七 Tab 深度拆解 | 信息工具（默认） |
 | 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 | 信息工具 |
-| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 | 信息工具 |
+| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Codex 点评 | 信息工具 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
 | A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
 | 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 单页决策沙盘：选业务场景（银行/电商/创业）→ 9 张产品决策卡 + L4 链路图 + mock 对话 Demo 全部随场景联动（决策卡高亮该场景取舍、Demo 演该行业四链路含 HITL）。决策卡含评估维度/三场景取舍/PM·算法分工徽章/证据。浅色主题，由 gen_index.js 数据驱动生成 | PM 作品 |
 | ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（14节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
 | Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
-| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（28篇，按年份分组，双主题） | 信息工具（直链） |
+| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（33篇，按年份分组，双主题） | 信息工具（直链） |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
@@ -77,14 +77,14 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
 - 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
 
-## 给 Claude 的工作指令
-- **共享上下文优先**：每次对话开始时，先读取 `docs/agent-context/README.md`、`memory.md`、`skills.md`、`maintenance.md`。Claude 新沉淀的长期项目知识必须同步写回这些共享文档，确保 Codex 下次也能继承。
+## 给 Codex 的工作指令
+- **共享上下文优先**：每次对话开始时，先读取 `docs/agent-context/README.md`、`memory.md`、`skills.md`、`maintenance.md`。Codex 新沉淀的长期项目知识必须同步写回这些共享文档，确保 Claude 下次也能继承。
 - **月度维护提醒**：每次对话开始时，检查 `docs/agent-context/maintenance.md` 顶部的 `<!-- monthly-review: last=... next=YYYY-MM-DD -->` 注释。若今天日期 ≥ next 日期，在第一条回复末尾追加提示：「📋 月度维护已到期（next=YYYY-MM-DD），可输入 /monthly-review 执行。」
 - 修改代码前先读相关文件，不要靠猜
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
-- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评；或直接 `/update-trends` 联网全量搜索更新
+- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
 - ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
 - A股助手 key 配置在 `tools/stock/config.local.js`（不进 git），修改此文件而非 index.html
 - 线上部署的 key 存在 GitHub Secrets，由 `.github/workflows/deploy.yml` 在构建时注入：
@@ -129,7 +129,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 
 ## Skill 管理（项目级 skill 维护指南）
 
-项目级 skill 统一维护在 `.agents/skills/<name>/SKILL.md`。`.claude/skills/` 是 Claude 兼容层，优先使用 Junction 指向 `.agents/skills/`；不要把 `.claude/skills/` 维护成独立规范源。
+项目级 skill 统一维护在 `.agents/skills/<name>/SKILL.md`。`.claude/skills/` 是 Claude 兼容层，优先使用 Junction 指向 `.agents/skills/`；不要再新建独立的 `.Codex/skills/` 作为项目规范源。
 
 | Skill | 用途 | 最近更新 |
 |-------|------|----------|
@@ -137,7 +137,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | `analyze-product` | 联网采集 AI 产品数据→写入 products.json | 2026-04 |
 | `brand-design-md` | 获取品牌 DESIGN.md 规范并生成 UI | 2026-04 |
 | `code-health-check` | 代码规范检查（含博客双主题） | 2026-04 |
-| `sync-docs` | 代码变更后同步 README/CLAUDE/CONVENTIONS（含博客文档） | 2026-04 |
+| `sync-docs` | 代码变更后同步 README/Codex/CONVENTIONS（含博客文档） | 2026-04 |
 | `update-trends` | 五大平台热榜联网搜索 → trends.json | 2026-04 |
 | `monthly-review` | 月度维护：记忆清理 + 规范文档同步 + 季度架构快照 | 2026-05-13 |
 

@@ -43,7 +43,7 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，同步更新两处 `posts` 数组
+- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加元数据
 
 ## 嵌入方式
 
