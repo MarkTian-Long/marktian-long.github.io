@@ -235,7 +235,7 @@ category: 技术
       gap: 48px;
       align-items: start;
     }
-    .toc-wrap { position: sticky; top: 40px; }
+    .toc-wrap { position: sticky; top: 72px; }
     .toc-card {
       background: var(--bg-subtle);
       border: 1px solid var(--border);
@@ -287,6 +287,8 @@ category: 技术
     .nav-label { font-size: .75rem; color: var(--text-2); }
     .nav-title { font-size: .875rem; color: var(--text-1); }
     .post-nav a:hover .nav-title { color: var(--clay); }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
   </style>
 </head>
 <body data-theme="light">

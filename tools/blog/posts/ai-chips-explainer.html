@@ -207,7 +207,7 @@ category: 技术
       display: grid; grid-template-columns: 220px 1fr;
       gap: 48px; align-items: start;
     }
-    .toc-wrap { position: sticky; top: 40px; }
+    .toc-wrap { position: sticky; top: 72px; }
     .toc-card {
       background: var(--bg-subtle); border: 1px solid var(--border);
       border-radius: 8px; padding: 16px;
@@ -373,6 +373,8 @@ category: 技术
       border-color: var(--clay); color: var(--clay);
       background: var(--chip-asic-zone-bg);
     }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
   </style>
 </head>
 <body data-theme="light">

@@ -112,6 +112,9 @@ initial migration.
   three `h2` headings.
 - Fixed buttons inside max-width centered layouts should live in a content
   container or top bar, not float against viewport edges.
+- Blog article navigation pairs a sticky `.top-bar` (`top: 16px`, `8px` on
+  mobile) with a desktop TOC offset of `72px`, so the return link and directory
+  never crowd each other.
 - `og:image` must use the actual deployed domain.
 - Qualitative comparison or positioning charts should prefer HTML tables when
   rotated Chinese SVG labels would render poorly.
