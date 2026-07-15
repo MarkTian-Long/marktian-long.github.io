@@ -49,3 +49,4 @@ docs/blog/files.zip
 
 docs/personal/
 docs/*.html
+.worktrees/
