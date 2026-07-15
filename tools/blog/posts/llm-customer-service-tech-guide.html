@@ -106,10 +106,21 @@ category: 技术
     .toc-wrap { position: sticky; top: 40px; }
     .toc-card { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
     .toc-card-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); display: block; margin-bottom: 10px; }
-    .toc-list { list-style: none; margin: 0; padding: 0; }
-    .toc-list li { margin: 0; }
-    .toc-list a { display: block; padding: 5px 8px; color: var(--text-2); text-decoration: none; font-size: 0.85rem; line-height: 1.4; border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
-    .toc-list a:hover, .toc-list a.toc-active { color: var(--clay); border-left-color: var(--clay); background: var(--clay-soft); border-radius: 4px; }
+    .toc-list,.toc-sublist { list-style:none; margin:0; padding:0; }
+    .toc-list li { margin:0; }
+    .toc-list a { display:block; padding:5px 8px; color:var(--text-2); text-decoration:none; font-size:.85rem; line-height:1.4; border-left:2px solid transparent; border-radius:4px; transition:color .15s,border-color .15s,background .15s; }
+    .toc-list > li:not(.toc-group) > a { padding-left:38px; }
+    .toc-list a:hover,.toc-list a.toc-active { color:var(--clay); border-left-color:var(--clay); background:var(--clay-soft); }
+    .toc-group-row { display:flex; align-items:stretch; }
+    .toc-group-row > a { flex:1; min-width:0; }
+    .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; }
+    .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; }
+    .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; }
+    .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); }
+    .toc-sublist { padding:1px 0 3px; }
+    .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; }
+    .toc-sublist a:hover,.toc-sublist a.toc-active { background:transparent; color:var(--clay); border-left-color:var(--clay); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
     @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } .toc-wrap { display: none; } }
     .related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
     .related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
@@ -140,54 +151,78 @@ category: 技术
         <span class="toc-card-label">本文目录</span>
         <ul class="toc-list">
           <li><a href="#智能客服的复杂度分层">智能客服的复杂度分层</a></li>
-          <li><a href="#业务特性分类场景取舍的共同语言">业务特性分类：场景取舍的共同语言</a></li>
-          <li><a href="#冷启动期的最小可行系统" style="padding-left:18px;font-size:0.78rem">冷启动期的最小可行系统</a></li>
-          <li><a href="#一数据层知识从哪里来">一、数据层：知识从哪里来</a></li>
-          <li><a href="#1.1-知识库来源与文档解析" style="padding-left:18px;font-size:0.78rem">1.1 知识库来源与文档解析</a></li>
-          <li><a href="#1.2-chunking策略" style="padding-left:18px;font-size:0.78rem">1.2 Chunking策略</a></li>
-          <li><a href="#1.3-embedding模型选型" style="padding-left:18px;font-size:0.78rem">1.3 Embedding模型选型</a></li>
-          <li><a href="#1.4-向量数据库选型" style="padding-left:18px;font-size:0.78rem">1.4 向量数据库选型</a></li>
-          <li><a href="#数据层协作要点" style="padding-left:18px;font-size:0.78rem">数据层协作要点</a></li>
-          <li><a href="#二意图路由层请求走哪条路径">二、意图路由层：请求走哪条路径</a></li>
-          <li><a href="#2.1-意图识别与路由" style="padding-left:18px;font-size:0.78rem">2.1 意图识别与路由</a></li>
-          <li><a href="#三检索层怎么找到对的内容">三、检索层：怎么找到对的内容</a></li>
-          <li><a href="#3.1-查询改写query-rewriting" style="padding-left:18px;font-size:0.78rem">3.1 查询改写（Query Rewriting）</a></li>
-          <li><a href="#3.2-稠密检索稀疏检索与混合检索" style="padding-left:18px;font-size:0.78rem">3.2 稠密检索、稀疏检索与混合检索</a></li>
-          <li><a href="#3.3-重排序reranker" style="padding-left:18px;font-size:0.78rem">3.3 重排序（Reranker）</a></li>
-          <li><a href="#3.4-text-to-sql结构化数据的检索路径" style="padding-left:18px;font-size:0.78rem">3.4 Text-to-SQL：结构化数据的检索路径</a></li>
-          <li><a href="#检索层协作要点" style="padding-left:18px;font-size:0.78rem">检索层协作要点</a></li>
-          <li><a href="#四生成层怎么生成好答案">四、生成层：怎么生成好答案</a></li>
-          <li><a href="#4.1-主模型选型与评估框架" style="padding-left:18px;font-size:0.78rem">4.1 主模型选型与评估框架</a></li>
-          <li><a href="#4.2-prompt工程" style="padding-left:18px;font-size:0.78rem">4.2 Prompt工程</a></li>
-          <li><a href="#4.3-幻觉控制" style="padding-left:18px;font-size:0.78rem">4.3 幻觉控制</a></li>
-          <li><a href="#生成层协作要点" style="padding-left:18px;font-size:0.78rem">生成层协作要点</a></li>
-          <li><a href="#五对话管理层怎么管理一次完整对话">五、对话管理层：怎么管理一次完整对话</a></li>
-          <li><a href="#5.1-上下文窗口管理" style="padding-left:18px;font-size:0.78rem">5.1 上下文窗口管理</a></li>
-          <li><a href="#5.2-多轮对话状态管理" style="padding-left:18px;font-size:0.78rem">5.2 多轮对话状态管理</a></li>
-          <li><a href="#5.3-人工接管触发机制" style="padding-left:18px;font-size:0.78rem">5.3 人工接管触发机制</a></li>
-          <li><a href="#对话管理层协作要点" style="padding-left:18px;font-size:0.78rem">对话管理层协作要点</a></li>
-          <li><a href="#六评估层怎么知道系统够不够好">六、评估层：怎么知道系统够不够好</a></li>
-          <li><a href="#6.1-离线评估指标体系ragas框架" style="padding-left:18px;font-size:0.78rem">6.1 离线评估指标体系（RAGAS框架）</a></li>
-          <li><a href="#6.2-在线评估与ab测试" style="padding-left:18px;font-size:0.78rem">6.2 在线评估与A/B测试</a></li>
-          <li><a href="#6.3-持续监控与漂移检测" style="padding-left:18px;font-size:0.78rem">6.3 持续监控与漂移检测</a></li>
-          <li><a href="#评估层协作要点" style="padding-left:18px;font-size:0.78rem">评估层协作要点</a></li>
-          <li><a href="#七工程层怎么让系统跑得起来">七、工程层：怎么让系统跑得起来</a></li>
-          <li><a href="#7.1-延迟优化" style="padding-left:18px;font-size:0.78rem">7.1 延迟优化</a></li>
-          <li><a href="#7.2-数据安全与权限管控" style="padding-left:18px;font-size:0.78rem">7.2 数据安全与权限管控</a></li>
-          <li><a href="#7.3-可观测性与成本监控" style="padding-left:18px;font-size:0.78rem">7.3 可观测性与成本监控</a></li>
-          <li><a href="#工程层协作要点" style="padding-left:18px;font-size:0.78rem">工程层协作要点</a></li>
-          <li><a href="#八迭代闭环层系统怎么持续变好">八、迭代闭环层：系统怎么持续变好</a></li>
-          <li><a href="#8.1-badcase发现与归因" style="padding-left:18px;font-size:0.78rem">8.1 Badcase发现与归因</a></li>
-          <li><a href="#8.2-评估数据集的构建与维护" style="padding-left:18px;font-size:0.78rem">8.2 评估数据集的构建与维护</a></li>
-          <li><a href="#8.3-数据飞轮从用户反馈到系统迭代" style="padding-left:18px;font-size:0.78rem">8.3 数据飞轮：从用户反馈到系统迭代</a></li>
-          <li><a href="#总结ai-pm的决策地图">总结：AI PM的决策地图</a></li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-1"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开业务特性分类：场景取舍的共同语言的子章节</span></button><a href="#业务特性分类场景取舍的共同语言">业务特性分类：场景取舍的共同语言</a></div>
+            <ul class="toc-sublist" id="toc-group-1" hidden>
+            <li><a href="#冷启动期的最小可行系统">冷启动期的最小可行系统</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-2"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开一、数据层：知识从哪里来的子章节</span></button><a href="#一数据层知识从哪里来">一、数据层：知识从哪里来</a></div>
+            <ul class="toc-sublist" id="toc-group-2" hidden>
+            <li><a href="#1.1-知识库来源与文档解析">1.1 知识库来源与文档解析</a></li>
+            <li><a href="#1.2-chunking策略">1.2 Chunking 策略</a></li>
+            <li><a href="#1.3-embedding模型选型">1.3 Embedding 模型选型</a></li>
+            <li><a href="#1.4-向量数据库选型">1.4 向量数据库选型</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-3"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开二、意图路由层：请求走哪条路径的子章节</span></button><a href="#二意图路由层请求走哪条路径">二、意图路由层：请求走哪条路径</a></div>
+            <ul class="toc-sublist" id="toc-group-3" hidden>
+            <li><a href="#2.1-意图识别与路由">2.1 意图识别与路由</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-4"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开三、检索层：怎么找到对的内容的子章节</span></button><a href="#三检索层怎么找到对的内容">三、检索层：怎么找到对的内容</a></div>
+            <ul class="toc-sublist" id="toc-group-4" hidden>
+            <li><a href="#3.1-查询改写query-rewriting">3.1 查询改写</a></li>
+            <li><a href="#3.2-稠密检索稀疏检索与混合检索">3.2 混合检索</a></li>
+            <li><a href="#3.3-重排序reranker">3.3 重排序</a></li>
+            <li><a href="#3.4-text-to-sql结构化数据的检索路径">3.4 Text-to-SQL</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-5"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开四、生成层：怎么生成好答案的子章节</span></button><a href="#四生成层怎么生成好答案">四、生成层：怎么生成好答案</a></div>
+            <ul class="toc-sublist" id="toc-group-5" hidden>
+            <li><a href="#4.1-主模型选型与评估框架">4.1 主模型选型与评估</a></li>
+            <li><a href="#4.2-prompt工程">4.2 Prompt 工程</a></li>
+            <li><a href="#4.3-幻觉控制">4.3 幻觉控制</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-6"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开五、对话管理层：完整对话的子章节</span></button><a href="#五对话管理层怎么管理一次完整对话">五、对话管理层：完整对话</a></div>
+            <ul class="toc-sublist" id="toc-group-6" hidden>
+            <li><a href="#5.1-上下文窗口管理">5.1 上下文窗口管理</a></li>
+            <li><a href="#5.2-多轮对话状态管理">5.2 多轮对话状态管理</a></li>
+            <li><a href="#5.3-人工接管触发机制">5.3 人工接管触发机制</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-7"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开六、评估层：怎么知道够不够好的子章节</span></button><a href="#六评估层怎么知道系统够不够好">六、评估层：怎么知道够不够好</a></div>
+            <ul class="toc-sublist" id="toc-group-7" hidden>
+            <li><a href="#6.1-离线评估指标体系ragas框架">6.1 离线评估指标</a></li>
+            <li><a href="#6.2-在线评估与ab测试">6.2 在线评估与 A/B 测试</a></li>
+            <li><a href="#6.3-持续监控与漂移检测">6.3 持续监控与漂移</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-8"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开七、工程层：怎么让系统跑起来的子章节</span></button><a href="#七工程层怎么让系统跑得起来">七、工程层：怎么让系统跑起来</a></div>
+            <ul class="toc-sublist" id="toc-group-8" hidden>
+            <li><a href="#7.1-延迟优化">7.1 延迟优化</a></li>
+            <li><a href="#7.2-数据安全与权限管控">7.2 数据安全与权限</a></li>
+            <li><a href="#7.3-可观测性与成本监控">7.3 可观测性与成本监控</a></li>
+            </ul>
+          </li>
+          <li class="toc-group">
+            <div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-group-9"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开八、迭代闭环层：持续变好的子章节</span></button><a href="#八迭代闭环层系统怎么持续变好">八、迭代闭环层：持续变好</a></div>
+            <ul class="toc-sublist" id="toc-group-9" hidden>
+            <li><a href="#8.1-badcase发现与归因">8.1 Badcase 发现与归因</a></li>
+            <li><a href="#8.2-评估数据集的构建与维护">8.2 评估数据集</a></li>
+            <li><a href="#8.3-数据飞轮从用户反馈到系统迭代">8.3 数据飞轮</a></li>
+            </ul>
+          </li>
+          <li><a href="#总结ai-pm的决策地图">总结：AI PM 的决策地图</a></li>
           <li><a href="#参考资料">参考资料</a></li>
-          <li><a href="#一手文件-官方发布" style="padding-left:18px;font-size:0.78rem">一手文件 / 官方发布</a></li>
-          <li><a href="#法律案例" style="padding-left:18px;font-size:0.78rem">法律案例</a></li>
-          <li><a href="#学术研究同行评审或接近同行评审" style="padding-left:18px;font-size:0.78rem">学术研究（同行评审或接近同行评审）</a></li>
-          <li><a href="#工具厂商数据官方声称未经独立验证" style="padding-left:18px;font-size:0.78rem">工具厂商数据（官方声称，未经独立验证）</a></li>
-          <li><a href="#行业博客-分析文章非同行评审供参考" style="padding-left:18px;font-size:0.78rem">行业博客 / 分析文章（非同行评审，供参考）</a></li>
-          <li><a href="#工具文档" style="padding-left:18px;font-size:0.78rem">工具文档</a></li>
         </ul>
       </nav>
     </aside>
@@ -1045,17 +1080,29 @@ Badcase筛选与归因
 (function(){
   var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
   var links = document.querySelectorAll('.toc-list a');
-  if (sections.length && links.length) {
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          var id = entry.target.id;
-          links.forEach(function(a){a.classList.toggle('toc-active', a.getAttribute('href')==='#'+id);});
-        }
-      });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-    sections.forEach(function(s){observer.observe(s);});
+  function setGroupExpanded(group, expanded) {
+    var toggle = group && group.querySelector('.toc-toggle');
+    var sublist = group && group.querySelector('.toc-sublist');
+    if (!toggle || !sublist) return;
+    toggle.setAttribute('aria-expanded', String(expanded));
+    sublist.hidden = !expanded;
   }
+  document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+    toggle.addEventListener('click', function(){
+      setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+    });
+  });
+  if (!sections.length || !links.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var id = entry.target.id;
+      var active = Array.prototype.find.call(links, function(link) { return link.getAttribute('href') === '#' + id; });
+      links.forEach(function(link) { link.classList.toggle('toc-active', link === active); });
+      if (active) setGroupExpanded(active.closest('.toc-group'), true);
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(function(section) { observer.observe(section); });
 })();
 (function(){
   var saved = localStorage.getItem('blog_theme');
