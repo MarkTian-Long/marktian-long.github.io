@@ -149,6 +149,7 @@ function toggleCaseDetail(btn) {
   const isOpen = body.classList.contains('open');
   body.classList.toggle('open', !isOpen);
   btn.classList.toggle('open', !isOpen);
+  if (!isOpen) window.trackAnalyticsEvent?.('case_detail_open', { case_title: btn.closest('.case-row')?.querySelector('.case-row-title')?.textContent || 'unknown' });
 }
 
 // ---- TOOL OPENER ----
@@ -164,6 +165,7 @@ function openTool(tool) {
   if (!isOpen) {
     panel.classList.remove('hidden');
     if (card) card.classList.add('active');
+    window.trackAnalyticsEvent?.('tool_open', { tool_name: tool, source_surface: 'homepage' });
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
