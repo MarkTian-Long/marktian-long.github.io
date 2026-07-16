@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+date:    2026.07
+title:   业务流程，如何变成 Agent 产品架构？
+tags:    [决策框架]
+slug:    agent-boundary
+summary: 设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。
+category: 产品
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>业务流程，如何变成 Agent 产品架构？ — Leo 的思考碎片</title>
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="业务流程，如何变成 Agent 产品架构？" />
+  <meta property="og:description" content="设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。" />
+  <meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/agent-boundary.html" />
+  <meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="业务流程，如何变成 Agent 产品架构？" />
+  <meta name="twitter:description" content="设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。" />
+  <meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .related-posts { margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .related-title { margin-bottom:1rem; color:var(--text-2); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; } .related-item { display:flex; align-items:baseline; gap:.75rem; padding:.5rem 0; text-decoration:none; } .related-item:hover .related-item-title { color:var(--clay); } .related-item-date { color:var(--text-2); font-size:.75rem; white-space:nowrap; } .related-item-title { color:var(--text-1); font-size:.9rem; }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、业务流程图为什么不是 Agent 产品架构图</a></li><li><a href="#section-2">二、先问：这个节点真的需要 Agent 吗？</a></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-3"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-3">三、需要 Agent，不等于需要独立 Agent</a></div><ul class="toc-sublist" id="toc-section-3" hidden><li><a href="#section-4">哪些边界支持独立 Agent</a></li><li><a href="#section-5">用轻量 Agent Contract 做反向检查</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-6"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-6">四、即使能够拆开，也要证明拆分值得</a></div><ul class="toc-sublist" id="toc-section-6" hidden><li><a href="#section-7">拆分也可能只是运行时计算策略</a></li><li><a href="#section-8">协调成本如何反噬拆分收益</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-9"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-9">五、智能投顾：对一张多 Agent 方案做“删、合、拆”</a></div><ul class="toc-sublist" id="toc-section-9" hidden><li><a href="#section-10">第一步：删——把不需要自主决策的模块还给软件</a></li><li><a href="#section-11">第二步：合——把共享目标和上下文的 Agent 能力留在一起</a></li><li><a href="#section-12">第三步：拆——让真实失效模式推动边界出现</a></li></ul></li><li><a href="#section-13">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.07</span><span id="post-tags"></span></div><h1 class="post-title">业务流程，如何变成 Agent 产品架构？</h1><p class="post-summary">设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><p>Agent 产品设计里，一个很常见的诱惑，是把业务流程里的每个节点都命名成一个 Agent。</p>
+<p>假设我们要设计一个智能投顾系统。</p>
+<p>从业务流程看，它可能包括客户需求理解、资产与持仓分析、市场研究、组合生成、风险审核、合规审核、推荐解释和交易执行。按照这条链路，很容易画出一张看起来分工明确的多 Agent 架构图：</p>
+<p>客户理解 Agent → 资产分析 Agent → 市场研究 Agent → 组合生成 Agent → 风险 Agent → 合规 Agent → 解释 Agent → 交易 Agent。</p>
+<p>每个业务步骤都有一个对应的 Agent，每个方框都有自己的名称，架构也显得足够“Agentic”。</p>
+<p>这并非只存在于架构图里的争论。2025 年 2 月，OpenAI 将 <a href="https://openai.com/index/introducing-deep-research/" target="_blank" rel="noopener noreferrer">deep research</a> 作为一个能够自主浏览、分析并综合大量网络来源的 Agent 能力推出；同年 6 月，Anthropic 则公开其 Research 产品采用“主 Agent 规划、多个子 Agent 并行搜索”的<a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank" rel="noopener noreferrer">多 Agent 架构</a>。两款产品面对的都是复杂研究任务，却公开呈现出不同的系统组织方式。<strong>业务目标相似，并不意味着 Agent 数量应该相同。</strong></p>
+<p>但这张图跳过了最关键的问题：资产分析真的需要自主决定下一步吗？风险计算为什么要交给大模型？推荐生成和推荐解释是否必须由两个彼此独立的 Agent 完成？合规审核中的明确规则、模糊判断和最终责任，是否应该被塞进同一个方框？</p>
+<p><strong>业务流程图描述的是工作怎样发生，Agent 架构图描述的是自主决策怎样分配和隔离。两者之间不能直接画等号。</strong></p>
+<p>这也是本文想讨论的核心问题：不是先决定要画几个 Agent，再给每个 Agent 找工作；而是先理解业务流程，再从真实约束中推导哪些地方需要 Agent、哪些 Agent 能力需要独立，以及这种拆分是否值得。</p>
+<h2 id="section-1">一、业务流程图为什么不是 Agent 产品架构图</h2>
+<p>按流程拆 Agent 之所以常见，是因为它符合两种非常自然的直觉。</p>
+<p>第一种直觉来自软件模块化。复杂系统本来就应该被拆分，每个模块有清楚的输入和输出。因此，当一个业务流程包含五个步骤时，把它拆成五个组件并没有问题。问题在于，<strong>独立软件模块不等于独立 Agent</strong>。数据清洗服务、规则引擎、风险计算模块和订单系统都可以独立部署、独立维护，却不需要开放式自主决策。</p>
+<p>第二种直觉来自人类组织结构。现实中的智能投顾可能涉及投资顾问、研究员、风控、合规和交易人员，于是架构图也沿着岗位边界拆分。但一个人类岗位往往同时包含信息检索、确定性计算、经验判断、审批责任和沟通协作。把整个岗位压缩成一个 Agent，不仅可能把不该交给模型的权限交出去，也可能掩盖真正需要软件、规则或人工承担的部分。</p>
+<p>类似的问题也会发生在 Prompt 和工具层。为客户理解、方案生成、内容解释分别写了不同 Prompt，不代表系统里自然出现了三个 Agent；一次模型调用、一个搜索工具或者一个 Workflow 节点，也不会因为被画成单独方框就获得自主性。</p>
+<p>流程当然仍然有价值。它能帮助产品经理找出判断点、数据依赖、状态变化、高风险动作和可能的并行任务。<strong>流程可以提供候选拆分点，但流程位置本身不足以证明一个独立 Agent 应当存在。</strong></p>
+<h2 id="section-2">二、先问：这个节点真的需要 Agent 吗？</h2>
+<p>“Agent”目前没有完全统一的行业定义。本文采用一个便于产品设计的工作定义：</p>
+<p><strong>Agent 是围绕一个明确目标，在限定的上下文、工具和权限内，能够根据中间结果自主决定下一步行动的 AI 单元。</strong></p>
+<p>这个定义强调的不是它有没有名字、调用了几次模型，而是它是否掌握了任务路径的部分控制权。Anthropic 在区分 Workflow 与 Agent 时也采用了相近的架构边界：Workflow 的路径主要由预先编排的代码确定，而 Agent 会动态决定自己的处理过程与工具使用方式；同时，他们建议从满足需求的最简单方案开始，只在必要时增加复杂度。<a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener noreferrer">Anthropic：Building Effective Agents</a></p>
+<p>回到智能投顾，业务链上的许多环节即使重要、复杂，也不需要 Agent：</p>
+<div class="blog-table"><table><thead><tr><th>业务能力</th><th>更合适的系统形态</th><th>主要原因</th></tr></thead><tbody><tr><td>身份认证与账户查询</td><td>普通软件服务</td><td>权限和路径应严格确定</td></tr><tr><td>资产、持仓归一化</td><td>数据 Workflow / 服务</td><td>规则、映射与校验为主</td></tr><tr><td>风险指标计算</td><td>确定性服务</td><td>公式和结果需要可复现</td></tr><tr><td>组合优化</td><td>数学优化服务</td><td>目标函数与约束需要明确</td></tr><tr><td>明确适当性规则</td><td>规则引擎</td><td>规则应稳定执行和审计</td></tr><tr><td>余额校验与订单提交</td><td>交易服务</td><td>高风险动作不能由模型自由完成</td></tr><tr><td>审计日志</td><td>基础设施</td><td>负责记录事实，不负责开放式判断</td></tr><tr><td>客户诉求理解与动态追问</td><td>Agent 能力候选</td><td>需要根据回答调整问题</td></tr><tr><td>开放式市场研究</td><td>Agent 能力候选</td><td>路径会随中间发现变化</td></tr><tr><td>建议生成与解释</td><td>Agent 能力候选</td><td>需要综合多种约束和材料</td></tr></tbody></table></div>
+<p>这里的关键不是“LLM 能不能参与”。Agent 可以调用风险计算和组合优化服务，也可以解释计算结果；但最终数值计算、余额校验、身份认证和订单提交仍应由确定性系统完成。</p>
+<p><strong>业务重要性、逻辑复杂度和独立部署，都不能自动证明一个模块需要 Agent。是否需要根据中间结果自主选择行动，才是第一道门槛。</strong></p>
+<h2 id="section-3">三、需要 Agent，不等于需要独立 Agent</h2>
+<p>通过第一道筛选后，智能投顾仍然可能剩下多个需要模型自主判断的能力：理解客户诉求、动态追问、查找市场信息、组织候选方案、生成建议和解释理由。</p>
+<p>但它们不必因此逐一成为 Agent。</p>
+<p>客户理解、建议生成与推荐解释可能共享同一个端到端目标：帮助用户形成一份符合其需求和约束的投资建议。它们需要读取相同的客户上下文，延续同一段对话状态，并对同一个最终输出负责。把它们拆开，可能只是把一个连续的决策循环切成了几个 Prompt 阶段，却没有形成真正的系统边界。</p>
+<h3 id="section-4">哪些边界支持独立 Agent</h3>
+<p>那么，什么情况下才出现独立 Agent 的理由？本文暂且归纳为四类候选信号：</p>
+<ul><li><strong>结果边界</strong>：是否交付不同的业务结果，承担不同的评价标准、审核、否决或追责责任；</li><li><strong>信息边界</strong>：是否需要隔离不同数据、上下文、状态或任务生命周期；</li><li><strong>行动边界</strong>：是否可以调用不同工具，修改不同对象，或执行、批准和否决不同动作；</li><li><strong>运行边界</strong>：是否存在显著的并行与专业化收益，或者需要独立部署、审计、恢复和版本管理。</li></ul>
+<p>这四类信号不是行业标准，也不是必须逐项满足的评分表，更不存在适用于所有业务的固定优先级。在金融、医疗等高风险场景里，行动权限和独立否决可能是最强边界；在研究、代码探索等低风险任务里，并行和上下文隔离也可能单独创造足够价值。</p>
+<p>真正需要追问的是：</p>
+<p><strong>当前有哪些约束，很难由同一个 Agent 低成本地共同维持？</strong></p>
+<p>例如，投资建议生成的目标是尽可能形成有用方案，而合规审核的目标是在必要时阻止方案继续流转。两者可以共享部分客户和产品信息，却可能拥有不同的错误成本、证据要求和否决权。此时，合规判断比“推荐解释”更容易形成独立边界，不是因为它恰好位于下一步，而是因为它承担了不同的系统责任。</p>
+<p>可以把这层判断压缩成一句话：</p>
+<p><strong>自主性决定一个能力是否需要 Agent，值得隔离的边界才决定它是否需要成为独立 Agent。</strong></p>
+<h3 id="section-5">用轻量 Agent Contract 做反向检查</h3>
+<p>为了避免“边界”停留在抽象判断，候选 Agent 还可以用一份轻量的 Agent Contract 做反向检查。它不是行业统一标准，也不是新的评分表，而是把前三类边界写成三个可讨论的问题。第四类“运行边界”则留在下一节，用来判断这种独立是否值得付出协调成本。</p>
+<p>OpenAI 在 2026 年发布 <a href="https://openai.com/index/introducing-openai-frontier/" target="_blank" rel="noopener noreferrer">Frontier</a> 时，将共享业务上下文、身份与权限边界、持续评价列为企业 Agent 进入真实工作的基础；A2A 协议也通过 <a href="https://a2a-protocol.org/latest/specification/" target="_blank" rel="noopener noreferrer">Agent Card</a> 声明 Agent 的能力、技能和认证要求；Anthropic 则把 Agent 的持续评测作为独立工程问题讨论。<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic：Demystifying Evals for AI Agents</a> 这些实践并没有形成统一的“Agent Contract”。本文只是把结果责任、信息范围和行动权限压缩成三个问题：</p>
+<div class="blog-table"><table><thead><tr><th>字段</th><th>需要回答的问题</th></tr></thead><tbody><tr><td>Outcome</td><td>它负责什么结果、不负责什么，怎样算做好？</td></tr><tr><td>Information</td><td>它可以读取哪些信息，需要维护哪些状态，事实来源在哪里？</td></tr><tr><td>Action</td><td>它能够调用哪些工具和确定性服务，又能决定、修改、执行或否决什么？</td></tr></tbody></table></div>
+<p>这里还需要澄清 Prompt 与 Agent Contract 的关系：Prompt 不是与这三项并列的第四个字段，而是向模型表达部分边界的实现载体。</p>
+<p>目标、任务范围和部分行为要求可以写入 Prompt。可访问的信息、状态和行动权限，需要通过上下文装配、数据访问控制、工具白名单和运行时审批真正落实；一个 Agent 是否完成目标、表现是否达标，则必须依靠外部测试、监控和审计验证，而不能只依赖模型自检。</p>
+<p>这份轻量 Contract 的价值不只是拆分后的文档，也在于反向检验拆分是否真实成立：如果两个 Agent 的 Outcome、Information 和 Action 几乎完全相同，只是位于不同流程步骤、使用了不同 Prompt，那么它们可能只是同一个 Agent 的两个内部阶段。</p>
+<p><strong>如果边界写不清，独立 Agent 很可能也不成立。</strong></p>
+<h2 id="section-6">四、即使能够拆开，也要证明拆分值得</h2>
+<p>很多能力都可以被包装成独立 Agent。只要为它配置一套 Prompt、工具和输出格式，就能在架构图上画出新的方框。但“可以拆”只说明技术上能够运行，“应该拆”还需要证明拆分后的系统更好。</p>
+<p>多 Agent 可能带来真实收益：</p>
+<ul><li>每个 Agent 的上下文更窄，减少无关信息干扰；</li><li>不同 Agent 可以采用不同工具、模型和工作策略；</li><li>高风险动作能够遵循最小权限原则；</li><li>生成者和审核者可以拥有相对独立的目标；</li><li>可并行任务能同时探索，提高覆盖范围和速度；</li><li>局部能力可以独立评测、迭代和故障恢复。</li></ul>
+<h3 id="section-7">拆分也可能只是运行时计算策略</h3>
+<p>多 Agent 的价值也不只来自长期责任、权限或否决边界。在低风险任务里，它也可能只是一种运行时计算策略。</p>
+<p>考虑一项海外市场研究任务。系统需要同时研究四个国家，每个国家的资料、搜索路径和局部结论相对独立，最后可以按照统一结构汇总。此时，主 Agent 临时生成多个子 Agent 并行研究，可能是合理的计算策略。</p>
+<p>Anthropic 的 Research 系统就是一个现实例子：主 Agent 会规划研究任务，并生成多个拥有独立上下文窗口的子 Agent 并行搜索，最后再汇总结果。官方披露认为这种方式更适合广度优先、可以沿多个独立方向探索的任务；相反，当任务要求所有 Agent 共享大量上下文，或子任务之间存在密集依赖时，多 Agent 并不合适。<a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank" rel="noopener noreferrer">Anthropic：How We Built Our Multi-Agent Research System</a></p>
+<p>这里使拆分成立的不是“流程有四步”，而是四个条件恰好同时存在：任务能够并行、上下文可以隔离、局部结果可以独立验收、汇总成本相对可控。</p>
+<p>这些子 Agent 通常只服务于当次任务，并不代表企业长期划分了四个稳定业务责任。换句话说，系统长期需要几个独立 Agent，与一次运行中临时调度几个子 Agent，是两个不同问题。</p>
+<p><strong>流程边界有时确实会与 Agent 边界重合，但这种重合需要被证明，不能被预设。</strong></p>
+<h3 id="section-8">协调成本如何反噬拆分收益</h3>
+<p>但拆分也会把原本发生在一个上下文里的连续思考，变成多个系统单元之间的交接：</p>
+<ul><li>上游需要决定向下游传递什么，遗漏的信息可能无法恢复；</li><li>多个 Agent 可能对同一客户状态或任务进度产生不同理解；</li><li>一个 Agent 的错误可能被下游当作事实继续放大；</li><li>目标、终止条件和责任归属可能在交接处变得模糊；</li><li>调度、通信、追踪、测试和故障定位都会变复杂。</li></ul>
+<p>一项针对多个 LLM 多 Agent 框架执行轨迹的研究，将常见失败归纳为系统设计、Agent 间失配以及任务验证等类别，其中包括角色规范不清、上下文丢失、重复执行、忽略其他 Agent 输入和错误终止等问题。<a href="https://arxiv.org/abs/2503.13657" target="_blank" rel="noopener noreferrer">Why Do Multi-Agent LLM Systems Fail?</a> 这意味着多 Agent 的可靠性问题不只是基础模型能力不足，也可能来自架构本身。</p>
+<p>成本也不只是工程复杂度。Anthropic 在介绍其多 Agent Research 系统时称，该架构适合需要广泛并行搜索、跨越单个上下文容量的研究任务，但其内部数据中，多 Agent 系统消耗的 Token 约为普通聊天的 15 倍；这属于厂商官方内部数据，未经独立验证，却足以说明性能收益通常伴随着明显成本。<a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank" rel="noopener noreferrer">Anthropic：How We Built Our Multi-Agent Research System</a></p>
+<p>多 Agent 也已经从实验框架进入主流云平台的产品能力。AWS 在 2025 年 3 月宣布 <a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-announces-general-availability-of-multi-agent-collaboration/" target="_blank" rel="noopener noreferrer">Amazon Bedrock 多 Agent 协作正式可用</a>，支持主管 Agent 路由、协调和并行调用子 Agent，并把最小数据访问、追踪和调试作为产品能力。值得注意的是，同一份发布也把依赖管理、延迟和监控复杂度列为 Agent 数量增加后的现实挑战。这个信号能证明多 Agent 正在进入生产工具链，却不能证明复杂流程天然应该被拆成更多 Agent。</p>
+<p>多个 Agent 之间还需要共享客户、产品、状态和动作的业务定义。上一篇讨论的<a href="https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html" target="_blank" rel="noopener noreferrer">业务语义层</a>可以提供这套共同语言，但它不能替我们决定系统需要几个 Agent。语义一致能够降低交接成本，却不能证明拆分本身合理。</p>
+<p><strong>“可以拆”只是技术可能性，“拆了更好”才是架构理由。</strong></p>
+<h2 id="section-9">五、智能投顾：对一张多 Agent 方案做“删、合、拆”</h2>
+<p>现在回到开头那张简化的智能投顾多 Agent 图。与其先争论它应该有三个、五个还是八个 Agent，不如按照三道判断重新推导：这里是否需要 Agent？是否需要独立？拆分是否值得？</p>
+<div class="blog-table"><table><thead><tr><th>动作</th><th>典型能力</th><th>判断依据</th></tr></thead><tbody><tr><td>删</td><td>风险计算、组合优化、订单提交</td><td>不需要开放式自主决策</td></tr><tr><td>合</td><td>客户理解、动态追问、建议生成与解释</td><td>共享目标、上下文和结果责任</td></tr><tr><td>拆</td><td>独立合规审核、长期研究能力</td><td>存在值得隔离的边界，且收益超过协调成本</td></tr></tbody></table></div>
+<p>这张表不是智能投顾的固定架构，而是接下来重新推导时使用的三种动作。</p>
+<h3 id="section-10">第一步：删——把不需要自主决策的模块还给软件</h3>
+<p>资产与持仓归一化、风险指标计算、组合优化、身份认证、余额校验、订单提交和审计日志，应优先回到数据服务、规则引擎、数学优化器、交易系统和基础设施中。</p>
+<p>这不是因为这些能力不重要，恰恰相反，正因为它们涉及资金、账户和可审计结果，才更应该使用确定、可复现、可测试的实现。</p>
+<p>Agent 可以提出需要计算哪些风险指标，也可以调用优化服务比较不同方案；但不能自行“估算”风险数值，更不能绕过交易校验直接提交订单。</p>
+<h3 id="section-11">第二步：合——把共享目标和上下文的 Agent 能力留在一起</h3>
+<p>客户意图理解、动态追问、方案组织和推荐解释都需要一定自主性，但在第一版产品中，它们可能适合保留在同一个投顾 Agent 内。</p>
+<p>这个 Agent 可以围绕用户目标形成一个连续循环：理解问题，判断信息是否足够，必要时追问，调用市场与风险工具，组织候选方案，再用用户能够理解的方式说明限制和理由。</p>
+<p>把这些能力拆成多个 Agent 并非永远错误。但如果它们读取几乎相同的上下文、没有权限差异、无法独立评价，并且最终都服务于同一份建议，那么拆开后的主要变化可能只是增加信息交接。</p>
+<h3 id="section-12">第三步：拆——让真实失效模式推动边界出现</h3>
+<p>最低复杂度方案并不意味着永远只保留一个 Agent。当系统出现明确失效模式时，拆分可能开始创造价值。</p>
+<p><strong>市场研究拖垮主 Agent 上下文。</strong>如果一次任务需要同时研究多个资产、地区和宏观因素，主 Agent可能被大量搜索轨迹淹没。此时可以先临时调度研究子 Agent，分别探索不同方向，再返回压缩后的证据和结论。</p>
+<p><strong>研究能力成为多个业务的长期依赖。</strong>当投资建议、再平衡、客户问答和内部投研都持续调用同一研究能力，并且其数据源、时效要求、输出契约和评价指标趋于稳定，它才更可能从临时子任务演进为长期独立 Agent。</p>
+<p><strong>建议生成与合规审核需要真正独立。</strong>如果审核者必须依据不同标准判断、具有独立否决权，并且漏放和误拦的成本明显不同，那么把审核完全留在建议 Agent 内部可能无法形成真实监督。不过，合规中的确定规则仍应由规则引擎执行；Agent 更适合处理需要理解非结构化材料、识别冲突或解释例外的模糊判断，最终高风险事项仍可能需要人工复核。</p>
+<p><strong>行动权限过于集中。</strong>负责理解需求和生成建议的 Agent，不应因此自动拥有修改客户风险等级或提交交易的权限。高风险动作应继续由确定性服务执行，并受到用户确认、人工审批、权限校验和审计约束。OpenAI Agents SDK 的工具审批机制也体现了类似思路：敏感工具调用可以暂停执行，等待人工批准或拒绝。<a href="https://openai.github.io/openai-agents-python/human_in_the_loop/" target="_blank" rel="noopener noreferrer">OpenAI Agents SDK：Human-in-the-loop</a></p>
+<p>经过“删、合、拆”，智能投顾的最低复杂度基准可能是：一个主要投顾 Agent，调用客户与账户数据服务、市场信息工具、风险计算服务、组合优化服务、合规规则和交易服务，并在必要时接入临时研究子 Agent、独立审核能力及人工复核。</p>
+<p>这不是生产系统的标准答案。不同机构的数据隔离、监管要求、产品范围和风险偏好不同，第一版架构也可能已经需要多个独立 Agent。</p>
+<p><strong>智能投顾最终可能是单 Agent，也可能是多 Agent；关键不在流程有多少步，而在实际约束产生了哪些必须隔离的边界。</strong></p>
+<p>业务流程分析仍然是 Agent 架构设计的起点。没有流程，我们无法识别数据从哪里来、判断在哪里发生、哪些动作会改变业务状态，也无法发现风险和依赖。</p>
+<p>但流程到架构之间不能省略三道判断：这里真的需要 Agent 吗？这个自主能力真的需要独立吗？拆分带来的收益足以覆盖协调成本吗？</p>
+<p>不是 Agent 越少越好，也不是多 Agent 越先进。最低复杂度不是无条件追求最少的方框，而是在满足业务约束后，不增加未经证明的自主决策单元。</p>
+<p><strong>先按流程理解业务，再按边界设计 Agent。Agent 数量应当是系统约束和真实失效模式推导出的结果，而不是流程步骤数量的映射。</strong></p>
+<h2 id="section-13">参考资料</h2>
+<h3 id="section-14">一手资料与官方工程实践</h3>
+<ul><li><a href="https://openai.com/index/introducing-deep-research/" target="_blank" rel="noopener noreferrer">OpenAI：Introducing deep research</a></li><li><a href="https://openai.com/index/introducing-openai-frontier/" target="_blank" rel="noopener noreferrer">OpenAI：Introducing Frontier</a></li><li><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener noreferrer">Anthropic：Building Effective AI Agents</a></li><li><a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank" rel="noopener noreferrer">Anthropic：How We Built Our Multi-Agent Research System</a></li><li><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic：Demystifying Evals for AI Agents</a></li><li><a href="https://openai.github.io/openai-agents-python/human_in_the_loop/" target="_blank" rel="noopener noreferrer">OpenAI Agents SDK：Human-in-the-loop</a></li><li><a href="https://a2a-protocol.org/latest/specification/" target="_blank" rel="noopener noreferrer">A2A Protocol Specification</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-announces-general-availability-of-multi-agent-collaboration/" target="_blank" rel="noopener noreferrer">AWS：Amazon Bedrock announces general availability of multi-agent collaboration</a></li></ul>
+<h3 id="section-15">学术研究</h3>
+<ul><li><a href="https://arxiv.org/abs/2503.13657" target="_blank" rel="noopener noreferrer">Why Do Multi-Agent LLM Systems Fail?</a></li></ul>
+<h3 id="section-16">系列文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html" target="_blank" rel="noopener noreferrer">从同义词表到业务语义层：企业如何向 AI 描述自己的业务世界</a></li></ul></div>
+        <div class="related-posts" id="relatedPosts" style="display:none"><div class="related-title">相关文章</div><div class="related-list" id="relatedList"></div></div>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){ var saved = localStorage.getItem('blog_theme'); document.body.dataset.theme = saved === 'dark' ? 'dark' : 'light'; })();
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();
+    var POST_META = { slug:'agent-boundary', tags:[], topics:[], category:'产品' };
+    (async function(){ var data = await fetch('../data/posts-meta.json').then(function(response){ return response.json(); }); var posts = data.posts; var self = posts.find(function(post){ return post.slug === POST_META.slug; }); if (self) { POST_META.tags = self.tags || []; POST_META.topics = self.topics || []; document.getElementById('post-tags').innerHTML = POST_META.tags.concat(POST_META.topics).map(function(tag){ return '<span class="tag">' + tag + '</span>'; }).join(''); } if (posts.length >= 5) { var scored = posts.filter(function(post){ return post.slug !== POST_META.slug; }).map(function(post){ var score = 0; (post.topics || []).forEach(function(topic){ if (POST_META.topics.includes(topic)) score += 3; }); (post.tags || []).forEach(function(tag){ if (POST_META.tags.includes(tag)) score += 2; }); if (post.category === POST_META.category) score += 1; return Object.assign({}, post, { score:score }); }).filter(function(post){ return post.score >= 1; }).sort(function(a,b){ return b.score - a.score || b.date.localeCompare(a.date); }).slice(0,2); if (scored.length) { document.getElementById('relatedList').innerHTML = scored.map(function(post){ return '<a class="related-item" href="' + post.url.split('/').pop() + '"><span class="related-item-date">' + post.date + '</span><span class="related-item-title">' + post.title + '</span></a>'; }).join(''); document.getElementById('relatedPosts').style.display = 'block'; } } var sorted = posts.slice().sort(function(a,b){ return b.date.localeCompare(a.date); }); var index = sorted.findIndex(function(post){ return post.slug === POST_META.slug; }); var prev = index > 0 ? sorted[index - 1] : null; var next = index < sorted.length - 1 ? sorted[index + 1] : null; if (prev) { document.getElementById('navPrev').href = prev.url.split('/').pop(); document.getElementById('navPrevTitle').textContent = prev.title; document.getElementById('navPrev').style.display = 'flex'; } if (next) { document.getElementById('navNext').href = next.url.split('/').pop(); document.getElementById('navNextTitle').textContent = next.title; document.getElementById('navNext').style.display = 'flex'; } })();
+  </script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

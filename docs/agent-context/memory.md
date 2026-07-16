@@ -95,6 +95,20 @@ initial migration.
 
 ### Blog system
 
+- 2026-07-16 Codex: Markdown-generated blog pages can inherit stale template
+  fragments when regex replacement stops at the first nested `</ul>`. For
+  `tools/blog/generate-post.js`, replace the entire `.toc-list` by matching
+  nested `<ul>` depth, not with a non-greedy regex.
+- 2026-07-16 Codex: Blog Markdown tables generated from `docs/blog/*.md`
+  should use the article template's `.blog-table` wrapper, not `.table-wrap`,
+  otherwise published article tables lose the expected styling.
+- 2026-07-16 Codex: The left TOC should include the top-level `参考资料` h2
+  when present, but should not include its supporting h3 sections such as
+  `一手资料`, `学术研究`, or `系列文章`.
+- 2026-07-16 Codex: When moving an Agent article from technical framing to
+  product framing, make the product-design audience explicit in the title,
+  summary, and opening context, but avoid repeating "PM" throughout the body.
+  Metadata can then use `category: 产品` and include `产品设计` as a topic.
 - Validate `tags` and `topics` against the writing guide before writing them: a
   topic must be central to the title, summary, and conclusion, rather than an
   example, implementation path, or frequently mentioned technology.

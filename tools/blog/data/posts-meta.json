@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "agent-boundary",
+      "date": "2026.07",
+      "title": "业务流程，如何变成 Agent 产品架构？",
+      "summary": "设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "Agent",
+        "产品设计"
+      ],
+      "category": "产品",
+      "url": "posts/agent-boundary.html"
+    },
+    {
       "slug": "ontology-business-semantic-layer",
       "date": "2026.07",
       "title": "从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测",

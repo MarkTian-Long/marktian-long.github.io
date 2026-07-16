@@ -10,6 +10,11 @@ tools/blog/
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
 ├── index.html              归档列表页（按年份分组，JS 渲染）
 └── posts/
+    ├── agent-boundary.html                      业务流程，如何变成 Agent 产品架构？（2026.07）
+    ├── ontology-business-semantic-layer.html    从同义词表到业务语义层（2026.07）
+    ├── enterprise-agent-fde.html                从 WorkBuddy 到 FDE：企业 Agent 落地方式（2026.07）
+    ├── physical-world-llm.html                  物理世界会有自己的 LLM 时刻吗？（2026.07）
+    ├── llm-customer-service-tech-guide.html     从零搭建一个LLM智能客服（2026.07）
     ├── spacex-ai-infrastructure-valuation.html  一份招股书里，两种不同节奏的"AI"（2026.06）
     ├── llm-saas-moat-disruption.html            AI coding 之后，哪些 B 端 SaaS 会死，哪些会活（2026.06）
     ├── perplexity-analysis.html                 Perplexity：做对了产品，但站错了位置（2026.06）
@@ -44,6 +49,7 @@ tools/blog/
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
 - **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加元数据
+- **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
 
 ## 嵌入方式
 
