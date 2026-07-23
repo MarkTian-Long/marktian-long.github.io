@@ -9,6 +9,7 @@ const {
   ensureArticleSeo,
   extractBody
 } = require('./search-foundation');
+const { buildSearchAssets } = require('./generate-search-assets');
 
 const config = Object.freeze({
   siteUrl: 'https://marktian-long.github.io',
@@ -100,4 +101,35 @@ test('ensureArticleSeo inserts an idempotent head block without changing body', 
   assert.match(once, /<meta name="description"/);
   assert.match(once, /<link rel="canonical"/);
   assert.match(once, /"@type":"BlogPosting"/);
+});
+
+test('buildSearchAssets emits entry pages, unique article URLs, and a limited feed', () => {
+  const posts = Array.from({ length: 22 }, (_, index) => ({
+    slug: `post-${index}`,
+    title: `Post ${index}`,
+    summary: `Summary ${index}`,
+    url: `posts/post-${index}.html`
+  }));
+
+  const assets = buildSearchAssets(config, posts);
+
+  assert.match(assets.sitemap, /<loc>https:\/\/marktian-long\.github\.io\/<\/loc>/);
+  assert.match(assets.sitemap, /<loc>https:\/\/marktian-long\.github\.io\/tools\/blog\/<\/loc>/);
+  assert.match(assets.sitemap, /<loc>https:\/\/marktian-long\.github\.io\/tools\/blog\/posts\/post-0\.html<\/loc>/);
+  assert.equal((assets.sitemap.match(/<url>/g) || []).length, 24);
+  assert.equal((assets.feed.match(/<item>/g) || []).length, 20);
+});
+
+test('buildSearchAssets rejects duplicate slugs and URLs', () => {
+  const duplicateSlugPosts = [
+    { slug: 'same', title: 'A', summary: 'A', url: 'posts/a.html' },
+    { slug: 'same', title: 'B', summary: 'B', url: 'posts/b.html' }
+  ];
+  const duplicateUrlPosts = [
+    { slug: 'a', title: 'A', summary: 'A', url: 'posts/same.html' },
+    { slug: 'b', title: 'B', summary: 'B', url: 'posts/same.html' }
+  ];
+
+  assert.throws(() => buildSearchAssets(config, duplicateSlugPosts), /Duplicate slug/);
+  assert.throws(() => buildSearchAssets(config, duplicateUrlPosts), /Duplicate url/);
 });

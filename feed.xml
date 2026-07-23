@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>思考碎片 — Leo Liu</title>
+    <link>https://marktian-long.github.io/tools/blog/</link>
+    <description>Leo Liu 关于 AI、产品、工程与商业的长期思考。</description>
+    <item>
+      <title>业务流程，如何变成 Agent 产品架构？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</guid>
+      <description>设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。</description>
+    </item>
+    <item>
+      <title>从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</guid>
+      <description>企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。</description>
+    </item>
+    <item>
+      <title>从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</guid>
+      <description>企业 Agent 进入真实组织后，竞争不再只是模型能力，还会被工作入口、软件商业模式和组织落地方式重新塑形。真正决定它能否规模化的，是能否把一次次落地沉淀成可复用产品能力。</description>
+    </item>
+    <item>
+      <title>物理世界会有自己的 LLM 时刻吗？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</guid>
+      <description>LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。</description>
+    </item>
+    <item>
+      <title>从零搭建一个LLM智能客服：完整技术链路与关键决策</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</guid>
+      <description>智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协作分工。</description>
+    </item>
+    <item>
+      <title>LLM 重构职场：不是谁消失，是每个人都在变</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</guid>
+      <description>LLM 对软件团队的冲击不是“执行岗消失、协调岗幸存”。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以“让事情发生”为输出的工作，面对的是另一种性质的重构。</description>
+    </item>
+    <item>
+      <title>当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</guid>
+      <description>AI对软件的改变不会停在AI能自己搞定一切的阶段。它会停在一个更现实的位置——AI主动发现问题、把决策权递到你面前，你来拍板。但这个变化本身会催生一种新的软件形态：专门负责排序和过滤这些AI主动请求的层，它可能比下一代agent的能力本身更值得关注。</description>
+    </item>
+    <item>
+      <title>一份招股书里，两种不同节奏的“AI”</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</guid>
+      <description>SpaceX 招股书把 AI 写成了估值核心—26.5万亿的TAM里AI占92.9%。但拆开其中最可验证的一角（AI基础设施，2.4万亿），会发现这个标签下装着两种验证节奏完全不同的东西：一层已签合同、有审计数字，另一层招股书自己写着「技术未经证实」。两层被压进同一个数字，这个数字描述的就不再是现在，而是一种把未来提前折算进当下的计价方式。</description>
+    </item>
+    <item>
+      <title>AI coding 之后，哪些 B 端 SaaS 会死，哪些会活</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</guid>
+      <description>LLM 让自研成本暴跌，动摇了“买不如建”的传统假设；但这个冲击是分化的——功能薄、行业知识浅的 B 端 SaaS 面临被替代压力，而深度沉淀了行业流程知识的产品，护城河在重构而非消失。</description>
+    </item>
+    <item>
+      <title>Perplexity：做对了产品，但站错了位置</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</guid>
+      <description>它在正确的时间解决了真实的问题，技术路径也没走错。但独立 AI 搜索这个品类本身，正在被一股更大的力量压缩——这篇拆解它的产品决策逻辑，以及结构性困境从哪里来。</description>
+    </item>
+    <item>
+      <title>从模糊到确定：人机边界是怎么移动的</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</guid>
+      <description>技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。这篇从一套反复救火的数据管道出发，回答边界由什么决定、为什么移动速度因场景而异，以及产品层面需要显式设计哪两个维度。</description>
+    </item>
+    <item>
+      <title>训练和推理，是两件不同的事</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</guid>
+      <description>训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。</description>
+    </item>
+    <item>
+      <title>芯片战争背后，藏着一张分工地图</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</guid>
+      <description>华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在任务覆盖范围和硬件灵活性两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。</description>
+    </item>
+    <item>
+      <title>模型跑出了测量边界，评测体系跟不上了</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</guid>
+      <description>静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。</description>
+    </item>
+    <item>
+      <title>大模型的分越来越高，但有些差距只用几天就能感觉到</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</guid>
+      <description>benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。</description>
+    </item>
+    <item>
+      <title>AI能大量生产方向，但还不会判断什么重要</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/automated-research.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/automated-research.html</guid>
+      <description>自动化科研让AI第一次跑完了整条研究链路。但这件事真正的意义不在于它能产出多少论文，而在于它把AI最难突破的边界暴露得足够清楚：执行可以工业化，判断还不行。</description>
+    </item>
+    <item>
+      <title>让 AI 写代码这件事，为什么到硬件就不行了</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</guid>
+      <description>在软件世界里效果极强的 AI 写代码工具，到了硬件开发面前几乎完全失效。不是因为工具不够好，而是因为硬件的反馈回路从根本上就不是数字闭环——物理世界的不确定性会污染 AI 的判断链条，让推理从根本上断掉。</description>
+    </item>
+    <item>
+      <title>OpenAI 和 Anthropic 同一周下场做咨询，FDE 时代来了？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</guid>
+      <description>大模型厂商相继成立企业部署合资公司，表面是商业扩张，实质是在宣告 AI 竞争主战场的迁移——从模型能力到落地能力。FDE 是第一批响应者，FDX 可能是这个逻辑的完整形态。</description>
+    </item>
+    <item>
+      <title>大模型的下半场：当预训练不再是唯一战场</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</guid>
+      <description>Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。</description>
+    </item>
+    <item>
+      <title>企业引入大模型 API，数据真的安全吗</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-data-security.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-data-security.html</guid>
+      <description>同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。</description>
+    </item>
+  </channel>
+</rss>
