@@ -14,6 +14,7 @@ const {
 } = require('./search-foundation');
 const { buildSearchAssets } = require('./generate-search-assets');
 const { retrofitBlogSeo } = require('./retrofit-blog-seo');
+const { checkSearchFoundation } = require('./check-search-foundation');
 
 const config = Object.freeze({
   siteUrl: 'https://marktian-long.github.io',
@@ -234,4 +235,124 @@ test('retrofitBlogSeo fails when metadata files are missing or HTML is malformed
     }).code,
     0
   );
+});
+
+function makeCheckFixture() {
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-check-'));
+  const posts = [{
+    slug: 'example',
+    title: 'Example',
+    summary: 'Example summary',
+    url: 'posts/example.html'
+  }];
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/data'), { recursive: true });
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/data/posts-meta.json'),
+    JSON.stringify({ posts }, null, 2),
+    'utf8'
+  );
+  const assets = buildSearchAssets(config, posts);
+  fs.writeFileSync(path.join(rootDir, 'robots.txt'), assets.robots, 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), assets.sitemap, 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'feed.xml'), assets.feed, 'utf8');
+
+  const article = ensureArticleSeo(
+    '<html><head><title>Example</title></head><body><main>Article</main></body></html>',
+    posts[0],
+    config
+  );
+  fs.writeFileSync(path.join(rootDir, 'tools/blog/posts/example.html'), article, 'utf8');
+  fs.writeFileSync(
+    path.join(rootDir, 'index.html'),
+    '<html><head><title>Home</title><meta name="description" content="Home" />'
+      + '<link rel="canonical" href="https://marktian-long.github.io/" />'
+      + '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite"}</script>'
+      + '</head><body>Home</body></html>',
+    'utf8'
+  );
+  fs.mkdirSync(path.join(rootDir, 'tools/blog'), { recursive: true });
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/index.html'),
+    '<html><head><title>Blog</title><meta name="description" content="Blog" />'
+      + '<link rel="canonical" href="https://marktian-long.github.io/tools/blog/" />'
+      + '<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage"}</script>'
+      + '</head><body>Blog</body></html>',
+    'utf8'
+  );
+
+  return { rootDir, posts };
+}
+
+test('checkSearchFoundation passes a complete fixture', () => {
+  const { rootDir } = makeCheckFixture();
+  const result = checkSearchFoundation({ rootDir, siteConfig: config });
+
+  assert.equal(result.code, 0);
+});
+
+test('checkSearchFoundation reports missing sitemap entries', () => {
+  const { rootDir } = makeCheckFixture();
+  fs.writeFileSync(
+    path.join(rootDir, 'sitemap.xml'),
+    buildSitemap(config, ['/', '/tools/blog/']),
+    'utf8'
+  );
+
+  const result = checkSearchFoundation({ rootDir, siteConfig: config });
+
+  assert.equal(result.code, 1);
+  assert.match(result.errors.join('\n'), /sitemap.*example\.html/);
+});
+
+test('checkSearchFoundation reports article SEO defects', () => {
+  const canonicalRoot = makeCheckFixture().rootDir;
+  const descriptionRoot = makeCheckFixture().rootDir;
+  const jsonRoot = makeCheckFixture().rootDir;
+  const duplicateCanonicalRoot = makeCheckFixture().rootDir;
+  const articlePath = 'tools/blog/posts/example.html';
+
+  fs.writeFileSync(
+    path.join(canonicalRoot, articlePath),
+    fs.readFileSync(path.join(canonicalRoot, articlePath), 'utf8')
+      .replace('https://marktian-long.github.io/tools/blog/posts/example.html', 'https://example.com/wrong.html'),
+    'utf8'
+  );
+  fs.writeFileSync(
+    path.join(descriptionRoot, articlePath),
+    fs.readFileSync(path.join(descriptionRoot, articlePath), 'utf8')
+      .replace(/<meta name="description"[^>]+>\n/, ''),
+    'utf8'
+  );
+  fs.writeFileSync(
+    path.join(jsonRoot, articlePath),
+    fs.readFileSync(path.join(jsonRoot, articlePath), 'utf8')
+      .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, '<script type="application/ld+json">{bad</script>'),
+    'utf8'
+  );
+  fs.writeFileSync(
+    path.join(duplicateCanonicalRoot, articlePath),
+    fs.readFileSync(path.join(duplicateCanonicalRoot, articlePath), 'utf8')
+      .replace('</head>', '<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/example.html" /></head>'),
+    'utf8'
+  );
+
+  assert.match(checkSearchFoundation({ rootDir: canonicalRoot, siteConfig: config }).errors.join('\n'), /canonical/);
+  assert.match(checkSearchFoundation({ rootDir: descriptionRoot, siteConfig: config }).errors.join('\n'), /description/);
+  assert.match(checkSearchFoundation({ rootDir: jsonRoot, siteConfig: config }).errors.join('\n'), /JSON-LD/);
+  assert.match(checkSearchFoundation({ rootDir: duplicateCanonicalRoot, siteConfig: config }).errors.join('\n'), /duplicate canonical/);
+});
+
+test('checkSearchFoundation reports feed and robots defects', () => {
+  const feedRoot = makeCheckFixture().rootDir;
+  const robotsRoot = makeCheckFixture().rootDir;
+  fs.writeFileSync(
+    path.join(feedRoot, 'feed.xml'),
+    '<rss><channel>' + '<item></item>'.repeat(config.blog.feedLimit + 1) + '</channel></rss>',
+    'utf8'
+  );
+  fs.writeFileSync(path.join(robotsRoot, 'robots.txt'), 'User-agent: *\nAllow: /\n', 'utf8');
+
+  assert.match(checkSearchFoundation({ rootDir: feedRoot, siteConfig: config }).errors.join('\n'), /feed.*limit/);
+  assert.match(checkSearchFoundation({ rootDir: robotsRoot, siteConfig: config }).errors.join('\n'), /robots.*sitemap/);
 });
