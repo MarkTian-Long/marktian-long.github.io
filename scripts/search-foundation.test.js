@@ -1,5 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 
 const {
   absoluteUrl,
@@ -10,6 +13,7 @@ const {
   extractBody
 } = require('./search-foundation');
 const { buildSearchAssets } = require('./generate-search-assets');
+const { retrofitBlogSeo } = require('./retrofit-blog-seo');
 
 const config = Object.freeze({
   siteUrl: 'https://marktian-long.github.io',
@@ -132,4 +136,102 @@ test('buildSearchAssets rejects duplicate slugs and URLs', () => {
 
   assert.throws(() => buildSearchAssets(config, duplicateSlugPosts), /Duplicate slug/);
   assert.throws(() => buildSearchAssets(config, duplicateUrlPosts), /Duplicate url/);
+});
+
+function makeRetrofitFixture(html, posts) {
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-foundation-'));
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/data'), { recursive: true });
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/data/posts-meta.json'),
+    JSON.stringify({ posts }, null, 2),
+    'utf8'
+  );
+  for (const post of posts) {
+    if (html !== null) {
+      fs.writeFileSync(path.join(rootDir, 'tools/blog', post.url), html, 'utf8');
+    }
+  }
+  return rootDir;
+}
+
+test('retrofitBlogSeo supports dry-run, check, write, and idempotent rewrites', () => {
+  const sourceHtml = [
+    '<!doctype html>',
+    '<html lang="zh-CN">',
+    '<head>',
+    '<title>Example</title>',
+    '</head>',
+    '<body>',
+    '<main><p>Body stays put.</p></main>',
+    '</body>',
+    '</html>'
+  ].join('\n');
+  const posts = [{
+    slug: 'example',
+    title: 'Example',
+    summary: 'Example summary',
+    url: 'posts/example.html'
+  }];
+  const rootDir = makeRetrofitFixture(sourceHtml, posts);
+  const filePath = path.join(rootDir, 'tools/blog/posts/example.html');
+
+  const dryRun = retrofitBlogSeo({ argv: [], rootDir, siteConfig: config });
+  assert.equal(dryRun.code, 0);
+  assert.equal(fs.readFileSync(filePath, 'utf8'), sourceHtml);
+
+  const check = retrofitBlogSeo({ argv: ['--check'], rootDir, siteConfig: config });
+  assert.equal(check.code, 1);
+  assert.match(check.messages.join('\n'), /MISSING/);
+
+  const write = retrofitBlogSeo({ argv: ['--write'], rootDir, siteConfig: config });
+  const writtenHtml = fs.readFileSync(filePath, 'utf8');
+  assert.equal(write.code, 0);
+  assert.notEqual(writtenHtml, sourceHtml);
+  assert.equal(extractBody(writtenHtml), extractBody(sourceHtml));
+  assert.match(writtenHtml, /search-foundation:start/);
+
+  const secondWrite = retrofitBlogSeo({ argv: ['--write'], rootDir, siteConfig: config });
+  assert.equal(secondWrite.code, 0);
+  assert.equal(fs.readFileSync(filePath, 'utf8'), writtenHtml);
+});
+
+test('retrofitBlogSeo fails when metadata files are missing or HTML is malformed', () => {
+  const validHtml = '<html><head><title>Example</title></head><body><p>Body</p></body></html>';
+  const missingFileRoot = makeRetrofitFixture(null, [{
+    slug: 'missing',
+    title: 'Missing',
+    summary: 'Missing summary',
+    url: 'posts/missing.html'
+  }]);
+  const missingBodyRoot = makeRetrofitFixture('<html><head><title>Bad</title></head></html>', [{
+    slug: 'bad-body',
+    title: 'Bad Body',
+    summary: 'Bad summary',
+    url: 'posts/bad-body.html'
+  }]);
+  const missingHeadRoot = makeRetrofitFixture('<html><body><p>Bad</p></body></html>', [{
+    slug: 'bad-head',
+    title: 'Bad Head',
+    summary: 'Bad summary',
+    url: 'posts/bad-head.html'
+  }]);
+  const excludedRoot = makeRetrofitFixture(validHtml, [{
+    slug: 'example',
+    title: 'Example',
+    summary: 'Example summary',
+    url: 'posts/example.html'
+  }]);
+
+  assert.equal(retrofitBlogSeo({ argv: ['--check'], rootDir: missingFileRoot, siteConfig: config }).code, 1);
+  assert.equal(retrofitBlogSeo({ argv: ['--write'], rootDir: missingBodyRoot, siteConfig: config }).code, 1);
+  assert.equal(retrofitBlogSeo({ argv: ['--write'], rootDir: missingHeadRoot, siteConfig: config }).code, 1);
+  assert.equal(
+    retrofitBlogSeo({
+      argv: ['--write', '--exclude', 'tools/blog/posts/example.html'],
+      rootDir: excludedRoot,
+      siteConfig: config
+    }).code,
+    0
+  );
 });

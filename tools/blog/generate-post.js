@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const config = require('../../scripts/site-config.js');
+const { articleUrl, ensureArticleSeo } = require('../../scripts/search-foundation.js');
 
 const [sourcePath, outputPath] = process.argv.slice(2);
 if (!sourcePath || !outputPath) {
@@ -133,9 +135,10 @@ page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\nti
 page = page.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(metadata.title) + ' — Leo 的思考碎片</title>');
 page = page.replace(/(<meta property="og:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
 page = page.replace(/(<meta property="og:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
-page = page.replace(/(<meta property="og:url" content=")[^"]*(" \/>)/, '$1https://marktian-long.github.io/tools/blog/posts/' + metadata.slug + '.html$2');
+page = page.replace(/(<meta property="og:url" content=")[^"]*(" \/>)/, '$1' + escapeHtml(articleUrl(config, metadata)) + '$2');
 page = page.replace(/(<meta name="twitter:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
 page = page.replace(/(<meta name="twitter:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
+page = ensureArticleSeo(page, metadata, config);
 page = replaceTocList(page, renderToc());
 page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, '<span class="post-date">' + metadata.date + '</span><span id="post-tags"></span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
 page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<div class="related-posts"/, () => '<div class="post-body">' + blocks.join('\n') + '</div>\n        <div class="related-posts"');
