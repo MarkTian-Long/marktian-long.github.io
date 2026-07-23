@@ -273,6 +273,13 @@ refactor: 迁移文件到 assets/ 目录结构
 | category | string | 大分类：`技术` / `产品` / `商业` / `生活` |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
 
+### 搜索元数据与发现资产
+- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
+- 新文章发布流程：`node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 未来更换站点域名只修改 `scripts/site-config.js`，然后重新生成 `robots.txt`、`sitemap.xml`、`feed.xml` 和文章 head 元数据。
+- 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
+- Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。
+
 ### 分类原则
 - **技术**：架构设计、工程实现、技术选型、模型机制
 - **产品**：PRD 思路、PM 决策框架、用户研究、功能设计

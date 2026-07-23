@@ -50,6 +50,9 @@ tools/blog/
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
 - **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加元数据
 - **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
+- **发布生成**：新增或修改文章后运行 `node tools/blog/generate-post.js <source.md> <output.html>`，再运行 `node scripts/generate-search-assets.js --write`
+- **发布检查**：提交前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 均一致
+- **域名维护**：站点域名只维护在 `scripts/site-config.js`；Search Console/Bing 验证属于后续账号操作，不写入文章或本目录配置
 
 ## 嵌入方式
 

@@ -295,7 +295,10 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ## 新增文章操作流程
 
-1. 在 `tools/blog/posts/` 下新建 HTML 文件（参照现有文章模板）
+1. 在 `docs/blog/` 下维护 Markdown 源稿，再用生成脚本输出文章 HTML：
+   ```powershell
+   node tools/blog/generate-post.js docs/blog/your-slug.md tools/blog/posts/your-slug.html
+   ```
 2. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
    ```json
    {
@@ -309,8 +312,13 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "url": "posts/your-slug.html"
    }
    ```
-3. 主页和列表页自动从 JSON 读取，**无需改动任何 HTML 文件**
-4. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json`
+3. 重新生成搜索发现资产，并运行静态检查：
+   ```powershell
+   node scripts/generate-search-assets.js --write
+   node scripts/check-search-foundation.js
+   ```
+4. 主页、列表页、canonical、description、JSON-LD、RSS 和 sitemap 都从 JSON/脚本生成，**不要手工复制域名或维护重复文章数组**
+5. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
 ### Markdown 转 HTML 发布 QA
@@ -323,6 +331,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
+- 检查 `node scripts/check-search-foundation.js` 是否通过；若修改了 `posts-meta.json`，还要确认 `node scripts/generate-search-assets.js --check` 不报过期。
 - 检查左侧目录层级：核心 `h2` 都作为一级项；只把可独立跳转的关键 `h3` 放进默认折叠的二级项。参考资料、附录与协作要点等辅助 h3 不应占用目录。
 - 在浏览器中至少查看一次文章页的正文末尾和参考资料区；只做 JSON/HTML 静态校验不足以发现可见转义文本和目录层级问题。
 - 涉及目录图标、缩进或展开状态时，按 `CONVENTIONS.md` 的「页面视觉复核」要求截图检查：默认收起、手动展开与滚动到已收录二级项后的状态都应保持层级和文字对齐。
@@ -617,7 +626,7 @@ var POST_META = {
 
 ## 分享功能规范
 
-OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘要+封面图），不在页面内放复制链接按钮。
+OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘要+封面图），不在页面内放复制链接按钮。canonical、标准 description、文章 JSON-LD、RSS auto-discovery、sitemap 和 feed 由 `scripts/site-config.js`、`scripts/search-foundation.js` 与生成脚本统一维护。
 
 ### OG meta 模板（加入每篇文章 `<head>`）
 
@@ -633,7 +642,17 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
 ```
 
-> `og:url` 域名以实际部署地址为准。封面图 `assets/images/og-cover.png`（1200×630px）全站统一，无需每篇单独配图。
+> `og:url`、canonical、RSS 地址和 sitemap 域名以 `scripts/site-config.js` 为准，不在文章里手工复制域名。封面图 `assets/images/og-cover.png`（1200×630px）全站统一，无需每篇单独配图。
+
+### 搜索发现维护
+
+- `tools/blog/data/posts-meta.json` 仍是 `title`、`summary`、`url` 的单一来源。
+- 新文章发布后运行 `node scripts/generate-search-assets.js --write` 更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
+- 发布前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 一致。
+- 现有元数据只有月份，不要伪造精确 `pubDate`、`datePublished` 或 `dateModified`；未来有可靠日期字段后再补。
+- 未来换域名只改 `scripts/site-config.js`，再重新运行生成和检查脚本。
+- Google Search Console、Bing Webmaster、账号验证 token 与自定义域名属于后续人工步骤，不写入当前文章模板。
+- `robots.txt` 当前只声明 sitemap 和全站允许，不区分 GPTBot 等 crawler；如需改变 crawler 策略，单独设计并确认。
 
 ### 验证方式
 
@@ -673,5 +692,5 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 |------|----------|------|
 | 阅读量统计 | 不蒜子（一行引入）/ Umami（自托管） | 不蒜子数据在第三方，Umami 数据自有 |
 | 点赞 / 评论 | Giscus（GitHub Discussions）/ Cusdis | Giscus 需登录 GitHub，Cusdis 无需登录 |
-| RSS Feed | 从 `posts-meta.json` 生成 XML | 适合未来读者订阅需求 |
+| RSS Feed | 已由 `scripts/generate-search-assets.js` 从 `posts-meta.json` 生成 XML | 未来可考虑增加站内订阅入口 |
 | 全文搜索 | Lunr.js 客户端索引 | 建议文章 > 50 篇后再考虑 |
