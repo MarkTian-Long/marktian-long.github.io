@@ -253,7 +253,40 @@ refactor: 迁移文件到 assets/ 目录结构
 
 ---
 
-## 七、博客内容规范
+## 七、GitHub 与本地文件边界
+
+完整分类表和例外处理见 `docs/repository-policy.md`。核心原则：
+
+- 决定线上结果、可复现开发、测试验证、项目规范和共享上下文的文件必须提交。
+- 密钥、个人隐私、本机路径、本机权限、IDE 状态、依赖缓存、临时预览、备份、Worktree 和 stash 只留本地。
+- `.agents/skills/` 是项目自定义 Skill 唯一编辑源，已在 AGENTS.md 登记的项目 Skill 必须提交；第三方设计 Skill 由 `skills-lock.json` 管理，其本机安装产物不提交。`.claude/skills/` 中的项目自定义兼容副本必须同步提交且内容一致。
+- `*.local.js`、`.env*`、`.claude/settings.local.json` 和 `docs/personal/` 永远不得提交；只提交脱敏的示例配置。
+- 线上直接读取的生成物（博客 HTML、`robots.txt`、`sitemap.xml`、`feed.xml`）必须提交，不能仅保留生成脚本。
+- 无法归类的文件默认不提交；确需新增例外时，先同步修改 `docs/repository-policy.md`、`.gitignore` 和自动检查。
+
+提交前运行：
+
+```powershell
+node scripts/check-repository-policy.js
+git status --short
+```
+
+禁止使用 `git add -f` 绕过边界规则。停止跟踪已经进入 GitHub 的本地专用文件、修改 `.github/workflows/` 或执行 `git push` 前，仍须按 HITL 规则获得用户确认。
+
+### GitHub 推送网络排查
+
+- 本地 `git commit` 成功但 `git push` 报 `Failed to connect to github.com port 443`、`Recv failure: Connection was reset` 时，通常是 **Git CLI 网络链路问题**，不是 GitHub 权限问题。
+- 先检查状态：`git status --short --branch`。若显示 `main...origin/main [ahead 1]`，说明本地提交已存在，只是还没推到远端。
+- 若浏览器能访问 GitHub，但 Git CLI 不能访问，优先检查本机代理。常见 Clash Verge/Mihomo 端口如 `127.0.0.1:7897`。
+- 可用临时代理推送，不改全局 Git 配置：
+  ```bash
+  git -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 push origin main
+  ```
+- 推送成功后确认：`git status --short --branch` 不再显示 ahead，`git log -1 --oneline --decorate` 中应同时出现 `HEAD -> main, origin/main`。
+
+---
+
+## 八、博客内容规范
 
 ### 数据文件
 - 博客元数据统一存放在 `tools/blog/data/posts-meta.json`（单一来源）
@@ -305,18 +338,6 @@ refactor: 迁移文件到 assets/ 目录结构
 ### 本地开发注意
 - `fetch` 在 `file://` 协议下因 CORS 失败，需用 HTTP server：`python -m http.server 8080`
 
-### GitHub 推送网络排查
-- 本地 `git commit` 成功但 `git push` 报 `Failed to connect to github.com port 443`、`Recv failure: Connection was reset` 时，通常是 **Git CLI 网络链路问题**，不是 GitHub 权限问题。
-- 先检查状态：`git status --short --branch`。若显示 `main...origin/main [ahead 1]`，说明本地提交已存在，只是还没推到远端。
-- 若浏览器能访问 GitHub，但 Git CLI 不能访问，优先检查本机代理。常见 Clash Verge/Mihomo 端口如 `127.0.0.1:7897`。
-- 可用临时代理推送，不改全局 Git 配置：
-  ```bash
-  git -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 push origin main
-  ```
-- 推送成功后确认：`git status --short --branch` 不再显示 ahead，`git log -1 --oneline --decorate` 中应同时出现 `HEAD -> main, origin/main`。
-
----
-
 ## 九、Skill 管理规范
 
 ### 目录结构
@@ -336,6 +357,7 @@ skills-lock.json        # 系统级 skill 哈希锁（不要手动编辑）
 ---
 name: skill-name
 description: 一句话描述，会显示在 Skill 列表里，要准确反映触发场景
+type: workflow
 ---
 
 # Skill 标题
@@ -346,22 +368,24 @@ description: 一句话描述，会显示在 Skill 列表里，要准确反映触
 ### 关键规则
 
 1. **目录结构固定**：`<name>/SKILL.md`，不允许根目录裸 `.md` 文件
-2. **frontmatter 必须完整**：缺少 `name` 或 `description` 时 skill 可能无法被正确识别
+2. **frontmatter 必须完整**：缺少 `name`、`description` 或 `type` 时 skill 可能无法被正确识别
 3. **路径兼容 Windows**：shell 命令中禁止 `/tmp`，统一用项目内路径（如 `tools/.design-tmp/`）
 4. **系统级 skill 不手动改**：`adapt/animate/audit` 等 17 个 impeccable skill 由 `skills-lock.json` 管理
 5. **skill 与规范同步**：新增规范后，检查相关 skill 是否覆盖（反之亦然）；变更时同步更新 CLAUDE.md 的「Skill 管理」表格
 
 ### 新增项目级 Skill 流程
 
-1. 创建 `.agents/skills/<name>/SKILL.md`，写 frontmatter + 内容
-2. 在 CLAUDE.md「Skill 选择树」中添加触发场景行
-3. 在 CLAUDE.md「Skill 管理」表格中添加一行（含最近更新日期）
+1. 在 `scripts/repository-policy.json` 的 `projectSkills` 中登记名称
+2. 创建 `.agents/skills/<name>/SKILL.md`，写完整 frontmatter + 内容
+3. 运行 `powershell -ExecutionPolicy Bypass -File scripts/sync-agent-context.ps1 -Write` 生成或更新 `.claude/skills/` 兼容副本
+4. 同步更新 AGENTS.md 和 CLAUDE.md 的「Skill 选择树」与「Skill 管理」表格
+5. 运行 `node scripts/check-repository-policy.js` 和只读的 `scripts/sync-agent-context.ps1` 检查
 
 ---
 
-## 八、待办：未来规范扩展
+## 十、待办：未来规范扩展
 
 - [ ] 响应式断点标准化（目前仅 768px 一个断点）
 - [ ] 图片资源优化规范（WebP 格式、尺寸限制）
 - [ ] 无障碍可访问性规范（ARIA 标签、键盘导航）
-- [ ] 部署规范（GitHub Pages / Vercel / Netlify）
+- [ ] 扩展部署目标规范（当前 GitHub Pages 已按 `docs/repository-policy.md` 管理）

@@ -244,12 +244,19 @@ qiuzhi/
 │   ├── fetch-trends.js        # 热点爬虫（GitHub/HN/36Kr 自动抓取）
 │   ├── site-config.js         # 公开站点域名与作者配置
 │   ├── generate-search-assets.js  # 统一生成页面 SEO 与发现资产
-│   └── check-search-foundation.js # 发布前一致性检查
+│   ├── check-search-foundation.js # 发布前一致性检查
+│   ├── check-repository-policy.js # GitHub / 本地文件边界检查
+│   ├── repository-policy.json     # 项目自定义 Skill 清单
+│   └── repository-policy.test.js  # 仓库策略单元与端到端测试
 ├── content/                   # Markdown 内容资料
-└── docs/
-    ├── blog/                  # 博客 Markdown 源稿（新文章与发布 HTML 同步提交）
-    ├── plans/                 # 设计文档与复盘（纳入版本控制）
-    └── personal/              # 个人文件（.gitignore 排除）
+├── docs/
+│   ├── blog/                  # 博客 Markdown 源稿（新文章与发布 HTML 同步提交）
+│   ├── plans/                 # 设计文档与复盘（纳入版本控制）
+│   ├── agent-context/         # 跨 Agent 共享上下文
+│   ├── repository-policy.md   # GitHub / 本地文件边界
+│   └── personal/              # 个人文件（.gitignore 排除）
+├── .agents/skills/            # 项目自定义 Skill 唯一编辑源
+└── .claude/skills/            # Claude 兼容层（自定义 Skill 与源同步）
 ```
 
 **技术选型原则**：零依赖，纯前端，浏览器直开。用最简单的方式把内容呈现出来，把精力花在产品思考上而不是技术配置上。
@@ -278,7 +285,13 @@ qiuzhi/
 
 直接编辑文件，浏览器刷新即可。无需 npm install，无需构建步骤。
 
-详细开发规范见 [CONVENTIONS.md](CONVENTIONS.md)。
+提交前运行：
+
+```powershell
+node scripts/check-repository-policy.js
+```
+
+详细开发规范见 [CONVENTIONS.md](CONVENTIONS.md)，文件是否进入 GitHub 见 [docs/repository-policy.md](docs/repository-policy.md)。
 
 ---
 

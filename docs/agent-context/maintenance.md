@@ -26,11 +26,18 @@ repository-visible schedule.
 
 ## Recurring checks
 
-Run `scripts/sync-agent-context.ps1` after changes to shared agent context, skill
-policy, or entry files.
+Run both checks after changes to shared agent context, skill policy, repository
+ownership, or entry files:
 
-The script is a checker. It should report drift but should not delete, replace,
-or rewrite directories automatically.
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/sync-agent-context.ps1
+node scripts/check-repository-policy.js
+```
+
+The default mode is read-only. `scripts/sync-agent-context.ps1 -Write` is the
+explicit one-way synchronization command for project-owned Skill compatibility
+files; it copies from `.agents/skills/` to `.claude/skills/` and never deletes
+extra files.
 
 ## Maintenance checklist
 
@@ -43,3 +50,5 @@ or rewrite directories automatically.
   `.agents/skills/*` unintentionally.
 - Confirm new project rules that affect all development are in `CONVENTIONS.md`,
   not only in private agent memory.
+- Confirm project-owned `.agents/skills/` entries are tracked, their
+  `.claude/skills/` compatibility files match, and no local-only file is tracked.

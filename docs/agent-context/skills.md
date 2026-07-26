@@ -9,20 +9,28 @@ compatibility, but they should not become independent sources.
 ## Canonical layout
 
 ```text
-.agents/skills/                # canonical source
-.claude/skills/                # compatibility layer, preferably junctions
-skills/                        # legacy compatibility copy, do not edit first
+.agents/skills/                # tracked project-owned canonical source
+.claude/skills/                # tracked Claude compatibility layer
+skills/                        # local legacy compatibility copy, do not edit
 .codex/                        # Codex-private config only; not a skill source
 ```
 
 ## Maintenance rules
 
 - Edit project skills in `.agents/skills/<name>/SKILL.md`.
-- If `.claude/skills/<name>` is a junction to `.agents/skills/<name>`, no extra
-  sync is needed.
-- If `.claude/skills/<name>` is a real directory, compare it with
-  `.agents/skills/<name>` before editing and migrate the durable changes back to
-  `.agents/skills/`.
+- `scripts/repository-policy.json` is the machine-readable list of project-owned
+  skills. Commit those entries under `.agents/skills/`; they must not be
+  excluded by `.gitignore`.
+- Keep `.claude/skills/` as a tracked compatibility layer. Project-owned skill
+  file names and contents must match `.agents/skills/`; agent-specific behavior
+  belongs in `AGENTS.md` or `CLAUDE.md`, not in divergent copies.
+- Vendor-managed design skills are governed by `skills-lock.json`. Their
+  `.agents/skills/` installation output stays local and is updated by the skill
+  manager, not by hand.
+- After changing a project-owned skill, run
+  `powershell -ExecutionPolicy Bypass -File scripts/sync-agent-context.ps1 -Write`
+  to update the Claude compatibility copy, then run the same script without
+  `-Write` plus `node scripts/check-repository-policy.js`.
 - Do not create a new `.codex/skills` or `.Codex/skills` source tree for this
   project unless the user explicitly requests a tool-private experiment.
 - Root `skills/` is treated as legacy compatibility. Do not use it as the first
@@ -31,12 +39,12 @@ skills/                        # legacy compatibility copy, do not edit first
   `name`, `description`, and `type` when the local skill format requires it.
 - Skill commands should avoid `/tmp` on Windows; use project-local temporary
   folders when a script is needed.
-- Independent Git worktrees may not contain the ignored `.agents/skills/`
-  directory. `scripts/sync-agent-context.ps1` resolves the canonical directory
-  from the primary workspace in that case; edit the primary source, not a
-  worktree-local copy.
+- Independent Git worktrees contain tracked project-owned skills and should edit
+  those files in the active worktree. Ignored vendor-managed installation output
+  may be absent; the checker can resolve that output from the primary workspace
+  for compatibility diagnostics only.
 
-## Current migration notes
+## Migration notes
 
 At the 2026-07-10 migration:
 
@@ -48,6 +56,12 @@ At the 2026-07-10 migration:
   `add-tool`, `analyze-product`, `brand-design-md`, `code-health-check`,
   `monthly-review`, `sync-docs`, `update-trends`.
 
-Replacing real directories with junctions requires deletion/replacement and must
-be treated as a user-confirmed operation. This migration records the policy but
-does not delete or replace those directories.
+On 2026-07-26, repository ownership was clarified:
+
+- The seven project-owned `.agents/skills/` entries changed from ignored local
+  state to tracked canonical sources; vendor-managed installation output remains
+  ignored.
+- `.claude/skills/` remains a tracked compatibility layer across clones.
+- Four agent-specific content differences were normalized into shared wording.
+- `.claude/settings.local.json` was classified as local-only because it contains
+  machine paths and permission state rather than project rules.

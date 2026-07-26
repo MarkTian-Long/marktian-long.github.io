@@ -25,6 +25,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify repository policy
+        run: |
+          node scripts/check-repository-policy.js
+          node --test scripts/repository-policy.test.js
+
       - name: Inject API config
         env:
           ESOP_API_KEY: ${{ secrets.ESOP_API_KEY }}

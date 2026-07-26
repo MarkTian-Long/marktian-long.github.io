@@ -40,6 +40,15 @@ initial migration.
 
 ### Workflow
 
+- 2026-07-26 Codex: GitHub is the source of truth for deployable assets,
+  reproducible source/tests, project documentation, shared context, and
+  project-owned `.agents/skills/`. Machine permissions, secrets, IDE state, dependencies,
+  previews, backups, worktrees, and stashes stay local. The full matrix lives
+  in `docs/repository-policy.md` and is enforced by
+  `scripts/check-repository-policy.js`; the machine-readable project Skill list
+  lives in `scripts/repository-policy.json`. Project-owned `.claude/skills/`
+  compatibility files must not diverge from `.agents/skills/`; vendor-managed
+  design skills remain governed by `skills-lock.json`.
 - 2026-07-26 Codex: When pushing to GitHub from this Windows workspace, direct
   HTTPS to `github.com:443` may time out even though the local machine has a
   working proxy. Before declaring push blocked, probe common local proxy ports;

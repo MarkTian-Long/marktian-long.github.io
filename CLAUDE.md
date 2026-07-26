@@ -38,11 +38,12 @@ tools/trends/                   # 热点快照（五大平台热榜 + Claude 点
 tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
 tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
-content/                        # Markdown 内容资料（不是代码）
-docs/                           # 个人文档（.gitignore 排除）
+content/                        # 可共享的 Markdown 内容资料
+docs/                           # 项目文档（仅 personal/ 和根目录二进制原稿排除）
+docs/repository-policy.md       # GitHub / 本地文件边界的唯一规则
 docs/agent-context/             # Claude/Codex 共享上下文、memory、维护手册
-.agents/skills/                 # 项目级共享 skill 源（Claude/Codex 共用）
-.claude/skills/                 # Claude 兼容层，优先指向 .agents/skills
+.agents/skills/                 # 项目自定义 skill 唯一编辑源（纳入 Git）
+.claude/skills/                 # Claude 兼容层（自定义 skill 必须与源同步）
 ```
 
 ## 已有工具模块
@@ -76,6 +77,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - AI 产品数据：`tools/ai-insights/data/products.json`
 - AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
 - 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
+- GitHub / 本地文件归属：`docs/repository-policy.md`；提交前运行 `node scripts/check-repository-policy.js`
 
 ## 给 Claude 的工作指令
 - **共享上下文优先**：每次对话开始时，先读取 `docs/agent-context/README.md`、`memory.md`、`skills.md`、`maintenance.md`。Claude 新沉淀的长期项目知识必须同步写回这些共享文档，确保 Codex 下次也能继承。
@@ -96,6 +98,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - UI 视觉美化时：先 `/impeccable` 加载设计知识，再用 `/audit` 诊断，用 `/polish`、`/typeset`、`/layout` 等子命令定向改动
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
+- **仓库边界**：线上资产、源码、测试、规范、共享 Skill 和项目文档必须提交；密钥、个人文件、本机权限、缓存、备份、Worktree 和 stash 只留本地。不得用 `git add -f` 绕过 `docs/repository-policy.md`
 - **大文件写入**（>300行的 HTML/JS）：不要用 Write tool 或 bash heredoc，应把生成脚本写到工具目录（如 `tools/<name>/gen_index.js`），用 `node tools/<name>/gen_index.js` 执行，完成后删除脚本（Windows 下 `/tmp` 不可用，统一用项目内路径）
 - **大文件修改**（已存在的大文件）：用 Edit tool 精确替换，每次 Edit 前先重新读取目标区域；涉及一个函数多处改动时，整段替换比小步插入更安全；连续多个 Task 修改同一文件时，注意前 Task 新增的变量/字段会影响后 Task 的代码锚点
 
@@ -103,6 +106,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 在执行以下操作前，必须明确告知用户并等待确认，不得自动执行：
 - git push / git push --force（推送到远程）
 - 删除任何文件或目录（rm、unlink）
+- 停止 Git 跟踪已经推送到 GitHub 的文件（即使使用 `git rm --cached` 保留本地副本）
 - 修改 .github/workflows/ 下的 CI/CD 配置
 - 提示用户修改 GitHub Secrets
 - git reset --hard 或其他丢弃本地改动的操作
@@ -129,7 +133,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 
 ## Skill 管理（项目级 skill 维护指南）
 
-项目级 skill 统一维护在 `.agents/skills/<name>/SKILL.md`。`.claude/skills/` 是 Claude 兼容层，优先使用 Junction 指向 `.agents/skills/`；不要把 `.claude/skills/` 维护成独立规范源。
+项目自定义 skill 清单维护在 `scripts/repository-policy.json`，正文统一维护在 `.agents/skills/<name>/SKILL.md` 并纳入 Git。`.claude/skills/` 是 Claude 兼容层，其中项目自定义 skill 必须与 `.agents/skills/` 文件名和内容一致；第三方设计 skill 由 `skills-lock.json` 管理，本机 `.agents/skills/` 安装产物不提交。Agent 专属说明写在 AGENTS.md / CLAUDE.md，不分叉共享 Skill。
 
 | Skill | 用途 | 最近更新 |
 |-------|------|----------|
@@ -143,6 +147,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 
 **维护规则：**
 - skill 文件必须以 `.agents/skills/<name>/SKILL.md` 为源（不能是根目录裸 `.md` 文件）
+- 修改项目 skill 后运行 `scripts/sync-agent-context.ps1 -Write` 同步 `.claude/skills/`，再运行只读同步检查和 `node scripts/check-repository-policy.js`
 - 每个 SKILL.md 必须有 `---` frontmatter，包含 `name`/`description`/`type` 字段
 - Windows 环境下路径限制：skill 内的 shell 命令禁止使用 `/tmp`，统一用项目内路径（如 `tools/.design-tmp/`）
 - 系统级 skill（pbakaus/impeccable 的 17 个设计 skill）由 `skills-lock.json` 哈希锁管理，更新用：`npx skills-manager@latest update`（或重新 install）；不要手动编辑兼容目录副本

@@ -49,6 +49,7 @@ Use this rule:
   `docs/agent-context/skills.md`.
 - Monthly review state and recurring maintenance policy go in
   `docs/agent-context/maintenance.md`.
+- GitHub versus local-only file ownership goes in `docs/repository-policy.md`.
 - Temporary task plans go in `docs/plans/`.
 
 Private Claude or Codex memory may still exist, but it should point back to this

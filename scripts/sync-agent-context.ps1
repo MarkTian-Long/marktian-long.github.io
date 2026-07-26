@@ -1,5 +1,6 @@
 param(
-  [switch]$Quiet
+  [switch]$Quiet,
+  [switch]$Write
 )
 
 $ErrorActionPreference = "Stop"
@@ -9,6 +10,16 @@ $errors = New-Object System.Collections.Generic.List[string]
 $warnings = New-Object System.Collections.Generic.List[string]
 $info = New-Object System.Collections.Generic.List[string]
 $canonicalSkillsRoot = Join-Path $repoRoot ".agents/skills"
+$policyManifest = Join-Path $repoRoot "scripts/repository-policy.json"
+if (Test-Path $policyManifest) {
+  $projectOwnedSkills = @(
+    (Get-Content -LiteralPath $policyManifest -Raw -Encoding UTF8 |
+      ConvertFrom-Json).projectSkills
+  )
+} else {
+  $projectOwnedSkills = @()
+  $errors.Add("Missing scripts/repository-policy.json") | Out-Null
+}
 
 if (-not (Test-Path $canonicalSkillsRoot)) {
   $commonGitDir = (& git -C $repoRoot rev-parse --git-common-dir 2>$null)
@@ -84,7 +95,8 @@ try {
     "docs/agent-context/memory.md",
     "docs/agent-context/skills.md",
     "docs/agent-context/maintenance.md",
-    "docs/agent-context/migration-plan-2026-07-10.md"
+    "docs/agent-context/migration-plan-2026-07-10.md",
+    "scripts/repository-policy.json"
   )
 
   foreach ($file in $requiredFiles) {
@@ -125,7 +137,7 @@ try {
   }
 
   if (Test-Path "skills") {
-    Add-Result "WARN" "Root skills/ exists as legacy compatibility; do not edit it first"
+    Add-Result "OK" "Root skills/ exists as ignored legacy compatibility"
   }
 
   if ((Test-Path $canonicalSkillsRoot) -and (Test-Path ".claude/skills")) {
@@ -133,6 +145,21 @@ try {
     foreach ($skill in $agentSkills) {
       $agentSkillDir = $skill.FullName
       $claudeSkillDir = Join-Path ".claude/skills" $skill.Name
+      if ($Write -and ($projectOwnedSkills -contains $skill.Name)) {
+        if (-not (Test-Path $claudeSkillDir)) {
+          New-Item -ItemType Directory -Path $claudeSkillDir -Force | Out-Null
+        }
+        Get-ChildItem -LiteralPath $agentSkillDir -Recurse -File | ForEach-Object {
+          $relativePath = $_.FullName.Substring($agentSkillDir.Length).TrimStart("\")
+          $targetPath = Join-Path $claudeSkillDir $relativePath
+          $targetParent = Split-Path $targetPath -Parent
+          if (-not (Test-Path $targetParent)) {
+            New-Item -ItemType Directory -Path $targetParent -Force | Out-Null
+          }
+          Copy-Item -LiteralPath $_.FullName -Destination $targetPath -Force
+        }
+        Add-Result "OK" "Synchronized .claude/skills/$($skill.Name) from canonical"
+      }
       $state = Get-SkillState $claudeSkillDir
 
       if ($state -eq "missing") {
@@ -151,7 +178,11 @@ try {
         $agentHash = (Get-FileHash -LiteralPath $agentSkillFile -Algorithm SHA256).Hash
         $claudeHash = (Get-FileHash -LiteralPath $claudeSkillFile -Algorithm SHA256).Hash
         if ($agentHash -eq $claudeHash) {
-          Add-Result "WARN" ".claude/skills/$($skill.Name) is a real directory but SKILL.md matches canonical"
+          if ($projectOwnedSkills -contains $skill.Name) {
+            Add-Result "OK" ".claude/skills/$($skill.Name) is a matching tracked compatibility directory"
+          } else {
+            Add-Result "WARN" ".claude/skills/$($skill.Name) is a real vendor directory; expected a managed junction"
+          }
         } else {
           Add-Result "WARN" ".claude/skills/$($skill.Name) is a real directory and differs from .agents/skills/$($skill.Name)"
         }
