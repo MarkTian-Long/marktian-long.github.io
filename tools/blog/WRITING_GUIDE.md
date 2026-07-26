@@ -295,11 +295,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ## 新增文章操作流程
 
-1. 在 `docs/blog/` 下维护 Markdown 源稿，再用生成脚本输出文章 HTML：
-   ```powershell
-   node tools/blog/generate-post.js docs/blog/your-slug.md tools/blog/posts/your-slug.html
-   ```
-2. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
+1. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
    ```json
    {
      "slug": "your-slug",
@@ -312,12 +308,16 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "url": "posts/your-slug.html"
    }
    ```
+2. 在 `docs/blog/` 下维护 Markdown 源稿，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
+   ```powershell
+   node tools/blog/generate-post.js docs/blog/your-slug.md tools/blog/posts/your-slug.html
+   ```
 3. 重新生成搜索发现资产，并运行静态检查：
    ```powershell
    node scripts/generate-search-assets.js --write
    node scripts/check-search-foundation.js
    ```
-4. 主页、列表页、canonical、description、JSON-LD、RSS 和 sitemap 都从 JSON/脚本生成，**不要手工复制域名或维护重复文章数组**
+4. 主页、列表页、canonical、description、JSON-LD、OG/Twitter 元数据、RSS 和 sitemap 都从 JSON/脚本生成，**不要在生成的 head 或搜索资产中手工复制域名，也不要维护重复文章数组**
 5. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
@@ -642,15 +642,15 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 <meta name="twitter:image"       content="https://marktian-long.github.io/assets/images/og-cover.png" />
 ```
 
-> `og:url`、canonical、RSS 地址和 sitemap 域名以 `scripts/site-config.js` 为准，不在文章里手工复制域名。封面图 `assets/images/og-cover.png`（1200×630px）全站统一，无需每篇单独配图。
+> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。封面图 `assets/images/og-cover.png`（1200×630px）全站统一，无需每篇单独配图。
 
 ### 搜索发现维护
 
 - `tools/blog/data/posts-meta.json` 仍是 `title`、`summary`、`url` 的单一来源。
-- 新文章发布后运行 `node scripts/generate-search-assets.js --write` 更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
+- 新文章发布后运行 `node scripts/generate-search-assets.js --write`，同步入口页与文章 head，并更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
 - 发布前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 一致。
 - 现有元数据只有月份，不要伪造精确 `pubDate`、`datePublished` 或 `dateModified`；未来有可靠日期字段后再补。
-- 未来换域名只改 `scripts/site-config.js`，再重新运行生成和检查脚本。
+- 未来更换搜索资产和自动生成 head 使用的域名，只改 `scripts/site-config.js`，再重新运行生成和检查脚本；正文中的显式链接仍需按内容语义单独核对。
 - Google Search Console、Bing Webmaster、账号验证 token 与自定义域名属于后续人工步骤，不写入当前文章模板。
 - `robots.txt` 当前只声明 sitemap 和全站允许，不区分 GPTBot 等 crawler；如需改变 crawler 策略，单独设计并确认。
 

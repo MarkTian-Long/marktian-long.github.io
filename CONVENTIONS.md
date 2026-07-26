@@ -258,7 +258,7 @@ refactor: 迁移文件到 assets/ 目录结构
 ### 数据文件
 - 博客元数据统一存放在 `tools/blog/data/posts-meta.json`（单一来源）
 - 主页和列表页都通过 `fetch` 读取，**不得**在 HTML 内联重复的文章数组
-- 新增文章只需在 `posts-meta.json` 头部追加条目，无需改动 HTML
+- `posts-meta.json` 是文章元数据的单一来源；新增文章时先添加元数据，再由生成脚本创建 HTML 和搜索发现资产
 
 ### posts-meta.json 字段规范
 
@@ -275,8 +275,8 @@ refactor: 迁移文件到 assets/ 目录结构
 
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：`node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
-- 未来更换站点域名只修改 `scripts/site-config.js`，然后重新生成 `robots.txt`、`sitemap.xml`、`feed.xml` 和文章 head 元数据。
+- 新文章发布流程：先更新 `posts-meta.json` → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。
 
@@ -321,10 +321,11 @@ refactor: 迁移文件到 assets/ 目录结构
 ### 目录结构
 
 ```
-.claude/skills/
+.agents/skills/
 ├── <name>/
-│   └── SKILL.md        # 必须：含 frontmatter 的 skill 定义
+│   └── SKILL.md        # canonical source：含 frontmatter 的 skill 定义
 └── ...
+.claude/skills/         # Claude 兼容层，优先使用 Junction
 skills-lock.json        # 系统级 skill 哈希锁（不要手动编辑）
 ```
 
@@ -351,7 +352,7 @@ description: 一句话描述，会显示在 Skill 列表里，要准确反映触
 
 ### 新增项目级 Skill 流程
 
-1. 创建 `.claude/skills/<name>/SKILL.md`，写 frontmatter + 内容
+1. 创建 `.agents/skills/<name>/SKILL.md`，写 frontmatter + 内容
 2. 在 CLAUDE.md「Skill 选择树」中添加触发场景行
 3. 在 CLAUDE.md「Skill 管理」表格中添加一行（含最近更新日期）
 

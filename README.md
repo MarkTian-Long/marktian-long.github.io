@@ -195,7 +195,7 @@ python -m http.server 8080
 
 `tools/blog/`
 
-对 AI 产品、技术演进、行业判断的持续记录，目前已发布 **33 篇文章**，覆盖三大主题：
+对 AI 产品、技术演进、行业判断的持续记录，文章数量由元数据自动驱动，覆盖三大主题：
 
 | 分类 | 代表文章 |
 |------|---------|
@@ -206,7 +206,7 @@ python -m http.server 8080
 ### 专栏特性
 
 - **双主题**：列表页默认浅色 / 文章页默认深色，主题状态跨页同步（`localStorage`）
-- **数据驱动**：元数据统一存放在 `tools/blog/data/posts-meta.json`，主页和列表页均 fetch 读取，新增文章只需改一个文件
+- **数据驱动**：元数据统一存放在 `tools/blog/data/posts-meta.json`，主页和列表页均 fetch 读取；发布脚本据此生成文章 head 和搜索发现资产
 - **独立区块**：在主页以独立 section 展示（非 iframe），文章在新标签页打开
 - **TOC 导航**：文章页左侧双栏 toc-card，一级章节可扫读；关键二级章节按需展开并支持滚动高亮
 
@@ -235,12 +235,15 @@ qiuzhi/
 │   ├── blog/                  # 思考碎片专栏（独立 section）
 │   │   ├── index.html         # 文章归档列表页
 │   │   ├── data/posts-meta.json  # 文章元数据（单一来源）
-│   │   ├── posts/             # 各篇文章 HTML（33 篇）
+│   │   ├── posts/             # 各篇文章 HTML
 │   │   └── WRITING_GUIDE.md   # 博客写作规范
 │   ├── dashboard/             # 求职追踪（dev only）
 │   └── product-collector/     # 产品信息采集器（dev only）
 ├── scripts/
-│   └── fetch-trends.js        # 热点爬虫（GitHub/HN/36Kr 自动抓取）
+│   ├── fetch-trends.js        # 热点爬虫（GitHub/HN/36Kr 自动抓取）
+│   ├── site-config.js         # 公开站点域名与作者配置
+│   ├── generate-search-assets.js  # 统一生成页面 SEO 与发现资产
+│   └── check-search-foundation.js # 发布前一致性检查
 ├── content/                   # Markdown 内容资料
 └── docs/
     ├── plans/                 # 设计文档与复盘（纳入版本控制）
@@ -263,7 +266,7 @@ qiuzhi/
 | AI 产品认知 | 10+ 款产品的结构化七维拆解，有自己的分析框架 |
 | 行业信息获取 | 多平台热榜聚合 + 持续更新的信息源体系 |
 | AI 能力落地 | A股助手的 6 个场景，覆盖 RAG/Agent/合规等复杂设计 |
-| 独立判断与写作 | 33 篇思考碎片，有立场、有数据、持续更新 |
+| 独立判断与写作 | 持续更新的思考碎片，有立场、有数据 |
 | 工程执行力 | 从 0 独立构建可运行 demo，爬虫 + AI 生成 + 前端展示全链路 |
 | 产品品味 | 暗色设计系统、CSS Design Tokens、模块化架构 |
 

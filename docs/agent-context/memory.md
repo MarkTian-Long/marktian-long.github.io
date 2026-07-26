@@ -95,6 +95,12 @@ initial migration.
 
 ### Blog system
 
+- 2026-07-24 Codex: Search discovery has one public configuration source at
+  `scripts/site-config.js`. After changing the domain or article metadata, run
+  `node scripts/generate-search-assets.js --write` and then
+  `node scripts/check-search-foundation.js`; the generator updates entry-page
+  and article head metadata plus robots, sitemap, and RSS without changing
+  HTML bodies.
 - 2026-07-16 Codex: Markdown-generated blog pages can inherit stale template
   fragments when regex replacement stops at the first nested `</ul>`. For
   `tools/blog/generate-post.js`, replace the entire `.toc-list` by matching

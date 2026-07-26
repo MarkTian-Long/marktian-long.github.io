@@ -58,7 +58,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 单页决策沙盘：选业务场景（银行/电商/创业）→ 9 张产品决策卡 + L4 链路图 + mock 对话 Demo 全部随场景联动（决策卡高亮该场景取舍、Demo 演该行业四链路含 HITL）。决策卡含评估维度/三场景取舍/PM·算法分工徽章/证据。浅色主题，由 gen_index.js 数据驱动生成 | PM 作品 |
 | ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（14节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
 | Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
-| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（33篇，按年份分组，双主题） | 信息工具（直链） |
+| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（文章数由元数据驱动，按年份分组，双主题） | 信息工具（直链） |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
@@ -76,6 +76,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - AI 产品数据：`tools/ai-insights/data/products.json`
 - AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
 - 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
+- 搜索发现配置与生成：`scripts/site-config.js`、`scripts/generate-search-assets.js`、`scripts/check-search-foundation.js`
 
 ## 给 Codex 的工作指令
 - **共享上下文优先**：每次对话开始时，先读取 `docs/agent-context/README.md`、`memory.md`、`skills.md`、`maintenance.md`。Codex 新沉淀的长期项目知识必须同步写回这些共享文档，确保 Claude 下次也能继承。
