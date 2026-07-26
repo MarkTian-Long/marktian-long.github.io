@@ -40,6 +40,15 @@ initial migration.
 
 ### Workflow
 
+- 2026-07-26 Codex: When pushing to GitHub from this Windows workspace, direct
+  HTTPS to `github.com:443` may time out even though the local machine has a
+  working proxy. Before declaring push blocked, probe common local proxy ports;
+  `127.0.0.1:7897` worked in this session. Use temporary Git proxy flags such
+  as `git -c http.proxy=http://127.0.0.1:7897 -c
+  https.proxy=http://127.0.0.1:7897 push origin <branch>` instead of changing
+  global Git config. SSH port 22 can be reachable while GitHub rejects the
+  operation because no SSH key is installed, so SSH reachability alone is not a
+  complete fallback.
 - Large HTML/JS writes over 300 lines should use a project-local generation
   script instead of ad hoc giant writes. Windows `/tmp` should not be used for
   project scripts.
