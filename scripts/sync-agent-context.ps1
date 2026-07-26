@@ -8,6 +8,23 @@ $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $errors = New-Object System.Collections.Generic.List[string]
 $warnings = New-Object System.Collections.Generic.List[string]
 $info = New-Object System.Collections.Generic.List[string]
+$canonicalSkillsRoot = Join-Path $repoRoot ".agents/skills"
+
+if (-not (Test-Path $canonicalSkillsRoot)) {
+  $commonGitDir = (& git -C $repoRoot rev-parse --git-common-dir 2>$null)
+  if ($LASTEXITCODE -eq 0 -and $commonGitDir) {
+    $resolvedGitDir = if ([IO.Path]::IsPathRooted($commonGitDir)) {
+      [IO.Path]::GetFullPath($commonGitDir)
+    } else {
+      [IO.Path]::GetFullPath((Join-Path $repoRoot $commonGitDir))
+    }
+    $primaryWorkspace = Split-Path $resolvedGitDir -Parent
+    $primarySkills = Join-Path $primaryWorkspace ".agents/skills"
+    if (Test-Path $primarySkills) {
+      $canonicalSkillsRoot = $primarySkills
+    }
+  }
+}
 
 function Add-Result {
   param(
@@ -93,10 +110,10 @@ try {
     }
   }
 
-  if (-not (Test-Path ".agents/skills")) {
-    Add-Result "ERROR" "Canonical .agents/skills directory is missing"
+  if (-not (Test-Path $canonicalSkillsRoot)) {
+    Add-Result "ERROR" "Canonical .agents/skills directory is missing from this worktree and the primary workspace"
   } else {
-    Add-Result "OK" "Canonical .agents/skills directory exists"
+    Add-Result "OK" "Canonical .agents/skills directory exists at $canonicalSkillsRoot"
   }
 
   if (Test-Path ".codex/skills") {
@@ -111,8 +128,8 @@ try {
     Add-Result "WARN" "Root skills/ exists as legacy compatibility; do not edit it first"
   }
 
-  if ((Test-Path ".agents/skills") -and (Test-Path ".claude/skills")) {
-    $agentSkills = Get-ChildItem ".agents/skills" -Directory
+  if ((Test-Path $canonicalSkillsRoot) -and (Test-Path ".claude/skills")) {
+    $agentSkills = Get-ChildItem $canonicalSkillsRoot -Directory
     foreach ($skill in $agentSkills) {
       $agentSkillDir = $skill.FullName
       $claudeSkillDir = Join-Path ".claude/skills" $skill.Name

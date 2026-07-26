@@ -31,6 +31,10 @@ skills/                        # legacy compatibility copy, do not edit first
   `name`, `description`, and `type` when the local skill format requires it.
 - Skill commands should avoid `/tmp` on Windows; use project-local temporary
   folders when a script is needed.
+- Independent Git worktrees may not contain the ignored `.agents/skills/`
+  directory. `scripts/sync-agent-context.ps1` resolves the canonical directory
+  from the primary workspace in that case; edit the primary source, not a
+  worktree-local copy.
 
 ## Current migration notes
 

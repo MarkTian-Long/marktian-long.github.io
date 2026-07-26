@@ -30,6 +30,7 @@ build/
 *.bak
 *.bak.*
 *.log
+/.codex-tmp/
 node_modules/
 scripts/node_modules/
 
