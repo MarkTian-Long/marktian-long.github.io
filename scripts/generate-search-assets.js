@@ -103,9 +103,13 @@ function readExisting(filePath) {
   return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : null;
 }
 
+function normalizeLineEndings(content) {
+  return content === null ? null : content.replace(/\r\n/g, '\n');
+}
+
 function changedTargets(rootDir, contents) {
   return Object.keys(contents)
-    .filter(file => readExisting(path.join(rootDir, file)) !== contents[file]);
+    .filter(file => normalizeLineEndings(readExisting(path.join(rootDir, file))) !== normalizeLineEndings(contents[file]));
 }
 
 function writeTargets(rootDir, contents) {
@@ -189,6 +193,7 @@ module.exports = {
   buildSearchAssets,
   validatePosts,
   targetContents,
+  changedTargets,
   parseArgs,
   main
 };

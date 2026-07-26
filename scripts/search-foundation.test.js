@@ -17,6 +17,7 @@ const {
 const {
   buildSearchAssets,
   targetContents,
+  changedTargets,
   validatePosts,
   parseArgs: parseSearchAssetArgs
 } = require('./generate-search-assets');
@@ -539,6 +540,16 @@ test('targetContents replaces every configured domain in generated outputs and p
   assert.match(combined, /https:\/\/example\.com\//);
   assert.doesNotMatch(combined, /marktian-long\.github\.io/);
   assert.equal(Object.keys(contents).length, 6);
+});
+
+test('search asset freshness checks tolerate Windows CRLF checkouts', () => {
+  const { rootDir, posts } = makeCheckFixture();
+  const contents = targetContents(config, posts, rootDir);
+  for (const [file, content] of Object.entries(contents)) {
+    fs.writeFileSync(path.join(rootDir, file), content.replace(/\n/g, '\r\n'), 'utf8');
+  }
+
+  assert.deepEqual(changedTargets(rootDir, contents), []);
 });
 
 test('generate-post CLI produces centralized SEO metadata without changing URL shape', () => {
