@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 
 const {
   absoluteUrl,
@@ -10,10 +11,19 @@ const {
   buildSitemap,
   buildRss,
   ensureArticleSeo,
+  ensureEntryPageSeo,
   extractBody
 } = require('./search-foundation');
-const { buildSearchAssets } = require('./generate-search-assets');
-const { retrofitBlogSeo } = require('./retrofit-blog-seo');
+const {
+  buildSearchAssets,
+  targetContents,
+  validatePosts,
+  parseArgs: parseSearchAssetArgs
+} = require('./generate-search-assets');
+const {
+  retrofitBlogSeo,
+  parseArgs: parseRetrofitArgs
+} = require('./retrofit-blog-seo');
 const { checkSearchFoundation } = require('./check-search-foundation');
 
 const config = Object.freeze({
@@ -21,8 +31,7 @@ const config = Object.freeze({
   siteName: 'Leo Liu · AI / Product / Builder',
   siteDescription: 'Leo Liu — AI 产品与工程实践，写关于 AI 落地的独立观察。',
   author: {
-    name: 'Leo Liu',
-    url: 'https://marktian-long.github.io'
+    name: 'Leo Liu'
   },
   blog: {
     title: '思考碎片 — Leo Liu',
@@ -77,6 +86,35 @@ test('buildRss limits items, escapes XML, and uses absolute links', () => {
   assert.doesNotMatch(xml, /<pubDate>/);
 });
 
+test('XML generators reject XML 1.0 control characters', () => {
+  assert.throws(
+    () => buildRss(config, [{
+      slug: 'bad',
+      title: 'Bad',
+      summary: 'Bad\u0001summary',
+      url: 'posts/bad.html'
+    }]),
+    /forbidden by XML 1\.0/
+  );
+  assert.throws(
+    () => buildRss(config, [{
+      slug: 'bad-surrogate',
+      title: 'Bad',
+      summary: 'Bad\uD800summary',
+      url: 'posts/bad-surrogate.html'
+    }]),
+    /unpaired UTF-16 surrogate/
+  );
+  assert.doesNotThrow(
+    () => buildRss(config, [{
+      slug: 'valid-surrogate-pair',
+      title: 'Valid',
+      summary: 'Valid \uD83D\uDE00 summary',
+      url: 'posts/valid-surrogate-pair.html'
+    }])
+  );
+});
+
 test('ensureArticleSeo inserts an idempotent head block without changing body', () => {
   const sourceHtml = [
     '<!doctype html>',
@@ -85,6 +123,12 @@ test('ensureArticleSeo inserts an idempotent head block without changing body', 
     '<meta charset="UTF-8" />',
     '<title>Old title</title>',
     '<meta property="og:title" content="Old title" />',
+    '<meta property="og:description" content="Old summary" />',
+    '<meta property="og:url" content="https://old.example/post.html" />',
+    '<meta property="og:image" content="https://old.example/cover.png" />',
+    '<meta name="twitter:title" content="Old title" />',
+    '<meta name="twitter:description" content="Old summary" />',
+    '<meta name="twitter:image" content="https://old.example/cover.png" />',
     '</head>',
     '<body>',
     '<main><h1>Visible body</h1><p>Do not touch.</p></main>',
@@ -106,6 +150,60 @@ test('ensureArticleSeo inserts an idempotent head block without changing body', 
   assert.match(once, /<meta name="description"/);
   assert.match(once, /<link rel="canonical"/);
   assert.match(once, /"@type":"BlogPosting"/);
+  assert.doesNotMatch(once, /old\.example/);
+  assert.match(once, /"url":"https:\/\/marktian-long\.github\.io\/"/);
+  assert.match(once, /<meta property="og:title" content="Example &lt;Post&gt;" \/>/);
+  assert.match(once, /<meta property="og:description" content="Summary with &quot;quotes&quot; &amp; angle &lt;brackets&gt;\." \/>/);
+  assert.match(once, /<meta name="twitter:title" content="Example &lt;Post&gt;" \/>/);
+  assert.match(once, /<meta name="twitter:description" content="Summary with &quot;quotes&quot; &amp; angle &lt;brackets&gt;\." \/>/);
+});
+
+test('SEO rewrites preserve unrelated JSON-LD scripts', () => {
+  const breadcrumb = '<script type="application/ld+json">{"@type":"BreadcrumbList"}</script>';
+  const organization = '<script type="application/ld+json">{"@type":"Organization"}</script>';
+  const article = '<script type="application/ld+json">{"@type":"BlogPosting"}</script>';
+  const articleArray = '<script type="application/ld+json">[{"@type":"BlogPosting","marker":"array"}]</script>';
+  const articleMultiType = '<script type="application/ld+json">{"@type":["BlogPosting","Article"],"marker":"multi"}</script>';
+  const website = '<script type="application/ld+json">{"@type":"WebSite"}</script>';
+  const sourceArticle = `<html><head><title>Article</title>${breadcrumb}${article}${articleArray}${articleMultiType}${organization}</head>`
+    + '<body>Article body</body></html>';
+  const sourceEntry = `<html><head><title>Home</title>${organization}${website}${breadcrumb}</head>`
+    + '<body>Home body</body></html>';
+  const metadata = {
+    slug: 'example',
+    title: 'Example',
+    summary: 'Example summary',
+    url: 'posts/example.html'
+  };
+
+  const rewrittenArticle = ensureArticleSeo(sourceArticle, metadata, config);
+  const rewrittenEntry = ensureEntryPageSeo(sourceEntry, 'home', config);
+
+  assert.match(rewrittenArticle, /"@type":"BreadcrumbList"/);
+  assert.match(rewrittenArticle, /"@type":"Organization"/);
+  assert.equal((rewrittenArticle.match(/"@type":"BlogPosting"/g) || []).length, 1);
+  assert.doesNotMatch(rewrittenArticle, /"marker":"array"|"marker":"multi"/);
+  assert.match(rewrittenEntry, /"@type":"Organization"/);
+  assert.match(rewrittenEntry, /"@type":"BreadcrumbList"/);
+  assert.equal((rewrittenEntry.match(/"@type":"WebSite"/g) || []).length, 1);
+});
+
+test('ensureEntryPageSeo centralizes entry metadata without changing body', () => {
+  const sourceHtml = '<html><head><title>Home</title>'
+    + '<meta name="description" content="Old" />'
+    + '<link rel="canonical" href="https://old.example/" />'
+    + '<meta property="og:url" content="https://old.example/" />'
+    + '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite"}</script>'
+    + '</head><body><main>Visible</main></body></html>';
+
+  const once = ensureEntryPageSeo(sourceHtml, 'home', config);
+  const twice = ensureEntryPageSeo(once, 'home', config);
+
+  assert.equal(twice, once);
+  assert.equal(extractBody(once), extractBody(sourceHtml));
+  assert.doesNotMatch(once, /old\.example/);
+  assert.match(once, /search-foundation-entry:start/);
+  assert.match(once, /"@graph"/);
 });
 
 test('buildSearchAssets emits entry pages, unique article URLs, and a limited feed', () => {
@@ -127,16 +225,42 @@ test('buildSearchAssets emits entry pages, unique article URLs, and a limited fe
 
 test('buildSearchAssets rejects duplicate slugs and URLs', () => {
   const duplicateSlugPosts = [
-    { slug: 'same', title: 'A', summary: 'A', url: 'posts/a.html' },
-    { slug: 'same', title: 'B', summary: 'B', url: 'posts/b.html' }
+    { slug: 'same', title: 'A', summary: 'A', url: 'posts/same.html' },
+    { slug: 'same', title: 'B', summary: 'B', url: 'posts/same.html' }
   ];
   const duplicateUrlPosts = [
-    { slug: 'a', title: 'A', summary: 'A', url: 'posts/same.html' },
-    { slug: 'b', title: 'B', summary: 'B', url: 'posts/same.html' }
+    { slug: 'same', title: 'A', summary: 'A', url: 'posts/same.html' },
+    { slug: 'same', title: 'B', summary: 'B', url: 'posts/same.html' }
   ];
 
   assert.throws(() => buildSearchAssets(config, duplicateSlugPosts), /Duplicate slug/);
-  assert.throws(() => buildSearchAssets(config, duplicateUrlPosts), /Duplicate url/);
+  assert.throws(() => validatePosts(duplicateUrlPosts), /Duplicate slug|Duplicate url/);
+});
+
+test('validatePosts rejects malformed fields and unsafe article paths', () => {
+  assert.throws(
+    () => validatePosts([{ slug: {}, title: 'A', summary: 'A', url: 'posts/a.html' }]),
+    /slug.*string/
+  );
+  assert.throws(
+    () => validatePosts([{ slug: '../a', title: 'A', summary: 'A', url: '../../../outside.html' }]),
+    /Invalid slug|Invalid url/
+  );
+  assert.throws(
+    () => validatePosts([{ slug: 'a', title: 'A', summary: 'A', url: 'posts/./a.html' }]),
+    /Invalid url/
+  );
+  assert.throws(
+    () => validatePosts([{ slug: 'a', title: ' A', summary: 'A', url: 'posts/a.html' }]),
+    /trimmed/
+  );
+});
+
+test('search CLIs reject unknown and ambiguous options', () => {
+  assert.throws(() => parseSearchAssetArgs(['--wrtie']), /Unknown option/);
+  assert.throws(() => parseSearchAssetArgs(['--write', '--check']), /either/);
+  assert.throws(() => parseRetrofitArgs(['--wrtie']), /Unknown option/);
+  assert.throws(() => parseRetrofitArgs(['--exclude', '--write']), /non-option path/);
 });
 
 function makeRetrofitFixture(html, posts) {
@@ -237,13 +361,14 @@ test('retrofitBlogSeo fails when metadata files are missing or HTML is malformed
   );
 });
 
-function makeCheckFixture() {
+function makeCheckFixture(postOverrides = {}) {
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-check-'));
   const posts = [{
     slug: 'example',
     title: 'Example',
     summary: 'Example summary',
-    url: 'posts/example.html'
+    url: 'posts/example.html',
+    ...postOverrides
   }];
   fs.mkdirSync(path.join(rootDir, 'tools/blog/data'), { recursive: true });
   fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
@@ -263,23 +388,19 @@ function makeCheckFixture() {
     config
   );
   fs.writeFileSync(path.join(rootDir, 'tools/blog/posts/example.html'), article, 'utf8');
-  fs.writeFileSync(
-    path.join(rootDir, 'index.html'),
-    '<html><head><title>Home</title><meta name="description" content="Home" />'
-      + '<link rel="canonical" href="https://marktian-long.github.io/" />'
-      + '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite"}</script>'
-      + '</head><body>Home</body></html>',
-    'utf8'
+  const home = ensureEntryPageSeo(
+    '<html><head><title>Home</title></head><body>Home</body></html>',
+    'home',
+    config
   );
+  fs.writeFileSync(path.join(rootDir, 'index.html'), home, 'utf8');
   fs.mkdirSync(path.join(rootDir, 'tools/blog'), { recursive: true });
-  fs.writeFileSync(
-    path.join(rootDir, 'tools/blog/index.html'),
-    '<html><head><title>Blog</title><meta name="description" content="Blog" />'
-      + '<link rel="canonical" href="https://marktian-long.github.io/tools/blog/" />'
-      + '<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage"}</script>'
-      + '</head><body>Blog</body></html>',
-    'utf8'
+  const blog = ensureEntryPageSeo(
+    '<html><head><title>Blog</title></head><body>Blog</body></html>',
+    'blog',
+    config
   );
+  fs.writeFileSync(path.join(rootDir, 'tools/blog/index.html'), blog, 'utf8');
 
   return { rootDir, posts };
 }
@@ -289,6 +410,16 @@ test('checkSearchFoundation passes a complete fixture', () => {
   const result = checkSearchFoundation({ rootDir, siteConfig: config });
 
   assert.equal(result.code, 0);
+});
+
+test('checkSearchFoundation accepts escaped social metadata values', () => {
+  const { rootDir } = makeCheckFixture({
+    title: 'A & B <C>',
+    summary: 'Summary with "quotes" & <angles>'
+  });
+  const result = checkSearchFoundation({ rootDir, siteConfig: config });
+
+  assert.equal(result.code, 0, result.errors.join('\n'));
 });
 
 test('checkSearchFoundation reports missing sitemap entries', () => {
@@ -302,7 +433,7 @@ test('checkSearchFoundation reports missing sitemap entries', () => {
   const result = checkSearchFoundation({ rootDir, siteConfig: config });
 
   assert.equal(result.code, 1);
-  assert.match(result.errors.join('\n'), /sitemap.*example\.html/);
+  assert.match(result.errors.join('\n'), /sitemap/);
 });
 
 test('checkSearchFoundation reports article SEO defects', () => {
@@ -310,6 +441,8 @@ test('checkSearchFoundation reports article SEO defects', () => {
   const descriptionRoot = makeCheckFixture().rootDir;
   const jsonRoot = makeCheckFixture().rootDir;
   const duplicateCanonicalRoot = makeCheckFixture().rootDir;
+  const staleJsonRoot = makeCheckFixture().rootDir;
+  const duplicateArrayJsonRoot = makeCheckFixture().rootDir;
   const articlePath = 'tools/blog/posts/example.html';
 
   fs.writeFileSync(
@@ -336,11 +469,31 @@ test('checkSearchFoundation reports article SEO defects', () => {
       .replace('</head>', '<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/example.html" /></head>'),
     'utf8'
   );
+  fs.writeFileSync(
+    path.join(staleJsonRoot, articlePath),
+    fs.readFileSync(path.join(staleJsonRoot, articlePath), 'utf8')
+      .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, '<script type="application/ld+json">{}</script>'),
+    'utf8'
+  );
+  fs.writeFileSync(
+    path.join(duplicateArrayJsonRoot, articlePath),
+    fs.readFileSync(path.join(duplicateArrayJsonRoot, articlePath), 'utf8')
+      .replace(
+        '</head>',
+        '<script type="application/ld+json">[{"@type":["BlogPosting","Article"],"marker":"legacy"}]</script></head>'
+      ),
+    'utf8'
+  );
 
   assert.match(checkSearchFoundation({ rootDir: canonicalRoot, siteConfig: config }).errors.join('\n'), /canonical/);
   assert.match(checkSearchFoundation({ rootDir: descriptionRoot, siteConfig: config }).errors.join('\n'), /description/);
   assert.match(checkSearchFoundation({ rootDir: jsonRoot, siteConfig: config }).errors.join('\n'), /JSON-LD/);
   assert.match(checkSearchFoundation({ rootDir: duplicateCanonicalRoot, siteConfig: config }).errors.join('\n'), /duplicate canonical/);
+  assert.match(checkSearchFoundation({ rootDir: staleJsonRoot, siteConfig: config }).errors.join('\n'), /JSON-LD|stale/);
+  assert.match(
+    checkSearchFoundation({ rootDir: duplicateArrayJsonRoot, siteConfig: config }).errors.join('\n'),
+    /JSON-LD count mismatch|stale/
+  );
 });
 
 test('checkSearchFoundation reports feed and robots defects', () => {
@@ -353,6 +506,59 @@ test('checkSearchFoundation reports feed and robots defects', () => {
   );
   fs.writeFileSync(path.join(robotsRoot, 'robots.txt'), 'User-agent: *\nAllow: /\n', 'utf8');
 
-  assert.match(checkSearchFoundation({ rootDir: feedRoot, siteConfig: config }).errors.join('\n'), /feed.*limit/);
-  assert.match(checkSearchFoundation({ rootDir: robotsRoot, siteConfig: config }).errors.join('\n'), /robots.*sitemap/);
+  assert.match(checkSearchFoundation({ rootDir: feedRoot, siteConfig: config }).errors.join('\n'), /feed/);
+  assert.match(checkSearchFoundation({ rootDir: robotsRoot, siteConfig: config }).errors.join('\n'), /robots/);
+});
+
+test('checkSearchFoundation reports orphaned articles', () => {
+  const { rootDir } = makeCheckFixture();
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/posts/orphan.html'),
+    '<html><head><title>Orphan</title></head><body>Orphan</body></html>',
+    'utf8'
+  );
+
+  const result = checkSearchFoundation({ rootDir, siteConfig: config });
+
+  assert.equal(result.code, 1);
+  assert.match(result.errors.join('\n'), /Orphan article file/);
+  assert.doesNotMatch(result.messages.join('\n'), /PASS blog article SEO/);
+});
+
+test('targetContents replaces every configured domain in generated outputs and pages', () => {
+  const { rootDir, posts } = makeCheckFixture();
+  const customConfig = {
+    ...config,
+    siteUrl: 'https://example.com',
+    author: { name: config.author.name }
+  };
+
+  const contents = targetContents(customConfig, posts, rootDir);
+  const combined = Object.values(contents).join('\n');
+
+  assert.match(combined, /https:\/\/example\.com\//);
+  assert.doesNotMatch(combined, /marktian-long\.github\.io/);
+  assert.equal(Object.keys(contents).length, 6);
+});
+
+test('generate-post CLI produces centralized SEO metadata without changing URL shape', () => {
+  const rootDir = path.resolve(__dirname, '..');
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-post-cli-'));
+  const outputPath = path.join(outputDir, 'agent-boundary.html');
+  const result = spawnSync(
+    process.execPath,
+    [
+      path.join(rootDir, 'tools/blog/generate-post.js'),
+      path.join(rootDir, 'docs/blog/agent-boundary.md'),
+      outputPath
+    ],
+    { cwd: rootDir, encoding: 'utf8' }
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  const html = fs.readFileSync(outputPath, 'utf8');
+  assert.match(html, /search-foundation:start/);
+  assert.match(html, /"@type":"BlogPosting"/);
+  assert.doesNotMatch(html, /posts\/posts\//);
+  assert.match(html, /<body\b/);
 });

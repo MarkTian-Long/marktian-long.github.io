@@ -1,9 +1,17 @@
 const fs = require('fs');
 const path = require('path');
+const { isDeepStrictEqual } = require('util');
 
 const siteConfig = require('./site-config');
-const { validatePosts } = require('./generate-search-assets');
-const { articleUrl, absoluteUrl } = require('./search-foundation');
+const { buildSearchAssets, validatePosts } = require('./generate-search-assets');
+const {
+  articleUrl,
+  absoluteUrl,
+  buildArticleJsonLd,
+  buildEntryJsonLd,
+  ensureArticleSeo,
+  ensureEntryPageSeo
+} = require('./search-foundation');
 
 function readText(rootDir, relPath) {
   return fs.readFileSync(path.join(rootDir, relPath), 'utf8');
@@ -23,8 +31,8 @@ function tagsByName(html, tagName) {
 }
 
 function attr(tag, name) {
-  const match = tag.match(new RegExp(`${name}=["']([^"']*)["']`, 'i'));
-  return match ? match[1] : '';
+  const match = tag.match(new RegExp(`${name}=(["'])(.*?)\\1`, 'i'));
+  return match ? match[2] : '';
 }
 
 function canonicalLinks(html) {
@@ -33,9 +41,27 @@ function canonicalLinks(html) {
     .map(tag => attr(tag, 'href'));
 }
 
-function hasDescription(html) {
+function metaValues(html, attribute, value) {
+  const pattern = new RegExp(`\\b${attribute}=["']${value}["']`, 'i');
   return tagsByName(html, 'meta')
-    .some(tag => /\bname=["']description["']/i.test(tag) && attr(tag, 'content'));
+    .filter(tag => pattern.test(tag))
+    .map(tag => attr(tag, 'content'));
+}
+
+function alternateFeeds(html) {
+  return tagsByName(html, 'link')
+    .filter(tag => /\brel=["']alternate["']/i.test(tag)
+      && /\btype=["']application\/rss\+xml["']/i.test(tag))
+    .map(tag => attr(tag, 'href'));
+}
+
+function htmlUnescape(value) {
+  return String(value)
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 }
 
 function jsonLdBlocks(html) {
@@ -61,60 +87,67 @@ function parseJsonLd(html, relPath, errors) {
   return parsed;
 }
 
-function sitemapLocs(xml) {
-  return [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/g)].map(match => match[1]
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'"));
+function normalizeNewlines(value) {
+  return String(value).replace(/\r\n/g, '\n');
 }
 
-function checkRobots(rootDir, config, errors, messages) {
-  const robots = readText(rootDir, 'robots.txt');
-  const sitemapUrl = absoluteUrl(config.siteUrl, '/sitemap.xml');
-  if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
-    errors.push('robots missing sitemap declaration');
-    return;
+function checkExactFile(rootDir, relPath, expected, errors, errorMessage) {
+  const actual = readText(rootDir, relPath);
+  if (normalizeNewlines(actual) !== normalizeNewlines(expected)) {
+    errors.push(errorMessage);
+    return false;
   }
-  messages.push('PASS robots.txt');
+  return true;
 }
 
-function checkSitemap(rootDir, config, posts, errors, messages) {
-  const sitemap = readText(rootDir, 'sitemap.xml');
-  const locs = new Set(sitemapLocs(sitemap));
-  const expected = [
-    absoluteUrl(config.siteUrl, '/'),
-    absoluteUrl(config.siteUrl, config.blog.path),
-    ...posts.map(post => articleUrl(config, post))
-  ];
-
-  for (const url of expected) {
-    if (!locs.has(url)) {
-      errors.push(`sitemap missing ${url}`);
-    }
+function checkAssets(rootDir, config, posts, errors, messages) {
+  const assets = buildSearchAssets(config, posts);
+  if (checkExactFile(rootDir, 'robots.txt', assets.robots, errors, 'robots.txt content mismatch')) {
+    messages.push('PASS robots.txt');
   }
-
-  if (!errors.some(error => error.startsWith('sitemap '))) {
+  if (checkExactFile(rootDir, 'sitemap.xml', assets.sitemap, errors, 'sitemap.xml content mismatch')) {
     messages.push('PASS sitemap.xml');
   }
-}
-
-function checkFeed(rootDir, config, errors, messages) {
-  const feed = readText(rootDir, 'feed.xml');
-  const itemCount = (feed.match(/<item>/g) || []).length;
-  if (itemCount > config.blog.feedLimit) {
-    errors.push(`feed item count exceeds limit: ${itemCount}/${config.blog.feedLimit}`);
-  }
-  if (!/<rss\b/i.test(feed)) {
-    errors.push('feed missing rss root');
-  }
-  if (!errors.some(error => error.startsWith('feed '))) {
+  if (checkExactFile(rootDir, 'feed.xml', assets.feed, errors, 'feed.xml content mismatch')) {
     messages.push('PASS feed.xml');
   }
 }
 
-function checkPageSeo({ html, relPath, expectedCanonical, errors }) {
+function findJsonLdByType(blocks, expectedType) {
+  const values = [];
+  function visit(value) {
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+    if (!value || typeof value !== 'object') {
+      return;
+    }
+    const nodeTypes = Array.isArray(value['@type']) ? value['@type'] : [value['@type']];
+    if (nodeTypes.includes(expectedType)) {
+      values.push(value);
+    }
+    if (Array.isArray(value['@graph'])) {
+      value['@graph'].forEach(visit);
+    }
+  }
+  for (const block of blocks) {
+    visit(block);
+  }
+  return values;
+}
+
+function checkPageSeo({
+  html,
+  relPath,
+  expectedCanonical,
+  expectedDescription,
+  expectedFeed,
+  expectedJsonLd,
+  expectedJsonLdType,
+  expectedShareUrls,
+  errors
+}) {
   const canonicals = canonicalLinks(html);
   if (canonicals.length !== 1) {
     errors.push(`${relPath} duplicate canonical count: ${canonicals.length}`);
@@ -122,41 +155,134 @@ function checkPageSeo({ html, relPath, expectedCanonical, errors }) {
     errors.push(`${relPath} canonical mismatch: ${canonicals[0]} !== ${expectedCanonical}`);
   }
 
-  if (!hasDescription(html)) {
-    errors.push(`${relPath} missing description`);
+  const descriptions = metaValues(html, 'name', 'description').map(htmlUnescape);
+  if (descriptions.length !== 1) {
+    errors.push(`${relPath} description count mismatch: ${descriptions.length}`);
+  } else if (descriptions[0] !== expectedDescription) {
+    errors.push(`${relPath} description mismatch`);
   }
 
-  parseJsonLd(html, relPath, errors);
+  const feeds = alternateFeeds(html);
+  if (feeds.length !== 1 || feeds[0] !== expectedFeed) {
+    errors.push(`${relPath} RSS alternate mismatch`);
+  }
+
+  const parsedJsonLd = parseJsonLd(html, relPath, errors);
+  const matchingJsonLd = findJsonLdByType(parsedJsonLd, expectedJsonLdType);
+  if (matchingJsonLd.length !== 1) {
+    errors.push(`${relPath} ${expectedJsonLdType} JSON-LD count mismatch: ${matchingJsonLd.length}`);
+  } else if (!isDeepStrictEqual(matchingJsonLd[0], expectedJsonLd)) {
+    errors.push(`${relPath} ${expectedJsonLdType} JSON-LD mismatch`);
+  }
+
+  for (const [attribute, value, expected] of expectedShareUrls || []) {
+    const values = metaValues(html, attribute, value).map(htmlUnescape);
+    if (values.length !== 1 || values[0] !== expected) {
+      errors.push(`${relPath} ${value} mismatch`);
+    }
+  }
+}
+
+function checkArticleFileSet(rootDir, posts, errors) {
+  const postsDir = path.join(rootDir, 'tools/blog/posts');
+  const actual = fs.readdirSync(postsDir)
+    .filter(file => file.endsWith('.html'))
+    .sort();
+  const expected = posts.map(post => path.posix.basename(post.url)).sort();
+  const missing = expected.filter(file => !actual.includes(file));
+  const orphaned = actual.filter(file => !expected.includes(file));
+  for (const file of missing) {
+    errors.push(`Missing article file: tools/blog/posts/${file}`);
+  }
+  for (const file of orphaned) {
+    errors.push(`Orphan article file: tools/blog/posts/${file}`);
+  }
 }
 
 function checkArticles(rootDir, config, posts, errors, messages) {
+  const articleErrorStart = errors.length;
+  checkArticleFileSet(rootDir, posts, errors);
+  const feedUrl = absoluteUrl(config.siteUrl, config.blog.feedPath);
+  const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
   let checked = 0;
   for (const post of posts) {
     const relPath = path.posix.join('tools/blog', post.url);
+    if (!fs.existsSync(path.join(rootDir, relPath))) {
+      continue;
+    }
     const html = readText(rootDir, relPath);
+    const expectedUrl = articleUrl(config, post);
+    const expectedHtml = ensureArticleSeo(html, post, config);
+    if (normalizeNewlines(html) !== normalizeNewlines(expectedHtml)) {
+      errors.push(`${relPath} generated SEO block is stale`);
+    }
     checkPageSeo({
       html,
       relPath,
-      expectedCanonical: articleUrl(config, post),
+      expectedCanonical: expectedUrl,
+      expectedDescription: post.summary,
+      expectedFeed: feedUrl,
+      expectedJsonLd: JSON.parse(buildArticleJsonLd(config, post, expectedUrl)),
+      expectedJsonLdType: 'BlogPosting',
+      expectedShareUrls: [
+        ['property', 'og:title', post.title],
+        ['property', 'og:description', post.summary],
+        ['property', 'og:url', expectedUrl],
+        ['property', 'og:image', imageUrl],
+        ['name', 'twitter:title', post.title],
+        ['name', 'twitter:description', post.summary],
+        ['name', 'twitter:image', imageUrl]
+      ],
       errors
     });
     checked++;
   }
 
-  if (!errors.some(error => error.startsWith('tools/blog/posts/'))) {
+  if (errors.length === articleErrorStart) {
     messages.push(`PASS blog article SEO: ${checked}/${posts.length}`);
   }
 }
 
 function checkEntryPages(rootDir, config, errors, messages) {
   const pages = [
-    ['index.html', absoluteUrl(config.siteUrl, '/')],
-    ['tools/blog/index.html', absoluteUrl(config.siteUrl, config.blog.path)]
+    {
+      relPath: 'index.html',
+      pageType: 'home',
+      canonical: absoluteUrl(config.siteUrl, '/'),
+      description: config.siteDescription,
+      jsonLdType: 'WebSite'
+    },
+    {
+      relPath: 'tools/blog/index.html',
+      pageType: 'blog',
+      canonical: absoluteUrl(config.siteUrl, config.blog.path),
+      description: config.blog.description,
+      jsonLdType: 'CollectionPage'
+    }
   ];
+  const feedUrl = absoluteUrl(config.siteUrl, config.blog.feedPath);
   let checked = 0;
-  for (const [relPath, expectedCanonical] of pages) {
-    const html = readText(rootDir, relPath);
-    checkPageSeo({ html, relPath, expectedCanonical, errors });
+  for (const page of pages) {
+    const html = readText(rootDir, page.relPath);
+    const expectedHtml = ensureEntryPageSeo(html, page.pageType, config);
+    if (normalizeNewlines(html) !== normalizeNewlines(expectedHtml)) {
+      errors.push(`${page.relPath} generated SEO block is stale`);
+    }
+    const expectedJsonLdDocument = JSON.parse(buildEntryJsonLd(config, page.pageType));
+    const expectedJsonLd = page.pageType === 'home'
+      ? findJsonLdByType([expectedJsonLdDocument], page.jsonLdType)[0]
+      : expectedJsonLdDocument;
+    checkPageSeo({
+      html,
+      relPath: page.relPath,
+      expectedCanonical: page.canonical,
+      expectedDescription: page.description,
+      expectedFeed: feedUrl,
+      expectedJsonLd,
+      expectedJsonLdType: page.jsonLdType,
+      expectedShareUrls: [['property', 'og:url', page.canonical]],
+      errors
+    });
     checked++;
   }
 
@@ -171,9 +297,7 @@ function checkSearchFoundation({ rootDir = path.resolve(__dirname, '..'), siteCo
 
   try {
     const posts = loadPosts(rootDir);
-    checkRobots(rootDir, config, errors, messages);
-    checkSitemap(rootDir, config, posts, errors, messages);
-    checkFeed(rootDir, config, errors, messages);
+    checkAssets(rootDir, config, posts, errors, messages);
     checkArticles(rootDir, config, posts, errors, messages);
     checkEntryPages(rootDir, config, errors, messages);
   } catch (error) {

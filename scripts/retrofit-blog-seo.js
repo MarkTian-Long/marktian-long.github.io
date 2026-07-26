@@ -11,18 +11,31 @@ function normalizeRelPath(value) {
 
 function parseArgs(argv) {
   const args = {
-    write: argv.includes('--write'),
-    check: argv.includes('--check'),
+    write: false,
+    check: false,
     excludes: []
   };
 
   for (let index = 0; index < argv.length; index++) {
-    if (argv[index] === '--exclude') {
+    const arg = argv[index];
+    if (arg === '--write') {
+      args.write = true;
+      continue;
+    }
+    if (arg === '--check') {
+      args.check = true;
+      continue;
+    }
+    if (arg === '--exclude') {
       const value = argv[index + 1];
-      if (!value) throw new Error('--exclude requires a path');
+      if (!value || value.startsWith('--')) {
+        throw new Error('--exclude requires a non-option path');
+      }
       args.excludes.push(normalizeRelPath(value));
       index++;
+      continue;
     }
+    throw new Error(`Unknown option: ${arg}`);
   }
 
   if (args.write && args.check) {
@@ -48,9 +61,15 @@ function hasSearchBlock(html) {
 
 function articleFileForPost(rootDir, post) {
   const relPath = normalizeRelPath(path.posix.join('tools/blog', post.url));
+  const postsRoot = path.resolve(rootDir, 'tools/blog/posts');
+  const absPath = path.resolve(rootDir, relPath);
+  const relativeToPosts = path.relative(postsRoot, absPath);
+  if (relativeToPosts.startsWith('..') || path.isAbsolute(relativeToPosts)) {
+    throw new Error(`Article path escapes tools/blog/posts: ${post.url}`);
+  }
   return {
     relPath,
-    absPath: path.join(rootDir, relPath)
+    absPath
   };
 }
 
@@ -70,7 +89,14 @@ function retrofitBlogSeo({ argv = process.argv.slice(2), rootDir = path.resolve(
   }
 
   for (const post of posts) {
-    const { relPath, absPath } = articleFileForPost(rootDir, post);
+    let articleFile;
+    try {
+      articleFile = articleFileForPost(rootDir, post);
+    } catch (error) {
+      errors.push(error.message);
+      continue;
+    }
+    const { relPath, absPath } = articleFile;
     if (args.excludes.includes(relPath)) {
       skipped.push(relPath);
       messages.push(`SKIP ${relPath}`);

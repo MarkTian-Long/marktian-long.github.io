@@ -6,10 +6,10 @@ const {
   articleUrl,
   buildRobots,
   buildSitemap,
-  buildRss
+  buildRss,
+  ensureArticleSeo,
+  ensureEntryPageSeo
 } = require('./search-foundation');
-
-const TARGETS = ['robots.txt', 'sitemap.xml', 'feed.xml'];
 
 function loadPosts(rootDir) {
   const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
@@ -28,10 +28,23 @@ function validatePosts(posts) {
   const slugs = new Set();
   const urls = new Set();
   for (const post of posts) {
+    if (!post || typeof post !== 'object' || Array.isArray(post)) {
+      throw new Error('Each post must be an object');
+    }
     for (const field of ['slug', 'title', 'summary', 'url']) {
-      if (!post[field]) {
-        throw new Error(`Post is missing ${field}`);
+      if (typeof post[field] !== 'string' || !post[field].trim()) {
+        throw new Error(`Post ${field} must be a non-empty string`);
       }
+    }
+    if (post.slug !== post.slug.trim() || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)) {
+      throw new Error(`Invalid slug: ${post.slug}`);
+    }
+    if (post.title !== post.title.trim() || post.summary !== post.summary.trim()) {
+      throw new Error(`Post text fields must be trimmed: ${post.slug}`);
+    }
+    const expectedUrl = `posts/${post.slug}.html`;
+    if (post.url !== expectedUrl) {
+      throw new Error(`Invalid url for ${post.slug}: expected ${expectedUrl}`);
     }
     if (slugs.has(post.slug)) {
       throw new Error(`Duplicate slug: ${post.slug}`);
@@ -63,13 +76,27 @@ function buildSearchAssets(siteConfig, posts) {
   };
 }
 
-function targetContents(siteConfig, posts) {
+function targetContents(siteConfig, posts, rootDir = path.resolve(__dirname, '..')) {
   const assets = buildSearchAssets(siteConfig, posts);
-  return {
+  const contents = {
     'robots.txt': assets.robots,
     'sitemap.xml': assets.sitemap,
     'feed.xml': assets.feed
   };
+  const entryPages = [
+    ['index.html', 'home'],
+    ['tools/blog/index.html', 'blog']
+  ];
+  for (const [relPath, pageType] of entryPages) {
+    const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
+    contents[relPath] = ensureEntryPageSeo(source, pageType, siteConfig);
+  }
+  for (const post of posts) {
+    const relPath = path.posix.join('tools/blog', post.url);
+    const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
+    contents[relPath] = ensureArticleSeo(source, post, siteConfig);
+  }
+  return contents;
 }
 
 function readExisting(filePath) {
@@ -77,11 +104,12 @@ function readExisting(filePath) {
 }
 
 function changedTargets(rootDir, contents) {
-  return TARGETS.filter(file => readExisting(path.join(rootDir, file)) !== contents[file]);
+  return Object.keys(contents)
+    .filter(file => readExisting(path.join(rootDir, file)) !== contents[file]);
 }
 
 function writeTargets(rootDir, contents) {
-  for (const file of TARGETS) {
+  for (const file of Object.keys(contents)) {
     fs.writeFileSync(path.join(rootDir, file), contents[file], 'utf8');
     console.log(`WROTE ${file}`);
   }
@@ -90,9 +118,11 @@ function writeTargets(rootDir, contents) {
 function checkTargets(rootDir, contents) {
   const changed = changedTargets(rootDir, contents);
   if (!changed.length) {
-    for (const file of TARGETS) {
-      console.log(`PASS ${file}`);
-    }
+    console.log('PASS robots.txt');
+    console.log('PASS sitemap.xml');
+    console.log('PASS feed.xml');
+    console.log('PASS entry page SEO: 2/2');
+    console.log(`PASS blog article SEO: ${Object.keys(contents).length - 5}/${Object.keys(contents).length - 5}`);
     return 0;
   }
 
@@ -115,21 +145,32 @@ function previewTargets(rootDir, contents) {
   return 0;
 }
 
-function main(argv = process.argv.slice(2), rootDir = path.resolve(__dirname, '..')) {
-  const shouldWrite = argv.includes('--write');
-  const shouldCheck = argv.includes('--check');
-  if (shouldWrite && shouldCheck) {
-    throw new Error('Use either --write or --check, not both');
+function parseArgs(argv) {
+  let mode = 'preview';
+  for (const arg of argv) {
+    if (arg === '--write' || arg === '--check') {
+      const nextMode = arg.slice(2);
+      if (mode !== 'preview' && mode !== nextMode) {
+        throw new Error('Use either --write or --check, not both');
+      }
+      mode = nextMode;
+      continue;
+    }
+    throw new Error(`Unknown option: ${arg}`);
   }
+  return mode;
+}
 
+function main(argv = process.argv.slice(2), rootDir = path.resolve(__dirname, '..')) {
+  const mode = parseArgs(argv);
   const posts = loadPosts(rootDir);
-  const contents = targetContents(config, posts);
+  const contents = targetContents(config, posts, rootDir);
 
-  if (shouldWrite) {
+  if (mode === 'write') {
     writeTargets(rootDir, contents);
     return 0;
   }
-  if (shouldCheck) {
+  if (mode === 'check') {
     return checkTargets(rootDir, contents);
   }
   return previewTargets(rootDir, contents);
@@ -148,5 +189,6 @@ module.exports = {
   buildSearchAssets,
   validatePosts,
   targetContents,
+  parseArgs,
   main
 };

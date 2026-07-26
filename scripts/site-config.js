@@ -3,8 +3,7 @@ module.exports = Object.freeze({
   siteName: 'Leo Liu · AI / Product / Builder',
   siteDescription: 'Leo Liu — AI 产品与工程实践，写关于 AI 落地的独立观察。',
   author: {
-    name: 'Leo Liu',
-    url: 'https://marktian-long.github.io'
+    name: 'Leo Liu'
   },
   blog: {
     title: '思考碎片 — Leo Liu',
