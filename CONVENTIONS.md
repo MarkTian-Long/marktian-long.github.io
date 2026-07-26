@@ -259,6 +259,7 @@ refactor: 迁移文件到 assets/ 目录结构
 - 博客元数据统一存放在 `tools/blog/data/posts-meta.json`（单一来源）
 - 主页和列表页都通过 `fetch` 读取，**不得**在 HTML 内联重复的文章数组
 - `posts-meta.json` 是文章元数据的单一来源；新增文章时先添加元数据，再由生成脚本创建 HTML 和搜索发现资产
+- 博客正文源稿优先维护在 `docs/blog/<slug>.md`；新文章必须同时提交 Markdown 源稿和 `tools/blog/posts/<slug>.html` 发布物。历史文章可能存在 HTML 与 Markdown 不一致，禁止批量从旧 Markdown 重新生成并覆盖已发布 HTML
 
 ### posts-meta.json 字段规范
 
@@ -275,7 +276,7 @@ refactor: 迁移文件到 assets/ 目录结构
 
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：先更新 `posts-meta.json` → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 新文章发布流程：先更新 `posts-meta.json` → 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。

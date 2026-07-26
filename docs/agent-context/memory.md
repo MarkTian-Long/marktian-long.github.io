@@ -101,6 +101,12 @@ initial migration.
   `node scripts/check-search-foundation.js`; the generator updates entry-page
   and article head metadata plus robots, sitemap, and RSS without changing
   HTML bodies.
+- 2026-07-26 Codex: Blog publishing treats `docs/blog/<slug>.md` as the
+  preferred source draft for new articles and `tools/blog/posts/<slug>.html` as
+  the deployed artifact. Historical articles may have HTML edits newer than
+  their Markdown candidates, and some early posts have no top-level Markdown
+  source. Do not bulk-regenerate historical HTML from Markdown; audit one
+  article at a time and backfill Markdown from current HTML when needed.
 - 2026-07-16 Codex: Markdown-generated blog pages can inherit stale template
   fragments when regex replacement stops at the first nested `</ul>`. For
   `tools/blog/generate-post.js`, replace the entire `.toc-list` by matching

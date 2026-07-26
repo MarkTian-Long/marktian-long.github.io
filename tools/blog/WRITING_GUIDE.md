@@ -293,6 +293,30 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ---
 
+## Markdown 源稿与发布 HTML 规范
+
+博客有两层文件：
+
+| 层级 | 路径 | 角色 |
+|------|------|------|
+| 源稿 | `docs/blog/*.md` | 写作和长期维护的正文来源 |
+| 发布物 | `tools/blog/posts/*.html` | GitHub Pages 实际访问的文章页面 |
+
+### 单一来源原则
+
+- 新文章必须同时提交 Markdown 源稿和生成后的 HTML；不要只提交 `tools/blog/posts/*.html`。
+- 新源稿优先命名为 `docs/blog/<slug>.md`，其中 `<slug>` 与 `posts-meta.json` 的 `slug` 完全一致。历史文件存在 `-v3`、`-final`、下划线等旧命名，保留但不作为新文章模板。
+- `tools/blog/data/posts-meta.json` 仍是标题、摘要、标签、分类和 URL 的单一来源；Markdown 负责正文，HTML 是部署产物。
+- 如果发布后必须手工改 HTML 的正文、目录、表格、callout 或参考资料，必须把同等内容回写到对应 Markdown，或在提交说明中明确这是 HTML-only 例外。不要让 HTML 成为唯一保存正文改动的地方。
+
+### 历史文章例外
+
+- 早期文章不保证都有 Markdown 源稿；部分 HTML 已经在发布后做过正文或结构编辑，可能和现有 Markdown 候选不一致。
+- 禁止对历史文章批量运行 `generate-post.js` 并覆盖 HTML。每次只处理一篇，先比较当前线上 HTML 与重新生成结果的可见正文，再决定是否回写 Markdown 或更新 HTML。
+- 对没有源稿的历史文章，优先从当前 HTML 反向整理 Markdown，再人工复核正文、标题层级、表格和参考资料链接。
+
+---
+
 ## 新增文章操作流程
 
 1. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
@@ -308,7 +332,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "url": "posts/your-slug.html"
    }
    ```
-2. 在 `docs/blog/` 下维护 Markdown 源稿，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
+2. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
    ```powershell
    node tools/blog/generate-post.js docs/blog/your-slug.md tools/blog/posts/your-slug.html
    ```
@@ -318,7 +342,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
    node scripts/check-search-foundation.js
    ```
 4. 主页、列表页、canonical、description、JSON-LD、OG/Twitter 元数据、RSS 和 sitemap 都从 JSON/脚本生成，**不要在生成的 head 或搜索资产中手工复制域名，也不要维护重复文章数组**
-5. `git add tools/blog/posts/xxx.html tools/blog/data/posts-meta.json robots.txt sitemap.xml feed.xml`
+5. `git add docs/blog/xxx.md tools/blog/posts/xxx.html tools/blog/data/posts-meta.json robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
 ### Markdown 转 HTML 发布 QA

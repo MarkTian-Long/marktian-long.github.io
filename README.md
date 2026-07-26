@@ -207,6 +207,7 @@ python -m http.server 8080
 
 - **双主题**：列表页默认浅色 / 文章页默认深色，主题状态跨页同步（`localStorage`）
 - **数据驱动**：元数据统一存放在 `tools/blog/data/posts-meta.json`，主页和列表页均 fetch 读取；发布脚本据此生成文章 head 和搜索发现资产
+- **源稿留存**：新文章正文源稿维护在 `docs/blog/<slug>.md`，与 `tools/blog/posts/<slug>.html` 发布物一起提交
 - **独立区块**：在主页以独立 section 展示（非 iframe），文章在新标签页打开
 - **TOC 导航**：文章页左侧双栏 toc-card，一级章节可扫读；关键二级章节按需展开并支持滚动高亮
 
@@ -246,6 +247,7 @@ qiuzhi/
 │   └── check-search-foundation.js # 发布前一致性检查
 ├── content/                   # Markdown 内容资料
 └── docs/
+    ├── blog/                  # 博客 Markdown 源稿（新文章与发布 HTML 同步提交）
     ├── plans/                 # 设计文档与复盘（纳入版本控制）
     └── personal/              # 个人文件（.gitignore 排除）
 ```
