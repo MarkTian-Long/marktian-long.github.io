@@ -282,7 +282,11 @@ git status --short
   ```bash
   git -c http.proxy=http://127.0.0.1:7897 -c https.proxy=http://127.0.0.1:7897 push origin main
   ```
+- 在 Codex 受限环境中，若代理 `ls-remote` 能读取远端，但 `push` 无输出退出，或 Git Credential Manager 报 `Unable to persist credentials with the 'wincredman' credential store`，说明网络已通、失败点在 Windows 凭据访问。应在用户确认后使用系统级执行权限重试同一条临时代理命令；不得改用明文凭据存储、向用户索要 Token，或修改全局 Git 代理。
+- 若系统级授权在命令启动前报 `Unknown parameter: input[...].namespace`，这是 Codex 授权审查通道故障，不是仓库或 GitHub 配置问题。停止重复尝试，重启 Codex 并直接以本仓库为工作区恢复任务，再重新核对 `ahead` 状态后推送。
+- 没有已配置 SSH key 时，不把 SSH 作为 HTTPS 推送失败的自动回退方案。
 - 推送成功后确认：`git status --short --branch` 不再显示 ahead，`git log -1 --oneline --decorate` 中应同时出现 `HEAD -> main, origin/main`。
+- GitHub Pages 发布还需验证线上结果：文章 URL 返回 HTTP 200，且页面正文或标题包含本次文章的唯一标题。远端分支同步不等于页面已刷新完成。
 
 ---
 

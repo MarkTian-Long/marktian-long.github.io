@@ -1,0 +1,4 @@
+interface:
+  display_name: "发布博客"
+  short_description: "生成、检查、提交、推送并验证 qiuzhi 博客文章"
+  default_prompt: "Use $publish-blog to publish a new qiuzhi blog article and verify GitHub Pages."

@@ -37,6 +37,10 @@ skills/                        # local legacy compatibility copy, do not edit
   place to edit project behavior.
 - Every skill should have `SKILL.md` with frontmatter containing at least
   `name`, `description`, and `type` when the local skill format requires it.
+- Project-owned skills use top-level `type: workflow`. The system
+  `skill-creator/scripts/quick_validate.py` currently rejects that extra field,
+  so project acceptance is determined by `sync-agent-context.ps1`,
+  `scripts/repository-policy.json`, and `check-repository-policy.js`.
 - Skill commands should avoid `/tmp` on Windows; use project-local temporary
   folders when a script is needed.
 - Independent Git worktrees contain tracked project-owned skills and should edit

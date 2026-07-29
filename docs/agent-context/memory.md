@@ -58,6 +58,16 @@ initial migration.
   global Git config. SSH port 22 can be reachable while GitHub rejects the
   operation because no SSH key is installed, so SSH reachability alone is not a
   complete fallback.
+- 2026-07-29 Codex: A managed Codex sandbox can reach GitHub through
+  `127.0.0.1:7897` while still failing to push because Git Credential Manager
+  cannot access the Windows `wincredman` store. If proxy `ls-remote` succeeds
+  but push exits silently or reports a credential-store error, keep the
+  temporary proxy flags and retry with user-approved system-level execution.
+  Do not switch to plaintext credential storage, request a personal access
+  token in chat, or change global Git settings. If the approval reviewer fails
+  before command startup with `Unknown parameter: input[...].namespace`,
+  restart Codex with this repository as the workspace, then resume by checking
+  `git status --short --branch`; the existing local commit remains valid.
 - Large HTML/JS writes over 300 lines should use a project-local generation
   script instead of ad hoc giant writes. Windows `/tmp` should not be used for
   project scripts.

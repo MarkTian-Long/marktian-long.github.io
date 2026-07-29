@@ -83,6 +83,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - **共享上下文优先**：每次对话开始时，先读取 `docs/agent-context/README.md`、`memory.md`、`skills.md`、`maintenance.md`。Claude 新沉淀的长期项目知识必须同步写回这些共享文档，确保 Codex 下次也能继承。
 - **月度维护提醒**：每次对话开始时，检查 `docs/agent-context/maintenance.md` 顶部的 `<!-- monthly-review: last=... next=YYYY-MM-DD -->` 注释。若今天日期 ≥ next 日期，在第一条回复末尾追加提示：「📋 月度维护已到期（next=YYYY-MM-DD），可输入 /monthly-review 执行。」
 - 修改代码前先读相关文件，不要靠猜
+- 发布博客文章时使用 `/publish-blog` skill，必须完成远端同步与线上 URL 验证后才能声称发布完成
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
@@ -118,6 +119,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | 新建功能/组件 | /brainstorming 然后 /writing-plans，不要直接写代码 |
 | 实现已有 plan | /executing-plans 或 /subagent-driven-development |
 | 遇到 bug | /systematic-debugging 或 /investigate，禁止不调查直接改代码 |
+| 发布博客文章 | /publish-blog |
 | 添加新工具页面 | /add-tool |
 | 采集 AI 产品数据 | /analyze-product 产品名 |
 | 更新热点快照 | /update-trends |
@@ -144,6 +146,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | `sync-docs` | 代码变更后同步 README/CLAUDE/CONVENTIONS（含博客文档） | 2026-04 |
 | `update-trends` | 五大平台热榜联网搜索 → trends.json | 2026-04 |
 | `monthly-review` | 月度维护：记忆清理 + 规范文档同步 + 季度架构快照 | 2026-05-13 |
+| `publish-blog` | 博客生成、检查、提交、推送回退与线上验证 | 2026-07-29 |
 
 **维护规则：**
 - skill 文件必须以 `.agents/skills/<name>/SKILL.md` 为源（不能是根目录裸 `.md` 文件）

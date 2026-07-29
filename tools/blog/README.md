@@ -52,7 +52,10 @@ tools/blog/
 - **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 源稿，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **发布生成**：先在 `posts-meta.json` 添加元数据，再运行 `node tools/blog/generate-post.js <source.md> <output.html>`，最后运行 `node scripts/generate-search-assets.js --write`
-- **发布检查**：提交前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 均一致
+- **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js` 和 `node scripts/check-repository-policy.js`
+- **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
+- **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库
+- **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200，且页面包含文章唯一标题。仅生成 HTML 或仅完成 commit 都不算发布完成
 - **域名维护**：搜索资产与自动生成的页面 head 域名维护在 `scripts/site-config.js`；正文显式链接按内容语义单独核对。Search Console/Bing 验证属于后续账号操作，不写入文章或本目录配置
 
 ## 嵌入方式

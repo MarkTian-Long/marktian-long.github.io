@@ -63,6 +63,8 @@ scripts/node_modules/
 !.agents/skills/code-health-check/**
 !.agents/skills/monthly-review/
 !.agents/skills/monthly-review/**
+!.agents/skills/publish-blog/
+!.agents/skills/publish-blog/**
 !.agents/skills/sync-docs/
 !.agents/skills/sync-docs/**
 !.agents/skills/update-trends/

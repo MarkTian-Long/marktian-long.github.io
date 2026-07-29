@@ -26,7 +26,7 @@ GitHub 用于保存可公开部署、可复现开发、可审查维护的项目�
 | 脱敏配置模板 | `config.example.js`、不含密钥的公共配置 | 说明配置结构，不携带真实凭据 |
 | 项目规范 | `README.md`、`CONVENTIONS.md`、`AGENTS.md`、`CLAUDE.md` | 所有维护者共同遵守 |
 | 项目文档 | `docs/plans/`、`docs/reviews/`、`docs/design-kit/`、`docs/agent-context/` | 设计依据、实施记录和共享经验 |
-| 项目自定义 Skill | `.agents/skills/` 中在 AGENTS.md 登记的 7 个 Skill | 唯一编辑源，必须能从 GitHub 恢复 |
+| 项目自定义 Skill | `.agents/skills/` 中在 AGENTS.md 登记的 8 个 Skill | 唯一编辑源，必须能从 GitHub 恢复 |
 | Claude 兼容 Skill | `.claude/skills/` | 为 Claude 提供兼容入口；项目自定义 Skill 必须与 `.agents/skills/` 同步提交 |
 | 部署定义 | `.github/workflows/` | 可复现部署流程；修改前仍需用户确认 |
 | 项目级待办 | `TODO.md` | 只记录项目工作，不写个人隐私或账号信息 |
