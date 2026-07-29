@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI、产品、工程与商业的长期思考。</description>
     <item>
+      <title>AI POC 到底在验证什么？一份给金融 B 端 AI PM 的推进地图</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html</guid>
+      <description>POC 不是一个功能简化的正式项目，也不只是多家厂商轮流展示产品。对金融软件厂商侧 AI PM 来说，核心产品工作是决定验证什么、验证到哪里、什么算有效，以及结果如何进入正式产品或项目。</description>
+    </item>
+    <item>
       <title>业务流程，如何变成 Agent 产品架构？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</guid>
       <description>Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。</description>
-    </item>
-    <item>
-      <title>企业引入大模型 API，数据真的安全吗</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-data-security.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-data-security.html</guid>
-      <description>同样的顾虑，在不同行业性质和解法完全不同。企业讨论最多的厂商侧风险，在实践中往往和员工行为侧的风险同等重要，两者需要截然不同的应对。</description>
     </item>
   </channel>
 </rss>

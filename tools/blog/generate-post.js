@@ -41,6 +41,10 @@ function renderTable(rows) {
     + '</tbody></table></div>';
 }
 
+function renderCodeBlock(rows) {
+  return '<pre><code>' + escapeHtml(rows.join('\n')) + '</code></pre>';
+}
+
 function replaceTocList(html, inner) {
   const openTag = '<ul class="toc-list">';
   const start = html.indexOf(openTag);
@@ -70,7 +74,7 @@ function appendBlock(html) {
 }
 
 function isBlockStart(line, next) {
-  return !line || /^#{1,3}\s+/.test(line) || /^---+\s*$/.test(line)
+  return !line || /^```/.test(line) || /^#{1,3}\s+/.test(line) || /^---+\s*$/.test(line)
     || /^>\s?/.test(line) || /^\s*(?:[-*]|\d+\.)\s+/.test(line)
     || (line.includes('|') && isTableSeparator(next));
 }
@@ -84,6 +88,14 @@ while (index < lines.length) {
     continue;
   }
   if (/^---+\s*$/.test(line)) { index++; continue; }
+  if (/^```/.test(line)) {
+    const rows = [];
+    index++;
+    while (index < lines.length && !/^```/.test(lines[index])) rows.push(lines[index++]);
+    if (index < lines.length) index++;
+    appendBlock(renderCodeBlock(rows));
+    continue;
+  }
   if (/^#{2,3}\s+/.test(line)) {
     const level = line.startsWith('###') ? 3 : 2;
     const title = line.replace(/^#+\s+/, '').trim();
@@ -139,6 +151,9 @@ page = page.replace(/(<meta property="og:url" content=")[^"]*(" \/>)/, '$1' + es
 page = page.replace(/(<meta name="twitter:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
 page = page.replace(/(<meta name="twitter:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
 page = ensureArticleSeo(page, metadata, config);
+if (!/\.post-body pre\b/.test(page)) {
+  page = page.replace(/(\.post-body code \{[^}]+\})/, '$1 .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; }');
+}
 page = replaceTocList(page, renderToc());
 page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, '<span class="post-date">' + metadata.date + '</span><span id="post-tags"></span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
 page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<div class="related-posts"/, () => '<div class="post-body">' + blocks.join('\n') + '</div>\n        <div class="related-posts"');

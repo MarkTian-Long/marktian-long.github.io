@@ -2,6 +2,21 @@
   "version": 1,
   "posts": [
     {
+      "slug": "ai-poc-financial-b2b-guide",
+      "date": "2026.07",
+      "title": "AI POC 到底在验证什么？一份给金融 B 端 AI PM 的推进地图",
+      "summary": "POC 不是一个功能简化的正式项目，也不只是多家厂商轮流展示产品。对金融软件厂商侧 AI PM 来说，核心产品工作是决定验证什么、验证到哪里、什么算有效，以及结果如何进入正式产品或项目。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "企业AI",
+        "金融科技"
+      ],
+      "category": "产品",
+      "url": "posts/ai-poc-financial-b2b-guide.html"
+    },
+    {
       "slug": "agent-boundary",
       "date": "2026.07",
       "title": "业务流程，如何变成 Agent 产品架构？",
