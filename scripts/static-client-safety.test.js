@@ -5,6 +5,12 @@ const test = require('node:test');
 
 const { isScanTarget, scanText } = require('./check-static-client-secrets');
 
+function toolSource(root, toolName) {
+  return ['index.html', 'app.js']
+    .map(file => fs.readFileSync(path.join(root, `tools/${toolName}`, file), 'utf8'))
+    .join('\n');
+}
+
 test('static safety scanner detects workflow injection without exposing its value', () => {
   const text = 'API_KEY: ${{ secrets.DEPLOY_ONLY_KEY }}\n';
   const findings = scanText('.github/workflows/deploy.yml', text);
@@ -42,8 +48,8 @@ test('static safety scanner never reads local key configuration files', () => {
 test('public deployment has no credential injection or browser-loaded local config', () => {
   const root = path.resolve(__dirname, '..');
   const workflow = fs.readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8');
-  const esop = fs.readFileSync(path.join(root, 'tools/esop-extractor/index.html'), 'utf8');
-  const stock = fs.readFileSync(path.join(root, 'tools/stock/index.html'), 'utf8');
+  const esop = toolSource(root, 'esop-extractor');
+  const stock = toolSource(root, 'stock');
 
   assert.doesNotMatch(workflow, /secrets\./);
   assert.doesNotMatch(workflow, /config\.local\.js/);
@@ -57,8 +63,8 @@ test('public deployment has no credential injection or browser-loaded local conf
 
 test('custom API keys stay in memory and untrusted multiline output is escaped', () => {
   const root = path.resolve(__dirname, '..');
-  const esop = fs.readFileSync(path.join(root, 'tools/esop-extractor/index.html'), 'utf8');
-  const stock = fs.readFileSync(path.join(root, 'tools/stock/index.html'), 'utf8');
+  const esop = toolSource(root, 'esop-extractor');
+  const stock = toolSource(root, 'stock');
 
   assert.doesNotMatch(esop, /localStorage\.(getItem|setItem)\(STORAGE_KEY_APIKEY/);
   assert.match(esop, /localStorage\.removeItem\(STORAGE_KEY_APIKEY\)/);

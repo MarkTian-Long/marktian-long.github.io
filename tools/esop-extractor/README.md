@@ -37,16 +37,14 @@
 ```
 tools/esop-extractor/
 ├── README.md           # 本文件
-├── index.html          # 单文件工具，HTML/CSS/JS 全部内联
+├── index.html          # 页面结构与样式
+├── app.js              # 交互、Prompt 与演示数据
 └── config.example.js   # 历史配置示例（运行时不会加载）
 ```
 
 ## localStorage Keys
 | Key | 内容 |
 |-----|------|
-| `qiuzhi_esop_apikey` | 自定义模式的用户 API Key |
-| `qiuzhi_esop_endpoint` | 自定义模式的 API Endpoint |
-| `qiuzhi_esop_model` | 自定义模式的模型名称 |
 | `qiuzhi_esop_apimode` | 当前模式（`default` / `custom`） |
 | `qiuzhi_esop_last_result` | 上次提取结果（JSON） |
 
@@ -86,6 +84,7 @@ tools/esop-extractor/
 
 ## 维护指南
 - **真实模型接入**：先设计服务端代理；不要向静态页面或 Pages artifact 注入 Key
+- **修改交互或演示数据**：编辑 `app.js`；页面结构或样式编辑 `index.html`
 - **修改字段**：同步更新 `FIELD_LABELS_*` 常量 + User Prompt 模板中的 JSON schema
 - **修改 Prompt**：更新 `SYSTEM_PROMPT` 常量
 - **修改同义词映射**：更新 `SYNONYM_MAP` 数组（会同步反映到左侧面板展示和 Prompt 内容）

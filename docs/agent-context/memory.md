@@ -247,6 +247,10 @@ initial migration.
   uploads only that directory. The manifest is an explicit allowlist, while
   `check-public-dist.js` verifies its file set and local resource references.
   Adding a public asset requires a manifest update plus build and Smoke checks.
+- Stock and ESOP keep their public DOM and CSS in `index.html`, while their
+  application logic now lives in same-directory `app.js` files. Preserve the
+  relative script reference and update the public-dist manifest/test whenever
+  either file boundary changes; use browser Smoke after a script extraction.
 
 ## Update protocol
 

@@ -26,9 +26,11 @@ const PUBLIC_FILES = [
   'tools/blog/index.html',
   'tools/blog/data/posts-meta.json',
   'tools/esop-extractor/index.html',
+  'tools/esop-extractor/app.js',
   'tools/radar/index.html',
   'tools/service-agent/index.html',
   'tools/stock/index.html',
+  'tools/stock/app.js',
   'tools/trends/index.html',
   'tools/trends/data/trends.json',
 ];
