@@ -58,6 +58,12 @@ qiuzhi/
 - **常量**：UPPER_SNAKE_CASE，如 `STATUS_LABELS`, `STORAGE_KEY`
 - **DOM 元素 ID**：camelCase，如 `casesGrid`, `timerDisplay`
 
+### Pages 发布白名单
+
+- GitHub Pages 仅上传 `dist/`，该目录由 `scripts/public-dist-manifest.js` 的显式白名单生成。
+- 新增或重命名公开页面、数据、脚本、样式或图片时，必须同步更新 manifest，并运行 `npm run build:public` 与 `npm run check:public-dist`。
+- `docs/`、`scripts/`、README、生成器、配置示例和 dev-only 工具不得加入白名单。
+
 ---
 
 ## 三、CSS 设计系统

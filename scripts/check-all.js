@@ -48,6 +48,7 @@ function main() {
     'static-client-safety.test.js',
     'portfolio-evidence.test.js',
     'generator-contracts.test.js',
+    'public-dist.test.js',
   ];
   const checks = [
     ['Node tests', node, ['--test', ...testFiles], scriptsDir],

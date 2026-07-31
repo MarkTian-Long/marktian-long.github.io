@@ -243,6 +243,10 @@ initial migration.
 - ESOP custom API credentials are current-page memory only; clear legacy
   `localStorage` key material on startup. Any string rendered from a model or
   other untrusted input must be HTML-escaped before preserving line breaks.
+- Pages deployment builds `dist/` from `scripts/public-dist-manifest.js` and
+  uploads only that directory. The manifest is an explicit allowlist, while
+  `check-public-dist.js` verifies its file set and local resource references.
+  Adding a public asset requires a manifest update plus build and Smoke checks.
 
 ## Update protocol
 

@@ -22,6 +22,14 @@ python -m http.server 8080
 # 访问 http://localhost:8080
 ```
 
+部署白名单构建与链接 Smoke：
+
+```bash
+cd scripts
+npm run build:public
+npm run check:public-dist
+```
+
 ---
 
 ## 网站结构
@@ -266,6 +274,7 @@ qiuzhi/
 - localStorage 数据持久化（Key 格式：`qiuzhi_<模块>_<版本>`）
 - 静态演示边界：公开页面不携带第三方 AI credential；真实模型接入需服务端代理
 - GitHub Actions 自动部署静态资产
+- Pages artifact 仅包含由 `scripts/public-dist-manifest.js` 定义的 `dist/` 白名单
 
 ---
 

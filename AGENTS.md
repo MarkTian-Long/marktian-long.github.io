@@ -90,6 +90,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
 - 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 和 Service Agent 均为 Mock-only。
 - 如需接入真实模型，必须先设计服务端代理和最小权限边界；禁止把 credential 写入 Pages artifact。
+- Pages 只上传 `dist/` 白名单产物。新增公开页面、脚本、数据或图片时，先更新 `scripts/public-dist-manifest.js`，再运行 `cd scripts; npm run build:public; npm run check:public-dist`。
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 任何 UI 可见改动完成后，必须按 `CONVENTIONS.md` 的「页面视觉复核」在真实本地页面使用视觉模型截图审查；交付时记录页面、视口、状态和结论，不能只做静态检查
 - UI 视觉美化时：先 `/impeccable` 加载设计知识，再用 `/audit` 诊断，用 `/polish`、`/typeset`、`/layout` 等子命令定向改动

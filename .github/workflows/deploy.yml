@@ -30,13 +30,19 @@ jobs:
           node scripts/check-repository-policy.js
           node --test scripts/repository-policy.test.js
 
+      - name: Build public artifact
+        run: node scripts/build-public-dist.js
+
+      - name: Smoke public artifact
+        run: node scripts/check-public-dist.js
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: 'dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
