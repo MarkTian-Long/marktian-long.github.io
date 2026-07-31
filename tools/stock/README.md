@@ -17,23 +17,18 @@
 
 - **前端**：Vanilla JS + CSS3，零依赖，无构建步骤
 - **行情数据**：Yahoo Finance（CORS 代理，15分钟延迟）
-- **AI 推理**：OpenRouter API（stepfun/step-3.5-flash）
+- **AI 推理**：静态演示响应，不在浏览器调用外部模型
 - **模拟数据**：基本面、情绪评分、新闻库（硬编码 JS 常量，标注 🎭）
 
 ## 数据标注规范
 
 - 📊 **真实数据** — Yahoo Finance 实时行情
 - 🎭 **模拟数据** — 演示用硬编码数据
-- 🤖 **AI 生成** — LLM 输出内容，标注置信度
+- 🎭 **静态演示** — 本地固定响应，不表示模型生成或置信度
 
-## 配置
+## 安全边界
 
-API Key 存放在 `config.local.js`（不进 git），格式：
-```js
-window.STOCK_CONFIG = { openrouterKey: 'sk-or-...' };
-```
-
-线上通过 GitHub Secrets (`STOCK_OPENROUTER_KEY`) 自动注入。
+公开页面不加载 `config.local.js`，不携带 API Key，也不会在浏览器中调用外部模型。若未来需要真实模型能力，必须先接入服务端代理；不得通过部署流程向静态产物注入 credential。
 
 ## 数据飞轮（反馈闭环）
 

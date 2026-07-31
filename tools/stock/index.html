@@ -5,13 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>A股 AI 助手</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='url(%23g)'>股</text></svg>" />
-  <!-- 本地 key 配置，.gitignore 排除；线上由 GitHub Actions 构建时注入 -->
-  <script src="config.local.js" onerror="window.STOCK_CONFIG={}"></script>
   <script>
-const CONFIG = {
-  OPENROUTER_KEY: window.STOCK_CONFIG?.openrouterKey || '',
-  MODEL: window.STOCK_CONFIG?.model || 'stepfun/step-3.5-flash:free'
-};
+const STATIC_RUNTIME_MODE = 'mock';
 </script>
   <style>
     :root {
@@ -570,7 +565,7 @@ const CONFIG = {
         <div class="welcome" style="flex:1;">
           <div class="welcome-icon">📄</div>
           <div class="welcome-title">AI 研报生成</div>
-          <div>基于知识库检索 + LLM 生成，引用来源可追溯</div>
+          <div>基于知识库检索 + 静态演示响应，引用来源可追溯</div>
         </div>
       </div>
     </div>
@@ -590,7 +585,7 @@ const CONFIG = {
         <div class="sector-heatmap" id="sectorHeatmap"></div>
       </div>
       <div class="radar-widget radar-brief-widget">
-        <div class="radar-widget-title">📰 今日 AI 简报 <span class="ai-tag">🤖 AI 生成</span></div>
+        <div class="radar-widget-title">📰 今日演示简报 <span class="ai-tag">🎭 静态演示</span></div>
         <div class="radar-brief-body" id="radarBrief">
           <button class="send-btn" onclick="generateBrief()" style="margin:auto;">生成今日简报</button>
         </div>
@@ -651,12 +646,12 @@ const CONFIG = {
         <div class="compliance-card">
           <div class="cc-icon">🏷️</div>
           <div class="cc-title">AI 内容标注</div>
-          <div class="cc-body">所有 AI 生成内容标注「🤖 AI 生成」，模拟数据标注「🎭 模拟数据」，真实数据标注「📊 真实数据」，来源和时效一目了然。</div>
+          <div class="cc-body">静态演示响应标注「🎭 静态演示」，模拟数据标注「🎭 模拟数据」，真实数据标注「📊 真实数据」，来源和时效一目了然。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">⚖️</div>
           <div class="cc-title">投资建议豁免</div>
-          <div class="cc-body">所有 AI 输出均附「仅供参考，不构成投资建议」声明。生产环境还需增加：用户适当性验证、风险承受能力评估、操作日志留存。</div>
+          <div class="cc-body">所有演示输出均附「仅供参考，不构成投资建议」声明。生产环境还需增加：用户适当性验证、风险承受能力评估、操作日志留存。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">🔒</div>
@@ -710,10 +705,8 @@ const CONFIG = {
           <tbody>
             <tr><td>📊 真实数据</td><td>来自 Yahoo Finance 的实时行情</td><td>N/A</td><td>收盘价、成交量、涨跌幅</td></tr>
             <tr><td>🎭 模拟数据</td><td>硬编码的演示数据</td><td>N/A</td><td>基本面、情绪评分、新闻</td></tr>
-            <tr><td>🤖 AI 生成</td><td>LLM 输出内容</td><td>标注置信度</td><td>分析结论、研报、Agent 判断</td></tr>
-            <tr><td style="color:var(--accent-green)">绿色置信度 ≥70%</td><td>AI 较确信的输出</td><td>≥70%</td><td>数据充分时的综合判断</td></tr>
-            <tr><td style="color:orange">橙色置信度 40-70%</td><td>AI 存在不确定性</td><td>40-70%</td><td>数据不足或存在矛盾信号</td></tr>
-            <tr><td style="color:var(--accent-red)">红色置信度 &lt;40%</td><td>AI 输出参考价值有限</td><td>&lt;40%</td><td>缺少关键数据时</td></tr>
+            <tr><td>🎭 静态演示</td><td>本地固定演示响应</td><td>不适用</td><td>分析结论、研报、Agent 判断</td></tr>
+            <tr><td colspan="4">静态演示不计算模型置信度；页面中的评分与颜色仅用于展示原型的信息层级。</td></tr>
           </tbody>
         </table>
       </div>
@@ -782,11 +775,14 @@ function appendLoadingMsg(stepLabel) {
   return div;
 }
 function updateMsg(div, content) {
-  div.querySelector('.msg-bubble').innerHTML = content;
+  div.querySelector('.msg-bubble').innerHTML = escapeMultiline(content);
   scrollBottom();
 }
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escapeMultiline(text) {
+  return escHtml(text).replace(/\n/g,'<br/>');
 }
 
 // =============================================
@@ -991,8 +987,8 @@ function buildPromptCard(params) {
         '<div class="prompt-content">使用 Few-shot 示例约束输出为 JSON，明确字段类型（symbol/range/interval），避免 LLM 自由发挥导致格式漂移。</div>' +
       '</div>' +
       '<div class="prompt-section">' +
-        '<div class="prompt-label">模型选型</div>' +
-        '<div class="prompt-content">stepfun/step-3.5-flash — 轻量快速，意图解析任务不需要推理深度，优先响应速度和成本控制。</div>' +
+        '<div class="prompt-label">真实接入参考</div>' +
+        '<div class="prompt-content">若未来接入服务端模型，可选择轻量快速模型处理意图解析，并优先评估响应速度、成本和安全边界。</div>' +
       '</div>' +
       '<div class="prompt-section">' +
         '<div class="prompt-label">解析结果</div>' +
@@ -1007,37 +1003,12 @@ function buildPromptCard(params) {
 }
 
 // =============================================
-//  OpenRouter LLM Call
+//  Static demo response
 // =============================================
 async function callLLM(systemPrompt, userContent) {
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + CONFIG.OPENROUTER_KEY,
-      'HTTP-Referer': location.href,
-      'X-Title': 'A-Share AI Assistant'
-    },
-    body: JSON.stringify({
-      model: CONFIG.MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userContent }
-      ],
-      max_tokens: 2000
-    })
-  });
-
-  if (!resp.ok) {
-    const errText = await resp.text().catch(()=>'');
-    throw new Error('OpenRouter 请求失败：HTTP ' + resp.status + ' ' + errText.slice(0,200));
-  }
-
-  const json = await resp.json();
-  const msg = json.choices?.[0]?.message;
-  const content = msg?.content || msg?.reasoning_content || '';
-  if (!content) throw new Error('LLM 返回为空：' + JSON.stringify(json).slice(0, 300));
-  return content.trim();
+  void systemPrompt;
+  void userContent;
+  return '演示模式：本页未调用外部模型，也不会携带或暴露服务端密钥。请结合页面中的行情、模拟资料和引用状态理解产品链路。';
 }
 
 function switchTab(name) {
@@ -1230,7 +1201,7 @@ async function runRAG() {
       + '</div></div>';
   }).join('');
   // Rerank 阶段：LLM 精排
-  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🧠 LLM 精排中（Reranking）...</div>';
+  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🧠 演示精排中（Reranking）...</div>';
   reportEl.innerHTML = '<div class="rag-searching">⏳ 等待精排完成...</div>';
   const reranked = await rerankResults(query, candidates);
   const results = reranked.slice(0, 3);
@@ -1272,8 +1243,8 @@ async function runRAG() {
     const qualityCard = buildQualityCard(wordCount, citationCount, results.length);
     const feedbackBar = buildFeedbackBar(query);
     reportEl.innerHTML = '<div class="rag-report-content">'
-      + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究报告 <span class="ai-tag">🤖 AI 生成</span></div>'
-      + '<div class="rag-report-text">' + report.replace(/\n/g,'<br/>') + '</div>'
+      + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究报告 <span class="ai-tag">🎭 静态演示</span></div>'
+      + '<div class="rag-report-text">' + escapeMultiline(report) + '</div>'
       + '<div class="rag-report-sources"><b>检索来源：</b>' + results.map(function(n,i){ const tc = tierConfig[n.tier] || tierConfig.unverified; return '[' + (i+1) + '] ' + escHtml(n.title) + ' <span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span> · ' + escHtml(n.source) + ' · ' + escHtml(n.date); }).join('<br/>') + '</div>'
       + '<div class="diag-disclaimer">⚠️ 本报告基于模拟新闻数据生成，仅供演示，不构成投资建议</div>'
       + qualityCard
@@ -1426,7 +1397,7 @@ function addAgentStep(container, type, title, content) {
 }
 
 function updateAgentStep(el, content) {
-  el.querySelector('.agent-step-body').innerHTML = content.replace(/\n/g,'<br/>');
+  el.querySelector('.agent-step-body').innerHTML = escapeMultiline(content);
 }
 
 function addToolCall(stepEl, toolName, status) {
@@ -1464,7 +1435,7 @@ async function runAgent() {
   const el = document.getElementById('agentProcess');
   el.innerHTML = '';
   renderAgentTools();
-  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '🤖 LLM 正在思考...');
+  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '🎭 演示推理中...');
   const planEl = addAgentStep(el, 'plan', '📋 PLAN', '⏳ 等待 THINK 完成...');
   // LLM 实时生成 THINK + PLAN
   try {
@@ -1518,8 +1489,8 @@ async function runAgent() {
     updateAgentStep(obsEl, '数据整合完成，生成最终判断');
     const finalEl = document.createElement('div');
     finalEl.className = 'agent-conclusion';
-    finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 最终结论 <span class="ai-tag">🤖 AI 生成</span></div>'
-      + '<div class="agent-conclusion-body">' + conclusion.replace(/\n/g,'<br/>') + '</div>'
+    finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 最终结论 <span class="ai-tag">🎭 静态演示</span></div>'
+      + '<div class="agent-conclusion-body">' + escapeMultiline(conclusion) + '</div>'
       + '<div class="agent-chain-note">推理链路：THINK → PLAN → ACT(' + Object.keys(toolResults).length + '个工具) → OBSERVE → 结论</div>';
     el.appendChild(finalEl);
   } catch(err) {
@@ -1563,13 +1534,13 @@ function buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentimen
     + '<div class="sentiment-news">' + sentiment.news.map(function(n) { return '<div class="sentiment-news-item">· ' + escHtml(n) + '</div>'; }).join('') + '</div>'
     + '</div>'
     + '</div>'
-    + '<div class="diag-summary"><div class="diag-summary-label">🤖 AI 综合解读</div>'
+    + '<div class="diag-summary"><div class="diag-summary-label">🎭 静态演示解读</div>'
     + '<div class="diag-summary-text">' + escHtml(diag.summary || '') + '</div>'
     + (risks ? '<div class="diag-risks"><b>风险：</b>' + risks + '</div>' : '')
     + (catalysts ? '<div class="diag-catalysts"><b>催化剂：</b>' + catalysts + '</div>' : '')
     + '<div class="diag-disclaimer">⚠️ 仅供参考，不构成投资建议</div>'
     + '</div>'
-    + '<div class="model-choice-note">🔧 <b>模型选型说明：</b>此模块使用 JSON Schema 约束的结构化输出模式，而非自由对话。原因：金融诊断报告需要字段确定性（评级/置信度/风险点），避免 LLM 自由发挥导致格式不稳定，便于前端渲染和后续校验。</div>'
+    + '<div class="model-choice-note">🔧 <b>真实接入说明：</b>若未来接入模型，应使用 JSON Schema 约束结构化输出，而非自由对话。金融诊断报告需要字段确定性（评级/置信度/风险点），便于前端渲染和后续校验。</div>'
     + '</div>';
 }
 
@@ -1654,7 +1625,7 @@ async function generateBrief() {
   const prompt = '你是A股市场分析师。基于以下信息生成今日市场简报（100字以内，简洁客观）：\n热点板块：' + sectorSummary + '\n今日异动：' + RADAR_DATA.movers.map(function(m) { return m.name + m.change + '%'; }).join('、') + '\n市场情绪：近5日均值' + avgSentiment + '/5';
   try {
     const brief = await callLLM(prompt, '请生成简报');
-    el.innerHTML = '<div class="radar-brief-text">' + brief.replace(/\n/g,'<br/>') + '</div>'
+    el.innerHTML = '<div class="radar-brief-text">' + escapeMultiline(brief) + '</div>'
       + '<div class="diag-disclaimer">⚠️ 基于模拟数据生成，仅供演示</div>';
   } catch(e) {
     el.innerHTML = '<div class="rag-error">' + escHtml(e.message) + '</div>';
@@ -1739,7 +1710,7 @@ function searchPrivateKb(query, topK) {
   <span class="disclaimer-tags">
     <span class="tag-real">📊 真实数据</span>
     <span class="tag-mock">🎭 模拟数据</span>
-    <span class="tag-ai">🤖 AI 生成</span>
+    <span class="tag-ai">🎭 静态演示</span>
   </span>
 </div>
 <script src="/assets/js/analytics.js" defer></script>

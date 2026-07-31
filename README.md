@@ -17,7 +17,7 @@
 或本地直接打开 `index.html`，无需任何构建工具或服务器。
 
 ```bash
-# 推荐用本地服务器启动，避免 iframe 安全策略限制
+# 推荐用本地服务器启动，避免浏览器 file:// 限制
 python -m http.server 8080
 # 访问 http://localhost:8080
 ```
@@ -30,7 +30,7 @@ python -m http.server 8080
 
 1. **Hero + 关于我**：一句话定位、求职状态、技能标签、联系方式
 2. **产品案例**：3 个脱敏工作案例列表，editorial 风格，支持展开查看完整 STAR 故事
-3. **工具箱**：8 个可交互工具模块，分「PM 作品」（2 列卡片）和「信息工具」（3 列卡片）两组，点击卡片展开 iframe
+3. **工具箱**：8 个可交互工具模块，分「PM 作品」（2 列卡片）和「信息工具」（3 列卡片）两组，点击卡片在新标签页打开独立页面
 4. **思考碎片**：持续更新的 AI 产品专栏，独立博客系统，文章在新标签页打开
 
 ---
@@ -63,13 +63,13 @@ python -m http.server 8080
 | Tab | 功能 | 技术标注 |
 |-----|------|----------|
 | 行情播报 | 实时行情摘要生成 | LLM + 结构化 prompt |
-| 个股诊断 | 输入股票代码，AI 生成诊断报告 | 真实 LLM 调用（OpenRouter） |
+| 个股诊断 | 输入股票代码，生成演示诊断报告 | 静态 Mock 响应 |
 | 深度研报 | RAG 增强研报生成 | RAG + Reranking + 双层知识库 |
 | 市场雷达 | 热点板块扫描 | mock 数据 + AI 点评 |
 | Agent 操盘 | AI 自主规划买卖策略 | Agent 任务拆解演示 |
 | 合规审查 | 投研内容合规检查 | 规则 + LLM 混合判断 |
 
-底部有免责声明和标注（真实 LLM 调用 / mock 数据 / AI 生成），清晰标注每个模块的技术实现方式。
+底部有免责声明和标注（真实行情 / Mock 数据 / 静态演示响应），清晰标注每个模块的技术实现方式。
 
 **体现能力**：AI 能力落地设计、RAG/Agent/合规等复杂场景的产品化思考、Demo 原型构建能力
 
@@ -89,7 +89,7 @@ python -m http.server 8080
 | 中台治理 | HITL 触发条件、升级阈值、SLA 指标设计 |
 | 数据飞轮 | Bad Case 标注流程、训练数据闭环设计 |
 
-调用 OpenRouter API 实现投诉链路的真实 LLM 调用，其余链路为 Mock。
+所有链路均为 Mock，用于展示意图路由、多 Agent 协作和 HITL 决策流程。
 
 **体现能力**：to B 中台产品设计、多 Agent 协作架构、AI 客服场景的系统性思考
 
@@ -264,8 +264,8 @@ qiuzhi/
 
 - HTML5 + CSS3 + Vanilla JS（无框架，无构建工具）
 - localStorage 数据持久化（Key 格式：`qiuzhi_<模块>_<版本>`）
-- OpenRouter API（stock、service-agent 工具的真实 LLM 调用）
-- GitHub Actions 自动部署 + Secrets 管理 API Key
+- 静态演示边界：公开页面不携带第三方 AI credential；真实模型接入需服务端代理
+- GitHub Actions 自动部署静态资产
 
 ---
 

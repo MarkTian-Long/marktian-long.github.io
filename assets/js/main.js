@@ -134,7 +134,7 @@ function renderCases() {
                 ${c.detail.decisions.map(d => `<li>${d}</li>`).join('')}
               </ul>
             </div>
-            ${c.detail.demoLink ? `<a class="detail-demo-link" href="#tools" onclick="setTimeout(()=>switchTool('esop'),100)">▶ 立即体验 ESOP 提取 Demo</a>` : ''}
+            ${c.detail.demoLink ? `<a class="detail-demo-link" href="tools/esop-extractor/index.html" target="_blank" rel="noopener">▶ 立即体验 ESOP 提取 Demo</a>` : ''}
           </div>
         </div>
       </div>
@@ -150,29 +150,6 @@ function toggleCaseDetail(btn) {
   body.classList.toggle('open', !isOpen);
   btn.classList.toggle('open', !isOpen);
   if (!isOpen) window.trackAnalyticsEvent?.('case_detail_open', { case_title: btn.closest('.case-row')?.querySelector('.case-row-title')?.textContent || 'unknown' });
-}
-
-// ---- TOOL OPENER ----
-function openTool(tool) {
-  const panel = document.getElementById(`panel-${tool}`);
-  const card = document.querySelector(`.toolbox-card[data-tool="${tool}"]`);
-  const isOpen = !panel.classList.contains('hidden');
-
-  // 关闭所有 panels 和 active 状态
-  document.querySelectorAll('.tool-panel').forEach(p => p.classList.add('hidden'));
-  document.querySelectorAll('.toolbox-card').forEach(c => c.classList.remove('active'));
-
-  if (!isOpen) {
-    panel.classList.remove('hidden');
-    if (card) card.classList.add('active');
-    window.trackAnalyticsEvent?.('tool_open', { tool_name: tool, source_surface: 'homepage' });
-    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-// 兼容旧引用（如 case detail 的 demo link）
-function switchTool(tool) {
-  openTool(tool);
 }
 
 // ---- SVG GRADIENT for Progress Ring ----

@@ -27,29 +27,18 @@
 
 | 模式 | 说明 |
 |------|------|
-| 系统默认 | 使用内置 OpenRouter key + `stepfun/step-3.5-flash:free`，开箱即用 |
+| 系统默认 | Demo 模式，返回模拟提取结果，无需 API Key |
 | 自定义 API | 填入自己的 API Key / Endpoint / 模型名，兼容任意 OpenAI Chat 格式接口 |
 
-### 内置 key 配置方式
-复制 `config.example.js` 为 `config.local.js`，填入真实 key：
-
-```js
-window.ESOP_CONFIG = {
-  builtinApiKey: 'sk-or-v1-xxx...',
-  baseUrl:       'https://openrouter.ai/api',
-  model:         'stepfun/step-3.5-flash:free',
-};
-```
-
-`config.local.js` 已被 `.gitignore` 排除，不会提交到 GitHub。
+### 自定义 API 使用边界
+自定义 API Key、Endpoint 和模型名只保存在当前页面会话，关闭页面后即清除。公开页面不会加载 `config.local.js`，也不会内置或部署注入真实 Key。
 
 ## 文件结构
 ```
 tools/esop-extractor/
 ├── README.md           # 本文件
 ├── index.html          # 单文件工具，HTML/CSS/JS 全部内联
-├── config.example.js   # 内置 key 配置示例（进 git）
-└── config.local.js     # 本地真实配置，含 API Key（不进 git）
+└── config.example.js   # 历史配置示例（运行时不会加载）
 ```
 
 ## localStorage Keys
@@ -96,7 +85,7 @@ tools/esop-extractor/
 ```
 
 ## 维护指南
-- **修改内置模型/key**：编辑 `config.local.js`（不影响 git 历史）
+- **真实模型接入**：先设计服务端代理；不要向静态页面或 Pages artifact 注入 Key
 - **修改字段**：同步更新 `FIELD_LABELS_*` 常量 + User Prompt 模板中的 JSON schema
 - **修改 Prompt**：更新 `SYSTEM_PROMPT` 常量
 - **修改同义词映射**：更新 `SYNONYM_MAP` 数组（会同步反映到左侧面板展示和 Prompt 内容）

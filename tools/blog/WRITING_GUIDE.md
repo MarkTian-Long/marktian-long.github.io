@@ -458,13 +458,13 @@ GitHub Pages 部署后无此问题。
     <a class="expand-btn-link" href="tools/blog/posts/xxx.html" target="_blank"
        onclick="event.stopPropagation()">📝 思考碎片：文章标题 →</a>
     <!-- 站内工具 -->
-    <button class="expand-btn-link" onclick="event.stopPropagation();openTool('tool-id')">🛠 工具：工具名称 →</button>
+    <a class="expand-btn-link" href="tools/<tool-name>/index.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">🛠 工具：工具名称 →</a>
 </div>
 ```
 
 **规则：**
 - 思考碎片链接用 `<a>` + `expand-btn-link`，前缀 `📝 思考碎片：`
-- 站内工具用 `<button>` + `expand-btn-link` + `openTool()`，前缀 `🛠 工具：`
+- 站内工具用直链 `<a>` + `expand-btn-link`，新标签页打开；前缀 `🛠 工具：`
 - 多个支撑材料横排（`.prediction-expand` 已设 `display:flex; gap:8px`）
 - 内部所有交互元素必须加 `onclick="event.stopPropagation()"` 阻止触发父级折叠
 - 没有合适资源的观点无需强行补充支撑材料，留空即可

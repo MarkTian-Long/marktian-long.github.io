@@ -1011,7 +1011,7 @@
         <div class="collapsible-header-left">
           <div class="section-icon"></div>
           模型配置
-          <span id="keySavedBadge" class="key-saved-badge hidden">✓ 已保存</span>
+          <span id="keySavedBadge" class="key-saved-badge hidden">✓ 本次会话已设置</span>
         </div>
         <span class="collapsible-arrow">▼</span>
       </div>
@@ -1063,7 +1063,7 @@
               style="width:100%;"
             />
             <div class="key-hint" style="margin-top:8px;">
-              支持任意兼容 OpenAI Chat API 的服务（DeepSeek / OpenRouter / 本地等）。Key 仅保存在本地浏览器。
+              支持任意兼容 OpenAI Chat API 的服务（DeepSeek / OpenRouter / 本地等）。Key 仅保存在当前会话，关闭页面后即清除。
             </div>
           </div>
         </div>
@@ -1300,7 +1300,6 @@
 </div>
 
 
-<script src="config.local.js" onerror="console.warn('config.local.js 未找到，使用代码内默认配置')"></script>
 <script>
 /* ================================================================
    CONSTANTS & PROMPTS
@@ -1308,10 +1307,9 @@
 
 const STORAGE_KEY_APIKEY = 'qiuzhi_esop_apikey';
 const STORAGE_KEY_RESULT = 'qiuzhi_esop_last_result';
-const _cfg               = window.ESOP_CONFIG || {};
-const DEEPSEEK_BASE_URL  = _cfg.baseUrl       || 'https://api.deepseek.com';
-const DEEPSEEK_MODEL     = _cfg.model         || 'deepseek-chat';
-const BUILTIN_API_KEY    = _cfg.builtinApiKey || '';
+const DEEPSEEK_BASE_URL  = 'https://api.deepseek.com';
+const DEEPSEEK_MODEL     = 'deepseek-chat';
+const BUILTIN_API_KEY    = '';
 
 /* ---- Field label maps ---- */
 const FIELD_LABELS_BASIC = {
@@ -1565,6 +1563,8 @@ const MOCK_PDF_RESULT = {
 ================================================================ */
 const state = {
   apiKey:      '',
+  apiEndpoint: 'https://api.deepseek.com',
+  apiModel:    'deepseek-chat',
   apiMode:     'default',
   isLoading:   false,
   result:      null,
@@ -1596,19 +1596,12 @@ function init() {
     </div>
   `).join('');
 
-  // Load API mode & custom key
+  // Load API mode. Custom credentials must never survive a browser session.
   const savedMode = localStorage.getItem('qiuzhi_esop_apimode') || 'default';
   setApiMode(savedMode, true);
-
-  const savedKey = localStorage.getItem(STORAGE_KEY_APIKEY) || '';
-  if (savedKey) {
-    document.getElementById('keyInput').value = savedKey;
-    document.getElementById('keySavedBadge').classList.remove('hidden');
-  }
-  const savedEndpoint = localStorage.getItem('qiuzhi_esop_endpoint') || '';
-  if (savedEndpoint) document.getElementById('endpointInput').value = savedEndpoint;
-  const savedModel = localStorage.getItem('qiuzhi_esop_model') || '';
-  if (savedModel) document.getElementById('modelInput').value = savedModel;
+  localStorage.removeItem(STORAGE_KEY_APIKEY);
+  localStorage.removeItem('qiuzhi_esop_endpoint');
+  localStorage.removeItem('qiuzhi_esop_model');
 
   // Load last result
   const savedResult = localStorage.getItem(STORAGE_KEY_RESULT);
@@ -1664,13 +1657,11 @@ function saveApiKey() {
     document.getElementById('keyErrorTip').classList.add('visible');
     return;
   }
-  localStorage.setItem(STORAGE_KEY_APIKEY, val);
   const ep = document.getElementById('endpointInput').value.trim();
-  if (ep) localStorage.setItem('qiuzhi_esop_endpoint', ep);
-  else localStorage.removeItem('qiuzhi_esop_endpoint');
   const mdl = document.getElementById('modelInput').value.trim();
-  if (mdl) localStorage.setItem('qiuzhi_esop_model', mdl);
-  else localStorage.removeItem('qiuzhi_esop_model');
+  state.apiKey = val;
+  state.apiEndpoint = ep || 'https://api.deepseek.com';
+  state.apiModel = mdl || 'deepseek-chat';
   document.getElementById('keySavedBadge').classList.remove('hidden');
   closeCollapsible('keySection');
 }
@@ -1705,7 +1696,7 @@ async function startExtraction() {
   let hasError = false;
 
   // Validate custom key
-  if (state.apiMode === 'custom' && !localStorage.getItem(STORAGE_KEY_APIKEY)) {
+  if (state.apiMode === 'custom' && !state.apiKey) {
     document.getElementById('keyInput').classList.add('error');
     document.getElementById('keyErrorTip').classList.add('visible');
     openCollapsible('keySection');
@@ -1768,9 +1759,9 @@ async function callDeepSeek(userPrompt) {
   // Resolve endpoint / key / model based on current mode
   let apiKey, baseUrl, model;
   if (state.apiMode === 'custom') {
-    apiKey  = localStorage.getItem(STORAGE_KEY_APIKEY) || '';
-    baseUrl = (localStorage.getItem('qiuzhi_esop_endpoint') || 'https://api.deepseek.com').replace(/\/$/, '');
-    model   = localStorage.getItem('qiuzhi_esop_model') || 'deepseek-chat';
+    apiKey  = state.apiKey;
+    baseUrl = state.apiEndpoint.replace(/\/$/, '');
+    model   = state.apiModel;
   } else {
     apiKey  = BUILTIN_API_KEY;
     baseUrl = DEEPSEEK_BASE_URL;

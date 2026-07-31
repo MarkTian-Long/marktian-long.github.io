@@ -231,6 +231,19 @@ initial migration.
   index directly, and Trends can publish partial empty boards after a fetch
   failure. Use the contract report and migration plan before changing them.
 
+### Track B architecture facts (2026-07-31, Codex)
+
+- GitHub Pages deployment must never write credentials into the uploaded
+  artifact. The deployment workflow contains no Secret injection, and the
+  static-client safety fixture checks both the workflow and browser entrypoints.
+- Homepage tool navigation is direct-link architecture: tool cards and case
+  links open `tools/<tool-name>/index.html` in a new tab. Do not reintroduce
+  homepage panel openers or iframe routing without an explicit architecture
+  decision.
+- ESOP custom API credentials are current-page memory only; clear legacy
+  `localStorage` key material on startup. Any string rendered from a model or
+  other untrusted input must be HTML-escaped before preserving line breaks.
+
 ## Update protocol
 
 When adding a memory item, include:

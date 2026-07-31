@@ -54,7 +54,7 @@ qiuzhi/
 
 ### JS 命名
 
-- **函数名**：camelCase，如 `renderCases()`, `switchTool()`
+- **函数名**：camelCase，如 `renderCases()`, `togglePrediction()`
 - **常量**：UPPER_SNAKE_CASE，如 `STATUS_LABELS`, `STORAGE_KEY`
 - **DOM 元素 ID**：camelCase，如 `casesGrid`, `timerDisplay`
 
@@ -137,8 +137,8 @@ background: rgba(255, 255, 255, 0.04);
             <div class="prediction-expand">
                 <a class="expand-btn-link" href="..." target="_blank"
                    onclick="event.stopPropagation()">📝 思考碎片：标题 →</a>
-                <button class="expand-btn-link"
-                        onclick="event.stopPropagation();openTool('id')">🛠 工具：名称 →</button>
+                <a class="expand-btn-link" href="tools/<tool-name>/index.html" target="_blank"
+                   rel="noopener" onclick="event.stopPropagation()">🛠 工具：名称 →</a>
             </div>
         </div>
     </div>

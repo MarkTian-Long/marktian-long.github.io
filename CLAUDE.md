@@ -16,7 +16,7 @@
 Leo Liu（刘洋）的个人品牌站，定位为 AI · Product · Builder 的长期思想输出站。纯前端，零依赖，无构建工具。
 
 **入口文件**：`index.html`（唯一入口，锚点导航）
-**工具目录**：`tools/<tool-name>/index.html`（iframe 嵌入主页面）
+**工具目录**：`tools/<tool-name>/index.html`（独立直链页面）
 **规范文档**：`CONVENTIONS.md`（完整开发规范，有疑问先查这里）
 
 ## 技术栈
@@ -36,7 +36,6 @@ tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
 tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
 tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
-tools/esop-extractor/config.local.js  # 本地 API key 配置（.gitignore 排除）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # 可共享的 Markdown 内容资料
 docs/                           # 项目文档（仅 personal/ 和根目录二进制原稿排除）
@@ -47,7 +46,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 ```
 
 ## 已有工具模块
-工具箱分两组展示：`PM 作品`（2列预览卡片）在上，`信息工具`（3列预览卡片）在下。点击卡片展开对应 iframe。
+工具箱分两组展示：`PM 作品`（2列预览卡片）在上，`信息工具`（3列预览卡片）在下。点击卡片在新标签页打开对应独立页面。
 
 | 工具 | 路径 | 功能 | 分组 |
 |------|------|------|------|
@@ -88,13 +87,8 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
 - 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评；或直接 `/update-trends` 联网全量搜索更新
-- ESOP 工具内置 key 配置在 `tools/esop-extractor/config.local.js`（不进 git），修改此文件而非 index.html
-- A股助手 key 配置在 `tools/stock/config.local.js`（不进 git），修改此文件而非 index.html
-- 线上部署的 key 存在 GitHub Secrets，由 `.github/workflows/deploy.yml` 在构建时注入：
-  - `ESOP_API_KEY` → tools/esop-extractor/config.local.js
-  - `STOCK_OPENROUTER_KEY` → tools/stock/config.local.js
-  - `SERVICE_OPENROUTER_KEY` → tools/service-agent/config.local.js
-  - 换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
+- 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 和 Service Agent 均为 Mock-only。
+- 如需接入真实模型，必须先设计服务端代理和最小权限边界；禁止把 credential 写入 Pages artifact。
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
 - 任何 UI 可见改动完成后，必须按 `CONVENTIONS.md` 的「页面视觉复核」在真实本地页面使用视觉模型截图审查；交付时记录页面、视口、状态和结论，不能只做静态检查
 - UI 视觉美化时：先 `/impeccable` 加载设计知识，再用 `/audit` 诊断，用 `/polish`、`/typeset`、`/layout` 等子命令定向改动
