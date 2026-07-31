@@ -57,6 +57,12 @@ type: workflow
 - 每条条目是否包含完整字段：`slug/date/title/summary/tags/topics/category/url`？
 - 是否有空字段或格式不符（如 date 非 `YYYY.MM`）？
 
+### 7. 可信度与生成器只读检查
+运行 `node scripts/check-static-client-secrets.js`、`node scripts/check-portfolio-evidence.js` 和 `node scripts/check-generator-contracts.js`：
+- 静态安全报告必须排除 `config.local.js`，只报告 workflow 注入、`innerHTML` 和证据敏感表述的位置；不输出 Secret，也不自动修复页面。
+- Portfolio schema 必须区分指标类型，并要求指标定义、来源、日期和 Mock 边界。
+- 生成器 contract 报告用于记录模板耦合、直接写公开产物和 partial 数据风险；发现后按迁移方案处理，不能在健康检查中执行生成器写模式。
+
 ## 输出格式
 
 ### 健康报告

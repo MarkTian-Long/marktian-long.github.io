@@ -356,7 +356,16 @@ git status --short
 ### 本地开发注意
 - `fetch` 在 `file://` 协议下因 CORS 失败，需用 HTTP server：`python -m http.server 8080`
 
-## 九、Skill 管理规范
+## 九、公开内容可信度与生成物规范
+
+1. **静态客户端不承载服务端秘密**：公开静态文件和 workflow 不得把 Secret 注入浏览器可读取的产物；发现后先用只读检查记录，架构修复进入有 HITL 的安全 Track。
+2. **不可信文本不直接注入 HTML**：外部输入、模型输出和远端数据进入 DOM 前必须追踪来源；优先 `textContent` 或 DOM API，确需 HTML 时使用经过审查的 allowlist。
+3. **公开指标必须可解释**：任何数字指标必须声明 `kind`、定义、来源和日期；`target`、`proxy`、`offline-measured`、`production-result`、`external-research` 不得混用。
+4. **Mock 边界前置**：Demo 必须在首次交互位置明确真实部分、Mock 部分和限制，不能把脚本输出、示例数据或目标值表述为生产结果。
+5. **生成物必须可检查**：每个公开生成物应有唯一源、默认无写入的 `--check` 路径和受控替换流程；不得通过批量重生覆盖历史发布物。
+6. **Skill 创建门槛**：只有已经重复至少三次、步骤稳定且可复用的流程才创建新项目 Skill；其余经验先留在 handoff 的候选区。
+
+## 十、Skill 管理规范
 
 ### 目录结构
 
@@ -401,7 +410,7 @@ type: workflow
 
 ---
 
-## 十、待办：未来规范扩展
+## 十一、待办：未来规范扩展
 
 - [ ] 响应式断点标准化（目前仅 768px 一个断点）
 - [ ] 图片资源优化规范（WebP 格式、尺寸限制）

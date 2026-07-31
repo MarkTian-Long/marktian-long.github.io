@@ -36,6 +36,7 @@ type: workflow
    ```
 
 5. 不批量用旧 Markdown 覆盖历史文章 HTML。生成器触碰但 `git diff --name-only` 不显示的文件属于换行符状态，不纳入提交。
+6. 生成器模板或搜索资产逻辑变更时，先运行对应 `--check` 与 contract fixture；除本次文章明确产物外，不得以写入模式批量重生历史 HTML。写入前先核对目标文件和既有公开页面 diff。
 
 ## 3. 验证与提交
 

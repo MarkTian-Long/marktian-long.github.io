@@ -217,7 +217,7 @@ test('repository policy CLI rejects incomplete Skill frontmatter', (t) => {
 test('repository policy CLI rejects a missing required ignore rule', (t) => {
   const root = createRepositoryFixture(t);
   const ignorePath = path.join(root, '.gitignore');
-  const ignore = fs.readFileSync(ignorePath, 'utf8').replace('.npmrc\n', '');
+  const ignore = fs.readFileSync(ignorePath, 'utf8').replace(/^\.npmrc\r?\n/m, '');
   fs.writeFileSync(ignorePath, ignore);
   run(root, 'git', ['add', '.gitignore']);
   const result = runPolicy(root);

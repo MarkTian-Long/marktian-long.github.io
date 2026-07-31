@@ -47,6 +47,11 @@ skills/                        # local legacy compatibility copy, do not edit
   those files in the active worktree. Ignored vendor-managed installation output
   may be absent; the checker can resolve that output from the primary workspace
   for compatibility diagnostics only.
+- `code-health-check` includes a report-only trust pass for static client
+  safety, portfolio evidence, and generator contracts. It must not treat a
+  report finding as authorization to rewrite a public page or a local key file.
+- `publish-blog` must use the generator's `--check` path for review and must
+  never bulk-regenerate historical article HTML to apply a template change.
 
 ## Migration notes
 

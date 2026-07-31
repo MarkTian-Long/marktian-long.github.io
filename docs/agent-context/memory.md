@@ -211,6 +211,26 @@ initial migration.
   than domestic models because it was less sycophantic, while the user remained
   cautious about agents. Treat this as a prior note, not a permanent preference.
 
+### Track A architecture facts (2026-07-31, Codex)
+
+- The local quality entrance is `scripts/package.json`: `npm test` runs Node
+  fixtures and `npm run check` additionally runs policy/search/static safety,
+  portfolio evidence, generator-contract reports, tracked JS syntax, and JSON
+  parsing. In a PowerShell session that blocks `npm.ps1`, use a process-local
+  execution-policy bypass or `cmd /c npm ...`; do not change machine policy.
+- `check-static-client-secrets.js` is intentionally report-only. It excludes
+  every `config.local.js` before reading, reports file/line/remediation without
+  printing a matched secret, and records workflow injection, `innerHTML`, and
+  evidence-sensitive public claims for a later security track.
+- Portfolio evidence is non-public source data in `docs/portfolio-evidence.*`.
+  It distinguishes targets/proxies/offline/production/external metrics and
+  requires an explicit Mock boundary. It is not wired into any public page in
+  Track A.
+- Current generator risks are deliberate migration baselines: the blog generator
+  reads a published article as its template, Service Agent writes its public
+  index directly, and Trends can publish partial empty boards after a fetch
+  failure. Use the contract report and migration plan before changing them.
+
 ## Update protocol
 
 When adding a memory item, include:
