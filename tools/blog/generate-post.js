@@ -143,6 +143,9 @@ function renderToc() {
 }
 
 let page = fs.readFileSync('tools/blog/posts/ontology-business-semantic-layer.html', 'utf8');
+if (!/<script src="\.\.\/article-runtime\.js"><\/script>/.test(page)) {
+  page = page.replace(/<body([^>]*)>/, '<body$1>\n  <script src="../article-runtime.js"></script>');
+}
 page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\ncategory: ' + metadata.category + '\n-->');
 page = page.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(metadata.title) + ' — Leo 的思考碎片</title>');
 page = page.replace(/(<meta property="og:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');

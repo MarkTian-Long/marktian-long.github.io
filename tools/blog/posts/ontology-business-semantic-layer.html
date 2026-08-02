@@ -51,6 +51,7 @@ category: 技术
   </style>
 </head>
 <body data-theme="light">
+<script src="../article-runtime.js"></script>
   <div class="page-outer">
     <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
     <div class="two-col">
@@ -263,7 +264,6 @@ category: 技术
     </div>
   </div>
   <script>
-    (function(){ var saved = localStorage.getItem('blog_theme'); document.body.dataset.theme = saved === 'dark' ? 'dark' : 'light'; })();
     (function(){
       var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
       var links = document.querySelectorAll('.toc-list a');

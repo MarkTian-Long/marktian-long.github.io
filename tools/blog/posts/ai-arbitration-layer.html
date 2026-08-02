@@ -164,13 +164,6 @@ category: 产品
     .top-bar {
       display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px;
     }
-    .theme-toggle-btn {
-      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
-      background: transparent; cursor: pointer; color: var(--text-3);
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
-    }
-    .theme-toggle-btn:hover { color: var(--clay); border-color: var(--clay); }
 
     /* 双栏布局 */
     .page-outer { max-width: 1008px; margin: 0 auto; }
@@ -290,13 +283,10 @@ category: 产品
   </style>
 </head>
 <body data-theme="light">
+<script src="../article-runtime.js"></script>
 <div class="page-outer" style="padding: 40px 20px 80px;">
   <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
     <a href="../index.html" class="back-link">← 返回列表</a>
-    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="切换主题">
-      <svg id="ptIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg id="ptIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
   </div>
   <div class="two-col page-outer">
     <aside class="toc-wrap">
@@ -533,23 +523,6 @@ category: 产品
 
 <script>
 (function(){
-  const btn = document.getElementById('themeToggleBtn');
-  const sun = document.getElementById('ptIconSun');
-  const moon = document.getElementById('ptIconMoon');
-  const DARK = 'dark'; const LIGHT = 'light';
-  let theme = localStorage.getItem('blog-theme') || LIGHT;
-  function applyTheme(t){
-    document.body.setAttribute('data-theme', t);
-    sun.style.display  = t === DARK  ? 'block' : 'none';
-    moon.style.display = t === LIGHT ? 'block' : 'none';
-  }
-  applyTheme(theme);
-  btn.addEventListener('click', function(){
-    theme = theme === LIGHT ? DARK : LIGHT;
-    localStorage.setItem('blog-theme', theme);
-    applyTheme(theme);
-  });
-
   // 标签渲染
   const tags = ['决策框架'];
   const topics = ['Agent'];

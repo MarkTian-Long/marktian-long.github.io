@@ -136,6 +136,11 @@ initial migration.
   their Markdown candidates, and some early posts have no top-level Markdown
   source. Do not bulk-regenerate historical HTML from Markdown; audit one
   article at a time and backfill Markdown from current HTML when needed.
+- 2026-08-02 Codex: Every blog article loads `tools/blog/article-runtime.js`
+  immediately after `<body>`. It shares the list page's `blog_theme`,
+  migrates the legacy `blog-theme` key once, and degrades a failed
+  `posts-meta.json` request to an empty local index plus a readable notice;
+  article body content remains available.
 - 2026-07-16 Codex: Markdown-generated blog pages can inherit stale template
   fragments when regex replacement stops at the first nested `</ul>`. For
   `tools/blog/generate-post.js`, replace the entire `.toc-list` by matching
@@ -154,6 +159,10 @@ initial migration.
   topic must be central to the title, summary, and conclusion, rather than an
   example, implementation path, or frequently mentioned technology.
 - `tags` and `topics` should not duplicate the same terms.
+- A new or redefined blog tag/topic is a single atomic change: obtain approval,
+  update the WRITING_GUIDE vocabulary and posts-meta.json together, then audit
+  all existing articles. The historical Markdown-source exception never
+  exempts metadata vocabulary synchronization.
 - Blog publishing follows: Markdown, generation script, metadata JSON update,
   product maturity check when applicable, then delivery.
 - Blog callouts should be the last element inside `post-body` and use
