@@ -229,6 +229,13 @@ function checkSharedArticleStyles(rootDir, errors, messages) {
     errors.push(`${runtimePath} does not load ${stylesheetPath}`);
     return;
   }
+
+  const stylesheet = readText(rootDir, stylesheetPath);
+  const navigationSafeguard = /\.post-body a\.related-item\s*,\s*\.post-body a\.related-item:hover\s*,\s*\.post-body \.post-nav a:hover\s*\{[^}]*text-decoration:\s*none;/;
+  if (!navigationSafeguard.test(stylesheet)) {
+    errors.push(`${stylesheetPath} must keep related and post navigation links underline-free`);
+    return;
+  }
   messages.push('PASS blog shared link styles');
 }
 

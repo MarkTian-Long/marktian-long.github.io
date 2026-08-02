@@ -382,7 +382,13 @@ function makeCheckFixture(postOverrides = {}) {
   fs.writeFileSync(path.join(rootDir, 'robots.txt'), assets.robots, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), assets.sitemap, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'feed.xml'), assets.feed, 'utf8');
-  fs.writeFileSync(path.join(rootDir, 'tools/blog/article-links.css'), '/* fixture */\n', 'utf8');
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/article-links.css'),
+    '.post-body a.related-item,\n'
+      + '.post-body a.related-item:hover,\n'
+      + '.post-body .post-nav a:hover { text-decoration: none; }\n',
+    'utf8'
+  );
   fs.writeFileSync(path.join(rootDir, 'tools/blog/article-runtime.js'), '/* loads article-links.css */\n', 'utf8');
 
   const article = ensureArticleSeo(
