@@ -8,6 +8,8 @@
 tools/blog/
 ├── README.md               本文件
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
+├── article-links.css       文章页共享链接语义与键盘焦点样式
+├── article-runtime.js      文章页共享主题、元数据降级与链接样式加载
 ├── index.html              归档列表页（按年份分组，JS 渲染）
 └── posts/
     ├── agent-boundary.html                      业务流程，如何变成 Agent 产品架构？（2026.07）

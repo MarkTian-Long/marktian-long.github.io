@@ -216,6 +216,22 @@ function checkInlineScripts(html, relPath, errors) {
   return checked;
 }
 
+function checkSharedArticleStyles(rootDir, errors, messages) {
+  const stylesheetPath = 'tools/blog/article-links.css';
+  const runtimePath = 'tools/blog/article-runtime.js';
+  if (!fs.existsSync(path.join(rootDir, stylesheetPath))) {
+    errors.push(`${stylesheetPath} is missing`);
+    return;
+  }
+
+  const runtime = readText(rootDir, runtimePath);
+  if (!runtime.includes('article-links.css')) {
+    errors.push(`${runtimePath} does not load ${stylesheetPath}`);
+    return;
+  }
+  messages.push('PASS blog shared link styles');
+}
+
 function checkArticles(rootDir, config, posts, errors, messages) {
   const articleErrorStart = errors.length;
   const scriptErrorStart = errors.length;
@@ -224,12 +240,18 @@ function checkArticles(rootDir, config, posts, errors, messages) {
   const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
   let checked = 0;
   let articlesWithValidScripts = 0;
+  let articlesWithSharedRuntime = 0;
   for (const post of posts) {
     const relPath = path.posix.join('tools/blog', post.url);
     if (!fs.existsSync(path.join(rootDir, relPath))) {
       continue;
     }
     const html = readText(rootDir, relPath);
+    if (/<script\b[^>]*\bsrc=["']\.\.\/article-runtime\.js["'][^>]*><\/script>/i.test(html)) {
+      articlesWithSharedRuntime++;
+    } else {
+      errors.push(`${relPath} missing shared article runtime`);
+    }
     const scriptErrorsBefore = errors.length;
     checkInlineScripts(html, relPath, errors);
     if (errors.length === scriptErrorsBefore) {
@@ -267,6 +289,9 @@ function checkArticles(rootDir, config, posts, errors, messages) {
   }
   if (errors.length === scriptErrorStart) {
     messages.push(`PASS blog inline scripts: ${articlesWithValidScripts}/${posts.length}`);
+  }
+  if (articlesWithSharedRuntime === posts.length) {
+    messages.push(`PASS blog shared runtime: ${articlesWithSharedRuntime}/${posts.length}`);
   }
 }
 
@@ -325,6 +350,7 @@ function checkSearchFoundation({ rootDir = path.resolve(__dirname, '..'), siteCo
   try {
     const posts = loadPosts(rootDir);
     checkAssets(rootDir, config, posts, errors, messages);
+    checkSharedArticleStyles(rootDir, errors, messages);
     checkArticles(rootDir, config, posts, errors, messages);
     checkEntryPages(rootDir, config, errors, messages);
   } catch (error) {

@@ -4,6 +4,20 @@
   var SHARED_THEME_KEY = 'blog_theme';
   var LEGACY_THEME_KEY = 'blog-theme';
   var META_FILE_NAME = 'posts-meta.json';
+  var ARTICLE_LINK_STYLESHEET = 'article-links.css';
+
+  function loadArticleLinkStyles() {
+    if (document.querySelector('link[data-blog-link-styles]')) return;
+
+    var runtimeScript = document.currentScript;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = runtimeScript && runtimeScript.src
+      ? new URL(ARTICLE_LINK_STYLESHEET, runtimeScript.src).href
+      : ARTICLE_LINK_STYLESHEET;
+    link.setAttribute('data-blog-link-styles', '');
+    document.head.appendChild(link);
+  }
 
   function readTheme() {
     try {
@@ -70,6 +84,7 @@
     };
   }
 
+  loadArticleLinkStyles();
   applyTheme();
   document.addEventListener('DOMContentLoaded', function () {
     window.setTimeout(applyTheme, 0);

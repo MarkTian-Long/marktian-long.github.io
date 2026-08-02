@@ -382,9 +382,11 @@ function makeCheckFixture(postOverrides = {}) {
   fs.writeFileSync(path.join(rootDir, 'robots.txt'), assets.robots, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), assets.sitemap, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'feed.xml'), assets.feed, 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'tools/blog/article-links.css'), '/* fixture */\n', 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'tools/blog/article-runtime.js'), '/* loads article-links.css */\n', 'utf8');
 
   const article = ensureArticleSeo(
-    '<html><head><title>Example</title></head><body><main>Article</main></body></html>',
+    '<html><head><title>Example</title></head><body><main>Article</main><script src="../article-runtime.js"></script></body></html>',
     posts[0],
     config
   );

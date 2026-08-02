@@ -1,0 +1,52 @@
+/* Shared hyperlink semantics for every blog article. */
+
+/* Inline citations stay recognizable without introducing browser-blue links. */
+.post-body a {
+  color: var(--text-1);
+  text-decoration: underline;
+  text-decoration-color: var(--clay);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+}
+
+.post-body a:hover {
+  color: var(--clay);
+  text-decoration-color: currentColor;
+}
+
+/* Reference lists are already a list of links, so underline on intent instead. */
+.refs a {
+  color: var(--text-3) !important;
+  text-decoration: none !important;
+}
+
+.refs a:hover {
+  color: var(--clay) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.16em;
+}
+
+/* Navigation relies on position and labels rather than underlines. */
+.back-link,
+.footer-nav a,
+.related-item,
+.post-nav a,
+.toc-list a {
+  text-decoration: none;
+}
+
+.back-link:hover,
+.footer-nav a:hover,
+.related-item:hover .related-item-title,
+.post-nav a:hover .nav-title,
+.toc-list a:hover,
+.toc-list a.toc-active {
+  color: var(--clay);
+}
+
+/* A consistent keyboard state must not depend on color alone. */
+a:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

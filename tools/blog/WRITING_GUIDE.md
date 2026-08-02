@@ -442,7 +442,7 @@ GitHub Pages 部署后无此问题。
     --text-1:      #f0f4ff;       /* 主文本 */
     --text-2:      #8a95b5;       /* 次要文本、callout 正文 */
     --text-3:      #4a5270;       /* 辅助文本、日期、小标注 */
-    --accent:      #4f8fff;       /* 蓝色，用于链接 focus（保留） */
+    --accent:      #4f8fff;       /* 蓝色，用于章节标识等辅助强调 */
     --clay:        #d97757;       /* 品牌色：标签、callout strong、hover */
     --clay-soft:   rgba(217,119,87,0.12);
     --tag-bg:      rgba(217,119,87,0.12);
@@ -485,6 +485,24 @@ GitHub Pages 部署后无此问题。
 | `.back-link:hover` | `color: var(--clay)` |
 | `.footer-nav a:hover` | `color: var(--clay)` |
 
+### 超链接与跳转规范
+
+文章页统一由 `article-runtime.js` 加载 `article-links.css`；不要在单篇文章中重新定义链接颜色、下划线或焦点样式。
+
+| 场景 | 默认状态 | hover / active | 键盘焦点 |
+|------|----------|----------------|----------|
+| 正文内引用链接（`.post-body a`） | 正文色 + 陶土色细下划线 | 文字与下划线变 `var(--clay)` | 陶土色 2px outline |
+| 参考资料（`.refs a`） | 辅助文字色，不加下划线 | 陶土色 + 下划线 | 陶土色 2px outline |
+| 返回、目录、相关文章、上一篇/下一篇 | 不加下划线，依靠位置与标签表达跳转 | 文字变 `var(--clay)`；目录保留现有 active 状态 | 陶土色 2px outline |
+
+- 正文链接不能使用浏览器默认蓝色；引用的可点击性由细下划线表达。
+- 不要为导航链接增加 hover 下划线，也不要只用颜色作为键盘焦点反馈。
+- 外链使用 `target="_blank"` 时必须同时写 `rel="noopener noreferrer"`；站内文章跳转保持同页打开。
+
+### 结构化信息块
+
+`.level-card`、`.decision-card` 等卡片只用于 2–4 个互斥层级、阶段或选项的并列比较。每项只包含标签、短标题和一段说明；普通段落、参考资料与单句结论不使用卡片，不嵌套卡片。单句可带走的判断继续使用 `.callout`。
+
 ### Google Fonts 引入（每篇文章 `<head>` 必须包含）
 
 ```html
@@ -499,6 +517,8 @@ GitHub Pages 部署后无此问题。
 <body data-theme="light">
   <script src="../article-runtime.js"></script>
 ```
+
+`article-runtime.js` 会在解析正文前加载共享链接样式；新文章不得省略该脚本。
 
 ---
 

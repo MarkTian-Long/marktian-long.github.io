@@ -96,6 +96,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
   - `SERVICE_OPENROUTER_KEY` → tools/service-agent/config.local.js
   - 换 key 去 Settings → Secrets 改，改完重新触发 Actions 即可
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
+- 任何 UI 可见改动完成后，必须按 `CONVENTIONS.md` 的「页面视觉复核」在真实本地页面使用视觉模型截图审查；交付时记录页面、视口、状态和结论，不能只做静态检查
 - UI 视觉美化时：先 `/impeccable` 加载设计知识，再用 `/audit` 诊断，用 `/polish`、`/typeset`、`/layout` 等子命令定向改动
 - 文档和代码不同步时使用 `/sync-docs` skill
 - 保持最小改动，不要顺手重构没有被要求改的代码
