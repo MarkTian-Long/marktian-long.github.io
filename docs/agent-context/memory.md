@@ -111,7 +111,8 @@ initial migration.
 - Layout refactors should search for related helper functions such as
   `restoreXxx` and `initXxx`.
 - After regex-based JS block removal, verify there are no orphaned `});`
-  fragments.
+  fragments; `node scripts/check-search-foundation.js` also parses every article's
+  inline JavaScript as a release guard.
 - Unique-source counts should use `Set.size`, not raw match counts.
 - User-visible metrics need clear semantics before implementation.
 

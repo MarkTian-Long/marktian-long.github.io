@@ -199,18 +199,42 @@ function checkArticleFileSet(rootDir, posts, errors) {
   }
 }
 
+function checkInlineScripts(html, relPath, errors) {
+  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+  let checked = 0;
+  for (const [, attributes, code] of scripts) {
+    if (/\bsrc\s*=/i.test(attributes) || /type=["']application\/ld\+json["']/i.test(attributes)) {
+      continue;
+    }
+    try {
+      new Function(code);
+      checked++;
+    } catch (error) {
+      errors.push(`${relPath} inline script ${checked + 1} has invalid JavaScript: ${error.message}`);
+    }
+  }
+  return checked;
+}
+
 function checkArticles(rootDir, config, posts, errors, messages) {
   const articleErrorStart = errors.length;
+  const scriptErrorStart = errors.length;
   checkArticleFileSet(rootDir, posts, errors);
   const feedUrl = absoluteUrl(config.siteUrl, config.blog.feedPath);
   const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
   let checked = 0;
+  let articlesWithValidScripts = 0;
   for (const post of posts) {
     const relPath = path.posix.join('tools/blog', post.url);
     if (!fs.existsSync(path.join(rootDir, relPath))) {
       continue;
     }
     const html = readText(rootDir, relPath);
+    const scriptErrorsBefore = errors.length;
+    checkInlineScripts(html, relPath, errors);
+    if (errors.length === scriptErrorsBefore) {
+      articlesWithValidScripts++;
+    }
     const expectedUrl = articleUrl(config, post);
     const expectedHtml = ensureArticleSeo(html, post, config);
     if (normalizeNewlines(html) !== normalizeNewlines(expectedHtml)) {
@@ -240,6 +264,9 @@ function checkArticles(rootDir, config, posts, errors, messages) {
 
   if (errors.length === articleErrorStart) {
     messages.push(`PASS blog article SEO: ${checked}/${posts.length}`);
+  }
+  if (errors.length === scriptErrorStart) {
+    messages.push(`PASS blog inline scripts: ${articlesWithValidScripts}/${posts.length}`);
   }
 }
 

@@ -480,7 +480,7 @@
             var btns = [];
             btns.push('<button class="page-btn" ' + (page === 1 ? 'disabled' : '') + ' data-goto="' + (page - 1) + '">←</button>');
             for (var i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || Math.abs(i - page) <= 1) {
+                if (totalPages <= 7 || i === 1 || i === totalPages || Math.abs(i - page) <= 1) {
                     btns.push('<button class="page-btn' + (i === page ? ' active' : '') + '" data-goto="' + i + '">' + i + '</button>');
                 } else if (Math.abs(i - page) === 2) {
                     btns.push('<span class="page-ellipsis">…</span>');

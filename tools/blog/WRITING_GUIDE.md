@@ -355,7 +355,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
-- 检查 `node scripts/check-search-foundation.js` 是否通过；若修改了 `posts-meta.json`，还要确认 `node scripts/generate-search-assets.js --check` 不报过期。
+- 检查 `node scripts/check-search-foundation.js` 是否通过；它会同时验证搜索资产和文章内联 JS 的语法。若修改了 `posts-meta.json`，还要确认 `node scripts/generate-search-assets.js --check` 不报过期。
 - 检查左侧目录层级：核心 `h2` 都作为一级项；只把可独立跳转的关键 `h3` 放进默认折叠的二级项。参考资料、附录与协作要点等辅助 h3 不应占用目录。
 - 在浏览器中至少查看一次文章页的正文末尾和参考资料区；只做 JSON/HTML 静态校验不足以发现可见转义文本和目录层级问题。
 - 涉及目录图标、缩进或展开状态时，按 `CONVENTIONS.md` 的「页面视觉复核」要求截图检查：默认收起、手动展开与滚动到已收录二级项后的状态都应保持层级和文字对齐。
