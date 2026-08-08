@@ -3,7 +3,7 @@ const path = require('path');
 const { isDeepStrictEqual } = require('util');
 
 const siteConfig = require('./site-config');
-const { buildSearchAssets, validatePosts } = require('./generate-search-assets');
+const { buildSearchAssets, validateBlogMetadata } = require('./generate-search-assets');
 const {
   articleUrl,
   absoluteUrl,
@@ -19,10 +19,7 @@ function readText(rootDir, relPath) {
 
 function loadPosts(rootDir) {
   const metadata = JSON.parse(readText(rootDir, 'tools/blog/data/posts-meta.json'));
-  if (!Array.isArray(metadata.posts)) {
-    throw new Error('posts-meta.json must contain posts array');
-  }
-  validatePosts(metadata.posts);
+  validateBlogMetadata(metadata);
   return metadata.posts;
 }
 

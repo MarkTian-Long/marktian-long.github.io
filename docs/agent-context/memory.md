@@ -159,6 +159,11 @@ initial migration.
   topic must be central to the title, summary, and conclusion, rather than an
   example, implementation path, or frequently mentioned technology.
 - `tags` and `topics` should not duplicate the same terms.
+- 2026-08-08 Codex: Historical blog retrieval is two-stage: use
+  `posts-meta.json` title, summary, concepts, topics, tags, and category to
+  recall candidates, then read the Markdown body or current published HTML
+  fallback before citing. `concepts` contains 4-7 specific semantic anchors;
+  it is not a front-end, SEO, tag, or static-related-post field.
 - A new or redefined blog tag/topic is a single atomic change: obtain approval,
   update the WRITING_GUIDE vocabulary and posts-meta.json together, then audit
   all existing articles. The historical Markdown-source exception never

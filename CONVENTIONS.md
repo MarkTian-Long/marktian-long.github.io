@@ -306,15 +306,22 @@ git status --short
 | slug | string | 文件名不含 .html，唯一标识符，kebab-case |
 | date | string | 格式 `YYYY.MM` |
 | title | string | 完整标题 |
-| summary | string | 一句话摘要（用于搜索和主页展示） |
+| summary | string | 1-2 句自然摘要：说明对象/问题、核心判断及关键机制或边界（用于搜索和主页展示） |
 | tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
 | topics | string[] | 话题领域标签，见 WRITING_GUIDE.md 标签库 |
+| concepts | string[] | 4-7 个具体检索概念：关键对象、机制、产品/公司或层级；不用于前台、SEO 或静态关联 |
 | category | string | 大分类：`技术` / `产品` / `商业` / `生活` |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
 
+### 历史文章两阶段检索
+
+- 规划或撰写新文章时，先仅阅读 `posts-meta.json` 的 `title`、`summary`、`concepts`、`topics`、`tags` 与 `category`，召回少量候选文章；`date` 只用于判断观点先后，`slug/url` 只用于定位正文。
+- 再阅读候选正文：优先 `docs/blog/<slug>.md`；历史文章缺少对应 Markdown 时，可直接读取 `tools/blog/posts/<slug>.html`。发布 HTML 可能比旧 Markdown 更接近最终正文，禁止为了检索而批量重新生成或补写历史源稿。
+- 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称不足以构成引用理由。
+
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：先更新 `posts-meta.json` → 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 新文章发布流程：先更新 `posts-meta.json`（包括 `concepts`）→ 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。

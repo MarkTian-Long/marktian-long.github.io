@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "posts": [
     {
       "slug": "ai-poc-financial-b2b-guide",
@@ -12,6 +12,14 @@
       "topics": [
         "企业AI",
         "金融科技"
+      ],
+      "concepts": [
+        "POC 验证目标",
+        "客户决策问题",
+        "最小可信验证",
+        "验收标准",
+        "金融软件厂商",
+        "正式项目转化"
       ],
       "category": "产品",
       "url": "posts/ai-poc-financial-b2b-guide.html"
@@ -28,6 +36,15 @@
         "Agent",
         "产品设计"
       ],
+      "concepts": [
+        "业务流程图",
+        "自主决策节点",
+        "多 Agent 拆分",
+        "责任边界",
+        "信息边界",
+        "权限边界",
+        "协调成本"
+      ],
       "category": "产品",
       "url": "posts/agent-boundary.html"
     },
@@ -42,6 +59,14 @@
       "topics": [
         "企业AI",
         "业务语义"
+      ],
+      "concepts": [
+        "企业本体",
+        "业务语义层",
+        "术语与实体关系",
+        "指标口径",
+        "业务规则",
+        "语义资产治理"
       ],
       "category": "技术",
       "url": "posts/ontology-business-semantic-layer.html"
@@ -58,6 +83,14 @@
         "Agent",
         "企业AI"
       ],
+      "concepts": [
+        "WorkBuddy",
+        "FDE",
+        "工作入口",
+        "组织可用性",
+        "现场复杂性",
+        "可复用产品能力"
+      ],
       "category": "商业",
       "url": "posts/enterprise-agent-fde.html"
     },
@@ -72,6 +105,14 @@
       "topics": [
         "前沿研究",
         "模型能力"
+      ],
+      "concepts": [
+        "物理世界 AI",
+        "行动数据",
+        "可观测性",
+        "世界模型",
+        "验证与归因",
+        "数字化程度"
       ],
       "category": "技术",
       "url": "posts/physical-world-llm.html"
@@ -89,6 +130,14 @@
         "智能客服",
         "RAG"
       ],
+      "concepts": [
+        "生产级客服链路",
+        "意图路由",
+        "知识库检索",
+        "对话管理",
+        "升级与人工接管",
+        "PM 与算法分工"
+      ],
       "category": "技术",
       "url": "posts/llm-customer-service-tech-guide.html"
     },
@@ -102,6 +151,14 @@
       ],
       "topics": [
         "企业AI"
+      ],
+      "concepts": [
+        "软件团队分工",
+        "标准化输入",
+        "可验证输出",
+        "流程协调",
+        "人际协作",
+        "职业重构"
       ],
       "category": "商业",
       "url": "posts/llm-reshapes-software-roles.html"
@@ -117,6 +174,14 @@
       "topics": [
         "Agent"
       ],
+      "concepts": [
+        "主动式 AI",
+        "仲裁层",
+        "AI 请求排序",
+        "决策权",
+        "软件入口",
+        "C 端与 B 端差异"
+      ],
       "category": "产品",
       "url": "posts/ai-arbitration-layer.html"
     },
@@ -130,6 +195,14 @@
       ],
       "topics": [
         "算力基础设施"
+      ],
+      "concepts": [
+        "SpaceX 招股书",
+        "AI 基础设施",
+        "TAM 估值",
+        "已签合同",
+        "技术未经证实",
+        "未来折现"
       ],
       "category": "商业",
       "url": "posts/spacex-ai-infrastructure-valuation.html"
@@ -145,6 +218,14 @@
       "topics": [
         "企业AI"
       ],
+      "concepts": [
+        "AI coding",
+        "B 端 SaaS",
+        "自研成本",
+        "行业流程知识",
+        "产品护城河",
+        "买与建"
+      ],
       "category": "商业",
       "url": "posts/llm-saas-moat-disruption.html"
     },
@@ -158,6 +239,14 @@
       ],
       "topics": [
         "产品设计"
+      ],
+      "concepts": [
+        "Perplexity",
+        "独立 AI 搜索",
+        "用户留存",
+        "产品形态",
+        "搜索入口",
+        "基础模型厂商"
       ],
       "category": "产品",
       "url": "posts/perplexity-analysis.html"
@@ -173,6 +262,14 @@
       "topics": [
         "Agent"
       ],
+      "concepts": [
+        "人机边界",
+        "验证反馈循环",
+        "数据管道",
+        "任务收敛",
+        "人工介入",
+        "自动驾驶"
+      ],
       "category": "技术",
       "url": "posts/human-ai-boundary-shift.html"
     },
@@ -186,6 +283,14 @@
       ],
       "topics": [
         "算力基础设施"
+      ],
+      "concepts": [
+        "模型训练",
+        "模型推理",
+        "吞吐量",
+        "内存带宽",
+        "推理规模",
+        "内存价格"
       ],
       "category": "技术",
       "url": "posts/training-vs-inference.html"
@@ -201,6 +306,15 @@
       "topics": [
         "算力基础设施"
       ],
+      "concepts": [
+        "CPU GPU ASIC 分工",
+        "任务覆盖范围",
+        "硬件灵活性",
+        "TPU",
+        "NPU",
+        "FPGA",
+        "DPU"
+      ],
       "category": "技术",
       "url": "posts/ai-chips-explainer.html"
     },
@@ -214,6 +328,14 @@
       ],
       "topics": [
         "评测体系"
+      ],
+      "concepts": [
+        "静态 benchmark",
+        "动态评测",
+        "Agent 评测",
+        "评测基础设施",
+        "大厂自建评测",
+        "第三方评测生态"
       ],
       "category": "技术",
       "url": "posts/ai-benchmark-failure.html"
@@ -229,6 +351,14 @@
       "topics": [
         "模型能力"
       ],
+      "concepts": [
+        "软性质量",
+        "主体性",
+        "抗谄媚能力",
+        "生产力场景",
+        "模型体验",
+        "benchmark 盲区"
+      ],
       "category": "技术",
       "url": "posts/llm-soft-quality.html"
     },
@@ -242,6 +372,14 @@
       ],
       "topics": [
         "前沿研究"
+      ],
+      "concepts": [
+        "自动化科研",
+        "FARS",
+        "研究链路",
+        "执行能力",
+        "价值判断",
+        "人机分工"
       ],
       "category": "技术",
       "url": "posts/automated-research.html"
@@ -257,6 +395,14 @@
       "topics": [
         "模型能力"
       ],
+      "concepts": [
+        "AI 编程工具",
+        "硬件开发",
+        "反馈回路",
+        "数字孪生",
+        "物理不确定性",
+        "推理链条"
+      ],
       "category": "技术",
       "url": "posts/ai-coding-hardware.html"
     },
@@ -270,6 +416,14 @@
       ],
       "topics": [
         "企业AI"
+      ],
+      "concepts": [
+        "FDE",
+        "企业部署合资公司",
+        "生产落地",
+        "FDX",
+        "复杂性吸收",
+        "模型厂商服务化"
       ],
       "category": "商业",
       "url": "posts/fde-blog-v3.html"
@@ -286,6 +440,14 @@
         "模型能力",
         "Agent"
       ],
+      "concepts": [
+        "预训练",
+        "后训练",
+        "算力分配",
+        "Agent 框架",
+        "Yupp",
+        "模型与框架协同"
+      ],
       "category": "技术",
       "url": "posts/llm-second-half.html"
     },
@@ -299,6 +461,14 @@
       ],
       "topics": [
         "企业AI"
+      ],
+      "concepts": [
+        "大模型 API",
+        "企业数据安全",
+        "强监管行业",
+        "员工行为风险",
+        "厂商侧风险",
+        "合规约束"
       ],
       "category": "商业",
       "url": "posts/enterprise-ai-data-security.html"
@@ -314,6 +484,14 @@
       "topics": [
         "Agent"
       ],
+      "concepts": [
+        "企业工作流",
+        "智能体定义",
+        "自主决策",
+        "工作流自动化",
+        "人机协作",
+        "生产环境"
+      ],
       "category": "商业",
       "url": "posts/agent-vs-workflow.html"
     },
@@ -327,6 +505,14 @@
       ],
       "topics": [
         "产品设计"
+      ],
+      "concepts": [
+        "Claude Design",
+        "Anthropic",
+        "工作流闭环",
+        "基础模型厂商",
+        "工具层",
+        "独立产品护城河"
       ],
       "category": "产品",
       "url": "posts/claude-design-blog.html"
@@ -343,6 +529,14 @@
         "Agent",
         "产品设计"
       ],
+      "concepts": [
+        "Manus",
+        "AI Agent 产品",
+        "用户付费决策",
+        "产品认知震撼",
+        "Meta 收购",
+        "产品演进"
+      ],
       "category": "产品",
       "url": "posts/manus-agent-analysis.html"
     },
@@ -357,6 +551,14 @@
       "topics": [
         "产品设计"
       ],
+      "concepts": [
+        "OpenClaw",
+        "个人 Agent",
+        "开源冷启动",
+        "B 端落地",
+        "脚手架产品",
+        "基础设施吞并"
+      ],
       "category": "产品",
       "url": "posts/openclaw-brand-creation.html"
     },
@@ -370,6 +572,14 @@
       ],
       "topics": [
         "企业AI"
+      ],
+      "concepts": [
+        "企业 AI 成熟度",
+        "探索期",
+        "交付期",
+        "迭代期",
+        "可度量目标",
+        "产品化飞轮"
       ],
       "category": "产品",
       "url": "posts/enterprise-ai-three-stages.html"
@@ -386,6 +596,14 @@
         "Agent",
         "产品设计"
       ],
+      "concepts": [
+        "AI 记忆系统",
+        "用户理解",
+        "留存目标",
+        "A/B Test",
+        "竞争壁垒",
+        "记忆架构"
+      ],
       "category": "产品",
       "url": "posts/memory-system.html"
     },
@@ -400,6 +618,14 @@
       "topics": [
         "Agent"
       ],
+      "concepts": [
+        "Harness",
+        "工具抽象",
+        "错误恢复",
+        "状态管理",
+        "生产可靠性",
+        "工程关注层次"
+      ],
       "category": "技术",
       "url": "posts/harness-engineering.html"
     },
@@ -413,6 +639,14 @@
       ],
       "topics": [
         "Agent"
+      ],
+      "concepts": [
+        "Agent 可靠性",
+        "生产质量",
+        "长任务执行",
+        "工具调用",
+        "错误恢复",
+        "评测缺口"
       ],
       "category": "技术",
       "url": "posts/agent-three-problems.html"
@@ -429,6 +663,14 @@
         "Agent",
         "企业AI"
       ],
+      "concepts": [
+        "Anthropic 订阅配额",
+        "Harness 层",
+        "平台控制权",
+        "Agent 生态",
+        "开放模型",
+        "封闭生态"
+      ],
       "category": "商业",
       "url": "posts/market-landscape-2026.html"
     },
@@ -444,6 +686,14 @@
       "topics": [
         "企业AI"
       ],
+      "concepts": [
+        "补救缺陷型技术",
+        "编码知识型技术",
+        "基础模型进步",
+        "技术生命周期",
+        "CoT",
+        "合规规则"
+      ],
       "category": "产品",
       "url": "posts/tech-obsolescence.html"
     },
@@ -457,6 +707,14 @@
       ],
       "topics": [
         "RAG"
+      ],
+      "concepts": [
+        "naive RAG",
+        "向量相似度",
+        "多跳检索",
+        "主动信息系统",
+        "业务相关性",
+        "知识库架构"
       ],
       "category": "技术",
       "url": "posts/rag-evolution.html"
@@ -473,6 +731,14 @@
       "topics": [
         "Agent"
       ],
+      "concepts": [
+        "Skill",
+        "Prompt Engineering",
+        "Harness",
+        "标准化执行单元",
+        "可观察性",
+        "Discovery Layer"
+      ],
       "category": "技术",
       "url": "posts/skill-system-and-harness.html"
     },
@@ -487,6 +753,14 @@
       "topics": [
         "Fine-tuning"
       ],
+      "concepts": [
+        "能力补救型微调",
+        "成本优化",
+        "可控性微调",
+        "少样本学习",
+        "LoRA",
+        "模型定制"
+      ],
       "category": "技术",
       "url": "posts/finetuning-evolution.html"
     },
@@ -494,13 +768,21 @@
       "slug": "prompt-engineering-lifecycle",
       "date": "2026.03",
       "title": "Prompt Engineering 的生命周期：哪些会消亡，哪些会留下",
-      "summary": "补救模型缺降的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
+      "summary": "补救模型缺陷的 Prompt 技巧终将消亡，但定义约束和编码知识的那部分会持续演进——关键是分清你在做哪种事。",
       "tags": [
         "工程演进",
         "技术判断"
       ],
       "topics": [
         "提示工程"
+      ],
+      "concepts": [
+        "Prompt Engineering",
+        "补救缺陷型",
+        "定义约束型",
+        "基础模型进步",
+        "上下文工程",
+        "可复用知识"
       ],
       "category": "技术",
       "url": "posts/prompt-engineering-lifecycle.html"

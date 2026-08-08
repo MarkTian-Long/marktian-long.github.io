@@ -19,6 +19,7 @@ const {
   targetContents,
   changedTargets,
   validatePosts,
+  validateBlogMetadata,
   parseArgs: parseSearchAssetArgs
 } = require('./generate-search-assets');
 const {
@@ -257,6 +258,61 @@ test('validatePosts rejects malformed fields and unsafe article paths', () => {
   );
 });
 
+test('validateBlogMetadata requires compact, specific retrieval concepts', () => {
+  const valid = {
+    version: 2,
+    posts: [{
+      slug: 'example',
+      date: '2026.08',
+      title: 'Example',
+      summary: 'This summary identifies the object, judgement, and mechanism.',
+      tags: ['决策框架'],
+      topics: ['企业AI'],
+      category: '产品',
+      concepts: ['POC 验证范围', '验收标准', '金融软件厂商', '正式项目转化'],
+      url: 'posts/example.html'
+    }]
+  };
+
+  assert.doesNotThrow(() => validateBlogMetadata(valid));
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, version: 1 }),
+    /version must be 2/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], date: '2026-08' }] }),
+    /YYYY\.MM/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], tags: [] }] }),
+    /tags.*non-empty array/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], category: '其他' }] }),
+    /category is invalid/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: undefined }] }),
+    /concepts.*array/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: ['a', 'b', 'c'] }] }),
+    /4 to 7/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: ['AI', '验收标准', '金融软件厂商', '正式项目转化'] }] }),
+    /generic/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: ['企业AI', '验收标准', '金融软件厂商', '正式项目转化'] }] }),
+    /duplicate tag or topic/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: ['验收标准', '验收标准', '金融软件厂商', '正式项目转化'] }] }),
+    /unique/
+  );
+});
+
 test('search CLIs reject unknown and ambiguous options', () => {
   assert.throws(() => parseSearchAssetArgs(['--wrtie']), /Unknown option/);
   assert.throws(() => parseSearchAssetArgs(['--write', '--check']), /either/);
@@ -366,8 +422,13 @@ function makeCheckFixture(postOverrides = {}) {
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-check-'));
   const posts = [{
     slug: 'example',
+    date: '2026.08',
     title: 'Example',
     summary: 'Example summary',
+    tags: ['决策框架'],
+    topics: ['企业AI'],
+    category: '产品',
+    concepts: ['验证范围', '验收标准', '金融软件厂商', '正式项目转化'],
     url: 'posts/example.html',
     ...postOverrides
   }];
@@ -375,7 +436,7 @@ function makeCheckFixture(postOverrides = {}) {
   fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
   fs.writeFileSync(
     path.join(rootDir, 'tools/blog/data/posts-meta.json'),
-    JSON.stringify({ posts }, null, 2),
+    JSON.stringify({ version: 2, posts }, null, 2),
     'utf8'
   );
   const assets = buildSearchAssets(config, posts);

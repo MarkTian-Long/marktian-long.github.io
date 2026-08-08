@@ -11,12 +11,14 @@ const {
   ensureEntryPageSeo
 } = require('./search-foundation');
 
+const BLOG_SCHEMA_VERSION = 2;
+const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '生活']);
+const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
+
 function loadPosts(rootDir) {
   const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-  if (!Array.isArray(metadata.posts)) {
-    throw new Error('posts-meta.json must contain posts array');
-  }
+  validateBlogMetadata(metadata);
   return metadata.posts;
 }
 
@@ -54,6 +56,55 @@ function validatePosts(posts) {
     }
     slugs.add(post.slug);
     urls.add(post.url);
+  }
+}
+
+function validateStringArray(post, field) {
+  if (!Array.isArray(post[field]) || !post[field].length) {
+    throw new Error(`Post ${field} must be a non-empty array: ${post.slug}`);
+  }
+  for (const value of post[field]) {
+    if (typeof value !== 'string' || !value.trim() || value !== value.trim()) {
+      throw new Error(`Post ${field} entries must be trimmed non-empty strings: ${post.slug}`);
+    }
+  }
+  if (new Set(post[field]).size !== post[field].length) {
+    throw new Error(`Post ${field} entries must be unique: ${post.slug}`);
+  }
+}
+
+function validateBlogMetadata(metadata) {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    throw new Error('posts-meta.json must contain an object');
+  }
+  if (metadata.version !== BLOG_SCHEMA_VERSION) {
+    throw new Error(`posts-meta.json version must be ${BLOG_SCHEMA_VERSION}`);
+  }
+  validatePosts(metadata.posts);
+
+  for (const post of metadata.posts) {
+    if (typeof post.date !== 'string' || !/^\d{4}\.\d{2}$/.test(post.date)) {
+      throw new Error(`Post date must use YYYY.MM: ${post.slug}`);
+    }
+    validateStringArray(post, 'tags');
+    validateStringArray(post, 'topics');
+    if (typeof post.category !== 'string' || !ALLOWED_CATEGORIES.has(post.category)) {
+      throw new Error(`Post category is invalid: ${post.slug}`);
+    }
+    if (!Array.isArray(post.concepts)) {
+      throw new Error(`Post concepts must be an array: ${post.slug}`);
+    }
+    if (post.concepts.length < 4 || post.concepts.length > 7) {
+      throw new Error(`Post concepts must contain 4 to 7 entries: ${post.slug}`);
+    }
+    validateStringArray(post, 'concepts');
+    if (post.concepts.some(concept => GENERIC_CONCEPTS.has(concept))) {
+      throw new Error(`Post concepts cannot use generic terms: ${post.slug}`);
+    }
+    const labels = new Set([...post.tags, ...post.topics]);
+    if (post.concepts.some(concept => labels.has(concept))) {
+      throw new Error(`Post concepts cannot duplicate tag or topic: ${post.slug}`);
+    }
   }
 }
 
@@ -192,6 +243,7 @@ if (require.main === module) {
 module.exports = {
   buildSearchAssets,
   validatePosts,
+  validateBlogMetadata,
   targetContents,
   changedTargets,
   parseArgs,

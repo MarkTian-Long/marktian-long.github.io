@@ -50,9 +50,10 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加元数据
+- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加完整元数据（含 `concepts`）
 - **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 源稿，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
+- **历史检索**：写作前先从元数据的标题、摘要、`concepts`、标签和分类召回候选，再读正文判断是否存在实质关联；历史文章缺同名 Markdown 时直接读取发布 HTML。命中不等于应引用。
 - **发布生成**：先在 `posts-meta.json` 添加元数据，再运行 `node tools/blog/generate-post.js <source.md> <output.html>`，最后运行 `node scripts/generate-search-assets.js --write`
 - **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js` 和 `node scripts/check-repository-policy.js`
 - **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
