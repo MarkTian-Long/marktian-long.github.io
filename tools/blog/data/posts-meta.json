@@ -2,6 +2,30 @@
   "version": 2,
   "posts": [
     {
+      "slug": "ai-work-system-competition",
+      "date": "2026.08",
+      "title": "半年之后，AI 办公从产品赛马走向体系竞争",
+      "summary": "Claude 先在编程这一高价值、可验证的窄任务中验证了 Agent 的商业化路径；约半年后，阿里、腾讯、字节陆续收拢 AI 办公产品与组织资源。竞争正从单点功能转向模型、工作入口、云、企业数据、治理与交付能力的体系较量。",
+      "tags": [
+        "市场格局"
+      ],
+      "topics": [
+        "Agent",
+        "企业AI"
+      ],
+      "concepts": [
+        "Claude Code",
+        "AI 办公",
+        "体系竞争",
+        "工作入口",
+        "默认调度权",
+        "企业工作系统",
+        "垂直 AI Builder"
+      ],
+      "category": "商业",
+      "url": "posts/ai-work-system-competition.html"
+    },
+    {
       "slug": "ai-poc-financial-b2b-guide",
       "date": "2026.07",
       "title": "AI POC 到底在验证什么？一份给金融 B 端 AI PM 的推进地图",

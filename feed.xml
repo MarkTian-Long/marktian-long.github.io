@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI、产品、工程与商业的长期思考。</description>
     <item>
+      <title>半年之后，AI 办公从产品赛马走向体系竞争</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html</guid>
+      <description>Claude 先在编程这一高价值、可验证的窄任务中验证了 Agent 的商业化路径；约半年后，阿里、腾讯、字节陆续收拢 AI 办公产品与组织资源。竞争正从单点功能转向模型、工作入口、云、企业数据、治理与交付能力的体系较量。</description>
+    </item>
+    <item>
       <title>AI POC 到底在验证什么？一份给金融 B 端 AI PM 的推进地图</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</guid>
       <description>大模型厂商相继成立企业部署合资公司，表面是商业扩张，实质是在宣告 AI 竞争主战场的迁移——从模型能力到落地能力。FDE 是第一批响应者，FDX 可能是这个逻辑的完整形态。</description>
-    </item>
-    <item>
-      <title>大模型的下半场：当预训练不再是唯一战场</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/llm-second-half.html</guid>
-      <description>Pre-train 的军备竞赛已接近尾声，真正决定胜负的战场，正在转移到 Post-train 和 Agent 框架。从算力分配表的变迁、Yupp 的关闭，到模型与框架的双向进化，这场竞争的节奏已经变了。</description>
     </item>
   </channel>
 </rss>
