@@ -315,9 +315,9 @@ git status --short
 
 ### 历史文章两阶段检索
 
-- 规划或撰写新文章时，先仅阅读 `posts-meta.json` 的 `title`、`summary`、`concepts`、`topics`、`tags` 与 `category`，召回少量候选文章；`date` 只用于判断观点先后，`slug/url` 只用于定位正文。
-- 再阅读候选正文：优先 `docs/blog/<slug>.md`；历史文章缺少对应 Markdown 时，可直接读取 `tools/blog/posts/<slug>.html`。发布 HTML 可能比旧 Markdown 更接近最终正文，禁止为了检索而批量重新生成或补写历史源稿。
-- 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称不足以构成引用理由。
+- 按 `tools/blog/WRITING_GUIDE.md` 的「历史博客滚动检索与复用」执行：完整读取 `posts-meta.json` 的 `title`、`summary`、`concepts`、`topics`、`tags` 与 `category` 形成高相关/潜在相关/弱相关候选池；无固定候选数量上限，只有论点、机制、边界、案例或大纲出现实质变化时才滚动重搜，正式大纲前再做最终覆盖扫描。
+- 编辑和生成仍以 `docs/blog/<slug>.md` 为源并生成 `tools/blog/posts/<slug>.html`；判断历史发表事实、引用资格或观点冲突时，正文按“线上正式页 → 仓库 HTML → Markdown”读取。禁止为了检索而批量重新生成或补写历史源稿。
+- 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称，以及仅为增加内链的需求均不足以构成引用理由。
 
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
