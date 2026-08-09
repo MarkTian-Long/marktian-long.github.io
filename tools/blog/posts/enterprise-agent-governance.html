@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+date:    2026.08
+title:   为什么企业开始谈 Agent「纳管」？
+tags:    [市场格局]
+slug:    enterprise-agent-governance
+summary: 企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。
+category: 行业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>为什么企业开始谈 Agent「纳管」？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="为什么企业开始谈 Agent「纳管」？" />
+<meta property="og:description" content="企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:title" content="为什么企业开始谈 Agent「纳管」？" />
+<meta name="twitter:description" content="企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"为什么企业开始谈 Agent「纳管」？","description":"企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。","url":"https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .related-posts { margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .related-title { margin-bottom:1rem; color:var(--text-2); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; } .related-item { display:flex; align-items:baseline; gap:.75rem; padding:.5rem 0; text-decoration:none; } .related-item:hover .related-item-title { color:var(--clay); } .related-item-date { color:var(--text-2); font-size:.75rem; white-space:nowrap; } .related-item-title { color:var(--text-1); font-size:.9rem; }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、不是 Agent 变多了，而是公司规则散落了</a></li><li><a href="#section-2">二、纳管统一的不是 Agent 怎么干活，而是企业允许它做什么</a></li><li><a href="#section-3">三、这个问题已经开始进入真实产品</a></li><li><a href="#section-4">四、需要统一规则，不等于一定要多一套平台</a></li><li><a href="#section-5">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.08</span><span id="post-tags"></span></div><h1 class="post-title">为什么企业开始谈 Agent「纳管」？</h1><p class="post-summary">企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><p>我真正开始留意“Agent 纳管”，是最近两件小事碰到了一起。</p>
+<p>前段时间，工作群里有人转了一篇腾讯云 4 月发布的 <a href="https://adp.tencentcloud.com/zh/blog/adp-agent-portal" target="_blank" rel="noopener noreferrer">ADP Agent Portal</a> 文章。里面讨论的已经不只是怎么开发一个 Agent，而是当企业里的 Agent 分散在不同团队和平台以后，怎么统一纳入管理、调度和治理。</p>
+<p>如果只有这一篇，我可能会把它当成厂商对 Agent 平台的一次产品扩展。但这周和一家头部券商交流时，对方也提到了“纳管”。</p>
+<p>这当然不足以说明券商行业已经普遍走到这一步，但两个信号碰到一起，我开始认真想一个问题：<strong>Agent 真正进入企业以后，为什么还会多出一个“管 Agent”的问题？</strong></p>
+<p>这刚好接上我之前两篇文章里的思考。<a href="https://marktian-long.github.io/tools/blog/posts/agent-boundary.html" target="_blank" rel="noopener noreferrer">《一个业务流程，到底应该拆成几个 Agent？》</a>更多讨论单个 Agent 的边界：它负责什么结果、可以知道什么、又能做什么；<a href="https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html" target="_blank" rel="noopener noreferrer">《从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？》</a>则往生产环境推进了一步：Agent 一旦开始读取真实数据、修改系统状态和推动后续流程，权限、审批、审计和责任归属都会变得重要。</p>
+<p>但这两篇文章基本都在回答同一个层级的问题：怎么管好<strong>这个 Agent</strong>。</p>
+<p>如果一家企业同时出现销售 Agent、客服 Agent、投研 Agent、研发 Agent，而且它们来自不同团队、不同 SaaS 和不同 AI 平台，原来由每个应用自己处理的边界，还适合继续各管各的吗？</p>
+<p>本文所说的“纳管”先取一个很朴素的定义：<strong>不管一个 Agent 在哪里开发、由谁提供，企业至少能知道它存在、知道谁负责、知道它被允许做什么，并在需要时追溯行为、撤销权限或停用它。</strong></p>
+<h2 id="section-1">一、不是 Agent 变多了，而是公司规则散落了</h2>
+<p>假设一家企业只有一个销售 Agent，需要读取 CRM。</p>
+<p>产品团队给它配置好权限：哪些客户信息能看，哪些字段不能看，修改关键数据必须经过人工确认。到这里没有太大问题。</p>
+<p>后来客服团队也做了一个 Agent，同样访问 CRM，于是重新配置一遍权限。再后来，运营和客户成功团队也各自做了 Agent。</p>
+<p>这时候公司调整了一条数据访问规则：<strong>某类敏感客户信息，从今天开始只有特定岗位可以访问。</strong></p>
+<p>如果访问规则都维护在各个 Agent 自己的配置里，这条本来属于公司的规则，就会变成四五份甚至十几份应用配置。企业不但要逐个修改，还得先回答：哪些 Agent 正在使用这项权限？谁批准的？有没有长期没人维护的 Agent 还保留旧权限？员工换岗或离职以后，相关权限有没有一起变化？</p>
+<p><strong>真正麻烦的不是第十个 Agent 比第一个更难开发，而是同一条企业规则开始被复制很多遍。</strong></p>
+<p>所以 Agent 数量并不是根因。几十个只能回答公开 FAQ 的 Agent，治理要求可能依然很轻；一个能够付款、修改合同或访问高敏感数据的 Agent，即使只有一个，也可能需要严格控制。</p>
+<p>更准确地说，当同一套公司规则开始影响多个 Agent、Agent 开始代表员工或组织执行真实动作、Agent 又来自不同团队和平台时，“每个应用自己管自己”的成本和风险都会明显增加。Agent 数量只是把这个问题放大了。</p>
+<h2 id="section-2">二、纳管统一的不是 Agent 怎么干活，而是企业允许它做什么</h2>
+<p>如果解决办法只是“把所有东西都塞进一个统一后台”，同样会走到另一个极端。</p>
+<p>一个销售 Agent 怎么分析客户、先查财报还是先读 CRM、失败后怎么调整策略，这些属于它自己的业务逻辑。企业没有必要把所有 Prompt、任务规划和工具调用顺序都统一规定，否则 Agent 也失去了动态决策的意义。</p>
+<p>真正值得区分的是两类事情：</p>
+<div class="blog-table"><table><thead><tr><th><strong>维度</strong></th><th><strong>Agent / 业务应用负责</strong></th><th><strong>企业更适合统一负责</strong></th></tr></thead><tbody><tr><td><strong>任务执行</strong></td><td>Prompt、规划、重试</td><td>通常不统一</td></tr><tr><td><strong>身份责任</strong></td><td>在授权身份下执行</td><td>身份、责任人、所属组织</td></tr><tr><td><strong>权限策略</strong></td><td>在授权范围内选择</td><td>数据、工具权限和风险规则</td></tr><tr><td><strong>高风险操作</strong></td><td>发起操作请求</td><td>审批门槛</td></tr><tr><td><strong>效果与留痕</strong></td><td>场景业务指标</td><td>最低评测、轨迹和审计要求</td></tr><tr><td><strong>生命周期</strong></td><td>局部重试、降级</td><td>撤权、暂停、停用</td></tr></tbody></table></div>
+<p><em>这是本文为了说明边界所做的归纳，不是行业标准，也不试图覆盖全部 Agent 治理能力。实际边界还取决于行业监管、业务风险和企业已有系统。</em></p>
+<p>这里的“统一”，不是让所有 Agent 获得同样的权限。</p>
+<p>销售 Agent 和客服 Agent 完全可以看到不同的数据。企业真正需要统一的是<strong>规则从哪里来</strong>：最好由同一套可信的身份和权限体系判断“这个人、这个 Agent、在这个场景下能做什么”，而不是四个团队分别在自己的 Prompt、代码和配置里解释一遍。</p>
+<p>评测也是类似的。企业可以统一要求高风险 Agent 保留必要的执行轨迹、关键动作和审计记录，但销售 Agent 的效果可能看商机转化，客服 Agent 看问题解决率，投研 Agent 又有自己的准确性和合规要求。</p>
+<p><strong>统一的是企业底线和规则来源，不是每个 Agent 的具体业务策略。</strong></p>
+<p>这样再看“纳管”，其实可以压成几个很具体的问题：它是谁？谁负责？它被允许做什么？出了问题以后，能不能把权力收回来？</p>
+<p>最后一个问题尤其重要。</p>
+<p>开发 Agent 时，我们天然会关注怎么给它更多数据、工具和行动能力；企业还必须关心另一半：员工离职以后权限能不能一起失效，某个接口出现风险能不能统一禁用，一个长期无人维护的 Agent 谁能停掉，异常发生后能不能还原它做过什么。</p>
+<p><strong>企业级纳管不仅是授权，也是撤权。</strong></p>
+<p>Agent 还会让传统身份与权限问题变得更复杂。Meta AI 高级总监 <a href="https://x.com/realmadhuguru" target="_blank" rel="noopener noreferrer">Madhu Gurumurthy</a> 此前在 Google 领导过 Gemini、Veo 等模型产品，他最近在 <a href="https://x.com/realmadhuguru/status/2080315474093760714" target="_blank" rel="noopener noreferrer">X 上抛过一个很具体的问题</a>：传统 IAM（身份与访问管理）原本是围绕数量相对有限的员工设计的，当企业开始拥有大量 Agent 时，身份和访问应该怎么管理？</p>
+<p>沿着这个问题往下想，Agent 与普通员工账号最大的不同之一，是它可能只是为了某个任务临时获得能力，也可能代表员工去调用另一个系统。于是权限不再只是“这个人能不能访问 CRM”，还会变成“这个 Agent 代表谁行动、这次任务被授予了什么权限、任务结束后这些权限什么时候失效”。</p>
+<p>Madhu 的帖子只能算从业者侧的问题信号，不足以证明企业已经普遍遇到同一种架构难题；但它至少把“纳管”从一个平台名词拉回到一个很具体的问题：<strong>当 Agent 成为新的执行主体，企业原有的身份和权限体系需要开始回答过去没有遇到的问题。</strong></p>
+<h2 id="section-3">三、这个问题已经开始进入真实产品</h2>
+<p>前面腾讯那篇文章只能说明一家厂商已经开始把“管理一群 Agent”产品化，还不足以证明这是一个更普遍的问题。</p>
+<p>Vercel 自己的内部实践提供了一个更具体的参照。Vercel 在 2026 年 6 月发布的 <a href="https://vercel.com/blog/vercel-for-enterprise-apps-and-agents" target="_blank" rel="noopener noreferrer">Enterprise Apps and Agents</a> 中披露，过去一年里，内部员工已经发布了数百个 Agent 和内部应用。真正困难的问题反而是在这些应用进入公司内部使用之后出现的：谁可以使用每个 Agent？怎么保证内部 Agent 不暴露到外部？Agent 可以访问哪些数据和系统？</p>
+<p>这是 Vercel 自己披露的内部实践，不是独立第三方调研。但它的处理方式很值得观察：Vercel 没有继续要求每个 Builder 分别把安全配置做好，而是把 ownership（责任归属）、access（访问控制）和 security（安全边界）做成平台默认能力。比如企业身份提供方配置一次后，可以自动应用到内部应用和 Agent；Agent 访问外部系统时使用按任务发放、任务结束后失效的短期凭证，而不是长期密钥。</p>
+<p>这和前面的 CRM 例子其实是同一个问题：<strong>不是团队没有能力自己配置权限，而是有些公司规则一旦需要被几十、几百个 Agent 反复遵守，就不应该再依赖每个 Builder 分别做对。</strong></p>
+<p>Vercel 自己的生产 Agent 又给出了一个更具体的权限例子。<a href="https://vercel.com/blog/vercel-agent" target="_blank" rel="noopener noreferrer">Vercel Agent</a>拥有独立身份，默认只有只读权限；需要回滚部署、修改配置等真实操作时，它会先提出计划，由人批准后获得只针对这次任务的短期权限，任务结束后重新回到只读状态。谁发起、谁批准、最后由 Agent 执行，也分别留下记录。</p>
+<p>这里已经能看到前一章“授权和撤权”的实际形态：<strong>能力可以给 Agent，但不必永久给；Agent 可以行动，但行动不必和发起人的身份混在一起。</strong></p>
+<p>再看第三方研究，IDC 在 2026 年讨论<a href="https://www.idc.com/resource-center/blog/futurescape-2026-charting-the-path-to-enterprise-wide-orchestration/" target="_blank" rel="noopener noreferrer">企业级 AI 编排</a>时，也把从孤立部署走向集中协调列为规模化 AI 面临的问题之一，并提出通过统一控制层协调 Agent、Workflow（工作流）和治理机制。</p>
+<p>到这里，“纳管”已经不太像腾讯一家厂商自己的产品概念：它既出现在企业客户的讨论里，也开始在内部 Agent 数量真正上来后的实践里暴露，还被第三方研究和不同企业软件平台分别产品化。</p>
+<p>但各家对于“这层能力应该长在哪里”的答案仍然不同。</p>
+<p><a href="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noopener noreferrer">Microsoft Agent 365</a>直接把自己定义为 Agent 的 Control Plane（控制平面），重点面向 IT 和安全团队。Microsoft 的<a href="https://learn.microsoft.com/en-us/security/security-for-ai/agent-365-security" target="_blank" rel="noopener noreferrer">官方安全说明</a>列出的风险就包括 Agent Sprawl（Agent 分散增长）、权限过大的 Agent 和工具滥用，并把 Agent 可见性、身份和安全控制接入原有的 Entra、Defender、Purview 等体系。</p>
+<p><a href="https://www.servicenow.com/products/ai-control-tower.html" target="_blank" rel="noopener noreferrer">ServiceNow AI Control Tower</a>代表另一条路线。它不是从 Agent 开发工具起步，而是把企业已有的 IT 资产和治理体系继续向 AI 扩张。<a href="https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-expands-AI-Control-Tower-to-discover-observe-govern-secure-and-measure-AI-deployed-across-any-system-in-the-enterprise/default.aspx" target="_blank" rel="noopener noreferrer">2026 年的官方发布</a>强调发现不同系统中的 AI，再把 Agent、模型、身份、风险、合规和运行表现接回统一治理体系。</p>
+<p>它们共同说明的并不是“Control Plane 已经形成标准产品”，而是一件更小的事：</p>
+<p><strong>一些原本容易散落在单个 Agent 里的企业控制能力，开始被当成多个 Agent 可以共同依赖的能力。</strong></p>
+<h2 id="section-4">四、需要统一规则，不等于一定要多一套平台</h2>
+<p>走到这里，很容易顺势得出一个更大的结论：企业以后都会单独采购一套 Agent Control Plane。</p>
+<p>现在还不能这么判断。</p>
+<p>企业需要统一身份、权限、策略、审计和生命周期，首先是一个<strong>逻辑上的需求</strong>；这些能力最后放在哪套产品里，则是另一个问题。</p>
+<p>AWS 就提供了一个很好的反例。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html" target="_blank" rel="noopener noreferrer">Amazon Bedrock AgentCore Policy</a>没有要求企业先建设一个独立的 Agent 管理门户，而是把策略执行放在 Agent 代码之外：Agent 真正调用工具之前，由 Gateway（网关）按照确定性策略判断这次操作是否允许。重点仍然是企业规则可以在 Agent 之外统一定义，而不用分别复制进每个 Agent。</p>
+<p>类似能力也可以从 Agent 开发平台往上长，或者由 IAM（身份与访问管理）、安全平台、ITSM（IT 服务管理）等原有企业系统向 Agent 扩张。</p>
+<p>所以相比争论 Control Plane 会不会成为一个独立新品类，我现在更关心几个实际问题：一个平台能不能发现不是自己创建的 Agent？能不能把企业已有的身份、权限和策略真正施加到这些 Agent 上？需要的时候，能不能撤权、停用并保留完整的责任记录？</p>
+<p>如果只能汇总运行日志，而真正的权限仍然分别藏在每个 Agent 里，它更多解决的是观测问题；如果只能很好地管理自己平台开发的 Agent，它解决的更多是平台内部治理。</p>
+<p>真正的企业级纳管，至少意味着<strong>管理范围开始越过单个 Agent、单个团队，甚至单个开发平台。</strong></p>
+<p>因此，目前相对确定的并不是“Agent Control Plane 这个新品类已经成立”，而是：</p>
+<p><strong>Agent 开始真正行动以后，一部分本来属于企业的控制规则，不能继续跟着每个 Agent 一起分散下去。</strong></p>
+<p>至于这些规则最终由一套独立系统承载，还是继续长在企业已有的平台里，现在仍然是开放问题。</p>
+<p>写到这里，我又想起之前那篇<a href="https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html" target="_blank" rel="noopener noreferrer">《从同义词表到业务语义层》</a>。</p>
+<p>那篇文章最初从一张同义词表出发，最后讨论的是：既然多个 AI 应用都在同一家企业里工作，就不应该让它们分别解释一遍“客户”“收入”“有效合同”到底是什么意思，而应该逐步把关键业务含义沉淀成可以复用的企业资产。</p>
+<p>现在看 Agent 纳管，其实像是同一个问题的另一面。</p>
+<p><strong>业务语义层解决的是：多个 AI 不应该各自理解一遍同一个企业。</strong></p>
+<p><strong>Agent 纳管解决的是：多个 Agent 也不应该各自维护一遍企业允许它们做什么。</strong></p>
+<p>前者更关心 AI 如何理解企业里的对象、关系、口径和规则；后者更关心 Agent 真正开始行动以后，身份、权限、审批和责任边界从哪里来。</p>
+<p>所以，对企业来说，可能比“要不要买一个 Agent Control Plane”更值得先想清楚的是：</p>
+<p><strong>哪些决定属于某个 Agent 自己，应该允许它持续迭代；哪些规则从一开始就不属于任何一个 Agent，而应该属于整个企业。</strong></p>
+<h2 id="section-5">参考资料</h2>
+<h3 id="section-6">一手文件 / 官方发布</h3>
+<ul><li><a href="https://adp.tencentcloud.com/zh/blog/adp-agent-portal" target="_blank" rel="noopener noreferrer">腾讯云 ADP：企业级 AI 智能体管理平台 Agent Portal</a></li><li><a href="https://vercel.com/blog/vercel-for-enterprise-apps-and-agents" target="_blank" rel="noopener noreferrer">Vercel for Enterprise Apps and Agents</a></li><li><a href="https://vercel.com/blog/vercel-agent" target="_blank" rel="noopener noreferrer">Introducing the new Vercel Agent</a></li><li><a href="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noopener noreferrer">Microsoft Agent 365</a></li><li><a href="https://learn.microsoft.com/en-us/security/security-for-ai/agent-365-security" target="_blank" rel="noopener noreferrer">Microsoft：Agent 365 安全与治理说明</a></li><li><a href="https://www.servicenow.com/products/ai-control-tower.html" target="_blank" rel="noopener noreferrer">ServiceNow AI Control Tower</a></li><li><a href="https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-expands-AI-Control-Tower-to-discover-observe-govern-secure-and-measure-AI-deployed-across-any-system-in-the-enterprise/default.aspx" target="_blank" rel="noopener noreferrer">ServiceNow：AI Control Tower 跨系统治理能力</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html" target="_blank" rel="noopener noreferrer">AWS：Policy in Amazon Bedrock AgentCore</a></li></ul>
+<h3 id="section-7">行业研究</h3>
+<ul><li><a href="https://www.idc.com/resource-center/blog/futurescape-2026-charting-the-path-to-enterprise-wide-orchestration/" target="_blank" rel="noopener noreferrer">IDC：Charting the Path to Enterprise-Wide AI Orchestration</a></li></ul>
+<h3 id="section-8">社区讨论</h3>
+<ul><li><a href="https://x.com/realmadhuguru/status/2080315474093760714" target="_blank" rel="noopener noreferrer">Madhu Gurumurthy：Agent 与传统 IAM 的身份治理问题</a>（代表从业者问题意识，不作为行业普及率或效果数据）</li></ul>
+<h3 id="section-9">历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/agent-boundary.html" target="_blank" rel="noopener noreferrer">一个业务流程，到底应该拆成几个 Agent？</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html" target="_blank" rel="noopener noreferrer">从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html" target="_blank" rel="noopener noreferrer">从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测</a></li></ul></div>
+        <div class="related-posts" id="relatedPosts" style="display:none"><div class="related-title">相关文章</div><div class="related-list" id="relatedList"></div></div>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();
+    var POST_META = { slug:'enterprise-agent-governance', tags:[], topics:[], category:'行业' };
+    (async function(){ var data = await fetch('../data/posts-meta.json').then(function(response){ return response.json(); }); var posts = data.posts; var self = posts.find(function(post){ return post.slug === POST_META.slug; }); if (self) { POST_META.tags = self.tags || []; POST_META.topics = self.topics || []; document.getElementById('post-tags').innerHTML = POST_META.tags.concat(POST_META.topics).map(function(tag){ return '<span class="tag">' + tag + '</span>'; }).join(''); } if (posts.length >= 5) { var scored = posts.filter(function(post){ return post.slug !== POST_META.slug; }).map(function(post){ var score = 0; (post.topics || []).forEach(function(topic){ if (POST_META.topics.includes(topic)) score += 3; }); (post.tags || []).forEach(function(tag){ if (POST_META.tags.includes(tag)) score += 2; }); if (post.category === POST_META.category) score += 1; return Object.assign({}, post, { score:score }); }).filter(function(post){ return post.score >= 1; }).sort(function(a,b){ return b.score - a.score || b.date.localeCompare(a.date); }).slice(0,2); if (scored.length) { document.getElementById('relatedList').innerHTML = scored.map(function(post){ return '<a class="related-item" href="' + post.url.split('/').pop() + '"><span class="related-item-date">' + post.date + '</span><span class="related-item-title">' + post.title + '</span></a>'; }).join(''); document.getElementById('relatedPosts').style.display = 'block'; } } var sorted = posts.slice().sort(function(a,b){ return b.date.localeCompare(a.date); }); var index = sorted.findIndex(function(post){ return post.slug === POST_META.slug; }); var prev = index > 0 ? sorted[index - 1] : null; var next = index < sorted.length - 1 ? sorted[index + 1] : null; if (prev) { document.getElementById('navPrev').href = prev.url.split('/').pop(); document.getElementById('navPrevTitle').textContent = prev.title; document.getElementById('navPrev').style.display = 'flex'; } if (next) { document.getElementById('navNext').href = next.url.split('/').pop(); document.getElementById('navNextTitle').textContent = next.title; document.getElementById('navNext').style.display = 'flex'; } })();
+  </script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

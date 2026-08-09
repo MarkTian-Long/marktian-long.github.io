@@ -99,7 +99,6 @@ category: 产品
       font-family: var(--font);
       font-size: 15px;
       line-height: 1.75;
-      padding: 40px 20px 80px;
       transition: background 0.2s, color 0.2s;
     }
     .wrapper { max-width: var(--max-width); margin: 0 auto; }
@@ -166,9 +165,9 @@ category: 产品
     }
 
     /* 双栏布局 */
-    .page-outer { max-width: 1008px; margin: 0 auto; }
+    .page-outer { max-width: 1008px; margin: 0 auto; padding: 40px 20px 80px; }
     .two-col {
-      display: grid; grid-template-columns: 220px 1fr;
+      display: grid; grid-template-columns: 220px minmax(0, 1fr);
       gap: 48px; align-items: start;
     }
     .toc-wrap { position: sticky; top: 72px; }
@@ -192,6 +191,7 @@ category: 产品
       background: var(--clay-soft); border-radius: 4px;
     }
     @media (max-width: 800px) {
+      .page-outer { padding: 28px 18px 64px; }
       .two-col { grid-template-columns: 1fr; }
       .toc-wrap { display: none; }
     }
@@ -284,11 +284,11 @@ category: 产品
 </head>
 <body data-theme="light">
 <script src="../article-runtime.js"></script>
-<div class="page-outer" style="padding: 40px 20px 80px;">
-  <div class="top-bar" style="max-width:1008px;margin:0 auto 36px;">
+<div class="page-outer">
+  <div class="top-bar">
     <a href="../index.html" class="back-link">← 返回列表</a>
   </div>
-  <div class="two-col page-outer">
+  <div class="two-col">
     <aside class="toc-wrap">
       <nav class="toc-card" aria-label="本文目录">
         <span class="toc-card-label">本文目录</span>

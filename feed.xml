@@ -3,7 +3,13 @@
   <channel>
     <title>思考碎片 — Leo Liu</title>
     <link>https://marktian-long.github.io/tools/blog/</link>
-    <description>Leo Liu 关于 AI、产品、工程与商业的长期思考。</description>
+    <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
+    <item>
+      <title>为什么企业开始谈 Agent「纳管」？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</guid>
+      <description>企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。</description>
+    </item>
     <item>
       <title>半年之后，AI 办公从产品赛马走向体系竞争</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html</link>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</guid>
       <description>在软件世界里效果极强的 AI 写代码工具，到了硬件开发面前几乎完全失效。不是因为工具不够好，而是因为硬件的反馈回路从根本上就不是数字闭环——物理世界的不确定性会污染 AI 的判断链条，让推理从根本上断掉。</description>
-    </item>
-    <item>
-      <title>OpenAI 和 Anthropic 同一周下场做咨询，FDE 时代来了？</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/fde-blog-v3.html</guid>
-      <description>大模型厂商相继成立企业部署合资公司，表面是商业扩张，实质是在宣告 AI 竞争主战场的迁移——从模型能力到落地能力。FDE 是第一批响应者，FDX 可能是这个逻辑的完整形态。</description>
     </item>
   </channel>
 </rss>

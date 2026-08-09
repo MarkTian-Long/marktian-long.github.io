@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>思考碎片 — Leo Liu</title>
 <!-- search-foundation-entry:start -->
-<meta name="description" content="Leo Liu 关于 AI、产品、工程与商业的长期思考。" />
+<meta name="description" content="Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。" />
 <link rel="canonical" href="https://marktian-long.github.io/tools/blog/" />
 <link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="思考碎片 — Leo Liu" />
-<meta property="og:description" content="Leo Liu 关于 AI、产品、工程与商业的长期思考。" />
+<meta property="og:description" content="Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。" />
 <meta property="og:url" content="https://marktian-long.github.io/tools/blog/" />
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"思考碎片 — Leo Liu","description":"Leo Liu 关于 AI、产品、工程与商业的长期思考。","url":"https://marktian-long.github.io/tools/blog/","isPartOf":{"@type":"WebSite","name":"Leo Liu · AI / Product / Builder","url":"https://marktian-long.github.io/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"思考碎片 — Leo Liu","description":"Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。","url":"https://marktian-long.github.io/tools/blog/","isPartOf":{"@type":"WebSite","name":"Leo Liu · AI / Product / Builder","url":"https://marktian-long.github.io/"}}</script>
 <!-- search-foundation-entry:end -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23f5f4ed'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'>✍</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -338,6 +338,7 @@
             <button class="cat-btn" data-cat="技术">技术 <span class="cat-count" id="cnt-tech"></span></button>
             <button class="cat-btn" data-cat="产品">产品 <span class="cat-count" id="cnt-product"></span></button>
             <button class="cat-btn" data-cat="商业">商业 <span class="cat-count" id="cnt-biz"></span></button>
+            <button class="cat-btn" data-cat="行业">行业 <span class="cat-count" id="cnt-industry"></span></button>
         </nav>
     </aside>
 
@@ -347,7 +348,7 @@
             <header>
                 <span class="blog-label">Writing</span>
                 <h1 class="blog-title">思考碎片</h1>
-                <p class="blog-desc">技术、产品、商业多角度拆解 AI 动态</p>
+                <p class="blog-desc">技术、产品、商业、行业四个角度拆解 AI 动态</p>
             </header>
             <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
                 <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -363,6 +364,7 @@
                 <button class="cat-tab" data-cat="技术">技术</button>
                 <button class="cat-tab" data-cat="产品">产品</button>
                 <button class="cat-tab" data-cat="商业">商业</button>
+                <button class="cat-tab" data-cat="行业">行业</button>
             </div>
         </div>
 
@@ -410,12 +412,13 @@
 
     // ── 分类计数 ──
     function updateCounts() {
-        const map = { all: posts.length, '技术': 0, '产品': 0, '商业': 0 };
+        const map = { all: posts.length, '技术': 0, '产品': 0, '商业': 0, '行业': 0 };
         posts.forEach(function (p) { if (p.category in map) map[p.category]++; });
         document.getElementById('cnt-all').textContent = map.all;
         document.getElementById('cnt-tech').textContent = map['技术'];
         document.getElementById('cnt-product').textContent = map['产品'];
         document.getElementById('cnt-biz').textContent = map['商业'];
+        document.getElementById('cnt-industry').textContent = map['行业'];
     }
 
     // ── 过滤 ──

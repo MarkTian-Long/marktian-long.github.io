@@ -7,7 +7,7 @@ module.exports = Object.freeze({
   },
   blog: {
     title: '思考碎片 — Leo Liu',
-    description: 'Leo Liu 关于 AI、产品、工程与商业的长期思考。',
+    description: 'Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。',
     path: '/tools/blog/',
     feedPath: '/feed.xml',
     imagePath: '/assets/images/og-cover.png',

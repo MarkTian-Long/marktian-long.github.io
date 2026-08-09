@@ -2,6 +2,30 @@
   "version": 2,
   "posts": [
     {
+      "slug": "enterprise-agent-governance",
+      "date": "2026.08",
+      "title": "为什么企业开始谈 Agent「纳管」？",
+      "summary": "企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。",
+      "tags": [
+        "市场格局"
+      ],
+      "topics": [
+        "Agent",
+        "企业AI"
+      ],
+      "concepts": [
+        "Agent 纳管",
+        "Agent Control Plane",
+        "Agent 身份治理",
+        "企业统一权限",
+        "Agent Sprawl",
+        "撤权与生命周期",
+        "跨平台治理"
+      ],
+      "category": "行业",
+      "url": "posts/enterprise-agent-governance.html"
+    },
+    {
       "slug": "ai-work-system-competition",
       "date": "2026.08",
       "title": "半年之后，AI 办公从产品赛马走向体系竞争",
@@ -22,7 +46,7 @@
         "企业工作系统",
         "垂直 AI Builder"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/ai-work-system-competition.html"
     },
     {
@@ -115,7 +139,7 @@
         "现场复杂性",
         "可复用产品能力"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/enterprise-agent-fde.html"
     },
     {
@@ -184,7 +208,7 @@
         "人际协作",
         "职业重构"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/llm-reshapes-software-roles.html"
     },
     {
@@ -449,7 +473,7 @@
         "复杂性吸收",
         "模型厂商服务化"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/fde-blog-v3.html"
     },
     {
@@ -494,7 +518,7 @@
         "厂商侧风险",
         "合规约束"
       ],
-      "category": "商业",
+      "category": "产品",
       "url": "posts/enterprise-ai-data-security.html"
     },
     {
@@ -516,7 +540,7 @@
         "人机协作",
         "生产环境"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/agent-vs-workflow.html"
     },
     {
@@ -695,7 +719,7 @@
         "开放模型",
         "封闭生态"
       ],
-      "category": "商业",
+      "category": "行业",
       "url": "posts/market-landscape-2026.html"
     },
     {

@@ -12,7 +12,7 @@ const {
 } = require('./search-foundation');
 
 const BLOG_SCHEMA_VERSION = 2;
-const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '生活']);
+const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '行业', '生活']);
 const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
 
 function loadPosts(rootDir) {

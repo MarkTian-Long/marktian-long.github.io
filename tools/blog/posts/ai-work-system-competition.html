@@ -5,7 +5,7 @@ title:   半年之后，AI 办公从产品赛马走向体系竞争
 tags:    [市场格局]
 slug:    ai-work-system-competition
 summary: Claude 先在编程这一高价值、可验证的窄任务中验证了 Agent 的商业化路径；约半年后，阿里、腾讯、字节陆续收拢 AI 办公产品与组织资源。竞争正从单点功能转向模型、工作入口、云、企业数据、治理与交付能力的体系较量。
-category: 商业
+category: 行业
 -->
 <html lang="zh-CN">
 <head>
@@ -188,7 +188,7 @@ category: 商业
       }, { rootMargin:'-20% 0px -70% 0px' });
       sections.forEach(function(section){ observer.observe(section); });
     })();
-    var POST_META = { slug:'ai-work-system-competition', tags:[], topics:[], category:'商业' };
+    var POST_META = { slug:'ai-work-system-competition', tags:[], topics:[], category:'行业' };
     (async function(){ var data = await fetch('../data/posts-meta.json').then(function(response){ return response.json(); }); var posts = data.posts; var self = posts.find(function(post){ return post.slug === POST_META.slug; }); if (self) { POST_META.tags = self.tags || []; POST_META.topics = self.topics || []; document.getElementById('post-tags').innerHTML = POST_META.tags.concat(POST_META.topics).map(function(tag){ return '<span class="tag">' + tag + '</span>'; }).join(''); } if (posts.length >= 5) { var scored = posts.filter(function(post){ return post.slug !== POST_META.slug; }).map(function(post){ var score = 0; (post.topics || []).forEach(function(topic){ if (POST_META.topics.includes(topic)) score += 3; }); (post.tags || []).forEach(function(tag){ if (POST_META.tags.includes(tag)) score += 2; }); if (post.category === POST_META.category) score += 1; return Object.assign({}, post, { score:score }); }).filter(function(post){ return post.score >= 1; }).sort(function(a,b){ return b.score - a.score || b.date.localeCompare(a.date); }).slice(0,2); if (scored.length) { document.getElementById('relatedList').innerHTML = scored.map(function(post){ return '<a class="related-item" href="' + post.url.split('/').pop() + '"><span class="related-item-date">' + post.date + '</span><span class="related-item-title">' + post.title + '</span></a>'; }).join(''); document.getElementById('relatedPosts').style.display = 'block'; } } var sorted = posts.slice().sort(function(a,b){ return b.date.localeCompare(a.date); }); var index = sorted.findIndex(function(post){ return post.slug === POST_META.slug; }); var prev = index > 0 ? sorted[index - 1] : null; var next = index < sorted.length - 1 ? sorted[index + 1] : null; if (prev) { document.getElementById('navPrev').href = prev.url.split('/').pop(); document.getElementById('navPrevTitle').textContent = prev.title; document.getElementById('navPrev').style.display = 'flex'; } if (next) { document.getElementById('navNext').href = next.url.split('/').pop(); document.getElementById('navNextTitle').textContent = next.title; document.getElementById('navNext').style.display = 'flex'; } })();
   </script>
 <script src="/assets/js/analytics.js" defer></script>
