@@ -35,4 +35,3 @@ The shared article runtime owns a compact disclosure control on every exact `参
 - Unit tests cover link-count labels, collapsed/expanded state labels and direct-anchor expansion decisions.
 - Static checks confirm every published page loads the shared runtime and the historical-body integrity checker remains clean.
 - Browser QA covers legacy and Markdown-generated pages, default collapse, click and keyboard expansion, reference-anchor expansion, desktop/mobile, light/dark and visible `继续阅读`.
-
