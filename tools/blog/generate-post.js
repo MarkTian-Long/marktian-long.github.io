@@ -142,7 +142,7 @@ function renderToc() {
   }).join('');
 }
 
-let page = fs.readFileSync('tools/blog/posts/ontology-business-semantic-layer.html', 'utf8');
+let page = fs.readFileSync('tools/blog/article-template.html', 'utf8');
 if (!/<script src="\.\.\/article-runtime\.js"><\/script>/.test(page)) {
   page = page.replace(/<body([^>]*)>/, '<body$1>\n  <script src="../article-runtime.js"></script>');
 }
@@ -159,6 +159,6 @@ if (!/\.post-body pre\b/.test(page)) {
 }
 page = replaceTocList(page, renderToc());
 page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, '<span class="post-date">' + metadata.date + '</span><span id="post-tags"></span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
-page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<div class="related-posts"/, () => '<div class="post-body">' + blocks.join('\n') + '</div>\n        <div class="related-posts"');
+page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<section class="continue-reading"/, () => '<div class="post-body">' + blocks.join('\n') + '</div>\n        <section class="continue-reading"');
 page = page.replace(/var POST_META = \{ slug:'[^']+', tags:\[\], topics:\[\], category:'[^']+' \};/, "var POST_META = { slug:'" + metadata.slug + "', tags:[], topics:[], category:'" + metadata.category + "' };");
 fs.writeFileSync(outputPath, page, 'utf8');

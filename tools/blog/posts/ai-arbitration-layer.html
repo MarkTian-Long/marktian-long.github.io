@@ -501,10 +501,10 @@ category: 产品
   </div>
 
   <!-- 相关文章 -->
-  <div class="related-posts" id="relatedPosts" style="display:none">
-    <div class="related-title">相关文章</div>
-    <div class="related-list" id="relatedList"></div>
-  </div>
+  <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
 
   <!-- 上下篇导航 -->
   <nav class="post-nav" id="postNav">
@@ -549,53 +549,6 @@ category: 产品
     }, {rootMargin:'-20% 0px -70% 0px'});
     headings.forEach(function(h){ obs.observe(h); });
   }
-
-  // 上下篇 + 相关文章
-  const SLUG = 'ai-arbitration-layer';
-  const META_URL = '../data/posts-meta.json';
-  fetch(META_URL).then(function(r){ return r.json(); }).then(function(data){
-    const posts = data.posts || [];
-    const idx = posts.findIndex(function(p){ return p.slug === SLUG; });
-
-    // 上下篇
-    if(idx > 0){
-      const prev = posts[idx-1];
-      const el = document.getElementById('navPrev');
-      el.style.display = 'flex';
-      el.href = prev.url.split('/').pop();
-      document.getElementById('navPrevTitle').textContent = prev.title;
-    }
-    if(idx < posts.length-1){
-      const next = posts[idx+1];
-      const el = document.getElementById('navNext');
-      el.style.display = 'flex';
-      el.href = next.url.split('/').pop();
-      document.getElementById('navNextTitle').textContent = next.title;
-    }
-
-    // 相关文章（同 tag/topic，最多3篇）
-    if(idx >= 0){
-      const cur = posts[idx];
-      const curKeys = [...(cur.tags||[]), ...(cur.topics||[])];
-      const related = posts.filter(function(p, i){
-        if(i === idx) return false;
-        const keys = [...(p.tags||[]), ...(p.topics||[])];
-        return keys.some(function(k){ return curKeys.includes(k); });
-      }).slice(0,3);
-      if(related.length){
-        const wrap = document.getElementById('relatedPosts');
-        wrap.style.display = '';
-        const list = document.getElementById('relatedList');
-        related.forEach(function(p){
-          const a = document.createElement('a');
-          a.className = 'related-item';
-          a.href = p.url.split('/').pop();
-          a.innerHTML = '<span class="related-item-date">'+p.date+'</span><span class="related-item-title">'+p.title+'</span>';
-          list.appendChild(a);
-        });
-      }
-    }
-  }).catch(function(){});
 })();
 </script>
 <script src="/assets/js/analytics.js" defer></script>

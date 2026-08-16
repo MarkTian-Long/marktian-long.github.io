@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>AI 研发已经开始自我加速，但这还不是 RSI</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-rd-self-acceleration-rsi.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-rd-self-acceleration-rsi.html</guid>
+      <description>AI 已经进入代码、实验、训练和评估等下一代 AI 的研发循环，并出现了研发自我加速的早期正反馈；但研究方向、结果解释和评价标准等关键判断权仍未形成自主闭环，因此这还不是递归式自我改进。</description>
+    </item>
+    <item>
       <title>为什么企业开始谈 Agent「纳管」？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/automated-research.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/automated-research.html</guid>
       <description>自动化科研让AI第一次跑完了整条研究链路。但这件事真正的意义不在于它能产出多少论文，而在于它把AI最难突破的边界暴露得足够清楚：执行可以工业化，判断还不行。</description>
-    </item>
-    <item>
-      <title>让 AI 写代码这件事，为什么到硬件就不行了</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ai-coding-hardware.html</guid>
-      <description>在软件世界里效果极强的 AI 写代码工具，到了硬件开发面前几乎完全失效。不是因为工具不够好，而是因为硬件的反馈回路从根本上就不是数字闭环——物理世界的不确定性会污染 AI 的判断链条，让推理从根本上断掉。</description>
     </item>
   </channel>
 </rss>

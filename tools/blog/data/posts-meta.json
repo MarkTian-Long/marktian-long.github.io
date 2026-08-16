@@ -2,6 +2,21 @@
   "version": 2,
   "posts": [
     {
+      "slug": "ai-rd-self-acceleration-rsi",
+      "date": "2026.08",
+      "title": "AI 研发已经开始自我加速，但这还不是 RSI",
+      "summary": "AI 已经进入代码、实验、训练和评估等下一代 AI 的研发循环，并出现了研发自我加速的早期正反馈；但研究方向、结果解释和评价标准等关键判断权仍未形成自主闭环，因此这还不是递归式自我改进。",
+      "tags": ["技术判断"],
+      "topics": ["模型能力", "前沿研究"],
+      "concepts": ["Recursive Self-Improvement", "AI 研发自我加速", "Research Taste", "自动实验闭环", "研发判断权", "AI Self-Improvement Threshold"],
+      "category": "技术",
+      "url": "posts/ai-rd-self-acceleration-rsi.html",
+      "relations": [
+        { "slug": "ai-coding-hardware", "type": "builds_on" },
+        { "slug": "automated-research", "type": "builds_on" }
+      ]
+    },
+    {
       "slug": "enterprise-agent-governance",
       "date": "2026.08",
       "title": "为什么企业开始谈 Agent「纳管」？",
@@ -23,7 +38,11 @@
         "跨平台治理"
       ],
       "category": "行业",
-      "url": "posts/enterprise-agent-governance.html"
+      "url": "posts/enterprise-agent-governance.html",
+      "relations": [
+        { "slug": "agent-boundary", "type": "builds_on" },
+        { "slug": "enterprise-agent-fde", "type": "builds_on" }
+      ]
     },
     {
       "slug": "ai-work-system-competition",
@@ -140,7 +159,10 @@
         "可复用产品能力"
       ],
       "category": "行业",
-      "url": "posts/enterprise-agent-fde.html"
+      "url": "posts/enterprise-agent-fde.html",
+      "relations": [
+        { "slug": "fde-blog-v3", "type": "builds_on" }
+      ]
     },
     {
       "slug": "physical-world-llm",
@@ -319,7 +341,10 @@
         "自动驾驶"
       ],
       "category": "技术",
-      "url": "posts/human-ai-boundary-shift.html"
+      "url": "posts/human-ai-boundary-shift.html",
+      "relations": [
+        { "slug": "agent-vs-workflow", "type": "builds_on" }
+      ]
     },
     {
       "slug": "training-vs-inference",

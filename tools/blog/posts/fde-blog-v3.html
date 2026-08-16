@@ -422,10 +422,10 @@ category: 行业
   </div>
 
   <!-- 相关文章 -->
-  <div class="related-posts" id="relatedPosts" style="display:none">
-    <div class="related-title">相关文章</div>
-    <div class="related-list" id="relatedList"></div>
-  </div>
+  <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
 
   <!-- 上下篇导航 -->
   <nav class="post-nav" id="postNav">
@@ -463,70 +463,7 @@ category: 行业
     }, { rootMargin: '-20% 0px -70% 0px' });
     sections.forEach(function(s) { observer.observe(s); });
   }
-})();
-
-// 相关文章 + 上下篇导航
-var POST_META = {
-  slug: 'fde-blog-v3',
-  tags: [],
-  topics: [],
-  category: '行业'
-};
-(async function() {
-  var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
-  var posts = data.posts;
-  // 从 JSON 读取标签，注入 header
-  var selfMeta = posts.find(function(p) { return p.slug === POST_META.slug; });
-  if (selfMeta) {
-    POST_META.tags = selfMeta.tags || [];
-    POST_META.topics = selfMeta.topics || [];
-    var allTags = POST_META.tags.concat(POST_META.topics);
-    document.getElementById('post-tags').innerHTML = allTags.map(function(t) {
-      return '<span class="tag">' + t + '</span>';
-    }).join('');
-  }
-  if (posts.length >= 5) {
-    var scored = posts
-      .filter(function(p) { return p.slug !== POST_META.slug; })
-      .map(function(p) {
-        var score = 0;
-        (p.topics || []).forEach(function(t) { if ((POST_META.topics||[]).includes(t)) score += 3; });
-        (p.tags || []).forEach(function(t) { if ((POST_META.tags||[]).includes(t)) score += 2; });
-        if (p.category === POST_META.category) score += 1;
-        return Object.assign({}, p, { score: score });
-      })
-      .filter(function(p) { return p.score >= 1; })
-      .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
-      .slice(0, 2);
-    if (scored.length) {
-      var list = document.getElementById('relatedList');
-      list.innerHTML = scored.map(function(p) {
-        return '<a class="related-item" href="' + p.url.split('/').pop() + '">' +
-          '<span class="related-item-date">' + p.date + '</span>' +
-          '<span class="related-item-title">' + p.title + '</span>' +
-          '</a>';
-      }).join('');
-      document.getElementById('relatedPosts').style.display = 'block';
-    }
-  }
-  var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
-  var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
-  var prev = idx > 0 ? sorted[idx - 1] : null;
-  var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
-  if (prev) {
-    var el = document.getElementById('navPrev');
-    el.href = prev.url.split('/').pop();
-    document.getElementById('navPrevTitle').textContent = prev.title;
-    el.style.display = 'flex';
-  }
-  if (next) {
-    var el2 = document.getElementById('navNext');
-    el2.href = next.url.split('/').pop();
-    document.getElementById('navNextTitle').textContent = next.title;
-    el2.style.display = 'flex';
-  }
-})();
-</script>
+})();</script>
 <script src="/assets/js/analytics.js" defer></script>
 </body>
 </html>

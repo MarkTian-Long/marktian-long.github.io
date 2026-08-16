@@ -312,6 +312,9 @@ git status --short
 | concepts | string[] | 4-7 个具体检索概念：关键对象、机制、产品/公司或层级；不用于前台、SEO 或静态关联 |
 | category | string | 正式大分类：技术 / 产品 / 商业 / 行业；生活仅为历史兼容值，不作为当前维护中的正式分类 |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
+| relations | object[]（可选） | 新文章单向指向较早文章的强关系；仅 `builds_on` / `revises` / `companion`，target 必须存在且不能自引或重复 |
+
+`concepts` 只用于历史语义召回，不能推导显式关系或前端推荐。文章页「继续阅读」从中央 metadata 动态计算：强关系优先，旧文自动反向显示后续延展/修正；未来关系不得回写历史正文。
 
 ### 历史文章两阶段检索
 

@@ -24,7 +24,14 @@
     const href = link.getAttribute('href') || '';
     const blog = href.match(/tools\/blog\/posts\/([^/]+)\.html|([^/]+)\.html$/);
     if (blog && (href.includes('blog/posts') || location.pathname.includes('/tools/blog/'))) {
-      window.trackAnalyticsEvent('blog_article_open', { article_slug: blog[1] || blog[2], source_surface: location.pathname.includes('/tools/blog/') ? 'archive' : 'homepage' });
+      const sourceSurface = link.dataset.analyticsSource
+        || (location.pathname.includes('/tools/blog/posts/') ? 'body'
+          : location.pathname.includes('/tools/blog/') ? 'archive' : 'homepage');
+      const params = { article_slug: blog[1] || blog[2], source_surface: sourceSurface };
+      if (sourceSurface === 'continue_reading' && link.dataset.relationType) {
+        params.relation_type = link.dataset.relationType;
+      }
+      window.trackAnalyticsEvent('blog_article_open', params);
     } else if (href.startsWith('mailto:')) {
       window.trackAnalyticsEvent('contact_click', { contact_method: 'email' });
     } else if (href.includes('tools/')) {

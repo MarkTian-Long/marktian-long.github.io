@@ -167,6 +167,7 @@ initial migration.
   Markdown; Markdown remains the editing/generation source. `concepts` contains
   4-7 specific semantic anchors; it is not a front-end, SEO, tag, or
   static-related-post field.
+- 2026-08-16 Codex: `concepts` remains historical semantic recall only. Confirmed strong article relationships live in optional `relations`, declared once by the newer article; the shared article runtime derives an older article's follow-up or revision navigation without changing historical body text.
 - A new or redefined blog tag/topic is a single atomic change: obtain approval,
   update the WRITING_GUIDE vocabulary and posts-meta.json together, then audit
   all existing articles. The historical Markdown-source exception never

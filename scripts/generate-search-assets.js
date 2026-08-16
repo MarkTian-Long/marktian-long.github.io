@@ -14,6 +14,7 @@ const {
 const BLOG_SCHEMA_VERSION = 2;
 const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '行业', '生活']);
 const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
+const ALLOWED_RELATION_TYPES = new Set(['builds_on', 'revises', 'companion']);
 
 function loadPosts(rootDir) {
   const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
@@ -81,6 +82,7 @@ function validateBlogMetadata(metadata) {
     throw new Error(`posts-meta.json version must be ${BLOG_SCHEMA_VERSION}`);
   }
   validatePosts(metadata.posts);
+  const postSlugs = new Set(metadata.posts.map(post => post.slug));
 
   for (const post of metadata.posts) {
     if (typeof post.date !== 'string' || !/^\d{4}\.\d{2}$/.test(post.date)) {
@@ -104,6 +106,22 @@ function validateBlogMetadata(metadata) {
     const labels = new Set([...post.tags, ...post.topics]);
     if (post.concepts.some(concept => labels.has(concept))) {
       throw new Error(`Post concepts cannot duplicate tag or topic: ${post.slug}`);
+    }
+    if (post.relations !== undefined && !Array.isArray(post.relations)) {
+      throw new Error(`Post relations must be an array when present: ${post.slug}`);
+    }
+    const targets = new Set();
+    for (const relation of post.relations || []) {
+      if (!relation || typeof relation !== 'object' || Array.isArray(relation)) {
+        throw new Error(`Post relation must be an object: ${post.slug}`);
+      }
+      if (typeof relation.slug !== 'string' || !relation.slug.trim() || !postSlugs.has(relation.slug)) {
+        throw new Error(`Post relation target must exist: ${post.slug}`);
+      }
+      if (relation.slug === post.slug) throw new Error(`Post relation cannot reference itself: ${post.slug}`);
+      if (!ALLOWED_RELATION_TYPES.has(relation.type)) throw new Error(`Post relation type is invalid: ${post.slug}`);
+      if (targets.has(relation.slug)) throw new Error(`Post relation target is duplicated: ${post.slug}`);
+      targets.add(relation.slug);
     }
   }
 }

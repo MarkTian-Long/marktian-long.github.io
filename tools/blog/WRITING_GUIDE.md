@@ -36,7 +36,7 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 
 ### `concepts`：AI 历史检索概念
 
-`concepts` 只写入 `posts-meta.json`，不在前台显示，也不参与 SEO、RSS、相关文章推荐或静态文章关系。它的职责是补足标题和摘要没有完整覆盖、但将来值得被语义召回的关键对象、机制、产品/公司、技术或层级。
+`concepts` 只写入 `posts-meta.json`，不在前台显示，也不参与 SEO、RSS、继续阅读或静态文章关系。它的职责是补足标题和摘要没有完整覆盖、但将来值得被语义召回的关键对象、机制、产品/公司、技术或层级。
 
 - 每篇 4-7 个，均为去重、命名稳定的短语；优先选择作者以后会自然搜索的表达。
 - 不写 `AI`、`产品`、`技术`、`行业` 等几乎没有区分度的泛词；不要因正文偶然提到品牌或术语就升级为 concept。
@@ -552,153 +552,29 @@ GitHub Pages 部署后无此问题。
 
 ---
 
-## 相关文章推荐规范
+## Continue Reading 关系规范
 
-**触发条件：** `posts-meta.json` 中 `posts` 数组长度 ≥ 5 时，文章底部显示推荐模块；< 5 篇时不显示。
+文章页底部使用由 `article-runtime.js` 统一渲染的「继续阅读」，最多 3 篇；候选不足时允许少展示。不要在文章 HTML 中复制推荐算法。
 
-### 推荐评分策略
+### 显式 relations
 
-```
-同 topics 标签，每个 +3 分
-同 tags 标签，每个   +2 分
-同 category           +1 分
-当前文章本身          排除
-```
+新文章可选在 `posts-meta.json` 中声明较新文章指向较早文章的强关系：
 
-取分最高的 2 篇，分数相同时取 `date` 更近的。最低展示分数 ≥ 1（0 分时不显示推荐模块，宁缺毋滥）。
-
-> **待完善：** 评分权重可根据实际推荐效果调整。
-
-### HTML 模板
-
-插入位置：`.post-body` 闭合标签之后、`</main>` 之前。
-
-```html
-<!-- 相关文章 -->
-<div class="related-posts" id="relatedPosts" style="display:none">
-    <div class="related-title">相关文章</div>
-    <div class="related-list" id="relatedList"></div>
-</div>
+```json
+"relations": [{ "slug": "older-article", "type": "builds_on" }]
 ```
 
-### CSS（加入文章 inline `<style>`）
+只允许 `builds_on`、`revises`、`companion`；target 必须存在、不得自引用或重复。正向依次显示「承接前文 / 修正前文 / 并列阅读」，旧文由中央 metadata 自动反向显示「后续延展 / 后续修正 / 并列阅读」。正文内链不自动构成 relation；只有核心前提、实质修正或直接互补已经由内容评审确认时才写入。历史正文不因未来关系回写。
 
-```css
-.related-posts { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-.related-title { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 1rem; }
-.related-item { display: flex; gap: .75rem; align-items: baseline; padding: .5rem 0; text-decoration: none; }
-.related-item:hover .related-item-title { color: var(--clay); }
-.related-item-date { font-size: .75rem; color: var(--text-2); white-space: nowrap; }
-.related-item-title { font-size: .9rem; color: var(--text-1); }
-```
+### 自动同主题与正文去重
 
-### JS 模板
+强关系始终优先。自动候选必须至少共享一个 `topic`；共享 topic 数、tag 数、category 和发布时间仅用于资格满足后的稳定排序。`concepts` 只服务历史语义召回，不参与前端推荐或关系。正文已有的站内历史文章不会再作为同主题推荐；最多仅允许最重要的一条显式关系与正文重复。
 
-在文章 `<head>` 内定义 `POST_META`（每篇填写），JS 逻辑与上下篇导航共用一次 fetch（见下节）。
+### 发布 QA
 
-```javascript
-// 放在 <head> 内或 <script> 顶部
-var POST_META = {
-    slug: 'current-slug',        // 当前文章 slug
-    tags: ['工程演进'],           // 同 posts-meta.json tags 字段
-    topics: ['RAG'],              // 同 posts-meta.json topics 字段
-    category: '技术'              // 技术 | 产品 | 商业 | 行业
-};
-```
-
----
-
-## 上一篇 / 下一篇导航规范
-
-**触发条件：** 文章详情页始终尝试渲染；文章数 ≥ 2 时才有实际链接。
-
-**实现方式：** fetch `../data/posts-meta.json`，按 `date` 字段倒序排列，找到当前 slug 的前后两篇（与相关推荐共用同一次 fetch，见下方完整 JS 模板）。
-
-### HTML 模板
-
-插入位置：`.related-posts` 之后。
-
-```html
-<!-- 上下篇导航 -->
-<nav class="post-nav" id="postNav">
-    <a class="post-nav-prev" id="navPrev" style="display:none" href="#">
-        <span class="nav-label">← 上一篇</span>
-        <span class="nav-title" id="navPrevTitle"></span>
-    </a>
-    <a class="post-nav-next" id="navNext" style="display:none" href="#">
-        <span class="nav-label">下一篇 →</span>
-        <span class="nav-title" id="navNextTitle"></span>
-    </a>
-</nav>
-```
-
-### CSS（加入文章 inline `<style>`）
-
-```css
-.post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-.post-nav a { display: flex; flex-direction: column; gap: .25rem; text-decoration: none; max-width: 45%; }
-.post-nav-next { align-items: flex-end; margin-left: auto; }
-.nav-label { font-size: .75rem; color: var(--text-2); }
-.nav-title { font-size: .875rem; color: var(--text-1); }
-.post-nav a:hover .nav-title { color: var(--clay); }
-```
-
-### 完整 JS 模板（相关推荐 + 上下篇合并，放在 `</body>` 前）
-
-```javascript
-(async function() {
-    var data = await fetch('../data/posts-meta.json').then(function(r) { return r.json(); });
-    var posts = data.posts;
-
-    // 相关文章推荐
-    if (posts.length >= 5) {
-        var scored = posts
-            .filter(function(p) { return p.slug !== POST_META.slug; })
-            .map(function(p) {
-                var score = 0;
-                (p.topics || []).forEach(function(t) { if ((POST_META.topics || []).includes(t)) score += 3; });
-                (p.tags || []).forEach(function(t) { if ((POST_META.tags || []).includes(t)) score += 2; });
-                if (p.category === POST_META.category) score += 1;
-                return Object.assign({}, p, { score: score });
-            })
-            .filter(function(p) { return p.score >= 1; })
-            .sort(function(a, b) { return b.score - a.score || b.date.localeCompare(a.date); })
-            .slice(0, 2);
-
-        if (scored.length) {
-            var list = document.getElementById('relatedList');
-            list.innerHTML = scored.map(function(p) {
-                // 注意：p.url 是 "posts/xxx.html"，文章页在 posts/ 目录下，只取文件名避免路径重复
-                return '<a class="related-item" href="' + p.url.split('/').pop() + '">'
-                    + '<span class="related-item-date">' + p.date + '</span>'
-                    + '<span class="related-item-title">' + p.title + '</span>'
-                    + '</a>';
-            }).join('');
-            document.getElementById('relatedPosts').style.display = 'block';
-        }
-    }
-
-    // 上下篇导航
-    var sorted = posts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
-    var idx = sorted.findIndex(function(p) { return p.slug === POST_META.slug; });
-    var prev = idx > 0 ? sorted[idx - 1] : null;
-    var next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
-    if (prev) {
-        var elPrev = document.getElementById('navPrev');
-        elPrev.href = prev.url.split('/').pop();  // 只取文件名，避免 posts/posts/ 双层路径
-        document.getElementById('navPrevTitle').textContent = prev.title;
-        elPrev.style.display = 'flex';
-    }
-    if (next) {
-        var elNext = document.getElementById('navNext');
-        elNext.href = next.url.split('/').pop();  // 只取文件名，避免 posts/posts/ 双层路径
-        document.getElementById('navNextTitle').textContent = next.title;
-        elNext.style.display = 'flex';
-    }
-})();
-```
-
-> **待完善：** 上下篇目前按 `date` 字段字符串排序，如果将来日期格式变化需同步调整；可考虑在导航里加分类小徽章，帮助读者判断跳转内容。
+- 大纲确认时分别判断：正文是否需要历史内链，以及是否值得成为公开强 relation；两者都可以为否。
+- 运行 `node --test scripts/blog-relationships.test.js`、`node scripts/migrate-blog-continue-reading.js --check` 和 `node scripts/check-blog-body-integrity.js`。
+- 保留「上一篇 / 下一篇」作为独立日期导航，不与继续阅读合并。
 
 ---
 
