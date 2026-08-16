@@ -9,7 +9,7 @@ tools/blog/
 ├── README.md               本文件
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
 ├── article-links.css       文章页共享链接语义与键盘焦点样式
-├── article-runtime.js      文章页共享主题、元数据降级、继续阅读与时间导航
+├── article-runtime.js      文章页共享主题、元数据降级、参考资料呈现、继续阅读与时间导航
 ├── article-template.html   新文章生成的独立模板来源
 ├── index.html              归档列表页（按年份分组，JS 渲染）
 └── posts/
@@ -57,7 +57,8 @@ tools/blog/
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
 - **发布生成**：先在 `posts-meta.json` 添加元数据，再运行 `node tools/blog/generate-post.js <source.md> <output.html>`，最后运行 `node scripts/generate-search-assets.js --write`
 - **继续阅读**：新文只单向声明已确认的 `builds_on` / `revises` / `companion`；旧文的后续延展/修正由 metadata 自动反向更新，正文不回写。
-- **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`
+- **参考资料**：仅写语义化标题、分组、列表和可选可信度说明；历史 `.refs` 与新文章的 Markdown 结构均由 `article-runtime.js` 统一为紧凑辅助信息层，不批量改写 HTML 正文。
+- **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js scripts/blog-reference-presentation.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`
 - **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
 - **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库
 - **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200，且页面包含文章唯一标题。仅生成 HTML 或仅完成 commit 都不算发布完成

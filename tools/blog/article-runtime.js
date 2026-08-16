@@ -9,6 +9,7 @@
   var SHARED_THEME_KEY = 'blog_theme';
   var LEGACY_THEME_KEY = 'blog-theme';
   var ARTICLE_LINK_STYLESHEET = 'article-links.css';
+  var REFERENCE_HEADING = '参考资料';
   var RELATION_LABELS = {
     builds_on: '承接前文', follow_up: '后续延展', revises: '修正前文',
     revised_by: '后续修正', companion: '并列阅读', same_topic: '同主题'
@@ -23,6 +24,30 @@
     if (type === 'builds_on') return inverse ? 'follow_up' : 'builds_on';
     if (type === 'revises') return inverse ? 'revised_by' : 'revises';
     return 'companion';
+  }
+  function normalizedText(value) { return String(value || '').replace(/\s+/g, ' ').trim(); }
+  function isReferenceHeading(value) { return normalizedText(value) === REFERENCE_HEADING; }
+  function isReferenceNote(value) { return /^来源可信度(?:说明)?[：:]/.test(normalizedText(value)); }
+  function isReferenceTerminator(node) {
+    var id = String((node && node.id) || '');
+    var className = String((node && node.className) || '');
+    return id === 'continueReading' || id === 'postNav' || /(^|\s)(continue-reading|post-nav|footer-nav)(\s|$)/.test(className);
+  }
+  function referencePresentationRoles(nodes) {
+    var active = false;
+    var terminated = false;
+    return (nodes || []).map(function (node) {
+      if (terminated || isReferenceTerminator(node)) { terminated = true; return null; }
+      var tagName = String((node && node.tagName) || '').toUpperCase();
+      if (!active) {
+        if (tagName === 'H2' && isReferenceHeading(node.text)) { active = true; return 'reference-heading'; }
+        return null;
+      }
+      if (tagName === 'H3') return 'reference-group';
+      if (tagName === 'UL' || tagName === 'OL') return 'reference-list';
+      if (tagName === 'P') return isReferenceNote(node.text) ? 'reference-note' : 'reference-copy';
+      return null;
+    });
   }
   function explicitCandidates(posts, current) {
     var bySlug = new Map(posts.map(function (post) { return [post.slug, post]; }));
@@ -121,6 +146,45 @@
       link.href = articleHref(post); link.style.display = 'flex'; link.dataset.analyticsSource = 'post_nav'; title.textContent = post.title;
     });
   }
+  function referenceDescriptor(element) { return { tagName: element.tagName, id: element.id, className: element.className, text: element.textContent }; }
+  function applyReferenceRoles(elements) {
+    referencePresentationRoles(elements.map(referenceDescriptor)).forEach(function (role, index) {
+      if (role) elements[index].classList.add(role);
+    });
+  }
+  function applyReferencePresentation() {
+    document.querySelectorAll('.post-body .refs').forEach(function (section) {
+      var heading = section.querySelector('h2');
+      if (!heading || !isReferenceHeading(heading.textContent)) return;
+      section.classList.add('reference-section');
+      applyReferenceRoles(Array.prototype.slice.call(section.children));
+    });
+    document.querySelectorAll('.post-body > h2').forEach(function (heading) {
+      if (!isReferenceHeading(heading.textContent) || (heading.parentElement && heading.parentElement.classList.contains('refs'))) return;
+      var elements = [heading];
+      var current = heading.nextElementSibling;
+      while (current && !isReferenceTerminator(referenceDescriptor(current))) { elements.push(current); current = current.nextElementSibling; }
+      heading.classList.add('reference-section');
+      applyReferenceRoles(elements);
+    });
+  }
+  function installReferencePresentationStyles() {
+    if (document.getElementById('referencePresentationStyles')) return;
+    var style = document.createElement('style'); style.id = 'referencePresentationStyles';
+    style.textContent = [
+      '.post-body .refs.reference-section{margin-top:2.5rem!important;padding-top:1.25rem!important;border-top:1px solid var(--border)!important}',
+      '.post-body>h2.reference-section{margin:2.5rem 0 .75rem!important;padding:1.25rem 0 0!important;border-top:1px solid var(--border)!important;border-left:0!important}',
+      '.post-body .reference-section .reference-heading,.post-body>h2.reference-heading{padding-left:0!important;border-left:0!important;color:var(--text-2)!important;font-size:.8125rem!important;font-weight:600!important;line-height:1.4!important;letter-spacing:.06em;text-transform:uppercase;margin:0 0 .75rem!important}',
+      '.post-body .reference-section .reference-group,.post-body>.reference-group{color:var(--text-2)!important;font-size:.75rem!important;font-weight:600!important;line-height:1.4!important;margin:.875rem 0 .5rem!important}',
+      '.post-body .reference-section .reference-list,.post-body>.reference-list{margin:0 0 1rem!important;padding-left:0!important;list-style:none!important}',
+      '.post-body .reference-section .reference-list li,.post-body>.reference-list li{color:var(--text-2)!important;font-size:.75rem!important;line-height:1.6!important;margin-bottom:.375rem!important}',
+      '.post-body .reference-section .reference-copy,.post-body>.reference-copy{color:var(--text-2)!important;font-size:.75rem!important;line-height:1.6!important;margin:0 0 1rem!important}',
+      '.post-body .reference-section .reference-note,.post-body>.reference-note{color:var(--text-2)!important;font-size:.75rem!important;line-height:1.6!important;margin:.875rem 0 0!important;padding-top:.625rem!important;border-top:1px solid var(--border)!important}',
+      '.post-body .reference-section a,.post-body>.reference-list a,.post-body>.reference-copy a,.post-body>.reference-note a{color:var(--text-2)!important;text-decoration:none!important}',
+      '.post-body .reference-section a:hover,.post-body>.reference-list a:hover,.post-body>.reference-copy a:hover,.post-body>.reference-note a:hover{color:var(--clay)!important;text-decoration:underline!important;text-underline-offset:.16em}'
+    ].join('');
+    document.head.appendChild(style);
+  }
   function adjacentPosts(posts, slug) {
     var sorted = posts.slice().sort(dateCompare); var index = sorted.findIndex(function (post) { return post.slug === slug; });
     return { prev: index > 0 ? sorted[index - 1] : null, next: index >= 0 && index < sorted.length - 1 ? sorted[index + 1] : null };
@@ -137,6 +201,6 @@
       renderTags(current); renderContinueReading(selectContinueReading(posts, slug, bodyLinkedSlugs(posts))); renderPostNav(posts, slug);
     }).catch(showMetadataFallback);
   }
-  function boot() { loadArticleLinkStyles(); applyTheme(); installStyles(); document.addEventListener('DOMContentLoaded', function () { window.setTimeout(function () { applyTheme(); initializeNavigation(); }, 0); }); }
-  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, boot: boot };
+  function boot() { loadArticleLinkStyles(); applyTheme(); installStyles(); installReferencePresentationStyles(); document.addEventListener('DOMContentLoaded', function () { window.setTimeout(function () { applyTheme(); applyReferencePresentation(); initializeNavigation(); }, 0); }); }
+  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, isReferenceHeading: isReferenceHeading, referencePresentationRoles: referencePresentationRoles, boot: boot };
 });
