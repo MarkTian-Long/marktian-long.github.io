@@ -168,7 +168,7 @@ initial migration.
   4-7 specific semantic anchors; it is not a front-end, SEO, tag, or
   static-related-post field.
 - 2026-08-16 Codex: `concepts` remains historical semantic recall only. Confirmed strong article relationships live in optional `relations`, declared once by the newer article; the shared article runtime derives an older article's follow-up or revision navigation without changing historical body text.
-- 2026-08-16 Codex: Reference sections are a shared compact auxiliary-information layer owned by `tools/blog/article-runtime.js`: exact `参考资料` headings work for both legacy `.refs` pages and Markdown-generated sibling structures. Keep references expanded and semantic, preserve historical source text/URLs, and do not copy per-post typography overrides.
+- 2026-08-16 Codex: Reference sections are a shared compact auxiliary-information layer owned by `tools/blog/article-runtime.js`: exact `参考资料` headings work for both legacy `.refs` pages and Markdown-generated sibling structures. Keep every source semantic and preserved, but default the section to a keyboard-accessible “展开 N 条来源” control so `继续阅读` remains visible; direct reference anchors auto-expand. Do not copy per-post typography overrides.
 - A new or redefined blog tag/topic is a single atomic change: obtain approval,
   update the WRITING_GUIDE vocabulary and posts-meta.json together, then audit
   all existing articles. The historical Markdown-source exception never

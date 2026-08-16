@@ -39,6 +39,21 @@ test('ordinary body sections and reference copy remain distinguishable', () => {
   ]), [null, null, 'reference-heading', 'reference-copy', 'reference-list']);
 });
 
+test('reference disclosure labels report source counts and state', () => {
+  assert.deepEqual(runtime.referenceDisclosureCopy(12, false), { text: '展开 12 条来源', expanded: false });
+  assert.deepEqual(runtime.referenceDisclosureCopy(12, true), { text: '收起 12 条来源', expanded: true });
+  assert.equal(runtime.referenceDisclosureCopy(0, false).text, '展开参考资料');
+  assert.equal(runtime.referenceDisclosureCopy(0, true).text, '收起参考资料');
+});
+
+test('reference anchors expand only their matching disclosure', () => {
+  assert.equal(runtime.shouldExpandReferenceForHash('#references', 'references'), true);
+  assert.equal(runtime.shouldExpandReferenceForHash('#section-10', 'section-10'), true);
+  assert.equal(runtime.shouldExpandReferenceForHash('#%E5%8F%82%E8%80%83', '参考'), true);
+  assert.equal(runtime.shouldExpandReferenceForHash('#section-10', 'references'), false);
+  assert.equal(runtime.shouldExpandReferenceForHash('', 'references'), false);
+});
+
 test('every published article loads the shared reference presentation runtime', () => {
   const postsDir = path.resolve(__dirname, '../tools/blog/posts');
   const pages = fs.readdirSync(postsDir).filter((file) => file.endsWith('.html'));

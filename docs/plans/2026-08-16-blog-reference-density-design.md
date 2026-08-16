@@ -2,7 +2,7 @@
 
 ## Confirmed outcome
 
-Every article’s `参考资料` section is rendered as one deliberately quieter auxiliary-information layer. It remains fully expanded and readable, but its type scale, colour and vertical rhythm no longer compete with the final paragraphs or the `继续阅读` block.
+Every article’s `参考资料` section is rendered as one deliberately quieter auxiliary-information layer. Its sources remain complete and readable on request, while the default collapsed control keeps the final paragraphs and the `继续阅读` block in the reader’s natural path.
 
 ## Audience and direction
 
@@ -17,7 +17,7 @@ Readers are AI hiring leads, AI product peers and founders evaluating the densit
 | Source-group heading | 12px, semibold, auxiliary text colour, 14px above and 8px below. |
 | Source row and link | 12px / 1.6, the contrast-safe secondary text token `--text-2`, with a 6px row rhythm. Links gain clay colour and underline only on hover or focus. |
 | Credibility note | 12px / 1.6, auxiliary text colour; it remains content, not a callout or card. |
-| Disclosure | No accordion, truncation or hidden sources. Long reference lists keep meaningful groups. |
+| Disclosure | Default to `参考资料 · 展开 N 条来源`; expand on click, keyboard activation or a direct reference anchor. No source is truncated or removed. Long lists keep meaningful groups. |
 
 The numbers intentionally match the established `llm-reshapes-software-roles.html` reference treatment that the user selected as the visual baseline. They are a specialised caption scale; article body copy remains unchanged at its existing readable size.
 

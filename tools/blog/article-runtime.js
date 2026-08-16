@@ -28,6 +28,16 @@
   function normalizedText(value) { return String(value || '').replace(/\s+/g, ' ').trim(); }
   function isReferenceHeading(value) { return normalizedText(value) === REFERENCE_HEADING; }
   function isReferenceNote(value) { return /^来源可信度(?:说明)?[：:]/.test(normalizedText(value)); }
+  function referenceDisclosureCopy(sourceCount, expanded) {
+    var count = Number(sourceCount) > 0 ? Math.floor(Number(sourceCount)) : 0;
+    var action = expanded ? '收起' : '展开';
+    return { text: count ? action + ' ' + count + ' 条来源' : action + '参考资料', expanded: Boolean(expanded) };
+  }
+  function shouldExpandReferenceForHash(hash, headingId) {
+    var value = String(hash || '').replace(/^#/, '');
+    try { value = decodeURIComponent(value); } catch (error) { /* Keep malformed hashes inert. */ }
+    return Boolean(value) && value === String(headingId || '');
+  }
   function isReferenceTerminator(node) {
     var id = String((node && node.id) || '');
     var className = String((node && node.className) || '');
@@ -148,16 +158,38 @@
   }
   function referenceDescriptor(element) { return { tagName: element.tagName, id: element.id, className: element.className, text: element.textContent }; }
   function applyReferenceRoles(elements) {
-    referencePresentationRoles(elements.map(referenceDescriptor)).forEach(function (role, index) {
+    var roles = referencePresentationRoles(elements.map(referenceDescriptor));
+    roles.forEach(function (role, index) {
       if (role) elements[index].classList.add(role);
     });
+    return elements.filter(function (element, index) { return index > 0 && Boolean(roles[index]); });
+  }
+  function addReferenceDisclosure(heading, contentElements) {
+    if (heading.querySelector('.reference-toggle')) return null;
+    if (!heading.id) heading.id = 'references';
+    var sourceCount = contentElements.reduce(function (count, element) { return count + element.querySelectorAll('a[href]').length; }, 0);
+    var button = document.createElement('button'); button.type = 'button'; button.className = 'reference-toggle';
+    var title = document.createElement('span'); title.className = 'reference-toggle-title'; title.textContent = REFERENCE_HEADING;
+    var hint = document.createElement('span'); hint.className = 'reference-toggle-hint';
+    button.appendChild(title); button.appendChild(hint); heading.textContent = ''; heading.appendChild(button);
+    function setExpanded(expanded) {
+      var copy = referenceDisclosureCopy(sourceCount, expanded);
+      contentElements.forEach(function (element) { element.hidden = !copy.expanded; });
+      button.setAttribute('aria-expanded', String(copy.expanded)); hint.textContent = copy.text;
+    }
+    button.addEventListener('click', function () { setExpanded(button.getAttribute('aria-expanded') !== 'true'); });
+    setExpanded(shouldExpandReferenceForHash(location.hash, heading.id));
+    return { headingId: heading.id, setExpanded: setExpanded };
   }
   function applyReferencePresentation() {
+    var disclosures = [];
     document.querySelectorAll('.post-body .refs').forEach(function (section) {
       var heading = section.querySelector('h2');
       if (!heading || !isReferenceHeading(heading.textContent)) return;
       section.classList.add('reference-section');
-      applyReferenceRoles(Array.prototype.slice.call(section.children));
+      var legacyElements = Array.prototype.slice.call(section.children);
+      var legacyDisclosure = addReferenceDisclosure(heading, applyReferenceRoles(legacyElements));
+      if (legacyDisclosure) disclosures.push(legacyDisclosure);
     });
     document.querySelectorAll('.post-body > h2').forEach(function (heading) {
       if (!isReferenceHeading(heading.textContent) || (heading.parentElement && heading.parentElement.classList.contains('refs'))) return;
@@ -165,8 +197,17 @@
       var current = heading.nextElementSibling;
       while (current && !isReferenceTerminator(referenceDescriptor(current))) { elements.push(current); current = current.nextElementSibling; }
       heading.classList.add('reference-section');
-      applyReferenceRoles(elements);
+      var directDisclosure = addReferenceDisclosure(heading, applyReferenceRoles(elements));
+      if (directDisclosure) disclosures.push(directDisclosure);
     });
+    if (disclosures.length && !document.documentElement.hasAttribute('data-reference-hash-listener')) {
+      document.documentElement.setAttribute('data-reference-hash-listener', '');
+      window.addEventListener('hashchange', function () {
+        disclosures.forEach(function (disclosure) {
+          if (shouldExpandReferenceForHash(location.hash, disclosure.headingId)) disclosure.setExpanded(true);
+        });
+      });
+    }
   }
   function installReferencePresentationStyles() {
     if (document.getElementById('referencePresentationStyles')) return;
@@ -181,7 +222,10 @@
       '.post-body .reference-section .reference-copy,.post-body>.reference-copy{color:var(--text-2)!important;font-size:.75rem!important;line-height:1.6!important;margin:0 0 1rem!important}',
       '.post-body .reference-section .reference-note,.post-body>.reference-note{color:var(--text-2)!important;font-size:.75rem!important;line-height:1.6!important;margin:.875rem 0 0!important;padding-top:.625rem!important;border-top:1px solid var(--border)!important}',
       '.post-body .reference-section a,.post-body>.reference-list a,.post-body>.reference-copy a,.post-body>.reference-note a{color:var(--text-2)!important;text-decoration:none!important}',
-      '.post-body .reference-section a:hover,.post-body>.reference-list a:hover,.post-body>.reference-copy a:hover,.post-body>.reference-note a:hover{color:var(--clay)!important;text-decoration:underline!important;text-underline-offset:.16em}'
+      '.post-body .reference-section a:hover,.post-body>.reference-list a:hover,.post-body>.reference-copy a:hover,.post-body>.reference-note a:hover{color:var(--clay)!important;text-decoration:underline!important;text-underline-offset:.16em}',
+      '.reference-toggle{display:inline-flex;align-items:baseline;gap:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;letter-spacing:inherit;text-align:left;text-transform:inherit;cursor:pointer}',
+      '.reference-toggle-hint{color:var(--text-2);font-size:.6875rem;font-weight:500;letter-spacing:0;text-transform:none;white-space:nowrap}.reference-toggle-hint:before{content:"·";margin:0 .45rem}',
+      '.reference-toggle:hover .reference-toggle-title{color:var(--clay)}.reference-toggle:focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:3px}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -202,5 +246,5 @@
     }).catch(showMetadataFallback);
   }
   function boot() { loadArticleLinkStyles(); applyTheme(); installStyles(); installReferencePresentationStyles(); document.addEventListener('DOMContentLoaded', function () { window.setTimeout(function () { applyTheme(); applyReferencePresentation(); initializeNavigation(); }, 0); }); }
-  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, isReferenceHeading: isReferenceHeading, referencePresentationRoles: referencePresentationRoles, boot: boot };
+  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, isReferenceHeading: isReferenceHeading, referencePresentationRoles: referencePresentationRoles, referenceDisclosureCopy: referenceDisclosureCopy, shouldExpandReferenceForHash: shouldExpandReferenceForHash, boot: boot };
 });
