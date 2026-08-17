@@ -2,6 +2,36 @@
   "version": 2,
   "posts": [
     {
+      "slug": "alignment-under-change",
+      "date": "2026.08",
+      "title": "当人和 AI 都在改变，“对齐”还能一次完成吗？",
+      "summary": "当 AI 具备长期记忆、持续适应和可修改的 Harness，而人也会在互动中被 AI 影响，对齐就不再只是把固定价值写进模型。本文从 Alignment、Continual Learning 和个人 Harness 的变化治理出发，讨论哪些规则可以改、哪些信息应留在模型外部，以及什么样的验证机制才配让一次变化长期留下。",
+      "tags": [
+        "技术判断",
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "concepts": [
+        "动态价值对齐",
+        "变化治理",
+        "Candidate Change 晋升",
+        "Harness 自我演化",
+        "持续学习",
+        "Bidirectional Human-AI Alignment",
+        "证据型知识层"
+      ],
+      "category": "技术",
+      "url": "posts/alignment-under-change.html",
+      "relations": [
+        { "slug": "harness-engineering", "type": "builds_on" },
+        { "slug": "memory-system", "type": "builds_on" },
+        { "slug": "llm-soft-quality", "type": "builds_on" },
+        { "slug": "human-ai-boundary-shift", "type": "builds_on" }
+      ]
+    },
+    {
       "slug": "ai-rd-self-acceleration-rsi",
       "date": "2026.08",
       "title": "AI 研发已经开始自我加速，但这还不是 RSI",

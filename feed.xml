@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>当人和 AI 都在改变，“对齐”还能一次完成吗？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/alignment-under-change.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/alignment-under-change.html</guid>
+      <description>当 AI 具备长期记忆、持续适应和可修改的 Harness，而人也会在互动中被 AI 影响，对齐就不再只是把固定价值写进模型。本文从 Alignment、Continual Learning 和个人 Harness 的变化治理出发，讨论哪些规则可以改、哪些信息应留在模型外部，以及什么样的验证机制才配让一次变化长期留下。</description>
+    </item>
+    <item>
       <title>AI 研发已经开始自我加速，但这还不是 RSI</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-rd-self-acceleration-rsi.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-rd-self-acceleration-rsi.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</guid>
       <description>benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。</description>
-    </item>
-    <item>
-      <title>AI能大量生产方向，但还不会判断什么重要</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/automated-research.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/automated-research.html</guid>
-      <description>自动化科研让AI第一次跑完了整条研究链路。但这件事真正的意义不在于它能产出多少论文，而在于它把AI最难突破的边界暴露得足够清楚：执行可以工业化，判断还不行。</description>
     </item>
   </channel>
 </rss>

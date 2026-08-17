@@ -27,6 +27,11 @@ function main() {
   const tracked = execFileSync('git', ['ls-files', 'tools/blog/posts'], { cwd: rootDir, encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
   const changed = [];
   for (const relPath of tracked) {
+    try {
+      execFileSync('git', ['cat-file', '-e', `HEAD:${relPath}`], { cwd: rootDir, stdio: 'ignore' });
+    } catch {
+      continue;
+    }
     const baseline = execFileSync('git', ['show', `HEAD:${relPath}`], { cwd: rootDir, encoding: 'utf8' });
     const current = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
     if (editorialBody(baseline).replace(/\r\n/g, '\n') !== editorialBody(current).replace(/\r\n/g, '\n')) changed.push(relPath);
