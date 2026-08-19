@@ -48,7 +48,7 @@ function resolveReference(fromFile, reference) {
   return normalized;
 }
 
-function referencedPaths(relativePath, text) {
+function referencedPaths(relativePath, text, resolutionFrom = relativePath) {
   const extension = path.posix.extname(relativePath).toLowerCase();
   const patterns = extension === '.html'
     ? [/\b(?:href|src)=["']([^"']+)["']/gi, /\bfetch\(\s*["']([^"']+)["']/gi]
@@ -59,7 +59,7 @@ function referencedPaths(relativePath, text) {
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) {
       if (!isLocalReference(match[1])) continue;
-      const resolved = resolveReference(relativePath, match[1]);
+      const resolved = resolveReference(resolutionFrom, match[1]);
       if (resolved) paths.push(resolved);
     }
   }
@@ -78,11 +78,25 @@ function checkPublicDist({ rootDir = repoRoot, outputDir = path.join(repoRoot, '
   missing.forEach(file => errors.push(`Missing public artifact: ${file}`));
   unexpected.forEach(file => errors.push(`Unexpected public artifact: ${file}`));
 
+  const scriptDocuments = new Map();
+  for (const htmlPath of actual.filter(file => file.endsWith('.html'))) {
+    const html = fs.readFileSync(path.join(outputDir, htmlPath), 'utf8');
+    for (const target of referencedPaths(htmlPath, html).filter(file => file.endsWith('.js'))) {
+      if (!scriptDocuments.has(target)) scriptDocuments.set(target, []);
+      scriptDocuments.get(target).push(htmlPath);
+    }
+  }
+
   for (const relativePath of actual.filter(file => /\.(?:html|css|js)$/i.test(file))) {
     const text = fs.readFileSync(path.join(outputDir, relativePath), 'utf8');
-    for (const target of referencedPaths(relativePath, text)) {
-      if (!actual.includes(target)) {
-        errors.push(`${relativePath} references missing artifact: ${target}`);
+    const executionDocuments = relativePath.endsWith('.js')
+      ? scriptDocuments.get(relativePath) || [relativePath]
+      : [relativePath];
+    for (const executionDocument of executionDocuments) {
+      for (const target of referencedPaths(relativePath, text, executionDocument)) {
+        if (!actual.includes(target)) {
+          errors.push(`${relativePath} references missing artifact: ${target}`);
+        }
       }
     }
   }

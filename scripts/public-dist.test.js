@@ -13,6 +13,8 @@ test('public dist manifest includes every public entrypoint and excludes dev-onl
 
   assert.deepEqual(validateManifest(repoRoot, files), []);
   assert.ok(files.includes('index.html'));
+  assert.ok(files.includes('tools/blog/article-runtime.js'));
+  assert.ok(files.includes('tools/blog/data/featured-posts.json'));
   assert.ok(files.includes('tools/blog/index.html'));
   assert.ok(files.includes('tools/blog/posts/agent-boundary.html'));
   assert.ok(files.includes('tools/service-agent/index.html'));
@@ -45,6 +47,17 @@ test('public dist smoke resolves local asset and data references only', () => {
   assert.deepEqual(
     referencedPaths('index.html', '<script src="assets/js/main.js"></script><script>fetch(\'tools/blog/data/posts-meta.json\')</script>'),
     ['assets/js/main.js', 'tools/blog/data/posts-meta.json'],
+  );
+});
+
+test('external scripts resolve fetch paths from the document that executes them', () => {
+  assert.deepEqual(
+    referencedPaths(
+      'tools/blog/article-runtime.js',
+      "fetch('../data/posts-meta.json')",
+      'tools/blog/posts/example.html',
+    ),
+    ['tools/blog/data/posts-meta.json'],
   );
 });
 
