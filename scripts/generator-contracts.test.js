@@ -7,19 +7,29 @@ const { analyzeGeneratorSources } = require('./generator-contracts');
 
 test('generator contract fixture detects each unsafe write and partial-data failure mode', () => {
   const findings = analyzeGeneratorSources({
-    blog: "fs.readFileSync('tools/blog/posts/ontology-business-semantic-layer.html', 'utf8')",
+    blog: "fs.readFileSync('tools/blog/posts/ontology-business-semantic-layer.html', 'utf8'); fs.writeFileSync(outputPath, html)",
     service: "const outPath = path.join(__dirname, 'index.html'); fs.writeFileSync(outPath, html)",
     trends: "const OUTPUT_PATH = 'trends.json'; fs.writeFileSync(OUTPUT_PATH, data); boards.push({ items: [] })",
   });
   assert.deepEqual(findings, [
     'blog-template-coupled-to-published-html',
+    'blog-direct-output-without-check',
     'service-agent-direct-public-write',
     'trends-direct-public-write',
     'trends-partial-can-publish-empty-board',
   ]);
 });
 
-test('current generators retain the migration signals without rewriting public artifacts', () => {
+test('controlled blog template still reports direct output without a check mode', () => {
+  const findings = analyzeGeneratorSources({
+    blog: "fs.readFileSync('tools/blog/article-template.html', 'utf8'); fs.writeFileSync(outputPath, html)",
+    service: '',
+    trends: '',
+  });
+  assert.deepEqual(findings, ['blog-direct-output-without-check']);
+});
+
+test('current generators retain the remaining migration signals without rewriting public artifacts', () => {
   const root = path.resolve(__dirname, '..');
   const findings = analyzeGeneratorSources({
     blog: fs.readFileSync(path.join(root, 'tools/blog/generate-post.js'), 'utf8'),
@@ -27,7 +37,7 @@ test('current generators retain the migration signals without rewriting public a
     trends: fs.readFileSync(path.join(root, 'scripts/fetch-trends.js'), 'utf8'),
   });
   assert.deepEqual(findings, [
-    'blog-template-coupled-to-published-html',
+    'blog-direct-output-without-check',
     'service-agent-direct-public-write',
     'trends-direct-public-write',
     'trends-partial-can-publish-empty-board',

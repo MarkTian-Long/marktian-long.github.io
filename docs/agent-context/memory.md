@@ -226,10 +226,11 @@ initial migration.
   It distinguishes targets/proxies/offline/production/external metrics and
   requires an explicit Mock boundary. It is not wired into any public page in
   Track A.
-- Current generator risks are deliberate migration baselines: the blog generator
-  reads a published article as its template, Service Agent writes its public
-  index directly, and Trends can publish partial empty boards after a fetch
-  failure. Use the contract report and migration plan before changing them.
+- Generator baseline updated 2026-08-19: the blog generator
+  now reads controlled `article-template.html`, but still writes the caller's
+  output path without a `--check` mode; Service Agent writes its public index
+  directly; and Trends can publish partial empty boards after a fetch failure.
+  Use the contract report and migration plan before changing them.
 
 ### Track B architecture facts (2026-07-31, Codex)
 

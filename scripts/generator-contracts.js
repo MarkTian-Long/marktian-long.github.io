@@ -8,6 +8,9 @@ function analyzeGeneratorSources(sources) {
   if (/readFileSync\('tools\/blog\/posts\/ontology-business-semantic-layer\.html'/.test(sources.blog)) {
     findings.push('blog-template-coupled-to-published-html');
   }
+  if (/writeFileSync\(outputPath/.test(sources.blog) && !/--check/.test(sources.blog)) {
+    findings.push('blog-direct-output-without-check');
+  }
   if (/path\.join\(__dirname, 'index\.html'\)/.test(sources.service) && /writeFileSync\(outPath/.test(sources.service)) {
     findings.push('service-agent-direct-public-write');
   }
