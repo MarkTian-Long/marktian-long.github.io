@@ -219,6 +219,16 @@
             background: var(--clay-soft);
             color: var(--clay);
         }
+        .featured-section { margin-bottom: 36px; }
+        .featured-label {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--text-3);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
         .empty { color: var(--text-3); font-size: 14px; padding: 20px 0; }
         .loading { color: var(--text-3); font-size: 14px; padding: 20px 0; }
         .active-filters {
@@ -368,6 +378,7 @@
             </div>
         </div>
 
+        <div id="featuredRoot"></div>
         <div id="archiveRoot"><div class="loading">加载中…</div></div>
     </main>
 
@@ -375,7 +386,7 @@
 
 <script>
 (function () {
-    let posts = [], cat = 'all', query = '', timer, page = 1;
+    let posts = [], featuredPosts = [], cat = 'all', query = '', timer, page = 1;
     const PAGE_SIZE = 10;
 
     // ── 主题初始化 ──
@@ -402,11 +413,29 @@
         try {
             const data = await fetch('data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
             posts = data.posts;
+            featuredPosts = await loadFeaturedPosts();
             updateCounts();
             render();
         } catch (e) {
             document.getElementById('archiveRoot').innerHTML =
                 '<p class="empty">加载失败，请用 HTTP server 打开（file:// 协议不支持 fetch）。</p>';
+        }
+    }
+
+    async function loadFeaturedPosts() {
+        try {
+            const data = await fetch('data/featured-posts.json', { cache: 'no-store' }).then(r => r.json());
+            if (!data || data.version !== 1 || !Array.isArray(data.featured)) return [];
+            const postBySlug = new Map(posts.map(function (post) { return [post.slug, post]; }));
+            const seen = new Set();
+            return data.featured.reduce(function (validPosts, slug) {
+                if (typeof slug !== 'string' || !slug.trim() || seen.has(slug) || !postBySlug.has(slug)) return validPosts;
+                seen.add(slug);
+                validPosts.push(postBySlug.get(slug));
+                return validPosts;
+            }, []).slice(0, 3);
+        } catch (e) {
+            return [];
         }
     }
 
@@ -424,8 +453,8 @@
     // ── 过滤 ──
     function filtered() {
         var r = cat !== 'all' ? posts.filter(function (p) { return p.category === cat; }) : posts.slice();
-        if (query) {
-            var q = query.toLowerCase();
+        if (query.trim()) {
+            var q = query.trim().toLowerCase();
             r = r.filter(function (p) {
                 return p.title.toLowerCase().includes(q) ||
                     p.summary.toLowerCase().includes(q) ||
@@ -439,8 +468,18 @@
     // ── 渲染 ──
     function render() {
         var root = document.getElementById('archiveRoot');
-        var list = filtered();
+        var featuredRoot = document.getElementById('featuredRoot');
+        var defaultArchive = cat === 'all' && !query.trim();
+        var showFeatured = defaultArchive && page === 1 && featuredPosts.length > 0;
+        var featuredSlugSet = new Set(featuredPosts.map(function (post) { return post.slug; }));
+        var list = defaultArchive ? posts.filter(function (post) { return !featuredSlugSet.has(post.slug); }) : filtered();
         updateFilterChips();
+
+        featuredRoot.innerHTML = showFeatured
+            ? '<section class="featured-section" aria-label="精选阅读">' +
+                '<div class="featured-label">精选阅读</div>' + renderPostRows(featuredPosts, true) +
+              '</section>'
+            : '';
         if (!list.length) {
             root.innerHTML = '<p class="empty">没有符合条件的文章。</p>';
             return;
@@ -463,18 +502,7 @@
             var label = ym.replace('.', ' · ');
             return '<div class="year-group">' +
                 '<div class="year-label">' + label + '</div>' +
-                byYM[ym].map(function (p) {
-                    return '<a class="post-row" href="' + p.url + '" target="_blank" aria-label="' + p.title + '">' +
-                        '<span class="post-date">' + p.date + '</span>' +
-                        '<div class="post-content">' +
-                        '<div class="post-title">' + p.title + '</div>' +
-                        '<div class="post-summary">' + p.summary + '</div>' +
-                        '<div class="post-tags">' + (p.tags || []).concat(p.topics || []).map(function (t) {
-                            return '<span class="post-tag">' + t + '</span>';
-                        }).join('') + '</div>' +
-                        '</div>' +
-                        '</a>';
-                }).join('') +
+                renderPostRows(byYM[ym], false) +
                 '</div>';
         }).join('');
 
@@ -505,6 +533,21 @@
                 }
             });
         });
+    }
+
+    function renderPostRows(postList, isFeatured) {
+        return postList.map(function (p) {
+            return '<a class="post-row" href="' + p.url + '" target="_blank" aria-label="' + p.title + '">' +
+                '<span class="post-date">' + p.date + '</span>' +
+                '<div class="post-content">' +
+                '<div class="post-title">' + p.title + '</div>' +
+                '<div class="post-summary">' + p.summary + '</div>' +
+                '<div class="post-tags">' + (isFeatured ? '<span class="post-tag">精选</span>' : '') + (p.tags || []).concat(p.topics || []).map(function (t) {
+                    return '<span class="post-tag">' + t + '</span>';
+                }).join('') + '</div>' +
+                '</div>' +
+                '</a>';
+        }).join('');
     }
 
     // ── 过滤状态 chip ──

@@ -79,16 +79,7 @@
     var current = posts.find(function (post) { return post.slug === currentSlug; });
     if (!current) return [];
     var bodyLinks = new Set(bodyLinkedSlugs || []);
-    var selected = [];
-    var repeatedBodyLink = false;
-    explicitCandidates(posts, current).forEach(function (candidate) {
-      if (selected.length >= 3) return;
-      if (bodyLinks.has(candidate.post.slug)) {
-        if (repeatedBodyLink) return;
-        repeatedBodyLink = true;
-      }
-      selected.push(candidate);
-    });
+    var selected = explicitCandidates(posts, current);
     if (selected.length >= 3) return selected;
     var selectedSlugs = new Set(selected.map(function (candidate) { return candidate.post.slug; }));
     posts.filter(function (post) {

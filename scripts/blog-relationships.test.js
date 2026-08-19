@@ -18,6 +18,19 @@ test('relations reject invalid type, target, self-reference, and duplicate targe
   assert.throws(() => validateBlogMetadata(withRelations([{ slug: 'b', type: 'builds_on' }, { slug: 'b', type: 'companion' }])), /target is duplicated/);
 });
 
+test('more than four explicit relations requires editorial QA instead of runtime truncation', () => {
+  const posts = ['a', 'b', 'c', 'd', 'e', 'f'].map((slug, index) => post(slug, `2026.0${index + 1}`, ['Agent']));
+  posts[0].relations = ['b', 'c', 'd', 'e', 'f'].map((slug) => ({ slug, type: 'builds_on' }));
+  assert.throws(() => validateBlogMetadata({ version: 2, posts }), /more than 4.*review/i);
+});
+
+test('relation QA counts distinct displayed targets when declarations are bidirectional', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'companion' }] });
+  const b = post('b', '2026.02', ['Agent'], { relations: [{ slug: 'a', type: 'companion' }, { slug: 'c', type: 'builds_on' }, { slug: 'd', type: 'revises' }, { slug: 'e', type: 'companion' }] });
+  const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
+  assert.doesNotThrow(() => validateBlogMetadata({ version: 2, posts: [a, b, c, d, e] }));
+});
+
 test('new explicit relations render forward and reverse labels without editing old metadata', () => {
   const a = post('a', '2026.01', ['Agent']);
   const b = post('b', '2026.02', ['Agent'], { relations: [{ slug: 'a', type: 'builds_on' }] });
@@ -37,12 +50,45 @@ test('same-topic requires a shared topic; tags, category, and concepts only affe
   assert.equal(result[0].relationType, 'same_topic');
 });
 
-test('body links only repeat once for the most important explicit relationship and results cap at three', () => {
+test('explicit relations remain when body or reference links already mention them', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }, { slug: 'c', type: 'companion' }, { slug: 'd', type: 'revises' }] });
+  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
+  const result = runtime.selectContinueReading([a, b, c, d, e], 'a', new Set(['b', 'c', 'd']));
+  assert.deepEqual(slugs(result), ['b', 'c', 'd']);
+  assert.deepEqual(result.map((item) => item.relationType), ['builds_on', 'companion', 'revises']);
+});
+
+test('same-topic excludes links already shown in the body or references', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }] });
+  const b = post('b', '2026.02', ['Agent']); const shown = post('shown', '2026.03', ['Agent']); const available = post('available', '2026.04', ['Agent']);
+  const result = runtime.selectContinueReading([a, b, shown, available], 'a', new Set(['b', 'shown']));
+  assert.deepEqual(slugs(result), ['b', 'available']);
+});
+
+test('one explicit relation receives at most two same-topic supplements', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }] });
+  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
+  assert.deepEqual(slugs(runtime.selectContinueReading([a, b, c, d, e], 'a', new Set())), ['b', 'e', 'd']);
+});
+
+test('two explicit relations receive at most one same-topic supplement', () => {
   const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }, { slug: 'c', type: 'companion' }] });
-  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']);
-  const result = runtime.selectContinueReading([a, b, c, d], 'a', new Set(['b', 'c']));
-  assert.deepEqual(slugs(result), ['b', 'd']);
-  assert.ok(result.length <= 3);
+  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
+  assert.deepEqual(slugs(runtime.selectContinueReading([a, b, c, d, e], 'a', new Set())), ['b', 'c', 'e']);
+});
+
+test('three explicit relations do not receive same-topic supplements', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }, { slug: 'c', type: 'companion' }, { slug: 'd', type: 'revises' }] });
+  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
+  assert.deepEqual(slugs(runtime.selectContinueReading([a, b, c, d, e], 'a', new Set())), ['b', 'c', 'd']);
+});
+
+test('four explicit relations all remain visible without same-topic supplements', () => {
+  const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'builds_on' }, { slug: 'c', type: 'companion' }, { slug: 'd', type: 'revises' }, { slug: 'e', type: 'builds_on' }] });
+  const b = post('b', '2026.02', ['Agent']); const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']); const f = post('f', '2026.06', ['Agent']);
+  const result = runtime.selectContinueReading([a, b, c, d, e, f], 'a', new Set(['b', 'c', 'd', 'e']));
+  assert.deepEqual(slugs(result), ['b', 'c', 'd', 'e']);
+  assert.equal(result.length, 4);
 });
 
 test('previous and next remain date navigation', () => {

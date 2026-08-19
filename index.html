@@ -79,7 +79,7 @@
                 这里记录的，都是某个当下的切片。
             </p>
             <div class="hero-actions reveal delay-3">
-                <a href="#writing" class="btn btn-primary">最近文章 →</a>
+                <a href="#writing" class="btn btn-primary">阅读文章 →</a>
                 <a href="#cases" class="btn btn-ghost">产品案例</a>
             </div>
         </div>
@@ -432,7 +432,28 @@
         if (!root) return;
         try {
             const data = await fetch('tools/blog/data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
-            root.innerHTML = data.posts.slice(0, 3).map(p => `
+            const posts = data.posts || [];
+            let featuredSlugs = [];
+            try {
+                const featuredData = await fetch('tools/blog/data/featured-posts.json', { cache: 'no-store' }).then(r => r.json());
+                if (featuredData && featuredData.version === 1 && Array.isArray(featuredData.featured)) {
+                    const postSlugs = new Set(posts.map(p => p.slug));
+                    const seen = new Set();
+                    featuredSlugs = featuredData.featured.filter(slug =>
+                        typeof slug === 'string' && slug.trim() && postSlugs.has(slug) && !seen.has(slug) && seen.add(slug)
+                    );
+                }
+            } catch (e) {
+                featuredSlugs = [];
+            }
+
+            const homeFeatured = featuredSlugs.length ? posts.find(p => p.slug === featuredSlugs[0]) : null;
+            const homePosts = homeFeatured ? [homeFeatured] : [];
+            posts.forEach(p => {
+                if (homePosts.length < 3 && !homePosts.some(item => item.slug === p.slug)) homePosts.push(p);
+            });
+
+            root.innerHTML = homePosts.map(p => `
                 <a class="writing-post-row" href="tools/blog/${p.url}" target="_blank" aria-label="${p.title}">
                     <span class="writing-post-date">${p.date}</span>
                     <div class="writing-post-content">
@@ -440,6 +461,7 @@
                         <span class="writing-post-summary">${p.summary}</span>
                     </div>
                     <div class="writing-post-tags">
+                        ${homeFeatured && p.slug === homeFeatured.slug ? '<span class="writing-tag">精选</span>' : ''}
                         ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
                         ${(p.topics||[]).map(t => `<span class="writing-tag">${t}</span>`).join('')}
                     </div>

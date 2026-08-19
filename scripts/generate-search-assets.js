@@ -83,6 +83,7 @@ function validateBlogMetadata(metadata) {
   }
   validatePosts(metadata.posts);
   const postSlugs = new Set(metadata.posts.map(post => post.slug));
+  const explicitRelationTargets = new Map(metadata.posts.map(post => [post.slug, new Set()]));
 
   for (const post of metadata.posts) {
     if (typeof post.date !== 'string' || !/^\d{4}\.\d{2}$/.test(post.date)) {
@@ -122,7 +123,12 @@ function validateBlogMetadata(metadata) {
       if (!ALLOWED_RELATION_TYPES.has(relation.type)) throw new Error(`Post relation type is invalid: ${post.slug}`);
       if (targets.has(relation.slug)) throw new Error(`Post relation target is duplicated: ${post.slug}`);
       targets.add(relation.slug);
+      explicitRelationTargets.get(post.slug).add(relation.slug);
+      explicitRelationTargets.get(relation.slug).add(post.slug);
     }
+  }
+  for (const [slug, targets] of explicitRelationTargets) {
+    if (targets.size > 4) throw new Error(`Post has more than 4 explicit relations; review relation scope: ${slug}`);
   }
 }
 
