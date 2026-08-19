@@ -236,7 +236,10 @@ initial migration.
 
 - GitHub Pages deployment must never write credentials into the uploaded
   artifact. The deployment workflow contains no Secret injection, and the
-  static-client safety fixture checks both the workflow and browser entrypoints.
+  deployment job runs the unified `scripts/npm run check` gate before building;
+  the static-client safety fixture checks both the workflow and browser
+  entrypoints. Node tests use test-runner discovery so newly added fixtures are
+  not omitted from either local or deployment checks.
 - Homepage tool navigation is direct-link architecture: tool cards and case
   links open `tools/<tool-name>/index.html` in a new tab. Do not reintroduce
   homepage panel openers or iframe routing without an explicit architecture
@@ -252,6 +255,12 @@ initial migration.
   application logic now lives in same-directory `app.js` files. Preserve the
   relative script reference and update the public-dist manifest/test whenever
   either file boundary changes; use browser Smoke after a script extraction.
+- Stock message helpers render only application-owned templates as HTML;
+  dynamic model/error fields must be escaped where those templates are built.
+  Its mock adapter must return each caller's expected JSON or prose contract.
+- The Portfolio validator derives required fields, enums, nested shapes, and
+  additional-property rules from `docs/portfolio-evidence.schema.json`; keep
+  the schema as the single contract and cover CLI argument behavior in tests.
 
 ## Update protocol
 

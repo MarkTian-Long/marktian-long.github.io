@@ -57,7 +57,7 @@ function appendLoadingMsg(stepLabel) {
   return div;
 }
 function updateMsg(div, content) {
-  div.querySelector('.msg-bubble').innerHTML = escapeMultiline(content);
+  div.querySelector('.msg-bubble').innerHTML = content;
   scrollBottom();
 }
 function escHtml(str) {
@@ -220,7 +220,7 @@ async function interpretData(userQuery, params, data) {
 //  构建输出
 // =============================================
 function buildAnswer(answer, rawData, params) {
-  const safeAnswer = answer.replace(/\n/g, '<br/>');
+  const safeAnswer = escapeMultiline(answer);
   let html = `<span class="step-tag step2">AI 分析</span><br/>${safeAnswer}`;
 
   if (rawData && rawData.length > 0) {
@@ -287,10 +287,61 @@ function buildPromptCard(params) {
 // =============================================
 //  Static demo response
 // =============================================
-async function callLLM(systemPrompt, userContent) {
-  void systemPrompt;
-  void userContent;
+function inferMockIntent(userContent) {
+  const query = String(userContent || '');
+  const matchedName = Object.keys(SYMBOL_MAP)
+    .sort(function(a, b) { return b.length - a.length; })
+    .find(function(name) { return query.includes(name); });
+  const explicitCode = query.match(/\b(\d{6})\b/);
+  const hongKongCode = query.match(/\b(\d{4,5})(?:\.HK|港股)\b/i);
+  let symbol = matchedName ? SYMBOL_MAP[matchedName] : '600519.SS';
+  if (explicitCode) symbol = explicitCode[1] + (explicitCode[1].startsWith('6') ? '.SS' : '.SZ');
+  if (hongKongCode) symbol = hongKongCode[1].padStart(4, '0') + '.HK';
+
+  let range = '5d';
+  if (/今日|最近(?:一个)?交易日/.test(query)) range = '1d';
+  else if (/近?一月|近?1个月/.test(query)) range = '1mo';
+  else if (/近?三月|近?3个月/.test(query)) range = '3mo';
+  else if (/半年|近?6个月/.test(query)) range = '6mo';
+  else if (/一年|近?1年/.test(query)) range = '1y';
+
+  let interval = '1d';
+  if (/周线|每周/.test(query)) interval = '1wk';
+  else if (/月线|每月/.test(query)) interval = '1mo';
+  return { symbol: symbol, range: range, interval: interval };
+}
+
+function mockModelResponse(systemPrompt, userContent) {
+  if (systemPrompt.includes('解析A股/港股查询意图')) {
+    return JSON.stringify(inferMockIntent(userContent));
+  }
+  if (systemPrompt.includes('诊断结果')) {
+    return JSON.stringify({
+      rating: '持有', confidence: 60,
+      summary: '静态演示使用模拟基本面与情绪数据，不代表真实投资判断。',
+      risks: ['数据为演示样本'], catalysts: ['需结合真实市场信息验证']
+    });
+  }
+  if (systemPrompt.includes('严格JSON数组')) {
+    const ids = Array.from(String(userContent).matchAll(/^\[(\d+)\]/gm), function(match) { return Number(match[1]); });
+    return JSON.stringify(ids.map(function(id, index) {
+      return { id: id, score: Math.max(0.5, 0.95 - index * 0.05), reason: '演示相关性' };
+    }));
+  }
+  if (systemPrompt.includes('以JSON格式输出think和plan两段')) {
+    return JSON.stringify({
+      think: '静态演示将结合行情、估值、新闻与情绪四类模拟信息。',
+      plan: '1. 解析股票代码\n2. 获取近期行情\n3. 读取模拟估值与新闻\n4. 汇总风险提示'
+    });
+  }
   return '演示模式：本页未调用外部模型，也不会携带或暴露服务端密钥。请结合页面中的行情、模拟资料和引用状态理解产品链路。';
+}
+
+async function callLLM(systemPrompt, userContent) {
+  if (typeof STATIC_RUNTIME_MODE !== 'undefined' && STATIC_RUNTIME_MODE !== 'mock') {
+    throw new Error('当前静态页面仅支持 mock 运行模式');
+  }
+  return mockModelResponse(String(systemPrompt || ''), String(userContent || ''));
 }
 
 function switchTab(name) {

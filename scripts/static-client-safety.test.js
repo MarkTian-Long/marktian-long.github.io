@@ -53,6 +53,7 @@ test('public deployment has no credential injection or browser-loaded local conf
 
   assert.doesNotMatch(workflow, /secrets\./);
   assert.doesNotMatch(workflow, /config\.local\.js/);
+  assert.match(workflow, /working-directory:\s*scripts[\s\S]*run:\s*npm run check/);
   assert.doesNotMatch(esop, /src="config\.local\.js"/);
   assert.doesNotMatch(stock, /src="config\.local\.js"/);
   assert.doesNotMatch(stock, /openrouter\.ai/);

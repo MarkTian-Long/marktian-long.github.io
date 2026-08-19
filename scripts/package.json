@@ -4,7 +4,7 @@
   "description": "",
   "main": "check-all.js",
   "scripts": {
-    "test": "node --test repository-policy.test.js search-foundation.test.js static-client-safety.test.js portfolio-evidence.test.js generator-contracts.test.js public-dist.test.js",
+    "test": "node --test",
     "check": "node check-all.js",
     "build:public": "node build-public-dist.js",
     "check:public-dist": "node check-public-dist.js"

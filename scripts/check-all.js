@@ -42,16 +42,8 @@ function checkJson() {
 }
 
 function main() {
-  const testFiles = [
-    'repository-policy.test.js',
-    'search-foundation.test.js',
-    'static-client-safety.test.js',
-    'portfolio-evidence.test.js',
-    'generator-contracts.test.js',
-    'public-dist.test.js',
-  ];
   const checks = [
-    ['Node tests', node, ['--test', ...testFiles], scriptsDir],
+    ['Node tests', node, ['--test'], scriptsDir],
     ['Repository policy', node, ['check-repository-policy.js'], scriptsDir],
     ['Search foundation', node, ['check-search-foundation.js'], scriptsDir],
     ['Static client safety report', node, ['check-static-client-secrets.js'], scriptsDir],

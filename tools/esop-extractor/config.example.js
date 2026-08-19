@@ -1,7 +1,6 @@
-// 复制此文件为 config.local.js，填入你的配置后使用
-// config.local.js 已被 .gitignore 排除，不会提交到 GitHub
+// 历史配置结构示例：公开静态页面不会加载此文件或 config.local.js。
+// 如需接入真实模型，请使用服务端代理保管密钥，不要把真实值写入此文件。
 window.ESOP_CONFIG = {
-  builtinApiKey: 'sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-  baseUrl:       'https://openrouter.ai/api',  // 或 https://api.deepseek.com 等
-  model:         'stepfun/step-3.5-flash:free',
+  baseUrl: 'https://your-server-proxy.example/api',
+  model:   'your-server-side-model-alias',
 };

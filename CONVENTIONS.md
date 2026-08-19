@@ -27,7 +27,7 @@ qiuzhi/
 
 1. **index.html 是唯一入口**，所有页面内容通过锚点导航，不新增独立页面
 2. **静态资源统一放 `assets/`**，禁止在根目录放散落的 CSS/JS/图片
-3. **工具类页面放 `tools/<tool-name>/`**，通过 iframe 嵌入主页面
+3. **工具类页面放 `tools/<tool-name>/`**，保持可独立运行，并从主页以 `target="_blank" rel="noopener"` 直链打开；不得恢复旧 iframe 面板入口
 4. **每个工具必须有 `README.md`**，说明功能、数据来源和维护方式
 5. **内容资料放 `content/`**，与代码分离，方便独立编辑和管理
 6. **设计文档放 `docs/plans/`**，纳入版本控制；**个人文件放 `docs/personal/`**，已在 `.gitignore` 中排除

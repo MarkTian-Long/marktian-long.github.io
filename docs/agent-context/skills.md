@@ -50,8 +50,10 @@ skills/                        # local legacy compatibility copy, do not edit
 - `code-health-check` includes a report-only trust pass for static client
   safety, portfolio evidence, and generator contracts. It must not treat a
   report finding as authorization to rewrite a public page or a local key file.
-- `publish-blog` must use the generator's `--check` path for review and must
-  never bulk-regenerate historical article HTML to apply a template change.
+- `publish-blog` must run the currently available generator contract and search
+  checks and must never bulk-regenerate historical article HTML to apply a
+  template change. A generator-level `--check` mode remains a pending migration
+  until `tools/blog/generate-post.js` implements it.
 
 ## Migration notes
 
