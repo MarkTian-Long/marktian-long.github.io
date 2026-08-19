@@ -23,6 +23,7 @@ const PUBLIC_FILES = [
   'tools/asci/engine.js',
   'tools/asci/main.js',
   'tools/asci/ui.js',
+  'tools/blog/article-links.css',
   'tools/blog/article-runtime.js',
   'tools/blog/index.html',
   'tools/blog/data/featured-posts.json',

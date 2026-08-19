@@ -13,6 +13,7 @@ test('public dist manifest includes every public entrypoint and excludes dev-onl
 
   assert.deepEqual(validateManifest(repoRoot, files), []);
   assert.ok(files.includes('index.html'));
+  assert.ok(files.includes('tools/blog/article-links.css'));
   assert.ok(files.includes('tools/blog/article-runtime.js'));
   assert.ok(files.includes('tools/blog/data/featured-posts.json'));
   assert.ok(files.includes('tools/blog/index.html'));
