@@ -6,6 +6,10 @@
  */
 const fs = require('fs');
 const path = require('path');
+const GENERATOR_ARGS = process.argv.slice(2);
+if (GENERATOR_ARGS.includes('--write') && GENERATOR_ARGS.includes('--candidate')) throw new Error('Choose exactly one generator mode');
+const GENERATOR_MODE = GENERATOR_ARGS.includes('--write') ? 'write'
+  : GENERATOR_ARGS[0] === '--candidate' ? 'candidate' : 'check';
 
 /* ===================================================================
  * 1. 数据层：场景 / 业务标签 / 决策卡 / 链路图 / Agent / mock 脚本
@@ -1157,9 +1161,25 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const outPath = path.join(__dirname, 'index.html');
-fs.writeFileSync(outPath, html, 'utf8');
-console.log('✓ 写出', outPath, '·', html.length, 'bytes ·', CARDS.length, '决策卡');
+const publicPath = path.join(__dirname, 'index.html');
+const candidatePath = GENERATOR_MODE === 'candidate' ? path.resolve(GENERATOR_ARGS[1] || '') : null;
+if (GENERATOR_MODE === 'candidate') {
+  const candidateRoot = path.resolve(__dirname, '../../build/candidate-site');
+  const relative = path.relative(candidateRoot, candidatePath);
+  if (!candidatePath || relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('Candidate output must stay under build/candidate-site');
+  fs.mkdirSync(path.dirname(candidatePath), { recursive: true });
+  fs.writeFileSync(candidatePath, html, 'utf8');
+  console.log('✓ 写入 candidate', candidatePath);
+} else {
+  const current = fs.existsSync(publicPath) ? fs.readFileSync(publicPath, 'utf8') : '';
+  if (GENERATOR_MODE === 'check') {
+    if (current !== html) process.exitCode = 1;
+    console.log(current === html ? '✓ check: public artifact is current' : '✗ check: public artifact is stale');
+  } else {
+    fs.writeFileSync(publicPath, html, 'utf8');
+    console.log('✓ 写出', publicPath, '·', html.length, 'bytes ·', CARDS.length, '决策卡');
+  }
+}
 
 /* Agent 状态列表（系统视角）：列出主流程涉及的 agent */
 function buildAspList(){

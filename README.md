@@ -14,7 +14,7 @@
 
 **<https://marktian-long.github.io>**
 
-或本地直接打开 `index.html`，无需任何构建工具或服务器。
+公开页面可直接打开 `index.html`，无需运行时构建工具或服务器；候选架构和发布验证使用本地 Node 工具链。
 
 ```bash
 # 推荐用本地服务器启动，避免浏览器 file:// 限制
@@ -28,6 +28,15 @@ python -m http.server 8080
 cd scripts
 npm run build:public
 npm run check:public-dist
+```
+
+候选架构构建（仅写入被忽略的 `build/candidate-site/`，不会覆盖公开源或 `dist/`）：
+
+```bash
+cd scripts
+npm run build:candidate
+node check-public-dist.js --out build/candidate-site/current
+cmd /c npm run check:equivalence:candidate
 ```
 
 ---
@@ -268,9 +277,10 @@ qiuzhi/
 └── .claude/skills/            # Claude 兼容层（自定义 Skill 与源同步）
 ```
 
-**技术选型原则**：零依赖，纯前端，浏览器直开。用最简单的方式把内容呈现出来，把精力花在产品思考上而不是技术配置上。
+**技术选型原则**：公开运行时保持纯前端、浏览器直开；本地候选架构以 Eleventy 生成受清单约束的验证产物，不参与线上运行时。
 
-- HTML5 + CSS3 + Vanilla JS（无框架，无构建工具）
+- HTML5 + CSS3 + Vanilla JS（公开运行时无框架、无构建步骤）
+- Eleventy 3.1.6（仅本地 candidate 构建与等价验证）
 - localStorage 数据持久化（Key 格式：`qiuzhi_<模块>_<版本>`）
 - 静态演示边界：公开页面不携带第三方 AI credential；真实模型接入需服务端代理
 - GitHub Actions 自动部署静态资产
@@ -293,7 +303,7 @@ qiuzhi/
 
 ## 本地开发
 
-直接编辑文件，浏览器刷新即可。无需 npm install，无需构建步骤。
+公开页面的日常编辑可直接浏览器刷新；候选架构和门禁需要先在 `scripts/` 执行 `cmd /c npm ci`，但默认不会改写公开源文件或 `dist/`。
 
 提交前运行：
 

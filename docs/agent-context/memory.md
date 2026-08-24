@@ -264,6 +264,12 @@ initial migration.
 
 ## Update protocol
 
+### Candidate architecture (2026-08-24, Codex)
+
+- Candidate architecture uses exact `@11ty/eleventy@3.1.6` only in the isolated build path. `scripts/build-candidate-site.js` may write only under `build/candidate-site/`; homepage and blog index use byte-frozen, version-controlled candidate inputs while every remaining public artifact passes through the explicit manifest.
+- Blog, Service Agent, and Trends generators default to a non-writing check path; candidate writes are restricted to `build/candidate-site/`, and public replacement requires explicit `--write`. Trends refuses an incomplete result with an empty board.
+- `scripts/blog-source-ledger.js` records 39 published articles as 21 source-confirmed, 9 legacy-frozen, and 9 blocked. Historical bodies remain frozen and must not be bulk-regenerated.
+
 When adding a memory item, include:
 
 - Date

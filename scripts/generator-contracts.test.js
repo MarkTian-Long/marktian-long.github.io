@@ -5,41 +5,39 @@ const test = require('node:test');
 
 const { analyzeGeneratorSources } = require('./generator-contracts');
 
-test('generator contract fixture detects each unsafe write and partial-data failure mode', () => {
+test('generator contract fixture detects each unsafe write and path failure mode', () => {
   const findings = analyzeGeneratorSources({
-    blog: "fs.readFileSync('tools/blog/posts/ontology-business-semantic-layer.html', 'utf8'); fs.writeFileSync(outputPath, html)",
-    service: "const outPath = path.join(__dirname, 'index.html'); fs.writeFileSync(outPath, html)",
+    blog: 'fs.writeFileSync(outputPath, html)',
+    service: 'fs.writeFileSync(publicPath, html)',
     trends: "const OUTPUT_PATH = 'trends.json'; fs.writeFileSync(OUTPUT_PATH, data); boards.push({ items: [] })",
   });
   assert.deepEqual(findings, [
-    'blog-template-coupled-to-published-html',
-    'blog-direct-output-without-check',
-    'service-agent-direct-public-write',
-    'trends-direct-public-write',
-    'trends-partial-can-publish-empty-board',
+    'blog-write-without-check-mode',
+    'service-write-without-check-mode',
+    'trends-write-without-explicit-mode',
+    'trends-partial-write-not-refused',
   ]);
 });
 
-test('controlled blog template still reports direct output without a check mode', () => {
+test('candidate output requires an explicit bounded path guard', () => {
   const findings = analyzeGeneratorSources({
-    blog: "fs.readFileSync('tools/blog/article-template.html', 'utf8'); fs.writeFileSync(outputPath, html)",
-    service: '',
-    trends: '',
+    blog: "if (mode === 'candidate') fs.writeFileSync(outputPath, html)",
+    service: "if (GENERATOR_MODE === 'candidate') fs.writeFileSync(publicPath, html)",
+    trends: "if (GENERATOR_MODE === 'candidate') fs.writeFileSync(OUTPUT_PATH, data); throw new Error('Refusing partial trends result')",
   });
-  assert.deepEqual(findings, ['blog-direct-output-without-check']);
+  assert.deepEqual(findings, [
+    'blog-write-without-check-mode', 'blog-candidate-path-unbounded',
+    'service-write-without-check-mode', 'service-candidate-path-unbounded',
+    'trends-write-without-explicit-mode', 'trends-candidate-path-unbounded',
+  ]);
 });
 
-test('current generators retain the remaining migration signals without rewriting public artifacts', () => {
+test('blog and service-agent generators require check, candidate, or explicit write mode', () => {
   const root = path.resolve(__dirname, '..');
   const findings = analyzeGeneratorSources({
     blog: fs.readFileSync(path.join(root, 'tools/blog/generate-post.js'), 'utf8'),
     service: fs.readFileSync(path.join(root, 'tools/service-agent/gen_index.js'), 'utf8'),
     trends: fs.readFileSync(path.join(root, 'scripts/fetch-trends.js'), 'utf8'),
   });
-  assert.deepEqual(findings, [
-    'blog-direct-output-without-check',
-    'service-agent-direct-public-write',
-    'trends-direct-public-write',
-    'trends-partial-can-publish-empty-board',
-  ]);
+  assert.deepEqual(findings, []);
 });

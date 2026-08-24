@@ -8,7 +8,9 @@
     "check": "node check-all.js",
     "build:public": "node build-public-dist.js",
     "check:public-dist": "node check-public-dist.js",
-    "check:equivalence:a0": "playwright test --config=playwright.config.cjs"
+    "check:equivalence:a0": "playwright test --config=playwright.config.cjs",
+    "check:equivalence:candidate": "node check-candidate-equivalence.js",
+    "build:candidate": "node build-candidate-site.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
+    "@11ty/eleventy": "3.1.6",
     "@playwright/test": "1.62.1"
   }
 }

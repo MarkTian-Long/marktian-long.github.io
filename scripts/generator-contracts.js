@@ -5,19 +5,13 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function analyzeGeneratorSources(sources) {
   const findings = [];
-  if (/readFileSync\('tools\/blog\/posts\/ontology-business-semantic-layer\.html'/.test(sources.blog)) {
-    findings.push('blog-template-coupled-to-published-html');
-  }
-  if (/writeFileSync\(outputPath/.test(sources.blog) && !/--check/.test(sources.blog)) {
-    findings.push('blog-direct-output-without-check');
-  }
-  if (/path\.join\(__dirname, 'index\.html'\)/.test(sources.service) && /writeFileSync\(outPath/.test(sources.service)) {
-    findings.push('service-agent-direct-public-write');
-  }
-  if (/trends\.json/.test(sources.trends) && /writeFileSync\(OUTPUT_PATH/.test(sources.trends)) {
-    findings.push('trends-direct-public-write');
-  }
-  if (/items:\s*\[\]/.test(sources.trends)) findings.push('trends-partial-can-publish-empty-board');
+  if (/writeFileSync\(outputPath/.test(sources.blog) && !/mode === 'check'/.test(sources.blog)) findings.push('blog-write-without-check-mode');
+  if (/mode === 'candidate'/.test(sources.blog) && !/Candidate output must stay under build\/candidate-site/.test(sources.blog)) findings.push('blog-candidate-path-unbounded');
+  if (/writeFileSync\(publicPath/.test(sources.service) && !/GENERATOR_MODE === 'check'/.test(sources.service)) findings.push('service-write-without-check-mode');
+  if (/GENERATOR_MODE === 'candidate'/.test(sources.service) && !/Candidate output must stay under build\/candidate-site/.test(sources.service)) findings.push('service-candidate-path-unbounded');
+  if (/writeFileSync\(OUTPUT_PATH/.test(sources.trends) && !/GENERATOR_MODE\s*!?==\s*'write'/.test(sources.trends)) findings.push('trends-write-without-explicit-mode');
+  if (/GENERATOR_MODE === 'candidate'/.test(sources.trends) && !/Candidate output must stay under build\/candidate-site/.test(sources.trends)) findings.push('trends-candidate-path-unbounded');
+  if (!/Refusing partial trends result/.test(sources.trends)) findings.push('trends-partial-write-not-refused');
   return findings;
 }
 

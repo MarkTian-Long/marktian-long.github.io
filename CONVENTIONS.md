@@ -63,6 +63,7 @@ qiuzhi/
 - GitHub Pages 仅上传 `dist/`，该目录由 `scripts/public-dist-manifest.js` 的显式白名单生成。
 - 新增或重命名公开页面、数据、脚本、样式或图片时，必须同步更新 manifest，并运行 `npm run build:public` 与 `npm run check:public-dist`。
 - `docs/`、`scripts/`、README、生成器、配置示例和 dev-only 工具不得加入白名单。
+- `npm run build:candidate` 仅可写入 `build/candidate-site/`；候选构建经 Eleventy 处理首页与博客入口的冻结兼容模板，模板输入来自 `site/candidate/frozen-page-source.js` 的受版本控制基线快照，并按 manifest 精确 passthrough 其余公开文件，默认不得回写公开源或 `dist/`。
 
 ---
 
@@ -368,7 +369,7 @@ git status --short
 2. **不可信文本不直接注入 HTML**：外部输入、模型输出和远端数据进入 DOM 前必须追踪来源；优先 `textContent` 或 DOM API，确需 HTML 时使用经过审查的 allowlist。
 3. **公开指标必须可解释**：任何数字指标必须声明 `kind`、定义、来源和日期；`target`、`proxy`、`offline-measured`、`production-result`、`external-research` 不得混用。
 4. **Mock 边界前置**：Demo 必须在首次交互位置明确真实部分、Mock 部分和限制，不能把脚本输出、示例数据或目标值表述为生产结果。
-5. **生成物必须可检查**：每个公开生成物应有唯一源、默认无写入的 `--check` 路径和受控替换流程；不得通过批量重生覆盖历史发布物。
+5. **生成物必须可检查**：每个公开生成物应有唯一源、默认无写入的 check 路径、限定 candidate 输出和显式 `--write` 替换流程；不得通过批量重生覆盖历史发布物。
 6. **Skill 创建门槛**：只有已经重复至少三次、步骤稳定且可复用的流程才创建新项目 Skill；其余经验先留在 handoff 的候选区。
 
 ## 十、Skill 管理规范

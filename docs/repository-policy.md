@@ -41,6 +41,8 @@ GitHub 用于保存可公开部署、可复现开发、可审查维护的项目�
 | 本机 Agent 权限与状态 | `.claude/settings.local.json`、`.codex/`、`.gstack/`、`.codebuddy/` | 不提交，不作为项目规则来源 |
 | IDE 配置 | `.idea/`、`.vscode/` | 默认只留本地；确需共享时先在本文档登记例外 |
 | 依赖与构建缓存 | `node_modules/`、`dist/`、`build/`、日志 | 由源码或命令重新生成 |
+
+候选架构输出一律写入被忽略的 `build/candidate-site/`；其中的报告、截图、哈希清单和 candidate HTML 不得提交。
 | 临时预览与备份 | `index-preview.html`、`*.bak`、`*.tmp`、`docs/blog/files.zip` | 只用于本机恢复或短期检查 |
 | 独立 Worktree | `.worktrees/`、`.claude/worktrees/` | Git 管理的本机工作目录，不是仓库内容 |
 | Git stash | `git stash list` 中的条目 | 只存在本机 Git 数据库，不会随 push 上传 |

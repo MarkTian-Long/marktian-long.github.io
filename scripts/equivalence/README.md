@@ -2,7 +2,8 @@
 
 This harness compares the approved public baseline at
 `74b531562ff14a5c38830c0edf88304af9f19933` with the current architecture
-worktree. It does not create or enable a candidate build.
+worktree. Its default command remains baseline/current only; the candidate command
+builds a third, independently served candidate root before running the same gate.
 
 ## Contract
 
@@ -46,6 +47,7 @@ From `scripts/`:
 
 ```powershell
 cmd /c npm run check:equivalence:a0
+cmd /c npm run check:equivalence:candidate
 ```
 
 Generated snapshots, screenshots, traces, and JSON reports are written below
@@ -57,6 +59,8 @@ failure or incomplete test/comparison count can never produce `status: passed`.
 
 ## Candidate adapter contract
 
-`site-matrix.js` exposes `candidate: { enabled: false, rootDir: null }`. A later
-phase must explicitly supply and enable a third root. A0 never imports,
-registers, serves, or reports a candidate.
+`site-matrix.js` exposes `candidate: { enabled: false, rootDir: null }` for the
+historical A0 command. `check:equivalence:candidate` creates an ignored candidate
+directory, passes it as `CANDIDATE_ROOT`, and requires its exact 73-file manifest,
+URLs, resources, DOM, ARIA, screenshots, and interactions to equal the approved
+baseline. The original A0 fixed baseline assertions stay intact.

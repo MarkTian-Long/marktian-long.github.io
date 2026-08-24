@@ -19,7 +19,7 @@ function toRoute(relativePath) {
   return `/${relativePath.split(path.sep).join('/')}`;
 }
 
-function createSiteMatrix(rootDir) {
+function createSiteMatrix(rootDir, { candidateRoot = null } = {}) {
   const files = publicFiles(rootDir);
   const htmlRoutes = files.filter(file => file.endsWith('.html')).map(toRoute);
 
@@ -29,7 +29,7 @@ function createSiteMatrix(rootDir) {
     basePaths: Object.freeze(['/', REPOSITORY_BASE_PATH]),
     viewports: VIEWPORTS,
     themes: THEMES,
-    candidate: Object.freeze({ enabled: false, rootDir: null }),
+    candidate: Object.freeze({ enabled: Boolean(candidateRoot), rootDir: candidateRoot ? path.resolve(candidateRoot) : null }),
   });
 }
 

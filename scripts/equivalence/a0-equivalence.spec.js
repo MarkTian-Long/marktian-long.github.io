@@ -7,7 +7,7 @@ const { test, expect, chromium } = require('@playwright/test');
 const { PNG } = require('playwright-core/lib/utilsBundle');
 const playwrightVersion = require('@playwright/test/package.json').version;
 const { captureDocument, normalizeAriaSnapshot, normalizeDocument } = require('./normalize');
-const { prepareSnapshots, sha256, startIndependentServers, stopIndependentServers } = require('./servers');
+const { listFiles, prepareSnapshots, sha256, startIndependentServers, startServerProcess, stopIndependentServers } = require('./servers');
 const {
   APPROVED_BASELINE_SHA,
   EXPECTED_HTML_ROUTE_COUNT,
@@ -17,6 +17,7 @@ const {
 } = require('./site-matrix');
 
 const repoRoot = path.resolve(__dirname, '../..');
+const candidateRoot = process.env.CANDIDATE_ROOT ? path.resolve(repoRoot, process.env.CANDIDATE_ROOT) : null;
 const outputRoot = path.join(repoRoot, 'build', 'architecture-equivalence');
 const screenshotRoot = path.join(outputRoot, 'report', 'screenshots');
 const EXPECTED_EXTERNAL_HOSTS = new Set([
@@ -43,12 +44,12 @@ let snapshots;
 let servers;
 const report = {
   schemaVersion: 1,
-  phase: 'A0',
-  executionId: 'P1-A0-001',
+  phase: candidateRoot ? 'P2-candidate' : 'A0',
+  executionId: candidateRoot ? 'P2-ARCH-NONVISUAL-001' : 'P1-A0-001',
   baselineSha: APPROVED_BASELINE_SHA,
   status: 'not-run',
   setupError: null,
-  candidate: { enabled: false, rootDir: null },
+  candidate: { enabled: Boolean(candidateRoot), rootDir: candidateRoot },
   environment: { node: process.version, playwright: playwrightVersion, locale: 'zh-CN', timezone: 'Asia/Shanghai' },
   tests: { expected: EXPECTED_TEST_COUNT, passed: 0, failed: 0, skipped: 0 },
   contract: {}, comparisons: { url: 0, negativeUrl: 0, resource: 0, dom: 0, aria: 0, screenshot: 0, screenshotRetries: 0, function: 0 },
@@ -207,13 +208,20 @@ async function compareScenario(scenario, action, group = 'matrix') {
   baseline.screenshot = await captureScreenshot(page, scenario.theme);
   let current = await openEvidence(context, servers.current, scenario, action, page);
   current.screenshot = await captureScreenshot(page, scenario.theme);
+  let candidate = null;
+  if (servers.candidate) {
+    candidate = await openEvidence(context, servers.candidate, scenario, action, page);
+    candidate.screenshot = await captureScreenshot(page, scenario.theme);
+  }
   await page.close();
   await context.close();
   const name = `${safeName(scenario.route)}__${scenario.viewportName}__${scenario.theme}__${group}`;
   fs.mkdirSync(screenshotRoot, { recursive: true });
   fs.writeFileSync(path.join(screenshotRoot, `${name}__baseline.png`), baseline.screenshot);
   fs.writeFileSync(path.join(screenshotRoot, `${name}__current.png`), current.screenshot);
+  if (candidate) fs.writeFileSync(path.join(screenshotRoot, `${name}__candidate.png`), candidate.screenshot);
   const screenshotDiff = comparePngBuffers(baseline.screenshot, current.screenshot);
+  const candidateScreenshotDiff = candidate ? comparePngBuffers(baseline.screenshot, candidate.screenshot) : null;
   if (screenshotDiff.differentPixels) report.rasterNoise.push({ name, ...screenshotDiff });
   expect(current.errors, `${name} current console/page errors`).toEqual([]);
   expect(baseline.errors, `${name} baseline console/page errors`).toEqual([]);
@@ -227,10 +235,24 @@ async function compareScenario(scenario, action, group = 'matrix') {
   expect(current.resources, `${name} resources`).toEqual(baseline.resources);
   expect(current.dom, `${name} normalized DOM`).toEqual(baseline.dom);
   expect(current.aria, `${name} ARIA`).toEqual(baseline.aria);
+  if (candidate) {
+    expect(candidate.errors, `${name} candidate console/page errors`).toEqual([]);
+    expect(candidate.localFailures, `${name} candidate local request failures`).toEqual([]);
+    expect(candidate.resources.filter(resource => resource.status >= 400), `${name} candidate HTTP errors`).toEqual([]);
+    expect(candidate.external.filter(host => !EXPECTED_EXTERNAL_HOSTS.has(host)), `${name} candidate unexpected external hosts`).toEqual([]);
+    expect(candidate.external, `${name} candidate external request set`).toEqual(baseline.external);
+    expect(candidate.resources, `${name} candidate resources`).toEqual(baseline.resources);
+    expect(candidate.dom, `${name} candidate normalized DOM`).toEqual(baseline.dom);
+    expect(candidate.aria, `${name} candidate ARIA`).toEqual(baseline.aria);
+    expect(candidateScreenshotDiff.dimensionsEqual, `${name} candidate screenshot dimensions`).toBe(true);
+    expect(candidateScreenshotDiff.maxChannelDelta, `${name} candidate screenshot max channel delta`).toBeLessThanOrEqual(MAX_RASTER_CHANNEL_DELTA);
+    expect(candidateScreenshotDiff.differentPixels, `${name} candidate screenshot raster-noise pixels`).toBeLessThanOrEqual(MAX_RASTER_NOISE_PIXELS);
+  }
   expect(screenshotDiff.dimensionsEqual, `${name} screenshot dimensions`).toBe(true);
   expect(screenshotDiff.maxChannelDelta, `${name} screenshot max channel delta`).toBeLessThanOrEqual(MAX_RASTER_CHANNEL_DELTA);
   expect(screenshotDiff.differentPixels, `${name} screenshot raster-noise pixels`).toBeLessThanOrEqual(MAX_RASTER_NOISE_PIXELS);
   report.comparisons.resource += current.resources.length;
+  if (candidate) report.comparisons.candidateResource = (report.comparisons.candidateResource || 0) + candidate.resources.length;
   report.comparisons.dom += 1;
   report.comparisons.aria += 1;
   report.comparisons.screenshot += 1;
@@ -239,9 +261,16 @@ async function compareScenario(scenario, action, group = 'matrix') {
 test.beforeAll(async () => {
   try {
     report.status = 'running';
-    matrix = createSiteMatrix(repoRoot);
+    matrix = createSiteMatrix(repoRoot, { candidateRoot });
     snapshots = prepareSnapshots({ repoRoot, outputRoot });
     servers = await startIndependentServers(snapshots);
+    if (candidateRoot) {
+      const candidateFiles = listFiles(candidateRoot);
+      const extras = candidateFiles.filter(file => !snapshots.files.includes(file));
+      const missing = snapshots.files.filter(file => !candidateFiles.includes(file));
+      if (extras.length || missing.length) throw new Error(`candidate manifest mismatch: extras=${extras.join(',')} missing=${missing.join(',')}`);
+      servers.candidate = await startServerProcess(candidateRoot, 'candidate');
+    }
     browser = await chromium.launch({
       args: [
         '--disable-font-subpixel-positioning', '--disable-gpu', '--disable-lcd-text',
@@ -252,12 +281,14 @@ test.beforeAll(async () => {
     report.servers = {
       baseline: { pid: servers.baseline.pid, port: servers.baseline.port, root: snapshots.baselineRoot },
       current: { pid: servers.current.pid, port: servers.current.port, root: snapshots.currentRoot },
+      ...(servers.candidate ? { candidate: { pid: servers.candidate.pid, port: servers.candidate.port, root: candidateRoot } } : {}),
     };
     report.contract = {
       publicFiles: snapshots.files.length,
       htmlRoutes: snapshots.htmlCount,
       baselinePublicHash: aggregateHash(snapshots.manifest, 'baselineSha256'),
       currentPublicHash: aggregateHash(snapshots.manifest, 'currentSha256'),
+      ...(candidateRoot ? { candidatePublicHash: aggregateHash(snapshots.files.map(file => ({ path: file, candidateSha256: sha256(fs.readFileSync(path.join(candidateRoot, file)))})), 'candidateSha256') } : {}),
     };
   } catch (error) {
     report.status = 'setup-failed';
@@ -306,12 +337,17 @@ test.afterAll(async () => {
 test('locks the contract and compares all public bytes', async () => {
   expect(matrix.files).toHaveLength(EXPECTED_PUBLIC_FILE_COUNT);
   expect(matrix.htmlRoutes).toHaveLength(EXPECTED_HTML_ROUTE_COUNT);
-  expect(matrix.candidate).toEqual({ enabled: false, rootDir: null });
+  expect(matrix.candidate).toEqual({ enabled: Boolean(candidateRoot), rootDir: candidateRoot });
   expect(matrix.files.some(file => file.includes('config.local'))).toBe(false);
   expect(snapshots.mismatches).toEqual([]);
   expect(servers.baseline.pid).not.toBe(servers.current.pid);
   expect(servers.baseline.port).not.toBe(servers.current.port);
   expect(servers.baseline.rootDir).not.toBe(servers.current.rootDir);
+  if (servers.candidate) {
+    expect(servers.candidate.pid).not.toBe(servers.baseline.pid);
+    expect(servers.candidate.port).not.toBe(servers.baseline.port);
+    expect(servers.candidate.rootDir).not.toBe(servers.baseline.rootDir);
+  }
   for (const basePath of matrix.basePaths) {
     for (const file of matrix.files) {
       const route = `${basePath}${file}`.replace(/\/+/g, '/');
@@ -322,6 +358,12 @@ test('locks the contract and compares all public bytes', async () => {
         .toEqual({ status: baseline.status, mime: baseline.mime, hash: baseline.hash, canonical: baseline.canonical });
       expect(current.status, `${route} current status`).toBe(200);
       expect(baseline.status, `${route} baseline status`).toBe(200);
+      if (servers.candidate) {
+        const candidate = await requestEvidence(servers.candidate.url, route);
+        expect({ status: candidate.status, mime: candidate.mime, hash: candidate.hash, canonical: candidate.canonical }, `${route} candidate`)
+          .toEqual({ status: baseline.status, mime: baseline.mime, hash: baseline.hash, canonical: baseline.canonical });
+        expect(candidate.status, `${route} candidate status`).toBe(200);
+      }
       report.comparisons.url += 1;
     }
   }
@@ -332,6 +374,11 @@ test('locks the contract and compares all public bytes', async () => {
     expect(current, `${route} negative route`).toEqual(baseline);
     expect(current.status, `${route} current negative status`).toBe(404);
     expect(baseline.status, `${route} baseline negative status`).toBe(404);
+    if (servers.candidate) {
+      const candidate = await requestEvidence(servers.candidate.url, route);
+      expect(candidate, `${route} candidate negative route`).toEqual(baseline);
+      expect(candidate.status, `${route} candidate negative status`).toBe(404);
+    }
     report.comparisons.negativeUrl += 1;
   }
 });

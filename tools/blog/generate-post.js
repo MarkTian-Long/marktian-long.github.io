@@ -3,9 +3,18 @@ const path = require('path');
 const config = require('../../scripts/site-config.js');
 const { articleUrl, ensureArticleSeo } = require('../../scripts/search-foundation.js');
 
-const [sourcePath, outputPath] = process.argv.slice(2);
+const generatorArgs = process.argv.slice(2);
+if (generatorArgs.includes('--write') && generatorArgs.includes('--candidate')) throw new Error('Choose exactly one generator mode');
+const mode = generatorArgs[0] === '--write' ? 'write' : generatorArgs[0] === '--candidate' ? 'candidate' : 'check';
+const [sourcePath, outputPath] = generatorArgs.slice(mode === 'check' ? 0 : 1);
 if (!sourcePath || !outputPath) {
-  throw new Error('Usage: node tools/blog/generate-post.js <source.md> <output.html>');
+  throw new Error('Usage: node tools/blog/generate-post.js [--write|--candidate] <source.md> <output.html>');
+}
+if (mode === 'candidate') {
+  const candidateRoot = path.resolve(__dirname, '../../build/candidate-site');
+  const target = path.resolve(outputPath);
+  const relative = path.relative(candidateRoot, target);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('Candidate output must stay under build/candidate-site');
 }
 
 const slug = path.basename(outputPath, '.html');
@@ -160,4 +169,12 @@ if (!/\.post-body pre\b/.test(page)) {
 page = replaceTocList(page, renderToc());
 page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, '<span class="post-date">' + metadata.date + '</span><span id="post-tags"></span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
 page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<section class="continue-reading"/, () => '<div class="post-body">' + blocks.join('\n') + '</div>\n        <section class="continue-reading"');
-fs.writeFileSync(outputPath, page, 'utf8');
+const current = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, 'utf8') : '';
+if (mode === 'check') {
+  if (current !== page) process.exitCode = 1;
+  console.log(current === page ? '✓ check: output is current' : '✗ check: output is stale');
+} else {
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, page, 'utf8');
+  console.log(`✓ ${mode}: ${outputPath}`);
+}

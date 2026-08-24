@@ -20,6 +20,29 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 const OUTPUT_PATH = path.resolve(__dirname, '../tools/trends/data/trends.json');
+const GENERATOR_ARGS = process.argv.slice(2);
+if (GENERATOR_ARGS.includes('--write') && GENERATOR_ARGS.includes('--candidate')) throw new Error('Choose exactly one generator mode');
+const GENERATOR_MODE = GENERATOR_ARGS.includes('--write') ? 'write'
+  : GENERATOR_ARGS[0] === '--candidate' ? 'candidate' : 'check';
+
+function candidateTarget() {
+  const target = path.resolve(GENERATOR_ARGS[1] || '');
+  const candidateRoot = path.resolve(__dirname, '../build/candidate-site');
+  const relative = path.relative(candidateRoot, target);
+  if (!GENERATOR_ARGS[1] || relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error('Candidate output must stay under build/candidate-site');
+  }
+  return target;
+}
+
+function readPublishedTrends() {
+  const raw = fs.readFileSync(OUTPUT_PATH, 'utf8');
+  const published = JSON.parse(raw);
+  if (!Array.isArray(published.boards) || published.boards.some(board => !Array.isArray(board.items) || board.items.length === 0)) {
+    throw new Error('Published trends artifact has an empty board');
+  }
+  return raw;
+}
 
 // ── 工具函数 ──────────────────────────────────────────────────────────────────
 
@@ -250,6 +273,22 @@ async function fetchOverseasAI() {
 // ── 主流程 ────────────────────────────────────────────────────────────────────
 
 async function main() {
+  // Check and candidate modes are deliberately offline: they validate or copy the
+  // already-reviewed public snapshot. Only an explicit --write may fetch fresh data.
+  if (GENERATOR_MODE === 'check') {
+    readPublishedTrends();
+    console.log('✓ check: published trends artifact is structurally complete');
+    return;
+  }
+  if (GENERATOR_MODE === 'candidate') {
+    const target = candidateTarget();
+    const payload = readPublishedTrends();
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, payload, 'utf8');
+    console.log(`✓ candidate: ${target}`);
+    return;
+  }
+  if (GENERATOR_MODE !== 'write') throw new Error(`Unsupported generator mode: ${GENERATOR_MODE}`);
   console.log('🚀 开始抓取热点数据...\n');
 
   const boards = [];
@@ -273,9 +312,16 @@ async function main() {
     boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: BOARD_INTROS['github-ai'], items: [] });
   }
 
-  // 2. Product Hunt 本月（由 Claude 搜索填充，爬虫跳过）
-  console.log('[2/5] Product Hunt 本月（由 /update-trends 更新，跳过）\n');
-  boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items: [] });
+  // 2. Product Hunt 本月
+  try {
+    console.log('[2/5] Product Hunt 本月');
+    const items = await fetchProductHunt();
+    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items });
+    console.log(`  ✓ 获取 ${items.length} 条\n`);
+  } catch (e) {
+    console.error(`  ✗ 失败: ${e.message}\n`);
+    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items: [] });
+  }
 
   // 3. HN 热议
   try {
@@ -315,8 +361,11 @@ async function main() {
     boards,
   };
 
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2), 'utf-8');
-  console.log(`\n✅ 写入完成：${OUTPUT_PATH}`);
+  const incomplete = boards.some(board => !Array.isArray(board.items) || board.items.length === 0);
+  if (incomplete) throw new Error('Refusing partial trends result with an empty board');
+  const payload = JSON.stringify(output, null, 2);
+  fs.writeFileSync(OUTPUT_PATH, payload, 'utf-8');
+  console.log(`\n✅ write 完成：${OUTPUT_PATH}`);
   console.log(`   更新时间：${today()}`);
   boards.forEach(b => console.log(`   ${b.icon} ${b.title}：${b.items.length} 条`));
 }

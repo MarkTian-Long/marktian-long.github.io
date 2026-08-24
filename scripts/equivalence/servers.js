@@ -230,6 +230,7 @@ module.exports = {
   normalizeRequestPath,
   prepareSnapshots,
   sha256,
+  startServerProcess,
   startIndependentServers,
   stopIndependentServers,
 };

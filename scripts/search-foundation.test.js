@@ -629,6 +629,7 @@ test('generate-post CLI produces centralized SEO metadata without changing URL s
     process.execPath,
     [
       path.join(rootDir, 'tools/blog/generate-post.js'),
+      '--write',
       path.join(rootDir, 'docs/blog/agent-boundary.md'),
       outputPath
     ],
