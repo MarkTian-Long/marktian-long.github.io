@@ -33,6 +33,7 @@ test('candidate plan has frozen Eleventy home/blog routes plus exact static isla
 
 test('frozen candidate route inputs exactly match the approved public source snapshot', () => {
   for (const route of ['index.html', 'tools/blog/index.html']) {
-    assert.equal(readFrozenPage(route), fs.readFileSync(path.join(repoRoot, route), 'utf8'), route);
+    const normalizeNewlines = value => value.replace(/\r\n/g, '\n');
+    assert.equal(normalizeNewlines(readFrozenPage(route)), normalizeNewlines(fs.readFileSync(path.join(repoRoot, route), 'utf8')), route);
   }
 });

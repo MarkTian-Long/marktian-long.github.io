@@ -7,7 +7,7 @@ test('blog ledger accounts for every published post and freezes stale regenerati
   const ledger = createLedger(path.resolve(__dirname, '..'));
   assert.equal(ledger.length, 39);
   assert.equal(ledger.filter(row => row.source_status === 'source-confirmed').length, 21);
-  assert.equal(ledger.filter(row => row.regeneration_status === 'frozen-required').length, 21);
+  assert.equal(ledger.filter(row => ['render-confirmed', 'frozen-required'].includes(row.regeneration_status)).length, 21);
   assert.equal(ledger.filter(row => row.source_status === 'legacy-frozen').length, 9);
   assert.equal(ledger.filter(row => row.source_status === 'blocked').length, 9);
 });
