@@ -16,8 +16,17 @@
 
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
+const fetch = globalThis.fetch;
+
+if (typeof fetch !== 'function') {
+  throw new Error('fetch-trends.js requires Node.js 18 or later');
+}
+
+function loadCheerio() {
+  // Offline check/candidate modes must run in the deployment verifier without
+  // installing the HTML scraper used only by explicit --write refreshes.
+  return require('cheerio');
+}
 
 const OUTPUT_PATH = path.resolve(__dirname, '../tools/trends/data/trends.json');
 const GENERATOR_ARGS = process.argv.slice(2);
@@ -74,7 +83,7 @@ async function fetchGithubTrending(since = 'weekly', lang = '') {
   const url = `https://github.com/trending${lang ? `/${lang}` : ''}?since=${since}`;
   console.log(`  抓取 GitHub Trending: ${url}`);
   const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
+  const $ = loadCheerio().load(html);
   const items = [];
 
   $('article.Box-row').each((i, el) => {
@@ -159,7 +168,7 @@ async function fetchProductHunt() {
   const url = `https://www.producthunt.com/leaderboard/monthly/${y}/${m}`;
   console.log(`  抓取 Product Hunt 月榜: ${url}`);
   const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
+  const $ = loadCheerio().load(html);
   const items = [];
 
   // PH 的结构：每个产品在 data-test="post-item" 或类似选择器
@@ -204,7 +213,7 @@ async function fetch36Kr() {
   const url = 'https://36kr.com/information/AI/';
   console.log(`  抓取 36Kr AI 频道: ${url}`);
   const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
+  const $ = loadCheerio().load(html);
   const items = [];
 
   $('a[href*="/p/"]').each((i, el) => {

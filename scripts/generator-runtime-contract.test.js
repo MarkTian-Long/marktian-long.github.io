@@ -11,6 +11,11 @@ const root = path.resolve(__dirname, '..');
 const candidateRoot = path.join(root, 'build', 'candidate-site', 'generator-contract-tests');
 const sha256 = file => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const run = (file, args) => execFileSync(process.execPath, [file, ...args], { cwd: root, encoding: 'utf8' });
+const runTrendsCheckWithoutWriteDependencies = () => execFileSync(process.execPath, [
+  '-e',
+  "const Module=require('node:module');const original=Module._load;Module._load=(request,parent,isMain)=>{if(request==='node-fetch'||request==='cheerio')throw new Error('write-only dependency was loaded');return original(request,parent,isMain)};require(require('node:path').resolve(process.argv[1]));",
+  'scripts/fetch-trends.js',
+], { cwd: root, encoding: 'utf8' });
 
 test('default generator checks do not write a public artifact', () => {
   const publicBlog = path.join(root, 'tools', 'blog', 'posts', 'agent-boundary.html');
@@ -21,7 +26,7 @@ test('default generator checks do not write a public artifact', () => {
   assert.equal(fs.existsSync(neverWritten), false);
   assert.throws(() => run('tools/service-agent/gen_index.js', []));
   assert.deepEqual([sha256(publicBlog), sha256(publicService)], before);
-  assert.match(run('scripts/fetch-trends.js', []), /structurally complete/);
+  assert.match(runTrendsCheckWithoutWriteDependencies(), /structurally complete/);
 });
 
 test('candidate generators are confined to the candidate build root', () => {
