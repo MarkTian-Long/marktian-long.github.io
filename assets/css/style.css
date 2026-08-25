@@ -1594,10 +1594,15 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   color: var(--text-secondary);
   font-size: 0.9rem;
   transition: color var(--transition);
   text-decoration: none;
+}
+
+.contact-link span:last-child {
+  overflow-wrap: anywhere;
 }
 
 .contact-link:hover {
