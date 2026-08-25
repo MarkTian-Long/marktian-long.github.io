@@ -28,6 +28,10 @@ function loadCheerio() {
   return require('cheerio');
 }
 
+function fetchWithTimeout(url, { timeout = 15000, ...options } = {}) {
+  return fetch(url, { ...options, signal: AbortSignal.timeout(timeout) });
+}
+
 const OUTPUT_PATH = path.resolve(__dirname, '../tools/trends/data/trends.json');
 const GENERATOR_ARGS = process.argv.slice(2);
 if (GENERATOR_ARGS.includes('--write') && GENERATOR_ARGS.includes('--candidate')) throw new Error('Choose exactly one generator mode');
@@ -56,7 +60,7 @@ function readPublishedTrends() {
 // ── 工具函数 ──────────────────────────────────────────────────────────────────
 
 async function fetchHtml(url) {
-  const res = await fetch(url, {
+  const res = await fetchWithTimeout(url, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
       'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
@@ -119,7 +123,7 @@ async function fetchGithubTrending(since = 'weekly', lang = '') {
 
 async function fetchHackerNews() {
   console.log('  抓取 Hacker News Top Stories...');
-  const idsRes = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json', { timeout: 10000 });
+  const idsRes = await fetchWithTimeout('https://hacker-news.firebaseio.com/v0/topstories.json', { timeout: 10000 });
   const ids = await idsRes.json();
   const top = ids.slice(0, 20);
 
@@ -127,7 +131,7 @@ async function fetchHackerNews() {
   for (const id of top) {
     if (items.length >= 6) break;
     try {
-      const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, { timeout: 8000 });
+      const res = await fetchWithTimeout(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, { timeout: 8000 });
       const item = await res.json();
       if (item.type !== 'story' || !item.title || !item.url) continue;
       items.push({
