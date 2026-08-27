@@ -11,7 +11,7 @@ const {
   ensureEntryPageSeo
 } = require('./search-foundation');
 
-const BLOG_SCHEMA_VERSION = 2;
+const BLOG_SCHEMA_VERSION = 3;
 const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '行业', '生活']);
 const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
 const ALLOWED_RELATION_TYPES = new Set(['builds_on', 'revises', 'companion']);
@@ -89,6 +89,9 @@ function validateBlogMetadata(metadata) {
     if (typeof post.date !== 'string' || !/^\d{4}\.\d{2}$/.test(post.date)) {
       throw new Error(`Post date must use YYYY.MM: ${post.slug}`);
     }
+    if (typeof post.share_quote !== 'string' || !post.share_quote.trim() || post.share_quote !== post.share_quote.trim()) {
+      throw new Error(`Post share_quote must be a trimmed non-empty string: ${post.slug}`);
+    }
     validateStringArray(post, 'tags');
     validateStringArray(post, 'topics');
     if (typeof post.category !== 'string' || !ALLOWED_CATEGORIES.has(post.category)) {
@@ -151,12 +154,21 @@ function buildSearchAssets(siteConfig, posts) {
   };
 }
 
+function buildShareCardConfig(siteConfig) {
+  return JSON.stringify({
+    siteUrl: siteConfig.siteUrl,
+    blogPath: siteConfig.blog.path,
+    authorName: siteConfig.author.name
+  }, null, 2) + '\n';
+}
+
 function targetContents(siteConfig, posts, rootDir = path.resolve(__dirname, '..')) {
   const assets = buildSearchAssets(siteConfig, posts);
   const contents = {
     'robots.txt': assets.robots,
     'sitemap.xml': assets.sitemap,
-    'feed.xml': assets.feed
+    'feed.xml': assets.feed,
+    'tools/blog/data/share-card-config.json': buildShareCardConfig(siteConfig)
   };
   const entryPages = [
     ['index.html', 'home'],
@@ -188,7 +200,8 @@ function changedTargets(rootDir, contents) {
 }
 
 function writeTargets(rootDir, contents) {
-  for (const file of Object.keys(contents)) {
+  for (const file of changedTargets(rootDir, contents)) {
+    fs.mkdirSync(path.dirname(path.join(rootDir, file)), { recursive: true });
     fs.writeFileSync(path.join(rootDir, file), contents[file], 'utf8');
     console.log(`WROTE ${file}`);
   }
@@ -200,8 +213,10 @@ function checkTargets(rootDir, contents) {
     console.log('PASS robots.txt');
     console.log('PASS sitemap.xml');
     console.log('PASS feed.xml');
+    console.log('PASS blog share-card config');
     console.log('PASS entry page SEO: 2/2');
-    console.log(`PASS blog article SEO: ${Object.keys(contents).length - 5}/${Object.keys(contents).length - 5}`);
+    const articleCount = Object.keys(contents).filter(file => file.startsWith('tools/blog/posts/')).length;
+    console.log(`PASS blog article SEO: ${articleCount}/${articleCount}`);
     return 0;
   }
 
@@ -266,6 +281,7 @@ if (require.main === module) {
 
 module.exports = {
   buildSearchAssets,
+  buildShareCardConfig,
   validatePosts,
   validateBlogMetadata,
   targetContents,

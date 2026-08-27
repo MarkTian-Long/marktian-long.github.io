@@ -15,6 +15,11 @@ test('public dist manifest includes every public entrypoint and excludes dev-onl
   assert.ok(files.includes('index.html'));
   assert.ok(files.includes('tools/blog/article-links.css'));
   assert.ok(files.includes('tools/blog/article-runtime.js'));
+  assert.ok(files.includes('tools/blog/share-card.html'));
+  assert.ok(files.includes('tools/blog/share-card.css'));
+  assert.ok(files.includes('tools/blog/share-card.js'));
+  assert.ok(files.includes('tools/blog/vendor/qrcode-generator.js'));
+  assert.ok(files.includes('tools/blog/data/share-card-config.json'));
   assert.ok(files.includes('tools/blog/data/featured-posts.json'));
   assert.ok(files.includes('tools/blog/index.html'));
   assert.ok(files.includes('tools/blog/posts/agent-boundary.html'));
@@ -59,6 +64,14 @@ test('external scripts resolve fetch paths from the document that executes them'
       'tools/blog/posts/example.html',
     ),
     ['tools/blog/data/posts-meta.json'],
+  );
+  assert.deepEqual(
+    referencedPaths(
+      'tools/blog/share-card.js',
+      "fetch('data/share-card-config.json'); fetch('data/posts-meta.json')",
+      'tools/blog/share-card.html',
+    ),
+    ['tools/blog/data/share-card-config.json', 'tools/blog/data/posts-meta.json'],
   );
 });
 

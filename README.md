@@ -100,6 +100,7 @@ python -m http.server 8080
 ```bash
 cd scripts
 cmd /c npm ci
+cmd /c npx playwright install chromium
 cmd /c npm run check
 cmd /c npm run build:public
 cmd /c npm run check:public-dist

@@ -25,6 +25,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install verification dependencies
+        working-directory: scripts
+        run: npm ci
+
+      - name: Install Chromium for browser checks
+        working-directory: scripts
+        run: npx playwright install --with-deps chromium
+
       - name: Verify site
         working-directory: scripts
         run: npm run check

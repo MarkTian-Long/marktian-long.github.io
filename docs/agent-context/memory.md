@@ -141,6 +141,13 @@ initial migration.
   migrates the legacy `blog-theme` key once, and degrades a failed
   `posts-meta.json` request to an empty local index plus a readable notice;
   article body content remains available.
+- 2026-08-27 Codex: Blog share posters use required, body-grounded
+  `share_quote` metadata; `article-runtime.js` supplies every article's single
+  entry, while `tools/blog/share-card.html` renders a local 1080 × 1920 Canvas
+  PNG and local QR from generated canonical site config. The HTML preview's
+  action, QR region, and hostname link to the canonical article; exported PNGs
+  remain raster images and rely on the QR for navigation. `share_quote` must not
+  change SEO fields; keep the page and vendor asset in the public-dist manifest.
 - 2026-07-16 Codex: Markdown-generated blog pages can inherit stale template
   fragments when regex replacement stops at the first nested `</ul>`. For
   `tools/blog/generate-post.js`, replace the entire `.toc-list` by matching

@@ -6,6 +6,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const { createCandidatePlan, resolveCandidateOutput } = require('./candidate-site');
+const { publicFiles } = require('./public-dist-manifest');
 const { readFrozenPage } = require('../site/candidate/frozen-page-source');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -18,8 +19,8 @@ test('candidate output is restricted to the ignored build directory', () => {
 
 test('candidate plan derives the exact public manifest route contract', () => {
   const plan = createCandidatePlan({ repoRoot, outputDir: 'build/candidate-site/run-a' });
-  assert.equal(plan.files.length, 73);
-  assert.equal(plan.htmlRoutes.length, 49);
+  assert.deepEqual(plan.files, publicFiles(repoRoot));
+  assert.equal(plan.htmlRoutes.length, plan.files.filter((file) => file.endsWith('.html')).length);
   assert.equal(plan.files.includes('tools/dashboard/index.html'), false);
   assert.equal(plan.files.includes('tools/product-collector/index.html'), false);
 });

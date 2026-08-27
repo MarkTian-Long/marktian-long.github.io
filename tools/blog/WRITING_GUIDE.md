@@ -14,9 +14,12 @@ title:    简洁动词短语或判断句；优先在列表页完整显示核心�
 tags:     从固定标签库选择（见下方）
 slug:     kebab-case，对应 posts/xxx.html 文件名
 summary:  1-2 句，概括核心观点，用于列表页展示
+share_quote: 1 段可独立带走的结论句，用于生成文章分享海报
 category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类导航；「生活」仅为历史兼容值，当前不维护、不使用）
 
 > **摘要 vs 正文导语：** `summary` 字段（列表页摘要）和文章正文第一段（导语）**允许不同**，两者各司其职——摘要负责吸引点击（常用数据/问题钩子），导语负责承接读者情绪（点进来后的第一感受）。两段质量须对等，不能一强一弱。若两段完全相同也可接受，但不要求强制统一。
+
+> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。在全文定稿后，从结尾结论、核心判断或 callout 中优先选择一段已在正文出现的原句；只有为独立阅读必须压缩时才做最小改写，不用标题、摘要或夸张口号替代。
 
 > **标题质量规则：** 标题应先说清对象与核心判断，再追求修辞；发布前在列表页的桌面和移动宽度检查，不应因 CSS 裁切而丢失关键语义。标题可以超过 20 字，但若删去修饰语后不损失判断，应优先精简；不要为了凑字数批量改写已发布文章。
 
@@ -377,6 +380,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "date": "YYYY.MM",
      "title": "...",
      "summary": "...",
+     "share_quote": "...",
      "tags": ["标签1"],
      "topics": ["话题1"],
      "concepts": ["关键对象", "核心机制", "具体场景", "判断边界"],
@@ -384,7 +388,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "url": "posts/your-slug.html"
    }
    ```
-2. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
+2. 全文定稿后，从正文结论或核心判断确定 `share_quote`；它必须是 trimmed 非空字符串，并能脱离正文独立成立。再在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
    ```powershell
    node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
    ```
@@ -602,7 +606,7 @@ relations 是上游编辑评审已经确认的结果。GitHub / Codex 不根据 
 
 ## 分享功能规范
 
-OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘要+封面图），不在页面内放复制链接按钮。canonical、标准 description、文章 JSON-LD、RSS auto-discovery、sitemap 和 feed 由 `scripts/site-config.js`、`scripts/search-foundation.js` 与生成脚本统一维护。
+OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘要+封面图）。文章页由共享运行时统一提供「生成分享图」入口，打开 `share-card.html?slug=<slug>` 后在浏览器本地生成固定 1080 × 1920 PNG；预览页的「打开原文」、二维码区和底部域名均可直接打开由 `scripts/site-config.js` 生成的 canonical 原文 URL。导出的 PNG 不能携带超链接，图片场景以二维码承担跳转入口。`share_quote` 只服务海报，不进入 OG、canonical、标准 description、JSON-LD、RSS、sitemap 或 feed。上述搜索资产仍由 `scripts/site-config.js`、`scripts/search-foundation.js` 与生成脚本统一维护。
 
 ### OG meta 模板（加入每篇文章 `<head>`）
 
@@ -622,7 +626,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 
 ### 搜索发现维护
 
-- `tools/blog/data/posts-meta.json` 仍是 `title`、`summary`、`url` 的单一来源。
+- `tools/blog/data/posts-meta.json` 仍是 `title`、`summary`、`share_quote`、`url` 的单一来源；`share-card-config.json` 由生成脚本从全站配置输出，不手工维护。
 - 新文章发布后运行 `node scripts/generate-search-assets.js --write`，同步入口页与文章 head，并更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
 - 发布前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 一致。
 - 现有元数据只有月份，不要伪造精确 `pubDate`、`datePublished` 或 `dateModified`；未来有可靠日期字段后再补。

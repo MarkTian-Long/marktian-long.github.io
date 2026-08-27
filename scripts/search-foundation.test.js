@@ -16,6 +16,7 @@ const {
 } = require('./search-foundation');
 const {
   buildSearchAssets,
+  buildShareCardConfig,
   targetContents,
   changedTargets,
   validatePosts,
@@ -260,12 +261,13 @@ test('validatePosts rejects malformed fields and unsafe article paths', () => {
 
 test('validateBlogMetadata requires compact, specific retrieval concepts', () => {
   const valid = {
-    version: 2,
+    version: 3,
     posts: [{
       slug: 'example',
       date: '2026.08',
       title: 'Example',
       summary: 'This summary identifies the object, judgement, and mechanism.',
+      share_quote: 'This is the conclusion worth carrying into a share card.',
       tags: ['决策框架'],
       topics: ['企业AI'],
       category: '产品',
@@ -277,11 +279,15 @@ test('validateBlogMetadata requires compact, specific retrieval concepts', () =>
   assert.doesNotThrow(() => validateBlogMetadata(valid));
   assert.throws(
     () => validateBlogMetadata({ ...valid, version: 1 }),
-    /version must be 2/
+    /version must be 3/
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], date: '2026-08' }] }),
     /YYYY\.MM/
+  );
+  assert.throws(
+    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], share_quote: ' ' }] }),
+    /share_quote/
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], tags: [] }] }),
@@ -353,6 +359,7 @@ test('retrofitBlogSeo supports dry-run, check, write, and idempotent rewrites', 
     slug: 'example',
     title: 'Example',
     summary: 'Example summary',
+    share_quote: 'Example conclusion.',
     url: 'posts/example.html'
   }];
   const rootDir = makeRetrofitFixture(sourceHtml, posts);
@@ -425,6 +432,7 @@ function makeCheckFixture(postOverrides = {}) {
     date: '2026.08',
     title: 'Example',
     summary: 'Example summary',
+    share_quote: 'Example conclusion.',
     tags: ['决策框架'],
     topics: ['企业AI'],
     category: '产品',
@@ -436,13 +444,14 @@ function makeCheckFixture(postOverrides = {}) {
   fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
   fs.writeFileSync(
     path.join(rootDir, 'tools/blog/data/posts-meta.json'),
-    JSON.stringify({ version: 2, posts }, null, 2),
+    JSON.stringify({ version: 3, posts }, null, 2),
     'utf8'
   );
   const assets = buildSearchAssets(config, posts);
   fs.writeFileSync(path.join(rootDir, 'robots.txt'), assets.robots, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), assets.sitemap, 'utf8');
   fs.writeFileSync(path.join(rootDir, 'feed.xml'), assets.feed, 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'tools/blog/data/share-card-config.json'), buildShareCardConfig(config), 'utf8');
   fs.writeFileSync(
     path.join(rootDir, 'tools/blog/article-links.css'),
     '.post-body a.related-item,\n'
@@ -608,7 +617,7 @@ test('targetContents replaces every configured domain in generated outputs and p
 
   assert.match(combined, /https:\/\/example\.com\//);
   assert.doesNotMatch(combined, /marktian-long\.github\.io/);
-  assert.equal(Object.keys(contents).length, 6);
+  assert.equal(Object.keys(contents).length, 7);
 });
 
 test('search asset freshness checks tolerate Windows CRLF checkouts', () => {

@@ -3,7 +3,7 @@ const path = require('path');
 const { isDeepStrictEqual } = require('util');
 
 const siteConfig = require('./site-config');
-const { buildSearchAssets, validateBlogMetadata } = require('./generate-search-assets');
+const { buildSearchAssets, buildShareCardConfig, validateBlogMetadata } = require('./generate-search-assets');
 const {
   articleUrl,
   absoluteUrl,
@@ -107,6 +107,15 @@ function checkAssets(rootDir, config, posts, errors, messages) {
   }
   if (checkExactFile(rootDir, 'feed.xml', assets.feed, errors, 'feed.xml content mismatch')) {
     messages.push('PASS feed.xml');
+  }
+  if (checkExactFile(
+    rootDir,
+    'tools/blog/data/share-card-config.json',
+    buildShareCardConfig(config),
+    errors,
+    'blog share-card config mismatch'
+  )) {
+    messages.push('PASS blog share-card config');
   }
 }
 

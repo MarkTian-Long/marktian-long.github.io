@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>生成分享图 — 思考碎片</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="share-card.css" />
+</head>
+<body>
+  <main class="share-card-page">
+    <a class="back-link" id="returnToArticle" href="index.html">← 返回文章</a>
+    <header class="page-heading">
+      <p class="eyebrow">THOUGHT FRAGMENT</p>
+      <h1>生成分享图</h1>
+      <p>海报固定导出为 1080 × 1920 PNG，扫码可打开原文。</p>
+    </header>
+
+    <section class="poster-shell" aria-labelledby="poster-label">
+      <h2 class="sr-only" id="poster-label">文章分享海报预览</h2>
+      <canvas id="shareCard" width="1080" height="1920" aria-describedby="posterAccessibleText"></canvas>
+      <a class="poster-article-link" id="posterArticleLink" href="index.html" target="_blank" rel="noopener" hidden aria-label="打开文章原文"></a>
+      <a class="poster-article-link" id="posterHostLink" href="index.html" target="_blank" rel="noopener" hidden aria-label="打开文章原文"></a>
+      <p class="sr-only" id="posterAccessibleText" aria-live="polite">正在生成分享图。</p>
+    </section>
+
+    <p class="error-message" id="shareCardError" role="alert" hidden></p>
+    <div class="actions" id="shareCardActions">
+      <button class="download-button" id="downloadPoster" type="button" disabled>保存 PNG</button>
+      <a class="article-link" id="openArticle" href="index.html" target="_blank" rel="noopener">打开原文 ↗</a>
+      <span class="download-note">图片仅在当前设备生成，不会上传文章内容。</span>
+    </div>
+  </main>
+  <script src="vendor/qrcode-generator.js"></script>
+  <script src="share-card.js"></script>
+</body>
+</html>

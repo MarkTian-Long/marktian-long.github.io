@@ -21,6 +21,9 @@ const slug = path.basename(outputPath, '.html');
 const metadata = JSON.parse(fs.readFileSync('tools/blog/data/posts-meta.json', 'utf8')).posts
   .find(post => post.slug === slug);
 if (!metadata) throw new Error('No metadata found for slug: ' + slug);
+if (typeof metadata.share_quote !== 'string' || !metadata.share_quote.trim()) {
+  throw new Error('No share_quote found for slug: ' + slug);
+}
 
 const markdown = fs.readFileSync(sourcePath, 'utf8').replace(/\r/g, '');
 const lines = markdown.split('\n');
@@ -155,7 +158,7 @@ let page = fs.readFileSync('tools/blog/article-template.html', 'utf8');
 if (!/<script src="\.\.\/article-runtime\.js"><\/script>/.test(page)) {
   page = page.replace(/<body([^>]*)>/, '<body$1>\n  <script src="../article-runtime.js"></script>');
 }
-page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\ncategory: ' + metadata.category + '\n-->');
+page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\nshare_quote: ' + metadata.share_quote + '\ncategory: ' + metadata.category + '\n-->');
 page = page.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(metadata.title) + ' — Leo 的思考碎片</title>');
 page = page.replace(/(<meta property="og:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
 page = page.replace(/(<meta property="og:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');

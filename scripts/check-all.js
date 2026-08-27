@@ -49,6 +49,7 @@ function main() {
     ['Static client safety report', node, ['check-static-client-secrets.js'], scriptsDir],
     ['Portfolio evidence', node, ['check-portfolio-evidence.js'], scriptsDir],
     ['Generator contracts report', node, ['check-generator-contracts.js'], scriptsDir],
+    ['Share-card QR vendor', node, ['sync-share-card-vendor.js', '--check'], scriptsDir],
   ];
   let success = true;
   for (const [label, command, args, cwd] of checks) {
