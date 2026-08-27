@@ -1,6 +1,6 @@
 # Agent Context Maintenance
 
-<!-- monthly-review: last=2026-07-10 next=2026-08-10 -->
+<!-- monthly-review: last=2026-08-27 next=2026-09-27 -->
 
 This file owns cross-agent maintenance state for qiuzhi. Both Claude and Codex
 should read this file instead of using private memory comments as the only
