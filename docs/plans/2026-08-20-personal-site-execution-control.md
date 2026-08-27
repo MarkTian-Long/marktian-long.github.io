@@ -113,9 +113,9 @@ Phase 1 必须使用 `/dispatching-parallel-agents`，但只允许两个同时�
 | Phase | 内容 | 分支 | 前台变化 | 阶段完成后的 main 策略 | 状态 |
 |---|---|---|---|---|---|
 | 0 | 控制计划与已确认决策 | `codex/personal-site-planning` | 无 | 计划最终确认后可 1 个 docs squash commit | `review` |
-| 1 | A0：baseline/current 技术等价门禁 | `codex/personal-site-architecture` | 禁止 | 通过后可 1 个 test/chore squash commit | `pending` |
-| 2 | A1：Eleventy candidate-only PoC | 同 architecture 分支 | 禁止 | 不单独进 main；接受后并入 Phase 3，拒绝则丢弃 | `pending` |
-| 3 | A2–A5：正式架构等价迁移 | 同 architecture 分支 | 必须等价 | 全部门禁通过后 1 个 refactor squash commit | `pending` |
+| 1 | A0：baseline/current 技术等价门禁 | `codex/personal-site-architecture` | 禁止 | 已以 1 个 test commit 进入 `main` | `landed` |
+| 2 | A1：Eleventy candidate-only PoC | 同 architecture 分支 | 禁止 | 已与 Phase 3 一并进入 `main`，仍保持 candidate-only | `landed` |
+| 3 | A2–A5：正式架构等价迁移 | 同 architecture 分支 | 必须等价 | 已以 1 个 refactor commit 进入 `main`，后续修复已完成 | `landed` |
 | 4 | Current / Concept A+ / Concept B 原型 | `codex/track-c-ui-prototypes` | 仅本地原型 | 不进 main | `pending` |
 | 5 | 用户选定的 Track C 正式实现 | 从确认的 prototype/architecture SHA 新建分支 | 有 | 视觉 HITL 后 1 个 UI squash commit | `pending` |
 | 6 | Skill 与工程治理 | `codex/personal-site-governance` | 无 | 1 个 governance squash commit | `pending` |
@@ -306,12 +306,14 @@ Recommended next gate:
 | 日期 | Phase | 状态 | 证据 SHA | 决策/偏差 | 下一步 |
 |---|---|---|---|---|---|
 | 2026-08-20 | 0 | `review` | planning `6a5c220` + 本文件待提交 | 用户确认 Concept A+；A0–A1 技术决策交由主 Agent；要求阶段化 main landing、明确窗口模型与低级别并行 Agent | 本地提交控制文件并发放 Phase 1 prompt；Phase 0 暂不 push |
+| 2026-08-23 | 1 | `landed` | `8c51ad1` | A0 等价门禁已进入 `main`；公开页面保持等价 | 进入 candidate-only 架构实施 |
+| 2026-08-24 | 2–3 | `landed` | `4fdbc49`；修复 `4140bed`、`7a551bc`、`d6c447e` | Eleventy 仅用于 `build/candidate-site/`；公开静态页面未被替换；跨平台与部署门禁已修复 | 维持 candidate-only 边界，Track C 在视觉方向确定后单独启动 |
 
 ## 9. 下一阶段 prompt 状态
 
-- Phase 1 prompt：在本控制文件完成本地 commit 后发放。
-- Phase 2 prompt：只有 Phase 1 状态更新为 `landed`；或 A0 **全部技术门禁已满足**、仅因用户尚未批准 main landing 而处于 `review`，且本文件明确记录 `branch_only_accepted` 时才生成。`blocked`、技术门禁失败或证据不完整时不得放行。
-- Track C prompt：只有架构最终 SHA 完成验证后才生成。
+- Phase 1 prompt：已完成，不再发放。
+- Phase 2 prompt：已与正式架构迁移完成并落地，不再发放。
+- Track C prompt：架构最终 SHA 已完成验证；仍须在用户确定视觉方向后单独生成，不得与治理或文档同步混执行。
 
 ## 10. 回滚与停止条件
 
