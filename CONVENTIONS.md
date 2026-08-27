@@ -331,7 +331,7 @@ git status --short
 
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：先更新 `posts-meta.json`（包括 `concepts`）→ 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 新文章发布流程：先更新 `posts-meta.json`（包括 `concepts`）→ 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。

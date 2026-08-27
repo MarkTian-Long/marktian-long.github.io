@@ -87,7 +87,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
-- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
+- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js --write`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
 - 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 和 Service Agent 均为 Mock-only。
 - 如需接入真实模型，必须先设计服务端代理和最小权限边界；禁止把 credential 写入 Pages artifact。
 - Pages 只上传 `dist/` 白名单产物。新增公开页面、脚本、数据或图片时，先更新 `scripts/public-dist-manifest.js`，再运行 `cd scripts; npm run build:public; npm run check:public-dist`。

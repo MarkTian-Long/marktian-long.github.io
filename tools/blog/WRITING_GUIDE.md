@@ -386,7 +386,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
    ```
 2. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
    ```powershell
-   node tools/blog/generate-post.js docs/blog/your-slug.md tools/blog/posts/your-slug.html
+   node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
    ```
 3. 重新生成搜索发现资产，并运行静态检查：
    ```powershell
@@ -648,7 +648,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 - 分页在 `filtered()` 函数返回结果的基础上切片，不改数据层
 - 实现时在 `index.html` JS 区新增 `paginate(list, page)` 纯函数
 
-> **待完善：** URL hash 方案在 iframe 嵌入主页时可能有路由冲突，届时可改用 `?page=2` query 参数方案。
+> **待完善：** 分页状态应优先使用 URL hash 方案；博客以独立直链页面打开，无需处理旧 iframe 路由冲突。
 
 ---
 

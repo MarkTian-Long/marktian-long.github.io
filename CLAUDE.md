@@ -34,7 +34,7 @@ tools/dashboard/                # 求职追踪 Dashboard
 tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
 tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
-tools/trends/                   # 热点快照（五大平台热榜 + Claude 点评）
+tools/trends/                   # 热点快照（五大平台热榜 + Codex 点评）
 tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # 可共享的 Markdown 内容资料
@@ -52,13 +52,13 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 |------|------|------|------|
 | AI 产品拆解 | `tools/ai-insights/index.html` | 产品卡片 + 七 Tab 深度拆解 | 信息工具（默认） |
 | 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 | 信息工具 |
-| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Claude 点评 | 信息工具 |
+| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Codex 点评 | 信息工具 |
 | ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
 | A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
 | 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 单页决策沙盘：选业务场景（银行/电商/创业）→ 9 张产品决策卡 + L4 链路图 + mock 对话 Demo 全部随场景联动（决策卡高亮该场景取舍、Demo 演该行业四链路含 HITL）。决策卡含评估维度/三场景取舍/PM·算法分工徽章/证据。浅色主题，由 gen_index.js 数据驱动生成 | PM 作品 |
 | ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（14节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
 | Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
-| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（28篇，按年份分组，双主题） | 信息工具（直链） |
+| 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（文章数由元数据驱动，按年份分组，双主题） | 信息工具（直链） |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
 | 面试练习器 | `assets/js/interview.js` | 20 题练习，内嵌在主页 | 隐藏（dev only） |
@@ -86,7 +86,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
-- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Claude 点评；或直接 `/update-trends` 联网全量搜索更新
+- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js --write`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
 - 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 和 Service Agent 均为 Mock-only。
 - 如需接入真实模型，必须先设计服务端代理和最小权限边界；禁止把 credential 写入 Pages artifact。
 - Pages 只上传 `dist/` 白名单产物。新增公开页面、脚本、数据或图片时，先更新 `scripts/public-dist-manifest.js`，再运行 `cd scripts; npm run build:public; npm run check:public-dist`。

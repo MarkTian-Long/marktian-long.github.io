@@ -1,6 +1,6 @@
 # 热点快照
 
-AI & 科技领域五大平台实时热榜，含 Claude PM 视角点评。
+AI 与科技领域五大平台热点快照，含 Codex PM 视角点评。
 
 ## 功能描述
 
@@ -11,7 +11,7 @@ AI & 科技领域五大平台实时热榜，含 Claude PM 视角点评。
 | 板块 | 来源 | 更新方式 |
 |------|------|---------|
 | ⚡ GitHub AI 热榜 | GitHub Trending | 爬虫自动抓取 |
-| 🚀 Product Hunt 本月 | Product Hunt | Claude 联网搜索填充（有反爬限制） |
+| 🚀 Product Hunt 本月 | Product Hunt | Codex 联网研究补充（有反爬限制） |
 | 🔥 HN 热议 | Hacker News | 爬虫自动抓取 |
 | 🌍 出海 AI 动态 | 出海 AI 聚合 | 爬虫自动抓取 |
 | 🇨🇳 国内 AI 热点 | 36Kr 等 | 爬虫自动抓取 |
@@ -24,16 +24,16 @@ AI & 科技领域五大平台实时热榜，含 Claude PM 视角点评。
 
    ```bash
    cd scripts
-   node fetch-trends.js
+   node fetch-trends.js --write
    ```
 
-2. Claude 补充 Product Hunt + 写 PM 点评：
+2. 使用 `/update-trends` 补充 Product Hunt 并写入 PM 点评：
 
    ```
    /update-trends
    ```
 
-> Product Hunt 有反爬限制，由 Claude 联网搜索填充。其余四个板块爬虫可直接获取真实数据。
+> Product Hunt 有反爬限制，由 `/update-trends` 的联网研究补充。其余四个板块可由显式 `--write` 抓取并写入公开快照。
 
 ## 文件结构
 
@@ -41,14 +41,14 @@ AI & 科技领域五大平台实时热榜，含 Claude PM 视角点评。
 tools/trends/
 ├── index.html        # 展示页面
 ├── data/
-│   └── trends.json   # 热点数据（爬虫写入 + Claude 补充）
+│   └── trends.json   # 热点数据（显式写入 + 联网研究补充）
 └── README.md
 ```
 
 ## 访问方式
 
 - 独立打开：`tools/trends/index.html`
-- 主页嵌入：工具箱 → 热点快照 Tab（iframe）
+- 主页入口：信息工具区的「热点快照」直链卡片，在新标签页打开
 
 ## 维护指南
 

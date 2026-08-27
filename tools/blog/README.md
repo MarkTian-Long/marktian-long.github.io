@@ -56,7 +56,7 @@ tools/blog/
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表即可。第一项是首页精选，Blog 最多展示前三项；最多 3 项，空数组关闭精选。不要把精选字段写入文章 metadata。
 - **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 编辑源，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
-- **发布生成**：先在 `posts-meta.json` 添加元数据，再运行 `node tools/blog/generate-post.js <source.md> <output.html>`，最后运行 `node scripts/generate-search-assets.js --write`
+- **发布生成**：先在 `posts-meta.json` 添加元数据，再运行 `node tools/blog/generate-post.js --write <source.md> <output.html>`，最后运行 `node scripts/generate-search-assets.js --write`
 - **继续阅读**：新文只单向声明已确认的 `builds_on` / `revises` / `companion`；旧文的后续延展/修正由 metadata 自动反向更新，正文不回写。
 - **参考资料**：仅写语义化标题、分组、列表和可选可信度说明；历史 `.refs` 与新文章的 Markdown 结构均由 `article-runtime.js` 统一为默认收起、可键盘展开的紧凑辅助信息层。目录或 URL 锚点直达会自动展开，不批量改写 HTML 正文。
 - **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js scripts/blog-reference-presentation.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`

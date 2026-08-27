@@ -4,7 +4,7 @@
  *
  * 用法：
  *   cd scripts
- *   node fetch-trends.js
+ *   node fetch-trends.js --write
  *
  * 数据来源：
  *   - GitHub Trending（抓取 HTML）

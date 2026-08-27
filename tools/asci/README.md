@@ -52,9 +52,9 @@ tools/asci/
 | 深度分析 | data-source-config → keyword-extract → db-search → abstract-screen → fulltext-read → quality-assess → contradiction-detect → outline-gen → review-write |
 | 文献地图 | keyword-extract → db-search → citation-chase → abstract-screen → theme-cluster → bibtex-export → outline-gen |
 
-## 面试题覆盖
+## 关键设计问题
 
-| 面试题 | 覆盖方式 |
+| 设计问题 | 覆盖方式 |
 |--------|---------|
 | Q1：最容易出错的环节 | 节点风险分级（低/中/高），高风险节点强制 HITL |
 | Q2：连续 3 次出错如何处理 | review-write 节点：三次 ERROR → 降级面板 → 三条路径（重试/换模型/人工接管） |

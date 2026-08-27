@@ -26,7 +26,7 @@ type: workflow
 3. 生成文章：
 
    ```powershell
-   node tools/blog/generate-post.js docs/blog/<slug>.md tools/blog/posts/<slug>.html
+   node tools/blog/generate-post.js --write docs/blog/<slug>.md tools/blog/posts/<slug>.html
    ```
 
 4. 刷新搜索发现资产：
