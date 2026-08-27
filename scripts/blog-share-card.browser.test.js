@@ -56,6 +56,15 @@ async function expectErrorState(page, address, pattern) {
   assert.equal(await page.locator('#posterHostLink').isHidden(), true);
 }
 
+async function expectToolbarAtViewportTop(page) {
+  await page.locator('.post-body h2').first().evaluate((heading) => heading.scrollIntoView());
+  assert.equal(await page.locator('.top-bar').evaluate((bar) => Math.round(bar.getBoundingClientRect().top)), 0);
+  assert.equal(await page.locator('.top-bar').evaluate((bar) => {
+    const element = document.elementFromPoint(window.innerWidth / 2, 1);
+    return Boolean(element && bar.contains(element));
+  }), true);
+}
+
 test('share-card renders and downloads a 1080×1920 poster across desktop and mobile themes', { timeout: 30000 }, async () => {
   const { server, url } = await startServer();
   let browser;
@@ -121,6 +130,7 @@ test('share-card renders and downloads a 1080×1920 poster across desktop and mo
     await desktop.waitForSelector('#shareCardLink');
     assert.equal(await desktop.locator('#shareCardLink').getAttribute('href'), '../share-card.html?slug=alignment-under-change');
     assert.ok(await desktop.locator('#shareCardLink').evaluate((link) => link.getBoundingClientRect().height >= 44));
+    await expectToolbarAtViewportTop(desktop);
     await desktopContext.close();
 
     const mobileContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
@@ -141,6 +151,9 @@ test('share-card renders and downloads a 1080×1920 poster across desktop and mo
     }));
     assert.ok(contrastRatio(controls.buttonColor, controls.buttonBackground) >= 4.5);
     assert.ok(contrastRatio(controls.linkColor, controls.pageBackground) >= 4.5);
+    await mobile.goto(`${url}/tools/blog/posts/alignment-under-change.html`, { waitUntil: 'domcontentloaded' });
+    await mobile.waitForSelector('#shareCardLink');
+    await expectToolbarAtViewportTop(mobile);
     await mobileContext.close();
   } finally {
     if (browser) await browser.close();
