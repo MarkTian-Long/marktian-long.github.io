@@ -53,7 +53,7 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加完整元数据（含 `concepts` 与正文结论 `share_quote`）；仅当内容评审已确认强关系时，额外维护可选 `relations`
+- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，在 `data/posts-meta.json` 的 `posts` 数组头部添加完整元数据（含 `concepts`）；用户交付最终 Markdown 后，由 Codex 在发布时根据终稿正文确定 `share_quote`，Markdown 无需携带该字段；仅当内容评审已确认强关系时，额外维护可选 `relations`
 - **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表即可。第一项是首页精选，Blog 最多展示前三项；最多 3 项，空数组关闭精选。不要把精选字段写入文章 metadata。
 - **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 编辑源，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖

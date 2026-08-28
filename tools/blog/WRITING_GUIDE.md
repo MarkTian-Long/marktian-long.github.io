@@ -14,12 +14,19 @@ title:    简洁动词短语或判断句；优先在列表页完整显示核心�
 tags:     从固定标签库选择（见下方）
 slug:     kebab-case，对应 posts/xxx.html 文件名
 summary:  1-2 句，概括核心观点，用于列表页展示
-share_quote: 1 段可独立带走的结论句，用于生成文章分享海报
+share_quote: 发布阶段从最终正文选取的完整原句，用于生成文章分享海报；Markdown 无需携带此字段
 category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类导航；「生活」仅为历史兼容值，当前不维护、不使用）
 
 > **摘要 vs 正文导语：** `summary` 字段（列表页摘要）和文章正文第一段（导语）**允许不同**，两者各司其职——摘要负责吸引点击（常用数据/问题钩子），导语负责承接读者情绪（点进来后的第一感受）。两段质量须对等，不能一强一弱。若两段完全相同也可接受，但不要求强制统一。
 
-> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。在全文定稿后，从结尾结论、核心判断或 callout 中优先选择一段已在正文出现的原句；只有为独立阅读必须压缩时才做最小改写，不用标题、摘要或夸张口号替代。
+> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。用户交付最终 Markdown 后，由 Codex 在发布阶段基于最终正文选择并写入 `posts-meta.json`；Markdown 本身无需携带该字段。
+>
+> **share_quote 选择规则：** `share_quote` 必须是最终正文中真实存在、可独立阅读的完整句子，不得为 metadata 另造一句。
+> 1. **结尾收束句优先：** 先检查最后一节和最后若干段，选择能收束全文、对应最终主结论、单独成立且不严重依赖上一句的原句；不要机械地把最后一句当作 `share_quote`。
+> 2. **正文核心判断其次：** 结尾没有合适句子时，再选择正文核心判断、已加粗的推理落点、关键 callout，或最能概括文章核心机制或边界的原句。
+> 3. **无合适原句时确认：** 不自行创造新文案写进 metadata；发布时应明确指出缺少合适 `share_quote`，给出 1—3 个正文原句候选并等待用户选择，或经用户同意后调整正文，再使用正文中的最终句子。
+>
+> `share_quote` 只服务分享海报，不服务 SEO / RSS / continue-reading，也不替代 `summary`；不用标题、摘要或夸张口号替代。
 
 > **标题质量规则：** 标题应先说清对象与核心判断，再追求修辞；发布前在列表页的桌面和移动宽度检查，不应因 CSS 裁切而丢失关键语义。标题可以超过 20 字，但若删去修饰语后不损失判断，应优先精简；不要为了凑字数批量改写已发布文章。
 
@@ -373,7 +380,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ## 新增文章操作流程
 
-1. 在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
+1. 用户交付最终 Markdown 后，由 Codex 按上方「share_quote 选择规则」从最终正文确定 `share_quote`；Markdown 本身不需要携带该字段。再在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目：
    ```json
    {
      "slug": "your-slug",
@@ -388,7 +395,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
      "url": "posts/your-slug.html"
    }
    ```
-2. 全文定稿后，从正文结论或核心判断确定 `share_quote`；它必须是 trimmed 非空字符串，并能脱离正文独立成立。再在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
+2. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
    ```powershell
    node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
    ```

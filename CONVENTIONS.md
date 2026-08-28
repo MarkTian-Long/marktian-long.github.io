@@ -314,6 +314,7 @@ git status --short
 | date | string | 格式 `YYYY.MM` |
 | title | string | 完整标题 |
 | summary | string | 1-2 句自然摘要：说明对象/问题、核心判断及关键机制或边界（用于搜索和主页展示） |
+| share_quote | string | 发布阶段从最终正文选择的完整原句，用于分享海报；Markdown 不携带该字段，规则见 WRITING_GUIDE.md |
 | tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
 | topics | string[] | 话题领域标签，见 WRITING_GUIDE.md 标签库 |
 | concepts | string[] | 4-7 个具体检索概念：关键对象、机制、产品/公司或层级；不用于前台、SEO 或静态关联 |

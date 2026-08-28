@@ -12,13 +12,18 @@ function readVendorSource(sourcePath = defaultSourcePath) {
   return fs.readFileSync(sourcePath, 'utf8');
 }
 
+function normalizeLineEndings(content) {
+  return String(content).replace(/\r\n?/g, '\n');
+}
+
 function targetPath(rootDir = repoRoot) {
   return path.join(rootDir, targetRelativePath);
 }
 
 function isCurrent(rootDir = repoRoot, sourcePath = defaultSourcePath) {
   const target = targetPath(rootDir);
-  return fs.existsSync(target) && fs.readFileSync(target, 'utf8') === readVendorSource(sourcePath);
+  return fs.existsSync(target)
+    && normalizeLineEndings(fs.readFileSync(target, 'utf8')) === normalizeLineEndings(readVendorSource(sourcePath));
 }
 
 function parseArgs(args) {

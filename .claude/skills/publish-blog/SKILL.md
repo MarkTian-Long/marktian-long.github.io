@@ -21,7 +21,7 @@ type: workflow
 
 ## 2. 生成发布资产
 
-1. 确认元数据包含 `slug/date/title/summary/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。
+1. 发布阶段由 Codex 按 `tools/blog/WRITING_GUIDE.md` 从最终 Markdown 正文选择 `share_quote` 并写入 `posts-meta.json`；Markdown 不需要携带该字段。确认元数据包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。
 2. 审核 `summary` 是否自然说明对象/问题、核心判断及关键机制或边界；审核 `concepts` 是否为 4-7 个具体、去重、非泛词的语义锚点，且不与 `tags/topics` 精确重复。若分类、标签、摘要或 concepts 存在实质歧义时向用户确认。
 3. 生成文章：
 
