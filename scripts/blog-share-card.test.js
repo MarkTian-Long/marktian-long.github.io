@@ -14,6 +14,7 @@ const shareCard = require('../tools/blog/share-card');
 const qrcode = require('../tools/blog/vendor/qrcode-generator');
 
 const repoRoot = path.resolve(__dirname, '..');
+const baselinePost = metadata.posts.find((post) => post.slug === 'alignment-under-change');
 const normalize = (value) => String(value).replace(/\s+/g, '').replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 const normalizeLineEndings = (value) => String(value).replace(/\r\n?/g, '\n');
 
@@ -106,9 +107,9 @@ test('poster wrapping keeps fitting Latin terms and technical identifiers intact
 });
 
 test('poster model fails clearly if a new article omits share_quote', () => {
-  const post = { ...metadata.posts[0] };
+  const post = { ...baselinePost };
   delete post.share_quote;
   assert.throws(() => shareCard.createPosterModel(post, JSON.parse(buildShareCardConfig(siteConfig))), /分享引语/);
-  assert.equal(articleRuntime.shareCardHref(metadata.posts[0]), '../share-card.html?slug=alignment-under-change');
+  assert.equal(articleRuntime.shareCardHref(baselinePost), '../share-card.html?slug=alignment-under-change');
   assert.equal(shareCard.filenameFor({ slug: 'alignment-under-change' }), 'alignment-under-change-share.png');
 });

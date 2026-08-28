@@ -2,6 +2,34 @@
   "version": 3,
   "posts": [
     {
+      "slug": "personal-harness",
+      "date": "2026.08",
+      "title": "我为什么开始给自己搭 Harness？",
+      "summary": "Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。",
+      "share_quote": "真正的 AI 杠杆，不只是让一次任务做得更快，而是让每一次合作，都能成为下一次合作的起点。",
+      "tags": [
+        "工程演进",
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "concepts": [
+        "Personal Harness",
+        "Context 路由",
+        "用户画像机制",
+        "任务恢复",
+        "判断历史",
+        "权限边界",
+        "机制退役"
+      ],
+      "category": "技术",
+      "url": "posts/personal-harness.html",
+      "relations": [
+        { "slug": "harness-engineering", "type": "builds_on" }
+      ]
+    },
+    {
       "slug": "alignment-under-change",
       "date": "2026.08",
       "title": "当人和 AI 都在改变，“对齐”还能一次完成吗？",

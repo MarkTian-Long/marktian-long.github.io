@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>我为什么开始给自己搭 Harness？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</guid>
+      <description>Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。</description>
+    </item>
+    <item>
       <title>当人和 AI 都在改变，“对齐”还能一次完成吗？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/alignment-under-change.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/alignment-under-change.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</guid>
       <description>静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。</description>
-    </item>
-    <item>
-      <title>大模型的分越来越高，但有些差距只用几天就能感觉到</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/llm-soft-quality.html</guid>
-      <description>benchmark 年年刷新，但真正决定模型能不能进你工作流的，是那些评测体系从来没测过的东西。主体性和抗谄媚能力，是软性质量的两个核心维度——分数接近、体验差距悬殊的根源就在这里。</description>
     </item>
   </channel>
 </rss>
