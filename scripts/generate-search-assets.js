@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('./site-config');
+const { validateImageContract } = require('./blog-image-contract');
 const {
   articleUrl,
   buildRobots,
@@ -11,7 +12,7 @@ const {
   ensureEntryPageSeo
 } = require('./search-foundation');
 
-const BLOG_SCHEMA_VERSION = 3;
+const BLOG_SCHEMA_VERSION = 4;
 const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '行业', '生活']);
 const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
 const ALLOWED_RELATION_TYPES = new Set(['builds_on', 'revises', 'companion']);
@@ -82,6 +83,7 @@ function validateBlogMetadata(metadata) {
     throw new Error(`posts-meta.json version must be ${BLOG_SCHEMA_VERSION}`);
   }
   validatePosts(metadata.posts);
+  validateImageContract(metadata);
   const postSlugs = new Set(metadata.posts.map(post => post.slug));
   const explicitRelationTargets = new Map(metadata.posts.map(post => [post.slug, new Set()]));
 

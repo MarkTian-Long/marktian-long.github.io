@@ -261,7 +261,11 @@ test('validatePosts rejects malformed fields and unsafe article paths', () => {
 
 test('validateBlogMetadata requires compact, specific retrieval concepts', () => {
   const valid = {
-    version: 3,
+    version: 4,
+    image_contract: {
+      version: 1,
+      legacy_without_visuals: ['example']
+    },
     posts: [{
       slug: 'example',
       date: '2026.08',
@@ -279,7 +283,7 @@ test('validateBlogMetadata requires compact, specific retrieval concepts', () =>
   assert.doesNotThrow(() => validateBlogMetadata(valid));
   assert.throws(
     () => validateBlogMetadata({ ...valid, version: 1 }),
-    /version must be 3/
+    /version must be 4/
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], date: '2026-08' }] }),
@@ -444,7 +448,11 @@ function makeCheckFixture(postOverrides = {}) {
   fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
   fs.writeFileSync(
     path.join(rootDir, 'tools/blog/data/posts-meta.json'),
-    JSON.stringify({ version: 3, posts }, null, 2),
+    JSON.stringify({
+      version: 4,
+      image_contract: { version: 1, legacy_without_visuals: posts.map(post => post.slug) },
+      posts
+    }, null, 2),
     'utf8'
   );
   const assets = buildSearchAssets(config, posts);
