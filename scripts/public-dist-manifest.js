@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { collectPostImagePaths, validateImageContract } = require('./blog-image-contract');
 
 const PUBLIC_FILES = [
   'index.html',
@@ -55,8 +56,15 @@ function listBlogPosts(rootDir) {
     .sort();
 }
 
+function listBlogImages(rootDir) {
+  const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  validateImageContract(metadata);
+  return collectPostImagePaths(metadata.posts);
+}
+
 function publicFiles(rootDir) {
-  return [...PUBLIC_FILES, ...listBlogPosts(rootDir)].sort();
+  return [...PUBLIC_FILES, ...listBlogPosts(rootDir), ...listBlogImages(rootDir)].sort();
 }
 
 function validateManifest(rootDir, files = publicFiles(rootDir)) {
@@ -79,6 +87,7 @@ function validateManifest(rootDir, files = publicFiles(rootDir)) {
 
 module.exports = {
   PUBLIC_FILES,
+  listBlogImages,
   publicFiles,
   toPosix,
   validateManifest,
