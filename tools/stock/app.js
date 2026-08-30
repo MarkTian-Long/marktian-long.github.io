@@ -27,6 +27,18 @@ let domSequence = 0;
 let runSequence = 0;
 let privateSequence = 0;
 let lastMarketQuery = '';
+let sessionSequence = 0;
+
+const YAHOO_PROXY_DEFINITIONS = Object.freeze([
+  { name: 'corsproxy.io', make: function(u) { return `https://corsproxy.io/?${encodeURIComponent(u)}`; } },
+  { name: 'allorigins.win', make: function(u) { return `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`; } },
+  { name: 'codetabs.com', make: function(u) { return `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`; } },
+]);
+const YAHOO_PROXY_NAMES = Object.freeze(YAHOO_PROXY_DEFINITIONS.map(function(proxy) { return proxy.name; }));
+
+const DIAGNOSIS_RUN = { generation: 0, abortController: null };
+const RAG_RUN = { generation: 0, abortController: null };
+const AGENT_RUN = { generation: 0, abortController: null };
 
 const DEMO_CLOSES = Object.freeze({
   '000001.SS': [3388.12, 3394.75, 3382.41, 3401.06, 3410.22],
@@ -45,11 +57,42 @@ const DEMO_DATES = Object.freeze(['2026-08-24', '2026-08-25', '2026-08-26', '202
 
 const RESEARCH_SESSION = {
   version: STOCK_APP_VERSION,
-  sessionId: 'session-local-001',
+  sessionId: createSessionId(),
   runs: [],
 };
 
 const FEEDBACK_LOG = [];
+
+function createSessionId() {
+  const cryptoApi = typeof globalThis !== 'undefined' ? globalThis.crypto : null;
+  if (cryptoApi && typeof cryptoApi.randomUUID === 'function') return 'session-local-' + cryptoApi.randomUUID();
+  sessionSequence += 1;
+  return 'session-local-' + new Date().toISOString().replace(/[^0-9]/g, '') + '-' + sessionSequence;
+}
+
+function beginGeneration(state, buttonId, withAbort) {
+  state.generation += 1;
+  if (state.abortController) state.abortController.abort();
+  state.abortController = withAbort && typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const button = typeof document !== 'undefined' && document.getElementById ? document.getElementById(buttonId) : null;
+  if (button) button.disabled = true;
+  return { token: state.generation, signal: state.abortController ? state.abortController.signal : undefined };
+}
+
+function isCurrentGeneration(state, token) {
+  return state.generation === token;
+}
+
+function endGeneration(state, token, buttonId) {
+  if (!isCurrentGeneration(state, token)) return;
+  state.abortController = null;
+  const button = typeof document !== 'undefined' && document.getElementById ? document.getElementById(buttonId) : null;
+  if (button) button.disabled = false;
+}
+
+function yahooProxyDisclosure() {
+  return YAHOO_PROXY_NAMES.join(' → ');
+}
 
 function nextDomId(prefix) {
   domSequence += 1;
@@ -65,7 +108,8 @@ function dataModeLabel(mode) {
 }
 
 function sourceLabel(snapshot) {
-  return snapshot && snapshot.source === 'Yahoo Finance' ? 'Yahoo Finance' : '演示快照';
+  if (snapshot && snapshot.source === 'Yahoo Finance') return 'Yahoo Finance via ' + (snapshot.transport || 'unknown proxy');
+  return '演示快照';
 }
 
 function recordResearchRun(input) {
@@ -113,8 +157,8 @@ function setDataMode(mode) {
   });
   const status = rootDocument && rootDocument.getElementById ? rootDocument.getElementById('dataModeStatus') : null;
   if (status) status.textContent = mode === DATA_MODE_MARKET
-    ? '已选择联网行情，提交查询后才请求 Yahoo；失败不会替换为演示数据。'
-    : '默认不联网，使用固定演示快照。';
+    ? '已选择联网行情，提交查询后才请求 Yahoo；按 ' + yahooProxyDisclosure() + ' 尝试，失败不会替换为演示数据。'
+    : '默认不发起行情数据请求，使用固定演示快照；站点统计脚本可能按全站设置联网。';
   renderResearchSession();
   return currentDataMode;
 }
@@ -260,7 +304,7 @@ async function parseIntent(userQuery) {
 }
 
 // =============================================
-//  Yahoo Finance 数据获取（通过 allorigins 代理解决 CORS）
+//  Yahoo Finance 数据获取（通过用户可见的公开代理处理 CORS）
 // =============================================
 function toFiniteNumber(value) {
   const number = Number(value);
@@ -301,11 +345,23 @@ function getDemoMarketSnapshot(symbol) {
   };
 }
 
-function createTimeoutSignal(timeoutMs) {
+function createTimeoutSignal(timeoutMs, externalSignal) {
   if (typeof AbortController === 'undefined' || !timeoutMs) return { signal: undefined, cleanup: function() {} };
   const controller = new AbortController();
   const timer = setTimeout(function() { controller.abort(); }, timeoutMs);
-  return { signal: controller.signal, cleanup: function() { clearTimeout(timer); } };
+  let onExternalAbort = null;
+  if (externalSignal) {
+    onExternalAbort = function() { controller.abort(); };
+    if (externalSignal.aborted) onExternalAbort();
+    else if (typeof externalSignal.addEventListener === 'function') externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+  }
+  return {
+    signal: controller.signal,
+    cleanup: function() {
+      clearTimeout(timer);
+      if (externalSignal && onExternalAbort && typeof externalSignal.removeEventListener === 'function') externalSignal.removeEventListener('abort', onExternalAbort);
+    },
+  };
 }
 
 function parseChartPayload(text) {
@@ -346,16 +402,13 @@ async function fetchYahoo(symbol, range, interval, options) {
   if (!symbol) throw new Error('未识别股票代码，未发起联网请求');
   const opts = options || {};
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
-  const proxies = [
-    { name: 'corsproxy.io', make: function(u) { return `https://corsproxy.io/?${encodeURIComponent(u)}`; } },
-    { name: 'allorigins.win', make: function(u) { return `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`; } },
-    { name: 'codetabs.com', make: function(u) { return `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`; } },
-  ];
   const fetchImpl = opts.fetchImpl || fetch;
   let lastErr = '未知网络错误';
-  for (const proxy of proxies) {
-    const timer = createTimeoutSignal(opts.timeoutMs || 8000);
+  if (opts.signal && opts.signal.aborted) throw new Error('请求已取消');
+  for (const proxy of YAHOO_PROXY_DEFINITIONS) {
+    const timer = createTimeoutSignal(opts.timeoutMs || 8000, opts.signal);
     try {
+      if (opts.signal && opts.signal.aborted) throw new Error('请求已取消');
       const response = await fetchImpl(proxy.make(url), { signal: timer.signal });
       if (!response.ok) {
         lastErr = 'HTTP ' + response.status;
@@ -382,6 +435,11 @@ async function fetchYahoo(symbol, range, interval, options) {
         rows: rows,
       };
     } catch (error) {
+      if (opts.signal && opts.signal.aborted) throw new Error('请求已取消');
+      if (timer.signal && timer.signal.aborted) {
+        lastErr = '请求超时';
+        break;
+      }
       lastErr = error && error.message ? error.message : String(error);
     } finally {
       timer.cleanup();
@@ -406,9 +464,11 @@ function sourceIdForSnapshot(snapshot, symbol) {
 function buildMarketFailureState(error, mode, run) {
   const message = escHtml(String(error && error.message || error));
   const modeText = mode === DATA_MODE_MARKET ? '联网行情' : '演示快照';
+  const sourceText = mode === DATA_MODE_MARKET ? 'Yahoo Finance via ' + yahooProxyDisclosure() : '演示快照';
   return '<div class="market-error-state">'
     + '<strong>行情未完成</strong>'
     + '<span>' + message + '</span>'
+    + '<span class="state-note">请求路径：' + escHtml(sourceText) + '</span>'
     + '<span class="state-note">当前模式：' + modeText + '。失败结果不会静默替换为另一种数据。</span>'
     + (run ? '<span class="state-note">运行：' + escHtml(run.runId) + ' · 状态：' + escHtml(run.status) + '</span>' : '')
     + '<div class="state-actions">'
@@ -599,33 +659,36 @@ function switchTab(name) {
   if (name === 'radar') initRadar();
 }
 
-// Tab 2: Mock 数据
+// Tab 2: 固定演示证据
 const FUNDAMENTAL_MOCK = {
-  '600519.SS': { pe: 28.3, pb: 9.2, marketCap: '2.1万亿', roe: '31.2%', grossMargin: '91.8%' },
-  '300750.SZ': { pe: 22.1, pb: 4.8, marketCap: '1.4万亿', roe: '18.3%', grossMargin: '22.1%' },
-  '002594.SZ': { pe: 18.7, pb: 3.2, marketCap: '8200亿', roe: '17.6%', grossMargin: '20.9%' },
-  '600036.SS': { pe: 7.2, pb: 1.1, marketCap: '9800亿', roe: '15.3%', grossMargin: '-' },
-  '601318.SS': { pe: 8.4, pb: 1.3, marketCap: '7600亿', roe: '14.1%', grossMargin: '-' },
+  '600519.SS': { pe: '未核验', pb: '未核验', marketCap: '未核验', roe: '未核验', grossMargin: '未核验' },
+  '300750.SZ': { pe: '未核验', pb: '未核验', marketCap: '未核验', roe: '未核验', grossMargin: '未核验' },
+  '002594.SZ': { pe: '未核验', pb: '未核验', marketCap: '未核验', roe: '未核验', grossMargin: '未核验' },
+  '600036.SS': { pe: '未核验', pb: '未核验', marketCap: '未核验', roe: '未核验', grossMargin: '未核验' },
+  '601318.SS': { pe: '未核验', pb: '未核验', marketCap: '未核验', roe: '未核验', grossMargin: '未核验' },
 };
 const SENTIMENT_MOCK = {
-  '600519.SS': { score: 3.2, label: '偏多', news: ['Q3财报超预期，净利润同比+15%', '高端白酒消费复苏信号', '机构持续增持'], trend: 'up' },
-  '300750.SZ': { score: 2.1, label: '中性偏多', news: ['出货量创历史新高', '欧洲市场扩张加速', '原材料价格波动'], trend: 'flat' },
-  '002594.SZ': { score: 1.8, label: '中性', news: ['国内销量领先', '海外工厂投产', '汽车行业价格竞争'], trend: 'flat' },
+  '600519.SS': { score: null, label: '未核验演示夹具', news: ['示例主题：需求变化（未核验）', '示例主题：行业景气（未核验）', '示例主题：资金关注（未核验）'], trend: 'unknown' },
+  '300750.SZ': { score: null, label: '未核验演示夹具', news: ['示例主题：出货变化（未核验）', '示例主题：海外布局（未核验）', '示例主题：原材料波动（未核验）'], trend: 'unknown' },
+  '002594.SZ': { score: null, label: '未核验演示夹具', news: ['示例主题：销量变化（未核验）', '示例主题：产能布局（未核验）', '示例主题：行业竞争（未核验）'], trend: 'unknown' },
 };
 const DEFAULT_MOCK = { pe: '--', pb: '--', marketCap: '--', roe: '--', grossMargin: '--' };
-const DEFAULT_SENTIMENT = { score: 0, label: '暂无数据', news: [], trend: 'flat' };
+const DEFAULT_SENTIMENT = { score: null, label: '暂无数据', news: [], trend: 'unknown' };
 
 async function runDiagnosis() {
   const name = document.getElementById('diagInput').value.trim();
   if (!name) { shakeInput(document.getElementById('diagInput')); return; }
+  const generation = beginGeneration(DIAGNOSIS_RUN, 'runDiagnosisButton', true);
   const requestMode = currentDataMode;
   const content = document.getElementById('diagContent');
   content.innerHTML = '<div class="diag-loading">⏳ 正在整理证据…</div>';
   try {
     const params = await parseIntent(name + '近5日行情');
+    if (!isCurrentGeneration(DIAGNOSIS_RUN, generation.token)) return;
     if (params.unresolved) throw new Error('未识别股票代码：请使用股票名称或 6 位代码后重试');
     const symbol = params.symbol;
-    const snapshot = await fetchMarketData(symbol, '5d', '1d', { mode: requestMode });
+    const snapshot = await fetchMarketData(symbol, '5d', '1d', { mode: requestMode, signal: generation.signal });
+    if (!isCurrentGeneration(DIAGNOSIS_RUN, generation.token)) return;
     const latest = snapshot.rows[snapshot.rows.length - 1];
     const first = snapshot.rows[0];
     const pctChange = (latest && latest.close && first && first.close)
@@ -634,6 +697,7 @@ async function runDiagnosis() {
     const fundamental = FUNDAMENTAL_MOCK[symbol] || DEFAULT_MOCK;
     const sentiment = SENTIMENT_MOCK[symbol] || DEFAULT_SENTIMENT;
     const diagResult = getDiagnosisResult(name, symbol, snapshot, fundamental, sentiment);
+    if (!isCurrentGeneration(DIAGNOSIS_RUN, generation.token)) return;
     const run = recordResearchRun({
       scenario: 'evidence-check',
       dataMode: requestMode,
@@ -641,8 +705,11 @@ async function runDiagnosis() {
     });
     content.innerHTML = buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment, diagResult, run);
   } catch(err) {
+    if (!isCurrentGeneration(DIAGNOSIS_RUN, generation.token)) return;
     const run = recordResearchRun({ scenario: 'evidence-check', dataMode: requestMode, sourceIds: [], status: 'failed' });
     content.innerHTML = '<div class="diag-error">' + buildMarketFailureState(err, requestMode, run) + '</div>';
+  } finally {
+    endGeneration(DIAGNOSIS_RUN, generation.token, 'runDiagnosisButton');
   }
 }
 
@@ -706,14 +773,14 @@ function expandQuery(query) {
 }
 
 const NEWS_DB = [
-  { id: 1, date: '2025-11-08', stock: '茅台', symbol: '600519.SS', title: '贵州茅台Q3财报超预期', content: '贵州茅台三季报显示净利润同比增长15.2%，营收创历史新高，高端白酒市场需求持续旺盛，机构普遍上调目标价。', tags: ['茅台', '白酒', '业绩'], relevance: 0.94, tier: 'official', source: '财报系统' },
-  { id: 2, date: '2025-11-05', stock: '白酒行业', symbol: null, title: '白酒板块估值修复行情', content: '受消费复苏预期带动，白酒板块整体回暖，茅台、五粮液等龙头股量价齐升，分析师建议关注春节备货行情。', tags: ['白酒', '消费', '板块'], relevance: 0.87, tier: 'mainstream', source: '新浪财经' },
-  { id: 3, date: '2025-11-02', stock: '消费板块', symbol: null, title: '国内消费数据好转，A股消费板块获资金青睐', content: '10月社零数据环比改善，消费板块获北向资金持续净买入，食品饮料领涨，分析师认为估值已具备安全边际。', tags: ['消费', '北向资金', '食品饮料'], relevance: 0.72, tier: 'mainstream', source: '东方财富' },
-  { id: 4, date: '2025-11-10', stock: '宁德时代', symbol: '300750.SZ', title: '宁德时代出货量创历史新高', content: '宁德时代10月动力电池出货量同比增长38%，海外市场占比提升至29%，欧洲工厂二期投产在即，市场份额进一步稳固。', tags: ['宁德时代', '电池', '新能源'], relevance: 0.96, tier: 'official', source: '公司公告' },
-  { id: 5, date: '2025-11-07', stock: '新能源', symbol: null, title: '新能源汽车渗透率突破50%', content: '11月前两周新能源汽车销量渗透率首次突破50%，产业链相关标的受益明显，动力电池、智能驾驶零部件均现强势表现。', tags: ['新能源', '汽车', '产业链'], relevance: 0.81, tier: 'mainstream', source: '证券时报' },
-  { id: 6, date: '2025-11-09', stock: '比亚迪', symbol: '002594.SZ', title: '比亚迪海外工厂投产助力全球化布局', content: '比亚迪泰国工厂正式投产，年产能15万辆，东南亚市场布局加速，叠加国内以旧换新政策拉动，全年销量有望超预期。', tags: ['比亚迪', '汽车', '出海'], relevance: 0.93, tier: 'official', source: '公司公告' },
-  { id: 7, date: '2025-11-06', stock: '招商银行', symbol: '600036.SS', title: '招商银行零售业务优势持续强化', content: '招行三季度零售客户数突破2亿，私行AUM增速领先同业，不良率维持低位，股息率吸引力提升，机构增持意愿明显。', tags: ['招商银行', '银行', '零售'], relevance: 0.91, tier: 'official', source: '财报系统' },
-  { id: 8, date: '2025-11-01', stock: '上证指数', symbol: '000001.SS', title: 'A股市场情绪回暖，北向资金连续净流入', content: '本周北向资金累计净流入超200亿元，上证指数在3200点附近获得有效支撑，市场多头信心逐渐恢复。', tags: ['上证', '北向资金', '市场情绪'], relevance: 0.70, tier: 'unverified', source: '市场资讯' },
+  { id: 1, date: '2025-11-08', stock: '茅台', symbol: '600519.SS', title: '茅台·未核验主题样本', content: '未核验演示文本：用于展示“业绩、需求与估值”主题的检索链路，不代表任何公司事实。', tags: ['茅台', '白酒', '业绩'], relevance: 0.94, tier: 'demo', source: '未核验演示夹具' },
+  { id: 2, date: '2025-11-05', stock: '白酒行业', symbol: null, title: '白酒行业·未核验主题样本', content: '未核验演示文本：用于展示行业主题、引用编号和时间标注，不代表任何行业或公司事实。', tags: ['白酒', '消费', '板块'], relevance: 0.87, tier: 'demo', source: '未核验演示夹具' },
+  { id: 3, date: '2025-11-02', stock: '消费板块', symbol: null, title: '消费板块·未核验主题样本', content: '未核验演示文本：用于展示板块关键词召回与冲突提示，不代表真实统计或市场判断。', tags: ['消费', '北向资金', '食品饮料'], relevance: 0.72, tier: 'demo', source: '未核验演示夹具' },
+  { id: 4, date: '2025-11-10', stock: '宁德时代', symbol: '300750.SZ', title: '宁德时代·未核验主题样本', content: '未核验演示文本：用于展示产业链主题的来源回溯，不代表任何公司的经营事实。', tags: ['宁德时代', '电池', '新能源'], relevance: 0.96, tier: 'demo', source: '未核验演示夹具' },
+  { id: 5, date: '2025-11-07', stock: '新能源', symbol: null, title: '新能源·未核验主题样本', content: '未核验演示文本：用于展示行业风险关键词与证据分级，不代表真实销量、渗透率或收益判断。', tags: ['新能源', '汽车', '产业链'], relevance: 0.81, tier: 'demo', source: '未核验演示夹具' },
+  { id: 6, date: '2025-11-09', stock: '比亚迪', symbol: '002594.SZ', title: '比亚迪·未核验主题样本', content: '未核验演示文本：用于展示企业主题检索与 Claim 引用，不代表任何公司的工厂、产能或业绩事实。', tags: ['比亚迪', '汽车', '出海'], relevance: 0.93, tier: 'demo', source: '未核验演示夹具' },
+  { id: 7, date: '2025-11-06', stock: '招商银行', symbol: '600036.SS', title: '招商银行·未核验主题样本', content: '未核验演示文本：用于展示金融主题的证据链路，不代表任何公司的客户、资产或财务事实。', tags: ['招商银行', '银行', '零售'], relevance: 0.91, tier: 'demo', source: '未核验演示夹具' },
+  { id: 8, date: '2025-11-01', stock: '上证指数', symbol: '000001.SS', title: '上证指数·未核验主题样本', content: '未核验演示文本：用于展示指数主题、时间过期提示和待核查项，不代表真实资金流或点位判断。', tags: ['上证', '北向资金', '市场情绪'], relevance: 0.70, tier: 'demo', source: '未核验演示夹具' },
 ];
 
 function searchNews(query, topK) {
@@ -727,10 +794,10 @@ function searchNews(query, topK) {
       if (news.tags.some(function(t) { return t.indexOf(kw) >= 0 || kw.indexOf(t) >= 0; })) score += 0.3;
     });
     const staleNote = news.date < '2026-08-28' ? '固定历史资料，非当前行情' : '';
-    const conflictNotes = [staleNote, news.tier === 'unverified' ? '来源层级待核查' : ''].filter(Boolean);
+    const conflictNotes = [staleNote, '内容未经来源核验'].filter(Boolean);
     return Object.assign({}, news, {
       sourceId: 'market-news-' + String(news.id).padStart(2, '0'),
-      evidenceLevel: news.tier === 'official' ? '一手资料' : news.tier === 'mainstream' ? '二手资料' : '待核查',
+      evidenceLevel: news.tier === 'demo' ? '未核验演示夹具' : '待核查',
       asOf: news.date + 'T00:00:00.000Z',
       unresolvedConflict: conflictNotes.join('；'),
       score: Math.min(news.relevance, score > 0 ? news.relevance * (0.7 + score) : 0.1),
@@ -752,6 +819,7 @@ function rerankResults(query, candidates) {
 async function runRAG() {
   const query = document.getElementById('ragInput').value.trim();
   if (!query) { shakeInput(document.getElementById('ragInput')); return; }
+  const generation = beginGeneration(RAG_RUN, 'runRagButton', false);
   const sourcesEl = document.getElementById('ragSources');
   const reportEl = document.getElementById('ragReport');
   const expansion = expandQuery(query);
@@ -760,29 +828,36 @@ async function runRAG() {
     : '';
   sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 关键词召回中…</div>';
   reportEl.innerHTML = '<div class="rag-searching">⌁ 等待来源完成…</div>';
-  await new Promise(function(r) { setTimeout(r, 120); });
-  const marketResults = searchNews(query, 5);
-  const privateResults = searchPrivateKb(query, 2);
-  const candidates = marketResults.concat(privateResults).slice(0, 6);
-  if (candidates.length === 0) {
-    const run = recordResearchRun({ scenario: 'research-report', dataMode: DATA_MODE_DEMO, sourceIds: [], status: 'partial' });
-    sourcesEl.innerHTML = expandHtml + '<div class="rag-placeholder">没有命中固定演示资料，未生成研报。请换一个对象或先加入本页私有资料。</div>';
-    reportEl.innerHTML = '<div class="rag-error">检索不完整 · 运行 ' + escHtml(run.runId) + ' · 未使用猜测内容</div>';
-    return;
+  try {
+    await new Promise(function(r) { setTimeout(r, 120); });
+    if (!isCurrentGeneration(RAG_RUN, generation.token)) return;
+    const marketResults = searchNews(query, 5);
+    const privateResults = searchPrivateKb(query, 2);
+    const candidates = marketResults.concat(privateResults).slice(0, 6);
+    if (candidates.length === 0) {
+      if (!isCurrentGeneration(RAG_RUN, generation.token)) return;
+      const run = recordResearchRun({ scenario: 'research-report', dataMode: DATA_MODE_DEMO, sourceIds: [], status: 'partial' });
+      sourcesEl.innerHTML = expandHtml + '<div class="rag-placeholder">没有命中固定演示资料，未生成研报。请换一个对象或先加入本页私有资料。</div>';
+      reportEl.innerHTML = '<div class="rag-error">检索不完整 · 运行 ' + escHtml(run.runId) + ' · 未使用猜测内容</div>';
+      return;
+    }
+    sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">⌁ 规则重排中…</div>';
+    reportEl.innerHTML = '<div class="rag-searching">⌁ 等待规则重排完成…</div>';
+    const reranked = rerankResults(query, candidates);
+    const results = reranked.slice(0, 3);
+    if (!isCurrentGeneration(RAG_RUN, generation.token)) return;
+    const run = recordResearchRun({
+      scenario: 'research-report',
+      dataMode: DATA_MODE_DEMO,
+      sourceIds: results.map(function(n) { return n.sourceId; }),
+    });
+    sourcesEl.innerHTML = expandHtml
+      + '<div class="rerank-header">⌁ 关键词召回 → 规则重排 · ' + candidates.length + '→' + results.length + '</div>'
+      + results.map(renderRagSource).join('');
+    reportEl.innerHTML = buildRagReport(query, results, run);
+  } finally {
+    endGeneration(RAG_RUN, generation.token, 'runRagButton');
   }
-  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">⌁ 规则重排中…</div>';
-  reportEl.innerHTML = '<div class="rag-searching">⌁ 等待规则重排完成…</div>';
-  const reranked = rerankResults(query, candidates);
-  const results = reranked.slice(0, 3);
-  const run = recordResearchRun({
-    scenario: 'research-report',
-    dataMode: DATA_MODE_DEMO,
-    sourceIds: results.map(function(n) { return n.sourceId; }),
-  });
-  sourcesEl.innerHTML = expandHtml
-    + '<div class="rerank-header">⌁ 关键词召回 → 规则重排 · ' + candidates.length + '→' + results.length + '</div>'
-    + results.map(renderRagSource).join('');
-  reportEl.innerHTML = buildRagReport(query, results, run);
 }
 
 function renderRagSource(n, index) {
@@ -871,6 +946,9 @@ function getFbData() {
 function submitFeedback(input) {
   const payload = input || {};
   if (!payload.runId) return { accepted: false, reason: '缺少 runId，无法归因反馈' };
+  if (!RESEARCH_SESSION.runs.some(function(run) { return run.runId === payload.runId; })) {
+    return { accepted: false, reason: 'run 不存在，无法记录反馈' };
+  }
   if (FEEDBACK_LOG.some(function(item) { return item.runId === payload.runId; })) {
     return { accepted: false, reason: '每个 run 只能提交一次最终反馈' };
   }
@@ -887,7 +965,23 @@ function submitFeedback(input) {
 }
 
 function exportFeedback() {
-  return JSON.stringify({ version: STOCK_APP_VERSION, feedback: FEEDBACK_LOG }, null, 2);
+  return JSON.stringify({
+    version: STOCK_APP_VERSION,
+    session: {
+      sessionId: RESEARCH_SESSION.sessionId,
+      version: RESEARCH_SESSION.version,
+    },
+    runs: RESEARCH_SESSION.runs.map(function(run) {
+      return {
+        runId: run.runId,
+        scenario: run.scenario,
+        dataMode: run.dataMode,
+        sourceIds: cloneData(run.sourceIds),
+        status: run.status,
+      };
+    }),
+    feedback: cloneData(FEEDBACK_LOG),
+  }, null, 2);
 }
 
 function feedbackBarForElement(element) {
@@ -980,7 +1074,7 @@ const AGENT_TOOLS = [
     status: 'market',
     schema: { symbol: 'string (Yahoo格式)', range: '1d|5d|1mo', interval: '1d|1wk' },
     impl: async function(args) {
-      const snapshot = await fetchMarketData(args.symbol, args.range || '5d', args.interval || '1d', { mode: args.mode || currentDataMode });
+      const snapshot = await fetchMarketData(args.symbol, args.range || '5d', args.interval || '1d', { mode: args.mode || currentDataMode, signal: args.signal });
       return {
         data: snapshot.rows.slice(-5),
         snapshot: snapshot,
@@ -995,7 +1089,7 @@ const AGENT_TOOLS = [
     schema: { symbol: 'string', name: 'string' },
     impl: async function(args) {
       const value = cloneData(FUNDAMENTAL_MOCK[args.symbol] || DEFAULT_MOCK);
-      return { data: value, sourceIds: ['fundamental-demo-' + args.symbol], source: '演示数据' };
+      return { data: value, sourceIds: ['fundamental-demo-' + args.symbol], source: '未核验演示夹具' };
     }
   },
   {
@@ -1008,7 +1102,7 @@ const AGENT_TOOLS = [
       return {
         news: results.map(function(n) { return { title: n.title, date: n.date, source: n.source, sourceId: n.sourceId }; }),
         sourceIds: results.map(function(n) { return n.sourceId; }),
-        source: '演示资料',
+        source: '未核验演示夹具',
       };
     }
   },
@@ -1021,7 +1115,7 @@ const AGENT_TOOLS = [
       return {
         data: cloneData(SENTIMENT_MOCK[args.symbol] || DEFAULT_SENTIMENT),
         sourceIds: ['sentiment-demo-' + args.symbol],
-        source: '演示数据',
+        source: '未核验演示夹具',
       };
     }
   }
@@ -1061,16 +1155,20 @@ function addToolCall(stepEl, toolName, status, mode) {
   const callEl = document.createElement('div');
   callEl.className = 'tool-call tool-call-pending';
   const label = status === 'market'
-    ? ((mode || currentDataMode) === DATA_MODE_MARKET ? '可请求联网' : '演示行情')
-    : '演示数据';
+    ? ((mode || currentDataMode) === DATA_MODE_MARKET ? 'Yahoo Finance via ' + YAHOO_PROXY_NAMES[0] : '演示行情')
+    : '未核验演示夹具';
   callEl.innerHTML = '<span class="tool-status">⏳</span> ' + escHtml(toolName) + '() <span class="tool-badge tool-badge-' + status + '">' + escHtml(label) + '</span>';
   stepEl.querySelector('.agent-step-body').appendChild(callEl);
   return callEl;
 }
 
-function markToolCall(el, result) {
+function markToolCall(el, result, sourceText) {
   el.className = 'tool-call tool-call-' + result;
   el.querySelector('.tool-status').textContent = result === 'success' ? '✅' : '❌';
+  if (sourceText) {
+    const badge = el.querySelector('.tool-badge');
+    if (badge) badge.textContent = sourceText;
+  }
 }
 
 function renderAgentTools(selectedNames, mode) {
@@ -1081,8 +1179,8 @@ function renderAgentTools(selectedNames, mode) {
   target.innerHTML = AGENT_TOOLS.map(function(t) {
     const isSelected = selected.includes(t.name);
     const badge = t.status === 'market'
-      ? (selectedMode === DATA_MODE_MARKET ? '联网可选' : '演示行情')
-      : '演示数据';
+      ? (selectedMode === DATA_MODE_MARKET ? 'Yahoo Finance via ' + YAHOO_PROXY_NAMES[0] : '演示行情')
+      : '未核验演示夹具';
     return '<div class="agent-tool-card ' + (isSelected ? 'agent-tool-card-selected' : 'agent-tool-card-muted') + '">'
       + '<div class="agent-tool-name">' + escHtml(t.name) + '() <span class="tool-badge tool-badge-' + t.status + '">' + escHtml(badge) + '</span></div>'
       + '<div class="agent-tool-desc">' + escHtml(t.desc) + '</div>'
@@ -1101,78 +1199,94 @@ async function runAgent() {
     setTimeout(function() { inp.classList.remove('input-shake'); inp.style.borderColor = ''; }, 600);
     return;
   }
+  const generation = beginGeneration(AGENT_RUN, 'runAgentButton', true);
   const el = document.getElementById('agentProcess');
   el.innerHTML = '';
   const agentMode = currentDataMode;
   const selectedNames = selectAgentTools(question);
   renderAgentTools(selectedNames, agentMode);
-  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '本地任务分解：先识别对象，再只取与「' + question + '」相关的证据。');
-  const planEl = addAgentStep(el, 'plan', '📋 PLAN', '执行计划：\n1. 解析研究对象\n2. 调用：' + selectedNames.join('、') + '\n3. 汇总来源编号\n4. 保留待核查项并等待人工确认');
-  let params;
   try {
-    params = await parseIntent(question);
-  } catch (error) {
-    params = { symbol: null, name: question, unresolved: true };
-  }
-  if (params.unresolved) {
-    const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: [], status: 'partial' });
-    addAgentStep(el, 'observe', '👁 OBSERVE', '无法确认研究对象，已停止工具调用。');
-    const partialEl = document.createElement('div');
-    partialEl.className = 'agent-partial';
-    partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
-      + '<div class="agent-conclusion-body">未识别到映射内股票代码，未猜测标的，也未生成研究结论。请补充股票名称或 6 位代码。</div>'
-      + '<div class="agent-chain-note">状态：partial · 原因：研究对象未确认</div>';
-    el.appendChild(partialEl);
-    return;
-  }
-
-  const actEl = addAgentStep(el, 'act', '⚡ ACT', '执行工具调用...');
-  const toolResults = {};
-  const symbol = params.symbol;
-  const found = Object.entries(SYMBOL_MAP).find(function(e) { return e[1] === symbol; });
-  const stockName = found ? found[0] : (params.name || symbol);
-  const selectedTools = AGENT_TOOLS.filter(function(tool) { return selectedNames.includes(tool.name); });
-  const sourceIds = [];
-  const failures = [];
-  for (let i = 0; i < selectedTools.length; i++) {
-    const tool = selectedTools[i];
-    const callEl = addToolCall(actEl, tool.name, tool.status, agentMode);
+    addAgentStep(el, 'think', '🤔 THINK', '本地任务分解：先识别对象，再只取与「' + question + '」相关的证据。');
+    addAgentStep(el, 'plan', '📋 PLAN', '执行计划：\n1. 解析研究对象\n2. 调用：' + selectedNames.join('、') + '\n3. 汇总来源编号\n4. 保留待核查项并等待人工确认');
+    let params;
     try {
-      let args = {};
-      if (tool.name === 'get_price') args = { symbol: symbol, range: '5d', mode: agentMode };
-      else if (tool.name === 'get_valuation') args = { symbol: symbol, name: stockName };
-      else if (tool.name === 'search_news') args = { query: stockName, topK: 3 };
-      else if (tool.name === 'get_sentiment') args = { symbol: symbol };
-      toolResults[tool.name] = await tool.impl(args);
-      (toolResults[tool.name].sourceIds || []).forEach(function(sourceId) { if (!sourceIds.includes(sourceId)) sourceIds.push(sourceId); });
-      markToolCall(callEl, 'success');
-    } catch (e) {
-      toolResults[tool.name] = { error: e.message };
-      failures.push(tool.name + '：' + e.message);
-      markToolCall(callEl, 'error');
+      params = await parseIntent(question);
+    } catch (error) {
+      params = { symbol: null, name: question, unresolved: true };
     }
-    await sleep(160);
+    if (!isCurrentGeneration(AGENT_RUN, generation.token)) return;
+    if (params.unresolved) {
+      const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: [], status: 'partial' });
+      addAgentStep(el, 'observe', '👁 OBSERVE', '无法确认研究对象，已停止工具调用。');
+      const partialEl = document.createElement('div');
+      partialEl.className = 'agent-partial';
+      partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
+        + '<div class="agent-conclusion-body">未识别到映射内股票代码，未猜测标的，也未生成研究结论。请补充股票名称或 6 位代码。</div>'
+        + '<div class="agent-chain-note">状态：partial · 原因：研究对象未确认</div>';
+      el.appendChild(partialEl);
+      return;
+    }
+
+    const actEl = addAgentStep(el, 'act', '⚡ ACT', '执行工具调用...');
+    const toolResults = {};
+    const symbol = params.symbol;
+    const found = Object.entries(SYMBOL_MAP).find(function(e) { return e[1] === symbol; });
+    const stockName = found ? found[0] : (params.name || symbol);
+    const selectedTools = AGENT_TOOLS.filter(function(tool) { return selectedNames.includes(tool.name); });
+    const sourceIds = [];
+    const failures = [];
+    for (let i = 0; i < selectedTools.length; i++) {
+      if (!isCurrentGeneration(AGENT_RUN, generation.token)) return;
+      const tool = selectedTools[i];
+      const callEl = addToolCall(actEl, tool.name, tool.status, agentMode);
+      try {
+        let args = {};
+        if (tool.name === 'get_price') args = { symbol: symbol, range: '5d', mode: agentMode, signal: generation.signal };
+        else if (tool.name === 'get_valuation') args = { symbol: symbol, name: stockName };
+        else if (tool.name === 'search_news') args = { query: stockName, topK: 3 };
+        else if (tool.name === 'get_sentiment') args = { symbol: symbol };
+        toolResults[tool.name] = await tool.impl(args);
+        if (!isCurrentGeneration(AGENT_RUN, generation.token)) return;
+        (toolResults[tool.name].sourceIds || []).forEach(function(sourceId) { if (!sourceIds.includes(sourceId)) sourceIds.push(sourceId); });
+        const toolSnapshot = toolResults[tool.name].snapshot;
+        markToolCall(callEl, 'success', toolSnapshot ? sourceLabel(toolSnapshot) : toolResults[tool.name].source || '未核验演示夹具');
+      } catch (e) {
+        if (!isCurrentGeneration(AGENT_RUN, generation.token)) return;
+        toolResults[tool.name] = { error: e.message };
+        const failureSource = tool.status === 'market' ? '（Yahoo Finance via ' + yahooProxyDisclosure() + '）' : '';
+        failures.push(tool.name + failureSource + '：' + e.message);
+        markToolCall(callEl, 'error');
+      }
+      await sleep(160);
+    }
+    if (!isCurrentGeneration(AGENT_RUN, generation.token)) return;
+    const runStatus = failures.length ? 'partial' : 'success';
+    const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: sourceIds, status: runStatus });
+    addAgentStep(el, 'observe', '👁 OBSERVE', failures.length
+      ? '证据链不完整，已保留成功结果并停止总结。'
+      : '证据已按来源编号汇总，未生成买卖判断。');
+    if (failures.length) {
+      const partialEl = document.createElement('div');
+      partialEl.className = 'agent-partial';
+      partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
+        + '<div class="agent-conclusion-body">已完成：' + escHtml(Object.keys(toolResults).filter(function(name) { return !toolResults[name].error; }).join('、') || '无') + '。失败：' + escHtml(failures.join('；')) + '。</div>'
+        + '<div class="agent-chain-note">状态：partial · 请修复数据源或补充证据后人工回归。</div>';
+      el.appendChild(partialEl);
+      return;
+    }
+    const sourceLabels = Array.from(new Set(Object.keys(toolResults).map(function(name) {
+      const result = toolResults[name];
+      return result && result.snapshot ? sourceLabel(result.snapshot) : result && result.source;
+    }).filter(Boolean)));
+    const finalEl = document.createElement('div');
+    finalEl.className = 'agent-conclusion agent-evidence-summary';
+    finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 证据汇总 <span class="ai-tag">本地规则</span></div>'
+      + '<div class="agent-conclusion-body">已围绕「' + escHtml(stockName) + '」完成 ' + selectedTools.length + ' 个任务相关工具调用，来源编号：' + escHtml(sourceIds.join('、') || '无') + '；来源：' + escHtml(sourceLabels.join('、') || '未标注') + '。结果仅用于研究流程展示，不输出交易方向。</div>'
+      + '<div class="agent-chain-note">推理链路：THINK → PLAN → ACT(' + selectedTools.length + '个工具) → OBSERVE → 人工确认 · ' + escHtml(run.runId) + '</div>';
+    el.appendChild(finalEl);
+  } finally {
+    endGeneration(AGENT_RUN, generation.token, 'runAgentButton');
   }
-  const runStatus = failures.length ? 'partial' : 'success';
-  const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: sourceIds, status: runStatus });
-  const obsEl = addAgentStep(el, 'observe', '👁 OBSERVE', failures.length
-    ? '证据链不完整，已保留成功结果并停止总结。'
-    : '证据已按来源编号汇总，未生成买卖判断。');
-  if (failures.length) {
-    const partialEl = document.createElement('div');
-    partialEl.className = 'agent-partial';
-    partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
-      + '<div class="agent-conclusion-body">已完成：' + escHtml(Object.keys(toolResults).filter(function(name) { return !toolResults[name].error; }).join('、') || '无') + '。失败：' + escHtml(failures.join('；')) + '。</div>'
-      + '<div class="agent-chain-note">状态：partial · 请修复数据源或补充证据后人工回归。</div>';
-    el.appendChild(partialEl);
-    return;
-  }
-  const finalEl = document.createElement('div');
-  finalEl.className = 'agent-conclusion agent-evidence-summary';
-  finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 证据汇总 <span class="ai-tag">本地规则</span></div>'
-    + '<div class="agent-conclusion-body">已围绕「' + escHtml(stockName) + '」完成 ' + selectedTools.length + ' 个任务相关工具调用，来源编号：' + escHtml(sourceIds.join('、') || '无') + '。结果仅用于研究流程展示，不输出交易方向。</div>'
-    + '<div class="agent-chain-note">推理链路：THINK → PLAN → ACT(' + selectedTools.length + '个工具) → OBSERVE → 人工确认 · ' + escHtml(run.runId) + '</div>';
-  el.appendChild(finalEl);
 }
 
 function buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment, diag, run) {
@@ -1180,7 +1294,9 @@ function buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment
     const change = row.changePct === null ? '-' : (row.changePct >= 0 ? '+' : '') + row.changePct + '%';
     return '<tr><td>' + escHtml(row.date) + '</td><td>' + escHtml(formatRowValue(row.close)) + '</td><td class="' + (row.changePct < 0 ? 'value-negative' : 'value-positive') + '">' + escHtml(change) + '</td></tr>';
   }).join('');
-  const sentimentBar = Math.round((sentiment.score / 5) * 100);
+  const hasSentimentScore = Number.isFinite(sentiment.score);
+  const sentimentBar = hasSentimentScore ? Math.round((sentiment.score / 5) * 100) : 0;
+  const sentimentScore = hasSentimentScore ? sentiment.score.toFixed(1) + ' / 5' : '—';
   const pending = (diag.pendingChecks || []).map(function(item) { return '<li>' + escHtml(item) + '</li>'; }).join('');
   return '<div class="diag-card">'
     + '<div class="diag-header">'
@@ -1193,7 +1309,7 @@ function buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment
     + '<table class="diag-mini-table"><tr><th>日期</th><th>收盘</th><th>涨跌</th></tr>' + trendRows + '</table>'
     + (pctChange ? '<div class="diag-pct ' + (parseFloat(pctChange) >= 0 ? 'value-positive' : 'value-negative') + '">5日区间 ' + (pctChange >= 0 ? '+' : '') + escHtml(pctChange) + '%</div>' : '')
     + '</div>'
-    + '<div class="diag-panel"><div class="diag-panel-title">🏢 基本面 <span class="mock-tag">演示数据</span></div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">🏢 基本面 <span class="mock-tag">未核验演示夹具</span></div>'
     + '<div class="diag-kv-list">'
     + '<div class="diag-kv"><span>市盈率</span><b>' + escHtml(String(fundamental.pe)) + '</b></div>'
     + '<div class="diag-kv"><span>市净率</span><b>' + escHtml(String(fundamental.pb)) + '</b></div>'
@@ -1201,8 +1317,8 @@ function buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment
     + '<div class="diag-kv"><span>ROE</span><b>' + escHtml(String(fundamental.roe)) + '</b></div>'
     + '<div class="diag-kv"><span>毛利率</span><b>' + escHtml(String(fundamental.grossMargin)) + '</b></div>'
     + '</div></div>'
-    + '<div class="diag-panel"><div class="diag-panel-title">📰 情绪证据 <span class="mock-tag">演示数据</span></div>'
-    + '<div class="sentiment-score">' + sentiment.score.toFixed(1) + ' / 5</div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">📰 情绪证据 <span class="mock-tag">未核验演示夹具</span></div>'
+    + '<div class="sentiment-score">' + sentimentScore + '</div>'
     + '<div class="sentiment-bar-wrap"><div class="sentiment-bar" style="width:' + sentimentBar + '%"></div></div>'
     + '<div class="sentiment-label">' + escHtml(sentiment.label) + '</div>'
     + '<div class="sentiment-news">' + sentiment.news.map(function(n) { return '<div class="sentiment-news-item">· ' + escHtml(n) + '</div>'; }).join('') + '</div>'
@@ -1231,7 +1347,7 @@ const RADAR_DATA = {
   ],
   movers: [
     { name: '寒武纪', symbol: '688256.SS', change: 8.3, volume: '高', reason: 'AI芯片订单增加' },
-    { name: '东方财富', symbol: '300059.SZ', change: 5.1, volume: '高', reason: '市场活跃度提升' },
+     { name: '证券服务样本', symbol: '演示标的-02', change: 5.1, volume: '高', reason: '市场活跃度提升（演示字段）' },
     { name: '药明康德', symbol: '603259.SS', change: -4.2, volume: '中', reason: '海外政策压力' },
   ],
   sentimentTrend: [

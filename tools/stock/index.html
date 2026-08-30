@@ -450,7 +450,7 @@ const STATIC_RUNTIME_MODE = 'mock';
 
 /* 深化版交互状态：模式、证据来源、反馈与 partial 状态共用同一套层级。 */
 .mode-strip { display:flex; align-items:center; gap:10px; padding:8px 16px; background:var(--bg-sec); border-bottom:1px solid var(--border); flex-shrink:0; min-height:48px; }
-.mode-label { font-size:11px; color:var(--text-muted); font-weight:700; letter-spacing:.04em; }
+.mode-label { font-size:11px; color:var(--text-muted); font-weight:700; letter-spacing:.04em; white-space:nowrap; }
 .mode-switch { display:inline-flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
 .mode-btn { min-height:32px; padding:5px 10px; border:0; border-right:1px solid var(--border); background:var(--card); color:var(--text-sec); font-size:11px; cursor:pointer; }
 .mode-btn:last-child { border-right:0; }
@@ -459,6 +459,9 @@ const STATIC_RUNTIME_MODE = 'mock';
 .mode-btn[data-mode-choice="market"].active { background:var(--accent-cyan); }
 .mode-status { color:var(--text-sec); font-size:11px; }
 .session-summary { margin-left:auto; color:var(--text-muted); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48%; }
+.network-disclosure { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; padding:7px 16px; background:var(--surface-soft); border-bottom:1px solid var(--border); color:var(--text-sec); font-size:10px; line-height:1.6; flex-shrink:0; }
+.network-disclosure strong { color:var(--accent-cyan); }
+.network-disclosure code { color:var(--text); font-family:monospace; }
 .market-provenance, .diag-provenance { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; margin-top:9px; padding:7px 9px; background:var(--surface-soft); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-muted); font-size:10px; }
 .source-badge { color:var(--accent); font-weight:700; }
 .market-error-state { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--accent-red); background:var(--danger-soft); border-radius:var(--radius-sm); color:var(--text-sec); }
@@ -502,6 +505,7 @@ const STATIC_RUNTIME_MODE = 'mock';
 
 @media (max-width: 800px) {
   .mode-strip { flex-wrap:wrap; gap:6px 8px; padding:7px 12px; }
+  .network-disclosure { padding:7px 12px; }
   .session-summary { width:100%; max-width:none; margin-left:0; }
   .diag-panels { grid-template-columns:1fr; }
   .rag-left { width:230px; }
@@ -539,8 +543,15 @@ const STATIC_RUNTIME_MODE = 'mock';
     <button class="mode-btn active" id="dataModeDemo" data-mode-choice="demo" aria-pressed="true" type="button" onclick="setDataMode('demo')">演示快照</button>
     <button class="mode-btn" id="dataModeMarket" data-mode-choice="market" aria-pressed="false" type="button" onclick="setDataMode('market')">联网行情</button>
   </div>
-  <span class="mode-status" id="dataModeStatus">默认不联网，使用固定演示快照。</span>
-  <span class="session-summary" id="sessionSummary">研究会话 session-local-001 · 0 次运行 · 仅本页内存</span>
+  <span class="mode-status" id="dataModeStatus">默认不发起行情数据请求，使用固定演示快照。</span>
+  <span class="session-summary" id="sessionSummary">研究会话初始化中 · 0 次运行 · 仅本页内存</span>
+</div>
+<div class="network-disclosure" id="networkDisclosure" aria-label="联网前说明">
+  <strong>联网前说明</strong>
+  <span>仅切换“联网行情”并提交后尝试请求</span>
+  <span>代理顺序：<code>corsproxy.io</code> → <code>allorigins.win</code> → <code>codetabs.com</code></span>
+  <span>发送字段：<code>symbol</code> / <code>range</code> / <code>interval</code></span>
+  <span>风险：公开第三方代理存在响应完整性、可用性与隐私风险；请勿输入额外敏感信息。</span>
 </div>
 
 <nav class="tab-nav">
@@ -604,7 +615,7 @@ const STATIC_RUNTIME_MODE = 'mock';
 <div class="tab-panel" id="tab-diagnosis">
   <div class="diagnosis-input-bar">
     <input class="diag-input" id="diagInput" aria-label="诊断股票名称" placeholder="输入股票名称，如：茅台、宁德时代、比亚迪" />
-    <button class="send-btn" onclick="runDiagnosis()">生成诊断报告</button>
+    <button class="send-btn" id="runDiagnosisButton" onclick="runDiagnosis()">生成诊断报告</button>
   </div>
   <div class="diagnosis-content" id="diagContent">
     <div class="welcome">
@@ -628,7 +639,7 @@ const STATIC_RUNTIME_MODE = 'mock';
         <button class="kb-tab-btn" onclick="switchKbTab('private')" id="kbTabPrivate">🗂️ 私有知识库</button>
       </div>
       <div class="kb-tab-panel active" id="kbPanelMarket">
-        <div class="kb-meta">固定新闻/财报样本 · 来源编号与 asOf 随引用展示 · 不代表当前市场</div>
+        <div class="kb-meta">未核验演示夹具 · 来源编号与 asOf 随引用展示 · 不代表当前市场</div>
         <div class="rag-left-body" id="ragSources">
           <div class="rag-placeholder">等待检索...</div>
         </div>
@@ -736,7 +747,7 @@ const STATIC_RUNTIME_MODE = 'mock';
         <div class="compliance-card">
           <div class="cc-icon">🏷️</div>
           <div class="cc-title">AI 内容标注</div>
-          <div class="cc-body">演示快照、联网成功、联网失败、用户资料和本地规则分别标注；来源、asOf 与 fetchedAt 不混写。</div>
+          <div class="cc-body">演示快照、联网成功、联网失败、未核验演示夹具、用户资料和本地规则分别标注；来源、asOf 与 fetchedAt 不混写。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">⚖️</div>
@@ -746,7 +757,7 @@ const STATIC_RUNTIME_MODE = 'mock';
         <div class="compliance-card">
           <div class="cc-icon">🔒</div>
           <div class="cc-title">数据安全</div>
-          <div class="cc-body">本静态页面不保存密钥、不接入模型服务；联网行情只在用户主动选择并提交后尝试公开代理，失败会原样停留。<code>proxy.py</code> 是未参与公开页面的历史本地工具，本页不调用它。</div>
+          <div class="cc-body">本静态页面不保存密钥、不接入模型服务；默认不发起行情数据请求，联网行情只在用户主动选择并提交后尝试公开代理，失败会原样停留。站点统计脚本可能按全站设置联网。<code>proxy.py</code> 是未参与公开页面的历史本地工具，本页不调用它。</div>
         </div>
       </div>
     </div>
@@ -766,7 +777,7 @@ const STATIC_RUNTIME_MODE = 'mock';
           </div>
         </div>
         <div class="lineage-source">
-          <div class="lineage-node source-node">固定新闻/财报样本<br/><span class="lineage-meta">sourceId · evidenceLevel · asOf</span></div>
+          <div class="lineage-node source-node">未核验新闻/财报主题夹具<br/><span class="lineage-meta">sourceId · evidenceLevel · asOf</span></div>
           <div class="lineage-arrow">↓</div>
           <div class="lineage-node process-node">关键词索引层<br/><span class="lineage-meta">同义词扩展 · 命中评分 · 规则重排</span></div>
           <div class="lineage-arrow">↓</div>
@@ -776,7 +787,7 @@ const STATIC_RUNTIME_MODE = 'mock';
           </div>
         </div>
         <div class="lineage-source">
-          <div class="lineage-node source-node">演示基本面/情绪样本<br/><span class="lineage-meta">仅用于结构化流程，不代表当前值</span></div>
+          <div class="lineage-node source-node">未核验基本面/情绪夹具<br/><span class="lineage-meta">仅用于结构化流程，不代表当前值</span></div>
           <div class="lineage-arrow">↓</div>
           <div class="lineage-targets">
             <div class="lineage-node target-node">Tab2 基本面</div>
@@ -795,7 +806,8 @@ const STATIC_RUNTIME_MODE = 'mock';
           <tbody>
             <tr><td>演示快照</td><td>固定本地行情样本</td><td>marketAsOf / fetchedAt</td><td>默认查询、诊断、Agent get_price</td></tr>
             <tr><td>联网成功</td><td>用户主动触发的 Yahoo 响应</td><td>source / transport / 时间</td><td>显式网络查询</td></tr>
-            <tr><td>固定资料</td><td>本地新闻、基本面和情绪样本</td><td>sourceId / evidenceLevel / asOf</td><td>RAG、诊断、Agent</td></tr>
+            <tr><td>未核验演示夹具</td><td>本地新闻主题、基本面和情绪结构样本</td><td>sourceId / evidenceLevel / asOf</td><td>RAG、诊断、Agent</td></tr>
+            <tr><td>站点统计</td><td>共享统计脚本可能按全站设置联网</td><td>由共享 analytics 管理</td><td>不属于行情数据源</td></tr>
             <tr><td colspan="4">本页只展示来源覆盖、证据完整度和待核查项，不把它们称作预测置信度或效果指标。</td></tr>
           </tbody>
         </table>

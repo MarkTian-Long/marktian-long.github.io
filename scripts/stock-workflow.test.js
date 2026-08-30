@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const { webcrypto } = require('node:crypto');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -11,6 +12,7 @@ function loadStockApi(options = {}) {
   const context = {
     AbortController,
     AbortSignal,
+    crypto: webcrypto,
     URL,
     URLSearchParams,
     console,
@@ -37,7 +39,8 @@ globalThis.__stockWorkflow = {
   getResearchSession: typeof getResearchSession === 'function' ? getResearchSession : null,
   submitFeedback: typeof submitFeedback === 'function' ? submitFeedback : null,
   exportFeedback: typeof exportFeedback === 'function' ? exportFeedback : null,
-  selectAgentTools: typeof selectAgentTools === 'function' ? selectAgentTools : null
+  selectAgentTools: typeof selectAgentTools === 'function' ? selectAgentTools : null,
+  searchNews: typeof searchNews === 'function' ? searchNews : null
 };`,
     context,
   );
@@ -137,6 +140,17 @@ test('explicit network failure rejects and never silently replaces the result wi
   assert.equal(attempts, 3);
 });
 
+test('news fixtures are explicitly unverified and do not impersonate primary or real-media sources', () => {
+  const api = loadStockApi();
+  assert.equal(typeof api.searchNews, 'function');
+  const results = api.searchNews('茅台', 3);
+  assert.ok(results.length > 0);
+  assert.ok(results.every((item) => item.source === '未核验演示夹具'));
+  assert.ok(results.every((item) => item.evidenceLevel === '未核验演示夹具'));
+  assert.doesNotMatch(JSON.stringify(results), /official|mainstream|一手资料|公司公告|新浪财经|东方财富|证券时报|财报系统/);
+  assert.doesNotMatch(JSON.stringify(results), /净利润同比|出货量同比|年产能|客户数突破/);
+});
+
 test('research session records a run without inventing production metrics', () => {
   const api = loadStockApi();
   assert.equal(typeof api.recordResearchRun, 'function');
@@ -189,19 +203,30 @@ test('agent selects tools from the research task instead of always running every
   assert.deepEqual(Array.from(api.selectAgentTools('招商银行市场情绪与舆情')), ['search_news', 'get_sentiment']);
 });
 
-test('feedback is one final decision per run and can be exported as JSON', () => {
+test('feedback is one final decision per real run and export contains only minimal session metadata', () => {
   const api = loadStockApi();
   assert.equal(typeof api.submitFeedback, 'function');
   assert.equal(typeof api.exportFeedback, 'function');
 
+  const unknown = api.submitFeedback({
+    runId: 'run-999',
+    decision: 'adopt',
+  });
+  assert.equal(unknown.accepted, false);
+
+  const run = api.recordResearchRun({
+    scenario: 'research-report',
+    dataMode: 'demo',
+    sourceIds: ['market-news-01'],
+  });
   const first = api.submitFeedback({
-    runId: 'run-001',
+    runId: run.runId,
     decision: 'revise',
     issueType: 'citation',
     target: 'claim-02',
   });
   const duplicate = api.submitFeedback({
-    runId: 'run-001',
+    runId: run.runId,
     decision: 'adopt',
     issueType: 'none',
     target: 'report',
@@ -211,7 +236,20 @@ test('feedback is one final decision per run and can be exported as JSON', () =>
   assert.equal(duplicate.accepted, false);
   assert.match(duplicate.reason, /一次/);
   const exported = JSON.parse(api.exportFeedback());
-  assert.equal(exported.feedback[0].runId, 'run-001');
+  assert.deepEqual(Object.keys(exported), ['version', 'session', 'runs', 'feedback']);
+  assert.deepEqual(Object.keys(exported.session).sort(), ['sessionId', 'version']);
+  assert.deepEqual(Object.keys(exported.runs[0]).sort(), ['dataMode', 'runId', 'scenario', 'sourceIds', 'status']);
+  assert.equal(exported.runs[0].runId, run.runId);
+  assert.equal(exported.feedback[0].runId, run.runId);
+  assert.doesNotMatch(JSON.stringify(exported), /茅台|私有资料|secret/i);
+});
+
+test('session ids are unique per page context', () => {
+  const first = loadStockApi().getResearchSession().sessionId;
+  const second = loadStockApi().getResearchSession().sessionId;
+  assert.match(first, /^session-local-/);
+  assert.match(second, /^session-local-/);
+  assert.notEqual(first, second);
 });
 
 test('claim and governance source files do not advertise unimplemented capabilities', () => {
@@ -223,6 +261,16 @@ test('claim and governance source files do not advertise unimplemented capabilit
   const contents = files.map((file) => fs.readFileSync(path.join(repoRoot, file), 'utf8')).join('\n');
 
   assert.doesNotMatch(contents, /LLM\s*实时生成|引用准确率达标|≤3\s*次|Secrets\s*注入|35万条/);
+  assert.match(contents, /未核验演示夹具/);
+  assert.doesNotMatch(contents, /official|mainstream|一手资料|公司公告|新浪财经|东方财富|证券时报|财报系统/);
+  assert.doesNotMatch(contents, /净利润同比|出货量同比|年产能15万辆|客户数突破2亿/);
+  assert.match(contents, /默认不发起行情数据请求/);
+  assert.doesNotMatch(contents, /默认不联网/);
+  assert.match(contents, /corsproxy\.io[\s\S]*allorigins\.win[\s\S]*codetabs\.com/);
+  assert.match(contents, /symbol[\s\S]*range[\s\S]*interval/);
+  assert.match(contents, /完整性[\s\S]*隐私风险/);
+  assert.match(contents, /站点统计[\s\S]*可能[\s\S]*联网/);
+  assert.match(contents, /Yahoo Finance via/);
   const page = fs.readFileSync(path.join(repoRoot, 'tools/stock/index.html'), 'utf8');
   assert.match(page, /proxy\.py.*未参与公开页面的历史本地工具/);
   assert.doesNotMatch(page, /text2vec-base-chinese|异常值过滤/);
