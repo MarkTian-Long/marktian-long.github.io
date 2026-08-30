@@ -5,8 +5,8 @@
   "as_of": "2026-05-19",
   "observed_at": "2026-05-19",
   "reviewed_at": "2026-08-30",
-  "collection_mode": "manual_reviewed",
-  "verification_level": "manual_reviewed",
+  "collection_mode": "structure_checked",
+  "verification_level": "structure_checked",
   "review_scope": "structure_only",
   "facts_verified_at": null,
   "featured_id": "signal-github-ai-01",
@@ -32,7 +32,7 @@
           "url": "https://github.com/openclaw/openclaw",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -72,7 +72,7 @@
           "url": "https://github.com/mattpocock/skills",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -112,7 +112,7 @@
           "url": "https://github.com/pixelle/pixelle-video",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -152,7 +152,7 @@
           "url": "https://github.com/NousResearch/hermes-agent",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -192,7 +192,7 @@
           "url": "https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -232,7 +232,7 @@
           "url": "https://github.com/pi-dev/pi-mono",
           "source_id": "source-github",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -287,7 +287,7 @@
           "url": "https://www.producthunt.com/products/claude-code",
           "source_id": "source-product-hunt",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -327,7 +327,7 @@
           "url": "https://www.producthunt.com/products/vivago-video-agent",
           "source_id": "source-product-hunt",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -367,7 +367,7 @@
           "url": "https://www.producthunt.com/products/magic-patterns",
           "source_id": "source-product-hunt",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -407,7 +407,7 @@
           "url": "https://www.producthunt.com/products/wispr-flow",
           "source_id": "source-product-hunt",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -447,7 +447,7 @@
           "url": "https://www.producthunt.com/products/coderabbit",
           "source_id": "source-product-hunt",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -502,7 +502,7 @@
           "url": "https://io.google/2026/",
           "source_id": "source-hacker-news",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -542,7 +542,7 @@
           "url": "https://thehackernews.com/2026/05/2026-year-of-ai-assisted-attacks.html",
           "source_id": "source-hacker-news",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -582,7 +582,7 @@
           "url": "https://news.ycombinator.com/item?id=48086001",
           "source_id": "source-hacker-news",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -622,7 +622,7 @@
           "url": "https://news.ycombinator.com/item?id=48085993",
           "source_id": "source-hacker-news",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -662,7 +662,7 @@
           "url": "https://medium.com/@jose.i.ruacho/youre-not-paying-for-ai-you-re-paying-for-a-subsidy-40ee4aa3c48d",
           "source_id": "source-hacker-news",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -717,7 +717,7 @@
           "url": "https://techcrunch.com/2026/05/15/runway-started-by-helping-filmmakers-now-it-wants-to-beat-google-at-ai/",
           "source_id": "source-overseas",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -757,7 +757,7 @@
           "url": "https://techstartups.com/2026/05/18/top-startup-and-tech-funding-news-may-18-2025/",
           "source_id": "source-overseas",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -797,7 +797,7 @@
           "url": "https://boldnewsonline.com/indias-ai-startup-ecosystem-expands-rapidly/",
           "source_id": "source-overseas",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -837,7 +837,7 @@
           "url": "https://techcrunch.com/2026/05/11/digg-tries-again-this-time-as-an-ai-news-aggregator/",
           "source_id": "source-overseas",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -892,7 +892,7 @@
           "url": "https://www.qbitai.com/2026/05/414432.html",
           "source_id": "source-china-ai",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -932,7 +932,7 @@
           "url": "https://36kr.com/p/3807808383344384",
           "source_id": "source-china-ai",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -972,7 +972,7 @@
           "url": "https://36kr.com/p/3806082901122568",
           "source_id": "source-china-ai",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "adopt",
             "watch"
@@ -1012,7 +1012,7 @@
           "url": "https://deepseek.csdn.net/69f407d054b52172bc711426.html",
           "source_id": "source-china-ai",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "watch",
             "deep_dive"
@@ -1052,7 +1052,7 @@
           "url": "https://www.36kr.com/p/3696839539338881",
           "source_id": "source-china-ai",
           "observed_at": "2026-05-19",
-          "verification_level": "manual_reviewed",
+          "verification_level": "structure_checked",
           "actions": [
             "compare",
             "watch"
@@ -1089,7 +1089,7 @@
   ],
   "method": {
     "freshness_policy": "0-7 天本期；8-30 天建议复核；超过 30 天为历史快照，不代表当前热度。",
-    "collection_boundary": "网络抓取只生成候选；公开快照只接受人工复核后的完整 JSON。",
+    "collection_boundary": "网络抓取只生成候选；候选须先完成结构检查，再逐条事实核验后才可公开写入完整 JSON。",
     "limitation": "本快照保留 2026-05-19 的历史记录，未在本轮联网核对事实变化。",
     "evidence_policy": "review_scope=structure_only 时，judgment.evidence 仅表示来源摘要或历史观察记录，不是独立事实证据。"
   }

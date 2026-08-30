@@ -47,7 +47,7 @@ function validItem(overrides = {}) {
     url: 'https://example.com/signals/example',
     source_id: SOURCE.id,
     observed_at: '2026-08-30',
-    verification_level: 'manual_reviewed',
+    verification_level: 'structure_checked',
     actions: ['watch', 'deep_dive'],
     tags: ['AI'],
     metrics: [{
@@ -79,8 +79,8 @@ function validSnapshot(overrides = {}) {
     as_of: '2026-08-30',
     observed_at: '2026-08-30',
     reviewed_at: '2026-08-30',
-    collection_mode: 'manual_reviewed',
-    verification_level: 'manual_reviewed',
+    collection_mode: 'structure_checked',
+    verification_level: 'structure_checked',
     review_scope: 'structure_only',
     facts_verified_at: null,
     featured_id: 'signal-example',
@@ -103,6 +103,23 @@ function validSnapshot(overrides = {}) {
   };
 }
 
+function markFactsVerified(snapshot) {
+  const verified = structuredClone(snapshot);
+  verified.collection_mode = 'manual_fact_reviewed';
+  verified.verification_level = 'manual_fact_reviewed';
+  verified.review_scope = 'facts_verified';
+  verified.facts_verified_at = '2026-08-30';
+  verified.method.evidence_policy = 'judgment.evidence records fact-checked source support, not causal proof.';
+  verified.boards.forEach(board => board.items.forEach(item => {
+    item.verification_level = 'manual_fact_reviewed';
+  }));
+  return verified;
+}
+
+function factVerifiedSnapshot(overrides = {}) {
+  return { ...markFactsVerified(validSnapshot()), ...overrides };
+}
+
 test('published trends data satisfies the v2 snapshot contract', () => {
   const dataPath = path.join(repoRoot, 'tools', 'trends', 'data', 'trends.json');
   const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
@@ -110,9 +127,12 @@ test('published trends data satisfies the v2 snapshot contract', () => {
   assert.equal(data.contract_version, 2);
   assert.equal(typeof data.snapshot_id, 'string');
   assert.equal(typeof data.collection_mode, 'string');
+  assert.equal(data.collection_mode, 'structure_checked');
+  assert.equal(data.verification_level, 'structure_checked');
   assert.equal(typeof data.featured_id, 'string');
   assert.equal(data.review_scope, 'structure_only');
   assert.equal(data.facts_verified_at, null);
+  assert.doesNotMatch(JSON.stringify(data), /manual_reviewed/);
   assert.match(data.method.evidence_policy, /历史观察记录|非独立证据/);
 });
 
@@ -156,6 +176,14 @@ test('v2 validation requires stable ids, review metadata, source time, ranking b
 
 test('review scope separates structure checks from fact verification', () => {
   assert.doesNotThrow(() => contract.assertValidSnapshot(validSnapshot()));
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    collection_mode: 'manual_reviewed',
+    verification_level: 'manual_reviewed',
+  })), /structure_checked|manual_fact_reviewed|legal/i);
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    collection_mode: 'manual_fact_reviewed',
+    verification_level: 'manual_fact_reviewed',
+  })), /facts_verified|facts_verified_at|structure_only/i);
   assert.throws(() => contract.assertValidSnapshot(validSnapshot({ review_scope: undefined })), /review_scope/i);
   assert.throws(() => contract.assertValidSnapshot(validSnapshot({
     facts_verified_at: '2026-08-30',
@@ -173,11 +201,22 @@ test('review scope separates structure checks from fact verification', () => {
   assert.doesNotThrow(() => contract.assertValidSnapshot(validSnapshot({
     review_scope: 'facts_verified',
     facts_verified_at: '2026-08-30',
+    collection_mode: 'manual_fact_reviewed',
+    verification_level: 'manual_fact_reviewed',
+    boards: [{
+      ...validSnapshot().boards[0],
+      items: [validItem({ verification_level: 'manual_fact_reviewed' })],
+    }],
     method: {
       ...validSnapshot().method,
       evidence_policy: 'judgment.evidence records fact-checked source support, not causal proof.',
     },
   })));
+  assert.doesNotThrow(() => contract.assertValidSnapshot(factVerifiedSnapshot()));
+  assert.throws(() => contract.assertValidSnapshot(factVerifiedSnapshot({ facts_verified_at: null })), /facts_verified_at|事实/i);
+  const partiallyVerified = factVerifiedSnapshot();
+  partiallyVerified.boards[0].items[0].verification_level = 'structure_checked';
+  assert.throws(() => contract.assertValidSnapshot(partiallyVerified), /manual_fact_reviewed|逐条|verification/i);
   assert.throws(() => contract.assertValidSnapshot(validSnapshot({
     review_scope: 'facts_verified',
     facts_verified_at: '2026-08-31',
@@ -247,7 +286,18 @@ test('unreviewed records are not publishable even when their shape is otherwise 
     }],
   });
   assert.throws(() => contract.assertValidSnapshot(snapshot), /review|复核|verification/i);
-  assert.doesNotThrow(() => contract.assertValidSnapshot(snapshot, { allowCandidate: true }));
+  const candidateSnapshot = {
+    ...snapshot,
+    snapshot_status: 'review',
+    collection_mode: 'candidate',
+    verification_level: 'candidate',
+    review_scope: 'candidate',
+    method: {
+      ...snapshot.method,
+      evidence_policy: 'Candidate summaries are source records, not independent factual evidence.',
+    },
+  };
+  assert.doesNotThrow(() => contract.assertValidSnapshot(candidateSnapshot, { allowCandidate: true }));
 });
 
 test('freshness uses an explicit clock and has exact 7/8/30/31 day boundaries', () => {
@@ -348,8 +398,19 @@ test('write accepts only a reviewed contract input and a bounded repository data
   const before = sha256(publicDataPath);
   fs.mkdirSync(candidateRoot, { recursive: true });
   fs.mkdirSync(publicTempRoot, { recursive: true });
-  fs.writeFileSync(inputPath, fs.readFileSync(publicDataPath));
+  const reviewed = markFactsVerified(JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
+  fs.writeFileSync(inputPath, JSON.stringify(reviewed));
   try {
+    const structureOnlyPath = path.join(candidateRoot, 'structure-only.json');
+    fs.writeFileSync(structureOnlyPath, fs.readFileSync(publicDataPath));
+    const structureRejected = failCli([
+      '--write',
+      '--input', structureOnlyPath,
+      '--target', path.join(publicTempRoot, 'should-not-write-structure.json'),
+    ]);
+    assert.notEqual(structureRejected.status, 0);
+    assert.match(`${structureRejected.stdout}\n${structureRejected.stderr}`, /manual_fact_reviewed|facts_verified|事实/i);
+
     runCli([
       '--write',
       '--input', path.relative(scriptsRoot, inputPath),
@@ -357,11 +418,11 @@ test('write accepts only a reviewed contract input and a bounded repository data
     ]);
     assert.equal(fs.existsSync(outputPath), true);
     assert.equal(sha256(publicDataPath), before);
-    assert.deepEqual(JSON.parse(fs.readFileSync(outputPath, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
+    assert.deepEqual(JSON.parse(fs.readFileSync(outputPath, 'utf8')), reviewed);
     const absoluteOutputPath = path.join(publicTempRoot, 'absolute-copy.json');
     runCli(['--write', '--input', inputPath, '--target', absoluteOutputPath]);
     assert.equal(fs.existsSync(absoluteOutputPath), true);
-    assert.deepEqual(JSON.parse(fs.readFileSync(absoluteOutputPath, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
+    assert.deepEqual(JSON.parse(fs.readFileSync(absoluteOutputPath, 'utf8')), reviewed);
 
     const unsafeTargets = [
       path.join(publicTempRoot, '..', '..', 'escape.json'),
@@ -396,7 +457,7 @@ test('write completes all gates before atomic rename and cleans a failed tempora
   const targetPath = path.join(publicTempRoot, 'published.json');
   fs.mkdirSync(candidateRoot, { recursive: true });
   fs.mkdirSync(publicTempRoot, { recursive: true });
-  fs.writeFileSync(inputPath, fs.readFileSync(publicDataPath));
+  fs.writeFileSync(inputPath, JSON.stringify(markFactsVerified(JSON.parse(fs.readFileSync(publicDataPath, 'utf8')))));
   fs.writeFileSync(targetPath, 'original target\n');
   const before = sha256(targetPath);
   const failingFileSystem = {

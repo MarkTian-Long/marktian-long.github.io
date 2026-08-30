@@ -1,6 +1,6 @@
 /**
  * fetch-trends.js
- * 生成候选或校验、写入人工复核后的热点快照
+ * 生成候选或校验、写入逐条事实核验后的热点快照
  *
  * 用法：
  *   cd scripts
@@ -261,7 +261,7 @@ async function fetchProductHunt() {
     });
   });
 
-  // 解析失败不生成榜单页占位项；候选输出会记录诊断状态，等待人工复核。
+  // 解析失败不生成榜单页占位项；候选输出会记录诊断状态，等待结构检查与事实核验。
   if (items.length === 0) {
     console.log('  ⚠ Product Hunt 解析失败（页面结构可能已变），不生成占位项');
   }
@@ -346,7 +346,7 @@ async function fetchOverseasAI() {
 const BOARD_CONFIG = Object.freeze([
   { id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: 'GitHub Trending 的 AI 相关仓库候选，记录来源周榜与新增 Stars 口径。', source_id: 'source-github', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源周榜的新增 Stars 排序；不同平台不直接横比', collect: () => fetchGithubTrending('weekly') },
   { id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: 'Product Hunt 月榜候选，记录来源页面当时的产品票数口径。', source_id: 'source-product-hunt', source_name: 'Product Hunt', source_url: 'https://www.producthunt.com/leaderboard/monthly', ranking_basis: '按来源月榜的票数排序；历史榜单不代表当前产品热度', collect: () => fetchProductHunt() },
-  { id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: 'Hacker News Top Stories 候选，保留 API 返回顺序并展示每条 story 的 Points。', source_id: 'source-hacker-news', source_name: 'Hacker News Top Stories', source_url: 'https://hacker-news.firebaseio.com/v0/topstories.json', ranking_basis: '按 Hacker News Top Stories API 返回顺序记录；展示 Points，不等于产品验证', candidateMetric: item => ({ label: 'Points（候选）', value: `${Number(item.score) || 0} points`, definition: '按 Hacker News Top Stories API 返回顺序记录；Points 仅表示来源互动口径。', source_url: item.hnUrl || item.url, caveat: '候选发现尚未人工复核，不可直接发布。' }), collect: () => fetchHackerNews() },
+  { id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: 'Hacker News Top Stories 候选，保留 API 返回顺序并展示每条 story 的 Points。', source_id: 'source-hacker-news', source_name: 'Hacker News Top Stories', source_url: 'https://hacker-news.firebaseio.com/v0/topstories.json', ranking_basis: '按 Hacker News Top Stories API 返回顺序记录；展示 Points，不等于产品验证', candidateMetric: item => ({ label: 'Points（候选）', value: `${Number(item.score) || 0} points`, definition: '按 Hacker News Top Stories API 返回顺序记录；Points 仅表示来源互动口径。', source_url: item.hnUrl || item.url, caveat: '候选发现尚未结构检查与事实核验，不可直接发布。' }), collect: () => fetchHackerNews() },
   { id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: '仅从 GitHub Trending 周榜筛选 AI 相关仓库候选，不外推为完整出海媒体监测。', source_id: 'source-overseas', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '仅按 GitHub 周榜观察排序；不构成市场规模排名', collect: () => fetchOverseasAI() },
   { id: 'china-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: '仅从 36Kr AI 频道整理国内 AI 资讯候选，不声明覆盖其他媒体。', source_id: 'source-china-ai', source_name: '36Kr AI 频道', source_url: 'https://36kr.com/information/AI/', ranking_basis: '仅按 36Kr AI 频道文章流与报道时间整理；不构成行业规模排名', collect: () => fetch36Kr() },
 ]);
@@ -355,15 +355,15 @@ function candidateItem(config, item, index, observedAt) {
   if (!item || typeof item.title !== 'string' || !item.title.trim()) throw new Error('candidate item has no title');
   if (typeof item.url !== 'string' || !/^https:\/\//i.test(item.url)) throw new Error('candidate item has no HTTPS URL');
   const sourceRank = Number.isInteger(item.rank) && item.rank > 0 ? item.rank : index + 1;
-  const summary = typeof item.summary === 'string' && item.summary.trim() ? item.summary : '候选发现，等待人工复核。';
+  const summary = typeof item.summary === 'string' && item.summary.trim() ? item.summary : '候选发现，等待结构检查与事实核验。';
   const metric = typeof config.candidateMetric === 'function'
     ? config.candidateMetric(item, sourceRank)
     : {
       label: '来源排名（候选）',
       value: String(sourceRank),
-      definition: '自动抓取到的来源排名，只用于人工复核候选，不代表公开热度结论。',
+      definition: '自动抓取到的来源排名，只用于结构检查与事实核验候选，不代表公开热度结论。',
       source_url: item.url,
-      caveat: '候选发现尚未人工复核，不可直接发布。',
+      caveat: '候选发现尚未结构检查与事实核验，不可直接发布。',
     };
   return {
     id: `candidate-${config.id}-${String(index + 1).padStart(2, '0')}`,
@@ -381,7 +381,7 @@ function candidateItem(config, item, index, observedAt) {
       kind: 'external-research',
       as_of: observedAt,
       source_url: metric.source_url || item.url,
-      caveat: metric.caveat || '候选发现尚未人工复核，不可直接发布。',
+      caveat: metric.caveat || '候选发现尚未结构检查与事实核验，不可直接发布。',
     }],
     judgment: {
       change: summary,
@@ -423,7 +423,7 @@ async function discoverCandidate({ now = new Date() } = {}) {
           diagnostics.push({ code: 'invalid_candidate', message: error.message });
         }
       }
-      if (items.length === 0) diagnostics.push({ code: 'empty_result', message: '没有可供人工复核的具体条目；未生成榜单页占位项。' });
+      if (items.length === 0) diagnostics.push({ code: 'empty_result', message: '没有可供结构检查与事实核验的具体条目；未生成榜单页占位项。' });
       boards.push(candidateBoard(config, items, observedAt, diagnostics));
     } catch (error) {
       boards.push(candidateBoard(config, [], observedAt, [{ code: 'fetch_failed', message: error.message }]));
@@ -442,7 +442,7 @@ async function discoverCandidate({ now = new Date() } = {}) {
     facts_verified_at: null,
     boards,
     method: {
-      collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。',
+      collection_boundary: '自动发现仅生成候选；候选须先完成结构检查，再逐条事实核验，公开写入前必须通过完整 JSON 门禁。',
       evidence_policy: '候选摘要是来源记录，不是独立事实证据。',
     },
   };
@@ -453,6 +453,12 @@ async function discoverCandidate({ now = new Date() } = {}) {
 function assertCompleteForPublic(snapshot) {
   if (!Array.isArray(snapshot.boards) || snapshot.boards.some(board => !Array.isArray(board.items) || board.items.length === 0)) {
     throw new Error('Refusing partial trends result with an empty board');
+  }
+  if (snapshot.review_scope !== 'facts_verified'
+    || snapshot.collection_mode !== 'manual_fact_reviewed'
+    || snapshot.verification_level !== 'manual_fact_reviewed'
+    || !snapshot.facts_verified_at) {
+    throw new Error('Public trends write requires a fact-verified snapshot: review_scope=facts_verified, manual_fact_reviewed, and facts_verified_at');
   }
 }
 

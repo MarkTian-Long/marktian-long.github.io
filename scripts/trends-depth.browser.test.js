@@ -51,6 +51,25 @@ function frozenClock(iso = '2026-08-30T12:00:00.000Z') {
   window.Date = FrozenDate;
 }
 
+function resolveBrowserExecutable(env = process.env, fileExists = fs.existsSync) {
+  if (env.PLAYWRIGHT_EXECUTABLE_PATH) return env.PLAYWRIGHT_EXECUTABLE_PATH;
+  const roots = [env.LOCALAPPDATA, env.PROGRAMFILES, env['PROGRAMFILES(X86)']].filter(Boolean);
+  const candidates = roots.map(root => path.join(root, 'Microsoft', 'Edge', 'Application', 'msedge.exe'));
+  return candidates.find(candidate => fileExists(candidate)) || null;
+}
+
+test('browser launcher honors PLAYWRIGHT_EXECUTABLE_PATH and local Edge fallback', () => {
+  assert.equal(
+    resolveBrowserExecutable({ PLAYWRIGHT_EXECUTABLE_PATH: 'C:\\custom\\browser.exe' }, () => false),
+    'C:\\custom\\browser.exe',
+  );
+  const fallback = resolveBrowserExecutable(
+    { LOCALAPPDATA: 'C:\\Users\\tester\\AppData\\Local' },
+    candidate => candidate.endsWith(path.join('Microsoft', 'Edge', 'Application', 'msedge.exe')),
+  );
+  assert.equal(fallback, path.join('C:\\Users\\tester\\AppData\\Local', 'Microsoft', 'Edge', 'Application', 'msedge.exe'));
+});
+
 test('trends v2 page renders research states, keyboard actions and recoverable load errors', { timeout: 45000 }, async () => {
   const { server, url } = await startServer();
   let browser;
@@ -60,11 +79,21 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
   noResultData.boards.forEach(board => board.items.forEach(item => { item.actions = ['watch']; }));
   const longTitleData = structuredClone(originalData);
   longTitleData.boards[0].items[0].title = '这是一个很长的信号标题，用来确认窄屏卡片会自然换行而不会把页面撑出横向滚动条';
+  const factsVerifiedData = structuredClone(originalData);
+  factsVerifiedData.collection_mode = 'manual_fact_reviewed';
+  factsVerifiedData.verification_level = 'manual_fact_reviewed';
+  factsVerifiedData.review_scope = 'facts_verified';
+  factsVerifiedData.facts_verified_at = '2026-08-30';
+  factsVerifiedData.method.evidence_policy = 'judgment.evidence records fact-checked source support, not causal proof.';
+  factsVerifiedData.boards.forEach(board => board.items.forEach(item => {
+    item.verification_level = 'manual_fact_reviewed';
+  }));
   const freshnessData = structuredClone(originalData);
   freshnessData.reviewed_at = freshnessData.as_of;
   let fixture = 'good';
   try {
-    browser = await chromium.launch({ headless: true });
+    const executablePath = resolveBrowserExecutable();
+    browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.addInitScript(frozenClock);
     await context.route(/https:\/\/fonts\.(?:googleapis|gstatic)\.com\//, route => route.abort());
@@ -78,6 +107,7 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
       }
       if (fixture === 'no-result') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(noResultData) });
       if (fixture === 'long-title') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(longTitleData) });
+      if (fixture === 'facts-verified') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(factsVerifiedData) });
       return route.continue();
     });
     const page = await context.newPage();
@@ -86,15 +116,16 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     await page.goto(`${url}/tools/trends/index.html`, { waitUntil: 'domcontentloaded' });
     await page.locator('#app[data-state="ready"]').waitFor();
     assert.match(await page.locator('#snapshot-status').textContent(), /历史快照，不代表当前热度/);
-    assert.equal(await page.locator('#verification-status').textContent(), '结构检查完成');
+    assert.equal(await page.locator('#verification-status').textContent(), '本轮仅结构检查');
     assert.match(await page.locator('#snapshot-dates').textContent(), /快照观察 2026-05-19 · 契约\/结构复核 2026-08-30/);
-    assert.match(await page.locator('#historical-caveat').textContent(), /历史事实未在本轮重验/);
-    assert.doesNotMatch(await page.locator('body').textContent(), /Claude 点评|Codex 点评|最新|manual_reviewed|candidate/);
+    assert.match(await page.locator('#historical-caveat').textContent(), /本轮仅结构检查.*事实未重验/);
+    assert.doesNotMatch(await page.locator('body').textContent(), /Claude 点评|Codex 点评|最新|manual_reviewed|manual_fact_reviewed|candidate/);
     assert.ok(await page.locator('.signal-meta').first().evaluate(meta => {
       const text = meta.textContent || '';
-      return /快照观察 2026-05-19/.test(text) && /历史事实未在本轮重验/.test(text) && /仅结构检查/.test(text);
+      return /快照观察 2026-05-19/.test(text) && /本轮仅结构检查.*事实未重验/.test(text) && /仅结构检查/.test(text);
     }));
-    assert.doesNotMatch(await page.locator('.signal-meta').first().textContent(), /manual_reviewed|candidate/);
+    assert.doesNotMatch(await page.locator('.signal-meta').first().textContent(), /manual_reviewed|manual_fact_reviewed|candidate/);
+    assert.match(await page.locator('.judgment-toggle').first().textContent(), /展开我的判断/);
     assert.equal(await page.locator('[role="tab"][data-board-id]').count(), 5);
     assert.equal(await page.locator('#workflow .workflow-step').count(), 4);
     assert.deepEqual(await page.locator('#workflow .workflow-title').allTextContents(), ['信源', '信号', '分析', '方法']);
@@ -104,6 +135,15 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     assert.equal(await page.locator('[aria-current="step"]').count(), 1);
     assert.equal(await page.locator('[aria-current="step"]').getAttribute('id'), 'workflow-nav-trends');
     assert.equal(await page.locator('#workflow-nav a').count(), 4);
+    fixture = 'facts-verified';
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('#app[data-state="ready"]').waitFor();
+    assert.equal(await page.locator('#verification-status').textContent(), '事实逐条核验');
+    assert.match(await page.locator('#historical-caveat').textContent(), /事实核验截至 2026-08-30/);
+    assert.doesNotMatch(await page.locator('body').textContent(), /manual_reviewed|manual_fact_reviewed|candidate/);
+    fixture = 'good';
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('#app[data-state="ready"]').waitFor();
     await capture(page, 'desktop-default.png');
 
     const boardTabs = page.locator('[role="tab"][data-board-id]');

@@ -406,7 +406,7 @@
                 <span class="status-chip" id="snapshot-status">加载中…</span>
                 <span class="verification-chip" id="verification-status">等待数据</span>
                 <p class="meta-line" id="snapshot-dates">快照观察 — · 契约/结构复核 —</p>
-                <p class="meta-line historical-caveat" id="historical-caveat">历史事实未在本轮重验</p>
+                <p class="meta-line historical-caveat" id="historical-caveat">本轮仅结构检查；历史事实未重验</p>
                 <p class="meta-line" id="snapshot-id">snapshot —</p>
             </div>
         </div>
@@ -439,8 +439,9 @@
             </div>
             <ul class="trust-list">
                 <li><strong>AI 辅助发现</strong>抓取脚本只生成候选，不直接进入公开快照。</li>
-                <li><strong>结构检查完成</strong>公开 JSON 已通过字段完整性检查；这不等于历史事实在本轮重新核验。</li>
-                <li><strong>历史事实未重验</strong>页面不会实时抓取；本页把“快照观察”和“契约/结构复核”分开标注，不把旧数据说成当前热度。</li>
+                <li><strong>本轮仅结构检查</strong>公开 JSON 已通过字段与编辑结构检查；这不等于逐条历史事实核验。</li>
+                <li><strong>事实逐条核验</strong>只有逐条核对来源事实并记录日期后，快照才可进入公开写入；当前页面不会实时抓取。</li>
+                <li><strong>历史事实未重验</strong>本页把“快照观察”和“契约/结构复核”分开标注，不把旧数据说成当前热度。</li>
             </ul>
         </section>
 

@@ -4,7 +4,7 @@
     const contract = root.TrendsContract;
     const state = { data: null, activeBoardId: null, action: 'all', view: 'signals' };
     const actionLabels = { watch: '持续关注', compare: '横向对比', adopt: '评估落地', deep_dive: '继续深挖' };
-    const reviewScopeLabels = { structure_only: '结构检查完成', facts_verified: '事实核验完成', candidate: '候选发现' };
+    const reviewScopeLabels = { structure_only: '本轮仅结构检查', facts_verified: '事实逐条核验', candidate: '候选发现' };
     const reviewScopeShortLabels = { structure_only: '仅结构检查', facts_verified: '事实已核验', candidate: '候选待核验' };
     const elements = {};
 
@@ -40,8 +40,8 @@
         if (state.data.review_scope === 'facts_verified' && state.data.facts_verified_at) {
             return `事实核验截至 ${formatDate(state.data.facts_verified_at)}`;
         }
-        if (state.data.review_scope === 'candidate') return '候选来源记录，待事实核验';
-        return '历史事实未在本轮重验';
+        if (state.data.review_scope === 'candidate') return '候选来源记录，待结构检查与事实核验';
+        return '本轮仅结构检查；历史事实未重验';
     }
 
     function sourceName(sourceId) {
@@ -105,7 +105,7 @@
         const evidenceField = make('div', 'judgment-field full');
         const evidenceLabel = state.data.review_scope === 'structure_only'
             ? '历史观察记录（非独立证据）'
-            : state.data.review_scope === 'facts_verified' ? '事实核验记录' : '候选来源记录（待事实核验）';
+            : state.data.review_scope === 'facts_verified' ? '事实核验记录' : '候选来源记录（待结构与事实核验）';
         append(evidenceField, make('p', 'judgment-label', evidenceLabel));
         const evidence = make('ul', 'evidence-list');
         item.judgment.evidence.forEach(entry => evidence.append(make('li', '', entry)));

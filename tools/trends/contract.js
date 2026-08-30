@@ -15,8 +15,8 @@
         'production-result',
         'external-research',
     ]);
-    const VALID_COLLECTION_MODES = Object.freeze(['manual_reviewed', 'candidate']);
-    const VALID_VERIFICATION_LEVELS = Object.freeze(['manual_reviewed', 'mixed', 'candidate']);
+    const VALID_COLLECTION_MODES = Object.freeze(['structure_checked', 'manual_fact_reviewed', 'candidate']);
+    const VALID_VERIFICATION_LEVELS = Object.freeze(['structure_checked', 'manual_fact_reviewed', 'candidate']);
     const VALID_REVIEW_SCOPES = Object.freeze(['structure_only', 'facts_verified', 'candidate']);
     const DAY_MS = 24 * 60 * 60 * 1000;
     const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -226,8 +226,11 @@
         } else if (new Set(item.actions).size !== item.actions.length) {
             errors.push(`${itemPath}.actions must not repeat categories`);
         }
-        if (item.verification_level !== 'manual_reviewed' && !allowCandidate) {
-            errors.push(`${itemPath}.verification_level must be manual_reviewed before publication`);
+        const expectedVerificationLevel = context.reviewScope === 'candidate'
+            ? 'candidate'
+            : context.reviewScope === 'facts_verified' ? 'manual_fact_reviewed' : 'structure_checked';
+        if (item.verification_level !== expectedVerificationLevel) {
+            errors.push(`${itemPath}.verification_level must be ${expectedVerificationLevel} for review_scope=${context.reviewScope || 'unknown'}`);
         }
         if (!Array.isArray(item.metrics) || item.metrics.length === 0) errors.push(`${itemPath}.metrics must not be empty`);
         else item.metrics.forEach(metric => validateMetric(metric, itemPath, sourceIds, errors, context));
@@ -255,10 +258,14 @@
         if (!VALID_COLLECTION_MODES.includes(snapshot.collection_mode)) errors.push('collection_mode is not legal');
         if (!VALID_VERIFICATION_LEVELS.includes(snapshot.verification_level)) errors.push('verification_level is not legal');
         if (!VALID_REVIEW_SCOPES.includes(snapshot.review_scope)) errors.push('review_scope is not legal');
-        if (!allowCandidate && snapshot.collection_mode !== 'manual_reviewed') errors.push('collection_mode must be manual_reviewed before publication');
-        if (!allowCandidate && snapshot.verification_level !== 'manual_reviewed') errors.push('verification_level must be manual_reviewed before publication');
+        if (!allowCandidate && !['structure_checked', 'manual_fact_reviewed'].includes(snapshot.collection_mode)) errors.push('collection_mode must be structure_checked or manual_fact_reviewed before publication');
+        if (!allowCandidate && !['structure_checked', 'manual_fact_reviewed'].includes(snapshot.verification_level)) errors.push('verification_level must be structure_checked or manual_fact_reviewed before publication');
         if (!allowCandidate && snapshot.review_scope === 'candidate') errors.push('review_scope candidate is not publishable');
         if (allowCandidate && snapshot.collection_mode === 'candidate' && snapshot.review_scope !== 'candidate') errors.push('candidate snapshot must use review_scope candidate');
+        if (snapshot.review_scope === 'structure_only' && snapshot.collection_mode !== 'structure_checked') errors.push('structure_only snapshots must use collection_mode structure_checked');
+        if (snapshot.review_scope === 'structure_only' && snapshot.verification_level !== 'structure_checked') errors.push('structure_only snapshots must use verification_level structure_checked');
+        if (snapshot.review_scope === 'facts_verified' && snapshot.collection_mode !== 'manual_fact_reviewed') errors.push('facts_verified snapshots must use collection_mode manual_fact_reviewed');
+        if (snapshot.review_scope === 'facts_verified' && snapshot.verification_level !== 'manual_fact_reviewed') errors.push('facts_verified snapshots must use verification_level manual_fact_reviewed');
         const snapshotDates = {};
         for (const field of ['as_of', 'observed_at', 'reviewed_at']) {
             snapshotDates[field] = typeof snapshot[field] === 'string'
@@ -330,7 +337,7 @@
             snapshot.boards.forEach((board, index) => {
                 if (!isRecord(board) || !Array.isArray(board.items)) return;
                 board.items.forEach(item => {
-                    validateItem(item, `boards[${index}]`, sourceIds, itemIds, itemUrls, errors, allowCandidate, { now, snapshotAsOf: snapshotDates.as_of });
+                    validateItem(item, `boards[${index}]`, sourceIds, itemIds, itemUrls, errors, allowCandidate, { now, snapshotAsOf: snapshotDates.as_of, reviewScope: snapshot.review_scope });
                     if (isRecord(item) && typeof item.id === 'string') featuredIds.add(item.id);
                 });
             });
