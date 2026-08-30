@@ -233,11 +233,12 @@ initial migration.
   It distinguishes targets/proxies/offline/production/external metrics and
   requires an explicit Mock boundary. It is not wired into any public page in
   Track A.
-- Generator baseline updated 2026-08-19: the blog generator
-  now reads controlled `article-template.html`, but still writes the caller's
-  output path without a `--check` mode; Service Agent writes its public index
-  directly; and Trends can publish partial empty boards after a fetch failure.
-  Use the contract report and migration plan before changing them.
+- Generator baseline updated 2026-08-31: the blog and Service Agent generators
+  default to non-writing checks, and Service Agent fails closed unless exactly
+  one supported fault mode is active. Trends separates read-only validation,
+  `--discover --candidate` output, and explicit `--write --input` publication;
+  public writes require a complete human-reviewed snapshot and use an atomic
+  same-directory replacement. Preserve these gates when changing generators.
 
 ### Track B architecture facts (2026-07-31, Codex)
 
@@ -268,6 +269,27 @@ initial migration.
 - The Portfolio validator derives required fields, enums, nested shapes, and
   additional-property rules from `docs/portfolio-evidence.schema.json`; keep
   the schema as the single contract and cover CLI argument behavior in tests.
+
+### Works and tools depth facts (2026-08-31, Codex)
+
+- The eight public Works & Tools entries remain independent static runtimes.
+  Homepage cards expose stable `data-portfolio-id` values, and the four
+  information tools expose exactly one `nav[data-workflow-nav]` with the order
+  `1 信源 / 2 信号 / 3 分析 / 4 方法`; no shared runtime is required.
+- Public research pages must distinguish archive organization from current
+  fact verification. AI Insights records are static archives pending fact
+  review; Radar's 11 sources are individually `not-reviewed`; the Trends data
+  is a 2026-05-19 historical snapshot whose 2026-08-30 review was structural,
+  not a re-verification of historical facts; Agent Hub framework facts are
+  archive-only until separately reviewed.
+- Product demos with asynchronous work must invalidate stale runs on restart,
+  mode changes, rollback, or scenario switches. HITL outcomes, faults, evidence
+  states, and exports must reflect the effective current run rather than old
+  callbacks or hidden global state.
+- `scripts/works-tools-visual.browser.test.js` is the cross-tool HTTP smoke
+  gate for the homepage plus all eight tools at desktop and mobile widths. Keep
+  tool-specific browser tests for deeper interactions, failures, focus, export,
+  and last-write-wins behavior; the smoke gate does not replace them.
 
 ## Update protocol
 

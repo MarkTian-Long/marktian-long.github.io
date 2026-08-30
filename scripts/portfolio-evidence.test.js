@@ -88,3 +88,10 @@ test('portfolio evidence CLI parses only the documented argument forms', () => {
 test('portfolio evidence success message reports the validated record count', () => {
   assert.equal(successMessage({ portfolio: [{}, {}] }), 'Portfolio evidence check passed: 2 records.');
 });
+
+test('portfolio evidence uses reader-facing authorship language for Trends', () => {
+  const trends = fixture.portfolio.find((record) => record.id === 'trends');
+  assert.ok(trends, 'Trends evidence record should exist');
+  assert.doesNotMatch(JSON.stringify(trends), /Codex 点评/);
+  assert.match(JSON.stringify(trends.mockParts), /作者静态判断/);
+});

@@ -17,7 +17,7 @@
 - Create: `scripts/trends-depth.test.js`
 - Modify: `tools/trends/data/trends.json`
 
-**Step 1:** 写失败测试，要求 snapshot 元数据、稳定 ID、采集模式、排名依据、来源时间、观察/复核时间、验证级别、行动类别与判断结构完整。
+**Step 1:** 写失败测试，要求 snapshot 元数据、稳定 ID、采集模式、排名依据、来源时间、观察/复核时间、`review_scope`、`facts_verified_at`、验证级别、行动类别与判断结构完整；结构检查不得冒充历史事实核验。
 
 **Step 2:** 指标必须具有合法 `kind`、`as_of` 和来源 URL；featured ID 必须存在；`deep_dive` 条目必须有下一研究问题；危险协议、泛化重复 URL、占位项和未复核记录必须被拒绝。
 
@@ -31,11 +31,11 @@
 - Modify: `scripts/fetch-trends.js`
 - Test: `scripts/trends-depth.test.js`
 
-**Step 1:** 默认模式只校验公开快照且不写文件；`--candidate` 只复制已验证快照到限定候选目录。
+**Step 1:** 默认模式只校验公开快照且不写文件；`--discover --candidate <path>` 只把自动发现结果写到限定候选目录，候选不是已复核公开数据。
 
 **Step 2:** 候选抓取失败记录诊断状态，不以 Product Hunt 榜单页或其他占位项冒充热点；GitHub/HN 自动结果只称候选发现。
 
-**Step 3:** 公开 `--write` 仅接受通过 contract、已人工复核的输入；测试绝对路径、`..`、仓库外目标、候选目录外目标和未复核输入均在写入前失败，成功用例只写仓库内专用临时目录并确认公开 JSON 未变。数据过期给出明确警告，但另设显式 freshness 门禁用于维护。
+**Step 3:** 公开 `--write` 仅接受通过 contract、已人工复核的输入；相对路径、绝对路径和含 `..` 的路径统一按解析后的真实目标判界，只有逃出允许目录时才失败。测试仓库外目标、候选目录外目标和未复核输入均在写入前失败，成功用例先完成全部门禁，再经同目录临时文件原子重命名。数据过期给出明确警告，但另设显式 freshness 门禁用于维护。
 
 ### Task 3: 重构信号研判页面
 

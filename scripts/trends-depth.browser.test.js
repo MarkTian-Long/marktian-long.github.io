@@ -97,7 +97,7 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     assert.doesNotMatch(await page.locator('.signal-meta').first().textContent(), /manual_reviewed|candidate/);
     assert.equal(await page.locator('[role="tab"][data-board-id]').count(), 5);
     assert.equal(await page.locator('#workflow .workflow-step').count(), 4);
-    assert.deepEqual(await page.locator('#workflow .workflow-title').allTextContents(), ['1 信源', '2 信号', '3 分析', '4 方法']);
+    assert.deepEqual(await page.locator('#workflow .workflow-title').allTextContents(), ['信源', '信号', '分析', '方法']);
     assert.deepEqual(await page.locator('#workflow .workflow-step').evaluateAll(links => links.map(link => link.getAttribute('href'))), [
       '../radar/index.html', '../trends/index.html', '../ai-insights/index.html', '../agent-hub/index.html',
     ]);
