@@ -21,7 +21,10 @@ const STATIC_RUNTIME_MODE = 'mock';
       --accent-cyan:  #0891b2;
       --accent-green: #059669;
       --accent-red:   #dc2626;
-      --grad:         linear-gradient(135deg, #2563eb, #7c3aed);
+      --accent-soft:  rgba(37,99,235,0.09);
+      --surface-soft: rgba(0,0,0,0.025);
+      --danger-soft:  rgba(220,38,38,0.08);
+      --grad:         linear-gradient(135deg, var(--accent), var(--accent-cyan));
       --text:         #1e293b;
       --text-sec:     #64748b;
       --text-muted:   #94a3b8;
@@ -444,6 +447,82 @@ const STATIC_RUNTIME_MODE = 'mock';
 .radar-refresh-icon { display:inline-block; transition:transform 0.4s ease; }
 .radar-refresh-icon.spinning { animation:spin 0.6s linear; }
 @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* 深化版交互状态：模式、证据来源、反馈与 partial 状态共用同一套层级。 */
+.mode-strip { display:flex; align-items:center; gap:10px; padding:8px 16px; background:var(--bg-sec); border-bottom:1px solid var(--border); flex-shrink:0; min-height:48px; }
+.mode-label { font-size:11px; color:var(--text-muted); font-weight:700; letter-spacing:.04em; }
+.mode-switch { display:inline-flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
+.mode-btn { min-height:32px; padding:5px 10px; border:0; border-right:1px solid var(--border); background:var(--card); color:var(--text-sec); font-size:11px; cursor:pointer; }
+.mode-btn:last-child { border-right:0; }
+.mode-btn:hover, .mode-btn:focus-visible { color:var(--accent); background:var(--accent-soft); outline:none; }
+.mode-btn.active { background:var(--accent); color:var(--bg-sec); font-weight:700; }
+.mode-btn[data-mode-choice="market"].active { background:var(--accent-cyan); }
+.mode-status { color:var(--text-sec); font-size:11px; }
+.session-summary { margin-left:auto; color:var(--text-muted); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48%; }
+.market-provenance, .diag-provenance { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; margin-top:9px; padding:7px 9px; background:var(--surface-soft); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-muted); font-size:10px; }
+.source-badge { color:var(--accent); font-weight:700; }
+.market-error-state { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--accent-red); background:var(--danger-soft); border-radius:var(--radius-sm); color:var(--text-sec); }
+.market-error-state strong { color:var(--accent-red); }
+.state-note { font-size:11px; color:var(--text-muted); }
+.state-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.inline-action, .fb-export { min-height:30px; padding:5px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-sec); color:var(--accent); font-size:11px; cursor:pointer; }
+.inline-action:hover, .inline-action:focus-visible, .fb-export:hover, .fb-export:focus-visible { border-color:var(--accent); background:var(--accent-soft); outline:none; }
+.evidence-score { color:var(--accent-green); font-weight:700; }
+.diag-confidence-note { color:var(--text-muted); font-size:10px; }
+.pending-title { margin-top:10px; color:var(--accent-red); font-size:11px; font-weight:700; }
+.pending-list { margin:4px 0 0 18px; color:var(--text-sec); font-size:11px; }
+.value-positive { color:var(--accent-green); }
+.value-negative { color:var(--accent-red); }
+.claim-list-title { margin:12px 0 6px; color:var(--accent); font-size:12px; font-weight:700; }
+.claim-list { display:flex; flex-direction:column; gap:7px; }
+.claim-card { padding:9px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface-soft); }
+.claim-header { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.claim-id { color:var(--accent); font-family:monospace; font-size:10px; font-weight:700; }
+.claim-citation-label { font-size:10px; color:var(--text-muted); }
+.claim-citation { color:var(--accent); font-weight:700; text-decoration:none; }
+.claim-citation:hover, .claim-citation:focus-visible { text-decoration:underline; outline:none; }
+.claim-text { margin-top:5px; color:var(--text); font-size:12px; line-height:1.65; }
+.claim-meta, .claim-conflict, .rag-source-note { margin-top:5px; color:var(--text-muted); font-size:10px; line-height:1.5; }
+.claim-meta { display:flex; flex-wrap:wrap; gap:5px 12px; }
+.claim-conflict { color:var(--accent-red); }
+.rag-source-item.source-focused { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+.agent-tool-card-selected { border-color:var(--accent); background:var(--accent-soft); }
+.agent-tool-card-muted { opacity:.62; }
+.agent-tool-selection { margin-bottom:4px; color:var(--accent); font-size:10px; font-weight:600; }
+.tool-badge-market { background:var(--accent-soft); color:var(--accent); }
+.tool-badge-demo { background:var(--surface-soft); color:var(--text-sec); }
+.agent-partial { background:var(--danger-soft); border:1px solid var(--accent-red); border-radius:var(--radius-md); padding:14px; }
+.agent-evidence-summary { border-color:var(--accent-green); background:var(--accent-soft); }
+.fb-regression-note { width:100%; color:var(--text-muted); font-size:10px; }
+.feedback-reason-label { color:var(--text-muted); font-size:11px; }
+.fb-reason-selected { border-color:var(--accent); color:var(--accent); }
+.radar-refresh-btn, .kb-upload-btn, .fb-btn, .fb-reason-btn, .fb-bad-submit { min-height:30px; }
+.trend-positive { background:var(--accent-green); }
+.trend-neutral { background:var(--text-muted); }
+
+@media (max-width: 800px) {
+  .mode-strip { flex-wrap:wrap; gap:6px 8px; padding:7px 12px; }
+  .session-summary { width:100%; max-width:none; margin-left:0; }
+  .diag-panels { grid-template-columns:1fr; }
+  .rag-left { width:230px; }
+  .agent-tools-panel { width:190px; }
+}
+@media (max-width: 520px) {
+  .header { padding:10px 12px; }
+  .header-badge { display:none; }
+  .tab-nav { padding:6px 8px; }
+  .tab-btn { padding:6px 10px; }
+  .quick-bar { padding:8px 10px; }
+  .quick-btn { min-height:30px; }
+  .rag-layout, .agent-layout { flex-direction:column; overflow-y:auto; }
+  .rag-left, .agent-tools-panel { width:100%; min-height:160px; border:0; border-bottom:1px solid var(--border); }
+  .rag-right, .agent-main { min-height:420px; }
+  .radar-top, .radar-bottom, .compliance-cards { grid-template-columns:1fr; }
+  .lineage-chart { grid-template-columns:1fr; }
+  .disclaimer-bar { align-items:flex-start; flex-direction:column; gap:4px; }
+  .input-area, .diagnosis-input-bar, .rag-input-bar, .agent-input-bar { padding:10px; }
+  .send-btn { padding-left:14px; padding-right:14px; }
+}
   </style>
 </head>
 <body>
@@ -454,26 +533,36 @@ const STATIC_RUNTIME_MODE = 'mock';
   <div class="header-badge">AI 产品能力展示台</div>
 </div>
 
+<div class="mode-strip" aria-label="数据模式">
+  <span class="mode-label">数据模式</span>
+  <div class="mode-switch" role="group" aria-label="选择行情数据模式">
+    <button class="mode-btn active" id="dataModeDemo" data-mode-choice="demo" aria-pressed="true" type="button" onclick="setDataMode('demo')">演示快照</button>
+    <button class="mode-btn" id="dataModeMarket" data-mode-choice="market" aria-pressed="false" type="button" onclick="setDataMode('market')">联网行情</button>
+  </div>
+  <span class="mode-status" id="dataModeStatus">默认不联网，使用固定演示快照。</span>
+  <span class="session-summary" id="sessionSummary">研究会话 session-local-001 · 0 次运行 · 仅本页内存</span>
+</div>
+
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('chat')" data-tab="chat">
     <span class="tab-icon">💬</span>行情助手
-    <span class="tab-tech">Prompt Engineering</span>
+    <span class="tab-tech">Deterministic Rules</span>
   </button>
   <button class="tab-btn" onclick="switchTab('diagnosis')" data-tab="diagnosis">
     <span class="tab-icon">🔬</span>个股诊断
-    <span class="tab-tech">Structured Output</span>
+    <span class="tab-tech">Evidence Card</span>
   </button>
   <button class="tab-btn" onclick="switchTab('report')" data-tab="report">
     <span class="tab-icon">📄</span>研报生成
-    <span class="tab-tech">RAG</span>
+    <span class="tab-tech">Keyword RAG</span>
   </button>
   <button class="tab-btn" onclick="switchTab('radar')" data-tab="radar">
     <span class="tab-icon">📡</span>市场雷达
-    <span class="tab-tech">Multi-Source</span>
+    <span class="tab-tech">Fixed Snapshot</span>
   </button>
   <button class="tab-btn" onclick="switchTab('agent')" data-tab="agent">
     <span class="tab-icon">🤖</span>Agent 实验室
-    <span class="tab-tech">AI Agent</span>
+    <span class="tab-tech">Task Tools</span>
   </button>
   <button class="tab-btn" onclick="switchTab('compliance')" data-tab="compliance">
     <span class="tab-icon">🛡️</span>合规设计
@@ -494,7 +583,8 @@ const STATIC_RUNTIME_MODE = 'mock';
   <div class="welcome" id="welcome">
     <div class="welcome-icon">📈</div>
     <div class="welcome-title">A股 AI 数据助手</div>
-    <div>用自然语言查询 A股数据 · 数据来自 Yahoo Finance · 延迟约15分钟</div>
+    <div>默认读取固定演示快照；切换“联网行情”后，提交查询才会请求 Yahoo Finance</div>
+    <div class="model-tip">联网成功或失败都会显示来源、时间与错误状态，不会静默替换数据</div>
     <div style="margin-top:6px; font-size:12px;">点击快捷按钮或在下方输入问题开始</div>
   </div>
 </div>
@@ -513,15 +603,15 @@ const STATIC_RUNTIME_MODE = 'mock';
 
 <div class="tab-panel" id="tab-diagnosis">
   <div class="diagnosis-input-bar">
-    <input class="diag-input" id="diagInput" placeholder="输入股票名称，如：茅台、宁德时代、比亚迪" />
+    <input class="diag-input" id="diagInput" aria-label="诊断股票名称" placeholder="输入股票名称，如：茅台、宁德时代、比亚迪" />
     <button class="send-btn" onclick="runDiagnosis()">生成诊断报告</button>
   </div>
   <div class="diagnosis-content" id="diagContent">
     <div class="welcome">
       <div class="welcome-icon">🔬</div>
       <div class="welcome-title">个股诊断报告</div>
-      <div>输入股票名称，AI 将生成结构化多维度诊断卡</div>
-      <div class="model-tip">🔧 此模块使用结构化输出模式（JSON Schema 约束），而非自由对话</div>
+      <div>输入股票名称，页面将按来源覆盖生成结构化证据卡</div>
+      <div class="model-tip">🔧 此模块使用固定字段结构展示证据，不生成模型评级</div>
     </div>
   </div>
 </div>
@@ -531,20 +621,20 @@ const STATIC_RUNTIME_MODE = 'mock';
     <div class="rag-left">
       <div class="rag-left-title">
         📚 知识库
-        <span class="rag-db-info">双层架构 🎭</span>
+        <span class="rag-db-info">双层资料 · 本地规则</span>
       </div>
       <div class="kb-tabs">
-        <button class="kb-tab-btn active" onclick="switchKbTab('market')" id="kbTabMarket">📡 实时市场库</button>
+        <button class="kb-tab-btn active" onclick="switchKbTab('market')" id="kbTabMarket">📡 固定市场资料</button>
         <button class="kb-tab-btn" onclick="switchKbTab('private')" id="kbTabPrivate">🗂️ 私有知识库</button>
       </div>
       <div class="kb-tab-panel active" id="kbPanelMarket">
-        <div class="kb-meta">自动同步 · 财报/新闻/政策 · 10+ 数据源 · 🎭 模拟</div>
+        <div class="kb-meta">固定新闻/财报样本 · 来源编号与 asOf 随引用展示 · 不代表当前市场</div>
         <div class="rag-left-body" id="ragSources">
           <div class="rag-placeholder">等待检索...</div>
         </div>
       </div>
       <div class="kb-tab-panel" id="kbPanelPrivate">
-        <div class="kb-meta">上传分析师行业报告与历史研报</div>
+        <div class="kb-meta">用户粘贴资料 · 仅保存在本页内存 · 关闭页面即清除</div>
         <textarea class="kb-upload-area" id="privateKbInput" placeholder="粘贴研报或行业报告内容（支持多段，用空行分隔）..."></textarea>
         <button class="kb-upload-btn" onclick="addToPrivateKb()">+ 加入知识库</button>
         <div class="kb-private-list" id="privateKbList">
@@ -553,19 +643,19 @@ const STATIC_RUNTIME_MODE = 'mock';
       </div>
       <div class="rag-why">
         <div class="rag-why-title">💡 双层知识库设计</div>
-        <div class="rag-why-body">实时市场库：自动同步24小时内财报/新闻/政策动态，覆盖市场反应窗口期；私有知识库：支持分析师上传历史研报，联合召回兼顾时效性与深度。</div>
+        <div class="rag-why-body">固定市场资料用于稳定演示召回、证据分级与引用回溯；私有资料只在当前页面参与关键词召回，不上传、不持久化。</div>
       </div>
     </div>
     <div class="rag-right">
       <div class="rag-input-bar">
-        <input class="diag-input" id="ragInput" placeholder="输入股票或行业，如：茅台、新能源、招商银行" />
-        <button class="send-btn" onclick="runRAG()">生成研报</button>
+        <input class="diag-input" id="ragInput" aria-label="研报检索对象" placeholder="输入股票或行业，如：茅台、新能源、招商银行" />
+        <button class="send-btn" id="runRagButton" onclick="runRAG()">生成研究草稿</button>
       </div>
       <div class="rag-report-body" id="ragReport">
         <div class="welcome" style="flex:1;">
           <div class="welcome-icon">📄</div>
           <div class="welcome-title">AI 研报生成</div>
-          <div>基于知识库检索 + 静态演示响应，引用来源可追溯</div>
+          <div>基于固定资料检索 + 本地规则摘要，逐 Claim 引用可回溯</div>
         </div>
       </div>
     </div>
@@ -574,9 +664,9 @@ const STATIC_RUNTIME_MODE = 'mock';
 
 <div class="tab-panel" id="tab-radar">
   <div class="radar-timestamp-bar">
-    <span>数据截至：<span id="radarTimestamp">2025-11-10 15:00（模拟）</span></span>
-    <button class="radar-refresh-btn" onclick="refreshRadarData()"><span class="radar-refresh-icon" id="radarRefreshIcon">🔄</span> 更新</button>
-    <span style="margin-left:auto;font-size:10px;">生产环境：每15分钟自动刷新</span>
+    <span>数据截至：<span id="radarTimestamp">2026-08-28 15:00（演示快照）</span></span>
+    <button class="radar-refresh-btn" id="radarRefreshButton" onclick="refreshRadarData()"><span class="radar-refresh-icon" id="radarRefreshIcon">🔄</span> 重绘快照</button>
+    <span style="margin-left:auto;font-size:10px;">固定时间戳 · 不读取当前时间</span>
   </div>
   <div class="radar-layout">
     <div class="radar-top">
@@ -602,25 +692,25 @@ const STATIC_RUNTIME_MODE = 'mock';
       </div>
     </div>
   </div>
-  <div class="radar-data-note">🎭 热点板块/异动/情绪趋势均为模拟数据；生产环境接入：雪球 API · 新浪财经 · 东方财富 | 更新频率：每15分钟</div>
+  <div class="radar-data-note">演示快照：热点板块、异动与情绪趋势均为固定样本；重绘只验证确定性，不代表实时行情。</div>
 </div>
 
 <div class="tab-panel" id="tab-agent">
   <div class="agent-layout">
     <div class="agent-main">
       <div class="agent-input-bar">
-        <input class="diag-input" id="agentInput" placeholder="输入复杂问题，如：茅台现在值得买入吗？宁德时代近期怎么样？" />
-        <button class="send-btn" onclick="runAgent()">启动 Agent</button>
+        <input class="diag-input" id="agentInput" aria-label="Agent 研究问题" placeholder="输入研究任务，如：茅台近期走势与证据缺口" />
+        <button class="send-btn" id="runAgentButton" onclick="runAgent()">启动 Agent</button>
       </div>
       <div class="agent-process" id="agentProcess">
         <div class="welcome">
           <div class="welcome-icon">🤖</div>
           <div class="welcome-title">Agent 实验室</div>
-          <div>可视化 ReAct Agent 执行过程：Think → Plan → Act → Observe</div>
+          <div>可视化任务型 Agent：Think → Plan → Act → Observe；只展示证据链，不输出交易方向</div>
           <div style="margin-top:8px; font-size:12px; color:var(--text-muted);">
             快速提问：
-            <span class="quick-btn" onclick="document.getElementById('agentInput').value='茅台现在值得买入吗？'">茅台值得买入？</span>
-            <span class="quick-btn" onclick="document.getElementById('agentInput').value='宁德时代最近走势如何，有投资价值吗？'">宁德时代分析</span>
+            <span class="quick-btn" onclick="document.getElementById('agentInput').value='茅台近期走势与新闻证据'">茅台证据任务</span>
+            <span class="quick-btn" onclick="document.getElementById('agentInput').value='宁德时代基本面与行业风险'">宁德时代证据任务</span>
           </div>
         </div>
       </div>
@@ -641,22 +731,22 @@ const STATIC_RUNTIME_MODE = 'mock';
         <div class="compliance-card">
           <div class="cc-icon">📋</div>
           <div class="cc-title">可解释性要求</div>
-          <div class="cc-body">证监会《证券期货业算法推荐管理办法》要求 AI 推荐必须具备可解释性。本工具通过 Prompt 卡、推理链可视化实现每步决策透明化。</div>
+          <div class="cc-body">本页把任务、工具选择、来源编号、数据时间和待核查项公开展示，便于复核每一步；它不是法规合规结论。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">🏷️</div>
           <div class="cc-title">AI 内容标注</div>
-          <div class="cc-body">静态演示响应标注「🎭 静态演示」，模拟数据标注「🎭 模拟数据」，真实数据标注「📊 真实数据」，来源和时效一目了然。</div>
+          <div class="cc-body">演示快照、联网成功、联网失败、用户资料和本地规则分别标注；来源、asOf 与 fetchedAt 不混写。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">⚖️</div>
           <div class="cc-title">投资建议豁免</div>
-          <div class="cc-body">所有演示输出均附「仅供参考，不构成投资建议」声明。生产环境还需增加：用户适当性验证、风险承受能力评估、操作日志留存。</div>
+          <div class="cc-body">页面不提供买卖建议。若进入生产场景，仍需单独设计适当性、风险承受能力、授权、审计和人工确认流程。</div>
         </div>
         <div class="compliance-card">
           <div class="cc-icon">🔒</div>
           <div class="cc-title">数据安全</div>
-          <div class="cc-body">API Key 通过 GitHub Secrets 注入，不进代码仓库。CORS 代理仅用于公开行情数据。生产环境应使用后端代理，避免密钥暴露在前端。</div>
+          <div class="cc-body">本静态页面不保存密钥、不接入模型服务；联网行情只在用户主动选择并提交后尝试公开代理，失败会原样停留。<code>proxy.py</code> 是未参与公开页面的历史本地工具，本页不调用它。</div>
         </div>
       </div>
     </div>
@@ -665,20 +755,20 @@ const STATIC_RUNTIME_MODE = 'mock';
       <div class="compliance-section-title">🗺️ 数据血缘图</div>
       <div class="lineage-chart">
         <div class="lineage-source">
-          <div class="lineage-node source-node">Yahoo Finance API<br/><span class="lineage-meta">行情数据 · 15分钟延迟 · 📊 真实</span></div>
+          <div class="lineage-node source-node">演示快照 / Yahoo Finance<br/><span class="lineage-meta">用户选择后取行情 · source + transport + 时间</span></div>
           <div class="lineage-arrow">↓</div>
-          <div class="lineage-node process-node">数据清洗层<br/><span class="lineage-meta">去重 · 异常值过滤 · 格式标准化</span></div>
+          <div class="lineage-node process-node">数据清洗层<br/><span class="lineage-meta">按日期去重 · 空收盘剔除 · 格式标准化</span></div>
           <div class="lineage-arrow">↓</div>
           <div class="lineage-targets">
             <div class="lineage-node target-node">Tab1 行情助手</div>
-            <div class="lineage-node target-node">Tab2 技术面</div>
+          <div class="lineage-node target-node">Tab2 证据核查</div>
             <div class="lineage-node target-node">Tab5 get_price()</div>
           </div>
         </div>
         <div class="lineage-source">
-          <div class="lineage-node source-node">新浪财经新闻<br/><span class="lineage-meta">35万条 · 2025年 · 🎭 模拟</span></div>
+          <div class="lineage-node source-node">固定新闻/财报样本<br/><span class="lineage-meta">sourceId · evidenceLevel · asOf</span></div>
           <div class="lineage-arrow">↓</div>
-          <div class="lineage-node process-node">向量化层<br/><span class="lineage-meta">text2vec-base-chinese · 关键词索引</span></div>
+          <div class="lineage-node process-node">关键词索引层<br/><span class="lineage-meta">同义词扩展 · 命中评分 · 规则重排</span></div>
           <div class="lineage-arrow">↓</div>
           <div class="lineage-targets">
             <div class="lineage-node target-node">Tab3 RAG 检索</div>
@@ -686,7 +776,7 @@ const STATIC_RUNTIME_MODE = 'mock';
           </div>
         </div>
         <div class="lineage-source">
-          <div class="lineage-node source-node">模拟数据 [MOCK]<br/><span class="lineage-meta">基本面 · 情绪评分 · 🎭 模拟</span></div>
+          <div class="lineage-node source-node">演示基本面/情绪样本<br/><span class="lineage-meta">仅用于结构化流程，不代表当前值</span></div>
           <div class="lineage-arrow">↓</div>
           <div class="lineage-targets">
             <div class="lineage-node target-node">Tab2 基本面</div>
@@ -701,12 +791,12 @@ const STATIC_RUNTIME_MODE = 'mock';
       <div class="compliance-section-title">📌 AI 内容标注规范</div>
       <div class="standard-table-wrap">
         <table class="standard-table">
-          <thead><tr><th>标签</th><th>含义</th><th>置信度阈值</th><th>应用场景</th></tr></thead>
+          <thead><tr><th>标签</th><th>含义</th><th>可追溯字段</th><th>应用场景</th></tr></thead>
           <tbody>
-            <tr><td>📊 真实数据</td><td>来自 Yahoo Finance 的实时行情</td><td>N/A</td><td>收盘价、成交量、涨跌幅</td></tr>
-            <tr><td>🎭 模拟数据</td><td>硬编码的演示数据</td><td>N/A</td><td>基本面、情绪评分、新闻</td></tr>
-            <tr><td>🎭 静态演示</td><td>本地固定演示响应</td><td>不适用</td><td>分析结论、研报、Agent 判断</td></tr>
-            <tr><td colspan="4">静态演示不计算模型置信度；页面中的评分与颜色仅用于展示原型的信息层级。</td></tr>
+            <tr><td>演示快照</td><td>固定本地行情样本</td><td>marketAsOf / fetchedAt</td><td>默认查询、诊断、Agent get_price</td></tr>
+            <tr><td>联网成功</td><td>用户主动触发的 Yahoo 响应</td><td>source / transport / 时间</td><td>显式网络查询</td></tr>
+            <tr><td>固定资料</td><td>本地新闻、基本面和情绪样本</td><td>sourceId / evidenceLevel / asOf</td><td>RAG、诊断、Agent</td></tr>
+            <tr><td colspan="4">本页只展示来源覆盖、证据完整度和待核查项，不把它们称作预测置信度或效果指标。</td></tr>
           </tbody>
         </table>
       </div>
@@ -719,9 +809,9 @@ const STATIC_RUNTIME_MODE = 'mock';
 <div class="disclaimer-bar">
   ⚠️ 本工具为 AI 产品能力演示，所有内容仅供参考，不构成投资建议。
   <span class="disclaimer-tags">
-    <span class="tag-real">📊 真实数据</span>
-    <span class="tag-mock">🎭 模拟数据</span>
-    <span class="tag-ai">🎭 静态演示</span>
+    <span class="tag-real">联网成功（需主动触发）</span>
+    <span class="tag-mock">演示快照 / 固定资料</span>
+    <span class="tag-ai">本地规则 / 不构成建议</span>
   </span>
 </div>
 <script src="/assets/js/analytics.js" defer></script>

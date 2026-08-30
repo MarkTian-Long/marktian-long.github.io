@@ -23,6 +23,11 @@ function loadRenderingApi() {
   return context.__stockRendering;
 }
 
+test('Stock exposes a workflow API instead of making tests depend on page-only globals', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../tools/stock/app.js'), 'utf8');
+  assert.match(source, /StockResearch/);
+});
+
 test('Stock renders trusted answer templates while escaping model text', () => {
   const api = loadRenderingApi();
   const bubble = { innerHTML: '' };
@@ -46,8 +51,13 @@ test('Stock mock adapter returns the JSON contract required by intent parsing', 
   const intent = await api.parseIntent('查询宁德时代近一月行情');
 
   assert.deepEqual(
-    JSON.parse(JSON.stringify(intent)),
-    { symbol: '300750.SZ', range: '1mo', interval: '1d' },
+    {
+      symbol: intent.symbol,
+      range: intent.range,
+      interval: intent.interval,
+      unresolved: intent.unresolved,
+    },
+    { symbol: '300750.SZ', range: '1mo', interval: '1d', unresolved: false },
   );
 });
 

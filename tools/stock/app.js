@@ -18,6 +18,111 @@ const SYMBOL_MAP = {
   '腾讯':     '0700.HK',
 };
 
+const STOCK_APP_VERSION = 'stock-assistant-v2';
+const DATA_MODE_DEMO = 'demo';
+const DATA_MODE_MARKET = 'market';
+const DEMO_SNAPSHOT_TIME = '2026-08-28T07:00:00.000Z';
+let currentDataMode = DATA_MODE_DEMO;
+let domSequence = 0;
+let runSequence = 0;
+let privateSequence = 0;
+let lastMarketQuery = '';
+
+const DEMO_CLOSES = Object.freeze({
+  '000001.SS': [3388.12, 3394.75, 3382.41, 3401.06, 3410.22],
+  '000905.SS': [5210.4, 5242.8, 5221.6, 5260.1, 5288.7],
+  '399001.SZ': [10822.1, 10848.3, 10790.5, 10876.8, 10902.4],
+  '399006.SZ': [2210.4, 2226.8, 2218.2, 2240.1, 2254.3],
+  '000300.SS': [3890.6, 3912.2, 3884.1, 3925.7, 3940.8],
+  '600519.SS': [1478.2, 1491.4, 1485.6, 1502.8, 1496.3],
+  '300750.SZ': [241.6, 244.2, 242.8, 246.1, 248.5],
+  '002594.SZ': [278.4, 281.7, 280.2, 283.5, 286.1],
+  '600036.SS': [39.1, 39.5, 39.3, 39.8, 40.2],
+  '601318.SS': [48.7, 49.1, 48.9, 49.4, 49.8],
+  '0700.HK': [382.4, 386.1, 384.8, 389.2, 391.5],
+});
+const DEMO_DATES = Object.freeze(['2026-08-24', '2026-08-25', '2026-08-26', '2026-08-27', '2026-08-28']);
+
+const RESEARCH_SESSION = {
+  version: STOCK_APP_VERSION,
+  sessionId: 'session-local-001',
+  runs: [],
+};
+
+const FEEDBACK_LOG = [];
+
+function nextDomId(prefix) {
+  domSequence += 1;
+  return prefix + '-' + String(domSequence).padStart(3, '0');
+}
+
+function cloneData(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function dataModeLabel(mode) {
+  return mode === DATA_MODE_MARKET ? '联网行情' : '演示快照';
+}
+
+function sourceLabel(snapshot) {
+  return snapshot && snapshot.source === 'Yahoo Finance' ? 'Yahoo Finance' : '演示快照';
+}
+
+function recordResearchRun(input) {
+  runSequence += 1;
+  const run = {
+    runId: 'run-' + String(runSequence).padStart(3, '0'),
+    scenario: input.scenario || 'unspecified',
+    dataMode: input.dataMode || currentDataMode,
+    sourceIds: Array.from(new Set(input.sourceIds || [])),
+    status: input.status || 'success',
+    version: STOCK_APP_VERSION,
+  };
+  RESEARCH_SESSION.runs.push(run);
+  renderResearchSession();
+  return cloneData(run);
+}
+
+function updateResearchRun(runId, patch) {
+  const run = RESEARCH_SESSION.runs.find(function(item) { return item.runId === runId; });
+  if (run) Object.assign(run, patch || {});
+  renderResearchSession();
+  return run ? cloneData(run) : null;
+}
+
+function getResearchSession() {
+  return cloneData(RESEARCH_SESSION);
+}
+
+function renderResearchSession() {
+  const summary = typeof document !== 'undefined' && document.getElementById ? document.getElementById('sessionSummary') : null;
+  if (!summary) return;
+  const lastRun = RESEARCH_SESSION.runs[RESEARCH_SESSION.runs.length - 1];
+  const lastText = lastRun ? ' · 最近 ' + lastRun.runId + ' ' + lastRun.scenario : '';
+  summary.textContent = '研究会话 ' + RESEARCH_SESSION.sessionId + ' · ' + RESEARCH_SESSION.runs.length + ' 次运行 · 当前' + dataModeLabel(currentDataMode) + ' · 仅本页内存' + lastText;
+}
+
+function setDataMode(mode) {
+  if (mode !== DATA_MODE_DEMO && mode !== DATA_MODE_MARKET) return currentDataMode;
+  currentDataMode = mode;
+  const rootDocument = typeof document !== 'undefined' ? document : null;
+  if (rootDocument && typeof rootDocument.querySelectorAll === 'function') rootDocument.querySelectorAll('[data-mode-choice]').forEach(function(button) {
+    const active = button.getAttribute('data-mode-choice') === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  const status = rootDocument && rootDocument.getElementById ? rootDocument.getElementById('dataModeStatus') : null;
+  if (status) status.textContent = mode === DATA_MODE_MARKET
+    ? '已选择联网行情，提交查询后才请求 Yahoo；失败不会替换为演示数据。'
+    : '默认不联网，使用固定演示快照。';
+  renderResearchSession();
+  return currentDataMode;
+}
+
+function getCurrentDataMode() {
+  return currentDataMode;
+}
+
 // =============================================
 //  UI Helpers
 // =============================================
@@ -63,6 +168,9 @@ function updateMsg(div, content) {
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function escAttr(str) {
+  return escHtml(str).replace(/'/g, '&#39;');
+}
 function escapeMultiline(text) {
   return escHtml(text).replace(/\n/g,'<br/>');
 }
@@ -82,30 +190,41 @@ async function handleSend() {
   const text = box.value.trim();
   if (!text) { shakeInput(box); return; }
 
+  lastMarketQuery = text;
+  const requestMode = currentDataMode;
   box.value = ''; box.style.height = 'auto';
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
   appendUserMsg(text);
 
-  const loadingDiv = appendLoadingMsg('Step 1 · 解析意图');
+  const loadingDiv = appendLoadingMsg('Step 1 · 解析任务');
+  let run = null;
+  let dataLoading = null;
+  let marketCompleted = false;
 
   try {
-    // Step 1: LLM 解析意图
     const params = await parseIntent(text);
-    updateMsg(loadingDiv, `<span class="step-tag step1">Step 1 完成</span><br/>股票：<b>${escHtml(params.symbol)}</b>，周期：${escHtml(params.range)}，间隔：${escHtml(params.interval)}`);
+    if (params.unresolved) throw new Error('未识别股票代码：请使用股票名称或 6 位代码后重试');
+    updateMsg(loadingDiv, `<span class="step-tag step1">Step 1 完成</span><br/>${escHtml(params.name || params.symbol)} · ${escHtml(params.range)} · ${escHtml(params.interval)}`);
 
-    // Step 2: 拉取数据
-    const dataLoading = appendLoadingMsg('Step 2 · 获取行情数据');
-    const rawData = await fetchYahoo(params.symbol, params.range, params.interval);
-    updateMsg(dataLoading, `<span class="step-tag step1">Step 2 完成</span><br/>获取到 ${rawData.length} 条数据`);
+    dataLoading = appendLoadingMsg('Step 2 · 获取行情数据');
+    const snapshot = await fetchMarketData(params.symbol, params.range, params.interval, { mode: requestMode });
+    run = recordResearchRun({
+      scenario: 'market-query',
+      dataMode: requestMode,
+      sourceIds: [sourceIdForSnapshot(snapshot, params.symbol)],
+    });
+    updateMsg(dataLoading, `<span class="step-tag step1">Step 2 完成</span><br/>${escHtml(sourceLabel(snapshot))} · ${snapshot.rows.length} 条记录 · 市场时间 ${escHtml(snapshot.marketAsOf)}`);
+    marketCompleted = true;
 
-    // Step 3: AI 解读
-    const aiLoading = appendLoadingMsg('Step 3 · AI 解读');
-    const answer = await interpretData(text, params, rawData);
-    updateMsg(aiLoading, buildAnswer(answer, rawData, params));
-
+    const summaryLoading = appendLoadingMsg('Step 3 · 本地规则摘要');
+    const answer = await interpretData(text, params, snapshot);
+    updateMsg(summaryLoading, buildAnswer(answer, snapshot, params, run));
   } catch (err) {
-    updateMsg(loadingDiv, `<span style="color:var(--accent-red)">⚠️ ${escHtml(String(err.message || err))}</span>`);
+    if (run) updateResearchRun(run.runId, { status: 'failed' });
+    else run = recordResearchRun({ scenario: 'market-query', dataMode: requestMode, sourceIds: [], status: 'failed' });
+    if (dataLoading && !marketCompleted) updateMsg(dataLoading, `<span class="step-tag step1">Step 2 未完成</span><br/>${escHtml(err.message || err)}`);
+    updateMsg(loadingDiv, buildMarketFailureState(err, requestMode, run));
   } finally {
     isLoading = false;
     document.getElementById('sendBtn').disabled = false;
@@ -113,21 +232,28 @@ async function handleSend() {
 }
 
 // =============================================
-//  LLM Step 1: 意图解析
+//  Step 1: 本地规则意图解析（保留 JSON 适配器契约）
 // =============================================
 async function parseIntent(userQuery) {
   const symbolList = Object.entries(SYMBOL_MAP).map(([k,v])=>`${k}=${v}`).join(',');
   const systemPrompt = `解析A股/港股查询意图，只返回JSON，无其他文字。
 字段：symbol(Yahoo格式股票代码),range(数据范围:1d/5d/1mo/3mo/6mo/1y),interval(粒度:1d/1wk/1mo)
 代码映射：${symbolList}
-若用户提到的股票不在映射表，自行推断Yahoo Finance格式（沪市.SS，深市.SZ）
+若用户提到的股票不在映射表，symbol必须为null并将unresolved设为true，不要猜测代码
 "今日/最近交易日/最近一个交易日"→range=1d,interval=1d；"近5日/一周"→range=5d,interval=1d；"近3日"→range=5d,interval=1d；"近一月"→range=1mo,interval=1d
 示例：{"symbol":"600519.SS","range":"5d","interval":"1d"}`;
 
   const resp = await callLLM(systemPrompt, userQuery);
   try {
     const cleaned = resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    return {
+      symbol: parsed.symbol || null,
+      name: parsed.name || String(userQuery || '').trim(),
+      range: parsed.range || '5d',
+      interval: parsed.interval || '1d',
+      unresolved: Boolean(parsed.unresolved || !parsed.symbol),
+    };
   } catch {
     throw new Error('意图解析失败：' + resp.slice(0, 150));
   }
@@ -136,107 +262,213 @@ async function parseIntent(userQuery) {
 // =============================================
 //  Yahoo Finance 数据获取（通过 allorigins 代理解决 CORS）
 // =============================================
-async function fetchYahoo(symbol, range, interval) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
+function toFiniteNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
 
-  // 依次尝试多个公共 CORS 代理，任一成功即返回
-  const proxies = [
-    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
-    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-  ];
+function toIso(value) {
+  if (typeof value === 'string') return new Date(value).toISOString();
+  if (typeof value === 'number') return new Date(value).toISOString();
+  return new Date().toISOString();
+}
 
-  let json = null;
-  let lastErr = '';
-  for (const makeProxy of proxies) {
-    try {
-      const resp = await fetch(makeProxy(url), { signal: AbortSignal.timeout(8000) });
-      if (!resp.ok) { lastErr = 'HTTP ' + resp.status; continue; }
-      const text = await resp.text();
-      // allorigins 返回 {contents: "..."}, 其他直接返回 JSON
-      try {
-        const outer = JSON.parse(text);
-        json = outer.contents ? JSON.parse(outer.contents) : outer;
-      } catch { lastErr = '响应解析失败'; continue; }
-      if (json?.chart) break; // 成功
-      json = null;
-    } catch (e) { lastErr = e.message; }
-  }
-  if (!json) throw new Error('数据请求失败：' + lastErr);
-
-  const result = json?.chart?.result?.[0];
-  if (!result) {
-    const err = json?.chart?.error?.description || '未找到该股票数据';
-    throw new Error(err);
-  }
-
-  const timestamps = result.timestamp || [];
-  const quote = result.indicators?.quote?.[0] || {};
-  const { open, high, low, close, volume } = quote;
-
-  if (!timestamps.length) return [];
-
-  // 先去重（同一天保留最后一条），再计算涨跌幅
-  const deduped = timestamps.map((ts, i) => ({
-    日期: new Date(ts * 1000).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }),
-    开盘: open?.[i]?.toFixed(2) ?? '-',
-    最高: high?.[i]?.toFixed(2) ?? '-',
-    最低: low?.[i]?.toFixed(2) ?? '-',
-    收盘: close?.[i]?.toFixed(2) ?? '-',
-    成交量: volume?.[i] ? (volume[i] / 10000).toFixed(0) + '万' : '-',
-    _close: close?.[i] ?? null
-  })).filter(r => r.收盘 !== '-')
-  .reduce((acc, row) => {
-    const last = acc[acc.length - 1];
-    if (last && last.日期 === row.日期) acc[acc.length - 1] = row;
-    else acc.push(row);
-    return acc;
-  }, []);
-
-  // 去重后再算涨跌幅（基于相邻两天收盘价）
-  return deduped.map((row, i) => {
-    const prev = deduped[i - 1];
-    const pct = (i > 0 && row._close && prev?._close)
-      ? ((row._close - prev._close) / prev._close * 100).toFixed(2) + '%'
-      : '-';
-    const { _close, ...rest } = row;
-    return { ...rest, 涨跌幅: pct };
+function buildRowsFromCloses(closes) {
+  return closes.map(function(close, index) {
+    const previous = closes[index - 1];
+    return {
+      date: DEMO_DATES[index] || DEMO_DATES[DEMO_DATES.length - 1],
+      open: Number((close - 2.4).toFixed(2)),
+      high: Number((close + 3.6).toFixed(2)),
+      low: Number((close - 4.1).toFixed(2)),
+      close: Number(close),
+      volume: 1000000 + index * 180000,
+      changePct: previous ? Number(((close - previous) / previous * 100).toFixed(2)) : null,
+    };
   });
 }
 
+function getDemoMarketSnapshot(symbol) {
+  const closes = DEMO_CLOSES[symbol];
+  if (!closes) throw new Error('演示快照没有该标的：请确认股票代码后重试');
+  return {
+    kind: 'market-snapshot',
+    source: '演示快照',
+    transport: 'local',
+    marketAsOf: DEMO_SNAPSHOT_TIME,
+    fetchedAt: DEMO_SNAPSHOT_TIME,
+    rows: cloneData(buildRowsFromCloses(closes)),
+  };
+}
+
+function createTimeoutSignal(timeoutMs) {
+  if (typeof AbortController === 'undefined' || !timeoutMs) return { signal: undefined, cleanup: function() {} };
+  const controller = new AbortController();
+  const timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+  return { signal: controller.signal, cleanup: function() { clearTimeout(timer); } };
+}
+
+function parseChartPayload(text) {
+  const outer = JSON.parse(text);
+  const payload = outer && outer.contents ? JSON.parse(outer.contents) : outer;
+  if (!payload || !payload.chart) throw new Error('响应缺少 chart 数据');
+  return payload;
+}
+
+function rowsFromChartResult(result) {
+  const timestamps = result.timestamp || [];
+  const quote = result.indicators && result.indicators.quote && result.indicators.quote[0] || {};
+  const rowsByDate = new Map();
+  timestamps.forEach(function(timestamp, index) {
+    const close = toFiniteNumber(quote.close && quote.close[index]);
+    if (close === null) return;
+    const date = new Date(timestamp * 1000).toISOString().slice(0, 10);
+    rowsByDate.set(date, {
+      date: date,
+      open: toFiniteNumber(quote.open && quote.open[index]),
+      high: toFiniteNumber(quote.high && quote.high[index]),
+      low: toFiniteNumber(quote.low && quote.low[index]),
+      close: close,
+      volume: toFiniteNumber(quote.volume && quote.volume[index]),
+      changePct: null,
+    });
+  });
+  const rows = Array.from(rowsByDate.values());
+  return rows.map(function(row, index) {
+    const previous = rows[index - 1];
+    return Object.assign({}, row, {
+      changePct: previous ? Number(((row.close - previous.close) / previous.close * 100).toFixed(2)) : null,
+    });
+  });
+}
+
+async function fetchYahoo(symbol, range, interval, options) {
+  if (!symbol) throw new Error('未识别股票代码，未发起联网请求');
+  const opts = options || {};
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&includePrePost=false`;
+  const proxies = [
+    { name: 'corsproxy.io', make: function(u) { return `https://corsproxy.io/?${encodeURIComponent(u)}`; } },
+    { name: 'allorigins.win', make: function(u) { return `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`; } },
+    { name: 'codetabs.com', make: function(u) { return `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`; } },
+  ];
+  const fetchImpl = opts.fetchImpl || fetch;
+  let lastErr = '未知网络错误';
+  for (const proxy of proxies) {
+    const timer = createTimeoutSignal(opts.timeoutMs || 8000);
+    try {
+      const response = await fetchImpl(proxy.make(url), { signal: timer.signal });
+      if (!response.ok) {
+        lastErr = 'HTTP ' + response.status;
+        continue;
+      }
+      let payload;
+      try {
+        payload = parseChartPayload(await response.text());
+      } catch (error) {
+        lastErr = error.message === '响应缺少 chart 数据' ? error.message : '响应解析失败';
+        continue;
+      }
+      const result = payload.chart.result && payload.chart.result[0];
+      if (!result) throw new Error(payload.chart.error && payload.chart.error.description || '未找到该股票数据');
+      const rows = rowsFromChartResult(result);
+      const marketTimestamp = result.meta && result.meta.regularMarketTime || (result.timestamp && result.timestamp[result.timestamp.length - 1]);
+      if (!rows.length) throw new Error('行情响应没有可用收盘价');
+      return {
+        kind: 'market-snapshot',
+        source: 'Yahoo Finance',
+        transport: proxy.name,
+        marketAsOf: marketTimestamp ? toIso(marketTimestamp * 1000) : 'unknown',
+        fetchedAt: toIso(opts.now),
+        rows: rows,
+      };
+    } catch (error) {
+      lastErr = error && error.message ? error.message : String(error);
+    } finally {
+      timer.cleanup();
+    }
+  }
+  throw new Error('数据请求失败：' + lastErr);
+}
+
+async function fetchMarketData(symbol, range, interval, options) {
+  const opts = options || {};
+  const mode = opts.mode || currentDataMode;
+  if (mode === DATA_MODE_DEMO) return getDemoMarketSnapshot(symbol, range, interval);
+  if (mode === DATA_MODE_MARKET) return fetchYahoo(symbol, range, interval, opts);
+  throw new Error('未知数据模式：' + mode);
+}
+
+function sourceIdForSnapshot(snapshot, symbol) {
+  if (snapshot && snapshot.source === 'Yahoo Finance') return 'yahoo-price-' + symbol;
+  return 'demo-price-' + symbol;
+}
+
+function buildMarketFailureState(error, mode, run) {
+  const message = escHtml(String(error && error.message || error));
+  const modeText = mode === DATA_MODE_MARKET ? '联网行情' : '演示快照';
+  return '<div class="market-error-state">'
+    + '<strong>行情未完成</strong>'
+    + '<span>' + message + '</span>'
+    + '<span class="state-note">当前模式：' + modeText + '。失败结果不会静默替换为另一种数据。</span>'
+    + (run ? '<span class="state-note">运行：' + escHtml(run.runId) + ' · 状态：' + escHtml(run.status) + '</span>' : '')
+    + '<div class="state-actions">'
+    + '<button class="inline-action" type="button" onclick="retryLastQuery()">重试</button>'
+    + '<button class="inline-action" type="button" onclick="setDataMode(\'demo\')">改用演示快照</button>'
+    + '</div></div>';
+}
+
+function retryLastQuery() {
+  const box = document.getElementById('inputBox');
+  if (!box || !lastMarketQuery) return;
+  box.value = lastMarketQuery;
+  return handleSend();
+}
+
 // =============================================
-//  LLM Step 2: 数据解读
+//  Step 2: 本地规则数据解读
 // =============================================
 async function interpretData(userQuery, params, data) {
-  if (!data || data.length === 0) {
-    return '未查询到相关数据，可能是非交易日或股票代码有误。';
-  }
-  const systemPrompt = `你是资深A股分析师，用简洁中文回答（100-200字）。根据数据分析趋势、涨跌幅、成交量变化，给出洞察结论，不要复述数字表格。`;
-  const userContent = `用户问题：${userQuery}\n股票代码：${params.symbol}\n数据：${JSON.stringify(data.slice(0, 20))}`;
-  return await callLLM(systemPrompt, userContent);
+  const rows = Array.isArray(data) ? data : data && data.rows || [];
+  if (!rows.length) return '没有可用行情记录，无法生成摘要。';
+  const first = rows[0];
+  const last = rows[rows.length - 1];
+  const change = first.close ? ((last.close - first.close) / first.close * 100).toFixed(2) : '0.00';
+  const direction = Number(change) > 0 ? '上行' : Number(change) < 0 ? '下行' : '基本持平';
+  return '本地规则摘要：' + params.symbol + ' 在 ' + rows.length + ' 条记录中' + direction + '，区间变化 ' + change + '%。这是对输入数据的机械汇总，不是模型结论，也不提供买卖建议。';
 }
 
 // =============================================
 //  构建输出
 // =============================================
-function buildAnswer(answer, rawData, params) {
+function buildAnswer(answer, rawData, params, run) {
   const safeAnswer = escapeMultiline(answer);
-  let html = `<span class="step-tag step2">AI 分析</span><br/>${safeAnswer}`;
+  const snapshot = Array.isArray(rawData) ? null : rawData;
+  const rows = Array.isArray(rawData) ? rawData : rawData && rawData.rows || [];
+  let html = `<span class="step-tag step2">本地规则摘要</span><br/>${safeAnswer}`;
 
-  if (rawData && rawData.length > 0) {
-    const collapseId = 'dc_' + Date.now();
-    const headers = Object.keys(rawData[0]);
-    const rows = rawData.slice(0, 50);
+  if (snapshot) {
+    html += '<div class="market-provenance">'
+      + '<span class="source-badge">' + escHtml(sourceLabel(snapshot)) + '</span>'
+      + '<span>传输：' + escHtml(snapshot.transport) + '</span>'
+      + '<span>市场时间：' + escHtml(snapshot.marketAsOf) + '</span>'
+      + '<span>抓取时间：' + escHtml(snapshot.fetchedAt) + '</span>'
+      + (run ? '<span>运行：' + escHtml(run.runId) + '</span>' : '')
+      + '</div>';
+  }
+
+  if (rows.length > 0) {
+    const collapseId = nextDomId('data');
+    const headers = Object.keys(rows[0]);
     html += `
-      <div class="data-collapse" id="${collapseId}" style="margin-top:10px;">
-        <div class="data-collapse-header" onclick="toggleCollapse('${collapseId}')">
-          <span>📋 原始数据（${rawData.length} 条）</span>
+      <div class="data-collapse" id="${collapseId}">
+        <div class="data-collapse-header" onclick="toggleCollapse('${collapseId}')" role="button" tabindex="0">
+          <span>📋 原始行情（${rows.length} 条）</span>
           <span class="data-collapse-arrow">▼</span>
         </div>
         <div class="data-table-wrap">
           <table class="data-table">
             <thead><tr>${headers.map(h=>`<th>${escHtml(h)}</th>`).join('')}</tr></thead>
-            <tbody>${rows.map(row=>`<tr>${headers.map(h=>`<td>${escHtml(String(row[h]??''))}</td>`).join('')}</tr>`).join('')}</tbody>
+            <tbody>${rows.slice(0, 50).map(row=>`<tr>${headers.map(h=>`<td>${escHtml(formatRowValue(row[h]))}</td>`).join('')}</tr>`).join('')}</tbody>
           </table>
         </div>
       </div>`;
@@ -245,19 +477,28 @@ function buildAnswer(answer, rawData, params) {
   return html;
 }
 
+function formatRowValue(value) {
+  if (value === null || typeof value === 'undefined') return '-';
+  if (typeof value === 'number') return value.toFixed(2);
+  return String(value);
+}
+
 function toggleCollapse(id) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.classList.toggle('open');
-  const body = el.querySelector('.prompt-card-body');
-  const arrow = el.querySelector('.prompt-card-arrow');
+  const body = el.querySelector('.prompt-card-body, .data-table-wrap');
+  const arrow = el.querySelector('.prompt-card-arrow, .data-collapse-arrow');
   if (body) {
-    body.style.display = body.style.display === 'none' ? 'flex' : 'none';
-    if (arrow) arrow.style.transform = body.style.display === 'none' ? '' : 'rotate(180deg)';
+    const isData = body.classList.contains('data-table-wrap');
+    const isOpen = el.classList.contains('open');
+    body.style.display = isOpen ? (isData ? 'block' : 'flex') : 'none';
+    if (arrow) arrow.style.transform = isOpen ? 'rotate(180deg)' : '';
   }
 }
 
 function buildPromptCard(params) {
-  const id = 'pc_' + Date.now();
+  const id = nextDomId('prompt');
   return '<div class="prompt-card" id="' + id + '">' +
     '<div class="prompt-card-header" onclick="toggleCollapse(\'' + id + '\')">' +
       '<span>🔧 Prompt 设计说明</span>' +
@@ -265,20 +506,20 @@ function buildPromptCard(params) {
     '</div>' +
     '<div class="prompt-card-body" style="display:none;">' +
       '<div class="prompt-section">' +
-        '<div class="prompt-label">Step 1 · 意图识别 Prompt 策略</div>' +
-        '<div class="prompt-content">使用 Few-shot 示例约束输出为 JSON，明确字段类型（symbol/range/interval），避免 LLM 自由发挥导致格式漂移。</div>' +
+        '<div class="prompt-label">Step 1 · 意图识别规则</div>' +
+        '<div class="prompt-content">使用固定映射与 JSON 字段约束（symbol/range/interval）；无法识别时保留 unresolved，不猜测代码。</div>' +
       '</div>' +
       '<div class="prompt-section">' +
-        '<div class="prompt-label">真实接入参考</div>' +
-        '<div class="prompt-content">若未来接入服务端模型，可选择轻量快速模型处理意图解析，并优先评估响应速度、成本和安全边界。</div>' +
+        '<div class="prompt-label">未来接入边界</div>' +
+        '<div class="prompt-content">若未来接入服务端模型，应另行评估响应速度、成本、安全边界和离线回归；本页当前不调用模型。</div>' +
       '</div>' +
       '<div class="prompt-section">' +
         '<div class="prompt-label">解析结果</div>' +
         '<div class="prompt-content">symbol: <b>' + escHtml(params.symbol) + '</b> · range: <b>' + escHtml(params.range) + '</b> · interval: <b>' + escHtml(params.interval) + '</b></div>' +
       '</div>' +
       '<div class="prompt-section">' +
-        '<div class="prompt-label">Step 3 · 解读 Prompt 策略</div>' +
-        '<div class="prompt-content">角色设定（资深分析师）+ 字数约束（100-200字）+ 负面约束（不复述数字表格），引导 LLM 产出洞察而非摘要。</div>' +
+        '<div class="prompt-label">Step 3 · 摘要规则</div>' +
+        '<div class="prompt-content">本地规则只计算区间方向与变化百分比，不生成预测，不替代人工研究。</div>' +
       '</div>' +
     '</div>' +
   '</div>';
@@ -294,7 +535,7 @@ function inferMockIntent(userContent) {
     .find(function(name) { return query.includes(name); });
   const explicitCode = query.match(/\b(\d{6})\b/);
   const hongKongCode = query.match(/\b(\d{4,5})(?:\.HK|港股)\b/i);
-  let symbol = matchedName ? SYMBOL_MAP[matchedName] : '600519.SS';
+  let symbol = matchedName ? SYMBOL_MAP[matchedName] : null;
   if (explicitCode) symbol = explicitCode[1] + (explicitCode[1].startsWith('6') ? '.SS' : '.SZ');
   if (hongKongCode) symbol = hongKongCode[1].padStart(4, '0') + '.HK';
 
@@ -308,7 +549,13 @@ function inferMockIntent(userContent) {
   let interval = '1d';
   if (/周线|每周/.test(query)) interval = '1wk';
   else if (/月线|每月/.test(query)) interval = '1mo';
-  return { symbol: symbol, range: range, interval: interval };
+  return {
+    symbol: symbol,
+    name: matchedName || query.trim(),
+    range: range,
+    interval: interval,
+    unresolved: !symbol,
+  };
 }
 
 function mockModelResponse(systemPrompt, userContent) {
@@ -317,9 +564,9 @@ function mockModelResponse(systemPrompt, userContent) {
   }
   if (systemPrompt.includes('诊断结果')) {
     return JSON.stringify({
-      rating: '持有', confidence: 60,
-      summary: '静态演示使用模拟基本面与情绪数据，不代表真实投资判断。',
-      risks: ['数据为演示样本'], catalysts: ['需结合真实市场信息验证']
+      summary: '静态演示只汇总已提供的行情、基本面和情绪样本，不替代人工核查。',
+      evidenceCompleteness: 2,
+      pendingChecks: ['财务期别与来源需核对', '适当性与风险承受能力未评估'],
     });
   }
   if (systemPrompt.includes('严格JSON数组')) {
@@ -330,8 +577,8 @@ function mockModelResponse(systemPrompt, userContent) {
   }
   if (systemPrompt.includes('以JSON格式输出think和plan两段')) {
     return JSON.stringify({
-      think: '静态演示将结合行情、估值、新闻与情绪四类模拟信息。',
-      plan: '1. 解析股票代码\n2. 获取近期行情\n3. 读取模拟估值与新闻\n4. 汇总风险提示'
+      think: '静态演示先识别问题对象，再按问题选择可用证据工具。',
+      plan: '1. 识别对象\n2. 执行选定工具\n3. 标记证据来源\n4. 等待人工确认'
     });
   }
   return '演示模式：本页未调用外部模型，也不会携带或暴露服务端密钥。请结合页面中的行情、模拟资料和引用状态理解产品链路。';
@@ -371,35 +618,50 @@ const DEFAULT_SENTIMENT = { score: 0, label: '暂无数据', news: [], trend: 'f
 async function runDiagnosis() {
   const name = document.getElementById('diagInput').value.trim();
   if (!name) { shakeInput(document.getElementById('diagInput')); return; }
+  const requestMode = currentDataMode;
   const content = document.getElementById('diagContent');
-  content.innerHTML = '<div class="diag-loading">⏳ 正在生成诊断报告...</div>';
+  content.innerHTML = '<div class="diag-loading">⏳ 正在整理证据…</div>';
   try {
     const params = await parseIntent(name + '近5日行情');
+    if (params.unresolved) throw new Error('未识别股票代码：请使用股票名称或 6 位代码后重试');
     const symbol = params.symbol;
-    const priceData = await fetchYahoo(symbol, '5d', '1d');
-    const latest = priceData[priceData.length - 1];
-    const first = priceData[0];
-    const pctChange = (latest && latest._close && first && first._close)
-      ? ((latest._close - first._close) / first._close * 100).toFixed(2)
+    const snapshot = await fetchMarketData(symbol, '5d', '1d', { mode: requestMode });
+    const latest = snapshot.rows[snapshot.rows.length - 1];
+    const first = snapshot.rows[0];
+    const pctChange = (latest && latest.close && first && first.close)
+      ? ((latest.close - first.close) / first.close * 100).toFixed(2)
       : null;
     const fundamental = FUNDAMENTAL_MOCK[symbol] || DEFAULT_MOCK;
     const sentiment = SENTIMENT_MOCK[symbol] || DEFAULT_SENTIMENT;
-    const diagResult = await getDiagnosisFromLLM(name, symbol, priceData, fundamental, sentiment);
-    content.innerHTML = buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentiment, diagResult);
+    const diagResult = getDiagnosisResult(name, symbol, snapshot, fundamental, sentiment);
+    const run = recordResearchRun({
+      scenario: 'evidence-check',
+      dataMode: requestMode,
+      sourceIds: [sourceIdForSnapshot(snapshot, symbol), 'fundamental-demo-' + symbol, 'sentiment-demo-' + symbol],
+    });
+    content.innerHTML = buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment, diagResult, run);
   } catch(err) {
-    content.innerHTML = '<div class="diag-error">⚠️ ' + escHtml(String(err.message)) + '</div>';
+    const run = recordResearchRun({ scenario: 'evidence-check', dataMode: requestMode, sourceIds: [], status: 'failed' });
+    content.innerHTML = '<div class="diag-error">' + buildMarketFailureState(err, requestMode, run) + '</div>';
   }
 }
 
-async function getDiagnosisFromLLM(name, symbol, priceData, fundamental, sentiment) {
-  const systemPrompt = '你是A股分析助手。基于提供的数据，输出严格JSON格式的诊断结果，无其他文字。JSON格式：{"rating":"买入|持有|观望|回避","confidence":0到100的整数,"summary":"50字以内的核心判断","risks":["风险1","风险2"],"catalysts":["催化剂1"]}';
-  const userContent = '股票：' + name + '(' + symbol + ')\n近5日走势：' + JSON.stringify(priceData.slice(-5)) + '\n基本面(模拟)：PE=' + fundamental.pe + ', PB=' + fundamental.pb + ', ROE=' + fundamental.roe + '\n新闻情绪(模拟)：' + sentiment.score + '/5, ' + sentiment.label;
-  const resp = await callLLM(systemPrompt, userContent);
-  try {
-    return JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
-  } catch {
-    return { rating: '持有', confidence: 60, summary: resp.slice(0, 50), risks: [], catalysts: [] };
-  }
+function getDiagnosisResult(name, symbol, snapshot, fundamental, sentiment) {
+  const buckets = [
+    snapshot.rows.length ? '行情记录' : null,
+    fundamental === DEFAULT_MOCK ? null : '基本面演示样本',
+    sentiment === DEFAULT_SENTIMENT ? null : '情绪演示样本',
+  ].filter(Boolean);
+  return {
+    summary: name + ' 的本页结果只展示可追溯证据和缺口，不输出买入、持有或回避判断。',
+    evidenceCompleteness: buckets.length + '/3',
+    evidenceBuckets: buckets,
+    pendingChecks: [
+      '财务数据期别、口径和原始来源待核对',
+      '演示情绪样本不代表实时舆情',
+      '未进行适当性、风险承受能力或交易授权评估',
+    ],
+  };
 }
 
 // Tab 3: RAG Mock 数据库
@@ -464,30 +726,27 @@ function searchNews(query, topK) {
       if (news.content.indexOf(kw) >= 0) score += 0.2;
       if (news.tags.some(function(t) { return t.indexOf(kw) >= 0 || kw.indexOf(t) >= 0; })) score += 0.3;
     });
-    return Object.assign({}, news, { score: Math.min(news.relevance, score > 0 ? news.relevance * (0.7 + score) : 0.1) });
+    const staleNote = news.date < '2026-08-28' ? '固定历史资料，非当前行情' : '';
+    const conflictNotes = [staleNote, news.tier === 'unverified' ? '来源层级待核查' : ''].filter(Boolean);
+    return Object.assign({}, news, {
+      sourceId: 'market-news-' + String(news.id).padStart(2, '0'),
+      evidenceLevel: news.tier === 'official' ? '一手资料' : news.tier === 'mainstream' ? '二手资料' : '待核查',
+      asOf: news.date + 'T00:00:00.000Z',
+      unresolvedConflict: conflictNotes.join('；'),
+      score: Math.min(news.relevance, score > 0 ? news.relevance * (0.7 + score) : 0.1),
+    });
   });
   return scored.sort(function(a, b) { return b.score - a.score; }).slice(0, topK).filter(function(n) { return n.score > 0.1; });
 }
 
-async function rerankResults(query, candidates) {
-  const systemPrompt = '你是金融信息相关性评估专家。对候选新闻与查询的相关性打分，输出严格JSON数组，无其他文字。格式：[{"id":数字,"score":0到1的小数,"reason":"10字以内的判断理由"}]';
-  const userContent = '查询：' + query + '\n\n候选新闻：\n' + candidates.map(function(n) {
-    return '[' + n.id + '] ' + n.title + '（' + n.date + '，' + n.stock + '）';
-  }).join('\n');
-  try {
-    const resp = await callLLM(systemPrompt, userContent);
-    const parsed = JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
-    return candidates.map(function(n) {
-      const ranked = parsed.find(function(r) { return r.id === n.id; });
-      return Object.assign({}, n, {
-        rerankScore: ranked ? ranked.score : n.score,
-        rerankReason: ranked ? ranked.reason : '',
-        origRank: candidates.indexOf(n) + 1
-      });
-    }).sort(function(a, b) { return b.rerankScore - a.rerankScore; });
-  } catch(e) {
-    return candidates.map(function(n) { return Object.assign({}, n, { rerankScore: n.score, rerankReason: '', origRank: candidates.indexOf(n) + 1 }); });
-  }
+function rerankResults(query, candidates) {
+  return candidates.map(function(n, index) {
+    return Object.assign({}, n, {
+      rerankScore: n.score,
+      rerankReason: '关键词命中 + 来源层级，规则可复核',
+      origRank: index + 1,
+    });
+  }).sort(function(a, b) { return b.rerankScore - a.rerankScore; });
 }
 
 async function runRAG() {
@@ -495,227 +754,292 @@ async function runRAG() {
   if (!query) { shakeInput(document.getElementById('ragInput')); return; }
   const sourcesEl = document.getElementById('ragSources');
   const reportEl = document.getElementById('ragReport');
-  // 查询扩展
   const expansion = expandQuery(query);
   const expandHtml = expansion.expanded.length > 0
     ? '<div class="rag-expansion">🔤 查询扩展：<b>' + escHtml(query) + '</b> → ' + expansion.terms.map(function(t) { return '<span class="expand-tag">' + escHtml(t) + '</span>'; }).join(' ') + '</div>'
     : '';
-  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 正在检索中...</div>';
-  reportEl.innerHTML = '<div class="rag-searching">⏳ 等待检索完成...</div>';
-  await new Promise(function(r) { setTimeout(r, 800); });
-  // 双层知识库联合召回
+  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🔍 关键词召回中…</div>';
+  reportEl.innerHTML = '<div class="rag-searching">⌁ 等待来源完成…</div>';
+  await new Promise(function(r) { setTimeout(r, 120); });
   const marketResults = searchNews(query, 5);
   const privateResults = searchPrivateKb(query, 2);
   const candidates = marketResults.concat(privateResults).slice(0, 6);
   if (candidates.length === 0) {
-    sourcesEl.innerHTML = '<div class="rag-placeholder">未找到相关新闻</div>';
-    reportEl.innerHTML = '<div class="rag-error">知识库中无相关内容</div>';
+    const run = recordResearchRun({ scenario: 'research-report', dataMode: DATA_MODE_DEMO, sourceIds: [], status: 'partial' });
+    sourcesEl.innerHTML = expandHtml + '<div class="rag-placeholder">没有命中固定演示资料，未生成研报。请换一个对象或先加入本页私有资料。</div>';
+    reportEl.innerHTML = '<div class="rag-error">检索不完整 · 运行 ' + escHtml(run.runId) + ' · 未使用猜测内容</div>';
     return;
   }
-  const tierConfig = {
-    official:   { label: '官方权威', color: 'var(--accent-green)', bg: 'rgba(0,229,160,0.10)' },
-    mainstream: { label: '主流媒体', color: 'var(--accent)',       bg: 'rgba(79,143,255,0.10)' },
-    unverified: { label: '待核实',   color: 'orange',              bg: 'rgba(255,165,0,0.10)' }
-  };
-  // 展示粗检结果（临时）
-  sourcesEl.innerHTML = expandHtml + candidates.map(function(n, i) {
-    const tc = tierConfig[n.tier] || tierConfig.unverified;
-    return '<div class="rag-source-item" id="src-' + n.id + '">'
-      + '<div class="rag-source-header"><span class="rag-source-idx">[' + (i+1) + ']</span>'
-      + '<span class="rag-source-title">' + escHtml(n.title) + '</span></div>'
-      + '<div class="rag-source-meta-row">'
-      + '<span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span>'
-      + '<span class="rag-source-meta">' + escHtml(n.source) + ' · ' + escHtml(n.date) + '</span>'
-      + '</div>'
-      + '<div class="rag-source-snippet">' + escHtml(n.content.slice(0, 80)) + '...</div>'
-      + '<div class="rag-relevance-bar-wrap">'
-      + '<div class="rag-relevance-bar" style="width:' + Math.round(n.score*100) + '%"></div>'
-      + '<span class="rag-relevance-val">相关度 ' + n.score.toFixed(2) + '</span>'
-      + '</div></div>';
-  }).join('');
-  // Rerank 阶段：LLM 精排
-  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">🧠 演示精排中（Reranking）...</div>';
-  reportEl.innerHTML = '<div class="rag-searching">⏳ 等待精排完成...</div>';
-  const reranked = await rerankResults(query, candidates);
+  sourcesEl.innerHTML = expandHtml + '<div class="rag-searching">⌁ 规则重排中…</div>';
+  reportEl.innerHTML = '<div class="rag-searching">⌁ 等待规则重排完成…</div>';
+  const reranked = rerankResults(query, candidates);
   const results = reranked.slice(0, 3);
-  // 渲染精排后结果（含排序变化）
+  const run = recordResearchRun({
+    scenario: 'research-report',
+    dataMode: DATA_MODE_DEMO,
+    sourceIds: results.map(function(n) { return n.sourceId; }),
+  });
   sourcesEl.innerHTML = expandHtml
-    + '<div class="rerank-header">🧠 Reranking 完成 · 粗检6→精排3</div>'
-    + results.map(function(n, i) {
-      const tc = tierConfig[n.tier] || tierConfig.unverified;
-      const rankChange = n.origRank - (i + 1);
-      const rankTag = rankChange > 0
-        ? '<span class="rank-up">↑' + rankChange + '</span>'
-        : rankChange < 0 ? '<span class="rank-down">↓' + Math.abs(rankChange) + '</span>'
-        : '<span class="rank-same">→</span>';
-      return '<div class="rag-source-item" id="src-' + n.id + '">'
-        + '<div class="rag-source-header">'
-        + '<span class="rag-source-idx">[' + (i+1) + ']</span>'
-        + rankTag
-        + '<span class="rag-source-title">' + escHtml(n.title) + '</span></div>'
-        + '<div class="rag-source-meta-row">'
-        + '<span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span>'
-        + '<span class="rag-source-meta">' + escHtml(n.source) + ' · ' + escHtml(n.date) + '</span>'
-        + '</div>'
-        + (n.rerankReason ? '<div class="rerank-reason">💡 ' + escHtml(n.rerankReason) + '</div>' : '')
-        + '<div class="rag-source-snippet">' + escHtml(n.content.slice(0, 80)) + '...</div>'
-        + '<div class="rag-relevance-bar-wrap">'
-        + '<div class="rag-relevance-bar" style="width:' + Math.round(n.rerankScore*100) + '%"></div>'
-        + '<span class="rag-relevance-val">精排得分 ' + n.rerankScore.toFixed(2) + '</span>'
-        + '</div></div>';
-    }).join('');
-  // Generate 阶段
-  reportEl.innerHTML = '<div class="rag-searching">🤖 AI 正在撰写研报...</div>';
-  const context = results.map(function(n, i) { return '[' + (i+1) + '] ' + n.title + '：' + n.content; }).join('\n');
-  const systemPrompt = '你是专业A股研究员。基于提供的新闻资料撰写简短研究报告（150-250字），要求：结构清晰（概况/亮点/风险），引用来源用[数字]标注，末尾附"数据来源"列表。';
-  const userContent = '研究对象：' + query + '\n\n参考资料：\n' + context;
-  try {
-    const report = await callLLM(systemPrompt, userContent);
-    const wordCount = report.replace(/<[^>]+>/g, '').replace(/\s+/g, '').length;
-    const citationCount = new Set((report.match(/\[(\d+)\]/g) || []).map(function(m){ return m; })).size;
-    const qualityCard = buildQualityCard(wordCount, citationCount, results.length);
-    const feedbackBar = buildFeedbackBar(query);
-    reportEl.innerHTML = '<div class="rag-report-content">'
-      + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究报告 <span class="ai-tag">🎭 静态演示</span></div>'
-      + '<div class="rag-report-text">' + escapeMultiline(report) + '</div>'
-      + '<div class="rag-report-sources"><b>检索来源：</b>' + results.map(function(n,i){ const tc = tierConfig[n.tier] || tierConfig.unverified; return '[' + (i+1) + '] ' + escHtml(n.title) + ' <span class="tier-badge" style="color:' + tc.color + ';background:' + tc.bg + '">' + tc.label + '</span> · ' + escHtml(n.source) + ' · ' + escHtml(n.date); }).join('<br/>') + '</div>'
-      + '<div class="diag-disclaimer">⚠️ 本报告基于模拟新闻数据生成，仅供演示，不构成投资建议</div>'
-      + qualityCard
-      + feedbackBar
-      + '</div>';
-  } catch(err) {
-    reportEl.innerHTML = '<div class="rag-error">⚠️ ' + escHtml(err.message) + '</div>';
-  }
+    + '<div class="rerank-header">⌁ 关键词召回 → 规则重排 · ' + candidates.length + '→' + results.length + '</div>'
+    + results.map(renderRagSource).join('');
+  reportEl.innerHTML = buildRagReport(query, results, run);
 }
 
-function buildQualityCard(wordCount, citationCount, sourceCount) {
+function renderRagSource(n, index) {
+  const rankChange = n.origRank - (index + 1);
+  const rankTag = rankChange > 0
+    ? '<span class="rank-up">↑' + rankChange + '</span>'
+    : rankChange < 0 ? '<span class="rank-down">↓' + Math.abs(rankChange) + '</span>'
+    : '<span class="rank-same">→</span>';
+  const tierLabel = n.evidenceLevel || '待核查';
+  return '<div class="rag-source-item" id="src-' + escAttr(n.sourceId) + '" data-source-id="' + escAttr(n.sourceId) + '">'
+    + '<div class="rag-source-header"><span class="rag-source-idx">[' + (index + 1) + ']</span>' + rankTag
+    + '<span class="rag-source-title">' + escHtml(n.title) + '</span></div>'
+    + '<div class="rag-source-meta-row"><span class="tier-badge tier-' + escAttr(n.tier) + '">' + escHtml(tierLabel) + '</span>'
+    + '<span class="rag-source-meta">' + escHtml(n.source) + ' · asOf ' + escHtml(n.asOf) + '</span></div>'
+    + '<div class="rag-source-snippet">' + escHtml(n.content.slice(0, 100)) + '…</div>'
+    + '<div class="rag-relevance-bar-wrap"><div class="rag-relevance-bar" style="width:' + Math.round(n.rerankScore * 100) + '%"></div>'
+    + '<span class="rag-relevance-val">规则得分 ' + n.rerankScore.toFixed(2) + '</span></div>'
+    + '<div class="rag-source-note">' + escHtml(n.rerankReason) + (n.unresolvedConflict ? ' · 冲突：' + escHtml(n.unresolvedConflict) : '') + '</div></div>';
+}
+
+function buildCitationLink(number, sourceId) {
+  return '<a class="claim-citation" href="#src-' + escAttr(sourceId) + '" onclick="focusSource(\'' + escAttr(sourceId) + '\')">[' + number + ']</a>';
+}
+
+function buildClaims(query, results) {
+  return results.map(function(n, index) {
+    return {
+      id: 'claim-' + String(index + 1).padStart(2, '0'),
+      text: query + ' 的演示资料记录：' + n.title + '。',
+      sourceId: n.sourceId,
+      evidenceLevel: n.evidenceLevel,
+      asOf: n.asOf,
+      unresolvedConflict: n.unresolvedConflict || '未发现样本内冲突；仍需回到来源核查。',
+    };
+  });
+}
+
+function buildRagReport(query, results, run) {
+  const claims = buildClaims(query, results);
+  const reportText = claims.map(function(claim, index) {
+    return '<p>' + escHtml(index === 0 ? '概况：' : index === 1 ? '观察：' : '边界：') + escHtml(claim.text) + ' ' + buildCitationLink(index + 1, claim.sourceId) + '</p>';
+  }).join('');
+  const claimHtml = claims.map(function(claim, index) {
+    return '<div class="claim-card" id="' + escAttr(claim.id) + '">'
+      + '<div class="claim-header"><span class="claim-id">' + escHtml(claim.id) + '</span><span class="claim-citation-label">引用 ' + buildCitationLink(index + 1, claim.sourceId) + '</span></div>'
+      + '<div class="claim-text">' + escHtml(claim.text) + '</div>'
+      + '<div class="claim-meta"><span>证据级别：' + escHtml(claim.evidenceLevel) + '</span><span>数据时间：' + escHtml(claim.asOf) + '</span></div>'
+      + '<div class="claim-conflict">未解决冲突：' + escHtml(claim.unresolvedConflict) + '</div></div>';
+  }).join('');
+  const wordCount = claims.reduce(function(total, claim) { return total + claim.text.replace(/\s+/g, '').length; }, 0);
+  return '<div class="rag-report-content">'
+    + '<div class="rag-report-title">📋 ' + escHtml(query) + ' 研究草稿 <span class="ai-tag">本地规则</span></div>'
+    + '<div class="rag-report-text">' + reportText + '</div>'
+    + '<div class="claim-list-title">逐 Claim 证据</div><div class="claim-list">' + claimHtml + '</div>'
+    + '<div class="rag-report-sources"><b>引用来源：</b>' + claims.map(function(claim, index) { return buildCitationLink(index + 1, claim.sourceId) + ' ' + escHtml(claim.text); }).join('<br/>') + '</div>'
+    + '<div class="diag-disclaimer">⚠️ 固定演示资料 + 本地规则，仅供研究流程演示，不构成投资建议。</div>'
+    + buildQualityCard(wordCount, claims.length, results.length, claims)
+    + buildFeedbackBar(run.runId)
+    + '</div>';
+}
+
+function buildQualityCard(wordCount, citationCount, sourceCount, claims) {
   const wordOk = wordCount >= 150 && wordCount <= 250;
-  const citationOk = citationCount >= sourceCount;
-  const roundEstimate = citationCount >= 3 ? '≤3次（引用充分）' : citationCount >= 1 ? '≤3次（参考值）' : '可能需要补充引用';
-  const roundClass = citationCount >= 1 ? 'quality-pass' : 'quality-warn';
+  const citationOk = sourceCount > 0 && citationCount >= sourceCount;
+  const evidenceBuckets = claims ? new Set(claims.map(function(claim) { return claim.evidenceLevel; })).size : Math.min(citationCount, sourceCount);
+  const evidenceOk = sourceCount > 0 && evidenceBuckets >= Math.min(3, sourceCount);
   return '<div class="report-quality-card">'
-    + '<div class="quality-card-title">📊 质量评估 <span style="font-weight:400;color:var(--text-muted);font-size:10px;">基于业务指标体系</span></div>'
+    + '<div class="quality-card-title">📊 质量检查 <span>只读 proxy，不是生产评估</span></div>'
     + '<div class="quality-metrics">'
-    + '<div class="quality-metric"><span class="quality-icon">' + (citationOk ? '✅' : '⚠️') + '</span><span class="quality-label">引用覆盖</span><span class="quality-value ' + (citationOk ? 'quality-pass' : 'quality-warn') + '">' + citationCount + '/' + sourceCount + ' 文档有溯源 → ' + (citationOk ? '引用准确率达标' : '建议补充引用') + '</span></div>'
+    + '<div class="quality-metric"><span class="quality-icon">' + (citationOk ? '✅' : '⚠️') + '</span><span class="quality-label">有效引用编号覆盖</span><span class="quality-value ' + (citationOk ? 'quality-pass' : 'quality-warn') + '">' + citationCount + '/' + sourceCount + ' 个来源出现编号</span></div>'
+    + '<div class="quality-metric"><span class="quality-icon">' + (evidenceOk ? '✅' : '⚠️') + '</span><span class="quality-label">证据桶完整度</span><span class="quality-value ' + (evidenceOk ? 'quality-pass' : 'quality-warn') + '">' + evidenceBuckets + '/' + Math.min(3, sourceCount) + ' 个证据级别</span></div>'
     + '<div class="quality-metric"><span class="quality-icon">' + (wordOk ? '✅' : '⚠️') + '</span><span class="quality-label">研报字数</span><span class="quality-value ' + (wordOk ? 'quality-pass' : 'quality-warn') + '">' + wordCount + '字（目标范围 150-250）</span></div>'
-    + '<div class="quality-metric"><span class="quality-icon">🔄</span><span class="quality-label">预计修改轮次</span><span class="quality-value ' + roundClass + '">' + roundEstimate + '</span></div>'
+    + '<div class="quality-note">反馈后的修复对象与回归结果由人工记录，本页不预估修改次数。</div>'
     + '</div></div>';
 }
 
-// 反馈闭环：localStorage 记录采用/修改/Bad Case
-const FB_STORAGE_KEY = 'qiuzhi_stock_feedback_v1';
+// 反馈闭环：每个 run 只接受一次最终反馈，数据仅保留在当前页面内存。
 function getFbData() {
-  try { return JSON.parse(localStorage.getItem(FB_STORAGE_KEY) || '{"adoptCount":0,"reviseCount":0,"badCases":[]}'); } catch { return { adoptCount: 0, reviseCount: 0, badCases: [] }; }
+  return {
+    feedback: cloneData(FEEDBACK_LOG),
+    adoptCount: FEEDBACK_LOG.filter(function(item) { return item.decision === 'adopt'; }).length,
+    reviseCount: FEEDBACK_LOG.filter(function(item) { return item.decision !== 'adopt'; }).length,
+  };
 }
-function saveFbData(d) { localStorage.setItem(FB_STORAGE_KEY, JSON.stringify(d)); }
 
-function buildFeedbackBar(query) {
+function submitFeedback(input) {
+  const payload = input || {};
+  if (!payload.runId) return { accepted: false, reason: '缺少 runId，无法归因反馈' };
+  if (FEEDBACK_LOG.some(function(item) { return item.runId === payload.runId; })) {
+    return { accepted: false, reason: '每个 run 只能提交一次最终反馈' };
+  }
+  const entry = {
+    runId: payload.runId,
+    decision: payload.decision || 'revise',
+    issueType: payload.issueType || 'unspecified',
+    repairTarget: payload.target || '人工复核',
+    regressionResult: payload.regressionResult || '尚未执行自动回归，等待人工复核',
+    note: payload.note || '',
+  };
+  FEEDBACK_LOG.push(entry);
+  return { accepted: true, entry: cloneData(entry) };
+}
+
+function exportFeedback() {
+  return JSON.stringify({ version: STOCK_APP_VERSION, feedback: FEEDBACK_LOG }, null, 2);
+}
+
+function feedbackBarForElement(element) {
+  return element && element.closest ? element.closest('.feedback-bar') : null;
+}
+
+function updateFeedbackBar(bar, result) {
+  if (!bar || !result || !result.accepted) return;
+  bar.querySelectorAll('.fb-btn, .fb-reason-btn, .fb-bad-submit').forEach(function(button) { button.disabled = true; });
+  const entry = result.entry;
+  const stats = bar.querySelector('.fb-stats');
+  if (stats) stats.textContent = '已记录 ' + entry.decision + ' · ' + entry.issueType + ' → ' + entry.repairTarget + ' → ' + entry.regressionResult;
+  const note = bar.querySelector('.fb-regression-note');
+  if (note) note.textContent = '回归记录：' + entry.issueType + ' → ' + entry.repairTarget + ' → ' + entry.regressionResult;
+}
+
+function buildFeedbackBar(runId) {
   const d = getFbData();
-  const statsText = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
-  return '<div class="feedback-bar" id="feedbackBar">'
-    + '<span class="feedback-label">这份研报对你有帮助吗？</span>'
+  return '<div class="feedback-bar" data-run-id="' + escAttr(runId) + '">'
+    + '<span class="feedback-label">这份草稿对你有帮助吗？每个 run 只提交一次最终反馈。</span>'
     + '<button class="fb-btn fb-adopt" onclick="fbAdopt(this)">👍 采用</button>'
     + '<button class="fb-btn fb-revise" onclick="fbRevise(this)">👎 需修改</button>'
-    + '<button class="fb-btn fb-bad" onclick="fbBad(this)">🚩 标记 Bad Case</button>'
-    + '<div class="fb-reasons" id="fbReasons">'
-    + '<span style="font-size:11px;color:var(--text-muted);">原因：</span>'
-    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">引用不准</button>'
-    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">分析浅</button>'
-    + '<button class="fb-reason-btn" onclick="fbSelectReason(this,\'' + escHtml(query) + '\')">格式问题</button>'
+    + '<button class="fb-btn fb-bad" onclick="fbBad(this)">🚩 标记问题</button>'
+    + '<div class="fb-reasons">'
+    + '<span class="feedback-reason-label">问题类型：</span>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this)">引用不准</button>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this)">分析浅</button>'
+    + '<button class="fb-reason-btn" onclick="fbSelectReason(this)">格式问题</button>'
     + '</div>'
-    + '<div class="fb-bad-input-wrap" id="fbBadInputWrap">'
-    + '<textarea class="fb-bad-textarea" id="fbBadTextarea" placeholder="描述问题（可选）..."></textarea>'
-    + '<button class="fb-bad-submit" onclick="fbSubmitBad(\'' + escHtml(query) + '\')">提交 Bad Case</button>'
+    + '<div class="fb-bad-input-wrap">'
+    + '<textarea class="fb-bad-textarea" placeholder="补充问题（可选）…"></textarea>'
+    + '<button class="fb-bad-submit" onclick="fbSubmitBad(this)">提交问题</button>'
     + '</div>'
-    + '<span class="fb-stats" id="fbStats">' + statsText + '</span>'
+    + '<span class="fb-stats">已记录 ' + d.feedback.length + ' 条反馈 · 当前 run 未提交</span>'
+    + '<span class="fb-regression-note">问题类型 → 修复对象 → 回归结果</span>'
+    + '<button class="fb-export" onclick="exportFeedbackFile(this)">导出 JSON</button>'
     + '</div>';
 }
 
 function fbAdopt(btn) {
-  const d = getFbData();
-  d.adoptCount++;
-  saveFbData(d);
-  btn.classList.add('fb-active-adopt');
-  btn.textContent = '👍 已采用';
-  btn.disabled = true;
-  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+  const bar = feedbackBarForElement(btn);
+  const result = submitFeedback({ runId: bar && bar.dataset.runId, decision: 'adopt', issueType: 'none', target: 'report', regressionResult: '无需修复回归' });
+  updateFeedbackBar(bar, result);
+  if (result.accepted) { btn.classList.add('fb-active-adopt'); btn.textContent = '👍 已采用'; }
 }
 
 function fbRevise(btn) {
-  const reasons = document.getElementById('fbReasons');
-  reasons.classList.toggle('show');
+  const bar = feedbackBarForElement(btn);
+  const reasons = bar && bar.querySelector('.fb-reasons');
+  if (reasons) reasons.classList.toggle('show');
 }
 
-function fbSelectReason(btn, query) {
-  const d = getFbData();
-  d.reviseCount = (d.reviseCount || 0) + 1;
-  d.badCases = d.badCases || [];
-  d.badCases.push({ query: query, reason: btn.textContent, ts: Date.now(), type: 'revise' });
-  saveFbData(d);
-  btn.style.borderColor = 'orange';
-  btn.style.color = 'orange';
-  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
+function fbSelectReason(btn) {
+  const bar = feedbackBarForElement(btn);
+  const result = submitFeedback({ runId: bar && bar.dataset.runId, decision: 'revise', issueType: btn.textContent, target: '对应 Claim 与引用', regressionResult: '待人工回归' });
+  updateFeedbackBar(bar, result);
+  if (result.accepted) btn.classList.add('fb-reason-selected');
 }
 
 function fbBad(btn) {
-  const wrap = document.getElementById('fbBadInputWrap');
-  wrap.classList.toggle('show');
+  const bar = feedbackBarForElement(btn);
+  const wrap = bar && bar.querySelector('.fb-bad-input-wrap');
+  if (wrap) wrap.classList.toggle('show');
   btn.classList.toggle('fb-active-bad');
 }
 
-function fbSubmitBad(query) {
-  const note = document.getElementById('fbBadTextarea').value.trim();
-  const d = getFbData();
-  d.badCases = d.badCases || [];
-  d.badCases.push({ query: query, note: note, ts: Date.now(), type: 'bad_case' });
-  saveFbData(d);
-  document.getElementById('fbBadInputWrap').classList.remove('show');
-  document.getElementById('fbBadTextarea').value = '';
-  document.getElementById('fbStats').textContent = '已采用 ' + d.adoptCount + ' 次 · Bad Case ' + d.badCases.length + ' 条';
-  const btn = document.querySelector('.fb-btn.fb-bad');
-  if (btn) { btn.classList.remove('fb-active-bad'); btn.textContent = '🚩 已记录'; btn.disabled = true; }
+function fbSubmitBad(btn) {
+  const bar = feedbackBarForElement(btn);
+  const textarea = bar && bar.querySelector('.fb-bad-textarea');
+  const result = submitFeedback({ runId: bar && bar.dataset.runId, decision: 'bad-case', issueType: '用户补充问题', target: '对应 Claim 与生成规则', regressionResult: '待人工回归', note: textarea ? textarea.value.trim() : '' });
+  updateFeedbackBar(bar, result);
+  if (result.accepted) btn.textContent = '已记录问题';
 }
 
-// Tab 5: Agent 工具定义
+function exportFeedbackFile(button) {
+  const blob = new Blob([exportFeedback()], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'stock-feedback.json';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  if (button) button.textContent = '已导出 JSON';
+}
+
+// Tab 5: Agent 工具定义。工具选择是可复核的本地规则，不代表模型自主决策。
 const AGENT_TOOLS = [
   {
     name: 'get_price',
-    desc: '获取股票近期行情数据',
-    status: 'real',
+    desc: '按任务需要获取近期行情证据',
+    status: 'market',
     schema: { symbol: 'string (Yahoo格式)', range: '1d|5d|1mo', interval: '1d|1wk' },
     impl: async function(args) {
-      const data = await fetchYahoo(args.symbol, args.range || '5d', '1d');
-      return { data: data.slice(-5), source: 'Yahoo Finance', delay: '15分钟' };
+      const snapshot = await fetchMarketData(args.symbol, args.range || '5d', args.interval || '1d', { mode: args.mode || currentDataMode });
+      return {
+        data: snapshot.rows.slice(-5),
+        snapshot: snapshot,
+        sourceIds: [sourceIdForSnapshot(snapshot, args.symbol)],
+      };
     }
   },
   {
     name: 'get_valuation',
-    desc: '获取股票估值指标（PE/PB/ROE）',
-    status: 'mock',
+    desc: '按任务需要读取固定基本面样本（PE/PB/ROE）',
+    status: 'demo',
     schema: { symbol: 'string', name: 'string' },
     impl: async function(args) {
-      const sym = args.symbol || (Object.entries(SYMBOL_MAP).find(function(e) { return args.name && args.name.indexOf(e[0]) >= 0; }) || [])[1];
-      return Object.assign({}, (FUNDAMENTAL_MOCK[sym] || DEFAULT_MOCK), { source: '模拟数据 [MOCK]' });
+      const value = cloneData(FUNDAMENTAL_MOCK[args.symbol] || DEFAULT_MOCK);
+      return { data: value, sourceIds: ['fundamental-demo-' + args.symbol], source: '演示数据' };
     }
   },
   {
     name: 'search_news',
-    desc: '检索相关新闻和市场情绪',
-    status: 'mock',
+    desc: '按任务需要召回带来源编号的固定资料',
+    status: 'demo',
     schema: { query: 'string', topK: 'number (默认3)' },
     impl: async function(args) {
       const results = searchNews(args.query, args.topK || 3);
-      return { news: results.map(function(n) { return { title: n.title, date: n.date, sentiment: n.score > 0.7 ? '正面' : '中性' }; }), source: '模拟数据 [MOCK]' };
+      return {
+        news: results.map(function(n) { return { title: n.title, date: n.date, source: n.source, sourceId: n.sourceId }; }),
+        sourceIds: results.map(function(n) { return n.sourceId; }),
+        source: '演示资料',
+      };
     }
   },
   {
     name: 'get_sentiment',
-    desc: '获取股票综合情绪评分',
-    status: 'mock',
+    desc: '按任务需要读取固定情绪样本',
+    status: 'demo',
     schema: { symbol: 'string' },
-    impl: async function(args) { return Object.assign({}, (SENTIMENT_MOCK[args.symbol] || DEFAULT_SENTIMENT), { source: '模拟数据 [MOCK]' }); }
+    impl: async function(args) {
+      return {
+        data: cloneData(SENTIMENT_MOCK[args.symbol] || DEFAULT_SENTIMENT),
+        sourceIds: ['sentiment-demo-' + args.symbol],
+        source: '演示数据',
+      };
+    }
   }
 ];
+
+function selectAgentTools(question) {
+  const query = String(question || '');
+  const selected = [];
+  function add(name) {
+    if (!selected.includes(name)) selected.push(name);
+  }
+  if (/行情|走势|涨跌|价格|收盘|最近|今日|现在|区间/.test(query)) add('get_price');
+  if (/估值|基本面|市盈率|市净率|ROE|财务|盈利|价值|值得/.test(query)) add('get_valuation');
+  if (/新闻|消息|公告|政策|行业|原因|风险|出货|销量|舆情/.test(query)) add('search_news');
+  if (/情绪|舆情|热度|情感/.test(query)) add('get_sentiment');
+  if (!selected.length) add('get_price');
+  return selected;
+}
 
 function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
@@ -733,10 +1057,13 @@ function updateAgentStep(el, content) {
   el.querySelector('.agent-step-body').innerHTML = escapeMultiline(content);
 }
 
-function addToolCall(stepEl, toolName, status) {
+function addToolCall(stepEl, toolName, status, mode) {
   const callEl = document.createElement('div');
   callEl.className = 'tool-call tool-call-pending';
-  callEl.innerHTML = '<span class="tool-status">⏳</span> ' + escHtml(toolName) + '() <span class="tool-badge tool-badge-' + status + '">' + (status === 'real' ? '📊 真实' : '🎭 模拟') + '</span>';
+  const label = status === 'market'
+    ? ((mode || currentDataMode) === DATA_MODE_MARKET ? '可请求联网' : '演示行情')
+    : '演示数据';
+  callEl.innerHTML = '<span class="tool-status">⏳</span> ' + escHtml(toolName) + '() <span class="tool-badge tool-badge-' + status + '">' + escHtml(label) + '</span>';
   stepEl.querySelector('.agent-step-body').appendChild(callEl);
   return callEl;
 }
@@ -746,11 +1073,20 @@ function markToolCall(el, result) {
   el.querySelector('.tool-status').textContent = result === 'success' ? '✅' : '❌';
 }
 
-function renderAgentTools() {
-  document.getElementById('agentTools').innerHTML = AGENT_TOOLS.map(function(t) {
-    return '<div class="agent-tool-card">'
-      + '<div class="agent-tool-name">' + escHtml(t.name) + '() <span class="tool-badge tool-badge-' + t.status + '">' + (t.status === 'real' ? '真实' : '模拟') + '</span></div>'
+function renderAgentTools(selectedNames, mode) {
+  const selected = selectedNames || [];
+  const selectedMode = mode || currentDataMode;
+  const target = document.getElementById('agentTools');
+  if (!target) return;
+  target.innerHTML = AGENT_TOOLS.map(function(t) {
+    const isSelected = selected.includes(t.name);
+    const badge = t.status === 'market'
+      ? (selectedMode === DATA_MODE_MARKET ? '联网可选' : '演示行情')
+      : '演示数据';
+    return '<div class="agent-tool-card ' + (isSelected ? 'agent-tool-card-selected' : 'agent-tool-card-muted') + '">'
+      + '<div class="agent-tool-name">' + escHtml(t.name) + '() <span class="tool-badge tool-badge-' + t.status + '">' + escHtml(badge) + '</span></div>'
       + '<div class="agent-tool-desc">' + escHtml(t.desc) + '</div>'
+      + '<div class="agent-tool-selection">' + (isSelected ? '本次任务已选择' : '本次任务未选择') + '</div>'
       + '<div class="agent-tool-schema">' + Object.entries(t.schema).map(function(e) { return escHtml(e[0]) + ': <i>' + escHtml(e[1]) + '</i>'; }).join('<br/>') + '</div>'
       + '</div>';
   }).join('');
@@ -767,92 +1103,97 @@ async function runAgent() {
   }
   const el = document.getElementById('agentProcess');
   el.innerHTML = '';
-  renderAgentTools();
-  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '🎭 演示推理中...');
-  const planEl = addAgentStep(el, 'plan', '📋 PLAN', '⏳ 等待 THINK 完成...');
-  // LLM 实时生成 THINK + PLAN
+  const agentMode = currentDataMode;
+  const selectedNames = selectAgentTools(question);
+  renderAgentTools(selectedNames, agentMode);
+  const thinkEl = addAgentStep(el, 'think', '🤔 THINK', '本地任务分解：先识别对象，再只取与「' + question + '」相关的证据。');
+  const planEl = addAgentStep(el, 'plan', '📋 PLAN', '执行计划：\n1. 解析研究对象\n2. 调用：' + selectedNames.join('、') + '\n3. 汇总来源编号\n4. 保留待核查项并等待人工确认');
+  let params;
   try {
-    const tpSystemPrompt = '你是ReAct Agent的推理模块。根据用户问题，以JSON格式输出think和plan两段。\nthink：分析这个具体问题需要哪些信息，简洁2-3句话，要提到具体的股票/行业名称。\nplan：列出4-5步执行计划，提及具体要调用的工具（get_price/get_valuation/search_news/get_sentiment）和用途。\n格式：{"think":"...","plan":"1. ...\n2. ...\n3. ..."}';
-    const tpResp = await callLLM(tpSystemPrompt, '用户问题：' + question);
-    let tpData;
-    try {
-      tpData = JSON.parse(tpResp.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());
-    } catch { tpData = { think: '分析问题：「' + question + '」\n需要获取价格走势、估值指标、市场情绪', plan: '1. 解析股票代码\n2. 调用 get_price → 近期行情\n3. 调用 get_valuation → 估值数据\n4. 调用 search_news → 市场情绪\n5. 综合分析输出判断' }; }
-    updateAgentStep(thinkEl, tpData.think || '');
-    updateAgentStep(planEl, tpData.plan || '');
-  } catch(e) {
-    updateAgentStep(thinkEl, '分析问题：「' + question + '」\n需要获取：价格走势数据、估值指标、市场情绪、相关新闻');
-    updateAgentStep(planEl, '执行计划：\n1. 解析股票代码\n2. 调用 get_price → 近期行情\n3. 调用 get_valuation → 估值数据\n4. 调用 search_news → 市场情绪\n5. 综合分析，输出判断');
+    params = await parseIntent(question);
+  } catch (error) {
+    params = { symbol: null, name: question, unresolved: true };
   }
+  if (params.unresolved) {
+    const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: [], status: 'partial' });
+    addAgentStep(el, 'observe', '👁 OBSERVE', '无法确认研究对象，已停止工具调用。');
+    const partialEl = document.createElement('div');
+    partialEl.className = 'agent-partial';
+    partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
+      + '<div class="agent-conclusion-body">未识别到映射内股票代码，未猜测标的，也未生成研究结论。请补充股票名称或 6 位代码。</div>'
+      + '<div class="agent-chain-note">状态：partial · 原因：研究对象未确认</div>';
+    el.appendChild(partialEl);
+    return;
+  }
+
   const actEl = addAgentStep(el, 'act', '⚡ ACT', '执行工具调用...');
   const toolResults = {};
-  let symbol, stockName;
-  try {
-    const params = await parseIntent(question);
-    symbol = params.symbol;
-    const found = Object.entries(SYMBOL_MAP).find(function(e) { return e[1] === symbol; });
-    stockName = found ? found[0] : symbol;
-  } catch(e) {
-    symbol = '600519.SS'; stockName = '茅台';
-  }
-  for (let i = 0; i < AGENT_TOOLS.length; i++) {
-    const tool = AGENT_TOOLS[i];
-    const callEl = addToolCall(actEl, tool.name, tool.status);
+  const symbol = params.symbol;
+  const found = Object.entries(SYMBOL_MAP).find(function(e) { return e[1] === symbol; });
+  const stockName = found ? found[0] : (params.name || symbol);
+  const selectedTools = AGENT_TOOLS.filter(function(tool) { return selectedNames.includes(tool.name); });
+  const sourceIds = [];
+  const failures = [];
+  for (let i = 0; i < selectedTools.length; i++) {
+    const tool = selectedTools[i];
+    const callEl = addToolCall(actEl, tool.name, tool.status, agentMode);
     try {
       let args = {};
-      if (tool.name === 'get_price') args = { symbol: symbol, range: '5d' };
+      if (tool.name === 'get_price') args = { symbol: symbol, range: '5d', mode: agentMode };
       else if (tool.name === 'get_valuation') args = { symbol: symbol, name: stockName };
       else if (tool.name === 'search_news') args = { query: stockName, topK: 3 };
       else if (tool.name === 'get_sentiment') args = { symbol: symbol };
       toolResults[tool.name] = await tool.impl(args);
+      (toolResults[tool.name].sourceIds || []).forEach(function(sourceId) { if (!sourceIds.includes(sourceId)) sourceIds.push(sourceId); });
       markToolCall(callEl, 'success');
-    } catch(e) {
+    } catch (e) {
       toolResults[tool.name] = { error: e.message };
+      failures.push(tool.name + '：' + e.message);
       markToolCall(callEl, 'error');
     }
-    await sleep(300);
+    await sleep(160);
   }
-  const obsEl = addAgentStep(el, 'observe', '👁 OBSERVE', '整合结果，进行推理...');
-  await sleep(400);
-  const systemPrompt = '你是专业A股分析师。基于以下多源数据，给出结构化投资判断（150字以内）：评级（买入/持有/观望/回避）+ 核心理由（2-3点）+ 主要风险（1-2点）。末尾注明"本分析仅供参考，不构成投资建议"。';
-  const priceData = (toolResults['get_price'] && toolResults['get_price'].data) ? toolResults['get_price'].data.slice(-3) : [];
-  const userContent = '问题：' + question + '\n股票：' + stockName + '(' + symbol + ')\n行情数据：' + JSON.stringify(priceData) + '\n估值：' + JSON.stringify(toolResults['get_valuation'] || {}) + '\n新闻情绪：' + JSON.stringify((toolResults['search_news'] && toolResults['search_news'].news) || []);
-  try {
-    const conclusion = await callLLM(systemPrompt, userContent);
-    updateAgentStep(obsEl, '数据整合完成，生成最终判断');
-    const finalEl = document.createElement('div');
-    finalEl.className = 'agent-conclusion';
-    finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 最终结论 <span class="ai-tag">🎭 静态演示</span></div>'
-      + '<div class="agent-conclusion-body">' + escapeMultiline(conclusion) + '</div>'
-      + '<div class="agent-chain-note">推理链路：THINK → PLAN → ACT(' + Object.keys(toolResults).length + '个工具) → OBSERVE → 结论</div>';
-    el.appendChild(finalEl);
-  } catch(err) {
-    updateAgentStep(obsEl, '⚠️ ' + err.message);
+  const runStatus = failures.length ? 'partial' : 'success';
+  const run = recordResearchRun({ scenario: 'agent-evidence', dataMode: agentMode, sourceIds: sourceIds, status: runStatus });
+  const obsEl = addAgentStep(el, 'observe', '👁 OBSERVE', failures.length
+    ? '证据链不完整，已保留成功结果并停止总结。'
+    : '证据已按来源编号汇总，未生成买卖判断。');
+  if (failures.length) {
+    const partialEl = document.createElement('div');
+    partialEl.className = 'agent-partial';
+    partialEl.innerHTML = '<div class="agent-conclusion-title">⚠️ 部分完成 <span class="ai-tag">' + escHtml(run.runId) + '</span></div>'
+      + '<div class="agent-conclusion-body">已完成：' + escHtml(Object.keys(toolResults).filter(function(name) { return !toolResults[name].error; }).join('、') || '无') + '。失败：' + escHtml(failures.join('；')) + '。</div>'
+      + '<div class="agent-chain-note">状态：partial · 请修复数据源或补充证据后人工回归。</div>';
+    el.appendChild(partialEl);
+    return;
   }
+  const finalEl = document.createElement('div');
+  finalEl.className = 'agent-conclusion agent-evidence-summary';
+  finalEl.innerHTML = '<div class="agent-conclusion-title">📊 Agent 证据汇总 <span class="ai-tag">本地规则</span></div>'
+    + '<div class="agent-conclusion-body">已围绕「' + escHtml(stockName) + '」完成 ' + selectedTools.length + ' 个任务相关工具调用，来源编号：' + escHtml(sourceIds.join('、') || '无') + '。结果仅用于研究流程展示，不输出交易方向。</div>'
+    + '<div class="agent-chain-note">推理链路：THINK → PLAN → ACT(' + selectedTools.length + '个工具) → OBSERVE → 人工确认 · ' + escHtml(run.runId) + '</div>';
+  el.appendChild(finalEl);
 }
 
-function buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentiment, diag) {
-  const ratingColor = { '买入': 'var(--accent-green)', '持有': 'var(--accent)', '观望': 'var(--accent-purple)', '回避': 'var(--accent-red)' };
-  const confColor = diag.confidence >= 70 ? 'var(--accent-green)' : diag.confidence >= 40 ? 'orange' : 'var(--accent-red)';
-  const trendRows = priceData.slice(-5).map(function(r) {
-    const isNeg = r['涨跌幅'] && r['涨跌幅'].toString().startsWith('-');
-    return '<tr><td>' + escHtml(r['日期'] || '') + '</td><td>' + escHtml(r['收盘'] || '') + '</td><td style="color:' + (isNeg ? 'var(--accent-red)' : 'var(--accent-green)') + '">' + escHtml(r['涨跌幅'] || '') + '</td></tr>';
+function buildDiagCard(name, symbol, snapshot, pctChange, fundamental, sentiment, diag, run) {
+  const trendRows = snapshot.rows.slice(-5).map(function(row) {
+    const change = row.changePct === null ? '-' : (row.changePct >= 0 ? '+' : '') + row.changePct + '%';
+    return '<tr><td>' + escHtml(row.date) + '</td><td>' + escHtml(formatRowValue(row.close)) + '</td><td class="' + (row.changePct < 0 ? 'value-negative' : 'value-positive') + '">' + escHtml(change) + '</td></tr>';
   }).join('');
   const sentimentBar = Math.round((sentiment.score / 5) * 100);
-  const risks = (diag.risks || []).map(function(r) { return escHtml(r); }).join('、');
-  const catalysts = (diag.catalysts || []).map(function(c) { return escHtml(c); }).join('、');
+  const pending = (diag.pendingChecks || []).map(function(item) { return '<li>' + escHtml(item) + '</li>'; }).join('');
   return '<div class="diag-card">'
     + '<div class="diag-header">'
     + '<div><div class="diag-name">' + escHtml(name) + '</div><div class="diag-symbol">' + escHtml(symbol) + '</div></div>'
-    + '<div class="diag-rating-block"><div class="diag-rating" style="color:' + (ratingColor[diag.rating] || 'var(--accent)') + '">' + escHtml(diag.rating) + '</div>'
-    + '<div class="diag-confidence">置信度 <span style="color:' + confColor + '">' + diag.confidence + '%</span></div></div>'
+    + '<div class="diag-rating-block"><div class="evidence-score">证据完整度 ' + escHtml(diag.evidenceCompleteness) + '</div><div class="diag-confidence-note">仅为来源覆盖计数，不是预测置信度</div></div>'
     + '</div>'
+    + '<div class="diag-provenance"><span class="source-badge">' + escHtml(sourceLabel(snapshot)) + '</span><span>市场时间：' + escHtml(snapshot.marketAsOf) + '</span><span>抓取时间：' + escHtml(snapshot.fetchedAt) + '</span>' + (run ? '<span>运行：' + escHtml(run.runId) + '</span>' : '') + '</div>'
     + '<div class="diag-panels">'
-    + '<div class="diag-panel"><div class="diag-panel-title">📊 技术面 <span class="real-tag">真实数据</span></div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">📊 行情证据 <span class="' + (snapshot.source === 'Yahoo Finance' ? 'real-tag' : 'mock-tag') + '">' + escHtml(sourceLabel(snapshot)) + '</span></div>'
     + '<table class="diag-mini-table"><tr><th>日期</th><th>收盘</th><th>涨跌</th></tr>' + trendRows + '</table>'
-    + (pctChange ? '<div class="diag-pct" style="color:' + (parseFloat(pctChange) >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">5日累计 ' + (pctChange >= 0 ? '+' : '') + pctChange + '%</div>' : '')
+    + (pctChange ? '<div class="diag-pct ' + (parseFloat(pctChange) >= 0 ? 'value-positive' : 'value-negative') + '">5日区间 ' + (pctChange >= 0 ? '+' : '') + escHtml(pctChange) + '%</div>' : '')
     + '</div>'
-    + '<div class="diag-panel"><div class="diag-panel-title">🏢 基本面 <span class="mock-tag">🎭 模拟数据</span></div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">🏢 基本面 <span class="mock-tag">演示数据</span></div>'
     + '<div class="diag-kv-list">'
     + '<div class="diag-kv"><span>市盈率</span><b>' + escHtml(String(fundamental.pe)) + '</b></div>'
     + '<div class="diag-kv"><span>市净率</span><b>' + escHtml(String(fundamental.pb)) + '</b></div>'
@@ -860,25 +1201,26 @@ function buildDiagCard(name, symbol, priceData, pctChange, fundamental, sentimen
     + '<div class="diag-kv"><span>ROE</span><b>' + escHtml(String(fundamental.roe)) + '</b></div>'
     + '<div class="diag-kv"><span>毛利率</span><b>' + escHtml(String(fundamental.grossMargin)) + '</b></div>'
     + '</div></div>'
-    + '<div class="diag-panel"><div class="diag-panel-title">📰 情绪面 <span class="mock-tag">🎭 模拟数据</span></div>'
+    + '<div class="diag-panel"><div class="diag-panel-title">📰 情绪证据 <span class="mock-tag">演示数据</span></div>'
     + '<div class="sentiment-score">' + sentiment.score.toFixed(1) + ' / 5</div>'
     + '<div class="sentiment-bar-wrap"><div class="sentiment-bar" style="width:' + sentimentBar + '%"></div></div>'
     + '<div class="sentiment-label">' + escHtml(sentiment.label) + '</div>'
     + '<div class="sentiment-news">' + sentiment.news.map(function(n) { return '<div class="sentiment-news-item">· ' + escHtml(n) + '</div>'; }).join('') + '</div>'
     + '</div>'
     + '</div>'
-    + '<div class="diag-summary"><div class="diag-summary-label">🎭 静态演示解读</div>'
+    + '<div class="diag-summary"><div class="diag-summary-label">🧭 研究边界</div>'
     + '<div class="diag-summary-text">' + escHtml(diag.summary || '') + '</div>'
-    + (risks ? '<div class="diag-risks"><b>风险：</b>' + risks + '</div>' : '')
-    + (catalysts ? '<div class="diag-catalysts"><b>催化剂：</b>' + catalysts + '</div>' : '')
-    + '<div class="diag-disclaimer">⚠️ 仅供参考，不构成投资建议</div>'
+    + '<div class="pending-title">待核查项</div><ul class="pending-list">' + pending + '</ul>'
+    + '<div class="diag-disclaimer">⚠️ 本页不构成投资建议，也不替代人工研究或适当性评估。</div>'
     + '</div>'
-    + '<div class="model-choice-note">🔧 <b>真实接入说明：</b>若未来接入模型，应使用 JSON Schema 约束结构化输出，而非自由对话。金融诊断报告需要字段确定性（评级/置信度/风险点），便于前端渲染和后续校验。</div>'
+    + '<div class="model-choice-note">本页使用本地规则与固定演示数据。任何生产接入都需要独立的数据口径、模型评估、审计和人工确认。</div>'
     + '</div>';
 }
 
 // Tab 4: 市场雷达 Mock 数据
 const RADAR_DATA = {
+  asOf: DEMO_SNAPSHOT_TIME,
+  generatedAt: DEMO_SNAPSHOT_TIME,
   hotSectors: [
     { name: '人工智能', change: 4.2, heat: 95 },
     { name: '新能源车', change: 2.8, heat: 82 },
@@ -893,44 +1235,41 @@ const RADAR_DATA = {
     { name: '药明康德', symbol: '603259.SS', change: -4.2, volume: '中', reason: '海外政策压力' },
   ],
   sentimentTrend: [
-    { date: '11-05', score: 2.1 }, { date: '11-06', score: 2.8 },
-    { date: '11-07', score: 3.5 }, { date: '11-08', score: 3.2 },
-    { date: '11-10', score: 3.8 },
+    { date: '08-24', score: 2.1 }, { date: '08-25', score: 2.8 },
+    { date: '08-26', score: 3.5 }, { date: '08-27', score: 3.2 },
+    { date: '08-28', score: 3.8 },
   ]
 };
+
+function getRadarSnapshot() {
+  return cloneData(RADAR_DATA);
+}
 
 function refreshRadarData() {
   const icon = document.getElementById('radarRefreshIcon');
   if (icon) { icon.classList.add('spinning'); setTimeout(function() { icon.classList.remove('spinning'); }, 600); }
-  // 随机微调数值，模拟更新感
-  RADAR_DATA.hotSectors = RADAR_DATA.hotSectors.map(function(s) {
-    return Object.assign({}, s, { change: parseFloat((s.change + (Math.random() - 0.5) * 0.4).toFixed(1)), heat: Math.min(99, Math.max(20, s.heat + Math.round((Math.random() - 0.5) * 6))) });
-  });
-  RADAR_DATA.sentimentTrend[RADAR_DATA.sentimentTrend.length - 1].score = parseFloat(Math.max(0.5, Math.min(5, RADAR_DATA.sentimentTrend[RADAR_DATA.sentimentTrend.length-1].score + (Math.random() - 0.5) * 0.6)).toFixed(1));
-  const now = new Date();
-  const ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + '（模拟）';
   const tsEl = document.getElementById('radarTimestamp');
-  if (tsEl) tsEl.textContent = ts;
+  if (tsEl) tsEl.textContent = '2026-08-28 15:00（演示快照）';
+  recordResearchRun({ scenario: 'radar-refresh', dataMode: DATA_MODE_DEMO, sourceIds: ['demo-radar-v1'] });
   initRadar();
 }
 
 function initRadar() {
   const heatmap = document.getElementById('sectorHeatmap');
   if (!heatmap) return;
-  heatmap.innerHTML = RADAR_DATA.hotSectors.map(function(s) {
-    const alpha = 0.15 + s.heat / 200;
-    const color = s.change >= 0 ? 'rgba(5,150,105,' + alpha + ')' : 'rgba(239,68,68,' + alpha + ')';
-    return '<div class="sector-block" style="background:' + color + '">'
+  const radar = getRadarSnapshot();
+  heatmap.innerHTML = radar.hotSectors.map(function(s) {
+    return '<div class="sector-block ' + (s.change >= 0 ? 'sector-positive' : 'sector-negative') + '">'
       + '<div class="sector-name">' + escHtml(s.name) + '</div>'
-      + '<div class="sector-change" style="color:' + (s.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">'
+      + '<div class="sector-change ' + (s.change >= 0 ? 'value-positive' : 'value-negative') + '">'
       + (s.change >= 0 ? '+' : '') + s.change + '%</div></div>';
   }).join('');
   const moversList = document.getElementById('moversList');
   if (moversList) {
-    moversList.innerHTML = RADAR_DATA.movers.map(function(m) {
+    moversList.innerHTML = radar.movers.map(function(m) {
       return '<div class="mover-item">'
         + '<div class="mover-name">' + escHtml(m.name) + '</div>'
-        + '<div class="mover-change" style="color:' + (m.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)') + '">'
+        + '<div class="mover-change ' + (m.change >= 0 ? 'value-positive' : 'value-negative') + '">'
         + (m.change >= 0 ? '+' : '') + m.change + '%</div>'
         + '<div class="mover-reason">' + escHtml(m.reason) + '</div>'
         + '</div>';
@@ -938,10 +1277,10 @@ function initRadar() {
   }
   const trendEl = document.getElementById('sentimentTrend');
   if (trendEl) {
-    trendEl.innerHTML = '<div class="trend-chart">' + RADAR_DATA.sentimentTrend.map(function(p) {
+    trendEl.innerHTML = '<div class="trend-chart">' + radar.sentimentTrend.map(function(p) {
       const h = Math.round(((p.score - 0) / (5 - 0)) * 60);
       return '<div class="trend-bar-wrap">'
-        + '<div class="trend-bar" style="height:' + h + 'px; background:' + (p.score >= 3 ? 'var(--accent-green)' : 'orange') + '"></div>'
+        + '<div class="trend-bar ' + (p.score >= 3 ? 'trend-positive' : 'trend-neutral') + '" style="height:' + h + 'px"></div>'
         + '<div class="trend-label">' + escHtml(p.date) + '</div>'
         + '</div>';
     }).join('') + '</div>';
@@ -950,19 +1289,16 @@ function initRadar() {
 
 async function generateBrief() {
   const el = document.getElementById('radarBrief');
-  el.innerHTML = '<div class="rag-searching">🤖 生成中...</div>';
-  const sectorSummary = RADAR_DATA.hotSectors.slice(0,3).map(function(s) {
+  el.innerHTML = '<div class="rag-searching">⌁ 规则摘要整理中…</div>';
+  const radar = getRadarSnapshot();
+  const sectorSummary = radar.hotSectors.slice(0,3).map(function(s) {
     return s.name + '(' + (s.change > 0 ? '+' : '') + s.change + '%)';
   }).join('、');
-  const avgSentiment = (RADAR_DATA.sentimentTrend.reduce(function(s, p) { return s + p.score; }, 0) / RADAR_DATA.sentimentTrend.length).toFixed(1);
-  const prompt = '你是A股市场分析师。基于以下信息生成今日市场简报（100字以内，简洁客观）：\n热点板块：' + sectorSummary + '\n今日异动：' + RADAR_DATA.movers.map(function(m) { return m.name + m.change + '%'; }).join('、') + '\n市场情绪：近5日均值' + avgSentiment + '/5';
-  try {
-    const brief = await callLLM(prompt, '请生成简报');
-    el.innerHTML = '<div class="radar-brief-text">' + escapeMultiline(brief) + '</div>'
-      + '<div class="diag-disclaimer">⚠️ 基于模拟数据生成，仅供演示</div>';
-  } catch(e) {
-    el.innerHTML = '<div class="rag-error">' + escHtml(e.message) + '</div>';
-  }
+  const avgSentiment = (radar.sentimentTrend.reduce(function(s, p) { return s + p.score; }, 0) / radar.sentimentTrend.length).toFixed(1);
+  const brief = '本地规则摘要：' + sectorSummary + ' 位于演示快照前列，近5日情绪均值 ' + avgSentiment + '/5。异动原因仅是样本字段，需回到原始来源核查。';
+  const run = recordResearchRun({ scenario: 'radar-brief', dataMode: DATA_MODE_DEMO, sourceIds: ['demo-radar-v1'] });
+  el.innerHTML = '<div class="radar-brief-text">' + escapeMultiline(brief) + '</div>'
+    + '<div class="diag-disclaimer">演示快照 · 本地规则摘要 · 运行 ' + escHtml(run.runId) + '</div>';
 }
 
 // 私有知识库（内存存储）
@@ -985,14 +1321,17 @@ function addToPrivateKb() {
   if (!text) return;
   const segments = text.split(/\n{2,}/).filter(function(s) { return s.trim().length > 10; });
   segments.forEach(function(seg) {
+    privateSequence += 1;
     PRIVATE_KB.push({
-      id: 'priv_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      id: 'private-doc-' + String(privateSequence).padStart(3, '0'),
+      sourceId: 'private-doc-' + String(privateSequence).padStart(3, '0'),
       content: seg.trim(),
       title: seg.trim().slice(0, 30) + (seg.length > 30 ? '...' : ''),
-      date: new Date().toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }),
+      date: '本页内存',
+      asOf: '本页内存',
       source: '私有知识库',
       tier: 'private',
-      addedAt: Date.now()
+      evidenceLevel: '用户资料',
     });
   });
   document.getElementById('privateKbInput').value = '';
@@ -1032,8 +1371,57 @@ function searchPrivateKb(query, topK) {
       if (doc.content.indexOf(kw) >= 0) score += 0.3;
       if (doc.title.indexOf(kw) >= 0) score += 0.4;
     });
-    return Object.assign({}, doc, { score: score > 0 ? Math.min(0.95, score) : 0, relevance: 0.9, rerankScore: 0, rerankReason: '', origRank: 0 });
+    return Object.assign({}, doc, {
+      score: score > 0 ? Math.min(0.95, score) : 0,
+      relevance: 0.9,
+      rerankScore: 0,
+      rerankReason: '关键词命中 + 用户资料，规则可复核',
+      origRank: 0,
+      evidenceLevel: '用户资料',
+      asOf: '本页内存',
+      unresolvedConflict: '用户资料未经外部核验',
+    });
   }).filter(function(d) { return d.score > 0; })
   .sort(function(a, b) { return b.score - a.score; })
   .slice(0, topK);
+}
+
+function focusSource(sourceId) {
+  const source = document.getElementById('src-' + sourceId);
+  if (!source) return;
+  document.querySelectorAll('.rag-source-item.source-focused').forEach(function(item) { item.classList.remove('source-focused'); });
+  source.classList.add('source-focused');
+  source.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function initStockApp() {
+  setDataMode(DATA_MODE_DEMO);
+  initRadar();
+  renderAgentTools([]);
+  renderPrivateKbList();
+  renderResearchSession();
+}
+
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initStockApp);
+  else initStockApp();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.StockResearch = {
+    version: STOCK_APP_VERSION,
+    fetchMarketData: fetchMarketData,
+    fetchYahoo: fetchYahoo,
+    parseIntent: parseIntent,
+    buildQualityCard: buildQualityCard,
+    getDemoMarketSnapshot: getDemoMarketSnapshot,
+    getRadarSnapshot: getRadarSnapshot,
+    recordResearchRun: recordResearchRun,
+    getResearchSession: getResearchSession,
+    submitFeedback: submitFeedback,
+    exportFeedback: exportFeedback,
+    selectAgentTools: selectAgentTools,
+    setDataMode: setDataMode,
+    getCurrentDataMode: getCurrentDataMode,
+  };
 }
