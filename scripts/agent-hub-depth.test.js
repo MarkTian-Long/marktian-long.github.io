@@ -133,14 +133,16 @@ test('framework references carry archive date and pending manual fact-check stat
   assert.doesNotMatch(readme, /按官方文档核对/);
 });
 
-test('all public metrics declare an allowed kind, definition, source and date', () => {
+test('all public metrics separate definition date from unmeasured runtime evidence', () => {
   assertImplementationLoaded();
   for (const record of [...model.scenes, ...model.architectures]) {
     for (const metric of record.metrics || []) {
       assert.equal(VALID_METRIC_KINDS.has(metric.kind), true, `${record.id} has invalid metric kind`);
       assert.ok(metric.definition, `${record.id} metric needs a definition`);
       assert.ok(metric.source, `${record.id} metric needs a source`);
-      assert.match(metric.asOf, /^2026-08-30$/, `${record.id} metric needs an asOf date`);
+      assert.match(metric.definitionAsOf, /^2026-08-30$/, `${record.id} metric needs a definitionAsOf date`);
+      assert.equal(metric.measuredAt, null, `${record.id} metric must not imply an unmeasured result`);
+      assert.equal(Object.prototype.hasOwnProperty.call(metric, 'asOf'), false, `${record.id} metric must not use ambiguous asOf`);
     }
   }
   const serialized = JSON.stringify(model);
@@ -189,7 +191,7 @@ test('engine returns traditional automation for a clear deterministic task', () 
   assertImplementationLoaded();
   const result = evaluateDecision(ANSWERS, { now: '2026-08-30' });
   assert.equal(result.status, 'ready');
-  assert.equal(result.outcomeId, 'no-agent');
+  assert.equal(result.outcomeId, 'automation');
   assert.equal(result.modeId, 'automation');
   assert.equal(result.requiresAgent, false);
   assert.ok(result.hitRules.length > 0);
@@ -211,9 +213,11 @@ test('engine fails closed for unresolved answers in the six-question gate', () =
     const result = evaluateDecision({ ...ANSWERS, [questionId]: value }, { now: '2026-08-30' });
     assert.equal(result.status, 'needs-input', `${questionId}=${value} must need input`);
     assert.equal(result.modeId, 'human-review', `${questionId}=${value} must route to human review`);
-    assert.equal(result.outcomeId, 'no-agent', `${questionId}=${value} must withdraw agent recommendation`);
+    assert.equal(result.outcomeId, 'human-review', `${questionId}=${value} must identify the human-review outcome`);
     assert.equal(result.requiresAgent, false, `${questionId}=${value} must not require an agent`);
     assert.equal(result.hitRules.some((rule) => rule.id === 'input-incomplete'), true, `${questionId}=${value} must hit input-incomplete`);
+    assert.equal(result.excludedAlternatives.some((item) => item.id === 'automation'), true, `${questionId}=${value} must explain traditional automation as an alternative`);
+    assert.equal(result.excludedAlternatives.some((item) => item.id === 'human-review'), false, `${questionId}=${value} must not exclude its selected fallback`);
   }
 });
 
@@ -221,14 +225,17 @@ test('engine distinguishes retrieval, single-agent and independent parallel work
   assertImplementationLoaded();
   const retrieval = evaluateDecision({ ...ANSWERS, knowledge: 'retrieval' }, { now: '2026-08-30' });
   assert.equal(retrieval.modeId, 'rag-assistant');
+  assert.equal(retrieval.outcomeId, 'rag-assistant');
 
   const single = evaluateDecision({ ...ANSWERS, knowledge: 'judgment', decomposition: 'dependent' }, { now: '2026-08-30' });
   assert.equal(single.modeId, 'single-agent-tools');
 
   const parallel = evaluateDecision({ ...ANSWERS, knowledge: 'judgment', decomposition: 'independent' }, { now: '2026-08-30' });
   assert.equal(parallel.modeId, 'parallel-multi-agent');
+  assert.equal(parallel.outcomeId, 'parallel-multi-agent');
   assert.equal(parallel.requiresMultipleIndependentSubtasks, true);
   assert.equal(parallel.excludedAlternatives.some((item) => item.id === 'single-agent-tools'), true);
+  assert.equal(parallel.excludedAlternatives.some((item) => item.id === 'human-review'), false);
 
   const dependent = evaluateDecision({ ...ANSWERS, knowledge: 'judgment', decomposition: 'dependent' }, { now: '2026-08-30' });
   assert.equal(dependent.modeId === 'parallel-multi-agent', false);
@@ -244,10 +251,99 @@ test('rules-based independent work stays in traditional automation or workflow',
   for (const [decomposition, expectedMode] of cases) {
     const result = evaluateDecision({ ...ANSWERS, decomposition }, { now: '2026-08-30' });
     assert.equal(result.modeId, expectedMode, `rules + ${decomposition} should not become multi-agent`);
-    assert.equal(result.outcomeId, 'no-agent');
+    assert.equal(result.outcomeId, 'automation');
     assert.equal(result.requiresAgent, false);
     assert.equal(result.hitRules.some((rule) => rule.id === 'deterministic-automation'), true);
     assert.equal(result.hitRules.some((rule) => rule.id === 'parallel-independent-only'), false);
+  }
+});
+
+test('high-risk rules-based independent work fails closed instead of using multi-agent', () => {
+  assertImplementationLoaded();
+  const cases = [
+    ['high', 'human-review'],
+    ['irreversible', 'human-review'],
+  ];
+
+  for (const [risk, expectedMode] of cases) {
+    const result = evaluateDecision({ ...ANSWERS, risk, decomposition: 'independent' }, { now: '2026-08-30' });
+    assert.equal(result.modeId, expectedMode, `rules + independent + ${risk} must not use multi-agent`);
+    assert.equal(result.outcomeId, 'human-review');
+    assert.equal(result.requiresAgent, false);
+    assert.equal(result.requiresMultipleIndependentSubtasks, false);
+    assert.equal(result.hitRules.some((rule) => rule.id === 'parallel-independent-only'), false);
+  }
+});
+
+test('medium risk and partial evaluation expose sampling and approval controls', () => {
+  assertImplementationLoaded();
+  const cases = [
+    { risk: 'medium', evaluation: 'measurable', knowledge: 'rules', decomposition: 'single' },
+    { risk: 'low', evaluation: 'partial', knowledge: 'judgment', decomposition: 'dependent' },
+    { risk: 'medium', evaluation: 'partial', knowledge: 'judgment', decomposition: 'dependent' },
+  ];
+
+  for (const overrides of cases) {
+    const result = evaluateDecision({ ...ANSWERS, ...overrides }, { now: '2026-08-30' });
+    assert.equal(result.requiresHumanApproval, true, `${JSON.stringify(overrides)} must require human approval`);
+    assert.equal(result.controls.preview, true, `${JSON.stringify(overrides)} must enable preview`);
+    assert.equal(result.controls.hitl, true, `${JSON.stringify(overrides)} must enable HITL`);
+    assert.equal(result.controls.audit, true, `${JSON.stringify(overrides)} must enable audit`);
+    assert.equal(result.controls.sampling, true, `${JSON.stringify(overrides)} must enable sampling`);
+    assert.equal(result.controls.approval, true, `${JSON.stringify(overrides)} must enable approval`);
+    assert.match(result.hitl.join(' '), /抽检|审批|接管/);
+  }
+});
+
+test('every complete six-question combination preserves mode identity and rules fail closed', () => {
+  assertImplementationLoaded();
+  const combinations = model.questions.reduce((sets, question) => sets.flatMap((answers) => question.options.map((option) => ({
+    ...answers,
+    [question.id]: option.id,
+  }))), [{}]);
+  const agentModes = new Set(['rag-assistant', 'single-agent-tools', 'parallel-multi-agent']);
+
+  assert.equal(combinations.length, 864);
+  for (const answers of combinations) {
+    const result = evaluateDecision(answers, { now: '2026-08-30' });
+    assert.equal(result.outcomeId, result.modeId, `outcomeId must identify the selected mode for ${JSON.stringify(answers)}`);
+    assert.equal(result.requiresAgent, agentModes.has(result.modeId), `requiresAgent must match mode for ${JSON.stringify(answers)}`);
+    assert.equal(result.requiresMultipleIndependentSubtasks, result.modeId === 'parallel-multi-agent', `parallel flag must match mode for ${JSON.stringify(answers)}`);
+    assert.equal(result.excludedAlternatives.some((item) => item.id === result.modeId), false, `selected mode cannot be excluded for ${JSON.stringify(answers)}`);
+    if (answers.knowledge === 'rules') {
+      assert.equal(agentModes.has(result.modeId), false, `rules knowledge must never enter an Agent mode: ${JSON.stringify(answers)}`);
+      assert.equal(result.requiresAgent, false, `rules knowledge must not require an Agent: ${JSON.stringify(answers)}`);
+    }
+  }
+});
+
+test('hit rules are returned in ascending priority order', () => {
+  assertImplementationLoaded();
+  const result = evaluateDecision({
+    ...ANSWERS,
+    knowledge: 'judgment',
+    decomposition: 'dependent',
+    repeatability: 'one-off',
+    risk: 'irreversible',
+    evaluation: 'partial',
+  }, { now: '2026-08-30' });
+  const priorities = result.hitRules.map((rule) => rule.priority);
+  assert.ok(priorities.length >= 2);
+  assert.deepEqual(priorities, priorities.slice().sort((left, right) => left - right));
+  assert.equal(result.hitRules[0].priority, Math.min(...priorities));
+  assert.equal(result.hitRules.some((rule) => rule.id === 'high-risk-controls'), true);
+});
+
+test('human review remains a visible fallback rather than an excluded alternative', () => {
+  assertImplementationLoaded();
+  const cases = [
+    { ...ANSWERS },
+    { ...ANSWERS, knowledge: 'retrieval', decomposition: 'dependent' },
+    { ...ANSWERS, knowledge: 'judgment', decomposition: 'independent' },
+  ];
+  for (const answers of cases) {
+    const result = evaluateDecision(answers, { now: '2026-08-30' });
+    assert.equal(result.excludedAlternatives.some((item) => item.id === 'human-review'), false, `${JSON.stringify(answers)} must keep human review available`);
   }
 });
 
@@ -329,7 +425,7 @@ test('engine uses the current date when no evaluation date is supplied', () => {
   const RealDate = Date;
   class ControlledDate extends RealDate {
     constructor(...args) {
-      super(...(args.length ? args : ['2031-04-05T00:00:00Z']));
+      super(...(args.length ? args : ['2031-04-04T16:05:00Z']));
     }
   }
 
@@ -341,4 +437,8 @@ test('engine uses the current date when no evaluation date is supplied', () => {
     global.Date = RealDate;
   }
   assert.equal(result.evaluatedAt, '2031-04-05');
+  assert.equal(result.metrics.every((metric) => metric.definitionAsOf === '2026-08-30'), true);
+  assert.equal(result.metrics.every((metric) => metric.measuredAt === null), true);
+  assert.equal(result.metrics.some((metric) => Object.prototype.hasOwnProperty.call(metric, 'asOf')), false);
+  assert.notEqual(result.evaluatedAt, result.metrics[0].definitionAsOf);
 });

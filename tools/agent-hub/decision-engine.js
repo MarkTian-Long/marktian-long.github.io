@@ -23,26 +23,40 @@
     const text = value.trim();
     const match = text.match(/^(\d{4})-(\d{2})-(\d{2})(?=$|T|\s)/);
     if (!match) return null;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const daysInMonth = month >= 1 && month <= 12
+      ? new Date(Date.UTC(year, month, 0)).getUTCDate()
+      : 0;
+    if (day < 1 || day > daysInMonth) return null;
     const source = text.length === 10 ? `${text}T00:00:00Z` : text;
     const date = new Date(source);
     if (Number.isNaN(date.getTime())) return null;
-    if (
-      date.getUTCFullYear() !== Number(match[1])
-      || date.getUTCMonth() + 1 !== Number(match[2])
-      || date.getUTCDate() !== Number(match[3])
-    ) return null;
     return date;
   }
 
   function formatDate(value) {
     const date = parseDate(value);
-    return date ? date.toISOString().slice(0, 10) : null;
+    if (!date) return null;
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]));
+    return values.year && values.month && values.day
+      ? `${values.year}-${values.month}-${values.day}`
+      : null;
   }
 
   function getFrameworkFreshness(fact, now) {
-    const archivedDate = parseDate(fact?.source?.archivedAt);
-    const referenceDate = parseDate(now === undefined ? new Date() : now);
-    if (!archivedDate || !referenceDate) {
+    const archivedAt = formatDate(fact?.source?.archivedAt);
+    const referenceAt = formatDate(now === undefined ? new Date() : now);
+    if (!archivedAt || !referenceAt) {
       return {
         state: 'unavailable',
         archivedAt: null,
@@ -50,17 +64,17 @@
         currentRecommendation: false,
       };
     }
-    if (archivedDate.getTime() > referenceDate.getTime()) {
+    if (archivedAt > referenceAt) {
       return {
         state: 'unavailable',
-        archivedAt: formatDate(archivedDate),
+        archivedAt,
         label: '整理日期在未来 · 待人工事实复核',
         currentRecommendation: false,
       };
     }
     return {
       state: 'archive-only',
-      archivedAt: formatDate(archivedDate),
+      archivedAt,
       label: '待人工事实复核',
       currentRecommendation: false,
     };
@@ -81,7 +95,7 @@
     return question?.options.find((option) => option.id === optionId)?.label || optionId;
   }
 
-  function makeMetric(id, label, definition, source, asOf) {
+  function makeMetric(id, label, definition, source) {
     return {
       id,
       label,
@@ -89,7 +103,8 @@
       definition,
       unit: '任务占比',
       source,
-      asOf,
+      definitionAsOf: model.meta.archiveDate,
+      measuredAt: null,
     };
   }
 
@@ -125,7 +140,10 @@
 
   function addRule(hitRules, id) {
     const rule = findRule(id);
-    if (rule && !hitRules.some((item) => item.id === id)) hitRules.push(rule);
+    if (rule && !hitRules.some((item) => item.id === id)) {
+      hitRules.push(rule);
+      hitRules.sort((left, right) => (left.priority - right.priority) || left.id.localeCompare(right.id));
+    }
   }
 
   function findOutcome(id) {
@@ -134,7 +152,7 @@
 
   function createExcludedAlternatives(modeId, hitRules) {
     return model.outcomes
-      .filter((outcome) => outcome.id !== 'no-agent' && outcome.id !== modeId)
+      .filter((outcome) => !['no-agent', 'human-review', modeId].includes(outcome.id))
       .map((outcome) => {
         const exclusionRule = hitRules.find((rule) => (rule.excludeModes || []).includes(outcome.id));
         return {
@@ -145,12 +163,17 @@
       });
   }
 
-  function controlsFor(risk, needsReview) {
+  function controlsFor(risk, evaluation, needsReview) {
     const highRisk = ['high', 'irreversible'].includes(risk);
+    const mediumRisk = risk === 'medium';
+    const partialEvaluation = evaluation === 'partial';
+    const approval = highRisk || mediumRisk || partialEvaluation || needsReview;
     return {
-      preview: highRisk || needsReview,
-      hitl: highRisk || needsReview,
-      audit: highRisk || needsReview,
+      preview: approval,
+      hitl: approval,
+      audit: approval,
+      sampling: mediumRisk || partialEvaluation,
+      approval,
       stopConditions: true,
     };
   }
@@ -161,7 +184,7 @@
       evaluatedAt,
       answers,
       status: 'ready',
-      outcomeId: 'no-agent',
+      outcomeId: 'human-review',
       modeId: 'human-review',
       requiresAgent: false,
       requiresMultipleIndependentSubtasks: false,
@@ -174,10 +197,10 @@
       hitl: [],
       failureFallback: [],
       stopConditions: [],
-      controls: controlsFor(answers.risk, false),
+      controls: controlsFor(answers.risk, answers.evaluation, false),
       metrics: [
-        makeMetric('task-acceptance', '任务验收通过率', '结果满足预先定义验收标准的任务占比', '试点标注与责任人复核', evaluatedAt),
-        makeMetric('human-override', '人工推翻率', '人工复核后改变系统建议或结果的任务占比', '人工复核记录', evaluatedAt),
+        makeMetric('task-acceptance', '任务验收通过率', '结果满足预先定义验收标准的任务占比', '试点标注与责任人复核'),
+        makeMetric('human-override', '人工推翻率', '人工复核后改变系统建议或结果的任务占比', '人工复核记录'),
       ],
       recommendation: findOutcome('human-review'),
     };
@@ -201,16 +224,12 @@
       if (contradictions.length) addRule(result.hitRules, 'risk-contradiction');
       if (contradictions.some((item) => item.id === 'recurring-unmeasured')) addRule(result.hitRules, 'evaluation-missing');
       result.modeId = 'human-review';
-      result.outcomeId = 'no-agent';
+      result.outcomeId = 'human-review';
       result.requiresAgent = false;
       result.requiresHumanApproval = true;
-      result.controls = controlsFor(answers.risk, true);
+      result.controls = controlsFor(answers.risk, answers.evaluation, true);
       result.recommendation = findOutcome('human-review');
-      result.excludedAlternatives = AGENT_MODE_IDS.map((id) => ({
-        id,
-        label: findOutcome(id).label,
-        reason: '输入不足或存在冲突，自动建议已撤回。',
-      }));
+      result.excludedAlternatives = createExcludedAlternatives('human-review', result.hitRules);
       result.normalPath = ['暂停自动建议', '由业务责任人补齐六问', '重新确认验收、责任与可逆性'];
       result.hitl = ['责任人先评审任务定义、数据范围和副作用', '没有明确批准前不执行外部动作'];
       result.failureFallback = ['保留当前输入与冲突记录', '回到人工方案评审或传统流程'];
@@ -219,11 +238,12 @@
     }
 
     const highRisk = ['high', 'irreversible'].includes(answers.risk);
+    const samplingRequired = answers.risk === 'medium' || answers.evaluation === 'partial';
     let modeId = 'human-review';
     if (answers.taskClarity === 'clear' && answers.knowledge === 'rules' && ['single', 'independent'].includes(answers.decomposition) && ['low', 'medium'].includes(answers.risk)) {
       modeId = 'automation';
       addRule(result.hitRules, 'deterministic-automation');
-    } else if (answers.decomposition === 'independent') {
+    } else if (answers.knowledge !== 'rules' && answers.decomposition === 'independent') {
       modeId = 'parallel-multi-agent';
       addRule(result.hitRules, 'parallel-independent-only');
     } else if (answers.knowledge === 'retrieval' && ['single', 'dependent'].includes(answers.decomposition)) {
@@ -245,7 +265,7 @@
     if (highRisk) addRule(result.hitRules, 'high-risk-controls');
 
     if (modeId === 'human-review') {
-      result.outcomeId = 'no-agent';
+      result.outcomeId = 'human-review';
       result.requiresAgent = false;
       result.requiresHumanApproval = true;
       result.recommendation = findOutcome('human-review');
@@ -255,35 +275,51 @@
       result.stopConditions = ['无法定义验收标准时停止', '反馈闭环或责任人缺失时停止'];
     } else {
       result.modeId = modeId;
-      result.outcomeId = AGENT_MODE_IDS.includes(modeId) ? modeId : 'no-agent';
+      result.outcomeId = modeId;
       result.requiresAgent = AGENT_MODE_IDS.includes(modeId);
-      result.requiresHumanApproval = highRisk;
       result.recommendation = findOutcome(modeId);
       if (modeId === 'automation') {
         result.normalPath = ['接收结构化输入', '执行规则或工作流', '校验输出', '记录运行结果'];
-        result.hitl = highRisk ? ['预览动作影响范围', '责任人批准后执行'] : ['异常或权限变化时转人工'];
+        result.hitl = highRisk
+          ? ['预览动作影响范围', '责任人批准后执行']
+          : samplingRequired
+            ? ['按预设比例人工抽检规则输出', '中风险或部分可验证结果须经责任人审批或接管']
+            : ['异常或权限变化时转人工'];
         result.failureFallback = ['停止当前规则步骤', '保留输入输出并转人工排查'];
         result.stopConditions = ['规则命中冲突或输入缺失时停止', '外部副作用未获批准时停止'];
       } else if (modeId === 'rag-assistant') {
         result.normalPath = ['检索受控资料', '展示来源与版本', '生成带边界的回答', '低置信度转人工'];
-        result.hitl = highRisk ? ['展示引用、影响范围与待执行动作', '责任人批准后才允许外部写入'] : ['政策冲突或用户升级时转人工'];
+        result.hitl = highRisk
+          ? ['展示引用、影响范围与待执行动作', '责任人批准后才允许外部写入']
+          : samplingRequired
+            ? ['按预设比例人工抽检回答与引用', '部分可验证或外部动作须经责任人审批或接管']
+            : ['政策冲突或用户升级时转人工'];
         result.failureFallback = ['引用缺失时不回答或给出缺口', '知识库不可用时转人工或静态 FAQ'];
         result.stopConditions = ['无有效引用时停止生成结论', '权限、版本或身份无法确认时停止'];
       } else if (modeId === 'parallel-multi-agent') {
         result.normalPath = ['拆分多个独立子任务', '并行执行并记录 branch id', '聚合并检查缺失/冲突', '人工确认后输出'];
-        result.hitl = ['聚合结果展示各分支证据', '责任人确认缺失与冲突后发布'];
+        result.hitl = [
+          ...(samplingRequired ? ['按预设比例人工抽检各分支与聚合结果'] : []),
+          '聚合结果展示各分支证据',
+          '责任人确认缺失与冲突后发布',
+        ];
         result.failureFallback = ['隔离失败分支并只重试幂等分支', '关键分支缺失时降级串行或转人工'];
         result.stopConditions = ['任一关键分支无法验收时停止聚合', '预算、超时或证据冲突触顶时停止'];
         result.requiresMultipleIndependentSubtasks = true;
       } else {
         result.normalPath = ['定义单一目标与工具契约', '执行有限工具调用', '校验结果并生成预览', '按权限执行并审计'];
-        result.hitl = ['外部写入前展示参数与影响范围', '责任人批准或拒绝后继续'];
+        result.hitl = highRisk
+          ? ['外部写入前展示参数与影响范围', '责任人批准或拒绝后继续']
+          : samplingRequired
+            ? ['按预设比例人工抽检工具结果', '部分可验证或外部写入须经责任人审批或接管']
+            : ['外部写入前展示参数与影响范围', '责任人批准或拒绝后继续'];
         result.failureFallback = ['停在当前工具步骤并保留错误', '恢复失败时转人工处理'];
         result.stopConditions = ['schema、权限或输入校验失败时停止', '恢复/重试预算用尽时停止'];
       }
     }
 
-    result.controls = controlsFor(answers.risk, modeId === 'human-review');
+    result.controls = controlsFor(answers.risk, answers.evaluation, modeId === 'human-review');
+    result.requiresHumanApproval = result.controls.approval;
     result.excludedAlternatives = createExcludedAlternatives(modeId, result.hitRules);
     return result;
   }

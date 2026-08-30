@@ -7,6 +7,22 @@ const { chromium } = require('@playwright/test');
 const { BLOCKED_BROWSER_PORTS, createStaticServer } = require('./equivalence/servers');
 
 const repoRoot = path.resolve(__dirname, '..');
+const fallbackBrowserPaths = [
+  process.env.RADAR_BROWSER_EXECUTABLE,
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+].filter(Boolean);
+
+async function launchBrowser() {
+  try {
+    return await chromium.launch({ headless: true });
+  } catch (error) {
+    if (!/spawn EPERM/.test(error.message)) throw error;
+    const executablePath = fallbackBrowserPaths.find((candidate) => fs.existsSync(candidate));
+    if (!executablePath) throw error;
+    return chromium.launch({ headless: true, executablePath });
+  }
+}
 
 function startServer() {
   return new Promise((resolve, reject) => {
@@ -50,7 +66,7 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser();
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'zh-CN' });
     await context.route(/https:\/\/fonts\.(?:googleapis|gstatic)\.com\//, (route) => route.abort());
     const page = await context.newPage();
@@ -87,6 +103,8 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
       assert.equal(await firstOption.isChecked(), true, `${questionId} should be keyboard operable`);
     }
     await maybeScreenshot(page, 'desktop-low-risk');
+    assert.match(await page.locator('#decision-mode').textContent(), /传统自动化/);
+    assert.match(await page.locator('#decision-mode').textContent(), /不需要 Agent/);
 
     const tabs = page.getByRole('tab');
     const tabPanels = page.getByRole('tabpanel', { includeHidden: true });
@@ -111,6 +129,8 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
     assert.match(await page.locator('#decision-fallback').textContent(), /失败|降级/);
     assert.match(await page.locator('#decision-stop').textContent(), /停止条件/);
     assert.match(await page.locator('#decision-metrics').textContent(), /proxy|代理|指标/);
+    assert.match(await page.locator('#decision-metrics').textContent(), /口径/);
+    assert.match(await page.locator('#decision-metrics').textContent(), /未测量/);
     assert.equal(await page.locator('#scene-link-service-agent').getAttribute('href'), '../service-agent/index.html');
     assert.equal(await page.locator('#scene-link-esop').getAttribute('href'), '../esop-extractor/index.html');
     assert.match(await page.locator('#decision-controls').textContent(), /预览/);
@@ -119,9 +139,23 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
     assert.match(await page.locator('#decision-controls').textContent(), /停止/);
     await maybeScreenshot(page, 'desktop-high-risk');
 
+    await page.locator('input[name="knowledge"][value="judgment"]').check();
+    await page.locator('input[name="risk"][value="medium"]').check();
+    await page.locator('input[name="evaluation"][value="partial"]').check();
+    assert.match(await page.locator('#decision-controls').textContent(), /预览：开启/);
+    assert.match(await page.locator('#decision-controls').textContent(), /HITL：开启/);
+    assert.match(await page.locator('#decision-controls').textContent(), /审计：开启/);
+    assert.match(await page.locator('#decision-controls').textContent(), /抽检：开启/);
+    assert.match(await page.locator('#decision-controls').textContent(), /审批：开启/);
+    assert.match(await page.locator('#control-chips').textContent(), /人工抽检/);
+    assert.match(await page.locator('#control-chips').textContent(), /审批/);
+    await maybeScreenshot(page, 'desktop-medium-partial-controls');
+
     await page.locator('input[name="taskClarity"][value="unclear"]').check();
     assert.equal(await page.locator('#decision-result.needs-input').count(), 1);
+    assert.match(await page.locator('#decision-mode').textContent(), /人工方案评审/);
     assert.match(await page.locator('#decision-result').textContent(), /自动建议已撤回|补齐|人工方案评审/);
+    assert.match(await page.locator('#decision-exclusions').textContent(), /传统自动化/);
     await maybeScreenshot(page, 'desktop-failure-path');
 
     await tabs.nth(1).click();
@@ -134,6 +168,12 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
     assert.equal(await page.locator('#enterprise-panel').isVisible(), true);
     assert.equal(await page.locator('.scene-card').count(), 6);
     await maybeScreenshot(page, 'desktop-enterprise');
+    await page.locator('#scene-use-it-helpdesk').click();
+    assert.equal(await page.locator('#tab-decision').getAttribute('aria-selected'), 'true');
+    assert.equal(await page.locator('#decision-panel').isVisible(), true);
+    assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.id), 'tab-decision');
+    assert.equal(await page.locator('#decision-result').isVisible(), true);
+    await maybeScreenshot(page, 'desktop-scene-focus');
 
     await tabs.nth(3).click();
     assert.equal(await page.locator('#judgments-panel').isVisible(), true);
@@ -164,7 +204,7 @@ test('Agent Hub marks framework references as archive-only until manual fact che
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser();
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'zh-CN' });
     await context.addInitScript(() => { window.__AGENT_HUB_NOW = '2026-08-31'; });
     const page = await context.newPage();
@@ -186,7 +226,7 @@ test('Agent Hub shows a readable data-missing state when the model script is una
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser();
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'zh-CN' });
     await context.route('**/tools/agent-hub/data/decision-model.js', (route) => route.abort());
     const page = await context.newPage();

@@ -120,7 +120,9 @@
       append(definition, make('span', '', metric.definition));
       const evidence = make('div');
       append(evidence, make('span', '', metric.unit || '未指定单位'));
-      append(evidence, make('small', '', String(metric.source || '') + ' · as of ' + String(metric.asOf || '未注明')));
+      append(evidence, make('small', '', String(metric.source || '') +
+        ' · 口径 ' + String(metric.definitionAsOf || '未注明') +
+        ' · 测量 ' + String(metric.measuredAt || '未测量')));
       append(row, name);
       append(row, definition);
       append(row, evidence);
@@ -169,9 +171,11 @@
     const mode = model.outcomes.find((outcome) => outcome.id === result.modeId) || result.recommendation;
     const title = result.status === 'needs-input'
       ? '先停一下：人工方案评审'
-      : result.outcomeId === 'no-agent'
-        ? '建议：不需要 Agent'
-        : '建议：' + (mode ? mode.label : result.modeId);
+      : result.modeId === 'human-review'
+        ? '建议：人工方案评审'
+        : result.modeId === 'automation'
+          ? '建议：传统自动化（不需要 Agent）'
+          : '建议：' + (mode ? mode.label : result.modeId);
     byId('decision-mode').textContent = title;
     byId('decision-status').textContent = result.status === 'needs-input' ? '需要补充' : '可形成建议';
     byId('decision-summary').textContent = (result.recommendation ? result.recommendation.description : '') + ' 评估日期：' + result.evaluatedAt + '。';
@@ -179,6 +183,8 @@
     renderExplanation(byId('decision-exclusions'), result.excludedAlternatives, '替代方案', '没有需要排除的替代方案。');
     byId('decision-normal-path').textContent = '正常链路：' + (result.normalPath || []).join(' → ');
     byId('decision-controls').textContent = '预览：' + (result.controls.preview ? '开启' : '按风险开启') +
+      ' · 人工抽检：' + (result.controls.sampling ? '开启' : '按需') +
+      ' · 审批：' + (result.controls.approval ? '开启' : '按需') +
       ' · HITL：' + (result.controls.hitl ? '开启' : '按风险开启') +
       ' · 审计：' + (result.controls.audit ? '开启' : '按风险开启') +
       ' · 停止：' + (result.controls.stopConditions ? '已定义' : '待定义');
@@ -189,6 +195,8 @@
     clear(chips);
     for (const item of [
       ['preview', '预览'],
+      ['sampling', '人工抽检'],
+      ['approval', '审批'],
       ['hitl', 'HITL'],
       ['audit', '审计'],
       ['stopConditions', '停止条件'],
@@ -309,6 +317,8 @@
     renderQuestions();
     renderDecision();
     switchTab('decision-panel');
+    const decisionTab = byId('tab-decision');
+    if (decisionTab && typeof decisionTab.focus === 'function') decisionTab.focus();
     const panel = byId('decision-panel');
     if (panel && panel.scrollIntoView) panel.scrollIntoView({ block: 'start' });
   }

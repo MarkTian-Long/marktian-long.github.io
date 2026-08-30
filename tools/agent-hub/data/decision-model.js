@@ -227,7 +227,8 @@
     definition,
     unit,
     source,
-    asOf: '2026-08-30',
+    definitionAsOf: '2026-08-30',
+    measuredAt: null,
   });
 
   const architectures = [
