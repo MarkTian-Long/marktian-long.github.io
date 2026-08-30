@@ -5,7 +5,8 @@ const test = require('node:test');
 
 const { parseArgs, successMessage, validatePortfolio } = require('./check-portfolio-evidence');
 
-const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/portfolio-evidence.examples.json'), 'utf8'));
+const repoRoot = path.resolve(__dirname, '..');
+const fixture = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/portfolio-evidence.examples.json'), 'utf8'));
 
 test('portfolio evidence covers eight public tools and retains the private case', () => {
   assert.deepEqual(validatePortfolio(fixture), []);
@@ -23,6 +24,16 @@ test('portfolio evidence covers eight public tools and retains the private case'
       'aml-due-diligence',
     ],
   );
+});
+
+test('every published evidence record resolves to its shipped demo and artifact source', () => {
+  for (const record of fixture.portfolio.filter((entry) => entry.status === 'published')) {
+    assert.equal(typeof record.links.demo, 'string', `${record.id} needs a demo link`);
+    assert.ok(fs.existsSync(path.join(repoRoot, record.links.demo)), `${record.id} demo must exist`);
+    for (const evidence of record.evidence.filter((entry) => entry.kind === 'artifact')) {
+      assert.ok(fs.existsSync(path.join(repoRoot, evidence.source)), `${record.id} artifact source must exist`);
+    }
+  }
 });
 
 test('portfolio evidence rejects a metric without a definition', () => {

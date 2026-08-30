@@ -4,7 +4,7 @@
 
 **Goal:** 在保持纯前端与首页极简结构的前提下，把 8 个作品/工具页面深化为可完成任务、可解释决策、明确证据边界并可持续维护的作品体系。
 
-**Architecture:** 八个工具各自维护独立页面、数据和测试，互不共享运行时；四个信息工具通过语义链接形成工作流。主集成任务独占首页、候选冻结页、public-dist manifest、portfolio evidence 和全量验证，避免并发编辑共享文件。
+**Architecture:** 八个工具各自维护独立页面、数据和测试，互不共享运行时；四个信息工具通过语义链接形成工作流。主集成任务独占首页、public-dist manifest、portfolio evidence、全量验证，以及“候选冻结页保持不变”的边界判定，避免并发编辑共享文件。
 
 **Tech Stack:** HTML5、CSS3、Vanilla JS、JSON、Node.js 生成器与 `node:test`、Playwright 视觉/浏览器检查。
 

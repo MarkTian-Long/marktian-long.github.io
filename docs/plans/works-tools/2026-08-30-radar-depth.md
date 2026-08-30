@@ -18,7 +18,7 @@
 
 **Step 1:** 写失败测试，约束 `meta`、`intents`、`sources` 与 `workflowTools` 的唯一 ID、安全 HTTPS URL、日期和枚举。
 
-**Step 2:** 要求每个研究意图引用至少两种来源，每个来源包含语言、类型、角色、主题、更新节奏、优先级、访问方式、适合任务、盲区、保留理由、最近复核和人工状态。
+**Step 2:** 要求每个研究意图引用至少两种来源，每个来源包含语言、类型、角色、主题、更新节奏、优先级、访问方式、适合任务、盲区、保留理由、可为空的 `lastReviewedAt` 和人工状态；未逐条打开核验时必须保留 `null` / `not-reviewed`。
 
 **Step 3:** 将现有 11 个信源逐项迁移；把工具区改成“搜索 → 验证 → 综合 → 沉淀”处理栈，无明确关系的创作工具移出本页。
 
@@ -34,7 +34,7 @@
 
 **Step 1:** 先写 `node:test + Playwright chromium + createStaticServer` 浏览器失败测试，覆盖意图预设改变推荐顺序、语言/类型/主题/优先级组合筛选、清空条件、键盘操作、外链安全属性，以及阻断 `data.js` 后的可读降级且无未处理异常。
 
-**Step 2:** 页面加入可信边界、四个研究意图、覆盖摘要、带 `priority/access/bestFor/blindSpot/retentionReason/lastCheckedAt` 的信源列表和处理栈。
+**Step 2:** 页面加入可信边界、四个研究意图、覆盖摘要、带 `priority/access/bestFor/blindSpot/retentionReason/lastReviewedAt` 的信源列表和处理栈。
 
 **Step 3:** 实现默认、预设选中、组合筛选、无结果并重置、数据脚本缺失状态；状态为人工复核，不冒充实时可达检测。
 

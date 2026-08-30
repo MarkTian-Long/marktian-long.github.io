@@ -31,11 +31,11 @@ assets/css/style.css            # 全局样式 + Design Tokens（CSS 变量）
 assets/js/main.js               # 导航、动画、案例数据
 assets/js/interview.js          # 面试练习器逻辑
 tools/dashboard/                # 求职追踪 Dashboard
-tools/ai-insights/              # AI 产品拆解展示（含 data/products.json）
+tools/ai-insights/              # AI 产品研究档案（含 data/products.json）
 tools/product-collector/        # AI 产品信息采集器（手动录入）
-tools/radar/                    # 前沿雷达（信息源导航 + 精选工具）
-tools/trends/                   # 热点快照（五大平台热榜 + Codex 点评）
-tools/service-agent/                # 智能客服中台 Demo（意图路由+多Agent+HITL）
+tools/radar/                    # 前沿雷达（研究意图 + 信源覆盖 + 工作流去向）
+tools/trends/                   # 热点快照（历史信号 + 新鲜度 + 来源账本）
+tools/service-agent/            # 智能客服决策沙盘（场景验收+故障注入+HITL）
 scripts/                        # 本地脚本（fetch-trends.js 爬虫）
 content/                        # 可共享的 Markdown 内容资料
 docs/                           # 项目文档（仅 personal/ 和根目录二进制原稿排除）
@@ -50,14 +50,14 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 
 | 工具 | 路径 | 功能 | 分组 |
 |------|------|------|------|
-| AI 产品拆解 | `tools/ai-insights/index.html` | 产品卡片 + 七 Tab 深度拆解 | 信息工具（默认） |
-| 前沿雷达 | `tools/radar/index.html` | 信息源导航（中/英分栏）+ 精选 AI 工具列表 | 信息工具 |
-| 热点快照 | `tools/trends/index.html` | 五大平台热榜（GitHub/HN/PH/出海/国内）+ Codex 点评 | 信息工具 |
-| ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | ESOP 文件字段提取演示 | PM 作品 |
-| A股 AI 助手 | `tools/stock/index.html` | 6-Tab AI 能力演示：行情/诊断/研报（RAG+Reranking+双层知识库）/雷达/Agent/合规 | PM 作品 |
-| 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 单页决策沙盘：选业务场景（银行/电商/创业）→ 9 张产品决策卡 + L4 链路图 + mock 对话 Demo 全部随场景联动（决策卡高亮该场景取舍、Demo 演该行业四链路含 HITL）。决策卡含评估维度/三场景取舍/PM·算法分工徽章/证据。浅色主题，由 gen_index.js 数据驱动生成 | PM 作品 |
-| ASCI 科研任务执行系统 | `tools/asci/index.html` | 非线性科研 Agent 管线（14节点）+ HITL + 降级策略，浅色主题 | PM 作品（直链） |
-| Agent 认知全景 | `tools/agent-hub/index.html` | 4-Tab：框架选型/架构设计/企业提效地图/PM 判断框架 | 信息工具（直链） |
+| AI 产品拆解 | `tools/ai-insights/index.html` | 静态产品研究档案：筛选/深链/五区分析/来源与事实复核状态 | 信息工具（默认） |
+| 前沿雷达 | `tools/radar/index.html` | 按研究意图筛选信源，展示覆盖、盲区、人工复核状态与工作流去向 | 信息工具 |
+| 热点快照 | `tools/trends/index.html` | 五类来源的历史信号快照：新鲜度、行动筛选、来源账本与判断展开 | 信息工具 |
+| ESOP 字段提取 Demo | `tools/esop-extractor/index.html` | 字段证据核验、人工复核、离线评估与会话级自定义接口 | PM 作品 |
+| A股 AI 助手 | `tools/stock/index.html` | 6-Tab 金融研究原型：显式数据模式、逐 Claim 引用、反馈回归、工具轨迹与合规边界 | PM 作品 |
+| 智能客服产品设计沙盘 | `tools/service-agent/index.html` | 三场景产品决策：验收卡、四类故障注入、节点状态、HITL、运行复盘与安全 JSON 导出；由 `gen_index.js` 生成 | PM 作品 |
+| ASCI 科研任务执行系统 | `tools/asci/index.html` | 14 节点研究协议、审计轨迹、人工检查点、失败回退和安全导出 | PM 作品（直链） |
+| Agent 认知全景 | `tools/agent-hub/index.html` | 六问确定性决策器 + 架构/场景/判断资料，输出控制、回退、替代方案与事实复核状态 | 信息工具（直链） |
 | 思考碎片博客 | `tools/blog/index.html` | 个人博客归档列表页（文章数由元数据驱动，按年份分组，双主题） | 信息工具（直链） |
 | 求职 Dashboard | `tools/dashboard/index.html` | 投递表格 + 漏斗图 + 待办 | 隐藏（dev only） |
 | 产品信息采集器 | `tools/product-collector/index.html` | 结构化表单 → JSON，localStorage 草稿 | 隐藏（dev only） |
@@ -87,8 +87,8 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 样式改动必须用已有 CSS 变量，需要新变量时先在 `:root` 定义
 - 添加新工具时使用 `/add-tool` skill
 - 采集新 AI 产品数据时使用 `/analyze-product 产品名` skill（联网搜索 → 生成 JSON → 写入 products.json）
-- 更新热点快照数据时：先运行 `cd scripts && node fetch-trends.js --write`（自动抓取 GitHub/HN/36Kr），再使用 `/update-trends` skill 补充 Product Hunt + Codex 点评；或直接 `/update-trends` 联网全量搜索更新
-- 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 和 Service Agent 均为 Mock-only。
+- 更新热点快照数据时使用 `/update-trends`：默认 `node fetch-trends.js --check` 只读校验；显式 `--discover --candidate <build/candidate-site/...>` 只生成候选；人工逐条复核完整 JSON 后，才允许 `--write --input <reviewed.json>` 写入公开快照。
+- 静态页面不得加载 `config.local.js`，也不得从部署工作流注入公开 API Key。ESOP 自定义 Key 仅存于当前页面会话；Stock 只有用户主动选择的行情请求可联网，其他分析为演示；Service Agent 为 Mock-only。
 - 如需接入真实模型，必须先设计服务端代理和最小权限边界；禁止把 credential 写入 Pages artifact。
 - Pages 只上传 `dist/` 白名单产物。新增公开页面、脚本、数据或图片时，先更新 `scripts/public-dist-manifest.js`，再运行 `cd scripts; npm run build:public; npm run check:public-dist`。
 - 怀疑代码偏离规范时使用 `/code-health-check` skill
@@ -141,7 +141,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | `brand-design-md` | 获取品牌 DESIGN.md 规范并生成 UI | 2026-04 |
 | `code-health-check` | 代码规范检查（含博客双主题） | 2026-04 |
 | `sync-docs` | 代码变更后同步 README/Codex/CONVENTIONS（含博客文档） | 2026-04 |
-| `update-trends` | 五大平台热榜联网搜索 → trends.json | 2026-04 |
+| `update-trends` | 候选发现 → 人工事实复核 → 显式写入 trends.json | 2026-08 |
 | `monthly-review` | 月度维护：记忆清理 + 规范文档同步 + 季度架构快照 | 2026-05-13 |
 | `publish-blog` | 博客生成、检查、提交、推送回退与线上验证 | 2026-07-29 |
 

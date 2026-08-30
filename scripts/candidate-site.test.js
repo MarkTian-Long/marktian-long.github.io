@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('node:path');
-const fs = require('node:fs');
+const crypto = require('node:crypto');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -10,6 +10,17 @@ const { publicFiles } = require('./public-dist-manifest');
 const { readFrozenPage } = require('../site/candidate/frozen-page-source');
 
 const repoRoot = path.resolve(__dirname, '..');
+const approvedFrozenPageHashes = Object.freeze({
+  'index.html': '1dc79d5701c8b0628c30d5e2f96f4d12de88ecf854a9da8cb8ab821521b7b6ee',
+  'tools/blog/index.html': 'bfd9d31932fa6e99bff283581319358af3538b11d389c64e6d41fb5eba216f8a'
+});
+
+function normalizedSha256(value) {
+  return crypto
+    .createHash('sha256')
+    .update(value.replace(/\r\n?/g, '\n'), 'utf8')
+    .digest('hex');
+}
 
 test('candidate output is restricted to the ignored build directory', () => {
   assert.throws(() => resolveCandidateOutput(repoRoot, 'dist'), /build[\\/]candidate-site/);
@@ -32,9 +43,8 @@ test('candidate plan has frozen Eleventy home/blog routes plus exact static isla
   assert.equal(plan.passthrough.includes('tools/service-agent/index.html'), true);
 });
 
-test('frozen candidate route inputs exactly match the approved public source snapshot', () => {
-  for (const route of ['index.html', 'tools/blog/index.html']) {
-    const normalizeNewlines = value => value.replace(/\r\n/g, '\n');
-    assert.equal(normalizeNewlines(readFrozenPage(route)), normalizeNewlines(fs.readFileSync(path.join(repoRoot, route), 'utf8')), route);
+test('frozen candidate route inputs retain their approved immutable hashes', () => {
+  for (const [route, expectedHash] of Object.entries(approvedFrozenPageHashes)) {
+    assert.equal(normalizedSha256(readFrozenPage(route)), expectedHash, route);
   }
 });

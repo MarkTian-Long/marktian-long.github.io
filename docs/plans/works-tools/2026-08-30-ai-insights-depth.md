@@ -16,7 +16,7 @@
 - Modify: `tools/ai-insights/data/products.json`
 - Create: `scripts/ai-insights-depth.test.js`
 
-**Step 1:** 写失败测试，要求每个产品具有唯一 `id`、`reviewedAt`、`reviewDueAt`、`thesis`、`decisionThemes`、至少三条 `decisions` 与两条 `uncertainties`。
+**Step 1:** 写失败测试，要求每个产品具有唯一 `id`、`archiveDate`、`factReviewStatus`、`thesis`、`decisionThemes`、至少三条 `decisions` 与两条 `uncertainties`；没有逐条人工核验证据时不得伪造 `reviewedAt`。
 
 **Step 2:** 要求 thesis/decision 的 `evidenceRefs` 可解析到 `sources`；每条公开指标具有 `definition`、五类合法 `kind`、`asOf`、`sourceRefs` 和 `caveat`；来源 URL 必须是 HTTPS。
 
@@ -36,11 +36,11 @@
 
 **Step 1a:** 浏览器测试使用 `node:test + Playwright chromium + createStaticServer`；拦截 `products.json` 分别返回 404、非法 JSON、部分非法记录和全非法记录，验证有效记录保留、可读错误与重试恢复。
 
-**Step 2:** 将详情收敛为“决策摘要、产品机制、竞争取舍、证据账本、演化与边界”，卡片前置个人判断、复核日期、主题和证据数。
+**Step 2:** 将详情收敛为“决策摘要、产品机制、竞争取舍、证据账本、演化与边界”，卡片前置个人判断、档案整理日期、事实复核状态、主题和证据数。
 
 **Step 3:** 动态数据全部用 DOM API 与 `textContent` 输出；恶意文本不能生成 HTML。产品卡、dialog 和 Tab 补齐焦点圈定、Esc、焦点恢复、方向键与 ARIA 状态。
 
-**Step 4:** 页面头显示“静态研究档案、非实时、最近复核”；详情清晰展示反证、迁移边界、缺失来源和待复核状态。
+**Step 4:** 页面头显示“静态研究档案、非实时、事实待人工复核”；详情清晰展示档案整理日期、反证、迁移边界、缺失来源和待复核状态。
 
 ### Task 3: 错误状态、工作流与文档
 

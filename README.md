@@ -40,19 +40,19 @@
 
 | 工具 | 路径 | 说明 |
 | --- | --- | --- |
-| ESOP 字段提取 Demo | [`tools/esop-extractor/`](tools/esop-extractor/) | 将文本中的股权激励字段结构化呈现 |
-| A股 AI 助手 | [`tools/stock/`](tools/stock/) | 行情、诊断、研报、雷达、Agent 与合规的静态演示 |
-| 智能客服产品设计沙盘 | [`tools/service-agent/`](tools/service-agent/) | 业务场景、决策卡、链路和 Mock 对话联动 |
-| ASCI 科研任务执行系统 | [`tools/asci/`](tools/asci/) | 带人工检查点与降级策略的科研 Agent 管线 |
+| ESOP 字段提取 Demo | [`tools/esop-extractor/`](tools/esop-extractor/) | 字段证据核验、人工复核、离线评估与会话级自定义接口工作台 |
+| A股 AI 助手 | [`tools/stock/`](tools/stock/) | 明确 Mock/联网边界、逐 Claim 引用、反馈回归与工具轨迹的金融研究原型 |
+| 智能客服产品设计沙盘 | [`tools/service-agent/`](tools/service-agent/) | 三场景验收、故障注入、HITL、运行复盘与安全导出的决策沙盘 |
+| ASCI 科研任务执行系统 | [`tools/asci/`](tools/asci/) | 14 节点研究协议、审计轨迹、人工检查点与可恢复降级管线 |
 
 ### 信息工具
 
 | 工具 | 路径 | 说明 |
 | --- | --- | --- |
-| AI 产品拆解 | [`tools/ai-insights/`](tools/ai-insights/) | AI 产品的结构化拆解与资料沉淀 |
-| 前沿雷达 | [`tools/radar/`](tools/radar/) | 中英文 AI 信息源与工具导航 |
-| 热点快照 | [`tools/trends/`](tools/trends/) | 多平台 AI、技术热点聚合与点评 |
-| Agent 认知全景 | [`tools/agent-hub/`](tools/agent-hub/) | 框架、架构、企业场景与判断框架 |
+| AI 产品拆解 | [`tools/ai-insights/`](tools/ai-insights/) | 可筛选、可深链、带来源与待复核边界的静态产品研究档案 |
+| 前沿雷达 | [`tools/radar/`](tools/radar/) | 按研究意图组织信源、覆盖盲区与下一步去向的信息入口 |
+| 热点快照 | [`tools/trends/`](tools/trends/) | 区分历史快照与结构复核、支持行动筛选和来源账本的信号研判台 |
+| Agent 认知全景 | [`tools/agent-hub/`](tools/agent-hub/) | 以六问规则判断是否需要 Agent，并解释控制、回退与替代方案 |
 
 所有公开工具均可独立打开。它们使用静态数据或 Mock 演示，不携带第三方服务凭据。
 
