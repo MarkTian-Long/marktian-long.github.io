@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ESOP 数据提取器</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='bold' fill='url(%23g)'>L</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23c96442'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='bold' fill='%23faf9f5'>L</text></svg>" />
   <style>
     /* ===== CSS Variables (tool-private) ===== */
     :root {
@@ -14,10 +14,10 @@
       --card-hover:   #f0eee6;
       --border:       #e8e6dc;
       --border-hover: rgba(201,100,66,0.4);
-      --accent:       #2563eb;
-      --accent-purple:#7c3aed;
-      --accent-cyan:  #0891b2;
-      --grad:         linear-gradient(135deg, #2563eb, #7c3aed);
+      --accent:       #c96442;
+      --accent-purple:#d97757;
+      --accent-cyan:  #277853;
+      --grad:         var(--accent);
       --text:         #141413;
       --text-sec:     #5e5d59;
       --text-muted:   #87867f;
@@ -228,7 +228,7 @@
     }
 
     .mode-btn.active {
-      background: rgba(79,143,255,0.12);
+       background: var(--accent-soft, var(--card-hover));
       border-color: var(--accent);
       color: var(--accent);
       font-weight: 600;
@@ -318,7 +318,7 @@
     .btn-primary:hover:not(:disabled) {
       opacity: 0.88;
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(79,143,255,0.3);
+       box-shadow: 0 6px 20px rgba(201,100,66,0.3);
     }
 
     .btn-primary:active:not(:disabled) {
@@ -328,13 +328,13 @@
     .btn-export {
       background: var(--card);
       color: var(--accent-cyan);
-      border: 1px solid rgba(0,212,255,0.25);
+       border: 1px solid var(--border-hover);
       font-size: 12px;
       padding: 6px 12px;
     }
 
     .btn-export:hover:not(:disabled) {
-      background: rgba(0,212,255,0.08);
+       background: var(--accent-faint, var(--card-hover));
       border-color: var(--accent-cyan);
     }
 
@@ -636,7 +636,7 @@
     .btn-edit:hover {
       border-color: var(--border-hover);
       color: var(--accent);
-      background: rgba(79,143,255,0.08);
+       background: var(--accent-faint, var(--card-hover));
     }
 
     /* ===== Grantee Section ===== */
@@ -798,7 +798,7 @@
     .pdf-drop-zone.drag-over {
       border-color: var(--accent);
       color: var(--text-sec);
-      background: rgba(79,143,255,0.06);
+       background: var(--accent-faint, var(--card-hover));
     }
 
     .pdf-drop-zone-icon {
@@ -813,8 +813,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(79,143,255,0.08);
-      border: 1px solid rgba(79,143,255,0.25);
+       background: var(--accent-faint, var(--card-hover));
+       border: 1px solid var(--border-hover);
       border-radius: var(--radius-sm);
       padding: 10px 12px;
       font-size: 12px;
@@ -988,6 +988,268 @@
       margin-top: 2px;
     }
   </style>
+  <style>
+    /* ===== Depth workbench visual system ===== */
+    :root {
+      --bg: #f4f1e8;
+      --bg-sec: #ebe7db;
+      --card: #fbfaf6;
+      --card-hover: #f1eee5;
+      --border: #d8d1c2;
+      --border-hover: #c96442;
+      --text: #24231f;
+      --text-sec: #5f5c53;
+      --text-muted: #817b6e;
+      --accent: #c96442;
+      --accent-strong: #4d4c48;
+      --accent-purple: #d97757;
+      --accent-cyan: #277853;
+      --accent-soft: #f6e5dc;
+      --accent-faint: #fcf3ed;
+      --green: #277853;
+      --green-soft: #e5f2e9;
+      --yellow: #a56516;
+      --yellow-soft: #fff0d5;
+      --red: #b53333;
+      --red-soft: #fae7e2;
+      --grad: var(--accent);
+      --focus-blue: #3898ec;
+      --overlay: rgba(244, 241, 232, 0.9);
+      --overlay-modal: rgba(244, 241, 232, 0.84);
+      --shadow-card: 0 10px 28px rgba(36, 35, 31, 0.06);
+      --shadow-modal: 0 22px 70px rgba(36, 35, 31, 0.18);
+      --font-tool: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "Cascadia Code", "Fira Code", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-tool);
+      font-size: 16px;
+      line-height: 1.55;
+      overflow: hidden;
+    }
+    button, input, textarea, select { font: inherit; }
+    button, [role="button"] { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid var(--focus-blue);
+      outline-offset: 2px;
+    }
+    #app { grid-template-columns: minmax(360px, 0.42fr) minmax(560px, 0.58fr); gap: 0; }
+    .panel-input, .panel-output { height: 100vh; }
+    .panel-input { padding: 24px 22px 34px; gap: 14px; background: var(--bg-sec); }
+    .panel-output { padding: 24px 28px 40px; background: var(--bg); }
+    .panel-input > * { flex: 0 0 auto; }
+    .panel-input .collapsible { flex-shrink: 0; }
+    .panel-title, .result-title, .placeholder-title { font-family: Georgia, "Songti SC", serif; font-weight: 500; }
+    .panel-title { font-size: 21px; letter-spacing: -0.02em; }
+    .panel-title span { background: none; color: var(--accent-strong, var(--accent)); -webkit-text-fill-color: initial; }
+    .subtle-lead { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+    .trust-card, .legacy-notice, .result-section, .evaluation-panel, .metrics-grid .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-card);
+    }
+    .trust-card { padding: 14px 16px; }
+    .trust-heading, .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .trust-heading strong { font-size: 13px; }
+    .mode-boundary-label, .result-mode-badge {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-hover);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: var(--accent);
+      background: var(--accent-faint);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .trust-copy { color: var(--text-sec); font-size: 13px; line-height: 1.55; margin-top: 8px; }
+    .trust-meta { color: var(--text-muted); font-size: 11px; margin-top: 8px; }
+    .process-card { padding: 2px 0 0; }
+    .process-title { color: var(--text-sec); font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+    .process-steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+    .process-step { min-width: 0; color: var(--text-muted); text-align: center; }
+    .process-step-marker { display: grid; place-items: center; width: 26px; height: 26px; margin: 0 auto 4px; border: 1px solid var(--border); border-radius: 50%; background: var(--card); color: var(--text-muted); font-size: 11px; font-weight: 700; }
+    .process-step-label { display: block; font-size: 11px; font-weight: 700; }
+    .process-step-detail { display: block; font-size: 10px; line-height: 1.3; margin-top: 2px; }
+    .process-step[data-state="active"] { color: var(--accent); }
+    .process-step[data-state="active"] .process-step-marker { border-color: var(--accent); background: var(--accent); color: var(--card); }
+    .process-step[data-state="done"] { color: var(--green); }
+    .process-step[data-state="done"] .process-step-marker { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+    .collapsible { background: var(--card); border-color: var(--border); box-shadow: none; }
+    .collapsible-header { min-height: 44px; padding: 10px 14px; }
+    .collapsible-header-left { color: var(--text-sec); font-size: 13px; letter-spacing: 0; text-transform: none; }
+    .section-icon { background: var(--accent); }
+    .collapsible-body-inner { border-top-color: var(--border); }
+    .api-mode-toggle { gap: 8px; }
+    .mode-btn { min-height: 44px; padding: 8px 10px; background: var(--bg); border-color: var(--border); color: var(--text-sec); transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition); }
+    .mode-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong, var(--accent)); }
+    .key-input, .textarea-main, .modal-input, .modal-note-input, .select-input { background: var(--bg); border-color: var(--border); color: var(--text); font-family: var(--font-tool); }
+    .key-input, .modal-input, .select-input { min-height: 44px; }
+    .key-label.spaced { margin-top: 10px; }
+    .key-hint-tight { margin-top: 8px; }
+    .full-width-input { width: 100%; }
+    .demo-tag { font-size: 10px; opacity: 0.6; }
+    .sample-action { align-self: flex-start; }
+    .textarea-main { min-height: 280px; font-size: 15px; line-height: 1.7; }
+    .textarea-main.readonly-input { background: var(--accent-faint); color: var(--text-sec); }
+    .btn { min-height: 44px; transition: background var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition), opacity var(--transition); }
+    .btn-primary { background: var(--grad); color: var(--card); box-shadow: 0 8px 18px rgba(201, 100, 66, 0.16); }
+    .btn-primary:hover:not(:disabled) { opacity: 0.92; box-shadow: 0 10px 22px rgba(201, 100, 66, 0.22); }
+    .btn-ghost { background: var(--card); border-color: var(--border); color: var(--text-sec); }
+    .btn-ghost:hover:not(:disabled) { background: var(--card-hover); border-color: var(--border-hover); color: var(--text); }
+    .key-hint, .input-boundary-note, .pdf-boundary-note { color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+    .input-boundary-note, .pdf-boundary-note { margin-top: 8px; padding: 8px 10px; border-left: 2px solid var(--accent); background: var(--accent-faint); }
+    .api-target-box { margin-top: 12px; padding: 11px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--accent-faint); }
+    .api-target-label { color: var(--text-muted); font-size: 11px; }
+    .api-target-origin { color: var(--accent-strong, var(--accent)); font-family: var(--font-mono); font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+    .origin-confirm { display: flex; align-items: flex-start; gap: 8px; margin-top: 9px; color: var(--text-sec); font-size: 12px; }
+    .origin-confirm input { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; accent-color: var(--accent); }
+    .scenario-heading { color: var(--text-sec); font-size: 13px; font-weight: 700; margin: 14px 0 8px; }
+    .scenario-picker { display: grid; gap: 7px; }
+    .scenario-card { display: block; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card); color: var(--text); text-align: left; transition: background var(--transition), border-color var(--transition), transform var(--transition); }
+    .scenario-card:hover { background: var(--card-hover); border-color: var(--border-hover); transform: translateY(-1px); }
+    .scenario-card.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 3px 0 var(--accent); }
+    .scenario-card-title { display: block; font-size: 13px; font-weight: 700; }
+    .scenario-card-desc { display: block; color: var(--text-muted); font-size: 12px; line-height: 1.45; margin-top: 3px; }
+    .scenario-hint { color: var(--text-muted); font-size: 12px; margin: 8px 0 0; }
+    .pdf-drop-zone { border-color: var(--border-strong, var(--border)); background: var(--card); }
+    .pdf-drop-zone:hover, .pdf-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-faint); }
+    .pdf-info-card { background: var(--accent-faint); border-color: var(--border-hover); }
+    .legacy-notice { padding: 11px 12px; border-color: var(--yellow); background: var(--yellow-soft); box-shadow: none; }
+    .legacy-notice strong { color: var(--yellow); font-size: 12px; }
+    .legacy-notice p { color: var(--text-sec); font-size: 12px; line-height: 1.5; margin: 4px 0 8px; }
+    .legacy-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .legacy-actions .btn { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+    .synonym-row { margin-bottom: 8px; padding: 9px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .synonym-standard { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+    .synonym-variants { display: flex; flex-wrap: wrap; gap: 4px; }
+    .synonym-variants span { padding: 2px 7px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); color: var(--text-sec); font-size: 11px; }
+    .prompt-pre { color: var(--text-sec); font-family: var(--font-mono); }
+    .output-placeholder { align-items: flex-start; justify-content: center; text-align: left; padding: 40px 8%; }
+    .placeholder-icon { color: var(--accent); font-size: 38px; opacity: 0.35; }
+    .placeholder-title { color: var(--text); font-size: 24px; letter-spacing: -0.02em; }
+    .placeholder-desc { max-width: 520px; color: var(--text-sec); font-size: 15px; line-height: 1.7; }
+    .result-header { align-items: center; margin-bottom: 14px; }
+    .result-title { font-size: 21px; letter-spacing: -0.02em; }
+    .result-subtitle { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+    .result-run-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--text-muted); font-size: 11px; margin-top: 8px; }
+    .result-run-meta code { color: var(--text-sec); font-family: var(--font-mono); }
+    .result-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+    .result-actions .btn { min-height: 40px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .metrics-grid .metric-card { min-height: 92px; padding: 11px 12px; box-shadow: none; }
+    .metric-label { color: var(--text-muted); font-size: 11px; line-height: 1.35; }
+    .metric-value { color: var(--text); font-size: 21px; font-weight: 700; letter-spacing: -0.02em; margin-top: 5px; }
+    .metric-kind { color: var(--text-muted); font-size: 10px; margin-top: 2px; }
+    .metric-card.metric-warning { border-color: var(--border); background: var(--card); }
+    .metric-card.metric-warning.has-anomaly { border-color: var(--yellow); background: var(--yellow-soft); }
+    .evaluation-panel, .result-section { padding: 13px 14px; box-shadow: none; margin-bottom: 12px; }
+    .evaluation-panel h3, .result-section h3 { color: var(--text); font-size: 13px; margin: 0; }
+    .evaluation-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .evaluation-item { padding: 8px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); }
+    .evaluation-item span { display: block; color: var(--text-muted); font-size: 11px; }
+    .evaluation-item strong { display: block; color: var(--accent); font-size: 17px; margin-top: 2px; }
+    .evaluation-meta { color: var(--text-muted); font-size: 12px; margin-top: 9px; }
+    .review-queue-list { display: grid; gap: 6px; margin-top: 9px; }
+    .queue-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); text-align: left; transition: background var(--transition), border-color var(--transition); }
+    .queue-item:hover { background: var(--accent-faint); border-color: var(--accent); }
+    .queue-item strong, .queue-item small { display: block; }
+    .queue-item strong { font-size: 12px; }
+    .queue-item small { color: var(--text-muted); font-family: var(--font-mono); font-size: 10px; margin-top: 2px; }
+    .queue-reason { color: var(--yellow); font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .anomaly-list { margin: 9px 0 0; padding-left: 18px; color: var(--yellow); font-size: 12px; line-height: 1.6; }
+    .empty-compact, .empty-state { color: var(--text-muted); font-size: 12px; }
+    .tabs { margin: 14px 0 12px; border-bottom-color: var(--border); overflow-x: auto; }
+    .tab-btn { min-height: 44px; padding: 8px 14px; color: var(--text-muted); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .table-wrap { overflow-x: auto; overflow-y: hidden; }
+    .field-table { min-width: 760px; font-size: 13px; }
+    .field-table th { background: var(--bg-sec); color: var(--text-muted); padding: 9px 10px; border-bottom-color: var(--border); white-space: nowrap; }
+    .field-table td { padding: 10px; border-bottom-color: var(--border); }
+    .field-table tr:hover td { background: var(--card-hover); }
+    .col-name { width: 150px; color: var(--text-sec); }
+    .col-name small { display: block; color: var(--text-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 400; line-height: 1.35; margin-top: 3px; overflow-wrap: anywhere; }
+    .col-value { min-width: 150px; color: var(--text); }
+    .col-conf { width: 92px; }
+    .col-evidence { min-width: 210px; max-width: 300px; }
+    .col-review { width: 88px; }
+    .col-action { width: 62px; }
+    .original-value { color: var(--text); overflow-wrap: anywhere; }
+    .effective-value { display: flex; gap: 5px; align-items: baseline; color: var(--green); font-weight: 700; margin-top: 4px; overflow-wrap: anywhere; }
+    .effective-value span { color: var(--green); font-size: 10px; font-weight: 500; }
+    .value-null { color: var(--text-muted); }
+    .conf-badge, .evidence-badge, .review-badge { border-radius: 999px; padding: 3px 7px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .conf-high { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+    .conf-medium { background: var(--yellow-soft); border-color: var(--yellow); color: var(--yellow); }
+    .conf-low { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+    .evidence-exact { background: var(--green-soft); border: 1px solid var(--green); color: var(--green); }
+    .evidence-partial { background: var(--yellow-soft); border: 1px solid var(--yellow); color: var(--yellow); }
+    .evidence-missing { background: var(--red-soft); border: 1px solid var(--red); color: var(--red); }
+    .review-accepted { background: var(--green-soft); border: 1px solid var(--green); color: var(--green); }
+    .review-corrected { background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent); }
+    .review-unresolved, .review-pending { background: var(--yellow-soft); border: 1px solid var(--yellow); color: var(--yellow); }
+    .source-match { margin-bottom: 5px; }
+    .src-snippet { color: var(--text-sec); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+    .btn-edit { min-height: 44px; padding: 8px; border-color: var(--border); color: var(--accent); }
+    .btn-edit:hover { background: var(--accent-soft); border-color: var(--accent); }
+    .grantee-section { margin-bottom: 16px; }
+    .grantee-section h3 { color: var(--text-sec); font-size: 14px; margin: 0 0 7px; }
+    .validation-warn { color: var(--yellow); font-size: 11px; line-height: 1.45; margin-top: 5px; }
+    .error-display { padding: 16px; border: 1px solid var(--red); border-radius: var(--radius-sm); background: var(--red-soft); color: var(--red); }
+    .error-display h3 { font-size: 16px; margin: 0; }
+    .error-display p { color: var(--text-sec); font-size: 13px; line-height: 1.6; margin: 8px 0 0; }
+    .error-action { color: var(--text-muted); font-size: 12px; margin-top: 8px; }
+    .modal-overlay { background: var(--overlay-modal); }
+    .modal-card { width: min(560px, 95vw); max-height: 92vh; overflow-y: auto; padding: 22px; background: var(--card); border-color: var(--border-hover); box-shadow: var(--shadow-modal); }
+    .modal-title { font-size: 18px; }
+    .modal-subtitle { font-family: var(--font-mono); font-size: 11px; overflow-wrap: anywhere; }
+    .modal-source-box { color: var(--text-sec); background: var(--bg); border-color: var(--border); font-style: normal; }
+    .modal-readonly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .modal-readonly-item { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); }
+    .modal-readonly-item span { display: block; color: var(--text-muted); font-size: 11px; }
+    .modal-readonly-item strong { display: block; color: var(--text); font-size: 13px; margin-top: 2px; overflow-wrap: anywhere; }
+    .select-input { width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); }
+    .error-type-item { min-height: 36px; padding: 5px 8px; }
+    .error-type-item span { color: var(--text-sec); font-size: 13px; }
+    .modal-section-title { display: block; color: var(--text-sec); margin-top: 13px; }
+    .modal-value-input { margin-bottom: 0; }
+    .modal-save-btn { width: auto; padding: 8px 20px; }
+    .modal-actions { margin-top: 16px; }
+    .btn-export-bad { background: var(--red-soft); border-color: var(--red); color: var(--red); min-height: 44px; }
+    .btn-export { color: var(--accent); border-color: var(--border-hover); min-height: 44px; }
+    .btn-export:hover:not(:disabled) { background: var(--accent-faint); border-color: var(--accent); }
+    .mode-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error-type-item { min-height: 44px; }
+    fieldset.error-type-group { border: 0; padding: 0; }
+    .loading-overlay { background: var(--overlay); }
+    @media (max-width: 980px) {
+      body { overflow: auto; }
+      #app { display: block; height: auto; }
+      .panel-input, .panel-output { height: auto; min-height: 0; overflow: visible; }
+      .panel-input { border-right: 0; border-bottom: 1px solid var(--border); }
+      .panel-output { min-height: 640px; }
+    }
+    @media (max-width: 620px) {
+      .panel-input, .panel-output { padding: 18px 14px 28px; }
+      .process-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 10px; }
+      .metrics-grid, .evaluation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .result-header { align-items: flex-start; }
+      .result-actions { justify-content: flex-start; width: 100%; }
+      .result-actions .btn { flex: 1 1 auto; }
+      .modal-readonly-grid { grid-template-columns: 1fr; }
+      .modal-card { padding: 18px; }
+      .placeholder-title { font-size: 21px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
 </head>
 <body>
 
@@ -999,9 +1261,37 @@
 
     <!-- Title -->
     <div>
-      <div class="panel-title"><span>ESOP 数据提取器</span></div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
-        粘贴招股书原文 · AI 自动提取股权激励字段
+      <div class="panel-title"><span>ESOP 字段提取工作台</span></div>
+      <div class="subtle-lead">从招股书片段到可核查、可复核的字段结果</div>
+    </div>
+
+    <div class="trust-card" aria-label="模式与隐私边界">
+      <div class="trust-heading">
+        <strong>先看边界</strong>
+        <span class="mode-boundary-label" id="modeBoundaryLabel">Demo 夹具</span>
+      </div>
+      <p class="trust-copy" id="modeBoundaryText">只运行三个版本化合成夹具，不读取真实 PDF 内容，也不把结果自动写入浏览器存储。</p>
+      <div class="trust-meta">准确率目标 <span id="accuracyTargetLabel">≥95%</span> 仍是 target，模型高置信占比只是 proxy。</div>
+    </div>
+
+    <div class="process-card" aria-label="处理流程">
+      <div class="process-title">六步处理状态</div>
+      <div class="process-steps">
+        <div class="process-step" data-step="input" data-state="active"><span class="process-step-marker">1</span><span class="process-step-label">输入</span><span class="process-step-detail">选择来源</span></div>
+        <div class="process-step" data-step="extract" data-state="pending"><span class="process-step-marker">2</span><span class="process-step-label">抽取</span><span class="process-step-detail">运行模式</span></div>
+        <div class="process-step" data-step="structure" data-state="pending"><span class="process-step-marker">3</span><span class="process-step-label">结构化</span><span class="process-step-detail">校验 schema</span></div>
+        <div class="process-step" data-step="evidence" data-state="pending"><span class="process-step-marker">4</span><span class="process-step-label">证据</span><span class="process-step-detail">匹配引文</span></div>
+        <div class="process-step" data-step="rules" data-state="pending"><span class="process-step-marker">5</span><span class="process-step-label">规则</span><span class="process-step-detail">发现异常</span></div>
+        <div class="process-step" data-step="review" data-state="pending"><span class="process-step-marker">6</span><span class="process-step-label">复核</span><span class="process-step-detail">留下记录</span></div>
+      </div>
+    </div>
+
+    <div class="legacy-notice hidden" id="legacyNotice" role="status">
+      <strong>发现旧版浏览器存储</strong>
+      <p id="legacyNoticeText">系统不会自动读取或删除旧数据。</p>
+      <div class="legacy-actions">
+        <button type="button" class="btn btn-ghost" id="loadLegacyBtn" onclick="loadLegacyResult()">加载到本会话</button>
+        <button type="button" class="btn btn-ghost" onclick="clearLegacyStorage()">清除旧 key</button>
       </div>
     </div>
 
@@ -1020,18 +1310,21 @@
           <!-- Mode toggle -->
           <div class="api-mode-toggle">
             <button id="modeDefault" class="mode-btn active" onclick="setApiMode('default')">
-              ✦ 系统默认 <span style="font-size:10px;opacity:0.6;">Demo</span>
+              ✦ 系统默认 <span class="demo-tag">Demo</span>
             </button>
             <button id="modeCustom" class="mode-btn" onclick="setApiMode('custom')">
               自定义 API
             </button>
           </div>
           <div class="key-hint" id="defaultModeHint">
-            Demo 模式，返回模拟提取结果，无需配置，开箱即用。
+            Demo 只运行下方三个版本化夹具，不会访问外部服务。
+          </div>
+          <div class="key-hint hidden" id="customModeHint">
+            自定义 API 只接受自由文本。调用前会显示目标 origin，并要求你明确确认数据外发。
           </div>
           <!-- Custom key input (hidden by default) -->
           <div id="customKeyArea" style="display:none;">
-            <label class="key-label">API Key（兼容 OpenAI 格式）</label>
+            <label class="key-label" for="keyInput">API Key（兼容 OpenAI 格式）</label>
             <div class="key-input-wrap">
               <input
                 type="password"
@@ -1043,28 +1336,36 @@
               />
               <button class="btn btn-ghost" onclick="saveApiKey()">保存</button>
             </div>
-            <div id="keyErrorTip" class="error-tip">请输入 API Key 后再开始提取</div>
-            <label class="key-label" style="margin-top:10px;">Endpoint（可选）</label>
+            <div id="keyErrorTip" class="error-tip">请输入 API Key 后再保存</div>
+            <label class="key-label spaced" for="endpointInput">Endpoint</label>
             <input
               type="text"
               id="endpointInput"
-              class="key-input"
-              placeholder="https://api.deepseek.com（留空则使用 DeepSeek）"
+              class="key-input full-width-input"
+              value="https://api.deepseek.com"
+              placeholder="https://api.example.com"
               autocomplete="off"
-              style="width:100%;"
+              oninput="onEndpointInput()"
             />
-            <label class="key-label" style="margin-top:10px;">模型名称（可选）</label>
+            <div id="endpointErrorTip" class="error-tip">Endpoint 格式不正确</div>
+            <label class="key-label spaced" for="modelInput">模型名称</label>
             <input
               type="text"
               id="modelInput"
-              class="key-input"
-              placeholder="deepseek-chat（留空则使用默认）"
+              class="key-input full-width-input"
+              value="deepseek-chat"
+              placeholder="deepseek-chat"
               autocomplete="off"
-              style="width:100%;"
             />
-            <div class="key-hint" style="margin-top:8px;">
-              支持任意兼容 OpenAI Chat API 的服务（DeepSeek / OpenRouter / 本地等）。Key 仅保存在当前会话，关闭页面后即清除。
+            <div class="api-target-box" aria-live="polite">
+              <div class="api-target-label">本次请求目标 origin</div>
+              <div class="api-target-origin" id="apiOriginLabel">https://api.deepseek.com</div>
+              <label class="origin-confirm">
+                <input type="checkbox" id="apiOriginConfirm" onchange="onOriginConfirmationChange()" />
+                <span>我确认把本次自由文本发送到上方 origin。Key、输入和结果不会写入 localStorage 或 sessionStorage。</span>
+              </label>
             </div>
+            <div class="key-hint key-hint-tight">仅允许 HTTPS；本机调试可使用 localhost、127.0.0.1 或 ::1。不会加载 config.local.js。</div>
           </div>
         </div>
       </div>
@@ -1073,9 +1374,13 @@
     <!-- Input Mode Toggle -->
     <div>
       <div class="api-mode-toggle" style="margin-bottom:0;">
-        <button id="modeText" class="mode-btn active" onclick="setInputMode('text')">📄 文本输入</button>
-        <button id="modePdf"  class="mode-btn"        onclick="setInputMode('pdf')">📎 上传 PDF <span style="font-size:10px;opacity:0.6;">Demo</span></button>
+        <button type="button" id="modeText" class="mode-btn active" onclick="setInputMode('text')">文本输入</button>
+        <button type="button" id="modePdf"  class="mode-btn"        onclick="setInputMode('pdf')">上传 PDF <span class="demo-tag">Demo</span></button>
       </div>
+
+      <div class="scenario-heading" id="scenarioHeading">Demo 场景</div>
+      <div id="scenarioPicker" class="scenario-picker" aria-label="Demo 场景选择"></div>
+      <p class="scenario-hint" id="scenarioHint">选择一个夹具后，文本会自动填入且只读。</p>
 
       <!-- Text Input Area -->
       <div id="textInputArea">
@@ -1086,10 +1391,12 @@
         <textarea
           id="textInput"
           class="textarea-main"
-          placeholder="将招股书相关章节文字粘贴到此处&#10;&#10;建议粘贴：股本结构、购股权计划、董事酬金等章节，效果更佳"
+          maxlength="200000"
+          placeholder="自定义 API 模式下，将招股书相关章节文字粘贴到此处"
           oninput="onTextInput()"
         ></textarea>
         <div id="textErrorTip" class="error-tip">请输入招股书原文后再开始提取</div>
+        <div class="input-boundary-note">Demo 文本来自合成夹具，不能代表真实招股书准确率。切换到自定义 API 后才允许编辑和外发自由文本。</div>
       </div>
 
       <!-- PDF Upload Area -->
@@ -1122,20 +1429,21 @@
           </div>
           <button class="pdf-clear-btn" onclick="clearPdf()">清除</button>
         </div>
-        <div id="pdfErrorTip" class="error-tip">请上传 PDF 文件后再开始提取</div>
+        <div id="pdfErrorTip" class="error-tip">请上传 PDF 文件后再开始处理</div>
+        <div class="pdf-boundary-note" id="pdfModeHint">固定 Demo 边界：只展示真实文件名和大小，不读取 PDF 内容，不推断页数。</div>
       </div>
     </div>
 
     <!-- Sample Button (text mode only) -->
     <div id="sampleBtnWrap">
-      <button class="btn btn-ghost" onclick="fillSampleText()" style="align-self:flex-start;">
-        📋 填入示例文本
+      <button type="button" class="btn btn-ghost sample-action" onclick="fillSampleText()">
+        回到标准夹具
       </button>
     </div>
 
     <!-- Extract Button -->
-    <button class="btn btn-primary" id="extractBtn" onclick="startExtraction()">
-      🔍 开始提取
+    <button type="button" class="btn btn-primary" id="extractBtn" onclick="startExtraction()">
+      ▶ 开始处理
     </button>
 
     <div class="divider"></div>
@@ -1197,11 +1505,17 @@
 
     <!-- Placeholder -->
     <div class="output-placeholder" id="outputPlaceholder">
-      <div class="placeholder-icon">📄</div>
-      <div class="placeholder-title">等待提取</div>
+      <div class="placeholder-icon">⌁</div>
+      <div class="placeholder-title">结果会停留在这里</div>
       <div class="placeholder-desc">
-        在左侧粘贴招股书原文，配置 API Key，<br />点击「开始提取」即可自动识别股权激励字段。
+        先选择一个 Demo 夹具查看证据和规则链，或切换到自定义 API，确认数据外发后再处理自己的文本。
       </div>
+    </div>
+
+    <div class="error-display hidden" id="errorDisplay" role="alert">
+      <h3 id="errorTitle">处理未完成</h3>
+      <p id="errorMessage">—</p>
+      <div class="error-action" id="errorAction">—</div>
     </div>
 
     <!-- Result Content -->
@@ -1210,21 +1524,47 @@
       <!-- Result Header -->
       <div class="result-header">
         <div class="result-meta">
-          <div class="result-title">提取结果</div>
-          <div class="result-stats">
-            <span class="stat-item">提取时间：<strong id="statTime">—</strong></span>
-            <span class="stat-item">字段数：<strong id="statFields">—</strong></span>
-            <span class="stat-item" title="核心字段提取准确率（高置信度字段占比）">高置信度率：<strong id="statHighConf" style="color:var(--green)">—</strong></span>
-            <span class="stat-item" title="字段级溯源覆盖率（附有原文来源的字段占比）">溯源覆盖率：<strong id="statSourceCov" style="color:var(--accent-cyan)">—</strong></span>
-            <span id="statWarnWrap" class="hidden">
-              <span class="warn-badge" id="statWarn">⚠ 0 个低置信度</span>
-            </span>
+          <div class="result-title">字段结果 <span class="result-mode-badge" id="resultModeHint">Demo · 标准样例</span></div>
+          <div class="result-subtitle">原始模型输出保留不动，有效值来自独立复核记录。</div>
+          <div class="result-run-meta">
+            <span>run <code id="resultRunId">—</code></span>
+            <span>schema <code id="resultSchema">—</code></span>
+            <span>完成于 <span id="resultTime">—</span></span>
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="result-actions">
           <button class="btn-export-bad hidden" id="exportBadBtn" onclick="exportBadCases()">⚑ 导出 Bad Cases (<span id="badCaseCount">0</span>)</button>
           <button class="btn btn-export" onclick="exportJSON()">⬇ 导出 JSON</button>
         </div>
+      </div>
+
+      <div class="metrics-grid" aria-label="结果指标">
+        <div class="metric-card"><div class="metric-label">字段覆盖</div><div class="metric-value" id="metricFieldCoverage">—</div><div class="metric-kind">当前结果 · 非空字段</div></div>
+        <div class="metric-card"><div class="metric-label">模型自报高置信占比</div><div class="metric-value" id="metricHighConf">—</div><div class="metric-kind" id="metricHighConfKind">proxy，不是准确率</div></div>
+        <div class="metric-card"><div class="metric-label">来源声明覆盖</div><div class="metric-value" id="metricSourceCoverage">—</div><div class="metric-kind">有 source 声明</div></div>
+        <div class="metric-card"><div class="metric-label">可定位证据覆盖</div><div class="metric-value" id="metricEvidenceCoverage">—</div><div class="metric-kind">exact + partial</div></div>
+        <div class="metric-card"><div class="metric-label">复核进度</div><div class="metric-value" id="metricReviewProgress">—</div><div class="metric-kind">accepted / corrected / unresolved</div></div>
+        <div class="metric-card metric-warning"><div class="metric-label">规则异常</div><div class="metric-value" id="metricAnomalyCount">—</div><div class="metric-kind">跨字段，不等于模型错误</div></div>
+      </div>
+
+      <div class="evaluation-panel hidden" id="evaluationPanel">
+        <div class="section-heading"><h3>合成标注评估</h3><span class="mode-boundary-label">offline-measured</span></div>
+        <div class="evaluation-grid">
+          <div class="evaluation-item"><span>样例级 exact match</span><strong id="evaluationExact">—</strong></div>
+          <div class="evaluation-item"><span>字段值 exact match</span><strong id="evaluationCompleteness">—</strong></div>
+          <div class="evaluation-item"><span>可定位证据覆盖</span><strong id="evaluationEvidence">—</strong></div>
+        </div>
+        <div class="evaluation-meta" id="evaluationMeta">—</div>
+      </div>
+
+      <div class="result-section" id="reviewQueuePanel">
+        <div class="section-heading"><h3>待复核队列</h3><span class="result-subtitle">低置信、证据非 exact、未解决或规则异常</span></div>
+        <div class="review-queue-list" id="reviewQueueList"></div>
+      </div>
+
+      <div class="result-section" id="anomalyPanel">
+        <div class="section-heading"><h3>规则异常</h3><span class="result-subtitle">只提示矛盾，不替你改值</span></div>
+        <ul class="anomaly-list" id="anomalyList"></ul>
       </div>
 
       <!-- Tabs -->
@@ -1253,14 +1593,26 @@
 <!-- ===== Edit Modal ===== -->
 <div class="modal-overlay hidden" id="editModal">
   <div class="modal-card">
-    <div class="modal-title" id="modalTitle">标注字段</div>
+    <div class="modal-title" id="modalTitle">复核字段</div>
     <div class="modal-subtitle" id="modalSubtitle">字段路径</div>
 
     <label class="modal-label">原文来源（只读）</label>
     <div class="modal-source-box" id="modalSource">—</div>
 
-    <div class="modal-section-title">错误类型（可多选）</div>
-    <div class="error-type-group">
+    <div class="modal-readonly-grid">
+      <div class="modal-readonly-item"><span>模型原始值</span><strong id="modalOriginalValue">—</strong></div>
+      <div class="modal-readonly-item"><span>模型原始 confidence</span><strong id="modalOriginalConfidence">—</strong></div>
+    </div>
+
+    <label class="modal-label" for="reviewStatusInput">复核状态</label>
+    <select class="select-input" id="reviewStatusInput">
+      <option value="unresolved">未解决</option>
+      <option value="corrected">已修正</option>
+      <option value="accepted">已接受</option>
+    </select>
+
+    <fieldset class="error-type-group">
+      <legend class="modal-section-title">错误类型（可多选）</legend>
       <label class="error-type-item">
         <input type="checkbox" name="errorType" value="value_wrong" />
         <span>数值 / 内容错误</span>
@@ -1278,22 +1630,59 @@
         <span>原文来源定位不对</span>
       </label>
       <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="ambiguous" />
+        <span>原文表述有歧义</span>
+      </label>
+      <label class="error-type-item">
+        <input type="checkbox" name="errorType" value="logical_conflict" />
+        <span>跨字段逻辑冲突</span>
+      </label>
+      <label class="error-type-item">
         <input type="checkbox" name="errorType" value="other" />
         <span>其他</span>
       </label>
-    </div>
+    </fieldset>
     <div class="modal-error-tip" id="modalErrorTypeTip">请至少选择一个错误类型</div>
 
-    <div class="modal-section-title">正确值（可选）</div>
-    <input type="text" class="modal-input" id="modalValueInput" placeholder="填入正确值，留空表示仅标注" style="margin-bottom:0;" />
+    <label class="modal-section-title" for="modalValueInput">正确值（可选）</label>
+    <input type="text" class="modal-input modal-value-input" id="modalValueInput" placeholder="填入有效值，原始值不会被覆盖" />
 
-    <div class="modal-section-title">备注（可选）</div>
+    <label class="modal-section-title" for="rootCauseInput">根因分类</label>
+    <select class="select-input" id="rootCauseInput">
+      <option value="value_wrong">值或内容错误</option>
+      <option value="missing">字段缺失</option>
+      <option value="overconfident">过度自信</option>
+      <option value="wrong_source">来源定位错误</option>
+      <option value="ambiguous">原文歧义</option>
+      <option value="logical_conflict">逻辑冲突</option>
+      <option value="other">其他</option>
+    </select>
+
+    <label class="modal-section-title" for="repairTargetInput">修复对象</label>
+    <select class="select-input" id="repairTargetInput">
+      <option value="prompt">Prompt</option>
+      <option value="schema">Schema</option>
+      <option value="evidence">证据定位</option>
+      <option value="validation_rule">校验规则</option>
+      <option value="source_data">源数据</option>
+      <option value="human_review">人工复核</option>
+    </select>
+
+    <label class="modal-section-title" for="regressionInput">回归结果</label>
+    <select class="select-input" id="regressionInput">
+      <option value="not-run">未运行</option>
+      <option value="passed">已通过</option>
+      <option value="failed">未通过</option>
+      <option value="not-applicable">不适用</option>
+    </select>
+
+    <label class="modal-section-title" for="modalNoteInput">备注（可选）</label>
     <textarea class="modal-note-input" id="modalNoteInput" rows="2" placeholder="描述错误原因，方便后续分析…"></textarea>
 
-    <div class="modal-actions" style="margin-top:16px;">
+    <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
-      <button class="btn btn-primary" style="width:auto;padding:8px 20px;" onclick="saveBadCase()">
-        ⚑ 标注 Bad Case
+      <button class="btn btn-primary modal-save-btn" onclick="saveReview()">
+        保存复核
       </button>
     </div>
   </div>
