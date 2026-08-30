@@ -85,6 +85,12 @@ test('the four information tools expose one consistent workflow navigation contr
   }
 });
 
+test('information tools use reader-facing authorship language', () => {
+  for (const page of ['tools/radar/index.html', 'tools/trends/index.html']) {
+    assert.doesNotMatch(read(page), /(?:Claude|Codex) 点评/, `${page} should name the author judgment, not the tool used to draft it`);
+  }
+});
+
 test('public manifest includes every local runtime asset referenced by the eight tool pages', () => {
   const pages = [
     'tools/esop-extractor/index.html',
