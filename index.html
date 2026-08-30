@@ -98,9 +98,12 @@
                 <h2 class="section-title">思考碎片</h2>
                 <p class="section-desc">技术、产品、商业、行业多角度拆解 AI 动态——分析前因后果，做出自己的预测</p>
             </div>
-            <div class="writing-archive reveal" id="writingArchive"></div>
+            <div class="writing-archive reveal" id="writingArchive">
+                <div id="writingRecommendation"></div>
+                <div id="writingRecent"></div>
+            </div>
             <div style="text-align:center;margin-top:24px;">
-                <a href="tools/blog/index.html" target="_blank" class="writing-archive-link">查看全部文章 →</a>
+                <a id="writingArchiveLink" href="tools/blog/index.html" target="_blank" class="writing-archive-link">查看全部文章 →</a>
             </div>
         </div>
     </section>
@@ -429,7 +432,10 @@
     // ========== Writing Section ==========
     (async function renderWriting() {
         const root = document.getElementById('writingArchive');
-        if (!root) return;
+        const recommendationRoot = document.getElementById('writingRecommendation');
+        const recentRoot = document.getElementById('writingRecent');
+        const archiveLink = document.getElementById('writingArchiveLink');
+        if (!root || !recommendationRoot || !recentRoot) return;
         try {
             const data = await fetch('tools/blog/data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
             const posts = data.posts || [];
@@ -448,25 +454,35 @@
             }
 
             const homeFeatured = featuredSlugs.length ? posts.find(p => p.slug === featuredSlugs[0]) : null;
-            const homePosts = homeFeatured ? [homeFeatured] : [];
-            posts.forEach(p => {
-                if (homePosts.length < 3 && !homePosts.some(item => item.slug === p.slug)) homePosts.push(p);
-            });
-
-            root.innerHTML = homePosts.map(p => `
-                <a class="writing-post-row" href="tools/blog/${p.url}" target="_blank" aria-label="${p.title}">
+            const recentPosts = posts.filter(p => !homeFeatured || p.slug !== homeFeatured.slug).slice(0, 3);
+            const renderPost = (p, className = '') => `
+                <a class="writing-post-row ${className}" href="tools/blog/${p.url}" target="_blank" aria-label="${p.title}">
                     <span class="writing-post-date">${p.date}</span>
                     <div class="writing-post-content">
                         <span class="writing-post-title">${p.title}</span>
                         <span class="writing-post-summary">${p.summary}</span>
                     </div>
                     <div class="writing-post-tags">
-                        ${homeFeatured && p.slug === homeFeatured.slug ? '<span class="writing-tag">精选</span>' : ''}
-                        ${p.tags.map(t => `<span class="writing-tag">${t}</span>`).join('')}
+                        ${(p.tags || []).map(t => `<span class="writing-tag">${t}</span>`).join('')}
                         ${(p.topics||[]).map(t => `<span class="writing-tag">${t}</span>`).join('')}
+                        <span class="writing-post-cue" aria-hidden="true">阅读文章 →</span>
                     </div>
                 </a>
-            `).join('');
+            `;
+
+            recommendationRoot.innerHTML = homeFeatured ? `
+                <section class="writing-recommendation" aria-label="推荐阅读">
+                    <p class="writing-list-label">推荐阅读</p>
+                    ${renderPost(homeFeatured, 'writing-recommendation-row')}
+                </section>
+            ` : '';
+            recentRoot.innerHTML = recentPosts.length ? `
+                <section class="writing-recent" aria-label="最近更新">
+                    <p class="writing-list-label">最近更新</p>
+                    ${recentPosts.map(p => renderPost(p)).join('')}
+                </section>
+            ` : '';
+            if (archiveLink && posts.length) archiveLink.textContent = `浏览全部 ${posts.length} 篇文章 →`;
         } catch (e) {
             root.innerHTML = '<p style="color:var(--text-muted,#87867f);font-size:14px;padding:20px 0">文章加载中，请稍后刷新。</p>';
         }
