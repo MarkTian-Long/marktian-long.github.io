@@ -4,6 +4,8 @@
     const contract = root.TrendsContract;
     const state = { data: null, activeBoardId: null, action: 'all', view: 'signals' };
     const actionLabels = { watch: '持续关注', compare: '横向对比', adopt: '评估落地', deep_dive: '继续深挖' };
+    const reviewScopeLabels = { structure_only: '结构检查完成', facts_verified: '事实核验完成', candidate: '候选发现' };
+    const reviewScopeShortLabels = { structure_only: '仅结构检查', facts_verified: '事实已核验', candidate: '候选待核验' };
     const elements = {};
 
     function get(id) {
@@ -26,6 +28,22 @@
         return value ? String(value) : '—';
     }
 
+    function reviewScopeLabel() {
+        return reviewScopeLabels[state.data.review_scope] || '复核范围未知';
+    }
+
+    function reviewScopeShortLabel() {
+        return reviewScopeShortLabels[state.data.review_scope] || '复核范围未知';
+    }
+
+    function reviewScopeDetail() {
+        if (state.data.review_scope === 'facts_verified' && state.data.facts_verified_at) {
+            return `事实核验截至 ${formatDate(state.data.facts_verified_at)}`;
+        }
+        if (state.data.review_scope === 'candidate') return '候选来源记录，待事实核验';
+        return '历史事实未在本轮重验';
+    }
+
     function sourceName(sourceId) {
         const board = state.data.boards.find(entry => entry.source && entry.source.id === sourceId);
         return board ? board.source.name : sourceId;
@@ -42,9 +60,9 @@
         const freshness = validation.freshness;
         elements.status.className = `status-chip ${freshness ? freshness.status : ''}`;
         elements.status.textContent = freshness ? freshness.label : '状态未知';
-        elements.verification.textContent = '契约/结构复核';
+        elements.verification.textContent = reviewScopeLabel();
         elements.dates.textContent = `快照观察 ${formatDate(state.data.observed_at)} · 契约/结构复核 ${formatDate(state.data.reviewed_at)}`;
-        elements.historicalCaveat.textContent = '历史事实未在本轮重验';
+        elements.historicalCaveat.textContent = reviewScopeDetail();
         elements.snapshotId.textContent = `snapshot ${state.data.snapshot_id}`;
     }
 
@@ -85,7 +103,10 @@
         const grid = make('div', 'judgment-grid');
         addField(grid, '变化', item.judgment.change, true);
         const evidenceField = make('div', 'judgment-field full');
-        append(evidenceField, make('p', 'judgment-label', '证据'));
+        const evidenceLabel = state.data.review_scope === 'structure_only'
+            ? '历史观察记录（非独立证据）'
+            : state.data.review_scope === 'facts_verified' ? '事实核验记录' : '候选来源记录（待事实核验）';
+        append(evidenceField, make('p', 'judgment-label', evidenceLabel));
         const evidence = make('ul', 'evidence-list');
         item.judgment.evidence.forEach(entry => evidence.append(make('li', '', entry)));
         evidenceField.append(evidence);
@@ -124,8 +145,8 @@
         const meta = make('div', 'signal-meta');
         append(meta,
             make('span', '', `快照观察 ${formatDate(item.observed_at)}`),
-            make('span', '', '历史事实未在本轮重验'),
-            make('span', '', '结构字段已复核'),
+            make('span', '', reviewScopeDetail()),
+            make('span', '', reviewScopeShortLabel()),
             ...item.actions.map(action => make('span', 'action-chip', actionLabels[action] || action)));
         const metrics = make('div', 'metric-list');
         item.metrics.forEach(metric => {

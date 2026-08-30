@@ -52,15 +52,11 @@ function optionValue(flag) {
   return value && !value.startsWith('--') ? value : null;
 }
 
-function containsParentSegment(value) {
-  return String(value || '').split(/[\\/]+/).includes('..');
-}
-
 function boundedFileTarget(value, root, message) {
-  if (!value || containsParentSegment(value)) throw new Error(message);
+  if (!value) throw new Error(message);
   const target = path.resolve(value);
   const relative = path.relative(root, target);
-  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) throw new Error(message);
+  if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new Error(message);
   return target;
 }
 
@@ -70,6 +66,30 @@ function candidateTarget() {
 
 function publicTarget(value) {
   return boundedFileTarget(value || OUTPUT_PATH, PUBLIC_DATA_ROOT, 'Public trends data target must stay under tools/trends/data');
+}
+
+function reviewedInputTarget(value) {
+  return boundedFileTarget(value, CANDIDATE_ROOT, 'Reviewed input must stay under build/candidate-site');
+}
+
+function atomicWrite(target, content, fileSystem = fs) {
+  const temporary = path.join(
+    path.dirname(target),
+    `.${path.basename(target)}.${process.pid}.${Date.now()}.tmp`,
+  );
+  try {
+    fileSystem.mkdirSync(path.dirname(target), { recursive: true });
+    fileSystem.writeFileSync(temporary, content, 'utf8');
+    fileSystem.renameSync(temporary, target);
+  } catch (error) {
+    try {
+      if (typeof fileSystem.rmSync === 'function') fileSystem.rmSync(temporary, { force: true });
+      else if (typeof fileSystem.unlinkSync === 'function') fileSystem.unlinkSync(temporary);
+    } catch (_) {
+      // Preserve the original write failure; cleanup is best effort.
+    }
+    throw error;
+  }
 }
 
 function readPublishedTrends(options = {}) {
@@ -91,15 +111,16 @@ function reviewedInputPath() {
 
 function writeReviewedSnapshot(inputPath, targetPath = OUTPUT_PATH, options = {}) {
   if (!inputPath) throw new Error('Reviewed input is required; --write never fetches live data');
+  const input = reviewedInputTarget(inputPath);
   const target = publicTarget(targetPath);
-  const raw = fs.readFileSync(path.resolve(inputPath), 'utf8');
+  const raw = fs.readFileSync(input, 'utf8');
   const snapshot = JSON.parse(raw);
   const validation = assertValidSnapshot(snapshot, {
     now: options.now || today(),
     requireFreshness: Boolean(options.requireFreshness),
   });
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
+  assertCompleteForPublic(snapshot);
+  atomicWrite(target, `${JSON.stringify(snapshot, null, 2)}\n`, options.fileSystem || fs);
   return { target, snapshot, validation };
 }
 
@@ -174,14 +195,14 @@ async function fetchHackerNews() {
   const top = ids.slice(0, 20);
 
   const items = [];
-  for (const id of top) {
+  for (const [topIndex, id] of top.entries()) {
     if (items.length >= 6) break;
     try {
       const res = await fetchWithTimeout(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, { timeout: 8000 });
       const item = await res.json();
       if (item.type !== 'story' || !item.title || !item.url) continue;
       items.push({
-        rank: items.length + 1,
+        rank: topIndex + 1,
         title: truncate(item.title, 80),
         summary: `${item.score} points · ${item.descendants || 0} comments`,
         insight: '',
@@ -323,11 +344,11 @@ async function fetchOverseasAI() {
 // ── 候选发现与主流程 ──────────────────────────────────────────────────────────
 
 const BOARD_CONFIG = Object.freeze([
-  { id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', source_id: 'source-github', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源周榜的新增 Stars 排序；不同平台不直接横比', collect: () => fetchGithubTrending('weekly') },
-  { id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', source_id: 'source-product-hunt', source_name: 'Product Hunt', source_url: 'https://www.producthunt.com/leaderboard/monthly', ranking_basis: '按来源月榜的票数排序；历史榜单不代表当前产品热度', collect: () => fetchProductHunt() },
-  { id: 'hacker-news', title: 'HN 热议', icon: '🔥', source_id: 'source-hacker-news', source_name: 'Hacker News', source_url: 'https://news.ycombinator.com/news', ranking_basis: '按来源页面的 Points 排序；讨论热度不等于产品验证', collect: () => fetchHackerNews() },
-  { id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', source_id: 'source-overseas', source_name: 'TechCrunch / GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源文章或 GitHub 周榜观察；不构成市场规模排名', collect: () => fetchOverseasAI() },
-  { id: 'china-ai', title: '国内 AI 热点', icon: '🇨🇳', source_id: 'source-china-ai', source_name: '36Kr / 量子位 / CSDN', source_url: 'https://36kr.com/information/AI/', ranking_basis: '按来源文章流与报道时间整理；不构成行业规模排名', collect: () => fetch36Kr() },
+  { id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: 'GitHub Trending 的 AI 相关仓库候选，记录来源周榜与新增 Stars 口径。', source_id: 'source-github', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源周榜的新增 Stars 排序；不同平台不直接横比', collect: () => fetchGithubTrending('weekly') },
+  { id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: 'Product Hunt 月榜候选，记录来源页面当时的产品票数口径。', source_id: 'source-product-hunt', source_name: 'Product Hunt', source_url: 'https://www.producthunt.com/leaderboard/monthly', ranking_basis: '按来源月榜的票数排序；历史榜单不代表当前产品热度', collect: () => fetchProductHunt() },
+  { id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: 'Hacker News Top Stories 候选，保留 API 返回顺序并展示每条 story 的 Points。', source_id: 'source-hacker-news', source_name: 'Hacker News Top Stories', source_url: 'https://hacker-news.firebaseio.com/v0/topstories.json', ranking_basis: '按 Hacker News Top Stories API 返回顺序记录；展示 Points，不等于产品验证', candidateMetric: item => ({ label: 'Points（候选）', value: `${Number(item.score) || 0} points`, definition: '按 Hacker News Top Stories API 返回顺序记录；Points 仅表示来源互动口径。', source_url: item.hnUrl || item.url, caveat: '候选发现尚未人工复核，不可直接发布。' }), collect: () => fetchHackerNews() },
+  { id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: '仅从 GitHub Trending 周榜筛选 AI 相关仓库候选，不外推为完整出海媒体监测。', source_id: 'source-overseas', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '仅按 GitHub 周榜观察排序；不构成市场规模排名', collect: () => fetchOverseasAI() },
+  { id: 'china-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: '仅从 36Kr AI 频道整理国内 AI 资讯候选，不声明覆盖其他媒体。', source_id: 'source-china-ai', source_name: '36Kr AI 频道', source_url: 'https://36kr.com/information/AI/', ranking_basis: '仅按 36Kr AI 频道文章流与报道时间整理；不构成行业规模排名', collect: () => fetch36Kr() },
 ]);
 
 function candidateItem(config, item, index, observedAt) {
@@ -335,6 +356,15 @@ function candidateItem(config, item, index, observedAt) {
   if (typeof item.url !== 'string' || !/^https:\/\//i.test(item.url)) throw new Error('candidate item has no HTTPS URL');
   const sourceRank = Number.isInteger(item.rank) && item.rank > 0 ? item.rank : index + 1;
   const summary = typeof item.summary === 'string' && item.summary.trim() ? item.summary : '候选发现，等待人工复核。';
+  const metric = typeof config.candidateMetric === 'function'
+    ? config.candidateMetric(item, sourceRank)
+    : {
+      label: '来源排名（候选）',
+      value: String(sourceRank),
+      definition: '自动抓取到的来源排名，只用于人工复核候选，不代表公开热度结论。',
+      source_url: item.url,
+      caveat: '候选发现尚未人工复核，不可直接发布。',
+    };
   return {
     id: `candidate-${config.id}-${String(index + 1).padStart(2, '0')}`,
     rank: sourceRank,
@@ -347,13 +377,11 @@ function candidateItem(config, item, index, observedAt) {
     actions: ['watch'],
     tags: Array.isArray(item.tags) ? item.tags : [],
     metrics: [{
-      label: '来源排名（候选）',
-      value: String(sourceRank),
-      definition: '自动抓取到的来源排名，只用于人工复核候选，不代表公开热度结论。',
+      ...metric,
       kind: 'external-research',
       as_of: observedAt,
-      source_url: item.url,
-      caveat: '候选发现尚未人工复核，不可直接发布。',
+      source_url: metric.source_url || item.url,
+      caveat: metric.caveat || '候选发现尚未人工复核，不可直接发布。',
     }],
     judgment: {
       change: summary,
@@ -370,6 +398,7 @@ function candidateBoard(config, items, observedAt, diagnostics = []) {
     id: config.id,
     title: config.title,
     icon: config.icon,
+    intro: config.intro,
     ranking_basis: config.ranking_basis,
     source: { id: config.source_id, name: config.source_name, url: config.source_url, as_of: observedAt },
     status: items.length > 0 ? 'ready' : 'failed',
@@ -409,10 +438,15 @@ async function discoverCandidate({ now = new Date() } = {}) {
     observed_at: observedAt,
     collection_mode: 'candidate',
     verification_level: 'candidate',
+    review_scope: 'candidate',
+    facts_verified_at: null,
     boards,
-    method: { collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。' },
+    method: {
+      collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。',
+      evidence_policy: '候选摘要是来源记录，不是独立事实证据。',
+    },
   };
-  const validation = require('../tools/trends/contract.js').assertValidCandidate(candidate);
+  const validation = require('../tools/trends/contract.js').assertValidCandidate(candidate, { now: observedAt });
   return { candidate, validation };
 }
 
@@ -434,20 +468,17 @@ async function main() {
     const target = candidateTarget();
     if (GENERATOR_ARGS.includes('--discover')) {
       const result = await discoverCandidate();
-      fs.mkdirSync(path.dirname(target), { recursive: true });
-      fs.writeFileSync(target, `${JSON.stringify(result.candidate, null, 2)}\n`, 'utf8');
+      atomicWrite(target, `${JSON.stringify(result.candidate, null, 2)}\n`);
       console.log(`✓ candidate discovery: ${target}`);
       return;
     }
     const { raw } = readPublishedTrends({ requireFreshness });
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, raw, 'utf8');
+    atomicWrite(target, raw);
     console.log(`✓ candidate copy: ${target}`);
     return;
   }
   if (GENERATOR_MODE === 'write') {
     const result = writeReviewedSnapshot(reviewedInputPath(), optionValue('--target') || OUTPUT_PATH, { requireFreshness });
-    assertCompleteForPublic(result.snapshot);
     result.validation.warnings.forEach(warning => console.warn(`⚠ ${warning}`));
     console.log(`✓ reviewed snapshot written: ${result.target}`);
     return;
@@ -459,12 +490,14 @@ module.exports = {
   OUTPUT_PATH,
   CANDIDATE_ROOT,
   PUBLIC_DATA_ROOT,
+  BOARD_CONFIG,
   candidateItem,
   candidateBoard,
   discoverCandidate,
   readPublishedTrends,
   writeReviewedSnapshot,
   boundedFileTarget,
+  atomicWrite,
 };
 
 if (require.main === module || (process.argv[1] && path.resolve(process.argv[1]) === __filename)) {

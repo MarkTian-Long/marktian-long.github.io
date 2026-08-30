@@ -17,6 +17,7 @@
     ]);
     const VALID_COLLECTION_MODES = Object.freeze(['manual_reviewed', 'candidate']);
     const VALID_VERIFICATION_LEVELS = Object.freeze(['manual_reviewed', 'mixed', 'candidate']);
+    const VALID_REVIEW_SCOPES = Object.freeze(['structure_only', 'facts_verified', 'candidate']);
     const DAY_MS = 24 * 60 * 60 * 1000;
     const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -54,6 +55,28 @@
             return new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), current.getUTCDate()));
         }
         return parseDate(now, 'now');
+    }
+
+    function parseOptionalDate(value, field, errors) {
+        if (value === null || value === undefined) return null;
+        if (typeof value !== 'string') {
+            errors.push(`${field} must be an ISO date or null`);
+            return null;
+        }
+        try {
+            return parseDate(value, field);
+        } catch (error) {
+            errors.push(error.message);
+            return null;
+        }
+    }
+
+    function rejectFuture(date, field, now, errors) {
+        if (date && now && date > now) errors.push(`${field} cannot be in the future`);
+    }
+
+    function rejectAfter(date, field, limit, limitField, errors) {
+        if (date && limit && date > limit) errors.push(`${field} cannot be later than ${limitField}`);
     }
 
     function freshnessFor(asOf, now) {
@@ -115,19 +138,21 @@
         if (typeof value !== 'string' || !value.trim()) errors.push(`${field} must be a non-empty string`);
     }
 
-    function validateSource(source, boardPath, errors) {
+    function validateSource(source, boardPath, errors, context = {}) {
         if (!isRecord(source)) {
             errors.push(`${boardPath}.source must be an object`);
             return;
         }
         for (const field of ['id', 'name', 'url', 'as_of']) requireText(source[field], `${boardPath}.source.${field}`, errors);
         if (typeof source.url === 'string' && !isSafeUrl(source.url)) errors.push(`${boardPath}.source.url must use HTTPS`);
-        if (typeof source.as_of === 'string') {
-            try { parseDate(source.as_of, `${boardPath}.source.as_of`); } catch (error) { errors.push(error.message); }
-        }
+        const sourceDate = typeof source.as_of === 'string'
+            ? parseOptionalDate(source.as_of, `${boardPath}.source.as_of`, errors)
+            : null;
+        rejectFuture(sourceDate, `${boardPath}.source.as_of`, context.now, errors);
+        rejectAfter(sourceDate, `${boardPath}.source.as_of`, context.snapshotAsOf, 'snapshot.as_of', errors);
     }
 
-    function validateMetric(metric, itemPath, sourceIds, errors) {
+    function validateMetric(metric, itemPath, sourceIds, errors, context = {}) {
         if (!isRecord(metric)) {
             errors.push(`${itemPath}.metrics must contain objects`);
             return;
@@ -138,9 +163,11 @@
         if (typeof metric.kind === 'string' && !VALID_METRIC_KINDS.includes(metric.kind)) {
             errors.push(`${itemPath}.metric.kind is not legal`);
         }
-        if (typeof metric.as_of === 'string') {
-            try { parseDate(metric.as_of, `${itemPath}.metric.as_of`); } catch (error) { errors.push(error.message); }
-        }
+        const metricDate = typeof metric.as_of === 'string'
+            ? parseOptionalDate(metric.as_of, `${itemPath}.metric.as_of`, errors)
+            : null;
+        rejectFuture(metricDate, `${itemPath}.metric.as_of`, context.now, errors);
+        rejectAfter(metricDate, `${itemPath}.metric.as_of`, context.snapshotAsOf, 'snapshot.as_of', errors);
         if (typeof metric.source_url === 'string' && !isSafeUrl(metric.source_url)) {
             errors.push(`${itemPath}.metric.source_url must use HTTPS`);
         }
@@ -166,7 +193,7 @@
         if (actions.includes('deep_dive')) requireText(judgment.next_question, `${itemPath}.judgment.next_question`, errors);
     }
 
-    function validateItem(item, boardPath, sourceIds, itemIds, itemUrls, errors, allowCandidate) {
+    function validateItem(item, boardPath, sourceIds, itemIds, itemUrls, errors, allowCandidate, context = {}) {
         if (!isRecord(item)) {
             errors.push(`${boardPath}.items must contain objects`);
             return;
@@ -181,9 +208,11 @@
         }
         if (!Number.isInteger(item.rank) || item.rank < 1) errors.push(`${itemPath}.rank must be a positive integer`);
         if (typeof item.source_id === 'string' && !sourceIds.has(item.source_id)) errors.push(`${itemPath}.source_id is not declared`);
-        if (typeof item.observed_at === 'string') {
-            try { parseDate(item.observed_at, `${itemPath}.observed_at`); } catch (error) { errors.push(error.message); }
-        }
+        const itemDate = typeof item.observed_at === 'string'
+            ? parseOptionalDate(item.observed_at, `${itemPath}.observed_at`, errors)
+            : null;
+        rejectFuture(itemDate, `${itemPath}.observed_at`, context.now, errors);
+        rejectAfter(itemDate, `${itemPath}.observed_at`, context.snapshotAsOf, 'snapshot.as_of', errors);
         if (typeof item.url === 'string') {
             if (!isSafeUrl(item.url)) errors.push(`${itemPath}.url must use HTTPS`);
             if (isGenericItemUrl(item.url)) errors.push(`${itemPath}.url must identify a specific item, not a generic board`);
@@ -201,7 +230,7 @@
             errors.push(`${itemPath}.verification_level must be manual_reviewed before publication`);
         }
         if (!Array.isArray(item.metrics) || item.metrics.length === 0) errors.push(`${itemPath}.metrics must not be empty`);
-        else item.metrics.forEach(metric => validateMetric(metric, itemPath, sourceIds, errors));
+        else item.metrics.forEach(metric => validateMetric(metric, itemPath, sourceIds, errors, context));
         validateJudgment(item.judgment, itemPath, item.actions || [], errors);
     }
 
@@ -211,28 +240,70 @@
         const allowCandidate = Boolean(options.allowCandidate);
         let freshness = null;
         if (!isRecord(snapshot)) return { ok: false, errors: ['snapshot must be an object'], warnings, freshness };
+        let now = null;
+        try {
+            now = parseNow(options.now);
+        } catch (error) {
+            errors.push(error.message);
+        }
         if (snapshot.contract_version !== 2) errors.push('contract_version must be 2');
-        for (const field of ['snapshot_id', 'snapshot_status', 'as_of', 'observed_at', 'reviewed_at', 'collection_mode', 'verification_level', 'featured_id']) {
+        for (const field of ['snapshot_id', 'snapshot_status', 'as_of', 'observed_at', 'reviewed_at', 'collection_mode', 'verification_level', 'review_scope', 'featured_id']) {
             requireText(snapshot[field], field, errors);
         }
+        if (!Object.prototype.hasOwnProperty.call(snapshot, 'facts_verified_at')) errors.push('facts_verified_at must be present and may be null');
         if (!['current', 'review', 'historical'].includes(snapshot.snapshot_status)) errors.push('snapshot_status is not legal');
         if (!VALID_COLLECTION_MODES.includes(snapshot.collection_mode)) errors.push('collection_mode is not legal');
         if (!VALID_VERIFICATION_LEVELS.includes(snapshot.verification_level)) errors.push('verification_level is not legal');
+        if (!VALID_REVIEW_SCOPES.includes(snapshot.review_scope)) errors.push('review_scope is not legal');
         if (!allowCandidate && snapshot.collection_mode !== 'manual_reviewed') errors.push('collection_mode must be manual_reviewed before publication');
         if (!allowCandidate && snapshot.verification_level !== 'manual_reviewed') errors.push('verification_level must be manual_reviewed before publication');
+        if (!allowCandidate && snapshot.review_scope === 'candidate') errors.push('review_scope candidate is not publishable');
+        if (allowCandidate && snapshot.collection_mode === 'candidate' && snapshot.review_scope !== 'candidate') errors.push('candidate snapshot must use review_scope candidate');
+        const snapshotDates = {};
         for (const field of ['as_of', 'observed_at', 'reviewed_at']) {
-            if (typeof snapshot[field] === 'string') {
-                try { parseDate(snapshot[field], field); } catch (error) { errors.push(error.message); }
+            snapshotDates[field] = typeof snapshot[field] === 'string'
+                ? parseOptionalDate(snapshot[field], field, errors)
+                : null;
+            rejectFuture(snapshotDates[field], field, now, errors);
+        }
+        const factsVerifiedAt = parseOptionalDate(snapshot.facts_verified_at, 'facts_verified_at', errors);
+        rejectFuture(factsVerifiedAt, 'facts_verified_at', now, errors);
+        if (snapshot.review_scope === 'facts_verified' && !factsVerifiedAt) errors.push('facts_verified review_scope requires facts_verified_at');
+        if (snapshot.review_scope !== 'facts_verified' && snapshot.facts_verified_at !== null) errors.push('facts_verified_at must be null unless review_scope is facts_verified');
+        if (snapshot.review_scope === 'facts_verified') {
+            if (typeof snapshot.method?.evidence_policy === 'string' && !/(fact[- ]checked|事实.{0,4}核验|verified source)/i.test(snapshot.method.evidence_policy)) {
+                errors.push('facts_verified evidence_policy must describe fact-checked source support');
             }
         }
-        if (typeof snapshot.as_of === 'string') {
+        if (snapshot.observed_at && snapshot.as_of && snapshotDates.observed_at && snapshotDates.as_of) {
+            rejectAfter(snapshotDates.observed_at, 'observed_at', snapshotDates.as_of, 'snapshot.as_of', errors);
+        }
+        if (snapshot.as_of && snapshot.reviewed_at && snapshotDates.as_of && snapshotDates.reviewed_at) {
+            rejectAfter(snapshotDates.as_of, 'as_of', snapshotDates.reviewed_at, 'reviewed_at', errors);
+        }
+        if (factsVerifiedAt && snapshotDates.reviewed_at) {
+            rejectAfter(factsVerifiedAt, 'facts_verified_at', snapshotDates.reviewed_at, 'reviewed_at', errors);
+        }
+        if (!isRecord(snapshot.method)) {
+            errors.push('method must be an object');
+        } else {
+            requireText(snapshot.method.evidence_policy, 'method.evidence_policy', errors);
+            const evidencePolicy = snapshot.method.evidence_policy;
+            if (typeof evidencePolicy === 'string' && /(?:independent factual evidence|独立事实证据)/i.test(evidencePolicy) && !/(?:not|非|不是|不等于)/i.test(evidencePolicy)) {
+                errors.push('method.evidence_policy must not present summaries as independent evidence');
+            }
+            if (snapshot.review_scope === 'structure_only' && typeof evidencePolicy === 'string' && !/(?:historical observation|历史观察记录|source summary|来源摘要|非独立|not independent)/i.test(evidencePolicy)) {
+                errors.push('structure_only evidence_policy must describe historical observations or non-independent evidence');
+            }
+        }
+        if (typeof snapshot.as_of === 'string' && snapshotDates.as_of) {
             try {
-                freshness = freshnessFor(snapshot.as_of, options.now);
+                freshness = freshnessFor(snapshot.as_of, now || options.now);
                 if (freshness.status === 'future') errors.push('as_of cannot be in the future');
                 if (freshness.status === 'historical') warnings.push(freshness.label);
                 if (options.requireFreshness && freshness.status !== 'current') errors.push(`freshness gate requires current snapshot, got ${freshness.status}`);
                 if (!allowCandidate && freshness.status !== 'future' && snapshot.snapshot_status !== freshness.status) {
-                    errors.push(`snapshot_status must match freshness status ${freshness.status}`);
+                    warnings.push(`snapshot_status ${snapshot.snapshot_status} differs from dynamically derived freshness ${freshness.status}`);
                 }
             } catch (error) { errors.push(error.message); }
         }
@@ -250,7 +321,7 @@
                 }
                 for (const field of ['id', 'title', 'icon', 'intro', 'ranking_basis']) requireText(board[field], `${boardPath}.${field}`, errors);
                 if (!Array.isArray(board.items) || board.items.length === 0) errors.push(`${boardPath}.items must not be empty`);
-                validateSource(board.source, boardPath, errors);
+                validateSource(board.source, boardPath, errors, { now, snapshotAsOf: snapshotDates.as_of });
                 if (isRecord(board.source) && typeof board.source.id === 'string') {
                     if (sourceIds.has(board.source.id)) errors.push(`${boardPath}.source.id must be unique`);
                     sourceIds.add(board.source.id);
@@ -259,13 +330,13 @@
             snapshot.boards.forEach((board, index) => {
                 if (!isRecord(board) || !Array.isArray(board.items)) return;
                 board.items.forEach(item => {
-                    validateItem(item, `boards[${index}]`, sourceIds, itemIds, itemUrls, errors, allowCandidate);
+                    validateItem(item, `boards[${index}]`, sourceIds, itemIds, itemUrls, errors, allowCandidate, { now, snapshotAsOf: snapshotDates.as_of });
                     if (isRecord(item) && typeof item.id === 'string') featuredIds.add(item.id);
                 });
             });
         }
         if (typeof snapshot.featured_id === 'string' && !featuredIds.has(snapshot.featured_id)) errors.push('featured_id must reference an existing item');
-        if (snapshot.reviewed_at && snapshot.observed_at && snapshot.reviewed_at < snapshot.observed_at) errors.push('reviewed_at cannot precede observed_at');
+        if (snapshot.reviewed_at && snapshot.observed_at && snapshotDates.reviewed_at && snapshotDates.observed_at && snapshotDates.reviewed_at < snapshotDates.observed_at) errors.push('reviewed_at cannot precede observed_at');
         return { ok: errors.length === 0, errors, warnings, freshness };
     }
 
@@ -275,19 +346,39 @@
         return result;
     }
 
-    function validateCandidateSnapshot(candidate) {
+    function validateCandidateSnapshot(candidate, options = {}) {
         const errors = [];
         if (!isRecord(candidate)) return { ok: false, errors: ['candidate snapshot must be an object'] };
+        let now = null;
+        try { now = parseNow(options.now); } catch (error) { errors.push(error.message); }
         if (candidate.contract_version !== 2) errors.push('contract_version must be 2');
-        for (const field of ['snapshot_id', 'snapshot_status', 'as_of', 'observed_at', 'collection_mode', 'verification_level']) {
+        for (const field of ['snapshot_id', 'snapshot_status', 'as_of', 'observed_at', 'collection_mode', 'verification_level', 'review_scope']) {
             requireText(candidate[field], field, errors);
         }
+        if (!Object.prototype.hasOwnProperty.call(candidate, 'facts_verified_at')) errors.push('facts_verified_at must be present and null for candidates');
         if (candidate.snapshot_status !== 'candidate') errors.push('snapshot_status must be candidate');
         if (candidate.collection_mode !== 'candidate') errors.push('collection_mode must be candidate');
         if (candidate.verification_level !== 'candidate') errors.push('verification_level must be candidate');
+        if (candidate.review_scope !== 'candidate') errors.push('candidate snapshot must use review_scope candidate');
+        if (candidate.facts_verified_at !== null) errors.push('candidate facts_verified_at must be null');
+        const candidateDates = {};
         for (const field of ['as_of', 'observed_at']) {
-            if (typeof candidate[field] === 'string') {
-                try { parseDate(candidate[field], field); } catch (error) { errors.push(error.message); }
+            candidateDates[field] = typeof candidate[field] === 'string'
+                ? parseOptionalDate(candidate[field], field, errors)
+                : null;
+            rejectFuture(candidateDates[field], field, now, errors);
+        }
+        if (candidateDates.observed_at && candidateDates.as_of) rejectAfter(candidateDates.observed_at, 'observed_at', candidateDates.as_of, 'as_of', errors);
+        if (!isRecord(candidate.method)) errors.push('method must be an object');
+        else {
+            requireText(candidate.method.evidence_policy, 'method.evidence_policy', errors);
+            if (typeof candidate.method.evidence_policy === 'string') {
+                if (!/(?:候选|candidate|来源记录|source record|非独立|not independent)/i.test(candidate.method.evidence_policy)) {
+                    errors.push('candidate evidence_policy must describe a source record, not independent evidence');
+                }
+                if (/(?:independent factual evidence|独立事实证据)/i.test(candidate.method.evidence_policy) && !/(?:not|非|不是|不等于)/i.test(candidate.method.evidence_policy)) {
+                    errors.push('candidate evidence_policy must not present summaries as independent evidence');
+                }
             }
         }
         if (!Array.isArray(candidate.boards) || candidate.boards.length === 0) errors.push('candidate boards must not be empty');
@@ -298,8 +389,8 @@
                     errors.push(`${boardPath} must be an object`);
                     return;
                 }
-                for (const field of ['id', 'title', 'icon', 'ranking_basis', 'status']) requireText(board[field], `${boardPath}.${field}`, errors);
-                validateSource(board.source, boardPath, errors);
+                for (const field of ['id', 'title', 'icon', 'intro', 'ranking_basis', 'status']) requireText(board[field], `${boardPath}.${field}`, errors);
+                validateSource(board.source, boardPath, errors, { now, snapshotAsOf: candidateDates.as_of });
                 if (!['ready', 'failed'].includes(board.status)) errors.push(`${boardPath}.status is not legal`);
                 if (!Array.isArray(board.diagnostics)) errors.push(`${boardPath}.diagnostics must be an array`);
                 if (!Array.isArray(board.items)) errors.push(`${boardPath}.items must be an array`);
@@ -321,8 +412,11 @@
                             reviewed_at: candidate.observed_at,
                             collection_mode: 'candidate',
                             verification_level: 'candidate',
+                            review_scope: 'candidate',
+                            facts_verified_at: null,
                             featured_id: firstId,
                             boards: [board],
+                            method: candidate.method,
                         }, { allowCandidate: true, now: candidate.observed_at });
                         errors.push(...result.errors.map(error => `${boardPath}: ${error}`));
                     }
@@ -332,8 +426,8 @@
         return { ok: errors.length === 0, errors };
     }
 
-    function assertValidCandidate(candidate) {
-        const result = validateCandidateSnapshot(candidate);
+    function assertValidCandidate(candidate, options = {}) {
+        const result = validateCandidateSnapshot(candidate, options);
         if (!result.ok) throw new ContractError(result.errors);
         return result;
     }
@@ -344,6 +438,7 @@
         VALID_METRIC_KINDS,
         VALID_COLLECTION_MODES,
         VALID_VERIFICATION_LEVELS,
+        VALID_REVIEW_SCOPES,
         freshnessFor,
         normalizeUrl,
         isSafeUrl,

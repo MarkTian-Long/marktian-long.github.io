@@ -9,6 +9,7 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const contract = require(path.join(repoRoot, 'tools', 'trends', 'contract.js'));
+const generator = require(path.join(repoRoot, 'scripts', 'fetch-trends.js'));
 const scriptsRoot = path.join(repoRoot, 'scripts');
 const publicDataPath = path.join(repoRoot, 'tools', 'trends', 'data', 'trends.json');
 
@@ -80,6 +81,8 @@ function validSnapshot(overrides = {}) {
     reviewed_at: '2026-08-30',
     collection_mode: 'manual_reviewed',
     verification_level: 'manual_reviewed',
+    review_scope: 'structure_only',
+    facts_verified_at: null,
     featured_id: 'signal-example',
     boards: [{
       id: 'example-board',
@@ -90,6 +93,12 @@ function validSnapshot(overrides = {}) {
       source: SOURCE,
       items: [validItem()],
     }],
+    method: {
+      freshness_policy: '0-7 days current; 8-30 days review; over 30 days historical.',
+      collection_boundary: 'Network discovery only creates candidates; public snapshots require reviewed JSON.',
+      limitation: 'Historical records are not rechecked in this round.',
+      evidence_policy: 'When review_scope=structure_only, judgment.evidence is a source summary or historical observation record, not independent factual evidence.',
+    },
     ...overrides,
   };
 }
@@ -102,6 +111,9 @@ test('published trends data satisfies the v2 snapshot contract', () => {
   assert.equal(typeof data.snapshot_id, 'string');
   assert.equal(typeof data.collection_mode, 'string');
   assert.equal(typeof data.featured_id, 'string');
+  assert.equal(data.review_scope, 'structure_only');
+  assert.equal(data.facts_verified_at, null);
+  assert.match(data.method.evidence_policy, /历史观察记录|非独立证据/);
 });
 
 test('v2 validation requires stable ids, review metadata, source time, ranking basis and judgement fields', () => {
@@ -114,7 +126,23 @@ test('v2 validation requires stable ids, review metadata, source time, ranking b
   }
 
   assert.throws(() => contract.assertValidSnapshot(validSnapshot({ featured_id: 'missing' })), /featured_id/);
-  assert.throws(() => contract.assertValidSnapshot(validSnapshot({ as_of: '2026-05-19', observed_at: '2026-05-19' }), { now: '2026-08-30' }), /snapshot_status.*historical/i);
+  const historical = validSnapshot({
+    as_of: '2026-05-19',
+    observed_at: '2026-05-19',
+    reviewed_at: '2026-05-19',
+    snapshot_status: 'current',
+    boards: [{
+      ...validSnapshot().boards[0],
+      source: { ...SOURCE, as_of: '2026-05-19' },
+      items: [validItem({
+        observed_at: '2026-05-19',
+        metrics: [{ ...validItem().metrics[0], as_of: '2026-05-19' }],
+      })],
+    }],
+  });
+  const historicalResult = contract.assertValidSnapshot(historical, { now: '2026-08-30' });
+  assert.equal(historicalResult.freshness.status, 'historical');
+  assert.match(historicalResult.warnings.join(' '), /snapshot_status|freshness/i);
   assert.throws(() => contract.assertValidSnapshot(validSnapshot({
     boards: [{ ...validSnapshot().boards[0], ranking_basis: '' }],
   })), /ranking_basis/);
@@ -124,6 +152,40 @@ test('v2 validation requires stable ids, review metadata, source time, ranking b
       items: [validItem({ judgment: { ...validItem().judgment, impact: '' } })],
     }],
   })), /judgment.*impact/i);
+});
+
+test('review scope separates structure checks from fact verification', () => {
+  assert.doesNotThrow(() => contract.assertValidSnapshot(validSnapshot()));
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({ review_scope: undefined })), /review_scope/i);
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    facts_verified_at: '2026-08-30',
+  })), /facts_verified_at|review scope|结构/i);
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    review_scope: 'facts_verified',
+    facts_verified_at: null,
+  })), /facts_verified_at|fact|事实/i);
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    method: {
+      ...validSnapshot().method,
+      evidence_policy: 'judgment.evidence is independent factual evidence.',
+    },
+  })), /evidence|观察|独立/i);
+  assert.doesNotThrow(() => contract.assertValidSnapshot(validSnapshot({
+    review_scope: 'facts_verified',
+    facts_verified_at: '2026-08-30',
+    method: {
+      ...validSnapshot().method,
+      evidence_policy: 'judgment.evidence records fact-checked source support, not causal proof.',
+    },
+  })));
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    review_scope: 'facts_verified',
+    facts_verified_at: '2026-08-31',
+    method: {
+      ...validSnapshot().method,
+      evidence_policy: 'judgment.evidence records fact-checked source support, not causal proof.',
+    },
+  }), { now: '2026-09-01' }), /facts_verified_at.*reviewed_at|later|晚于/i);
 });
 
 test('metrics require a legal kind, explicit as_of and an HTTPS source URL', () => {
@@ -216,14 +278,53 @@ test('freshness is an explicit maintenance gate rather than an implicit rewrite'
   assert.equal(sha256(publicDataPath), before);
 });
 
-test('candidate copy accepts only an absolute target inside build/candidate-site', () => {
+test('snapshot and nested observation dates cannot be in the future or after the snapshot review window', () => {
+  const now = '2026-08-30';
+  const futureCases = [
+    validSnapshot({ as_of: '2026-08-31', observed_at: '2026-08-31', reviewed_at: '2026-08-31' }),
+    validSnapshot({ reviewed_at: '2026-08-31' }),
+    validSnapshot({ boards: [{
+      ...validSnapshot().boards[0],
+      source: { ...SOURCE, as_of: '2026-08-31' },
+    }] }),
+    validSnapshot({ boards: [{
+      ...validSnapshot().boards[0],
+      items: [validItem({ observed_at: '2026-08-31' })],
+    }] }),
+    validSnapshot({ boards: [{
+      ...validSnapshot().boards[0],
+      items: [validItem({ metrics: [{ ...validItem().metrics[0], as_of: '2026-08-31' }] })],
+    }] }),
+  ];
+  futureCases.forEach(snapshot => assert.throws(
+    () => contract.assertValidSnapshot(snapshot, { now }),
+    /future|later|晚于|now|日期/i,
+  ));
+
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    reviewed_at: '2026-08-29',
+  }), { now }), /reviewed_at|as_of|precede|晚于/i);
+  assert.throws(() => contract.assertValidSnapshot(validSnapshot({
+    boards: [{
+      ...validSnapshot().boards[0],
+      source: { ...SOURCE, as_of: '2026-08-31' },
+    }],
+  }), { now: '2026-09-01' }), /source\.as_of|snapshot|晚于/i);
+});
+
+test('candidate copy accepts legal relative and absolute targets but rejects true escapes', () => {
   const candidateRoot = path.join(repoRoot, 'build', 'candidate-site', `trends-depth-${process.pid}`);
   const target = path.join(candidateRoot, 'reviewed.json');
+  const absoluteTarget = path.join(candidateRoot, 'absolute-reviewed.json');
+  const relativeTarget = path.relative(scriptsRoot, path.join(candidateRoot, 'nested', '..', 'reviewed.json'));
   fs.mkdirSync(candidateRoot, { recursive: true });
   try {
-    runCli(['--candidate', target]);
+    runCli(['--candidate', relativeTarget]);
     assert.equal(fs.existsSync(target), true);
     assert.deepEqual(JSON.parse(fs.readFileSync(target, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
+    runCli(['--candidate', absoluteTarget]);
+    assert.equal(fs.existsSync(absoluteTarget), true);
+    assert.deepEqual(JSON.parse(fs.readFileSync(absoluteTarget, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
 
     for (const unsafeTarget of [
       path.join(repoRoot, 'tools', 'trends', 'data', 'escape.json'),
@@ -240,20 +341,30 @@ test('candidate copy accepts only an absolute target inside build/candidate-site
 });
 
 test('write accepts only a reviewed contract input and a bounded repository data target', () => {
-  const tempRoot = path.join(repoRoot, 'tools', 'trends', 'data', `.trends-depth-write-${process.pid}`);
-  const inputPath = path.join(tempRoot, 'reviewed.json');
-  const outputPath = path.join(tempRoot, 'published-copy.json');
+  const candidateRoot = path.join(repoRoot, 'build', 'candidate-site', `.trends-depth-write-${process.pid}`);
+  const publicTempRoot = path.join(repoRoot, 'tools', 'trends', 'data', `.trends-depth-write-${process.pid}`);
+  const inputPath = path.join(candidateRoot, 'reviewed.json');
+  const outputPath = path.join(publicTempRoot, 'published-copy.json');
   const before = sha256(publicDataPath);
-  fs.mkdirSync(tempRoot, { recursive: true });
+  fs.mkdirSync(candidateRoot, { recursive: true });
+  fs.mkdirSync(publicTempRoot, { recursive: true });
   fs.writeFileSync(inputPath, fs.readFileSync(publicDataPath));
   try {
-    runCli(['--write', '--input', inputPath, '--target', outputPath]);
+    runCli([
+      '--write',
+      '--input', path.relative(scriptsRoot, inputPath),
+      '--target', path.relative(scriptsRoot, path.join(publicTempRoot, 'nested', '..', 'published-copy.json')),
+    ]);
     assert.equal(fs.existsSync(outputPath), true);
     assert.equal(sha256(publicDataPath), before);
     assert.deepEqual(JSON.parse(fs.readFileSync(outputPath, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
+    const absoluteOutputPath = path.join(publicTempRoot, 'absolute-copy.json');
+    runCli(['--write', '--input', inputPath, '--target', absoluteOutputPath]);
+    assert.equal(fs.existsSync(absoluteOutputPath), true);
+    assert.deepEqual(JSON.parse(fs.readFileSync(absoluteOutputPath, 'utf8')), JSON.parse(fs.readFileSync(publicDataPath, 'utf8')));
 
     const unsafeTargets = [
-      path.join(tempRoot, '..', '..', 'escape.json'),
+      path.join(publicTempRoot, '..', '..', 'escape.json'),
       path.join(repoRoot, 'tools', 'trends', 'escape.json'),
       path.join(repoRoot, '..', 'trends-depth-escape.json'),
       path.join(repoRoot, 'build', 'candidate-site', 'escape.json'),
@@ -264,16 +375,46 @@ test('write accepts only a reviewed contract input and a bounded repository data
       assert.match(`${result.stdout}\n${result.stderr}`, /public trends data|target|仓库|bounded/i);
     }
 
-    const unreviewedPath = path.join(tempRoot, 'unreviewed.json');
+    const unreviewedPath = path.join(candidateRoot, 'unreviewed.json');
     const unreviewed = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
     unreviewed.boards[0].items[0].verification_level = 'candidate';
     fs.writeFileSync(unreviewedPath, JSON.stringify(unreviewed));
-    const rejected = failCli(['--write', '--input', unreviewedPath, '--target', path.join(tempRoot, 'should-not-exist.json')]);
+    const rejected = failCli(['--write', '--input', unreviewedPath, '--target', path.join(publicTempRoot, 'should-not-exist.json')]);
     assert.notEqual(rejected.status, 0);
     assert.match(`${rejected.stdout}\n${rejected.stderr}`, /review|复核|contract/i);
     assert.equal(sha256(publicDataPath), before);
   } finally {
-    fs.rmSync(tempRoot, { recursive: true, force: true });
+    fs.rmSync(candidateRoot, { recursive: true, force: true });
+    fs.rmSync(publicTempRoot, { recursive: true, force: true });
+  }
+});
+
+test('write completes all gates before atomic rename and cleans a failed temporary file', () => {
+  const candidateRoot = path.join(repoRoot, 'build', 'candidate-site', `.trends-depth-atomic-${process.pid}`);
+  const publicTempRoot = path.join(repoRoot, 'tools', 'trends', 'data', `.trends-depth-atomic-${process.pid}`);
+  const inputPath = path.join(candidateRoot, 'reviewed.json');
+  const targetPath = path.join(publicTempRoot, 'published.json');
+  fs.mkdirSync(candidateRoot, { recursive: true });
+  fs.mkdirSync(publicTempRoot, { recursive: true });
+  fs.writeFileSync(inputPath, fs.readFileSync(publicDataPath));
+  fs.writeFileSync(targetPath, 'original target\n');
+  const before = sha256(targetPath);
+  const failingFileSystem = {
+    mkdirSync: fs.mkdirSync.bind(fs),
+    writeFileSync: fs.writeFileSync.bind(fs),
+    renameSync: () => { throw new Error('simulated atomic rename failure'); },
+    rmSync: fs.rmSync.bind(fs),
+  };
+  try {
+    assert.throws(() => generator.writeReviewedSnapshot(inputPath, targetPath, {
+      now: '2026-08-31',
+      fileSystem: failingFileSystem,
+    }), /simulated atomic rename failure/);
+    assert.equal(sha256(targetPath), before);
+    assert.deepEqual(fs.readdirSync(publicTempRoot).filter(name => name.endsWith('.tmp')), []);
+  } finally {
+    fs.rmSync(candidateRoot, { recursive: true, force: true });
+    fs.rmSync(publicTempRoot, { recursive: true, force: true });
   }
 });
 
@@ -294,16 +435,23 @@ test('candidate contract keeps fetch failures as diagnostics and never as placeh
     observed_at: '2026-08-30',
     collection_mode: 'candidate',
     verification_level: 'candidate',
+    review_scope: 'candidate',
+    facts_verified_at: null,
     boards: [{
       id: 'product-hunt',
       title: 'Product Hunt',
       icon: '🚀',
+      intro: 'Product Hunt candidate board.',
       ranking_basis: '候选发现，不构成公开排名。',
       source: SOURCE,
       status: 'failed',
       diagnostics: [{ code: 'fetch_failed', message: 'network unavailable' }],
       items: [],
     }],
+    method: {
+      collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。',
+      evidence_policy: '候选摘要是来源记录，不是独立事实证据。',
+    },
   };
   assert.doesNotThrow(() => contract.assertValidCandidate(candidate));
   assert.throws(() => contract.assertValidCandidate({
@@ -314,4 +462,62 @@ test('candidate contract keeps fetch failures as diagnostics and never as placeh
     ...candidate,
     boards: [{ ...candidate.boards[0], status: 'ready', diagnostics: [], items: [] }],
   }), /items|empty|候选/i);
+  assert.throws(() => contract.assertValidCandidate({
+    ...candidate,
+    method: { ...candidate.method, evidence_policy: 'candidate summaries are independent factual evidence.' },
+  }), /evidence|独立/i);
+});
+
+test('production candidate metadata matches the actual collectors', () => {
+  assert.equal(generator.BOARD_CONFIG.length, 5);
+  const hackerNews = generator.BOARD_CONFIG.find(config => config.id === 'hacker-news');
+  const overseas = generator.BOARD_CONFIG.find(config => config.id === 'overseas-ai');
+  const china = generator.BOARD_CONFIG.find(config => config.id === 'china-ai');
+  assert.match(hackerNews.intro, /Top Stories/);
+  assert.equal(hackerNews.source_url, 'https://hacker-news.firebaseio.com/v0/topstories.json');
+  assert.match(hackerNews.ranking_basis, /Top Stories.*顺序/);
+  const hnItem = generator.candidateItem(hackerNews, {
+    rank: 4,
+    score: 321,
+    title: 'A Hacker News story',
+    summary: 'A concrete story summary.',
+    url: 'https://example.com/story',
+    hnUrl: 'https://news.ycombinator.com/item?id=123',
+  }, 0, '2026-08-30');
+  assert.equal(hnItem.metrics[0].label, 'Points（候选）');
+  assert.match(hnItem.metrics[0].value, /321 points/);
+  assert.equal(overseas.source_name, 'GitHub Trending');
+  assert.equal(china.source_name, '36Kr AI 频道');
+  assert.doesNotMatch(JSON.stringify(generator.BOARD_CONFIG), /TechCrunch|量子位|CSDN/);
+});
+
+test('ready candidate boards include intro and pass the candidate contract', () => {
+  const config = generator.BOARD_CONFIG.find(entry => entry.id === 'github-ai');
+  assert.equal(typeof config.intro, 'string');
+  const item = generator.candidateItem(config, {
+    rank: 1,
+    title: 'Example repository',
+    summary: 'A concrete candidate summary.',
+    url: 'https://github.com/example/repository',
+    tags: ['AI'],
+  }, 0, '2026-08-30');
+  const board = generator.candidateBoard(config, [item], '2026-08-30');
+  assert.equal(board.status, 'ready');
+  assert.equal(board.intro, config.intro);
+  assert.doesNotThrow(() => contract.assertValidCandidate({
+    contract_version: 2,
+    snapshot_id: 'candidate-2026-08-30',
+    snapshot_status: 'candidate',
+    as_of: '2026-08-30',
+    observed_at: '2026-08-30',
+    collection_mode: 'candidate',
+    verification_level: 'candidate',
+    review_scope: 'candidate',
+    facts_verified_at: null,
+    boards: [board],
+    method: {
+      collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。',
+      evidence_policy: '候选摘要是来源记录，不是独立事实证据。',
+    },
+  }));
 });

@@ -37,8 +37,8 @@ function stopServer(server) {
   return new Promise(resolve => server.close(resolve));
 }
 
-function frozenClock() {
-  const fixed = Date.parse('2026-08-30T12:00:00.000Z');
+function frozenClock(iso = '2026-08-30T12:00:00.000Z') {
+  const fixed = Date.parse(iso);
   const OriginalDate = Date;
   class FrozenDate extends OriginalDate {
     constructor(...args) {
@@ -60,6 +60,8 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
   noResultData.boards.forEach(board => board.items.forEach(item => { item.actions = ['watch']; }));
   const longTitleData = structuredClone(originalData);
   longTitleData.boards[0].items[0].title = '这是一个很长的信号标题，用来确认窄屏卡片会自然换行而不会把页面撑出横向滚动条';
+  const freshnessData = structuredClone(originalData);
+  freshnessData.reviewed_at = freshnessData.as_of;
   let fixture = 'good';
   try {
     browser = await chromium.launch({ headless: true });
@@ -84,13 +86,13 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     await page.goto(`${url}/tools/trends/index.html`, { waitUntil: 'domcontentloaded' });
     await page.locator('#app[data-state="ready"]').waitFor();
     assert.match(await page.locator('#snapshot-status').textContent(), /历史快照，不代表当前热度/);
-    assert.equal(await page.locator('#verification-status').textContent(), '契约/结构复核');
+    assert.equal(await page.locator('#verification-status').textContent(), '结构检查完成');
     assert.match(await page.locator('#snapshot-dates').textContent(), /快照观察 2026-05-19 · 契约\/结构复核 2026-08-30/);
     assert.match(await page.locator('#historical-caveat').textContent(), /历史事实未在本轮重验/);
     assert.doesNotMatch(await page.locator('body').textContent(), /Claude 点评|Codex 点评|最新|manual_reviewed|candidate/);
     assert.ok(await page.locator('.signal-meta').first().evaluate(meta => {
       const text = meta.textContent || '';
-      return /快照观察 2026-05-19/.test(text) && /历史事实未在本轮重验/.test(text);
+      return /快照观察 2026-05-19/.test(text) && /历史事实未在本轮重验/.test(text) && /仅结构检查/.test(text);
     }));
     assert.doesNotMatch(await page.locator('.signal-meta').first().textContent(), /manual_reviewed|candidate/);
     assert.equal(await page.locator('[role="tab"][data-board-id]').count(), 5);
@@ -177,6 +179,29 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     await capture(page, 'mobile-long-title-expanded.png', { fullPage: true });
     assert.equal(pageErrors.length, 0, pageErrors.join('\n'));
     await context.close();
+
+    const expectedFreshness = [
+      ['2026-05-26T12:00:00.000Z', '本期'],
+      ['2026-05-27T12:00:00.000Z', '建议复核'],
+      ['2026-06-18T12:00:00.000Z', '建议复核'],
+      ['2026-06-19T12:00:00.000Z', '历史快照，不代表当前热度'],
+    ];
+    for (const [clock, label] of expectedFreshness) {
+      const freshnessContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+      await freshnessContext.addInitScript(frozenClock, clock);
+      await freshnessContext.route('**/tools/trends/data/trends.json', route => route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(freshnessData),
+      }));
+      const freshnessPage = await freshnessContext.newPage();
+      freshnessPage.on('pageerror', error => pageErrors.push(error.message));
+      await freshnessPage.goto(`${url}/tools/trends/index.html`, { waitUntil: 'domcontentloaded' });
+      await freshnessPage.locator('#app[data-state="ready"]').waitFor();
+      assert.equal(await freshnessPage.locator('#snapshot-status').textContent(), label);
+      await freshnessContext.close();
+    }
+    assert.equal(pageErrors.length, 0, pageErrors.join('\n'));
   } finally {
     if (browser) await browser.close();
     await stopServer(server);

@@ -7,6 +7,8 @@
   "reviewed_at": "2026-08-30",
   "collection_mode": "manual_reviewed",
   "verification_level": "manual_reviewed",
+  "review_scope": "structure_only",
+  "facts_verified_at": null,
   "featured_id": "signal-github-ai-01",
   "boards": [
     {
@@ -1088,6 +1090,7 @@
   "method": {
     "freshness_policy": "0-7 天本期；8-30 天建议复核；超过 30 天为历史快照，不代表当前热度。",
     "collection_boundary": "网络抓取只生成候选；公开快照只接受人工复核后的完整 JSON。",
-    "limitation": "本快照保留 2026-05-19 的历史记录，未在本轮联网核对事实变化。"
+    "limitation": "本快照保留 2026-05-19 的历史记录，未在本轮联网核对事实变化。",
+    "evidence_policy": "review_scope=structure_only 时，judgment.evidence 仅表示来源摘要或历史观察记录，不是独立事实证据。"
   }
 }
