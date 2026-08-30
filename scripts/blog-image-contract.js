@@ -7,6 +7,7 @@ const INLINE_WIDTH = 1280;
 const INLINE_HEIGHT = 720;
 const MAX_INLINE_IMAGES = 2;
 const MAX_TEXT_LENGTH = 160;
+const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const GENERIC_INLINE_NAMES = /^(?:asset|cover|figure|final|image|illustration|img|inline|new|photo)(?:-\d+)?$/;
 
 function isPlainObject(value) {
@@ -28,6 +29,12 @@ function assertExactKeys(value, keys, label) {
 function assertText(value, label) {
   if (typeof value !== 'string' || !value.trim() || value !== value.trim() || value.length > MAX_TEXT_LENGTH) {
     throw new Error(`${label} must be trimmed text between 1 and ${MAX_TEXT_LENGTH} characters`);
+  }
+}
+
+function assertMarkdownImageText(value, label, unsupportedPattern) {
+  if (unsupportedPattern.test(value)) {
+    throw new Error(`${label} contains characters unsupported by the standalone Markdown image syntax`);
   }
 }
 
@@ -69,6 +76,8 @@ function validateInlineImage(post, image, paths) {
   }
   assertText(image.alt, `${label} alt`);
   assertText(image.caption, `${label} caption`);
+  assertMarkdownImageText(image.alt, `${label} alt`, /[\]\r\n]/);
+  assertMarkdownImageText(image.caption, `${label} caption`, /["\r\n]/);
   registerPath(paths, image.src);
 }
 
@@ -95,7 +104,9 @@ function validateImageContract(metadata) {
   const postSlugs = new Set();
   for (const post of metadata.posts) {
     assertPlainObject(post, 'Blog post');
-    if (typeof post.slug !== 'string' || !post.slug) throw new Error('Blog post slug must be a non-empty string');
+    if (typeof post.slug !== 'string' || !SAFE_SLUG.test(post.slug)) {
+      throw new Error('Blog post slug must be lowercase kebab-case');
+    }
     if (postSlugs.has(post.slug)) throw new Error(`Duplicate blog post slug: ${post.slug}`);
     postSlugs.add(post.slug);
   }

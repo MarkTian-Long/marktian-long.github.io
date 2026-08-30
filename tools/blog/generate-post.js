@@ -91,7 +91,7 @@ function injectPostCover(template, metadata) {
   if ((template.match(/<!-- post-cover -->/g) || []).length !== 1) {
     throw new Error('Article template must contain one post-cover marker');
   }
-  return template.replace(marker, renderPostCover(metadata));
+  return template.replace(marker, () => renderPostCover(metadata));
 }
 
 function resolveMarkdownImagePath(sourceRepoPath, imagePath) {

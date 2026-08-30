@@ -46,6 +46,21 @@ test('metadata cover renders once after the header and before the divider', () =
   assert.match(html, /loading="eager" decoding="async" fetchpriority="high"/);
 });
 
+test('cover injection keeps replacement tokens in alt text literal', () => {
+  const template = '<header class="post-header">Header</header>\n<!-- post-cover -->\n<hr class="divider" />';
+  const metadata = {
+    ...visualPost,
+    visuals: {
+      ...visualPost.visuals,
+      cover: { ...visualPost.visuals.cover, alt: 'Literal $& marker' },
+    },
+  };
+  const html = injectPostCover(template, metadata);
+
+  assert.match(html, /alt="Literal \$&amp; marker"/);
+  assert.doesNotMatch(html, /<!-- post-cover -->/);
+});
+
 test('legacy posts render no cover and consume the template marker', () => {
   const template = '<header>Header</header>\n<!-- post-cover -->\n<hr class="divider" />';
   const html = injectPostCover(template, { slug: 'legacy-post' });

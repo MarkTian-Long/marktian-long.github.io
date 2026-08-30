@@ -83,6 +83,17 @@ test('the image contract and legacy exemption list are explicit and exact', () =
   );
 });
 
+test('post slugs must be lowercase kebab-case before they are used in asset paths', () => {
+  for (const slug of ['../escape', 'Upper-Post', 'double--dash', 'trailing-']) {
+    const current = post(slug, { cover: cover(slug), inline: [] });
+    assert.throws(
+      () => validateImageContract(metadata([current])),
+      /slug.*lowercase kebab-case/i,
+      slug,
+    );
+  }
+});
+
 test('a post with visuals cannot remain in the legacy exemption list', () => {
   const current = post('current-post', {
     cover: cover('current-post'),
@@ -122,7 +133,11 @@ test('inline images stay local, descriptive, bounded, and fully described', () =
     [[inline('new-post', 'context-loop', { width: 1200 })], /new-post.*1280.*720/i],
     [[inline('new-post', 'context-loop', { height: 630 })], /new-post.*1280.*720/i],
     [[inline('new-post', 'context-loop', { alt: ' ' })], /new-post.*inline.*alt/i],
+    [[inline('new-post', 'context-loop', { alt: 'Context ] loop' })], /inline.*alt.*Markdown/i],
+    [[inline('new-post', 'context-loop', { alt: 'Context\nloop' })], /inline.*alt.*Markdown/i],
     [[inline('new-post', 'context-loop', { caption: '' })], /new-post.*caption/i],
+    [[inline('new-post', 'context-loop', { caption: 'The "context" loop.' })], /caption.*Markdown/i],
+    [[inline('new-post', 'context-loop', { caption: 'Context\nloop.' })], /caption.*Markdown/i],
     [[inline('new-post', 'context-loop', { caption: 'c'.repeat(161) })], /new-post.*caption/i],
   ];
   for (const [inlineImages, expected] of invalid) {

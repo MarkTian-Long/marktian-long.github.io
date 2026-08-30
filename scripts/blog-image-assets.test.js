@@ -61,10 +61,36 @@ function coverVisual(slug) {
   };
 }
 
+function inlineVisual(slug, name = 'context-loop') {
+  return {
+    src: `assets/images/blog/${slug}/${name}.webp`,
+    alt: '上下文与反馈形成闭环',
+    caption: '闭环把本次任务转化为下次任务可复用的上下文。',
+    width: 1280,
+    height: 720,
+  };
+}
+
 async function writeMetadata(rootDir, value) {
   const metadataPath = path.join(rootDir, 'tools', 'blog', 'data', 'posts-meta.json');
   fs.mkdirSync(path.dirname(metadataPath), { recursive: true });
   fs.writeFileSync(metadataPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function writePostHtml(rootDir, slug, visuals, { includeCover = true, includeInline = true } = {}) {
+  const postPath = path.join(rootDir, 'tools', 'blog', 'posts', `${slug}.html`);
+  fs.mkdirSync(path.dirname(postPath), { recursive: true });
+  const cover = includeCover
+    ? `<figure class="post-cover">\n  <img src="../../../${visuals.cover.src}" alt="${visuals.cover.alt}" width="${visuals.cover.width}" height="${visuals.cover.height}" loading="eager" decoding="async" fetchpriority="high" />\n</figure>`
+    : '';
+  const figures = includeInline
+    ? visuals.inline.map(image => `<figure class="post-figure">\n  <img src="../../../${image.src}" alt="${image.alt}" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" />\n  <figcaption>${image.caption}</figcaption>\n</figure>`).join('\n')
+    : '';
+  fs.writeFileSync(
+    postPath,
+    `<main><header class="post-header">Header</header>\n${cover}\n<hr class="divider" />\n<div class="post-body">${figures}</div></main>`,
+    'utf8',
+  );
 }
 
 test('cover preparation writes a bounded 1200x630 JPEG under the slug directory', async () => {
@@ -162,10 +188,54 @@ test('asset validation accepts one declared, correctly prepared cover', async ()
   const slug = 'sample-post';
   const inputPath = await createInput(rootDir);
   await prepareBlogImage({ rootDir, slug, role: 'cover', inputPath });
-  await writeMetadata(rootDir, metadata(slug, coverVisual(slug)));
+  const visuals = coverVisual(slug);
+  await writeMetadata(rootDir, metadata(slug, visuals));
+  writePostHtml(rootDir, slug, visuals);
 
   const result = await validateBlogImages({ rootDir });
   assert.deepEqual(result, { declared: 1, checked: 1 });
+});
+
+test('asset validation fully decodes declared images instead of trusting headers', async () => {
+  const rootDir = fixtureRoot();
+  const slug = 'sample-post';
+  const outputPath = path.join(rootDir, 'assets', 'images', 'blog', slug, 'cover.jpg');
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  const pixels = crypto.randomBytes(1200 * 630 * 3);
+  const complete = await sharp(pixels, { raw: { width: 1200, height: 630, channels: 3 } })
+    .jpeg({ quality: 35 })
+    .toBuffer();
+  const truncated = complete.subarray(0, Math.floor(complete.length * 0.6));
+  fs.writeFileSync(outputPath, truncated);
+  const header = await sharp(outputPath).metadata();
+  assert.equal(header.width, 1200);
+  assert.equal(header.height, 630);
+  const visuals = coverVisual(slug);
+  await writeMetadata(rootDir, metadata(slug, visuals));
+  writePostHtml(rootDir, slug, visuals);
+
+  await assert.rejects(() => validateBlogImages({ rootDir }), /decode|corrupt|premature|truncat/i);
+});
+
+test('asset validation requires declared covers and inline images in the rendered article', async () => {
+  const missingCoverRoot = fixtureRoot();
+  const slug = 'sample-post';
+  const inputPath = await createInput(missingCoverRoot);
+  await prepareBlogImage({ rootDir: missingCoverRoot, slug, role: 'cover', inputPath });
+  const coverOnly = coverVisual(slug);
+  await writeMetadata(missingCoverRoot, metadata(slug, coverOnly));
+  writePostHtml(missingCoverRoot, slug, coverOnly, { includeCover: false });
+  await assert.rejects(() => validateBlogImages({ rootDir: missingCoverRoot }), /rendered.*post-cover/i);
+
+  const missingInlineRoot = fixtureRoot();
+  const secondInput = await createInput(missingInlineRoot);
+  await prepareBlogImage({ rootDir: missingInlineRoot, slug, role: 'cover', inputPath: secondInput });
+  await prepareBlogImage({ rootDir: missingInlineRoot, slug, role: 'inline', name: 'context-loop', inputPath: secondInput });
+  const withInline = coverVisual(slug);
+  withInline.inline = [inlineVisual(slug)];
+  await writeMetadata(missingInlineRoot, metadata(slug, withInline));
+  writePostHtml(missingInlineRoot, slug, withInline, { includeInline: false });
+  await assert.rejects(() => validateBlogImages({ rootDir: missingInlineRoot }), /rendered.*post-figure|context-loop/i);
 });
 
 test('asset validation rejects missing and orphan blog images', async () => {

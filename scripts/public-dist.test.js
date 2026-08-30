@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { publicFiles, validateManifest } = require('./public-dist-manifest');
+const { publicFiles, resolvePublicPath, validateManifest } = require('./public-dist-manifest');
 const { isLocalReference, referencedPaths, resolveReference } = require('./check-public-dist');
 const { outputDirFromArgs } = require('./build-public-dist');
 
@@ -123,4 +123,11 @@ test('external scripts resolve fetch paths from the document that executes them'
 test('public dist output directory cannot escape the repository', () => {
   assert.throws(() => outputDirFromArgs(['--out', '../outside']), /must stay within the repository/);
   assert.match(outputDirFromArgs(['--out', 'dist/smoke']), /[\\/]dist[\\/]smoke$/);
+});
+
+test('public source paths cannot escape or use platform-specific separators', () => {
+  assert.throws(() => resolvePublicPath(repoRoot, '../outside.html'), /must stay within the public root/i);
+  assert.throws(() => resolvePublicPath(repoRoot, 'assets\\images\\cover.jpg'), /forward-slash relative path/i);
+  assert.match(resolvePublicPath(repoRoot, 'assets/images/og-cover.png'), /assets[\\/]images[\\/]og-cover\.png$/);
+  assert.match(validateManifest(repoRoot, ['../outside.html']).join('\n'), /must stay within the public root/i);
 });

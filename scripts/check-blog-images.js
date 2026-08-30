@@ -18,6 +18,65 @@ function posixPath(value) {
   return value.split(path.sep).join('/');
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function occurrenceCount(value, needle) {
+  return String(value).split(needle).length - 1;
+}
+
+function validateRenderedPostImages(rootDir, metadata) {
+  for (const post of metadata.posts) {
+    const postPath = path.join(rootDir, 'tools', 'blog', 'posts', `${post.slug}.html`);
+    if (!fs.existsSync(postPath) || !fs.statSync(postPath).isFile()) {
+      throw new Error(`Missing rendered blog article: tools/blog/posts/${post.slug}.html`);
+    }
+    const html = fs.readFileSync(postPath, 'utf8');
+    const coverMarker = '<figure class="post-cover">';
+    const coverCount = occurrenceCount(html, coverMarker);
+    if (!post.visuals) {
+      if (coverCount !== 0) throw new Error(`Legacy post ${post.slug} must not render a post-cover`);
+      continue;
+    }
+
+    if (coverCount !== 1) {
+      throw new Error(`Post ${post.slug} must contain exactly one rendered post-cover`);
+    }
+    const coverStart = html.indexOf(coverMarker);
+    const headerStart = html.indexOf('<header class="post-header"');
+    const headerEnd = html.indexOf('</header>', headerStart);
+    const dividerStart = html.indexOf('<hr class="divider"', coverStart);
+    if (headerStart === -1 || headerEnd === -1 || dividerStart === -1
+      || !(headerEnd < coverStart && coverStart < dividerStart)) {
+      throw new Error(`Post ${post.slug} rendered post-cover must sit between the article header and divider`);
+    }
+    const cover = post.visuals.cover;
+    const expectedCoverImage = `<img src="../../../${cover.src}" alt="${escapeHtml(cover.alt)}" width="${cover.width}" height="${cover.height}" loading="eager" decoding="async" fetchpriority="high" />`;
+    if (!html.includes(expectedCoverImage)) {
+      throw new Error(`Post ${post.slug} rendered post-cover must match metadata`);
+    }
+
+    const inlineMarker = '<figure class="post-figure">';
+    if (occurrenceCount(html, inlineMarker) !== post.visuals.inline.length) {
+      throw new Error(`Post ${post.slug} rendered post-figure count must match metadata`);
+    }
+    for (const image of post.visuals.inline) {
+      const expectedFigure = '<figure class="post-figure">\n'
+        + `  <img src="../../../${image.src}" alt="${escapeHtml(image.alt)}" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" />\n`
+        + `  <figcaption>${escapeHtml(image.caption)}</figcaption>\n`
+        + '</figure>';
+      if (!html.includes(expectedFigure)) {
+        throw new Error(`Post ${post.slug} is missing the rendered post-figure for ${image.src}`);
+      }
+    }
+  }
+}
+
 function listAssetFiles(rootDir) {
   const assetRoot = path.join(rootDir, 'assets', 'images', 'blog');
   if (!fs.existsSync(assetRoot)) return [];
@@ -71,8 +130,14 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..') } = 
     if (image.width !== profile.width || image.height !== profile.height) {
       throw new Error(`Blog image dimensions must be ${profile.width} x ${profile.height}: ${imagePath}`);
     }
+    try {
+      await sharp(absolutePath, { failOn: 'warning' }).stats();
+    } catch (error) {
+      throw new Error(`Blog image failed full decode: ${imagePath} (${error.message})`);
+    }
     checked += 1;
   }
+  validateRenderedPostImages(rootDir, metadata);
   return { declared: declared.length, checked };
 }
 
@@ -89,4 +154,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, validateBlogImages, main };
+module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, validateBlogImages, validateRenderedPostImages, main };
