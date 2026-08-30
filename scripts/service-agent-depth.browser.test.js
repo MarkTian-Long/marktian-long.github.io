@@ -48,11 +48,43 @@ async function waitForCompleteReview(page) {
   await page.locator('#run-review[data-state="complete"]').waitFor({ state: 'visible' });
 }
 
+function isSpawnEperm(error) {
+  const message = error && error.message ? error.message : '';
+  return Boolean(error && (error.code === 'EPERM' || /spawn\s+EPERM/i.test(message)));
+}
+
+function findLocalEdgeExecutable() {
+  const candidates = [
+    process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    process.env.ProgramFiles && path.join(process.env.ProgramFiles, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    process.env['ProgramFiles(x86)'] && path.join(process.env['ProgramFiles(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  ].filter(Boolean);
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+async function launchBrowser() {
+  const configuredExecutablePath = (process.env.PLAYWRIGHT_EXECUTABLE_PATH || '').trim();
+  if (configuredExecutablePath) {
+    return chromium.launch({ headless: true, executablePath: configuredExecutablePath });
+  }
+
+  try {
+    return await chromium.launch({ headless: true });
+  } catch (error) {
+    if (!isSpawnEperm(error)) throw error;
+    const edgeExecutablePath = findLocalEdgeExecutable();
+    if (!edgeExecutablePath) throw error;
+    return chromium.launch({ headless: true, executablePath: edgeExecutablePath });
+  }
+}
+
 test('service-agent depth supports scenario switching, four fault drills, HITL, export, and restart', { timeout: 60000 }, async () => {
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser();
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
     const pageErrors = [];
