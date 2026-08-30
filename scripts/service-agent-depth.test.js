@@ -26,7 +26,7 @@ function readPublicData() {
   return JSON.parse(raw);
 }
 
-function runGeneratorWithTemporaryArtifact(content) {
+function runGeneratorWithTemporaryArtifact(content, args = ['--check']) {
   const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'service-agent-depth-'));
   const temporaryGeneratorPath = path.join(temporaryRoot, 'gen_index.js');
   const temporaryArtifactPath = path.join(temporaryRoot, 'index.html');
@@ -34,7 +34,7 @@ function runGeneratorWithTemporaryArtifact(content) {
   fs.writeFileSync(temporaryArtifactPath, content, 'utf8');
 
   try {
-    return spawnSync(process.execPath, [temporaryGeneratorPath, '--check'], {
+    return spawnSync(process.execPath, [temporaryGeneratorPath, ...args], {
       cwd: repoRoot,
       encoding: 'utf8',
     });
@@ -139,6 +139,27 @@ test('the generated public artifact is current under the generator check mode', 
   });
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(`${result.stdout}${result.stderr}`, /check: public artifact is current/);
+});
+
+test('generator mode parsing is exactly-one and fail-closed for duplicate, mixed, and unknown arguments', () => {
+  const invalidArgs = [
+    ['--check', '--write'],
+    ['--check', '--check'],
+    ['--write', '--write'],
+    ['--candidate', 'build/candidate-site/service-agent.html', 'extra'],
+    ['--check', '--candidate', 'build/candidate-site/service-agent.html'],
+    ['--check', '--unknown'],
+    ['--write', '--unknown'],
+    ['extra', '--candidate', 'build/candidate-site/service-agent.html'],
+    ['--unknown'],
+    ['--candidate'],
+  ];
+
+  for (const args of invalidArgs) {
+    const result = runGeneratorWithTemporaryArtifact(readArtifact(), args);
+    assert.notEqual(result.status, 0, `must reject: ${args.join(' ')}`);
+    assert.match(`${result.stdout}${result.stderr}`, /generator mode|candidate|argument/i, args.join(' '));
+  }
 });
 
 test('generator check accepts CRLF and CR artifacts without changing generated content', () => {

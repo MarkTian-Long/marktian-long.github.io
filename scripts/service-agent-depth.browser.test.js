@@ -56,6 +56,7 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
     const pageErrors = [];
+    const sensitiveSentinel = 'SENSITIVE-UNAUTHORIZED-8f31c2';
     page.on('pageerror', (error) => pageErrors.push(error.message));
 
     await page.goto(`${url}/tools/service-agent/index.html`, { waitUntil: 'domcontentloaded' });
@@ -74,6 +75,45 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
       assert.notEqual(snapshots.bank[field].text, snapshots.startup[field].text, `${field} bank/startup`);
     }
 
+    await page.locator('.scn-card[data-scn="ecom"]').click();
+
+    await page.locator('#chat-input').fill('请查一下我的订单到哪了？');
+    await page.locator('#send-btn').click();
+    await page.locator('#restart-demo-btn').click();
+    await page.waitForTimeout(2200);
+    assert.equal(await page.locator('#chat-messages .user').count(), 0);
+    assert.equal(await page.locator('#chat-messages .assistant').count(), 1);
+    assert.equal(await page.locator('#chat-input').inputValue(), '');
+    assert.equal(await page.locator('#step-stream').textContent(), '');
+    assert.equal(await page.locator('#run-log').textContent(), '');
+    assert.equal(await page.locator('#run-review').isVisible(), false);
+    assert.equal(await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace()), null);
+    assert.equal(await page.locator('[data-fnode]:not([data-state="idle"])').count(), 0);
+
+    await page.locator('#chat-input').fill('请查一下我的账户余额 '+sensitiveSentinel);
+    await page.locator('#send-btn').click();
+    await page.locator('.scn-card[data-scn="bank"]').click();
+    await page.waitForTimeout(2200);
+    assert.equal(await page.locator('.scn-card[data-scn="bank"]').evaluate((card) => card.classList.contains('on')), true);
+    assert.equal(await page.locator('#chat-messages .user').count(), 0);
+    assert.equal(await page.locator('#chat-messages .assistant').count(), 1);
+    assert.equal(await page.locator('#chat-input').inputValue(), '');
+    assert.equal(await page.locator('#step-stream').textContent(), '');
+    assert.equal(await page.locator('#run-log').textContent(), '');
+    assert.equal(await page.locator('#run-review').isVisible(), false);
+    assert.equal(await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace()), null);
+    assert.equal(await page.locator('[data-fnode]:not([data-state="idle"])').count(), 0);
+    const leakedSensitiveState = await page.evaluate((sentinel) => {
+      const trace = window.__SERVICE_AGENT__.getRunTrace();
+      const exported = window.__SERVICE_AGENT__.getExportPayload();
+      return {
+        dom: document.body.innerHTML.includes(sentinel),
+        input: document.getElementById('chat-input').value.includes(sentinel),
+        trace: JSON.stringify(trace).includes(sentinel),
+        export: JSON.stringify(exported).includes(sentinel),
+      };
+    }, sensitiveSentinel);
+    assert.deepEqual(leakedSensitiveState, { dom: false, input: false, trace: false, export: false });
     await page.locator('.scn-card[data-scn="ecom"]').click();
     await page.locator('#fault-select').waitFor();
     await page.locator('.quick-btn').first().click();
@@ -122,6 +162,7 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     assert.equal(trace.finalStatus, 'completed');
     assert.ok(trace.visitedNodes.includes('hitl'));
     assert.equal(trace.hitlActions.at(-1).action, 'approve');
+    assert.equal(await page.locator('#hitl-card').getAttribute('data-hitl-state'), 'resolved');
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -143,6 +184,24 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     assert.equal(await page.locator('#run-log').textContent(), '');
     assert.equal(await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace()), null);
     assert.equal(await page.locator('#flow-node-sql').getAttribute('data-state'), 'idle');
+
+    for (const action of ['reject', 'delegate']) {
+      await page.locator('#fault-select').selectOption('ecom:low-confidence-intent');
+      await page.locator('#run-fault-btn').click();
+      await page.locator('#hitl-card').waitFor({ state: 'visible' });
+      await page.locator('[data-hitl-action="'+action+'"]').click();
+      await page.locator('#hitl-card[data-hitl-state="handed-off"]').waitFor({ state: 'visible' });
+      assert.equal(await page.locator('#run-review').getAttribute('data-state'), 'pending-human');
+      assert.equal(await page.locator('#run-review').getAttribute('data-final-status'), 'pending-human');
+      const handoffTrace = await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace());
+      assert.equal(handoffTrace.finalStatus, 'pending-human');
+      assert.ok(handoffTrace.pendingHumanItems.length > 0);
+      assert.notEqual(await page.locator('#hitl-card').getAttribute('data-hitl-state'), 'resolved');
+      const handoffExport = await page.evaluate(() => window.__SERVICE_AGENT__.getExportPayload());
+      assert.equal(handoffExport.runTrace.finalStatus, 'pending-human');
+      assert.ok(handoffExport.runTrace.pendingHumanItems.length > 0);
+      await page.locator('#restart-demo-btn').click();
+    }
 
     await page.locator('.scn-card[data-scn="bank"]').click();
     assert.equal(await page.locator('#run-review').isVisible(), false);

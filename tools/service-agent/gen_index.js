@@ -7,11 +7,29 @@
 const fs = require('fs');
 const path = require('path');
 const GENERATOR_ARGS = process.argv.slice(2);
-if (GENERATOR_ARGS.includes('--write') && GENERATOR_ARGS.includes('--candidate')) throw new Error('Choose exactly one generator mode');
-const GENERATOR_MODE = GENERATOR_ARGS.includes('--write') ? 'write'
-  : GENERATOR_ARGS[0] === '--candidate' ? 'candidate'
-  : GENERATOR_ARGS[0] === '--check' ? 'check' : null;
-if (!GENERATOR_MODE) throw new Error('Choose one generator mode: --check, --write, or --candidate <path>');
+const GENERATOR_MODE_FLAGS = ['--check', '--write', '--candidate'];
+const GENERATOR_MODE_ARGS = GENERATOR_ARGS.filter((arg) => GENERATOR_MODE_FLAGS.includes(arg));
+if (GENERATOR_MODE_ARGS.length !== 1) {
+  throw new Error('Choose exactly one generator mode: --check, --write, or --candidate <path>');
+}
+const GENERATOR_MODE_FLAG = GENERATOR_MODE_ARGS[0];
+const GENERATOR_MODE_INDEX = GENERATOR_ARGS.indexOf(GENERATOR_MODE_FLAG);
+if (GENERATOR_MODE_INDEX !== 0) {
+  throw new Error('Generator mode must be the first argument');
+}
+const GENERATOR_EXTRA_ARGS = GENERATOR_ARGS
+  .slice(0, GENERATOR_MODE_INDEX)
+  .concat(GENERATOR_ARGS.slice(GENERATOR_MODE_INDEX + 1));
+if (GENERATOR_MODE_FLAG === '--candidate') {
+  if (GENERATOR_EXTRA_ARGS.length !== 1 || !GENERATOR_EXTRA_ARGS[0] || GENERATOR_EXTRA_ARGS[0].startsWith('--')) {
+    throw new Error('Candidate mode requires exactly one output path and no extra arguments');
+  }
+} else if (GENERATOR_EXTRA_ARGS.length) {
+  throw new Error('Unknown or extra generator argument: ' + GENERATOR_EXTRA_ARGS[0]);
+}
+const GENERATOR_MODE = GENERATOR_MODE_FLAG === '--write' ? 'write'
+  : GENERATOR_MODE_FLAG === '--candidate' ? 'candidate' : 'check';
+const GENERATOR_CANDIDATE_ARG = GENERATOR_MODE === 'candidate' ? GENERATOR_EXTRA_ARGS[0] : null;
 
 /* ===================================================================
  * 1. 数据层：场景 / 业务标签 / 决策卡 / 链路图 / Agent / mock 脚本
@@ -970,8 +988,18 @@ var isBusy = false;
 var runTrace = null;
 var runEpoch = 0;
 var _hitlScript = null;
+var _hitlEpoch = null;
 
 function cloneData(value){ return JSON.parse(JSON.stringify(value)); }
+function isRunCurrent(epoch){ return typeof epoch === 'undefined' || epoch === runEpoch; }
+function staleRunError(){
+  var error=new Error('本次模拟已重置');
+  error.staleRun=true;
+  return error;
+}
+function assertRunCurrent(epoch){
+  if(!isRunCurrent(epoch)) throw staleRunError();
+}
 function createRunTrace(taskLabel, faultType){
   return {
     version: 1,
@@ -987,42 +1015,51 @@ function createRunTrace(taskLabel, faultType){
     pendingHumanItems: []
   };
 }
-function traceNode(nodeId){
+function traceNode(nodeId,epoch){
+  assertRunCurrent(epoch);
   if(runTrace && !runTrace.visitedNodes.includes(nodeId)) runTrace.visitedNodes.push(nodeId);
 }
-function traceGuardrail(nodeId, rule, result){
+function traceGuardrail(nodeId, rule, result,epoch){
+  assertRunCurrent(epoch);
   if(!runTrace) return;
   runTrace.guardrails.push({node:nodeId, rule:rule, result:result});
 }
-function traceHITL(action, label){
+function traceHITL(action, label,epoch){
+  assertRunCurrent(epoch);
   if(!runTrace) return;
   runTrace.hitlActions.push({action:action, label:label});
 }
-function finishTrace(status, outcome, pendingHumanItems){
+function finishTrace(status, outcome, pendingHumanItems,epoch){
+  assertRunCurrent(epoch);
   if(!runTrace) return;
   runTrace.finalStatus = status;
   runTrace.finalOutcome = outcome;
   runTrace.pendingHumanItems = pendingHumanItems || [];
-  renderRunReview();
+  renderRunReview(epoch);
 }
 
 /* ============ 场景选择器 ============ */
 function selectScenario(key){
-  if(isBusy) return;
+  if(!SCENARIOS[key]) return;
+  var epoch=++runEpoch;
+  assertRunCurrent(epoch);
   currentScenario = key;
+  restartDemo(epoch);
+  assertRunCurrent(epoch);
   // 卡片高亮
   document.querySelectorAll('.scn-card').forEach(function(el){
+    assertRunCurrent(epoch);
     el.classList.toggle('on', el.dataset.scn === key);
   });
-  renderScenarioDetail(key);
-  renderAcceptanceCard(key);
-  applyScenarioToMatrix(key);
-  renderQuickButtons();           // 快捷按钮随场景更新
-  renderFaultOptions();
-  restartDemo();                  // 场景切换不复用旧轨迹、日志或人工卡片
+  renderScenarioDetail(key,epoch);
+  renderAcceptanceCard(key,epoch);
+  applyScenarioToMatrix(key,epoch);
+  renderQuickButtons(epoch);           // 快捷按钮随场景更新
+  renderFaultOptions(epoch);
 }
 
-function renderScenarioDetail(key){
+function renderScenarioDetail(key,epoch){
+  assertRunCurrent(epoch);
   var S = ${JSON.stringify(SCENARIOS)}[key];
   var box = document.getElementById('scn-detail');
   if(!box) return;
@@ -1031,11 +1068,14 @@ function renderScenarioDetail(key){
     return '<span class="tag"><span class="td">'+T.dim+'</span>'+T.label+'</span>';
   }).join('');
   // 用 class 联动而非重建含 ID 的容器（仅本块无下游 getElementById 依赖，可整体写）
+  assertRunCurrent(epoch);
   document.getElementById('scn-tags').innerHTML = tagHtml;
+  assertRunCurrent(epoch);
   document.getElementById('scn-constraint').innerHTML = '<b>'+S.name+'：</b>'+S.constraint;
 }
 
-function renderAcceptanceCard(key){
+function renderAcceptanceCard(key,epoch){
+  assertRunCurrent(epoch);
   var S = SCENARIOS[key];
   var card = document.getElementById('acceptance-card');
   if(!card || !S) return;
@@ -1047,16 +1087,20 @@ function renderAcceptanceCard(key){
     item.dataset.acceptanceKind = data.kind;
     var kind = item.querySelector('.acceptance-kind');
     var text = item.querySelector('[data-acceptance-text]');
+    assertRunCurrent(epoch);
     if(kind) kind.textContent = data.kind === 'target' ? '目标' : '代理';
+    assertRunCurrent(epoch);
     if(text) text.textContent = data.description;
   });
 }
 
 /* 把当前场景应用到决策矩阵：高亮取舍行 + 改写卡顶结论 */
 var CARD_DATA = ${JSON.stringify(CARDS.map(c=>({id:c._id,choices:c.choices,judge:c.judge})))};
-function applyScenarioToMatrix(key){
+function applyScenarioToMatrix(key,epoch){
+  assertRunCurrent(epoch);
   document.querySelectorAll('.dcard').forEach(function(card){
     card.querySelectorAll('.to-row').forEach(function(r){
+      assertRunCurrent(epoch);
       r.classList.toggle('hot', r.dataset.scn === key);
     });
   });
@@ -1067,22 +1111,27 @@ function applyScenarioToMatrix(key){
     var pin = card.querySelector('[data-scn-conclusion]');
     var jud = card.querySelector('[data-judge]');
     var scnName = ${JSON.stringify(Object.fromEntries(Object.entries(SCENARIOS).map(([k,v])=>[k,v.name])))}[key];
+    assertRunCurrent(epoch);
     if(pin) pin.textContent = '针对「'+scnName+'」';
+    assertRunCurrent(epoch);
     if(jud) jud.textContent = c.choices[key];
   });
 }
 
 /* ============ 决策卡展开 ============ */
 function toggleCard(head){
+  assertRunCurrent(runEpoch);
   head.closest('.dcard').classList.toggle('open');
 }
 function jumpToCard(id){
+  var epoch=runEpoch;
+  assertRunCurrent(epoch);
   var card = document.getElementById(id);
   if(!card) return;
   card.classList.add('open');
   card.scrollIntoView({behavior:'smooth', block:'center'});
   card.classList.add('flash');
-  setTimeout(function(){ card.classList.remove('flash'); }, 1400);
+  setTimeout(function(){ if(isRunCurrent(epoch)) card.classList.remove('flash'); }, 1400);
 }
 
 /* ============ Agent 定义（复用旧 demo） ============ */
@@ -1102,124 +1151,168 @@ var MOCK_SCRIPT = ${JSON.stringify(MOCK_SCRIPT)};
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
 /* ============ 节点状态机 ============ */
-function setNodeState(nodeId, state, statusText){
+function setNodeState(nodeId, state, statusText,epoch){
+  assertRunCurrent(epoch);
   var aspEl = document.getElementById('asp-'+nodeId);
   if(aspEl){
+    assertRunCurrent(epoch);
     aspEl.className = 'asp-agent '+state;
     var st = document.getElementById('asp-'+nodeId+'-status');
-    if(st && statusText) st.textContent = statusText;
+    if(st && statusText){
+      assertRunCurrent(epoch);
+      st.textContent = statusText;
+    }
   }
-  if(state !== 'idle') traceNode(nodeId);
+  if(state !== 'idle') traceNode(nodeId,epoch);
 }
-function setFlowState(nodeId, state, statusText){
+function setFlowState(nodeId, state, statusText,epoch){
+  assertRunCurrent(epoch);
   var flowEl = document.getElementById('flow-node-'+nodeId);
   if(!flowEl) return;
+  assertRunCurrent(epoch);
   flowEl.dataset.state = state;
-  if(statusText) flowEl.title = statusText;
-  traceNode(nodeId);
+  if(statusText){
+    assertRunCurrent(epoch);
+    flowEl.title = statusText;
+  }
+  traceNode(nodeId,epoch);
 }
-function resetFlowNodes(){
+function resetFlowNodes(epoch){
+  assertRunCurrent(epoch);
   document.querySelectorAll('[data-fnode]').forEach(function(el){
+    assertRunCurrent(epoch);
     el.dataset.state = 'idle';
+    assertRunCurrent(epoch);
     el.removeAttribute('title');
   });
 }
-function resetAllNodes(){
-  Object.keys(AGENT_KEY_MAP).forEach(function(id){ setNodeState(id,'idle','待命'); });
-  resetFlowNodes();
-  var stream=document.getElementById('step-stream'); if(stream) stream.innerHTML='';
-  var log=document.getElementById('run-log'); if(log) log.innerHTML='';
+function resetAllNodes(epoch){
+  assertRunCurrent(epoch);
+  Object.keys(AGENT_KEY_MAP).forEach(function(id){ setNodeState(id,'idle','待命',epoch); });
+  resetFlowNodes(epoch);
+  var stream=document.getElementById('step-stream'); if(stream){ assertRunCurrent(epoch); stream.innerHTML=''; }
+  var log=document.getElementById('run-log'); if(log){ assertRunCurrent(epoch); log.innerHTML=''; }
 }
 
 /* ============ 渲染辅助 ============ */
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function appendLog(msg,type){
+function appendLog(msg,type,epoch){
+  assertRunCurrent(epoch);
   var log=document.getElementById('run-log'); if(!log) return;
+  assertRunCurrent(epoch);
   var line=document.createElement('div'); line.className='log-line '+(type||'info');
   var n=new Date(); var ts=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  assertRunCurrent(epoch);
   line.textContent='['+ts+'] '+msg; log.appendChild(line); log.scrollTop=log.scrollHeight;
 }
-function appendMessage(type,content){
+function appendMessage(type,content,epoch){
+  assertRunCurrent(epoch);
   var msgs=document.getElementById('chat-messages');
+  assertRunCurrent(epoch);
   var div=document.createElement('div'); div.className='chat-bubble '+type; div.textContent=content;
+  assertRunCurrent(epoch);
   msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight; return div;
 }
-function appendLayerTag(text){
+function appendLayerTag(text,epoch){
+  assertRunCurrent(epoch);
   var msgs=document.getElementById('chat-messages');
+  assertRunCurrent(epoch);
   var div=document.createElement('div'); div.className='chat-bubble layer-tag'; div.textContent=text;
+  assertRunCurrent(epoch);
   msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
-function appendStepCard(agentId,content,badgeType){
+function appendStepCard(agentId,content,badgeType,epoch){
+  assertRunCurrent(epoch);
   var agent=AGENTS[AGENT_KEY_MAP[agentId]||agentId]||{name:agentId,icon:'🤖'};
   var msgs=document.getElementById('step-stream')||document.getElementById('chat-messages');
+  assertRunCurrent(epoch);
   var card=document.createElement('div'); card.className='step-card';
   var bt=badgeType==='mock'?'🎭 模拟工具':badgeType==='hitl'?'👤 HITL':'LLM 调用';
   card.innerHTML='<div class="step-card-header"><span class="step-card-icon">'+agent.icon+'</span>'+
     '<span class="step-card-name">'+escH(agent.name)+'</span>'+
     '<span class="step-card-badge '+(badgeType||'')+'">'+bt+'</span></div>'+
     '<div class="step-card-body">'+escH(content)+'</div>';
+  assertRunCurrent(epoch);
   msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight; return card;
 }
 
 /* ============ Agent 调用（双模式）============ */
 /* mockOut: mock 模式下该 agent 的预设输出（来自脚本） */
-async function callAgent(agentId, userContent, badgeType, mockOut){
+async function callAgent(agentId, userContent, badgeType, mockOut,epoch){
+  assertRunCurrent(epoch);
   var agent=AGENTS[AGENT_KEY_MAP[agentId]||agentId];
   if(!agent) throw new Error('未知 Agent: '+agentId);
-  setNodeState(agentId,'active','处理中…');
-  appendLog('调用 '+agent.name,'info');
-  var card=appendStepCard(agentId,'正在处理…',badgeType); card.classList.add('running');
+  setNodeState(agentId,'active','处理中…',epoch);
+  appendLog('调用 '+agent.name,'info',epoch);
+  var card=appendStepCard(agentId,'正在处理…',badgeType,epoch);
+  assertRunCurrent(epoch);
+  card.classList.add('running');
   var result;
   try{
-    await sleep(550); result=mockOut;
+    await sleep(550);
+    assertRunCurrent(epoch);
+    result=mockOut;
+    assertRunCurrent(epoch);
     card.classList.remove('running');
     var body=card.querySelector('.step-card-body');
     var prev=String(result).length>240?String(result).slice(0,240)+'…':String(result);
+    assertRunCurrent(epoch);
     if(body) body.innerHTML='输出：<pre>'+escH(prev)+'</pre>';
-    setNodeState(agentId,'done','完成'); appendLog(agent.name+' 完成','ok');
+    setNodeState(agentId,'done','完成',epoch); appendLog(agent.name+' 完成','ok',epoch);
   }catch(e){
+    if(e && e.staleRun) throw e;
+    assertRunCurrent(epoch);
     card.classList.remove('running');
     var b2=card.querySelector('.step-card-body'); if(b2) b2.textContent='❌ '+e.message;
-    setNodeState(agentId,'idle','错误'); appendLog(agent.name+' 失败: '+e.message,'error'); throw e;
+    setNodeState(agentId,'idle','错误',epoch); appendLog(agent.name+' 失败: '+e.message,'error',epoch); throw e;
   }
+  assertRunCurrent(epoch);
   return result;
 }
 
 /* ============ 主流程（脚本驱动）============ */
 async function runChat(userMsg, scriptItem){
   if(isBusy) return;
-  disableInput(); resetAllNodes(); clearRunReview();
+  var epoch=++runEpoch;
+  assertRunCurrent(epoch);
+  disableInput(epoch); resetAllNodes(epoch); clearRunReview(epoch);
+  assertRunCurrent(epoch);
   runTrace = createRunTrace(scriptItem && scriptItem.qLabel, null);
-  appendMessage('user', userMsg);
+  appendMessage('user', userMsg,epoch);
   var hitlTriggered=false;
   try{
-    setFlowState('guard-in','active','输入检测');
+    setFlowState('guard-in','active','输入检测',epoch);
     await sleep(220);
-    setFlowState('guard-in','done','输入检测通过');
-    traceGuardrail('guard-in','输入合规检测','通过');
-    setFlowState('router','active','意图分类');
-    setNodeState('router','routing','分类中…');
-    appendLog('开始路由：'+userMsg.slice(0,18),'info');
-    appendLayerTag('① 意图路由层 · 正在分流');
-    var intentRaw = await callAgent('router', userMsg, null, scriptItem?scriptItem.intent:null);
+    assertRunCurrent(epoch);
+    setFlowState('guard-in','done','输入检测通过',epoch);
+    traceGuardrail('guard-in','输入合规检测','通过',epoch);
+    setFlowState('router','active','意图分类',epoch);
+    setNodeState('router','routing','分类中…',epoch);
+    appendLog('开始路由：'+userMsg.slice(0,18),'info',epoch);
+    appendLayerTag('① 意图路由层 · 正在分流',epoch);
+    var intentRaw = await callAgent('router', userMsg, null, scriptItem?scriptItem.intent:null,epoch);
+    assertRunCurrent(epoch);
     var intent = scriptItem && scriptItem.intent || 'faq';
-    setNodeState('router','done',intent);
-    setFlowState('router','done','路由到 '+intent);
-    appendLog('路由结果：'+intent,'ok');
+    setNodeState('router','done',intent,epoch);
+    setFlowState('router','done','路由到 '+intent,epoch);
+    appendLog('路由结果：'+intent,'ok',epoch);
 
-    if(intent==='faq'){ await chainFaq(userMsg,scriptItem); }
-    else if(intent==='logistics'){ await chainLogistics(userMsg,scriptItem); }
-    else if(intent==='return'){ await chainReturn(userMsg,scriptItem); }
-    else if(intent==='complaint'){ hitlTriggered = await chainComplaint(userMsg,scriptItem); }
+    if(intent==='faq'){ await chainFaq(userMsg,scriptItem,epoch); assertRunCurrent(epoch); }
+    else if(intent==='logistics'){ await chainLogistics(userMsg,scriptItem,epoch); assertRunCurrent(epoch); }
+    else if(intent==='return'){ await chainReturn(userMsg,scriptItem,epoch); assertRunCurrent(epoch); }
+    else if(intent==='complaint'){ hitlTriggered = await chainComplaint(userMsg,scriptItem,epoch); assertRunCurrent(epoch); }
   }catch(e){
-    appendMessage('assistant','❌ 处理出错，已停止本次模拟：'+e.message); appendLog('错误：'+e.message,'error');
-    finishTrace('blocked','流程异常，已停止本次模拟',['检查模拟脚本或输入']);
+    if(e && e.staleRun) return;
+    if(!isRunCurrent(epoch)) return;
+    appendMessage('assistant','❌ 处理出错，已停止本次模拟：'+e.message,epoch); appendLog('错误：'+e.message,'error',epoch);
+    finishTrace('blocked','流程异常，已停止本次模拟',['检查模拟脚本或输入'],epoch);
   }
+  if(!isRunCurrent(epoch)) return;
   if(!hitlTriggered && runTrace && runTrace.finalStatus === 'running'){
-    finishTrace('completed','完整模拟链路完成');
-    enableInput();
+    finishTrace('completed','完整模拟链路完成',null,epoch);
+    enableInput(epoch);
   }else if(!hitlTriggered){
-    enableInput();
+    enableInput(epoch);
   }
 }
 
@@ -1227,180 +1320,206 @@ function parseJsonOutput(raw,fallback){
   try{return JSON.parse(String(raw));}catch(e){return fallback;}
 }
 
-async function chainFaq(userMsg,sc){
-  setFlowState('branch','done','FAQ 路径');
-  setFlowState('rag','active','检索知识');
-  appendLayerTag('④ 生成层 · 基于知识库回答');
-  var reply=await callAgent('faq',userMsg,null,sc?sc.faq:null);
-  setFlowState('rag','done','知识检索完成');
-  setFlowState('gen','active','生成回答');
-  setFlowState('gen','done','回答生成完成');
-  setFlowState('guard-out','done','输出检测通过');
-  traceGuardrail('guard-out','输出合规检测','通过');
-  setFlowState('reply','returned','已返回');
-  appendMessage('assistant',reply);
+async function chainFaq(userMsg,sc,epoch){
+  assertRunCurrent(epoch);
+  setFlowState('branch','done','FAQ 路径',epoch);
+  setFlowState('rag','active','检索知识',epoch);
+  appendLayerTag('④ 生成层 · 基于知识库回答',epoch);
+  var reply=await callAgent('faq',userMsg,null,sc?sc.faq:null,epoch);
+  assertRunCurrent(epoch);
+  setFlowState('rag','done','知识检索完成',epoch);
+  setFlowState('gen','active','生成回答',epoch);
+  setFlowState('gen','done','回答生成完成',epoch);
+  setFlowState('guard-out','done','输出检测通过',epoch);
+  traceGuardrail('guard-out','输出合规检测','通过',epoch);
+  setFlowState('reply','returned','已返回',epoch);
+  appendMessage('assistant',reply,epoch);
 }
-async function chainLogistics(userMsg,sc){
-  setFlowState('branch','done','Text-to-SQL 路径');
-  setFlowState('sql','active','生成并执行查询');
-  appendLayerTag('③ 检索层 · Text-to-SQL 查订单');
-  var raw=await callAgent('logistics',userMsg,'mock',sc?sc.logistics:null);
+async function chainLogistics(userMsg,sc,epoch){
+  assertRunCurrent(epoch);
+  setFlowState('branch','done','Text-to-SQL 路径',epoch);
+  setFlowState('sql','active','生成并执行查询',epoch);
+  appendLayerTag('③ 检索层 · Text-to-SQL 查订单',epoch);
+  var raw=await callAgent('logistics',userMsg,'mock',sc?sc.logistics:null,epoch);
+  assertRunCurrent(epoch);
   var data=parseJsonOutput(raw,{});
   if(data.order_id && MOCK_ORDERS[data.order_id]){
     var mk=MOCK_ORDERS[data.order_id];
     data.status=mk.status;data.location=mk.location;data.eta=mk.eta;data.carrier=mk.carrier;
-    appendLog('🎭 模拟物流 API：'+data.status+' / '+data.location,'warn');
+    appendLog('🎭 模拟物流 API：'+data.status+' / '+data.location,'warn',epoch);
   }
-  setFlowState('sql','done','查询完成');
-  setFlowState('gen','active','生成回答');
-  appendLayerTag('④ 生成层 · 组织成自然语言');
-  var reply=await callAgent('logi-reply','物流查询结果：'+JSON.stringify(data),null,sc?sc.logiReply:null);
-  setFlowState('gen','done','回答生成完成');
-  setFlowState('guard-out','done','输出检测通过');
-  traceGuardrail('guard-out','输出合规检测','通过');
-  setFlowState('reply','returned','已返回');
-  appendMessage('assistant',reply);
+  setFlowState('sql','done','查询完成',epoch);
+  setFlowState('gen','active','生成回答',epoch);
+  appendLayerTag('④ 生成层 · 组织成自然语言',epoch);
+  var reply=await callAgent('logi-reply','物流查询结果：'+JSON.stringify(data),null,sc?sc.logiReply:null,epoch);
+  assertRunCurrent(epoch);
+  setFlowState('gen','done','回答生成完成',epoch);
+  setFlowState('guard-out','done','输出检测通过',epoch);
+  traceGuardrail('guard-out','输出合规检测','通过',epoch);
+  setFlowState('reply','returned','已返回',epoch);
+  appendMessage('assistant',reply,epoch);
 }
-async function chainReturn(userMsg,sc){
-  setFlowState('branch','done','规则核查路径');
-  setFlowState('rag','active','检索规则');
-  appendLayerTag('③ 检索层 · 退换货规则核查');
-  var raw=await callAgent('return-check',userMsg,null,sc?sc.returnCheck:null);
+async function chainReturn(userMsg,sc,epoch){
+  assertRunCurrent(epoch);
+  setFlowState('branch','done','规则核查路径',epoch);
+  setFlowState('rag','active','检索规则',epoch);
+  appendLayerTag('③ 检索层 · 退换货规则核查',epoch);
+  var raw=await callAgent('return-check',userMsg,null,sc?sc.returnCheck:null,epoch);
+  assertRunCurrent(epoch);
   var data=parseJsonOutput(raw,{eligible:true});
-  setFlowState('rag','done','规则检索完成');
-  setFlowState('gen','active','生成处理方案');
-  appendLayerTag('④ 生成层 · 生成处理方案');
-  var reply=await callAgent('return-sol','用户诉求：'+userMsg+'\\n核查：'+JSON.stringify(data),null,sc?sc.returnSol:null);
-  setFlowState('gen','done','方案生成完成');
-  setFlowState('guard-out','done','输出检测通过');
-  traceGuardrail('guard-out','输出合规检测','通过');
-  setFlowState('reply','returned','已返回');
-  appendMessage('assistant',reply);
+  setFlowState('rag','done','规则检索完成',epoch);
+  setFlowState('gen','active','生成处理方案',epoch);
+  appendLayerTag('④ 生成层 · 生成处理方案',epoch);
+  var reply=await callAgent('return-sol','用户诉求：'+userMsg+'\\n核查：'+JSON.stringify(data),null,sc?sc.returnSol:null,epoch);
+  assertRunCurrent(epoch);
+  setFlowState('gen','done','方案生成完成',epoch);
+  setFlowState('guard-out','done','输出检测通过',epoch);
+  traceGuardrail('guard-out','输出合规检测','通过',epoch);
+  setFlowState('reply','returned','已返回',epoch);
+  appendMessage('assistant',reply,epoch);
 }
-async function chainComplaint(userMsg,sc){
-  setFlowState('branch','done','投诉处置路径');
-  appendLayerTag('⑤ 对话管理层 · 情绪识别 + 升级判断');
-  var emoRaw=await callAgent('emotion',userMsg,null,sc?sc.emotion:null);
+async function chainComplaint(userMsg,sc,epoch){
+  assertRunCurrent(epoch);
+  setFlowState('branch','done','投诉处置路径',epoch);
+  appendLayerTag('⑤ 对话管理层 · 情绪识别 + 升级判断',epoch);
+  var emoRaw=await callAgent('emotion',userMsg,null,sc?sc.emotion:null,epoch);
+  assertRunCurrent(epoch);
   var emo=parseJsonOutput(emoRaw,{emotion_score:5});
-  var escRaw=await callAgent('escalation','情绪：'+JSON.stringify(emo)+'\\n原话：'+userMsg,null,sc?sc.escalation:null);
+  var escRaw=await callAgent('escalation','情绪：'+JSON.stringify(emo)+'\\n原话：'+userMsg,null,sc?sc.escalation:null,epoch);
+  assertRunCurrent(epoch);
   var es=parseJsonOutput(escRaw,{need_human:false});
   if(es.need_human){
-    setNodeState('escalation','done','触发 HITL');
-    setNodeState('hitl','escalated','等待人工');
-    setFlowState('hitl','waiting','等待人工决策');
-    appendLog('⚠️ 触发 HITL：'+(es.reason||''),'warn');
-    appendLayerTag('⑤ HITL · 高风险，等待人工决策');
-    traceGuardrail('hitl','HITL 触发条件',es.reason||'高风险请求');
-    finishTrace('pending-human','等待人工决策',['人工确认是否安抚、接管或升级']);
-    showHumanIntervention(emo,es,userMsg,sc);
+    setNodeState('escalation','done','触发 HITL',epoch);
+    setNodeState('hitl','escalated','等待人工',epoch);
+    setFlowState('hitl','waiting','等待人工决策',epoch);
+    appendLog('⚠️ 触发 HITL：'+(es.reason||''),'warn',epoch);
+    appendLayerTag('⑤ HITL · 高风险，等待人工决策',epoch);
+    traceGuardrail('hitl','HITL 触发条件',es.reason||'高风险请求',epoch);
+    finishTrace('pending-human','等待人工决策',['人工确认是否安抚、接管或升级'],epoch);
+    showHumanIntervention(emo,es,userMsg,sc,epoch);
     return true; // 暂停等人工
   }else{
-    setNodeState('escalation','done','无需升级');
-    setFlowState('gen','active','生成安抚回复');
-    appendLayerTag('④ 生成层 · AI 安抚回复');
-    var reply=await callAgent('soothe','原话：'+userMsg+'\\n情绪：'+JSON.stringify(emo),null,sc?sc.soothe:null);
-    setFlowState('gen','done','安抚回复生成完成');
-    setFlowState('guard-out','done','输出检测通过');
-    traceGuardrail('guard-out','输出合规检测','通过');
-    setFlowState('reply','returned','已返回');
-    appendMessage('assistant',reply);
+    setNodeState('escalation','done','无需升级',epoch);
+    setFlowState('gen','active','生成安抚回复',epoch);
+    appendLayerTag('④ 生成层 · AI 安抚回复',epoch);
+    var reply=await callAgent('soothe','原话：'+userMsg+'\\n情绪：'+JSON.stringify(emo),null,sc?sc.soothe:null,epoch);
+    assertRunCurrent(epoch);
+    setFlowState('gen','done','安抚回复生成完成',epoch);
+    setFlowState('guard-out','done','输出检测通过',epoch);
+    traceGuardrail('guard-out','输出合规检测','通过',epoch);
+    setFlowState('reply','returned','已返回',epoch);
+    appendMessage('assistant',reply,epoch);
     return false;
   }
 }
 
 /* ============ 故障演练 ============ */
 function currentFaultItems(){ return FAULT_CASES[currentScenario] || FAULT_CASES.ecom; }
-function renderFaultOptions(){
+function renderFaultOptions(epoch){
+  assertRunCurrent(epoch);
   var select=document.getElementById('fault-select'); if(!select) return;
   var items=currentFaultItems();
   var options=Object.keys(items).map(function(key){
     return '<option value="'+currentScenario+':'+key+'" data-fault-type="'+key+'">'+escH(items[key].label)+'</option>';
   }).join('');
+  assertRunCurrent(epoch);
   select.innerHTML=options;
-  renderFaultPreview();
+  renderFaultPreview(epoch);
 }
-function renderFaultPreview(){
+function renderFaultPreview(epoch){
+  if(typeof epoch === 'undefined') epoch=runEpoch;
+  assertRunCurrent(epoch);
   var select=document.getElementById('fault-select');
   var box=document.getElementById('fault-preview');
   if(!select || !box) return;
   var key=String(select.value).split(':').slice(1).join(':');
   var fault=currentFaultItems()[key]; if(!fault) return;
+  assertRunCurrent(epoch);
   box.innerHTML='';
-  var input=document.createElement('strong'); input.textContent=fault.input;
-  var risk=document.createElement('span'); risk.className='risk'; risk.textContent='风险 · '+fault.riskLevel;
-  var guard=document.createElement('span'); guard.className='guard'; guard.textContent='预期护栏：'+fault.expectedGuardrail;
+  var input=document.createElement('strong'); assertRunCurrent(epoch); input.textContent=fault.input;
+  var risk=document.createElement('span'); risk.className='risk'; assertRunCurrent(epoch); risk.textContent='风险 · '+fault.riskLevel;
+  var guard=document.createElement('span'); guard.className='guard'; assertRunCurrent(epoch); guard.textContent='预期护栏：'+fault.expectedGuardrail;
+  assertRunCurrent(epoch);
   box.append(input,risk,guard);
 }
-function completeFault(fault){
-  traceGuardrail(fault.triggerNode,'故障护栏',fault.expectedGuardrail);
-  appendLog('故障处置：'+fault.expectedOutcome,'warn');
-  appendMessage('assistant',fault.expectedOutcome+'。本次模拟不会继续执行被拦截路径。');
-  finishTrace('blocked',fault.expectedOutcome);
-  enableInput();
+function completeFault(fault,epoch){
+  assertRunCurrent(epoch);
+  traceGuardrail(fault.triggerNode,'故障护栏',fault.expectedGuardrail,epoch);
+  appendLog('故障处置：'+fault.expectedOutcome,'warn',epoch);
+  appendMessage('assistant',fault.expectedOutcome+'。本次模拟不会继续执行被拦截路径。',epoch);
+  finishTrace('blocked',fault.expectedOutcome,null,epoch);
+  enableInput(epoch);
 }
 async function runFaultCase(faultKey){
   if(isBusy) return;
   var fault=currentFaultItems()[faultKey];
   if(!fault) return;
   var epoch=++runEpoch;
-  disableInput(); resetAllNodes(); clearRunReview();
+  assertRunCurrent(epoch);
+  disableInput(epoch); resetAllNodes(epoch); clearRunReview(epoch);
+  assertRunCurrent(epoch);
   runTrace=createRunTrace(fault.label,faultKey);
-  appendMessage('user',fault.input);
-  appendLog('开始故障演练：'+fault.label,'info');
-  appendLayerTag('故障演练 · '+fault.label);
-  setFlowState('guard-in','active','输入检测');
+  appendMessage('user',fault.input,epoch);
+  appendLog('开始故障演练：'+fault.label,'info',epoch);
+  appendLayerTag('故障演练 · '+fault.label,epoch);
+  setFlowState('guard-in','active','输入检测',epoch);
   await sleep(260);
-  if(epoch!==runEpoch) return;
+  if(!isRunCurrent(epoch)) return;
 
   if(faultKey==='stale-knowledge'){
-    setFlowState('guard-in','done','输入检测通过');
-    setFlowState('router','done','路由到 FAQ');
-    setFlowState('branch','done','知识路径');
-    setFlowState('rag','active','校验知识版本');
+    setFlowState('guard-in','done','输入检测通过',epoch);
+    setFlowState('router','done','路由到 FAQ',epoch);
+    setFlowState('branch','done','知识路径',epoch);
+    setFlowState('rag','active','校验知识版本',epoch);
     await sleep(360);
-    if(epoch!==runEpoch) return;
-    setFlowState('rag','blocked','知识版本过期');
-    completeFault(fault);
+    if(!isRunCurrent(epoch)) return;
+    setFlowState('rag','blocked','知识版本过期',epoch);
+    completeFault(fault,epoch);
   }else if(faultKey==='prompt-injection'){
     await sleep(360);
-    if(epoch!==runEpoch) return;
-    setFlowState('guard-in','blocked','Prompt 注入已拦截');
-    completeFault(fault);
+    if(!isRunCurrent(epoch)) return;
+    setFlowState('guard-in','blocked','Prompt 注入已拦截',epoch);
+    completeFault(fault,epoch);
   }else if(faultKey==='unauthorized-data'){
-    setFlowState('guard-in','done','输入检测通过');
-    setFlowState('router','done','路由到 logistics');
-    setFlowState('branch','done','Text-to-SQL 路径');
-    setFlowState('sql','active','权限校验');
-    setNodeState('logistics','routing','校验权限');
+    setFlowState('guard-in','done','输入检测通过',epoch);
+    setFlowState('router','done','路由到 logistics',epoch);
+    setFlowState('branch','done','Text-to-SQL 路径',epoch);
+    setFlowState('sql','active','权限校验',epoch);
+    setNodeState('logistics','routing','校验权限',epoch);
     await sleep(360);
-    if(epoch!==runEpoch) return;
-    setNodeState('logistics','escalated','权限拦截');
-    setFlowState('sql','blocked','未授权查询已拦截');
-    completeFault(fault);
+    if(!isRunCurrent(epoch)) return;
+    setNodeState('logistics','escalated','权限拦截',epoch);
+    setFlowState('sql','blocked','未授权查询已拦截',epoch);
+    completeFault(fault,epoch);
   }else if(faultKey==='low-confidence-intent'){
-    setFlowState('guard-in','done','输入检测通过');
-    setFlowState('router','active','置信度评估');
-    setNodeState('router','routing','置信度不足');
+    setFlowState('guard-in','done','输入检测通过',epoch);
+    setFlowState('router','active','置信度评估',epoch);
+    setNodeState('router','routing','置信度不足',epoch);
     await sleep(360);
-    if(epoch!==runEpoch) return;
-    setNodeState('router','done','低置信意图');
-    setFlowState('router','waiting','需要人工确认');
-    setFlowState('branch','waiting','暂停自动执行');
-    setFlowState('hitl','waiting','等待人工决策');
-    traceGuardrail(fault.triggerNode,'故障护栏',fault.expectedGuardrail);
+    if(!isRunCurrent(epoch)) return;
+    setNodeState('router','done','低置信意图',epoch);
+    setFlowState('router','waiting','需要人工确认',epoch);
+    setFlowState('branch','waiting','暂停自动执行',epoch);
+    setFlowState('hitl','waiting','等待人工决策',epoch);
+    traceGuardrail(fault.triggerNode,'故障护栏',fault.expectedGuardrail,epoch);
+    assertRunCurrent(epoch);
     runTrace.pendingHumanItems=['人工确认用户具体诉求后再继续'];
-    finishTrace('pending-human',fault.expectedOutcome,runTrace.pendingHumanItems);
+    finishTrace('pending-human',fault.expectedOutcome,runTrace.pendingHumanItems,epoch);
     showHumanIntervention({emotion_score:'N/A',emotion_label:'低置信'},
       {priority:'high',reason:fault.expectedGuardrail},fault.input,
-      {soothe:fault.safeResponse,faultType:faultKey});
+      {soothe:fault.safeResponse,faultType:faultKey},epoch);
   }
 }
 
 /* ============ HITL ============ */
-function showHumanIntervention(emo,es,originalMsg,sc){
+function showHumanIntervention(emo,es,originalMsg,sc,epoch){
+  assertRunCurrent(epoch);
   _hitlScript = sc;
+  _hitlEpoch = epoch;
   var msgs=document.getElementById('chat-messages');
+  assertRunCurrent(epoch);
   var card=document.createElement('div'); card.id='hitl-card'; card.className='hitl-card'; card.dataset.originalMsg=originalMsg;
+  assertRunCurrent(epoch);
   card.dataset.faultType=sc && sc.faultType || '';
   card.innerHTML='<div class="hitl-card-title">⚠️ 已触发人工审核（HITL 安全阀）</div>'+
     '<div class="hitl-card-body">情绪强度：'+escH(String(emo.emotion_score||'N/A'))+'/10 · '+escH(emo.emotion_label||'')+'<br>'+
@@ -1411,64 +1530,83 @@ function showHumanIntervention(emo,es,originalMsg,sc){
       '<button class="hitl-btn reject" data-hitl-action="reject" onclick="handleHITL(this,\\'reject\\')">🚫 直接转人工</button>'+
       '<button class="hitl-btn delegate" data-hitl-action="delegate" onclick="handleHITL(this,\\'delegate\\')">📞 升级主管</button>'+
     '</div>';
+  assertRunCurrent(epoch);
   msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight;
 }
 async function handleHITL(btn,action){
+  var epoch=_hitlEpoch;
+  if(!isRunCurrent(epoch)) return;
+  assertRunCurrent(epoch);
   var card=btn.closest('.hitl-card');
-  card.querySelectorAll('.hitl-btn').forEach(function(b){b.disabled=true;});
+  if(!card) return;
+  card.querySelectorAll('.hitl-btn').forEach(function(b){assertRunCurrent(epoch); b.disabled=true;});
   var originalMsg=card.dataset.originalMsg||'';
   var script=_hitlScript||{};
-  traceHITL(action, action==='approve'?'人工批准 AI 安抚':action==='reject'?'人工接管':'升级主管');
+  traceHITL(action, action==='approve'?'人工批准 AI 安抚':action==='reject'?'人工接管':'升级主管',epoch);
+  var resolved=false;
   try{
     if(action==='approve'){
-      appendLog('👤 人工批准 → AI 安抚','ok');
-      setNodeState('hitl','done','已处理'); setNodeState('soothe','active','安抚中…');
-      setFlowState('hitl','done','人工已批准');
-      setFlowState('gen','active','生成安抚回复');
-      var reply=await callAgent('soothe','原话：'+originalMsg+'（已人工审核确认安抚策略）',null,script.soothe);
-      setFlowState('gen','done','安抚回复生成完成');
-      setFlowState('guard-out','done','输出检测通过');
-      traceGuardrail('guard-out','输出合规检测','通过');
-      setFlowState('reply','returned','已返回');
-      appendMessage('assistant',reply);
-      finishTrace('completed','人工批准后发送安全安抚回复');
+      appendLog('👤 人工批准 → AI 安抚','ok',epoch);
+      setNodeState('hitl','done','已处理',epoch); setNodeState('soothe','active','安抚中…',epoch);
+      setFlowState('hitl','done','人工已批准',epoch);
+      setFlowState('gen','active','生成安抚回复',epoch);
+      var reply=await callAgent('soothe','原话：'+originalMsg+'（已人工审核确认安抚策略）',null,script.soothe,epoch);
+      assertRunCurrent(epoch);
+      setFlowState('gen','done','安抚回复生成完成',epoch);
+      setFlowState('guard-out','done','输出检测通过',epoch);
+      traceGuardrail('guard-out','输出合规检测','通过',epoch);
+      setFlowState('reply','returned','已返回',epoch);
+      appendMessage('assistant',reply,epoch);
+      finishTrace('completed','人工批准后发送安全安抚回复',null,epoch);
+      resolved=true;
     }else if(action==='reject'){
-      appendLog('👤 人工接管','ok'); setNodeState('hitl','done','人工接管');
-      setFlowState('hitl','done','人工接管'); setFlowState('reply','returned','已转人工');
-      appendMessage('assistant','您好，已为您转接专属客服，稍后会有专人与您联系，请稍候。');
-      finishTrace('completed','人工接管，停止自动生成');
+      appendLog('👤 人工接管，等待人工继续处理','ok',epoch);
+      setNodeState('hitl','escalated','人工接管，等待处理',epoch);
+      setFlowState('hitl','waiting','已转人工，等待接管',epoch);
+      setFlowState('reply','returned','已转人工',epoch);
+      appendMessage('assistant','您好，已为您转接专属客服，稍后会有专人与您联系，请稍候。',epoch);
+      finishTrace('pending-human','人工接管，等待后续人工处理',
+        (runTrace.pendingHumanItems||[]).concat('人工客服继续处理本次会话'),epoch);
     }else{
-      appendLog('👤 升级至主管','warn'); setNodeState('hitl','escalated','升级主管');
-      setFlowState('hitl','waiting','等待主管人工跟进');
-      appendMessage('assistant','您的问题已升级至客服主管处理，后续由人工团队跟进，感谢您的耐心等待。');
-      finishTrace('completed','升级主管，转入人工跟进',['主管后续人工跟进']);
+      appendLog('👤 升级至主管，等待人工跟进','warn',epoch);
+      setNodeState('hitl','escalated','等待主管跟进',epoch);
+      setFlowState('hitl','waiting','等待主管人工跟进',epoch);
+      appendMessage('assistant','您的问题已升级至客服主管处理，后续由人工团队跟进，感谢您的耐心等待。',epoch);
+      finishTrace('pending-human','升级主管，等待人工跟进',
+        (runTrace.pendingHumanItems||[]).concat('主管后续人工跟进'),epoch);
     }
-    card.dataset.hitlState='resolved';
+    assertRunCurrent(epoch);
+    card.dataset.hitlState=resolved?'resolved':'handed-off';
   }catch(e){
-    appendMessage('assistant','❌ 处理出错：'+e.message);
-    finishTrace('blocked','人工动作处理失败',['人工重新确认处置动作']);
+    if(e && e.staleRun) return;
+    if(!isRunCurrent(epoch)) return;
+    appendMessage('assistant','❌ 处理出错：'+e.message,epoch);
+    finishTrace('pending-human','人工动作处理失败',['人工重新确认处置动作'],epoch);
+    assertRunCurrent(epoch);
+    card.dataset.hitlState='pending-human';
   }
-  enableInput();
+  if(isRunCurrent(epoch)) enableInput(epoch);
 }
 
 /* ============ 输入控制 ============ */
-function enableInput(){
+function enableInput(epoch){
+  assertRunCurrent(epoch);
   isBusy=false;
-  document.getElementById('send-btn').disabled=false;
-  document.getElementById('chat-input').disabled=false;
-  document.querySelectorAll('.quick-btn').forEach(function(b){b.disabled=false;});
-  document.querySelectorAll('.scn-card').forEach(function(b){b.disabled=false;});
-  var faultSelect=document.getElementById('fault-select'); if(faultSelect) faultSelect.disabled=false;
-  var faultBtn=document.getElementById('run-fault-btn'); if(faultBtn) faultBtn.disabled=false;
+  var sendBtn=document.getElementById('send-btn'); if(sendBtn){ assertRunCurrent(epoch); sendBtn.disabled=false; }
+  var chatInput=document.getElementById('chat-input'); if(chatInput){ assertRunCurrent(epoch); chatInput.disabled=false; }
+  document.querySelectorAll('.quick-btn').forEach(function(b){assertRunCurrent(epoch); b.disabled=false;});
+  document.querySelectorAll('.scn-card').forEach(function(b){assertRunCurrent(epoch); b.disabled=false;});
+  var faultSelect=document.getElementById('fault-select'); if(faultSelect){ assertRunCurrent(epoch); faultSelect.disabled=false; }
+  var faultBtn=document.getElementById('run-fault-btn'); if(faultBtn){ assertRunCurrent(epoch); faultBtn.disabled=false; }
 }
-function disableInput(){
+function disableInput(epoch){
+  assertRunCurrent(epoch);
   isBusy=true;
-  document.getElementById('send-btn').disabled=true;
-  document.getElementById('chat-input').disabled=true;
-  document.querySelectorAll('.quick-btn').forEach(function(b){b.disabled=true;});
-  document.querySelectorAll('.scn-card').forEach(function(b){b.disabled=true;});
-  var faultSelect=document.getElementById('fault-select'); if(faultSelect) faultSelect.disabled=true;
-  var faultBtn=document.getElementById('run-fault-btn'); if(faultBtn) faultBtn.disabled=true;
+  var sendBtn=document.getElementById('send-btn'); if(sendBtn){ assertRunCurrent(epoch); sendBtn.disabled=true; }
+  var chatInput=document.getElementById('chat-input'); if(chatInput){ assertRunCurrent(epoch); chatInput.disabled=true; }
+  document.querySelectorAll('.quick-btn').forEach(function(b){assertRunCurrent(epoch); b.disabled=true;});
+  var faultSelect=document.getElementById('fault-select'); if(faultSelect){ assertRunCurrent(epoch); faultSelect.disabled=true; }
+  var faultBtn=document.getElementById('run-fault-btn'); if(faultBtn){ assertRunCurrent(epoch); faultBtn.disabled=true; }
 }
 function runSelectedFault(){
   var select=document.getElementById('fault-select');
@@ -1480,7 +1618,8 @@ function traceValue(items, formatter, empty){
   if(!items || !items.length) return empty;
   return items.map(formatter).join(' · ');
 }
-function renderRunReview(){
+function renderRunReview(epoch){
+  assertRunCurrent(epoch);
   var review=document.getElementById('run-review');
   var exportBtn=document.getElementById('export-run-btn');
   if(!review) return;
@@ -1503,13 +1642,13 @@ function renderRunReview(){
   var guards=document.querySelector('[data-run-guardrails]');
   var hitl=document.querySelector('[data-run-hitl]');
   var pending=document.querySelector('[data-run-pending]');
-  if(status) status.textContent=statusLabels[runTrace.finalStatus]||runTrace.finalStatus;
-  if(outcome) outcome.textContent=runTrace.finalOutcome||'运行中';
-  if(nodes) nodes.textContent=traceValue(runTrace.visitedNodes,function(id){return id;},'尚未经过节点');
-  if(guards) guards.textContent=traceValue(runTrace.guardrails,function(item){return item.rule+'：'+item.result;},'未触发额外护栏');
-  if(hitl) hitl.textContent=traceValue(runTrace.hitlActions,function(item){return item.label;},'未触发 HITL');
-  if(pending) pending.textContent=traceValue(runTrace.pendingHumanItems,function(item){return item;},'无');
-  if(exportBtn) exportBtn.disabled=runTrace.finalStatus==='running';
+  if(status){ assertRunCurrent(epoch); status.textContent=statusLabels[runTrace.finalStatus]||runTrace.finalStatus; }
+  if(outcome){ assertRunCurrent(epoch); outcome.textContent=runTrace.finalOutcome||'运行中'; }
+  if(nodes){ assertRunCurrent(epoch); nodes.textContent=traceValue(runTrace.visitedNodes,function(id){return id;},'尚未经过节点'); }
+  if(guards){ assertRunCurrent(epoch); guards.textContent=traceValue(runTrace.guardrails,function(item){return item.rule+'：'+item.result;},'未触发额外护栏'); }
+  if(hitl){ assertRunCurrent(epoch); hitl.textContent=traceValue(runTrace.hitlActions,function(item){return item.label;},'未触发 HITL'); }
+  if(pending){ assertRunCurrent(epoch); pending.textContent=traceValue(runTrace.pendingHumanItems,function(item){return item;},'无'); }
+  if(exportBtn){ assertRunCurrent(epoch); exportBtn.disabled=runTrace.finalStatus==='running'; }
 }
 function buildExportPayload(){
   return {
@@ -1524,41 +1663,51 @@ function buildExportPayload(){
   };
 }
 function exportRunData(){
+  var epoch=runEpoch;
+  assertRunCurrent(epoch);
   if(!runTrace || runTrace.finalStatus==='running') return;
   var blob=new Blob([JSON.stringify(buildExportPayload(),null,2)],{type:'application/json'});
   var url=URL.createObjectURL(blob);
   var link=document.createElement('a');
+  assertRunCurrent(epoch);
   link.href=url; link.download='service-agent-'+currentScenario+'-run.json';
+  assertRunCurrent(epoch);
   document.body.appendChild(link); link.click(); link.remove();
-  setTimeout(function(){URL.revokeObjectURL(url);},0);
+  setTimeout(function(){ if(isRunCurrent(epoch)) URL.revokeObjectURL(url); },0);
 }
-function clearRunReview(){
+function clearRunReview(epoch){
+  assertRunCurrent(epoch);
   runTrace=null;
-  renderRunReview();
+  renderRunReview(epoch);
 }
 window.__SERVICE_AGENT__={
   getRunTrace:function(){return runTrace?cloneData(runTrace):null;},
   getExportPayload:function(){return runTrace?buildExportPayload():null;}
 };
 var SCN_NAMES = ${JSON.stringify(Object.fromEntries(Object.entries(SCENARIOS).map(([k,v])=>[k,v.name])))};
-function restartDemo(){
+function restartDemo(epoch){
   // 重置全部全局流程状态（feedback_global_state_reset）
-  runEpoch += 1;
-  isBusy=false; _hitlScript=null;
-  resetAllNodes();
-  clearRunReview();
-  document.getElementById('chat-messages').innerHTML='';
-  appendMessage('assistant','你好，这里是「'+(SCN_NAMES[currentScenario]||'')+'」。试试下面的预设问题，看请求如何流经各层。');
-  enableInput();
+  if(typeof epoch === 'undefined') epoch=++runEpoch;
+  assertRunCurrent(epoch);
+  isBusy=false; _hitlScript=null; _hitlEpoch=null;
+  resetAllNodes(epoch);
+  clearRunReview(epoch);
+  var input=document.getElementById('chat-input'); if(input){ assertRunCurrent(epoch); input.value=''; }
+  var messages=document.getElementById('chat-messages'); if(messages){ assertRunCurrent(epoch); messages.innerHTML=''; }
+  appendMessage('assistant','你好，这里是「'+(SCN_NAMES[currentScenario]||'')+'」。试试下面的预设问题，看请求如何流经各层。',epoch);
+  enableInput(epoch);
+  return epoch;
 }
 
 /* quick / send：按当前场景取对应脚本 */
 function currentScripts(){ return MOCK_SCRIPT[currentScenario] || MOCK_SCRIPT.ecom; }
 
-function renderQuickButtons(){
+function renderQuickButtons(epoch){
+  assertRunCurrent(epoch);
   var row=document.getElementById('quick-row'); if(!row) return;
   var s=currentScripts();
   var order=['faq','logistics','return','complaint'];
+  assertRunCurrent(epoch);
   row.innerHTML=order.map(function(k){
     return '<button class="quick-btn" onclick="sendQuick(\\''+k+'\\')">'+escH(s[k].qLabel)+'</button>';
   }).join('');
@@ -1566,12 +1715,14 @@ function renderQuickButtons(){
 function sendQuick(key){
   if(isBusy) return;
   var sc = currentScripts()[key];
+  assertRunCurrent(runEpoch);
   document.getElementById('chat-input').value='';
   runChat(sc.q, sc);
 }
 function sendChat(){
   var input=document.getElementById('chat-input');
   var msg=input.value.trim(); if(!msg||isBusy) return;
+  assertRunCurrent(runEpoch);
   input.value='';
   // 关键词粗匹配到当前场景的预设脚本（演示路由分流逻辑）
   var key='faq';
@@ -1788,7 +1939,7 @@ function normalizeLineEndings(value) {
 }
 
 const publicPath = path.join(__dirname, 'index.html');
-const candidatePath = GENERATOR_MODE === 'candidate' ? path.resolve(GENERATOR_ARGS[1] || '') : null;
+const candidatePath = GENERATOR_MODE === 'candidate' ? path.resolve(GENERATOR_CANDIDATE_ARG) : null;
 if (GENERATOR_MODE === 'candidate') {
   const candidateRoot = path.resolve(__dirname, '../../build/candidate-site');
   const relative = path.relative(candidateRoot, candidatePath);
