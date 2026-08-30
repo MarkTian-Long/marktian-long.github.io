@@ -3,7 +3,6 @@
   "image_contract": {
     "version": 1,
     "legacy_without_visuals": [
-      "personal-harness",
       "alignment-under-change",
       "ai-rd-self-acceleration-rsi",
       "enterprise-agent-governance",
@@ -70,6 +69,15 @@
       ],
       "category": "技术",
       "url": "posts/personal-harness.html",
+      "visuals": {
+        "cover": {
+          "src": "assets/images/blog/personal-harness/cover.jpg",
+          "alt": "个人工作台被 Context、Memory、工具、方法和反馈五个模块连接成持续积累的协作闭环",
+          "width": 1200,
+          "height": 630
+        },
+        "inline": []
+      },
       "relations": [
         { "slug": "harness-engineering", "type": "builds_on" }
       ]
