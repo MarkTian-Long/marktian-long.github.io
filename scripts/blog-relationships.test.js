@@ -6,12 +6,19 @@ const { validateBlogMetadata } = require('./generate-search-assets.js');
 function post(slug, date, topics, extra = {}) {
   return { slug, date, title: slug, summary: slug, share_quote: `${slug} quote`, url: `posts/${slug}.html`, tags: ['技术判断'], topics, category: '技术', concepts: [`${slug}-a`, `${slug}-b`, `${slug}-c`, `${slug}-d`], ...extra };
 }
+function metadata(posts) {
+  return {
+    version: 4,
+    image_contract: { version: 1, legacy_without_visuals: posts.map((entry) => entry.slug) },
+    posts,
+  };
+}
 function slugs(items) { return items.map((item) => item.post.slug); }
 
 test('relations reject invalid type, target, self-reference, and duplicate targets', () => {
-  const base = { version: 3, posts: [post('a', '2026.01', ['Agent']), post('b', '2026.02', ['Agent'])] };
+  const base = metadata([post('a', '2026.01', ['Agent']), post('b', '2026.02', ['Agent'])]);
   assert.doesNotThrow(() => validateBlogMetadata(base));
-  const withRelations = (relations) => ({ version: 3, posts: base.posts.map((entry) => entry.slug === 'a' ? { ...entry, relations } : entry) });
+  const withRelations = (relations) => metadata(base.posts.map((entry) => entry.slug === 'a' ? { ...entry, relations } : entry));
   assert.throws(() => validateBlogMetadata(withRelations([{ slug: 'b', type: 'wrong' }])), /type is invalid/);
   assert.throws(() => validateBlogMetadata(withRelations([{ slug: 'missing', type: 'builds_on' }])), /target must exist/);
   assert.throws(() => validateBlogMetadata(withRelations([{ slug: 'a', type: 'builds_on' }])), /cannot reference itself/);
@@ -21,14 +28,14 @@ test('relations reject invalid type, target, self-reference, and duplicate targe
 test('more than four explicit relations requires editorial QA instead of runtime truncation', () => {
   const posts = ['a', 'b', 'c', 'd', 'e', 'f'].map((slug, index) => post(slug, `2026.0${index + 1}`, ['Agent']));
   posts[0].relations = ['b', 'c', 'd', 'e', 'f'].map((slug) => ({ slug, type: 'builds_on' }));
-  assert.throws(() => validateBlogMetadata({ version: 3, posts }), /more than 4.*review/i);
+  assert.throws(() => validateBlogMetadata(metadata(posts)), /more than 4.*review/i);
 });
 
 test('relation QA counts distinct displayed targets when declarations are bidirectional', () => {
   const a = post('a', '2026.01', ['Agent'], { relations: [{ slug: 'b', type: 'companion' }] });
   const b = post('b', '2026.02', ['Agent'], { relations: [{ slug: 'a', type: 'companion' }, { slug: 'c', type: 'builds_on' }, { slug: 'd', type: 'revises' }, { slug: 'e', type: 'companion' }] });
   const c = post('c', '2026.03', ['Agent']); const d = post('d', '2026.04', ['Agent']); const e = post('e', '2026.05', ['Agent']);
-  assert.doesNotThrow(() => validateBlogMetadata({ version: 3, posts: [a, b, c, d, e] }));
+  assert.doesNotThrow(() => validateBlogMetadata(metadata([a, b, c, d, e])));
 });
 
 test('new explicit relations render forward and reverse labels without editing old metadata', () => {

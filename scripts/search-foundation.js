@@ -1,3 +1,5 @@
+const { resolvePostCover } = require('./blog-image-contract');
+
 function trimTrailingSlash(value) {
   return String(value || '').replace(/\/+$/, '');
 }
@@ -130,7 +132,17 @@ function buildRss(config, posts) {
   ].join('\n');
 }
 
-function buildArticleJsonLd(config, metadata, url) {
+function resolveArticleImage(config, metadata) {
+  const cover = resolvePostCover(metadata, config);
+  return {
+    url: absoluteUrl(config.siteUrl, cover.src),
+    alt: cover.alt,
+    width: cover.width,
+    height: cover.height,
+  };
+}
+
+function buildArticleJsonLd(config, metadata, url, image = resolveArticleImage(config, metadata)) {
   return JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -138,7 +150,7 @@ function buildArticleJsonLd(config, metadata, url) {
     description: metadata.summary,
     url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    image: [absoluteUrl(config.siteUrl, config.blog.imagePath)],
+    image: [image.url],
     author: {
       '@type': 'Person',
       name: config.author.name,
@@ -150,8 +162,8 @@ function buildArticleJsonLd(config, metadata, url) {
 function buildArticleSeoBlock(metadata, config) {
   const url = articleUrl(config, metadata);
   const feedUrl = absoluteUrl(config.siteUrl, config.blog.feedPath);
-  const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
-  const jsonLd = buildArticleJsonLd(config, metadata, url);
+  const image = resolveArticleImage(config, metadata);
+  const jsonLd = buildArticleJsonLd(config, metadata, url, image);
 
   return [
     '<!-- search-foundation:start -->',
@@ -161,10 +173,15 @@ function buildArticleSeoBlock(metadata, config) {
     `<meta property="og:title" content="${htmlAttributeEscape(metadata.title)}" />`,
     `<meta property="og:description" content="${htmlAttributeEscape(metadata.summary)}" />`,
     `<meta property="og:url" content="${htmlAttributeEscape(url)}" />`,
-    `<meta property="og:image" content="${htmlAttributeEscape(imageUrl)}" />`,
+    `<meta property="og:image" content="${htmlAttributeEscape(image.url)}" />`,
+    `<meta property="og:image:width" content="${htmlAttributeEscape(image.width)}" />`,
+    `<meta property="og:image:height" content="${htmlAttributeEscape(image.height)}" />`,
+    `<meta property="og:image:alt" content="${htmlAttributeEscape(image.alt)}" />`,
+    '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${htmlAttributeEscape(metadata.title)}" />`,
     `<meta name="twitter:description" content="${htmlAttributeEscape(metadata.summary)}" />`,
-    `<meta name="twitter:image" content="${htmlAttributeEscape(imageUrl)}" />`,
+    `<meta name="twitter:image" content="${htmlAttributeEscape(image.url)}" />`,
+    `<meta name="twitter:image:alt" content="${htmlAttributeEscape(image.alt)}" />`,
     `<script type="application/ld+json">${jsonLd}</script>`,
     '<!-- search-foundation:end -->'
   ].join('\n');
@@ -228,8 +245,8 @@ function stripArticleSeo(sourceHtml) {
     /[ \t]*<meta\b(?=[^>]*\bname=["']description["'])[^>]*\/?>[ \t]*\r?\n?/gi,
     /[ \t]*<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\/?>[ \t]*\r?\n?/gi,
     /[ \t]*<link\b(?=[^>]*\brel=["']alternate["'])(?=[^>]*\btype=["']application\/rss\+xml["'])[^>]*\/?>[ \t]*\r?\n?/gi,
-    /[ \t]*<meta\b(?=[^>]*\bproperty=["']og:(?:title|description|url|image)["'])[^>]*\/?>[ \t]*\r?\n?/gi,
-    /[ \t]*<meta\b(?=[^>]*\bname=["']twitter:(?:title|description|image)["'])[^>]*\/?>[ \t]*\r?\n?/gi
+    /[ \t]*<meta\b(?=[^>]*\bproperty=["']og:(?:title|description|url|image(?::(?:width|height|alt))?)["'])[^>]*\/?>[ \t]*\r?\n?/gi,
+    /[ \t]*<meta\b(?=[^>]*\bname=["']twitter:(?:card|title|description|image(?::alt)?)["'])[^>]*\/?>[ \t]*\r?\n?/gi
   ]);
   return removeJsonLdScriptsByType(withoutTags, ['BlogPosting']);
 }
@@ -332,6 +349,7 @@ function ensureEntryPageSeo(sourceHtml, pageType, config) {
 
 module.exports = {
   absoluteUrl,
+  resolveArticleImage,
   xmlEscape,
   htmlAttributeEscape,
   extractBody,

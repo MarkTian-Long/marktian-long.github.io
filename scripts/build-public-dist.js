@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { publicFiles, validateManifest } = require('./public-dist-manifest');
+const { publicFiles, resolvePublicPath, validateManifest } = require('./public-dist-manifest');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -42,9 +42,10 @@ function buildPublicDist({ rootDir = repoRoot, outputDir = path.join(repoRoot, '
   fs.mkdirSync(outputDir, { recursive: true });
 
   for (const relativePath of files) {
-    const targetPath = path.join(outputDir, relativePath);
+    const sourcePath = resolvePublicPath(rootDir, relativePath);
+    const targetPath = resolvePublicPath(outputDir, relativePath);
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.copyFileSync(path.join(rootDir, relativePath), targetPath);
+    fs.copyFileSync(sourcePath, targetPath);
   }
   return files;
 }

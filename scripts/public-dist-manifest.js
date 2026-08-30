@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { collectPostImagePaths, validateImageContract } = require('./blog-image-contract');
 
 const PUBLIC_FILES = [
   'index.html',
@@ -55,6 +56,23 @@ function toPosix(filePath) {
   return filePath.split(path.sep).join('/');
 }
 
+function resolvePublicPath(rootDir, relativePath) {
+  if (typeof relativePath !== 'string' || !relativePath || relativePath.includes('\\') || path.posix.isAbsolute(relativePath)) {
+    throw new Error(`Public artifact must use a non-empty forward-slash relative path: ${relativePath}`);
+  }
+  const normalized = path.posix.normalize(relativePath);
+  if (normalized !== relativePath || normalized === '..' || normalized.startsWith('../')) {
+    throw new Error(`Public artifact must stay within the public root: ${relativePath}`);
+  }
+  const absoluteRoot = path.resolve(rootDir);
+  const absolutePath = path.resolve(absoluteRoot, ...relativePath.split('/'));
+  const relative = path.relative(absoluteRoot, absolutePath);
+  if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error(`Public artifact must stay within the public root: ${relativePath}`);
+  }
+  return absolutePath;
+}
+
 function listBlogPosts(rootDir) {
   const postsDir = path.join(rootDir, 'tools/blog/posts');
   return fs.readdirSync(postsDir, { withFileTypes: true })
@@ -63,14 +81,27 @@ function listBlogPosts(rootDir) {
     .sort();
 }
 
+function listBlogImages(rootDir) {
+  const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  validateImageContract(metadata);
+  return collectPostImagePaths(metadata.posts);
+}
+
 function publicFiles(rootDir) {
-  return [...PUBLIC_FILES, ...listBlogPosts(rootDir)].sort();
+  return [...PUBLIC_FILES, ...listBlogPosts(rootDir), ...listBlogImages(rootDir)].sort();
 }
 
 function validateManifest(rootDir, files = publicFiles(rootDir)) {
   const errors = [];
   for (const relativePath of files) {
-    const absolutePath = path.join(rootDir, relativePath);
+    let absolutePath;
+    try {
+      absolutePath = resolvePublicPath(rootDir, relativePath);
+    } catch (error) {
+      errors.push(error.message);
+      continue;
+    }
     if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
       errors.push(`Missing public source file: ${relativePath}`);
     }
@@ -87,7 +118,9 @@ function validateManifest(rootDir, files = publicFiles(rootDir)) {
 
 module.exports = {
   PUBLIC_FILES,
+  listBlogImages,
   publicFiles,
+  resolvePublicPath,
   toPosix,
   validateManifest,
 };

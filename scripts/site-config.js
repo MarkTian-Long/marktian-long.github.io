@@ -11,6 +11,9 @@ module.exports = Object.freeze({
     path: '/tools/blog/',
     feedPath: '/feed.xml',
     imagePath: '/assets/images/og-cover.png',
+    imageAlt: 'Leo · AI · Product · Builder',
+    imageWidth: 1200,
+    imageHeight: 630,
     feedLimit: 20
   }
 });

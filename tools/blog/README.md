@@ -8,6 +8,7 @@
 tools/blog/
 ├── README.md               本文件
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
+├── VISUAL_GUIDE.md         新文章视觉系统（封面/正文图/提示词/资产检查）
 ├── article-links.css       文章页共享链接语义与键盘焦点样式
 ├── article-runtime.js      文章页共享主题、元数据降级、参考资料呈现、继续阅读与时间导航
 ├── share-card.*            本地 Canvas 分享海报页（固定 1080 × 1920 PNG）
@@ -53,16 +54,16 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **新增文章**：遵循 `WRITING_GUIDE.md` 规范，最终 Markdown 的标题下唯一 blockquote 是正式 `summary`，发布阶段原样同步到 `data/posts-meta.json`；Codex 只从终稿正文选择 `share_quote`，Markdown 无需携带发布 metadata；仅当内容评审已确认强关系时，额外维护可选 `relations`
-- **文章清单**：以 `data/posts-meta.json` 为单一来源；上方目录只保留近期与代表性文章，避免手工清单漂移
+- **新增文章**：遵循 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md`。最终 Markdown 的标题下唯一 blockquote 是正式 `summary`，发布阶段原样同步到 `data/posts-meta.json`；Codex 只从终稿正文选择 `share_quote`，Markdown 无需携带发布 metadata；仅当内容评审已确认强关系时，额外维护可选 `relations`。每篇新文章必须有一张单篇封面；正文只在能明显降低理解成本时配 0–2 张图
+- **文章清单**：以 `data/posts-meta.json` v4 为单一来源；根级 `image_contract` 管理历史无图豁免，单篇 `visuals` 声明封面和正文图。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表即可。第一项是首页精选，Blog 最多展示前三项；最多 3 项，空数组关闭精选。不要把精选字段写入文章 metadata。
 - **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 编辑源，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
-- **发布生成**：先在 `posts-meta.json` 同步 Markdown blockquote 得到的 `summary` 并添加其他元数据，再运行 `node tools/blog/generate-post.js --write <source.md> <output.html>`；生成器会拒绝 summary 与最终 Markdown 不一致的源稿，最后运行 `node scripts/generate-search-assets.js --write`
+- **发布生成**：先在 `posts-meta.json` 同步 Markdown blockquote 得到的 `summary` 并添加其他元数据；用 `scripts/prepare-blog-image.js` 生成规范封面（及按需的正文图），再维护 `visuals` 和 Markdown 独立图片语法。随后运行 `node tools/blog/generate-post.js --write <source.md> <output.html>`；生成器会拒绝 summary 或图片声明与最终 Markdown 不一致的源稿，最后运行 `node scripts/generate-search-assets.js --write`
 - **分享海报**：文章页的「生成分享图」统一进入 `share-card.html?slug=<slug>`；预览页的「打开原文」、二维码区和底部域名均直达 canonical 原文，导出的 PNG 是普通图片，仅通过二维码跳转。海报页加载与首页相同的 Libre Baskerville / Source Sans 3 字重组合。二维码资产更新后运行 `node scripts/sync-share-card-vendor.js --check`，不使用第三方二维码服务。
 - **继续阅读**：新文只单向声明已确认的 `builds_on` / `revises` / `companion`；旧文的后续延展/修正由 metadata 自动反向更新，正文不回写。
 - **参考资料**：仅写语义化标题、分组、列表和可选可信度说明；历史 `.refs` 与新文章的 Markdown 结构均由 `article-runtime.js` 统一为默认收起、可键盘展开的紧凑辅助信息层。目录或 URL 锚点直达会自动展开，不批量改写 HTML 正文。
-- **发布检查**：提交前依次运行 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js scripts/blog-reference-presentation.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`
+- **发布检查**：提交前依次运行 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js scripts/blog-reference-presentation.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`。新公开图片还必须进入 metadata 声明的 public-dist 白名单，运行 `npm run build:public` 与 `npm run check:public-dist`，并按 `CONVENTIONS.md` 完成文章页桌面/移动、浅色/深色和图片失败状态的视觉检查
 - **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
 - **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库
 - **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200，且页面包含文章唯一标题。仅生成 HTML 或仅完成 commit 都不算发布完成

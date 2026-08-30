@@ -18,8 +18,8 @@ const baselinePost = metadata.posts.find((post) => post.slug === 'alignment-unde
 const normalize = (value) => String(value).replace(/\s+/g, '').replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 const normalizeLineEndings = (value) => String(value).replace(/\r\n?/g, '\n');
 
-test('v3 blog metadata has a trimmed, body-grounded share_quote for every post', () => {
-  assert.equal(metadata.version, 3);
+test('v4 blog metadata has a trimmed, body-grounded share_quote for every post', () => {
+  assert.equal(metadata.version, 4);
   assert.ok(metadata.posts.length > 0, 'posts metadata must contain at least one published post');
   assert.doesNotThrow(() => validateBlogMetadata(metadata));
   assert.equal(metadata.posts.filter((post) => typeof post.share_quote === 'string' && post.share_quote.trim()).length, metadata.posts.length);

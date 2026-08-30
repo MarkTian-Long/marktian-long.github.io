@@ -1,8 +1,10 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { publicFiles, validateManifest } = require('./public-dist-manifest');
+const { publicFiles, resolvePublicPath, validateManifest } = require('./public-dist-manifest');
 const { isLocalReference, referencedPaths, resolveReference } = require('./check-public-dist');
 const { outputDirFromArgs } = require('./build-public-dist');
 
@@ -29,6 +31,49 @@ test('public dist manifest includes every public entrypoint and excludes dev-onl
   assert.ok(!files.some(file => file.startsWith('tools/dashboard/')));
   assert.ok(!files.some(file => file.startsWith('tools/product-collector/')));
   assert.ok(!files.some(file => /(?:README\.md|config\.example\.js|gen_index\.js|proxy\.py)$/.test(file)));
+});
+
+test('public dist derives the exact blog image allowlist from metadata', () => {
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-public-images-'));
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/data'), { recursive: true });
+  fs.mkdirSync(path.join(rootDir, 'tools/blog/posts'), { recursive: true });
+  fs.mkdirSync(path.join(rootDir, 'assets/images/blog/sample-post'), { recursive: true });
+  fs.writeFileSync(path.join(rootDir, 'assets/images/blog/sample-post/orphan.webp'), 'orphan');
+  fs.writeFileSync(
+    path.join(rootDir, 'tools/blog/data/posts-meta.json'),
+    JSON.stringify({
+      version: 4,
+      image_contract: { version: 1, legacy_without_visuals: [] },
+      posts: [{
+        slug: 'sample-post',
+        visuals: {
+          cover: {
+            src: 'assets/images/blog/sample-post/cover.jpg',
+            alt: 'Sample cover',
+            width: 1200,
+            height: 630,
+          },
+          inline: [{
+            src: 'assets/images/blog/sample-post/context-loop.webp',
+            alt: 'Context loop',
+            caption: 'One sentence',
+            width: 1280,
+            height: 720,
+          }],
+        },
+      }],
+    }),
+    'utf8',
+  );
+
+  const files = publicFiles(rootDir);
+  assert.ok(files.includes('assets/images/blog/sample-post/cover.jpg'));
+  assert.ok(files.includes('assets/images/blog/sample-post/context-loop.webp'));
+  assert.ok(!files.includes('assets/images/blog/sample-post/orphan.webp'));
+  assert.match(
+    validateManifest(rootDir, files).join('\n'),
+    /Missing public source file: assets\/images\/blog\/sample-post\/cover\.jpg/,
+  );
 });
 
 test('Stock and ESOP load their application logic from dedicated files', () => {
@@ -78,4 +123,11 @@ test('external scripts resolve fetch paths from the document that executes them'
 test('public dist output directory cannot escape the repository', () => {
   assert.throws(() => outputDirFromArgs(['--out', '../outside']), /must stay within the repository/);
   assert.match(outputDirFromArgs(['--out', 'dist/smoke']), /[\\/]dist[\\/]smoke$/);
+});
+
+test('public source paths cannot escape or use platform-specific separators', () => {
+  assert.throws(() => resolvePublicPath(repoRoot, '../outside.html'), /must stay within the public root/i);
+  assert.throws(() => resolvePublicPath(repoRoot, 'assets\\images\\cover.jpg'), /forward-slash relative path/i);
+  assert.match(resolvePublicPath(repoRoot, 'assets/images/og-cover.png'), /assets[\\/]images[\\/]og-cover\.png$/);
+  assert.match(validateManifest(repoRoot, ['../outside.html']).join('\n'), /must stay within the public root/i);
 });
