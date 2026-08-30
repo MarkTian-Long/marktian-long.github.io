@@ -13,6 +13,7 @@ qiuzhi/
 │   ├── css/                # 样式文件
 │   ├── js/                 # 脚本文件
 │   └── images/             # 图片资源
+│       └── blog/<slug>/   # 博客单篇封面与正文图
 ├── tools/                  # 嵌入式工具（每个工具独立文件夹）
 │   └── <tool-name>/
 │       └── index.html
@@ -62,6 +63,7 @@ qiuzhi/
 
 - GitHub Pages 仅上传 `dist/`，该目录由 `scripts/public-dist-manifest.js` 的显式白名单生成。
 - 新增或重命名公开页面、数据、脚本、样式或图片时，必须同步更新 manifest，并运行 `npm run build:public` 与 `npm run check:public-dist`。
+- 博客图片例外由 `posts-meta.json` v4 的 `visuals` 精确声明，manifest 只收集已声明资产，不递归公开 `assets/images/blog/` 整个目录。
 - `docs/`、`scripts/`、README、生成器、配置示例和 dev-only 工具不得加入白名单。
 - `npm run build:candidate` 仅可写入 `build/candidate-site/`；候选构建经 Eleventy 处理首页与博客入口的冻结兼容模板，模板输入来自 `site/candidate/frozen-page-source.js` 的受版本控制基线快照，并按 manifest 精确 passthrough 其余公开文件，默认不得回写公开源或 `dist/`。
 
@@ -301,10 +303,11 @@ git status --short
 ## 八、博客内容规范
 
 ### 数据文件
-- 博客元数据统一存放在 `tools/blog/data/posts-meta.json`（单一来源）
+- 博客元数据统一存放在 `tools/blog/data/posts-meta.json` v4（单一来源）
 - 主页和列表页都通过 `fetch` 读取，**不得**在 HTML 内联重复的文章数组
 - `posts-meta.json` 是文章元数据的单一来源；新增文章时先添加元数据，再由生成脚本创建 HTML 和搜索发现资产
 - 博客正文源稿优先维护在 `docs/blog/<slug>.md`；新文章必须同时提交 Markdown 源稿和 `tools/blog/posts/<slug>.html` 发布物。历史文章可能存在 HTML 与 Markdown 不一致，禁止批量从旧 Markdown 重新生成并覆盖已发布 HTML
+- 主页与 Blog 列表保持纯文字；单篇图片只在文章页、分享元数据和结构化数据中使用，不为列表增加封面或缩略图
 
 ### posts-meta.json 字段规范
 
@@ -321,8 +324,16 @@ git status --short
 | category | string | 正式大分类：技术 / 产品 / 商业 / 行业；生活仅为历史兼容值，不作为当前维护中的正式分类 |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
 | relations | object[]（可选） | 新文章单向指向较早文章的强关系；仅 `builds_on` / `revises` / `companion`，target 必须存在且不能自引或重复 |
+| visuals | object | 非历史豁免文章必需；`cover` 声明单篇封面，`inline` 声明 0–2 张正文图 |
 
 `concepts` 只用于历史语义召回，不能推导显式关系或前端推荐。文章页「继续阅读」从中央 metadata 动态计算：强关系优先，旧文自动反向显示后续延展/修正；未来关系不得回写历史正文。
+
+### 博客图片契约
+
+- 根级 `image_contract.version` 为 `1`；`legacy_without_visuals` 只能列出已有历史文章，新文章不得借此跳过封面。历史豁免文章保持无单篇图片现状，不批量补图或改正文。
+- 每篇新文章必须有 `assets/images/blog/<slug>/cover.jpg`，规格为 JPEG 1200 × 630、不超过 350 KB。正文图只在对理解关系、顺序、边界、分层或反馈回路有实质帮助时使用 0–2 张，规格为 WebP 1280 × 720、单张不超过 250 KB。
+- 图片成品必须用 `scripts/prepare-blog-image.js` 生成，并通过 `node scripts/check-blog-images.js`。Markdown 正文图必须独立成行，其路径、alt 和 caption 与 `visuals.inline` 完全一致。
+- 完整视觉语言、生成模式、决策门和 alt/caption 规则见 `tools/blog/VISUAL_GUIDE.md`。
 
 ### 历史文章两阶段检索
 
@@ -331,8 +342,9 @@ git status --short
 - 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称，以及仅为增加内链的需求均不足以构成引用理由。
 
 ### 搜索元数据与发现资产
-- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts`）→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在不一致时直接失败。
+- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 和 `visuals` 的单一来源；canonical、标准 description、JSON-LD、OG/Twitter、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。新文章的 OG、Twitter large image card 与 JSON-LD 共用 `visuals.cover`；历史豁免文章回退到全站 `assets/images/og-cover.png`。
+- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts` 与 `visuals`）→生成并检查单篇封面及按需的 0–2 张正文图→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js` →构建/检查 public dist 与文章页视觉复核。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在不一致时直接失败。
+- 发布检查至少包含 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`npm run build:public` 和 `npm run check:public-dist`。有图文章页必须在桌面/移动、浅色/深色及图片加载失败状态下做真实截图审查。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。

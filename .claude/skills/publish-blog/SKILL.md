@@ -1,6 +1,6 @@
 ---
 name: publish-blog
-description: 发布 qiuzhi 博客文章的端到端流程，覆盖 Markdown 源稿、元数据、HTML 与搜索资产生成、检查、review、commit、HITL 推送、GitHub 网络与凭据回退、远端同步和 GitHub Pages 线上验证。用户要求“发布博客”“上传文章”“推送文章到 GitHub”或继续处理未完成的博客发布时使用。
+description: 发布 qiuzhi 博客文章的端到端流程，覆盖 Markdown 源稿、视觉资产、元数据、HTML 与搜索资产生成、检查、review、commit、HITL 推送、GitHub 网络与凭据回退、远端同步和 GitHub Pages 线上验证。用户要求“发布博客”“上传文章”“推送文章到 GitHub”或继续处理未完成的博客发布时使用。
 type: workflow
 ---
 
@@ -23,38 +23,58 @@ type: workflow
 
 1. 发布阶段由 Codex 按 `tools/blog/WRITING_GUIDE.md` 从最终 Markdown 正文选择 `share_quote` 并写入 `posts-meta.json`；Markdown 不需要携带该字段。确认元数据包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。
 2. 审核 `summary` 是否自然说明对象/问题、核心判断及关键机制或边界；审核 `concepts` 是否为 4-7 个具体、去重、非泛词的语义锚点，且不与 `tags/topics` 精确重复。若分类、标签、摘要或 concepts 存在实质歧义时向用户确认。
-3. 生成文章：
+3. 在最终内容与元数据评审完成后、生成 HTML 前执行视觉阶段：
+   - 读取 `image_contract.legacy_without_visuals`。只有该清单中的历史文章可以不含 `visuals`；清单外的文章必须有一张封面，并判断是否需要 0-2 张能解释机制、关系、流程或对比的正文图。正文图没有明确解释价值时使用 0 张，不为装饰而添加。
+   - 默认使用 Codex 内置 `imagegen`，此模式不索取、读取或配置 API key。只有用户明确选择时才使用 CLI/API 回退。
+   - 按 `tools/blog/VISUAL_GUIDE.md` 为每张图确定意图和提示词，检查完整分辨率结果；若存在明确缺陷，最多进行一次仅针对该缺陷的定向修订，不生成开放式候选批次。
+   - 将选中的候选复制到 `build/blog-image-work/<slug>/`，不得只留在 Codex 的生成图片目录。记录每张最终图使用的完整 prompt 和生成模式。
+   - 使用下列命令生成受约束的公开资产；正文图为每张图使用唯一、描述性的 kebab-case `name`：
+
+     ```powershell
+     node scripts/prepare-blog-image.js --slug <slug> --role cover --input build/blog-image-work/<slug>/<cover-candidate>
+     node scripts/prepare-blog-image.js --slug <slug> --role inline --name <descriptive-name> --input build/blog-image-work/<slug>/<inline-candidate>
+     ```
+
+   - 将最终路径、尺寸、alt、caption 写入该文章的 `visuals`；封面由生成器从元数据渲染，正文图同时按 `tools/blog/WRITING_GUIDE.md` 的 Markdown 图片语法放到确有解释价值的位置。
+   - 对于清单外的新图片契约文章，`imagegen` 失败、结果经一次定向修订仍不合格、或资产准备失败都必须阻断发布；不得静默回退到全站默认封面，也不得把文章临时加入 legacy 清单。
+4. 生成文章：
 
    ```powershell
    node tools/blog/generate-post.js --write docs/blog/<slug>.md tools/blog/posts/<slug>.html
    ```
 
-4. 刷新搜索发现资产：
+5. 刷新搜索发现资产：
 
    ```powershell
    node scripts/generate-search-assets.js --write
    ```
 
-5. 不批量用旧 Markdown 覆盖历史文章 HTML。生成器触碰但 `git diff --name-only` 不显示的文件属于换行符状态，不纳入提交。
-6. 生成器模板或搜索资产逻辑变更时，先运行对应 `--check` 与 contract fixture；除本次文章明确产物外，不得以写入模式批量重生历史 HTML。写入前先核对目标文件和既有公开页面 diff。
+6. 不批量用旧 Markdown 覆盖历史文章 HTML，也不为 legacy 清单中的文章补图。生成器触碰但 `git diff --name-only` 不显示的文件属于换行符状态，不纳入提交。
+7. 生成器模板或搜索资产逻辑变更时，先运行对应 `--check` 与 contract fixture；除本次文章明确产物外，不得以写入模式批量重生历史 HTML。写入前先核对目标文件和既有公开页面 diff。
 
 ## 3. 验证与提交
 
 依次运行：
 
 ```powershell
+node scripts/check-blog-images.js
 node scripts/generate-search-assets.js --check
 node scripts/check-search-foundation.js
-node --test scripts/search-foundation.test.js
+node --test scripts/search-foundation.test.js scripts/blog-image-contract.test.js scripts/blog-image-assets.test.js scripts/blog-image-rendering.test.js scripts/public-dist.test.js
+node scripts/check-blog-body-integrity.js
 node scripts/check-repository-policy.js
+node scripts/build-public-dist.js --out build/public-dist-blog-images
+node scripts/check-public-dist.js --out build/public-dist-blog-images
 ```
 
 然后：
 
-1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD 和文章正文。
-2. 执行项目要求的 review。
-3. 只暂存 Markdown、文章 HTML、元数据、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复。
-4. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。
+1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据、文章封面、声明的正文图和完整正文。
+2. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
+3. 通过本地 HTTP 服务打开真实文章，在桌面/移动端和明/暗主题下使用视觉模型检查图片加载状态，并模拟一次图片加载失败；确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
+4. 执行项目要求的 review。
+5. 只暂存 Markdown、文章 HTML、元数据、最终图片、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复；不得暂存候选图或临时 public-dist。
+6. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。
 
 ## 4. 推送 HITL
 
@@ -91,4 +111,4 @@ git push origin <branch>
 
 ## 6. 完成报告
 
-报告提交 SHA、远端同步状态、线上文章链接和验证结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”。
+报告提交 SHA、远端同步状态、线上文章链接和验证结果；同时报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”。
