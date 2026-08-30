@@ -42,7 +42,7 @@
   }
 
   function getNow() {
-    return root.__AGENT_HUB_NOW || '2026-08-30';
+    return root.__AGENT_HUB_NOW || new Date();
   }
 
   function countAnswers() {
@@ -219,7 +219,7 @@
         ['能力', fact.capabilities.join('、')],
         ['适用信号', fact.selectionSignal],
         ['限制', fact.caveat],
-        ['档案整理日期', fact.source.archivedAt + ' · ' + freshness.label],
+        ['档案整理日期', (freshness.archivedAt || '日期不可用') + ' · ' + freshness.label],
       ]) {
         const line = make('div', 'card-fact');
         append(line, make('strong', '', item[0]));

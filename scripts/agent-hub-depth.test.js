@@ -199,6 +199,24 @@ test('engine returns traditional automation for a clear deterministic task', () 
   assert.ok(result.stopConditions.length >= 2);
 });
 
+test('engine fails closed for unresolved answers in the six-question gate', () => {
+  assertImplementationLoaded();
+  const cases = [
+    ['taskClarity', 'unclear'],
+    ['repeatability', 'unknown'],
+    ['decomposition', 'unknown'],
+  ];
+
+  for (const [questionId, value] of cases) {
+    const result = evaluateDecision({ ...ANSWERS, [questionId]: value }, { now: '2026-08-30' });
+    assert.equal(result.status, 'needs-input', `${questionId}=${value} must need input`);
+    assert.equal(result.modeId, 'human-review', `${questionId}=${value} must route to human review`);
+    assert.equal(result.outcomeId, 'no-agent', `${questionId}=${value} must withdraw agent recommendation`);
+    assert.equal(result.requiresAgent, false, `${questionId}=${value} must not require an agent`);
+    assert.equal(result.hitRules.some((rule) => rule.id === 'input-incomplete'), true, `${questionId}=${value} must hit input-incomplete`);
+  }
+});
+
 test('engine distinguishes retrieval, single-agent and independent parallel work', () => {
   assertImplementationLoaded();
   const retrieval = evaluateDecision({ ...ANSWERS, knowledge: 'retrieval' }, { now: '2026-08-30' });
@@ -214,6 +232,34 @@ test('engine distinguishes retrieval, single-agent and independent parallel work
 
   const dependent = evaluateDecision({ ...ANSWERS, knowledge: 'judgment', decomposition: 'dependent' }, { now: '2026-08-30' });
   assert.equal(dependent.modeId === 'parallel-multi-agent', false);
+});
+
+test('rules-based independent work stays in traditional automation or workflow', () => {
+  assertImplementationLoaded();
+  const cases = [
+    ['single', 'automation'],
+    ['independent', 'automation'],
+  ];
+
+  for (const [decomposition, expectedMode] of cases) {
+    const result = evaluateDecision({ ...ANSWERS, decomposition }, { now: '2026-08-30' });
+    assert.equal(result.modeId, expectedMode, `rules + ${decomposition} should not become multi-agent`);
+    assert.equal(result.outcomeId, 'no-agent');
+    assert.equal(result.requiresAgent, false);
+    assert.equal(result.hitRules.some((rule) => rule.id === 'deterministic-automation'), true);
+    assert.equal(result.hitRules.some((rule) => rule.id === 'parallel-independent-only'), false);
+  }
+});
+
+test('excluded alternative reasons come from the rule that excludes each outcome', () => {
+  assertImplementationLoaded();
+  const result = evaluateDecision({ ...ANSWERS, knowledge: 'retrieval', decomposition: 'dependent' }, { now: '2026-08-30' });
+  const excludedParallel = result.excludedAlternatives.find((item) => item.id === 'parallel-multi-agent');
+  const retrievalRule = model.decisionRules.find((rule) => rule.id === 'retrieval-assistant');
+
+  assert.ok(excludedParallel);
+  assert.ok(retrievalRule);
+  assert.equal(excludedParallel.reason, retrievalRule.explanation);
 });
 
 test('engine forces preview, HITL, audit and stop conditions for high-risk or irreversible actions', () => {
@@ -256,4 +302,43 @@ test('same answers and evaluation date produce the same explainable decision', (
   const first = evaluateDecision({ ...ANSWERS, knowledge: 'judgment' }, { now: '2026-08-30' });
   const second = evaluateDecision({ ...ANSWERS, knowledge: 'judgment' }, { now: '2026-08-30' });
   assert.deepEqual(second, first);
+});
+
+test('framework dates fail closed for invalid, missing and future archive dates', () => {
+  assertImplementationLoaded();
+  const cases = [
+    ['2026-02-30', '2026-08-31', '资料日期不可用'],
+    ['invalid', '2026-08-31', '资料日期不可用'],
+    [undefined, '2026-08-31', '资料日期不可用'],
+    ['2026-09-01', '2026-08-31', '整理日期在未来'],
+  ];
+
+  for (const [archivedAt, now, expectedLabel] of cases) {
+    const freshness = getFrameworkFreshness({ source: { archivedAt } }, now);
+    assert.equal(freshness.state, 'unavailable', `${String(archivedAt)} must be unavailable`);
+    assert.match(freshness.label, new RegExp(expectedLabel));
+    assert.match(freshness.label, /待人工事实复核/);
+    assert.equal(freshness.currentRecommendation, false);
+  }
+
+  assert.equal(getFrameworkFreshness({ source: { archivedAt: '2026-02-30' } }, '2026-08-31').archivedAt, null);
+});
+
+test('engine uses the current date when no evaluation date is supplied', () => {
+  assertImplementationLoaded();
+  const RealDate = Date;
+  class ControlledDate extends RealDate {
+    constructor(...args) {
+      super(...(args.length ? args : ['2031-04-05T00:00:00Z']));
+    }
+  }
+
+  let result;
+  global.Date = ControlledDate;
+  try {
+    result = evaluateDecision(ANSWERS);
+  } finally {
+    global.Date = RealDate;
+  }
+  assert.equal(result.evaluatedAt, '2031-04-05');
 });

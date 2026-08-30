@@ -460,6 +460,7 @@ a { color: inherit; }
   background: var(--paper-soft);
 }
 .framework-card[data-freshness="archive-only"] { border-color: var(--amber-line); background: var(--amber-paper); }
+.framework-card[data-freshness="unavailable"] { border-color: var(--rose-line); background: var(--rose-soft); }
 .card-top {
   display: flex;
   align-items: flex-start;
@@ -472,6 +473,7 @@ a { color: inherit; }
 .card-top p { margin: var(--space-1) 0 0; color: var(--muted); font-size: .75rem; }
 .framework-card > p, .topology-card > p, .scene-card > p, .judgment-card > p { margin: var(--space-4) 0; color: var(--muted); font-size: .82rem; }
 .framework-card[data-freshness="archive-only"] .source-status { background: var(--amber-soft); color: var(--amber); }
+.framework-card[data-freshness="unavailable"] .source-status { background: var(--rose-soft); color: var(--rose); }
 .card-facts { display: grid; gap: var(--space-2); }
 .card-fact { display: grid; grid-template-columns: 5.2rem 1fr; gap: var(--space-2); font-size: .76rem; }
 .card-fact strong { color: var(--ink); }

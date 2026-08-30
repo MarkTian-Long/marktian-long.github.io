@@ -149,7 +149,7 @@
     {
       id: 'input-incomplete',
       priority: 1,
-      when: '六个问题未完整回答，或 decomposition=unknown / repeatability=unknown',
+      when: '六个问题未完整回答，或 taskClarity=unclear / decomposition=unknown / repeatability=unknown',
       thenModes: ['no-agent', 'human-review'],
       excludeModes: ['automation', 'rag-assistant', 'single-agent-tools', 'parallel-multi-agent'],
       explanation: '信息不足时撤回自动建议；先补齐任务边界、频率和拆解证据。',
@@ -165,10 +165,10 @@
     {
       id: 'deterministic-automation',
       priority: 3,
-      when: 'taskClarity=clear、knowledge=rules、decomposition=single 且 risk=low/medium',
+      when: 'taskClarity=clear、knowledge=rules、decomposition=single/independent 且 risk=low/medium',
       thenModes: ['no-agent', 'automation'],
       excludeModes: ['rag-assistant', 'single-agent-tools', 'parallel-multi-agent'],
-      explanation: '规则可枚举时，传统自动化更可解释、可测试，也不需要 Agent。',
+      explanation: '规则可枚举时，传统自动化或工作流（包括规则型并行）更可解释、可测试，也不需要 Agent。',
     },
     {
       id: 'retrieval-assistant',
@@ -189,7 +189,7 @@
     {
       id: 'parallel-independent-only',
       priority: 3,
-      when: 'decomposition=independent，且存在多个可分别验收的子任务',
+      when: 'knowledge≠rules 且 decomposition=independent，且存在多个可分别验收的子任务',
       thenModes: ['parallel-multi-agent'],
       excludeModes: ['single-agent-tools'],
       explanation: '并行只由“多个独立子任务”触发；串行依赖或单一任务不能凭空增加 Agent。',

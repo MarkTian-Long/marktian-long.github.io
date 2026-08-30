@@ -8,24 +8,59 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function buildAgentHubEngine(model) {
   const QUESTION_IDS = model ? model.questions.map((question) => question.id) : [];
   const AGENT_MODE_IDS = ['rag-assistant', 'single-agent-tools', 'parallel-multi-agent'];
+  const UNRESOLVED_ANSWERS = Object.freeze({
+    taskClarity: new Set(['unclear']),
+    repeatability: new Set(['unknown']),
+    decomposition: new Set(['unknown']),
+  });
 
   function parseDate(value) {
-    if (value instanceof Date) return new Date(value.getTime());
-    const source = String(value || new Date().toISOString()).length <= 10
-      ? `${value}T00:00:00Z`
-      : String(value);
+    if (value instanceof Date) {
+      const time = value.getTime();
+      return Number.isNaN(time) ? null : new Date(time);
+    }
+    if (typeof value !== 'string') return null;
+    const text = value.trim();
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})(?=$|T|\s)/);
+    if (!match) return null;
+    const source = text.length === 10 ? `${text}T00:00:00Z` : text;
     const date = new Date(source);
-    return Number.isNaN(date.getTime()) ? new Date('2026-08-30T00:00:00Z') : date;
+    if (Number.isNaN(date.getTime())) return null;
+    if (
+      date.getUTCFullYear() !== Number(match[1])
+      || date.getUTCMonth() + 1 !== Number(match[2])
+      || date.getUTCDate() !== Number(match[3])
+    ) return null;
+    return date;
   }
 
   function formatDate(value) {
-    return parseDate(value).toISOString().slice(0, 10);
+    const date = parseDate(value);
+    return date ? date.toISOString().slice(0, 10) : null;
   }
 
   function getFrameworkFreshness(fact, now) {
+    const archivedDate = parseDate(fact?.source?.archivedAt);
+    const referenceDate = parseDate(now === undefined ? new Date() : now);
+    if (!archivedDate || !referenceDate) {
+      return {
+        state: 'unavailable',
+        archivedAt: null,
+        label: '资料日期不可用 · 待人工事实复核',
+        currentRecommendation: false,
+      };
+    }
+    if (archivedDate.getTime() > referenceDate.getTime()) {
+      return {
+        state: 'unavailable',
+        archivedAt: formatDate(archivedDate),
+        label: '整理日期在未来 · 待人工事实复核',
+        currentRecommendation: false,
+      };
+    }
     return {
       state: 'archive-only',
-      archivedAt: formatDate(fact.source.archivedAt),
+      archivedAt: formatDate(archivedDate),
       label: '待人工事实复核',
       currentRecommendation: false,
     };
@@ -46,7 +81,7 @@
     return question?.options.find((option) => option.id === optionId)?.label || optionId;
   }
 
-  function makeMetric(id, label, definition, source) {
+  function makeMetric(id, label, definition, source, asOf) {
     return {
       id,
       label,
@@ -54,7 +89,7 @@
       definition,
       unit: '任务占比',
       source,
-      asOf: '2026-08-30',
+      asOf,
     };
   }
 
@@ -98,14 +133,16 @@
   }
 
   function createExcludedAlternatives(modeId, hitRules) {
-    const selectedRule = hitRules.find((rule) => rule.excludeModes.includes(modeId));
     return model.outcomes
       .filter((outcome) => outcome.id !== 'no-agent' && outcome.id !== modeId)
-      .map((outcome) => ({
-        id: outcome.id,
-        label: outcome.label,
-        reason: selectedRule?.explanation || '当前任务形态没有证明它是最小可行方案。',
-      }));
+      .map((outcome) => {
+        const exclusionRule = hitRules.find((rule) => (rule.excludeModes || []).includes(outcome.id));
+        return {
+          id: outcome.id,
+          label: outcome.label,
+          reason: exclusionRule?.explanation || '当前任务形态没有证明它是最小可行方案。',
+        };
+      });
   }
 
   function controlsFor(risk, needsReview) {
@@ -119,8 +156,9 @@
   }
 
   function baseResult(answers, now) {
+    const evaluatedAt = formatDate(now);
     return {
-      evaluatedAt: formatDate(now),
+      evaluatedAt,
       answers,
       status: 'ready',
       outcomeId: 'no-agent',
@@ -138,8 +176,8 @@
       stopConditions: [],
       controls: controlsFor(answers.risk, false),
       metrics: [
-        makeMetric('task-acceptance', '任务验收通过率', '结果满足预先定义验收标准的任务占比', '试点标注与责任人复核'),
-        makeMetric('human-override', '人工推翻率', '人工复核后改变系统建议或结果的任务占比', '人工复核记录'),
+        makeMetric('task-acceptance', '任务验收通过率', '结果满足预先定义验收标准的任务占比', '试点标注与责任人复核', evaluatedAt),
+        makeMetric('human-override', '人工推翻率', '人工复核后改变系统建议或结果的任务占比', '人工复核记录', evaluatedAt),
       ],
       recommendation: findOutcome('human-review'),
     };
@@ -148,10 +186,10 @@
   function evaluateDecision(input, options) {
     if (!model) throw new Error('Agent Hub decision model is unavailable');
     const answers = normalizeAnswers(input);
-    const now = options?.now || '2026-08-30';
+    const now = options?.now ?? new Date();
     const result = baseResult(answers, now);
     const missingQuestions = model.questions
-      .filter((question) => !answers[question.id])
+      .filter((question) => !answers[question.id] || UNRESOLVED_ANSWERS[question.id]?.has(answers[question.id]))
       .map((question) => ({ id: question.id, label: question.prompt }));
     const contradictions = findContradictions(answers);
     result.missingQuestions = missingQuestions;
@@ -159,7 +197,8 @@
 
     if (missingQuestions.length || contradictions.length) {
       result.status = 'needs-input';
-      addRule(result.hitRules, missingQuestions.length ? 'input-incomplete' : 'risk-contradiction');
+      if (missingQuestions.length) addRule(result.hitRules, 'input-incomplete');
+      if (contradictions.length) addRule(result.hitRules, 'risk-contradiction');
       if (contradictions.some((item) => item.id === 'recurring-unmeasured')) addRule(result.hitRules, 'evaluation-missing');
       result.modeId = 'human-review';
       result.outcomeId = 'no-agent';
@@ -181,7 +220,7 @@
 
     const highRisk = ['high', 'irreversible'].includes(answers.risk);
     let modeId = 'human-review';
-    if (answers.taskClarity === 'clear' && answers.knowledge === 'rules' && answers.decomposition === 'single' && ['low', 'medium'].includes(answers.risk)) {
+    if (answers.taskClarity === 'clear' && answers.knowledge === 'rules' && ['single', 'independent'].includes(answers.decomposition) && ['low', 'medium'].includes(answers.risk)) {
       modeId = 'automation';
       addRule(result.hitRules, 'deterministic-automation');
     } else if (answers.decomposition === 'independent') {

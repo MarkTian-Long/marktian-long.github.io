@@ -166,6 +166,7 @@ test('Agent Hub marks framework references as archive-only until manual fact che
   try {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'zh-CN' });
+    await context.addInitScript(() => { window.__AGENT_HUB_NOW = '2026-08-31'; });
     const page = await context.newPage();
     await gotoAgentHub(page, url);
     await page.locator('#tab-decision').click();
