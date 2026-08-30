@@ -459,7 +459,7 @@ a { color: inherit; }
   border-radius: var(--radius-md);
   background: var(--paper-soft);
 }
-.framework-card[data-freshness="expired"] { border-color: var(--amber-line); background: var(--amber-paper); }
+.framework-card[data-freshness="archive-only"] { border-color: var(--amber-line); background: var(--amber-paper); }
 .card-top {
   display: flex;
   align-items: flex-start;
@@ -471,17 +471,7 @@ a { color: inherit; }
 .card-top h3 { margin: 0; font-size: 1.03rem; letter-spacing: -.02em; line-height: 1.25; }
 .card-top p { margin: var(--space-1) 0 0; color: var(--muted); font-size: .75rem; }
 .framework-card > p, .topology-card > p, .scene-card > p, .judgment-card > p { margin: var(--space-4) 0; color: var(--muted); font-size: .82rem; }
-.framework-card .current-recommendation {
-  margin-top: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--teal-soft);
-  color: var(--teal);
-  font-size: .75rem;
-  font-weight: 750;
-}
-.framework-card[data-freshness="expired"] .source-status { background: var(--amber-soft); color: var(--amber); }
-.framework-card[data-freshness="expired"] .current-recommendation { display: none; }
+.framework-card[data-freshness="archive-only"] .source-status { background: var(--amber-soft); color: var(--amber); }
 .card-facts { display: grid; gap: var(--space-2); }
 .card-fact { display: grid; grid-template-columns: 5.2rem 1fr; gap: var(--space-2); font-size: .76rem; }
 .card-fact strong { color: var(--ink); }
@@ -662,7 +652,7 @@ a { color: inherit; }
           </div>
         </div>
         <div class="framework-wrap">
-          <p class="section-label">框架事实 / official sources + review date</p>
+          <p class="section-label">框架资料 / 候选来源 + 人工事实复核</p>
           <div id="framework-facts" class="framework-grid"></div>
         </div>
       </section>
@@ -693,7 +683,7 @@ a { color: inherit; }
     </div>
   </main>
 
-  <footer class="site-footer"><a href="../../index.html">Leo Liu · AI · Product · Builder</a><span>静态页面 · 不保存问卷 · 框架事实需按复核日期再确认</span></footer>
+  <footer class="site-footer"><a href="../../index.html">Leo Liu · AI · Product · Builder</a><span>静态页面 · 不保存问卷 · 候选框架资料待人工事实复核</span></footer>
 </div>
 <script src="data/decision-model.js"></script>
 <script src="decision-engine.js"></script>

@@ -1,5 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function loadModule(relativePath) {
   try {
@@ -61,7 +63,6 @@ function assertStableIds(records, label) {
 test('decision model exposes the planned six-question contract and six content sets', () => {
   assertImplementationLoaded();
   assert.equal(model.meta.id, 'agent-hub-depth-2026-08-30');
-  assert.equal(model.meta.reviewCycleDays, 90);
   assert.equal(model.questions.length, 6);
   assert.equal(model.outcomes.length, 6);
   assert.equal(model.decisionRules.length >= 8, true);
@@ -104,21 +105,32 @@ test('model rules cover no-agent, automation, retrieval, single-agent, parallel 
   assert.equal(model.decisionRules.some((rule) => /撤回|insufficient|不完整/i.test(rule.explanation)), true);
 });
 
-test('framework facts carry official source, checked date and freshness policy', () => {
+test('framework references carry archive date and pending manual fact-check status', () => {
   assertImplementationLoaded();
+  assert.equal(model.meta.frameworkEvidenceStatus, 'archive-only');
   for (const fact of model.frameworkFacts) {
     assert.ok(fact.name);
     assert.ok(fact.claim);
-    assert.ok(['active', 'experimental', 'successor', 'platform'].includes(fact.status));
-    assert.equal(fact.source.type, 'official-doc');
+    assert.equal(fact.status, 'unverified');
+    assert.equal(fact.source.type, 'candidate-official-url');
     assert.match(fact.source.url, /^https:\/\//);
-    assert.match(fact.source.checkedAt, /^2026-08-30$/);
-    assert.equal(fact.reviewAfterDays, 90);
+    assert.match(fact.source.archivedAt, /^2026-08-30$/);
+    assert.equal(fact.source.verificationStatus, '待人工事实复核');
+    assert.equal(fact.reviewAfterDays, undefined);
+    assert.equal(fact.currentRecommendation, undefined);
+    assert.doesNotMatch(fact.claim, /官方文档|官方仓库/);
     assert.ok(fact.source.id);
   }
 
-  assert.equal(getFrameworkFreshness(model.frameworkFacts[0], '2026-11-29').state, 'review');
-  assert.equal(getFrameworkFreshness(model.frameworkFacts[0], '2027-03-01').state, 'expired');
+  const freshness = getFrameworkFreshness(model.frameworkFacts[0], '2027-03-01');
+  assert.equal(freshness.state, 'archive-only');
+  assert.equal(freshness.label, '待人工事实复核');
+  assert.equal(freshness.currentRecommendation, false);
+
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'tools/agent-hub/README.md'), 'utf8');
+  assert.match(readme, /档案整理日期/);
+  assert.match(readme, /待人工事实复核/);
+  assert.doesNotMatch(readme, /按官方文档核对/);
 });
 
 test('all public metrics declare an allowed kind, definition, source and date', () => {

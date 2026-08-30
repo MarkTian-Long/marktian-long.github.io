@@ -6,7 +6,6 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = engine;
   if (root) root.AgentHubEngine = engine;
 }(typeof globalThis !== 'undefined' ? globalThis : this, function buildAgentHubEngine(model) {
-  const DAY_MS = 24 * 60 * 60 * 1000;
   const QUESTION_IDS = model ? model.questions.map((question) => question.id) : [];
   const AGENT_MODE_IDS = ['rag-assistant', 'single-agent-tools', 'parallel-multi-agent'];
 
@@ -24,18 +23,11 @@
   }
 
   function getFrameworkFreshness(fact, now) {
-    const checkedAt = parseDate(fact.source.checkedAt);
-    const current = parseDate(now);
-    const ageDays = Math.max(0, Math.floor((current.getTime() - checkedAt.getTime()) / DAY_MS));
-    let state = 'fresh';
-    if (ageDays > 180) state = 'expired';
-    else if (ageDays > (fact.reviewAfterDays || 90)) state = 'review';
     return {
-      state,
-      ageDays,
-      checkedAt: formatDate(checkedAt),
-      label: state === 'fresh' ? '在复核窗口内' : state === 'review' ? '待复核' : '过期资料',
-      currentRecommendation: state !== 'expired' && fact.currentRecommendation !== false,
+      state: 'archive-only',
+      archivedAt: formatDate(fact.source.archivedAt),
+      label: '待人工事实复核',
+      currentRecommendation: false,
     };
   }
 

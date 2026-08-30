@@ -209,9 +209,9 @@
       const top = make('div', 'card-top');
       const titleGroup = make('div');
       append(titleGroup, make('h3', '', fact.name));
-      append(titleGroup, make('p', '', fact.status));
+      append(titleGroup, make('p', '', '资料状态：未核验'));
       append(top, titleGroup);
-      append(top, make('span', 'source-status', fact.statusLabel + ' · ' + freshness.label));
+      append(top, make('span', 'source-status', freshness.label));
       append(card, top);
       append(card, make('p', '', fact.claim));
       const facts = make('div', 'card-facts');
@@ -219,7 +219,7 @@
         ['能力', fact.capabilities.join('、')],
         ['适用信号', fact.selectionSignal],
         ['限制', fact.caveat],
-        ['复核', fact.source.checkedAt + ' · ' + freshness.ageDays + ' 天前'],
+        ['档案整理日期', fact.source.archivedAt + ' · ' + freshness.label],
       ]) {
         const line = make('div', 'card-fact');
         append(line, make('strong', '', item[0]));
@@ -227,16 +227,13 @@
         append(facts, line);
       }
       append(card, facts);
-      if (freshness.currentRecommendation) {
-        append(card, make('div', 'current-recommendation', '当前参考：仍在复核窗口内；不是生产承诺。'));
-      }
-      const sourceLink = make('a', 'source-link', '查看官方来源 ↗');
+      const sourceLink = make('a', 'source-link', '查看候选官方 URL ↗');
       sourceLink.href = fact.source.url;
       sourceLink.target = '_blank';
       sourceLink.rel = 'noopener noreferrer';
       append(card, sourceLink);
       if (fact.secondarySource) {
-        const secondaryLink = make('a', 'source-link', '查看补充官方来源 ↗');
+        const secondaryLink = make('a', 'source-link', '查看补充候选 URL ↗');
         secondaryLink.href = fact.secondarySource.url;
         secondaryLink.target = '_blank';
         secondaryLink.rel = 'noopener noreferrer';

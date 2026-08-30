@@ -160,20 +160,20 @@ test('Agent Hub depth supports six-question keyboard decisions, explainable outc
   }
 });
 
-test('Agent Hub marks stale framework evidence for review and hides expired current recommendations', { timeout: 30000 }, async () => {
+test('Agent Hub marks framework references as archive-only until manual fact checking', { timeout: 30000 }, async () => {
   const { server, url } = await startServer();
   let browser;
   try {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'zh-CN' });
-    await context.addInitScript(() => { window.__AGENT_HUB_NOW = '2027-03-01'; });
     const page = await context.newPage();
     await gotoAgentHub(page, url);
     await page.locator('#tab-decision').click();
-    assert.equal(await page.locator('#framework-facts .framework-card[data-freshness="expired"]').count(), 6);
+    assert.equal(await page.locator('#framework-facts .framework-card[data-freshness="archive-only"]').count(), 6);
     assert.equal(await page.locator('#framework-facts .current-recommendation').count(), 0);
-    assert.match(await page.locator('#framework-facts').textContent(), /过期资料/);
-    await maybeScreenshot(page, 'desktop-expired-frameworks');
+    assert.match(await page.locator('#framework-facts').textContent(), /档案整理日期/);
+    assert.match(await page.locator('#framework-facts').textContent(), /待人工事实复核/);
+    await maybeScreenshot(page, 'desktop-archive-frameworks');
     await context.close();
   } finally {
     if (browser) await browser.close();
