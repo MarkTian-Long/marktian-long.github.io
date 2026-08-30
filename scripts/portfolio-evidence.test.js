@@ -7,11 +7,21 @@ const { parseArgs, successMessage, validatePortfolio } = require('./check-portfo
 
 const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/portfolio-evidence.examples.json'), 'utf8'));
 
-test('portfolio evidence example covers the five planned portfolio types', () => {
+test('portfolio evidence covers eight public tools and retains the private case', () => {
   assert.deepEqual(validatePortfolio(fixture), []);
   assert.deepEqual(
     fixture.portfolio.map((record) => record.id),
-    ['esop-extractor', 'financial-rag', 'service-agent', 'aml-due-diligence', 'asci-research-system'],
+    [
+      'esop-extractor',
+      'financial-rag',
+      'service-agent',
+      'asci-research-system',
+      'ai-insights',
+      'radar',
+      'trends',
+      'agent-hub',
+      'aml-due-diligence',
+    ],
   );
 });
 

@@ -59,7 +59,7 @@
         "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "title": { "type": "string", "minLength": 1 },
         "tier": { "enum": ["flagship", "supporting", "concept"] },
-        "type": { "enum": ["interactive-demo", "case-study", "research-system"] },
+        "type": { "enum": ["interactive-demo", "case-study", "research-system", "information-workflow"] },
         "status": { "enum": ["published", "private", "in-progress"] },
         "myRole": { "type": "string", "minLength": 1 },
         "realParts": { "type": "array", "items": { "type": "string" } },
