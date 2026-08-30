@@ -1,57 +1,84 @@
 # 热点快照
 
-AI 与科技领域五大平台热点快照，含 Codex PM 视角点评。
+热点快照 v2 是一个可追溯的 AI 信号研判台。它把五个平台的榜单记录成带来源、观察时间、指标口径、行动分类和人工判断的静态快照，不把静态数据伪装成实时热度。
 
-## 功能描述
+## 页面能力
 
-聚合五大平台热榜数据，每条热点附带 PM 视角解读，体现对行业动态的持续跟踪与信息获取体系。
+- 统一工作流：`1 信源 → 2 信号 → 3 分析 → 4 方法`，本页是第 2 步。
+- 快照状态：`本期`、`建议复核`、`历史快照，不代表当前热度`。
+- 信号视图：按平台切换，按 `持续关注`、`横向对比`、`评估落地`、`继续深挖`筛选。
+- 判断视图：每条信号展开“变化、证据、影响、不确定性、下一步”，深挖信号还必须提供下一研究问题。
+- 来源账本：展示每个平台的来源链接、来源记录日期、页面观察日期和排名依据。
+- 错误态：数据不存在、JSON 无效、空板块都会显示可重试的错误信息。
 
-## 数据板块
+页面只通过本地 HTTP 读取 JSON。直接用 `file://` 打开时，浏览器可能阻止 `fetch`，请使用任意本地静态服务器。
 
-| 板块 | 来源 | 更新方式 |
-|------|------|---------|
-| ⚡ GitHub AI 热榜 | GitHub Trending | 爬虫自动抓取 |
-| 🚀 Product Hunt 本月 | Product Hunt | Codex 联网研究补充（有反爬限制） |
-| 🔥 HN 热议 | Hacker News | 爬虫自动抓取 |
-| 🌍 出海 AI 动态 | 出海 AI 聚合 | 爬虫自动抓取 |
-| 🇨🇳 国内 AI 热点 | 36Kr 等 | 爬虫自动抓取 |
+## v2 数据契约
 
-## 数据更新
+公开 `tools/trends/data/trends.json` 必须满足 `tools/trends/contract.js`：
 
-**推荐双步更新流程：**
+- 快照元数据：`contract_version`、`snapshot_id`、`snapshot_status`、`as_of`、`observed_at`、`reviewed_at`、`collection_mode`、`verification_level`、`featured_id`。
+- 板块：稳定 `id`、标题、图标、简介、`ranking_basis`、来源对象和非空 `items`。
+- 来源：稳定 `id`、名称、HTTPS `url`、`as_of`。
+- 信号：稳定 `id`、`rank`、标题、摘要、具体 HTTPS `url`、`source_id`、`observed_at`、`verification_level`、行动分类、指标和判断。
+- 指标：`label`、`value`、`definition`、合法 `kind`、`as_of`、HTTPS `source_url`、`caveat`。
+- 判断：`change`、非空 `evidence`、`impact`、`uncertainty`、`next_step`；包含 `deep_dive` 时还需要 `next_question`。
 
-1. 爬虫自动抓取（GitHub / HN / 36Kr / 出海 AI）：
+不接受 `javascript:`、`data:`、HTTP 链接、榜单根页面、重复 URL、占位文本或未复核记录。日期按 UTC 日历计算，0–7 天为本期，8–30 天建议复核，超过 30 天为历史快照。
 
-   ```bash
-   cd scripts
-   node fetch-trends.js --write
-   ```
+## 数据更新边界
 
-2. 使用 `/update-trends` 补充 Product Hunt 并写入 PM 点评：
+默认命令只校验，不抓取、不写入：
 
-   ```
-   /update-trends
-   ```
+```bash
+cd scripts
+node fetch-trends.js --check
+```
 
-> Product Hunt 有反爬限制，由 `/update-trends` 的联网研究补充。其余四个板块可由显式 `--write` 抓取并写入公开快照。
+需要把过期数据当作失败时，显式使用 freshness gate：
+
+```bash
+node fetch-trends.js --check --freshness
+```
+
+自动抓取只生成候选，候选文件必须落在 `build/candidate-site/`，失败板块保留诊断且不补占位条目：
+
+```bash
+node fetch-trends.js --discover --candidate ..\build\candidate-site\trends-candidate.json
+```
+
+人工完成来源、时间、指标、行动和判断复核后，才允许写入 `tools/trends/data/`。写入前会再次验证完整 v2 契约，写入命令不联网：
+
+```bash
+node fetch-trends.js --write --input ..\build\candidate-site\trends-reviewed.json
+```
+
+如需测试其他公开目标，`--target` 也只能指向 `tools/trends/data/` 下的文件。绝对路径、`..` 逃逸、候选目录或仓库外路径都会被拒绝。写入前先完成路径校验和 JSON 校验，失败不会创建目标文件。
+
+## 当前快照限制
+
+仓库内当前公开快照的 `as_of` / `observed_at` 是 `2026-05-19`，页面在 `2026-08-30` 显示“历史快照，不代表当前热度”。`reviewed_at` 只表示本轮契约和编辑字段复核日期，不代表重新核对了当日榜单。历史记录中的数值、排序、事实和因果判断没有在本轮联网重验，不能当作 2026-08-30 的当前事实。
+
+来源排名只说明对应平台当时的排序或互动口径，不等于跨平台热度、用户留存、市场规模或因果结果。下一轮更新应保留可追溯的具体条目链接、来源日期和核验说明。
 
 ## 文件结构
 
 ```
 tools/trends/
-├── index.html        # 展示页面
+├── index.html        # 页面结构与设计 token
+├── app.js            # 安全 DOM 渲染、工作流视图和交互
+├── contract.js       # v2 契约、URL 边界和 freshness 纯函数
 ├── data/
-│   └── trends.json   # 热点数据（显式写入 + 联网研究补充）
+│   └── trends.json   # 人工复核后的公开快照
 └── README.md
 ```
 
-## 访问方式
+相关测试：
 
-- 独立打开：`tools/trends/index.html`
-- 主页入口：信息工具区的「热点快照」直链卡片，在新标签页打开
+```bash
+cd scripts
+node --test trends-depth.test.js
+node --test trends-depth.browser.test.js
+```
 
-## 维护指南
-
-- **数据格式**：`trends.json` 由 `scripts/fetch-trends.js` 写入，结构见脚本注释
-- **手动补充**：可直接编辑 `trends.json`，按现有条目格式追加
-- **更新频率**：建议每周运行一次完整更新流程
+浏览器测试使用固定时钟 `2026-08-30`，覆盖正常、筛选、键盘、来源、移动端、空板块、404 和无效 JSON 状态。

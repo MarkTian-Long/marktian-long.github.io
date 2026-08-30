@@ -1,10 +1,12 @@
 /**
  * fetch-trends.js
- * 抓取各平台热点数据，写入 tools/trends/data/trends.json
+ * 生成候选或校验、写入人工复核后的热点快照
  *
  * 用法：
  *   cd scripts
- *   node fetch-trends.js --write
+ *   node fetch-trends.js --check
+ *   node fetch-trends.js --discover --candidate ..\\build\\candidate-site\\trends-candidate.json
+ *   node fetch-trends.js --write --input ..\\build\\candidate-site\\trends-reviewed.json
  *
  * 数据来源：
  *   - GitHub Trending（抓取 HTML）
@@ -17,6 +19,9 @@
 const fs = require('fs');
 const path = require('path');
 const fetch = globalThis.fetch;
+const {
+  assertValidSnapshot,
+} = require('../tools/trends/contract.js');
 
 if (typeof fetch !== 'function') {
   throw new Error('fetch-trends.js requires Node.js 18 or later');
@@ -33,28 +38,69 @@ function fetchWithTimeout(url, { timeout = 15000, ...options } = {}) {
 }
 
 const OUTPUT_PATH = path.resolve(__dirname, '../tools/trends/data/trends.json');
+const PUBLIC_DATA_ROOT = path.resolve(__dirname, '../tools/trends/data');
+const CANDIDATE_ROOT = path.resolve(__dirname, '../build/candidate-site');
 const GENERATOR_ARGS = process.argv.slice(2);
 if (GENERATOR_ARGS.includes('--write') && GENERATOR_ARGS.includes('--candidate')) throw new Error('Choose exactly one generator mode');
 const GENERATOR_MODE = GENERATOR_ARGS.includes('--write') ? 'write'
-  : GENERATOR_ARGS[0] === '--candidate' ? 'candidate' : 'check';
+  : GENERATOR_ARGS.includes('--candidate') ? 'candidate' : 'check';
 
-function candidateTarget() {
-  const target = path.resolve(GENERATOR_ARGS[1] || '');
-  const candidateRoot = path.resolve(__dirname, '../build/candidate-site');
-  const relative = path.relative(candidateRoot, target);
-  if (!GENERATOR_ARGS[1] || relative.startsWith('..') || path.isAbsolute(relative)) {
-    throw new Error('Candidate output must stay under build/candidate-site');
-  }
+function optionValue(flag) {
+  const index = GENERATOR_ARGS.indexOf(flag);
+  if (index < 0) return null;
+  const value = GENERATOR_ARGS[index + 1];
+  return value && !value.startsWith('--') ? value : null;
+}
+
+function containsParentSegment(value) {
+  return String(value || '').split(/[\\/]+/).includes('..');
+}
+
+function boundedFileTarget(value, root, message) {
+  if (!value || containsParentSegment(value)) throw new Error(message);
+  const target = path.resolve(value);
+  const relative = path.relative(root, target);
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) throw new Error(message);
   return target;
 }
 
-function readPublishedTrends() {
+function candidateTarget() {
+  return boundedFileTarget(optionValue('--candidate'), CANDIDATE_ROOT, 'Candidate output must stay under build/candidate-site');
+}
+
+function publicTarget(value) {
+  return boundedFileTarget(value || OUTPUT_PATH, PUBLIC_DATA_ROOT, 'Public trends data target must stay under tools/trends/data');
+}
+
+function readPublishedTrends(options = {}) {
   const raw = fs.readFileSync(OUTPUT_PATH, 'utf8');
   const published = JSON.parse(raw);
-  if (!Array.isArray(published.boards) || published.boards.some(board => !Array.isArray(board.items) || board.items.length === 0)) {
-    throw new Error('Published trends artifact has an empty board');
+  const validation = assertValidSnapshot(published, {
+    now: options.now || today(),
+    requireFreshness: Boolean(options.requireFreshness),
+  });
+  if (validation.warnings.length) {
+    validation.warnings.forEach(warning => console.warn(`⚠ ${warning}`));
   }
-  return raw;
+  return { raw, published, validation };
+}
+
+function reviewedInputPath() {
+  return optionValue('--input') || (GENERATOR_ARGS[0] === '--write' && GENERATOR_ARGS[1] && !GENERATOR_ARGS[1].startsWith('--') ? GENERATOR_ARGS[1] : null);
+}
+
+function writeReviewedSnapshot(inputPath, targetPath = OUTPUT_PATH, options = {}) {
+  if (!inputPath) throw new Error('Reviewed input is required; --write never fetches live data');
+  const target = publicTarget(targetPath);
+  const raw = fs.readFileSync(path.resolve(inputPath), 'utf8');
+  const snapshot = JSON.parse(raw);
+  const validation = assertValidSnapshot(snapshot, {
+    now: options.now || today(),
+    requireFreshness: Boolean(options.requireFreshness),
+  });
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
+  return { target, snapshot, validation };
 }
 
 // ── 工具函数 ──────────────────────────────────────────────────────────────────
@@ -71,8 +117,8 @@ async function fetchHtml(url) {
   return res.text();
 }
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
+function today(value = new Date()) {
+  return new Date(value).toISOString().slice(0, 10);
 }
 
 function truncate(str, max = 60) {
@@ -182,30 +228,21 @@ async function fetchProductHunt() {
     const title = truncate($el.find('h3, h2, [class*="title"], [class*="name"]').first().text(), 60);
     const desc = truncate($el.find('p, [class*="tagline"], [class*="description"]').first().text(), 80);
     const href = $el.find('a[href^="/posts/"]').attr('href');
-    if (!title || title.length < 2) return;
+    if (!title || title.length < 2 || !href) return;
     items.push({
       rank: items.length + 1,
       title,
       summary: desc || '暂无描述',
       insight: '',
-      url: href ? `https://www.producthunt.com${href}` : url,
+      url: `https://www.producthunt.com${href}`,
       source: 'Product Hunt',
       tags: ['新产品', '本月'],
     });
   });
 
-  // fallback：如果选择器没匹配到（PH 频繁改结构），返回榜单页链接占位
+  // 解析失败不生成榜单页占位项；候选输出会记录诊断状态，等待人工复核。
   if (items.length === 0) {
-    console.log('  ⚠ Product Hunt 解析失败（页面结构可能已变），使用榜单页链接');
-    items.push({
-      rank: 1,
-      title: `Product Hunt ${y}年${m}月榜`,
-      summary: '点击查看本月完整榜单',
-      insight: '',
-      url,
-      source: 'Product Hunt',
-      tags: ['本月榜单'],
-    });
+    console.log('  ⚠ Product Hunt 解析失败（页面结构可能已变），不生成占位项');
   }
 
   return items;
@@ -283,107 +320,156 @@ async function fetchOverseasAI() {
   return result;
 }
 
-// ── 主流程 ────────────────────────────────────────────────────────────────────
+// ── 候选发现与主流程 ──────────────────────────────────────────────────────────
+
+const BOARD_CONFIG = Object.freeze([
+  { id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', source_id: 'source-github', source_name: 'GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源周榜的新增 Stars 排序；不同平台不直接横比', collect: () => fetchGithubTrending('weekly') },
+  { id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', source_id: 'source-product-hunt', source_name: 'Product Hunt', source_url: 'https://www.producthunt.com/leaderboard/monthly', ranking_basis: '按来源月榜的票数排序；历史榜单不代表当前产品热度', collect: () => fetchProductHunt() },
+  { id: 'hacker-news', title: 'HN 热议', icon: '🔥', source_id: 'source-hacker-news', source_name: 'Hacker News', source_url: 'https://news.ycombinator.com/news', ranking_basis: '按来源页面的 Points 排序；讨论热度不等于产品验证', collect: () => fetchHackerNews() },
+  { id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', source_id: 'source-overseas', source_name: 'TechCrunch / GitHub Trending', source_url: 'https://github.com/trending?since=weekly', ranking_basis: '按来源文章或 GitHub 周榜观察；不构成市场规模排名', collect: () => fetchOverseasAI() },
+  { id: 'china-ai', title: '国内 AI 热点', icon: '🇨🇳', source_id: 'source-china-ai', source_name: '36Kr / 量子位 / CSDN', source_url: 'https://36kr.com/information/AI/', ranking_basis: '按来源文章流与报道时间整理；不构成行业规模排名', collect: () => fetch36Kr() },
+]);
+
+function candidateItem(config, item, index, observedAt) {
+  if (!item || typeof item.title !== 'string' || !item.title.trim()) throw new Error('candidate item has no title');
+  if (typeof item.url !== 'string' || !/^https:\/\//i.test(item.url)) throw new Error('candidate item has no HTTPS URL');
+  const sourceRank = Number.isInteger(item.rank) && item.rank > 0 ? item.rank : index + 1;
+  const summary = typeof item.summary === 'string' && item.summary.trim() ? item.summary : '候选发现，等待人工复核。';
+  return {
+    id: `candidate-${config.id}-${String(index + 1).padStart(2, '0')}`,
+    rank: sourceRank,
+    title: item.title,
+    summary,
+    url: item.url,
+    source_id: config.source_id,
+    observed_at: observedAt,
+    verification_level: 'candidate',
+    actions: ['watch'],
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    metrics: [{
+      label: '来源排名（候选）',
+      value: String(sourceRank),
+      definition: '自动抓取到的来源排名，只用于人工复核候选，不代表公开热度结论。',
+      kind: 'external-research',
+      as_of: observedAt,
+      source_url: item.url,
+      caveat: '候选发现尚未人工复核，不可直接发布。',
+    }],
+    judgment: {
+      change: summary,
+      evidence: [summary],
+      impact: '候选信号可能值得加入后续人工研究队列。',
+      uncertainty: '自动抓取没有验证事实、时间范围、热度口径或因果关系。',
+      next_step: '打开具体来源，核对条目、时间与排名依据，再决定是否写入公开快照。',
+    },
+  };
+}
+
+function candidateBoard(config, items, observedAt, diagnostics = []) {
+  return {
+    id: config.id,
+    title: config.title,
+    icon: config.icon,
+    ranking_basis: config.ranking_basis,
+    source: { id: config.source_id, name: config.source_name, url: config.source_url, as_of: observedAt },
+    status: items.length > 0 ? 'ready' : 'failed',
+    diagnostics,
+    items,
+  };
+}
+
+async function discoverCandidate({ now = new Date() } = {}) {
+  const observedAt = today(now);
+  const boards = [];
+  for (const config of BOARD_CONFIG) {
+    try {
+      console.log(`[candidate] ${config.title}`);
+      const discovered = await config.collect();
+      const diagnostics = [];
+      const items = [];
+      for (const [index, item] of discovered.entries()) {
+        try {
+          items.push(candidateItem(config, item, index, observedAt));
+        } catch (error) {
+          diagnostics.push({ code: 'invalid_candidate', message: error.message });
+        }
+      }
+      if (items.length === 0) diagnostics.push({ code: 'empty_result', message: '没有可供人工复核的具体条目；未生成榜单页占位项。' });
+      boards.push(candidateBoard(config, items, observedAt, diagnostics));
+    } catch (error) {
+      boards.push(candidateBoard(config, [], observedAt, [{ code: 'fetch_failed', message: error.message }]));
+      console.error(`  ✗ ${config.title}: ${error.message}`);
+    }
+  }
+  const candidate = {
+    contract_version: 2,
+    snapshot_id: `candidate-${observedAt}`,
+    snapshot_status: 'candidate',
+    as_of: observedAt,
+    observed_at: observedAt,
+    collection_mode: 'candidate',
+    verification_level: 'candidate',
+    boards,
+    method: { collection_boundary: '自动发现仅生成候选；公开写入前必须人工复核完整 JSON。' },
+  };
+  const validation = require('../tools/trends/contract.js').assertValidCandidate(candidate);
+  return { candidate, validation };
+}
+
+function assertCompleteForPublic(snapshot) {
+  if (!Array.isArray(snapshot.boards) || snapshot.boards.some(board => !Array.isArray(board.items) || board.items.length === 0)) {
+    throw new Error('Refusing partial trends result with an empty board');
+  }
+}
 
 async function main() {
-  // Check and candidate modes are deliberately offline: they validate or copy the
-  // already-reviewed public snapshot. Only an explicit --write may fetch fresh data.
+  const requireFreshness = GENERATOR_ARGS.includes('--freshness');
   if (GENERATOR_MODE === 'check') {
-    readPublishedTrends();
-    console.log('✓ check: published trends artifact is structurally complete');
+    const result = readPublishedTrends({ requireFreshness });
+    const freshness = result.validation.freshness;
+    console.log(`✓ check: published trends artifact is structurally complete (${freshness.label}, age=${freshness.age_days}d)`);
     return;
   }
   if (GENERATOR_MODE === 'candidate') {
     const target = candidateTarget();
-    const payload = readPublishedTrends();
+    if (GENERATOR_ARGS.includes('--discover')) {
+      const result = await discoverCandidate();
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, `${JSON.stringify(result.candidate, null, 2)}\n`, 'utf8');
+      console.log(`✓ candidate discovery: ${target}`);
+      return;
+    }
+    const { raw } = readPublishedTrends({ requireFreshness });
     fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, payload, 'utf8');
-    console.log(`✓ candidate: ${target}`);
+    fs.writeFileSync(target, raw, 'utf8');
+    console.log(`✓ candidate copy: ${target}`);
     return;
   }
-  if (GENERATOR_MODE !== 'write') throw new Error(`Unsupported generator mode: ${GENERATOR_MODE}`);
-  console.log('🚀 开始抓取热点数据...\n');
-
-  const boards = [];
-
-  const BOARD_INTROS = {
-    'github-ai': 'GitHub 本周增长最快的 AI 相关仓库，按新增 Stars 排序。反映开源社区当前最热门的技术方向。',
-    'product-hunt': 'Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。数据由 Claude 搜索整理。',
-    'hacker-news': 'Hacker News 当前热度最高的技术讨论，按 Points 排序。HN 社区以技术深度和高质量讨论著称，是观察全球技术趋势的风向标。',
-    'overseas-ai': 'GitHub 英文 AI 项目周榜 + 海外社区热点，关注出海产品机会和国际 AI 技术动向。',
-    'cn-ai': '36Kr AI 频道最新文章，聚焦国内 AI 产品、融资、创业动态，是了解国内 AI 生态的快捷窗口。',
-  };
-
-  // 1. GitHub AI 热榜
-  try {
-    console.log('[1/5] GitHub AI 热榜');
-    const items = await fetchGithubTrending('weekly');
-    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: BOARD_INTROS['github-ai'], items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'github-ai', title: 'GitHub AI 热榜', icon: '⚡', intro: BOARD_INTROS['github-ai'], items: [] });
+  if (GENERATOR_MODE === 'write') {
+    const result = writeReviewedSnapshot(reviewedInputPath(), optionValue('--target') || OUTPUT_PATH, { requireFreshness });
+    assertCompleteForPublic(result.snapshot);
+    result.validation.warnings.forEach(warning => console.warn(`⚠ ${warning}`));
+    console.log(`✓ reviewed snapshot written: ${result.target}`);
+    return;
   }
-
-  // 2. Product Hunt 本月
-  try {
-    console.log('[2/5] Product Hunt 本月');
-    const items = await fetchProductHunt();
-    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'product-hunt', title: 'Product Hunt 本月', icon: '🚀', intro: BOARD_INTROS['product-hunt'], items: [] });
-  }
-
-  // 3. HN 热议
-  try {
-    console.log('[3/5] Hacker News 热议');
-    const items = await fetchHackerNews();
-    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: BOARD_INTROS['hacker-news'], items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'hacker-news', title: 'HN 热议', icon: '🔥', intro: BOARD_INTROS['hacker-news'], items: [] });
-  }
-
-  // 4. 出海 AI 动态
-  try {
-    console.log('[4/5] 出海 AI 动态');
-    const items = await fetchOverseasAI();
-    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: BOARD_INTROS['overseas-ai'], items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'overseas-ai', title: '出海 AI 动态', icon: '🌍', intro: BOARD_INTROS['overseas-ai'], items: [] });
-  }
-
-  // 5. 国内 AI 热点
-  try {
-    console.log('[5/5] 国内 AI 热点（36Kr）');
-    const items = await fetch36Kr();
-    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: BOARD_INTROS['cn-ai'], items });
-    console.log(`  ✓ 获取 ${items.length} 条\n`);
-  } catch (e) {
-    console.error(`  ✗ 失败: ${e.message}\n`);
-    boards.push({ id: 'cn-ai', title: '国内 AI 热点', icon: '🇨🇳', intro: BOARD_INTROS['cn-ai'], items: [] });
-  }
-
-  const output = {
-    updated_at: today(),
-    boards,
-  };
-
-  const incomplete = boards.some(board => !Array.isArray(board.items) || board.items.length === 0);
-  if (incomplete) throw new Error('Refusing partial trends result with an empty board');
-  const payload = JSON.stringify(output, null, 2);
-  fs.writeFileSync(OUTPUT_PATH, payload, 'utf-8');
-  console.log(`\n✅ write 完成：${OUTPUT_PATH}`);
-  console.log(`   更新时间：${today()}`);
-  boards.forEach(b => console.log(`   ${b.icon} ${b.title}：${b.items.length} 条`));
+  throw new Error(`Unsupported generator mode: ${GENERATOR_MODE}`);
 }
 
-main().catch(err => {
-  console.error('❌ 抓取失败:', err);
-  process.exit(1);
-});
+module.exports = {
+  OUTPUT_PATH,
+  CANDIDATE_ROOT,
+  PUBLIC_DATA_ROOT,
+  candidateItem,
+  candidateBoard,
+  discoverCandidate,
+  readPublishedTrends,
+  writeReviewedSnapshot,
+  boundedFileTarget,
+};
+
+if (require.main === module || (process.argv[1] && path.resolve(process.argv[1]) === __filename)) {
+  main().catch(err => {
+    console.error('❌ 抓取失败:', err);
+    process.exit(1);
+  });
+}

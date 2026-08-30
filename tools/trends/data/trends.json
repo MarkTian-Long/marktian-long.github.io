@@ -1,83 +1,266 @@
 {
-  "updated_at": "2026-05-19",
+  "contract_version": 2,
+  "snapshot_id": "trends-2026-05-19",
+  "snapshot_status": "historical",
+  "as_of": "2026-05-19",
+  "observed_at": "2026-05-19",
+  "reviewed_at": "2026-08-30",
+  "collection_mode": "manual_reviewed",
+  "verification_level": "manual_reviewed",
+  "featured_id": "signal-github-ai-01",
   "boards": [
     {
       "id": "github-ai",
       "title": "GitHub AI 热榜",
       "icon": "⚡",
-      "intro": "GitHub 本周增长最快的 AI 相关仓库，按新增 Stars 排序。反映开源社区当前最热门的技术方向。",
+      "intro": "GitHub 本周增长最快的 AI 相关仓库，按新增 Stars 排序。反映开源社区历史记录中的最热门的技术方向。",
+      "ranking_basis": "按来源周榜的新增 Stars 排序；不同平台不直接横比",
+      "source": {
+        "id": "source-github",
+        "name": "GitHub Trending",
+        "url": "https://github.com/trending?since=weekly",
+        "as_of": "2026-05-19"
+      },
       "items": [
         {
+          "id": "signal-github-ai-01",
           "rank": 1,
           "title": "OpenClaw",
-          "repoPath": "openclaw/openclaw",
           "summary": "本地运行的个人 AI 助手，连接 50+ 主流通讯/协作平台。",
-          "insight": "从 9K 星爆到 21 万+，OpenClaw 是 2026 开年最大的开源爆款。本地化 + 全平台集成打中了隐私意识强的用户。对 PM 的启示：「私有化部署」不再是企业专属需求。",
           "url": "https://github.com/openclaw/openclaw",
-          "source": "GitHub Trending",
-          "tags": ["Agent", "本地部署", "周榜"],
-          "stars": 210000,
-          "starsGain": "12,000+ stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "Agent",
+            "本地部署",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "12,000+ stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/openclaw/openclaw",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "本地运行的个人 AI 助手，连接 50+ 主流通讯/协作平台。",
+            "evidence": [
+              "本地运行的个人 AI 助手，连接 50+ 主流通讯/协作平台。"
+            ],
+            "impact": "从 9K 星爆到 21 万+，OpenClaw 是 2026 开年最大的开源爆款。本地化 + 全平台集成打中了隐私意识强的用户。对 PM 的启示：「私有化部署」不再是企业专属需求。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-github-ai-02",
           "rank": 2,
           "title": "mattpocock/skills",
-          "repoPath": "mattpocock/skills",
           "summary": "面向真实工程师的 Claude Code Skill 集合。",
-          "insight": "本周新增 1600+ Stars，登顶周榜。AI 编程 Agent 的可扩展性竞争已从「生成质量」转移到「Skill 生态」，这是一个值得持续关注的范式转变信号。",
           "url": "https://github.com/mattpocock/skills",
-          "source": "GitHub Trending",
-          "tags": ["Claude Code", "Skill", "周榜"],
-          "stars": 55320,
-          "starsGain": "1,618 stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "Claude Code",
+            "Skill",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "1,618 stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/mattpocock/skills",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "面向真实工程师的 Claude Code Skill 集合。",
+            "evidence": [
+              "面向真实工程师的 Claude Code Skill 集合。"
+            ],
+            "impact": "本周新增 1600+ Stars，登顶周榜。AI 编程 Agent 的可扩展性竞争已从「生成质量」转移到「Skill 生态」，这是一个值得持续关注的范式转变信号。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-github-ai-03",
           "rank": 3,
           "title": "Pixelle-Video",
-          "repoPath": "pixelle/pixelle-video",
           "summary": "全自动视频生成管线：输入主题，输出完整视频。",
-          "insight": "脚本→视觉→配音→配乐→合成的全流程自动化，代表了 AIGC 从「单点生成」走向「完整工作流」的趋势。内容创作者的入行门槛正在被重写。",
           "url": "https://github.com/pixelle/pixelle-video",
-          "source": "GitHub Trending",
-          "tags": ["视频生成", "AIGC", "周榜"],
-          "stars": 38400,
-          "starsGain": "9,800 stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "视频生成",
+            "AIGC",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "9,800 stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/pixelle/pixelle-video",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "全自动视频生成管线：输入主题，输出完整视频。",
+            "evidence": [
+              "全自动视频生成管线：输入主题，输出完整视频。"
+            ],
+            "impact": "脚本→视觉→配音→配乐→合成的全流程自动化，代表了 AIGC 从「单点生成」走向「完整工作流」的趋势。内容创作者的入行门槛正在被重写。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-github-ai-04",
           "rank": 4,
           "title": "NousResearch/hermes-agent",
-          "repoPath": "NousResearch/hermes-agent",
           "summary": "「随用户成长」的开源 Agent 框架。",
-          "insight": "13 万+ Stars，框架定位强调个性化成长路径。Agent 领域正在出现两种路线之争：通用超级 Agent vs 可适应用户习惯的个性化 Agent。",
           "url": "https://github.com/NousResearch/hermes-agent",
-          "source": "GitHub Trending",
-          "tags": ["Agent框架", "个性化", "周榜"],
-          "stars": 129961,
-          "starsGain": "8,500 stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "Agent框架",
+            "个性化",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "8,500 stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/NousResearch/hermes-agent",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "「随用户成长」的开源 Agent 框架。",
+            "evidence": [
+              "「随用户成长」的开源 Agent 框架。"
+            ],
+            "impact": "13 万+ Stars，框架定位强调个性化成长路径。Agent 领域正在出现两种路线之争：通用超级 Agent vs 可适应用户习惯的个性化 Agent。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-github-ai-05",
           "rank": 5,
           "title": "ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
-          "repoPath": "ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
           "summary": "300+ AI Agent、框架和工具的对比指南与 Benchmark。",
-          "insight": "合集类项目本周持续高热，说明开发者在 Agent 生态选型上存在大量「信息过载」痛点。谁能做好导航层，谁就有流量。",
           "url": "https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
-          "source": "GitHub Trending",
-          "tags": ["Awesome列表", "Agent", "周榜"],
-          "stars": 47200,
-          "starsGain": "6,300 stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "Awesome列表",
+            "Agent",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "6,300 stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "300+ AI Agent、框架和工具的对比指南与 Benchmark。",
+            "evidence": [
+              "300+ AI Agent、框架和工具的对比指南与 Benchmark。"
+            ],
+            "impact": "合集类项目本周持续高热，说明开发者在 Agent 生态选型上存在大量「信息过载」痛点。谁能做好导航层，谁就有流量。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-github-ai-06",
           "rank": 6,
           "title": "pi-mono",
-          "repoPath": "pi-dev/pi-mono",
           "summary": "可互换组件的统一 AI Agent 工具包（CLI + LLM API + TUI + Slack）。",
-          "insight": "把 Coding Agent CLI、统一 LLM API、TUI 和 Slack Bot 打包成可插拔单体，是「平台化」思路的体现。值得关注其如何解决多模型切换时的上下文一致性。",
           "url": "https://github.com/pi-dev/pi-mono",
-          "source": "GitHub Trending",
-          "tags": ["工具包", "多模型", "周榜"],
-          "stars": 18700,
-          "starsGain": "5,100 stars this week"
+          "source_id": "source-github",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "工具包",
+            "多模型",
+            "周榜"
+          ],
+          "metrics": [
+            {
+              "label": "新增 Stars（来源记录）",
+              "value": "5,100 stars this week",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://github.com/pi-dev/pi-mono",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "可互换组件的统一 AI Agent 工具包（CLI + LLM API + TUI + Slack）。",
+            "evidence": [
+              "可互换组件的统一 AI Agent 工具包（CLI + LLM API + TUI + Slack）。"
+            ],
+            "impact": "把 Coding Agent CLI、统一 LLM API、TUI 和 Slack Bot 打包成可插拔单体，是「平台化」思路的体现。值得关注其如何解决多模型切换时的上下文一致性。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         }
       ]
     },
@@ -85,57 +268,214 @@
       "id": "product-hunt",
       "title": "Product Hunt 本月",
       "icon": "🚀",
-      "intro": "Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。数据由 Claude 搜索整理。",
+      "intro": "Product Hunt 本月获票最多的新产品，覆盖 AI 工具、开发者工具、效率产品等方向。本记录保留当时的榜单字段，来源热度未在本轮重验。",
+      "ranking_basis": "按来源月榜的票数排序；历史榜单不代表当前产品热度",
+      "source": {
+        "id": "source-product-hunt",
+        "name": "Product Hunt",
+        "url": "https://www.producthunt.com/leaderboard/monthly/2026/5",
+        "as_of": "2026-05-19"
+      },
       "items": [
         {
+          "id": "signal-product-hunt-01",
           "rank": 1,
           "title": "Claude Code",
           "summary": "Anthropic 官方 AI 编程 CLI，深度融合代码库理解与多文件操作。",
-          "insight": "本月 PH 编程 Agent 类排名第一。Cursor 之外，Anthropic 亲自下场做 CLI 工具，意味着 API 层和工具层的边界正在消失——模型商直接争夺开发者工作流。",
-          "url": "https://www.producthunt.com/categories/ai-coding-agents",
-          "source": "Product Hunt",
-          "tags": ["AI编程", "Anthropic", "CLI"],
-          "votes": 1240
+          "url": "https://www.producthunt.com/products/claude-code",
+          "source_id": "source-product-hunt",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "AI编程",
+            "Anthropic",
+            "CLI"
+          ],
+          "metrics": [
+            {
+              "label": "Product Hunt votes（来源记录）",
+              "value": "1240",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.producthunt.com/products/claude-code",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "Anthropic 官方 AI 编程 CLI，深度融合代码库理解与多文件操作。",
+            "evidence": [
+              "Anthropic 官方 AI 编程 CLI，深度融合代码库理解与多文件操作。"
+            ],
+            "impact": "本月 PH 编程 Agent 类排名第一。Cursor 之外，Anthropic 亲自下场做 CLI 工具，意味着 API 层和工具层的边界正在消失——模型商直接争夺开发者工作流。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-product-hunt-02",
           "rank": 2,
           "title": "Vivago Video Agent",
           "summary": "AI 视频制作 Agent，帮助创作者持续产出高质量内容。",
-          "insight": "视频 Agent 赛道本月最受关注。从单次生成到持续创作陪伴，产品定位向「AI 创作伙伴」而非「一次性工具」演进，订阅留存逻辑更强。",
-          "url": "https://www.producthunt.com/products",
-          "source": "Product Hunt",
-          "tags": ["视频生成", "Agent", "内容创作"],
-          "votes": 980
+          "url": "https://www.producthunt.com/products/vivago-video-agent",
+          "source_id": "source-product-hunt",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "视频生成",
+            "Agent",
+            "内容创作"
+          ],
+          "metrics": [
+            {
+              "label": "Product Hunt votes（来源记录）",
+              "value": "980",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.producthunt.com/products/vivago-video-agent",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "AI 视频制作 Agent，帮助创作者持续产出高质量内容。",
+            "evidence": [
+              "AI 视频制作 Agent，帮助创作者持续产出高质量内容。"
+            ],
+            "impact": "视频 Agent 赛道本月最受关注。从单次生成到持续创作陪伴，产品定位向「AI 创作伙伴」而非「一次性工具」演进，订阅留存逻辑更强。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-product-hunt-03",
           "rank": 3,
           "title": "Magic Patterns",
           "summary": "设计系统感知的交互原型 AI 生成工具。",
-          "insight": "能理解品牌设计系统再生成原型，解决了通用 AI 生成 UI 的「调性不一致」问题。对 Design System 有投入的中大型团队是精准用户。",
-          "url": "https://www.producthunt.com/categories/ai-designer",
-          "source": "Product Hunt",
-          "tags": ["设计系统", "原型", "AI设计"],
-          "votes": 870
+          "url": "https://www.producthunt.com/products/magic-patterns",
+          "source_id": "source-product-hunt",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "设计系统",
+            "原型",
+            "AI设计"
+          ],
+          "metrics": [
+            {
+              "label": "Product Hunt votes（来源记录）",
+              "value": "870",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.producthunt.com/products/magic-patterns",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "设计系统感知的交互原型 AI 生成工具。",
+            "evidence": [
+              "设计系统感知的交互原型 AI 生成工具。"
+            ],
+            "impact": "能理解品牌设计系统再生成原型，解决了通用 AI 生成 UI 的「调性不一致」问题。对 Design System 有投入的中大型团队是精准用户。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-product-hunt-04",
           "rank": 4,
           "title": "Wispr Flow",
           "summary": "语音听写 App，让你的输入速度提升 4 倍。",
-          "insight": "语音输入复兴的代表产品，本月持续高票。随着 Agent 执行层能力增强，「如何高效表达意图」成为新的用户体验瓶颈，语音是最自然的解法。",
-          "url": "https://www.producthunt.com/products",
-          "source": "Product Hunt",
-          "tags": ["语音输入", "效率", "输入法"],
-          "votes": 760
+          "url": "https://www.producthunt.com/products/wispr-flow",
+          "source_id": "source-product-hunt",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "语音输入",
+            "效率",
+            "输入法"
+          ],
+          "metrics": [
+            {
+              "label": "Product Hunt votes（来源记录）",
+              "value": "760",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.producthunt.com/products/wispr-flow",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "语音听写 App，让你的输入速度提升 4 倍。",
+            "evidence": [
+              "语音听写 App，让你的输入速度提升 4 倍。"
+            ],
+            "impact": "语音输入复兴的代表产品，本月持续高票。随着 Agent 执行层能力增强，「如何高效表达意图」成为新的用户体验瓶颈，语音是最自然的解法。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-product-hunt-05",
           "rank": 5,
           "title": "CodeRabbit",
           "summary": "上下文感知的 AI PR 代码审查与修复建议工具。",
-          "insight": "将 AI 嵌入 Code Review 流程而非替换它，是更容易被团队接受的切入点。PR 级别的上下文理解正在成为 AI 编程工具的新分水岭。",
-          "url": "https://www.producthunt.com/products",
-          "source": "Product Hunt",
-          "tags": ["代码审查", "DevOps", "AI编程"],
-          "votes": 690
+          "url": "https://www.producthunt.com/products/coderabbit",
+          "source_id": "source-product-hunt",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "代码审查",
+            "DevOps",
+            "AI编程"
+          ],
+          "metrics": [
+            {
+              "label": "Product Hunt votes（来源记录）",
+              "value": "690",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.producthunt.com/products/coderabbit",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "上下文感知的 AI PR 代码审查与修复建议工具。",
+            "evidence": [
+              "上下文感知的 AI PR 代码审查与修复建议工具。"
+            ],
+            "impact": "将 AI 嵌入 Code Review 流程而非替换它，是更容易被团队接受的切入点。PR 级别的上下文理解正在成为 AI 编程工具的新分水岭。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         }
       ]
     },
@@ -144,51 +484,213 @@
       "title": "Hacker News 热议",
       "icon": "🔥",
       "intro": "Hacker News 近期最热门的 AI 相关讨论，反映技术社区的前沿关注与批判性思考。",
+      "ranking_basis": "按来源页面的 Points 排序；讨论热度不等于产品验证",
+      "source": {
+        "id": "source-hacker-news",
+        "name": "Hacker News",
+        "url": "https://news.ycombinator.com/news",
+        "as_of": "2026-05-19"
+      },
       "items": [
         {
+          "id": "signal-hacker-news-01",
           "rank": 1,
           "title": "Google I/O 2026：Gemini 4.0、Android XR 眼镜与全系 AI Agent",
           "summary": "Google I/O 5 月 19 日开幕，Gemini Spark 持久 Agent 等多项重磅发布。",
-          "insight": "Google 把 I/O 重新定义为 AI 发布会。Gemini Spark（持久 Agent）和系统级 Android AI 代理是最值得跟踪的方向——平台方直接做 Agent 层，对第三方应用生态的影响深远。",
           "url": "https://io.google/2026/",
-          "source": "Hacker News",
-          "tags": ["Google", "Gemini", "Agent"]
+          "source_id": "source-hacker-news",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "Google",
+            "Gemini",
+            "Agent"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 1",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://io.google/2026/",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "Google I/O 5 月 19 日开幕，Gemini Spark 持久 Agent 等多项重磅发布。",
+            "evidence": [
+              "Google I/O 5 月 19 日开幕，Gemini Spark 持久 Agent 等多项重磅发布。"
+            ],
+            "impact": "Google 把 I/O 重新定义为 AI 发布会。Gemini Spark（持久 Agent）和系统级 Android AI 代理是最值得跟踪的方向——平台方直接做 Agent 层，对第三方应用生态的影响深远。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-hacker-news-02",
           "rank": 2,
           "title": "2026：AI 辅助攻击元年——LLM 首次被用于零日漏洞利用",
           "summary": "Google 披露野外已出现 AI 辅助生成的 0-day 漏洞利用。",
-          "insight": "攻防双方都在用 AI 提速，但攻方迭代成本更低。OpenAI 随即宣布 Daybreak 漏洞检测平台。安全领域的 AI 军备竞赛已从概念验证走向实战，对产品安全设计的影响不可忽视。",
           "url": "https://thehackernews.com/2026/05/2026-year-of-ai-assisted-attacks.html",
-          "source": "Hacker News",
-          "tags": ["安全", "0-day", "AI攻防"]
+          "source_id": "source-hacker-news",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "安全",
+            "0-day",
+            "AI攻防"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 2",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://thehackernews.com/2026/05/2026-year-of-ai-assisted-attacks.html",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "Google 披露野外已出现 AI 辅助生成的 0-day 漏洞利用。",
+            "evidence": [
+              "Google 披露野外已出现 AI 辅助生成的 0-day 漏洞利用。"
+            ],
+            "impact": "攻防双方都在用 AI 提速，但攻方迭代成本更低。OpenAI 随即宣布 Daybreak 漏洞检测平台。安全领域的 AI 军备竞赛已从概念验证走向实战，对产品安全设计的影响不可忽视。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-hacker-news-03",
           "rank": 3,
           "title": "Anthropic 宣布 API 用量独立计费池（6 月 15 日起）",
           "summary": "程序化 API 用量将从订阅额度中独立，引发定价模式讨论。",
-          "insight": "把交互用量和 API 用量拆开计费，是 Anthropic 针对「用 Claude 写 Claude 代码」的重度用户定向提价。HN 热议的核心：AI 订阅的「All-in-One」时代可能正在结束。",
-          "url": "https://news.ycombinator.com/front",
-          "source": "Hacker News",
-          "tags": ["Anthropic", "定价", "API"]
+          "url": "https://news.ycombinator.com/item?id=48086001",
+          "source_id": "source-hacker-news",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "Anthropic",
+            "定价",
+            "API"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 3",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://news.ycombinator.com/item?id=48086001",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "程序化 API 用量将从订阅额度中独立，引发定价模式讨论。",
+            "evidence": [
+              "程序化 API 用量将从订阅额度中独立，引发定价模式讨论。"
+            ],
+            "impact": "把交互用量和 API 用量拆开计费，是 Anthropic 针对「用 Claude 写 Claude 代码」的重度用户定向提价。HN 热议的核心：AI 订阅的「All-in-One」时代可能正在结束。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-hacker-news-04",
           "rank": 4,
           "title": "Ask HN: 2026 年 5 月你在做什么？",
           "summary": "社区月度自我报告，Agent、Skill 框架、本地模型是主流方向。",
-          "insight": "本月 Ask HN 主线：大量开发者在构建「给 AI Agent 用的工具」，而非直接面向终端用户产品。这个信号说明基础设施层还有很大空间，但也意味着竞争将迅速加剧。",
           "url": "https://news.ycombinator.com/item?id=48085993",
-          "source": "Hacker News",
-          "tags": ["社区", "Agent", "开发者"]
+          "source_id": "source-hacker-news",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "社区",
+            "Agent",
+            "开发者"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 4",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://news.ycombinator.com/item?id=48085993",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "社区月度自我报告，Agent、Skill 框架、本地模型是主流方向。",
+            "evidence": [
+              "社区月度自我报告，Agent、Skill 框架、本地模型是主流方向。"
+            ],
+            "impact": "本月 Ask HN 主线：大量开发者在构建「给 AI Agent 用的工具」，而非直接面向终端用户产品。这个信号说明基础设施层还有很大空间，但也意味着竞争将迅速加剧。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-hacker-news-05",
           "rank": 5,
           "title": "你付的不是 AI 费，你在补贴一个泡沫",
           "summary": "质疑 AI 定价模型可持续性的深度分析。",
-          "insight": "HN 热议文章，核心论点：当前 AI 订阅价格远低于实际算力成本，用户享受的是风投补贴。对 PM 来说，这意味着「AI 赋能」的竞争优势窗口是有限的，需要在补贴期内建立真实护城河。",
           "url": "https://medium.com/@jose.i.ruacho/youre-not-paying-for-ai-you-re-paying-for-a-subsidy-40ee4aa3c48d",
-          "source": "Hacker News",
-          "tags": ["AI经济", "定价", "商业模式"]
+          "source_id": "source-hacker-news",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "AI经济",
+            "定价",
+            "商业模式"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 5",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://medium.com/@jose.i.ruacho/youre-not-paying-for-ai-you-re-paying-for-a-subsidy-40ee4aa3c48d",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "质疑 AI 定价模型可持续性的深度分析。",
+            "evidence": [
+              "质疑 AI 定价模型可持续性的深度分析。"
+            ],
+            "impact": "HN 热议文章，核心论点：当前 AI 订阅价格远低于实际算力成本，用户享受的是风投补贴。对 PM 来说，这意味着「AI 赋能」的竞争优势窗口是有限的，需要在补贴期内建立真实护城河。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         }
       ]
     },
@@ -197,42 +699,173 @@
       "title": "出海 AI 动态",
       "icon": "🌍",
       "intro": "全球 AI 创业公司融资、产品出海与市场动态，重点关注中国 AI 产品的国际化进展。",
+      "ranking_basis": "按来源文章或 GitHub 周榜观察；不构成市场规模排名",
+      "source": {
+        "id": "source-overseas",
+        "name": "TechCrunch / GitHub Trending",
+        "url": "https://github.com/trending?since=weekly",
+        "as_of": "2026-05-19"
+      },
       "items": [
         {
+          "id": "signal-overseas-ai-01",
           "rank": 1,
           "title": "Runway 估值 53 亿美元，Q2 ARR 增加 4000 万",
           "summary": "AI 视频生成独角兽 Runway 商业化提速，从工具走向平台。",
-          "insight": "Runway 不满足于做 AI 视频工具，对标目标是 Google 的影像基础设施。ARR 的快速增长说明影视/广告行业对 AI 视频工作流的接受度远超预期，内容侧落地比 B2B SaaS 快得多。",
           "url": "https://techcrunch.com/2026/05/15/runway-started-by-helping-filmmakers-now-it-wants-to-beat-google-at-ai/",
-          "source": "TechCrunch",
-          "tags": ["Runway", "视频AI", "融资"]
+          "source_id": "source-overseas",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "Runway",
+            "视频AI",
+            "融资"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 1",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://techcrunch.com/2026/05/15/runway-started-by-helping-filmmakers-now-it-wants-to-beat-google-at-ai/",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "AI 视频生成独角兽 Runway 商业化提速，从工具走向平台。",
+            "evidence": [
+              "AI 视频生成独角兽 Runway 商业化提速，从工具走向平台。"
+            ],
+            "impact": "Runway 不满足于做 AI 视频工具，对标目标是 Google 的影像基础设施。ARR 的快速增长说明影视/广告行业对 AI 视频工作流的接受度远超预期，内容侧落地比 B2B SaaS 快得多。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-overseas-ai-02",
           "rank": 2,
           "title": "Dust 完成 4000 万美元 B 轮，加速企业 AI Agent 部署",
           "summary": "Sequoia、Snowflake 等领投，聚焦企业级 Agent 落地。",
-          "insight": "企业 AI Agent 赛道的 B 轮融资持续活跃，Dust 选择「平台而非应用」的定位与 Anthropic/OpenAI 的企业服务形成差异化。值得关注其 Agent 编排层的技术壁垒如何建立。",
           "url": "https://techstartups.com/2026/05/18/top-startup-and-tech-funding-news-may-18-2025/",
-          "source": "TechStartups",
-          "tags": ["企业Agent", "B轮", "Sequoia"]
+          "source_id": "source-overseas",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "企业Agent",
+            "B轮",
+            "Sequoia"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 2",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://techstartups.com/2026/05/18/top-startup-and-tech-funding-news-may-18-2025/",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "Sequoia、Snowflake 等领投，聚焦企业级 Agent 落地。",
+            "evidence": [
+              "Sequoia、Snowflake 等领投，聚焦企业级 Agent 落地。"
+            ],
+            "impact": "企业 AI Agent 赛道的 B 轮融资持续活跃，Dust 选择「平台而非应用」的定位与 Anthropic/OpenAI 的企业服务形成差异化。值得关注其 Agent 编排层的技术壁垒如何建立。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-overseas-ai-03",
           "rank": 3,
           "title": "印度 AI 创业生态快速扩张，医疗/教育/金融领域融资密集",
           "summary": "印度成为 2026 年增长最快的 AI 市场之一。",
-          "insight": "印度市场的 AI 落地有独特优势：海量数字化低收入用户 + 本地化语言需求 + 政府推动。对出海团队来说，印度可能是比东南亚更有规模效应的 AI 第二市场。",
           "url": "https://boldnewsonline.com/indias-ai-startup-ecosystem-expands-rapidly/",
-          "source": "Bold News",
-          "tags": ["印度", "AI市场", "新兴市场"]
+          "source_id": "source-overseas",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "印度",
+            "AI市场",
+            "新兴市场"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 3",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://boldnewsonline.com/indias-ai-startup-ecosystem-expands-rapidly/",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "印度成为 2026 年增长最快的 AI 市场之一。",
+            "evidence": [
+              "印度成为 2026 年增长最快的 AI 市场之一。"
+            ],
+            "impact": "印度市场的 AI 落地有独特优势：海量数字化低收入用户 + 本地化语言需求 + 政府推动。对出海团队来说，印度可能是比东南亚更有规模效应的 AI 第二市场。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-overseas-ai-04",
           "rank": 4,
           "title": "Digg 以 AI 新闻聚合器身份复活",
           "summary": "Digg 重新上线，定位为 AI 驱动的内容发现平台。",
-          "insight": "老牌社区用 AI 重做信息聚合，与其说是 Digg 的回归，不如说是验证了一个产品假设：当 LLM 足够便宜，「编辑型媒体」都会被 AI 重写。值得关注其 SEO 流量策略。",
           "url": "https://techcrunch.com/2026/05/11/digg-tries-again-this-time-as-an-ai-news-aggregator/",
-          "source": "TechCrunch",
-          "tags": ["媒体", "AI聚合", "产品复活"]
+          "source_id": "source-overseas",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "媒体",
+            "AI聚合",
+            "产品复活"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 4",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://techcrunch.com/2026/05/11/digg-tries-again-this-time-as-an-ai-news-aggregator/",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "Digg 重新上线，定位为 AI 驱动的内容发现平台。",
+            "evidence": [
+              "Digg 重新上线，定位为 AI 驱动的内容发现平台。"
+            ],
+            "impact": "老牌社区用 AI 重做信息聚合，与其说是 Digg 的回归，不如说是验证了一个产品假设：当 LLM 足够便宜，「编辑型媒体」都会被 AI 重写。值得关注其 SEO 流量策略。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         }
       ]
     },
@@ -241,53 +874,220 @@
       "title": "国内 AI 热点",
       "icon": "🇨🇳",
       "intro": "国内 AI 大模型、产品与政策动态，来源：36Kr、量子位、IT 之家等。",
+      "ranking_basis": "按来源文章流与报道时间整理；不构成行业规模排名",
+      "source": {
+        "id": "source-china-ai",
+        "name": "36Kr / 量子位 / CSDN",
+        "url": "https://36kr.com/information/AI/",
+        "as_of": "2026-05-19"
+      },
       "items": [
         {
+          "id": "signal-china-ai-01",
           "rank": 1,
           "title": "DeepSeek 首轮融资 500 亿元，V4.1 定档 6 月",
           "summary": "梁文锋出资 200 亿，估值或达 3500 亿元；V4.1 将加入图像/音频理解。",
-          "insight": "500 亿元融资是国内 AI 公司历史最大单笔。更值得关注的是 V4.1 的能力扩展方向：图像+音频理解但只输出文本——这是一种刻意的「感知增强、输出收窄」策略，降低多模态风险的同时增强应用场景覆盖。",
           "url": "https://www.qbitai.com/2026/05/414432.html",
-          "source": "量子位",
-          "tags": ["DeepSeek", "融资", "大模型"]
+          "source_id": "source-china-ai",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "DeepSeek",
+            "融资",
+            "大模型"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 1",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.qbitai.com/2026/05/414432.html",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "梁文锋出资 200 亿，估值或达 3500 亿元；V4.1 将加入图像/音频理解。",
+            "evidence": [
+              "梁文锋出资 200 亿，估值或达 3500 亿元；V4.1 将加入图像/音频理解。"
+            ],
+            "impact": "500 亿元融资是国内 AI 公司历史最大单笔。更值得关注的是 V4.1 的能力扩展方向：图像+音频理解但只输出文本——这是一种刻意的「感知增强、输出收窄」策略，降低多模态风险的同时增强应用场景覆盖。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-china-ai-02",
           "rank": 2,
           "title": "智谱市值突破 5000 亿港元，六小虎估值竞赛白热化",
           "summary": "智谱总市值约 5127 亿港元，国内大模型独角兽估值集体飙升。",
-          "insight": "「六小虎」估值竞赛的背后是商业化路径的分化：智谱走 To B 代码/企业服务，月之暗面走消费端 Kimi。两条路的护城河截然不同，市值会收敛还是持续分化是 2026 的核心看点。",
           "url": "https://36kr.com/p/3807808383344384",
-          "source": "36氪",
-          "tags": ["智谱", "估值", "大模型竞争"]
+          "source_id": "source-china-ai",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "智谱",
+            "估值",
+            "大模型竞争"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 2",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://36kr.com/p/3807808383344384",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "智谱总市值约 5127 亿港元，国内大模型独角兽估值集体飙升。",
+            "evidence": [
+              "智谱总市值约 5127 亿港元，国内大模型独角兽估值集体飙升。"
+            ],
+            "impact": "「六小虎」估值竞赛的背后是商业化路径的分化：智谱走 To B 代码/企业服务，月之暗面走消费端 Kimi。两条路的护城河截然不同，市值会收敛还是持续分化是 2026 的核心看点。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-china-ai-03",
           "rank": 3,
           "title": "国家发布《智能体规范应用实施意见》，19 个典型场景首次官方定义",
           "summary": "网信办 + 发改委 + 工信部联合发文，首次从国家层面定义智能体。",
-          "insight": "监管层用「自主感知、记忆、决策、交互、执行」五要素定义智能体，并列出科研/产业/民生/治理四大方向。政策信号明确：Agent 是下一个被重点扶持也被重点监管的赛道，合规成本将成为竞争要素。",
           "url": "https://36kr.com/p/3806082901122568",
-          "source": "36氪",
-          "tags": ["政策", "Agent", "监管"]
+          "source_id": "source-china-ai",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "adopt",
+            "watch"
+          ],
+          "tags": [
+            "政策",
+            "Agent",
+            "监管"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 3",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://36kr.com/p/3806082901122568",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "网信办 + 发改委 + 工信部联合发文，首次从国家层面定义智能体。",
+            "evidence": [
+              "网信办 + 发改委 + 工信部联合发文，首次从国家层面定义智能体。"
+            ],
+            "impact": "监管层用「自主感知、记忆、决策、交互、执行」五要素定义智能体，并列出科研/产业/民生/治理四大方向。政策信号明确：Agent 是下一个被重点扶持也被重点监管的赛道，合规成本将成为竞争要素。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-china-ai-04",
           "rank": 4,
           "title": "2026 年 4-5 月超级更新月：GPT-5.5、Claude 4.7、DeepSeek V4 密集升级",
           "summary": "主流大模型集体迭代，能力基线快速拉升，价格同步下降。",
-          "insight": "「超级更新月」的本质是模型能力商品化的加速——当 GPT/Claude/DeepSeek 的基础能力差距缩小，应用层的产品定义和用户体验将成为更关键的竞争变量。",
           "url": "https://deepseek.csdn.net/69f407d054b52172bc711426.html",
-          "source": "CSDN",
-          "tags": ["大模型迭代", "GPT", "Claude"]
+          "source_id": "source-china-ai",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "watch",
+            "deep_dive"
+          ],
+          "tags": [
+            "大模型迭代",
+            "GPT",
+            "Claude"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 4",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://deepseek.csdn.net/69f407d054b52172bc711426.html",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "主流大模型集体迭代，能力基线快速拉升，价格同步下降。",
+            "evidence": [
+              "主流大模型集体迭代，能力基线快速拉升，价格同步下降。"
+            ],
+            "impact": "「超级更新月」的本质是模型能力商品化的加速——当 GPT/Claude/DeepSeek 的基础能力差距缩小，应用层的产品定义和用户体验将成为更关键的竞争变量。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         },
         {
+          "id": "signal-china-ai-05",
           "rank": 5,
           "title": "国内 AI 芯片 2026：从「推理」走向「训练」的跨越",
           "summary": "国产芯片厂商加速布局训练侧，打破英伟达在高端算力的垄断。",
-          "insight": "推理侧国产化已有相当进展，训练侧是更硬的战场。这个转变意味着国内 AI 的「算力自主」叙事正在从 PPT 走向产品，但距离 H100 同等效能仍有差距，短期影响更多在政采和大厂内部。",
           "url": "https://www.36kr.com/p/3696839539338881",
-          "source": "36氪",
-          "tags": ["AI芯片", "国产化", "训练算力"]
+          "source_id": "source-china-ai",
+          "observed_at": "2026-05-19",
+          "verification_level": "manual_reviewed",
+          "actions": [
+            "compare",
+            "watch"
+          ],
+          "tags": [
+            "AI芯片",
+            "国产化",
+            "训练算力"
+          ],
+          "metrics": [
+            {
+              "label": "来源排名",
+              "value": "rank 5",
+              "definition": "该数值仅记录来源在观察时的排序或互动口径，不是跨平台热度或因果结果。",
+              "kind": "external-research",
+              "as_of": "2026-05-19",
+              "source_url": "https://www.36kr.com/p/3696839539338881",
+              "caveat": "历史快照未在本轮重新核对；不要将其解读为 2026-08-30 的当前指标。"
+            }
+          ],
+          "judgment": {
+            "change": "国产芯片厂商加速布局训练侧，打破英伟达在高端算力的垄断。",
+            "evidence": [
+              "国产芯片厂商加速布局训练侧，打破英伟达在高端算力的垄断。"
+            ],
+            "impact": "推理侧国产化已有相当进展，训练侧是更硬的战场。这个转变意味着国内 AI 的「算力自主」叙事正在从 PPT 走向产品，但距离 H100 同等效能仍有差距，短期影响更多在政采和大厂内部。",
+            "uncertainty": "内容来自 2026-05-19 历史快照；来源热度、事实和因果关系未在本轮重新验证。",
+            "next_step": "在下一轮快照中复核来源位置、具体产品进展和用户行为，再决定是否扩大跟踪。",
+            "next_question": "这一信号在下一次复核时是否仍然成立？"
+          }
         }
       ]
     }
-  ]
+  ],
+  "method": {
+    "freshness_policy": "0-7 天本期；8-30 天建议复核；超过 30 天为历史快照，不代表当前热度。",
+    "collection_boundary": "网络抓取只生成候选；公开快照只接受人工复核后的完整 JSON。",
+    "limitation": "本快照保留 2026-05-19 的历史记录，未在本轮联网核对事实变化。"
+  }
 }
