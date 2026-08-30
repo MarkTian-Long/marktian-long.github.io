@@ -27,14 +27,18 @@ const THEME_LABELS = {
     safety: '安全',
 };
 const STATUS_LABELS = {
-    current: '维护中',
-    due: '待复核',
+    pending: '待人工复核',
     historical: '历史档案',
 };
 const STATUS_DESCRIPTIONS = {
-    current: '在维护周期内',
-    due: '已超过计划复核日期',
+    pending: '来源与产品事实尚待人工逐项复核',
     historical: '产品状态已发生变化',
+};
+const TIMELINE_TYPE_LABELS = {
+    archive: '档案整理',
+    boundary: '边界整理',
+    launch: '产品发布',
+    retirement: '停止提供',
 };
 
 const state = {
@@ -106,7 +110,15 @@ function isHttps(url) {
 }
 
 function isIsoDate(value) {
-    return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+    const match = typeof value === 'string' ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null;
+    if (!match) return false;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(0);
+    date.setUTCFullYear(year, month - 1, day);
+    date.setUTCHours(0, 0, 0, 0);
+    return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
 function isNonEmptyString(value) {
@@ -115,7 +127,8 @@ function isNonEmptyString(value) {
 
 function isValidProduct(product) {
     if (!isObject(product) || !product.id || !product.name || !product.category) return false;
-    if (!isIsoDate(product.reviewedAt) || !isIsoDate(product.reviewDueAt)) return false;
+    if (!isIsoDate(product.archiveDate) || product.factReviewStatus !== '待人工事实复核') return false;
+    if ('reviewedAt' in product || 'reviewDueAt' in product) return false;
     if (!isNonEmptyString(product.detailLink) || !isHttps(product.detailLink)) return false;
     if (!isObject(product.thesis) || !isNonEmptyString(product.thesis.text) || !Array.isArray(product.thesis.evidenceRefs)) return false;
     if (!Array.isArray(product.decisionThemes) || product.decisionThemes.length < 3) return false;
@@ -132,8 +145,12 @@ function isValidProduct(product) {
     }
     const refsResolve = refs => Array.isArray(refs) && refs.length > 0 && refs.every(ref => sourceIds.has(ref));
     if (!refsResolve(product.thesis.evidenceRefs)) return false;
+    const decisionIds = new Set(product.decisions.map(decision => decision?.id));
+    if (decisionIds.size !== product.decisions.length) return false;
     if (product.decisions.some(decision => !decision || !isNonEmptyString(decision.id) || !isNonEmptyString(decision.title) || !isNonEmptyString(decision.choice) || !isNonEmptyString(decision.why) || !isNonEmptyString(decision.tradeoff) || !refsResolve(decision.evidenceRefs))) return false;
     if (product.uncertainties.some(uncertainty => !uncertainty || !isNonEmptyString(uncertainty.question) || !['open', 'watch', 'bounded'].includes(uncertainty.status) || !isNonEmptyString(uncertainty.note) || !Array.isArray(uncertainty.evidenceRefs) || uncertainty.evidenceRefs.some(ref => !sourceIds.has(ref)))) return false;
+    const metricIds = new Set(product.keyMetrics.map(metric => metric?.id));
+    if (metricIds.size !== product.keyMetrics.length) return false;
     if (product.keyMetrics.some(metric => !metric || !isNonEmptyString(metric.id) || !isNonEmptyString(metric.label) || !isNonEmptyString(metric.value) || !isNonEmptyString(metric.definition) || !VALID_METRIC_KINDS.has(metric.kind) || !isIsoDate(metric.asOf) || !refsResolve(metric.sourceRefs) || !isNonEmptyString(metric.caveat))) return false;
 
     const summary = product.tabs.summary;
@@ -141,10 +158,10 @@ function isValidProduct(product) {
     const tradeoffs = product.tabs.tradeoffs;
     const evidence = product.tabs.evidence;
     const evolution = product.tabs.evolution;
-    if (!isNonEmptyString(summary.problem) || !isNonEmptyString(summary.whyAi) || !isNonEmptyString(summary.humanRole) || !Array.isArray(summary.decisionIds)) return false;
+    if (!isNonEmptyString(summary.problem) || !isNonEmptyString(summary.whyAi) || !isNonEmptyString(summary.humanRole) || !Array.isArray(summary.decisionIds) || !summary.decisionIds.length || summary.decisionIds.some(id => !decisionIds.has(id))) return false;
     if (!isNonEmptyString(mechanism.summary) || !Array.isArray(mechanism.system) || !mechanism.system.every(isNonEmptyString) || !isNonEmptyString(mechanism.humanRole) || !Array.isArray(mechanism.failureModes) || !mechanism.failureModes.every(isNonEmptyString)) return false;
     if (!isNonEmptyString(tradeoffs.summary) || !Array.isArray(tradeoffs.rows) || tradeoffs.rows.length < 1 || tradeoffs.rows.some(row => !row || !isNonEmptyString(row.decision) || !isNonEmptyString(row.gain) || !isNonEmptyString(row.cost) || !isNonEmptyString(row.boundary))) return false;
-    if (!isNonEmptyString(evidence.summary) || !Array.isArray(evidence.metricIds) || !isNonEmptyString(evidence.missing)) return false;
+    if (!isNonEmptyString(evidence.summary) || !Array.isArray(evidence.metricIds) || !evidence.metricIds.length || evidence.metricIds.some(id => !metricIds.has(id)) || !isNonEmptyString(evidence.missing)) return false;
     if (!isNonEmptyString(evolution.summary) || !Array.isArray(evolution.timeline) || evolution.timeline.length < 1 || !isNonEmptyString(evolution.migrationBoundary) || !isNonEmptyString(evolution.counterEvidence)) return false;
     if (evolution.timeline.some(event => !event || !isIsoDate(event.date) || !isNonEmptyString(event.event) || !isNonEmptyString(event.type) || !refsResolve(event.evidenceRefs))) return false;
     return true;
@@ -165,14 +182,9 @@ function formatDate(date) {
     return String(date || '').replaceAll('-', '.');
 }
 
-function todayIso() {
-    return new Date().toISOString().slice(0, 10);
-}
-
-function reviewState(product) {
+function archiveState(product) {
     if (product.lifecycle === 'historical') return { key: 'historical', label: STATUS_LABELS.historical, detail: STATUS_DESCRIPTIONS.historical };
-    if (product.reviewDueAt < todayIso()) return { key: 'due', label: STATUS_LABELS.due, detail: STATUS_DESCRIPTIONS.due };
-    return { key: 'current', label: STATUS_LABELS.current, detail: STATUS_DESCRIPTIONS.current };
+    return { key: 'pending', label: STATUS_LABELS.pending, detail: STATUS_DESCRIPTIONS.pending };
 }
 
 function themeLabel(theme) {
@@ -187,6 +199,10 @@ function typeLabel(kind) {
         'production-result': '生产结果',
         'external-research': '外部研究',
     }[kind] || kind;
+}
+
+function timelineTypeLabel(type) {
+    return TIMELINE_TYPE_LABELS[type] || type;
 }
 
 function renderFilterGroup(container, values, active, group, allLabel) {
@@ -240,7 +256,7 @@ function createCard(product) {
     const card = createElement('article', 'product-card');
     card.dataset.productId = product.id;
     card.dataset.category = product.category;
-    const review = reviewState(product);
+    const archive = archiveState(product);
     const open = createElement('button', 'product-open');
     open.type = 'button';
     open.id = `product-card-${product.id}`;
@@ -250,7 +266,7 @@ function createCard(product) {
     const top = createElement('div', 'card-topline');
     append(top,
         createElement('span', 'product-mark', product.logo || product.name.slice(0, 1)),
-        makeBadge(review.label, `status-${review.key}`));
+        makeBadge(archive.label, `status-${archive.key}`));
     const identity = createElement('div', 'card-identity');
     append(identity, createElement('h3', 'card-name', product.name), createElement('p', 'card-company', product.company));
     const thesis = createElement('p', 'card-thesis', product.thesis.text);
@@ -260,7 +276,7 @@ function createCard(product) {
     const evidence = createElement('span', 'evidence-count', `${sourceCount(product)} 条来源`);
     const footer = createElement('div', 'card-footer');
     append(footer,
-        createElement('span', 'review-date', `复核 ${formatDate(product.reviewedAt)}`),
+        createElement('span', 'archive-date', `整理 ${formatDate(product.archiveDate)}`),
         createElement('span', 'card-cta', '打开档案 ↗'));
     append(open, top, identity, thesis, tags, evidence, footer);
     card.append(open);
@@ -289,6 +305,7 @@ function showLoadError(error) {
     state.loading = false;
     renderFilters();
     renderGrid();
+    setHidden(elements.emptyState, true);
     setHidden(elements.partialLoadNotice, true);
     setHidden(elements.loadError, false);
     setHidden(elements.retryLoad, false);
@@ -457,7 +474,7 @@ function renderMetric(product, metric) {
         head,
         createElement('strong', 'metric-value', metric.value),
         makeTextBlock('定义', metric.definition, 'metric-copy'),
-        makeTextBlock(`截至 ${formatDate(metric.asOf)}`, metric.caveat, 'metric-copy'),
+        makeTextBlock(`档案整理 ${formatDate(metric.asOf)}`, metric.caveat, 'metric-copy'),
         makeEvidenceRefs(product, metric.sourceRefs));
     return item;
 }
@@ -481,7 +498,7 @@ function renderEvidencePanel(product) {
         link.href = source.url;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        append(row, link, createElement('span', 'source-date', `${source.type} · ${formatDate(source.date)}`));
+        append(row, link, createElement('span', 'source-date', `${source.type} · 档案整理 ${formatDate(source.date)}`));
         sources.append(row);
     });
     panel.append(sources);
@@ -490,14 +507,14 @@ function renderEvidencePanel(product) {
 
 function renderEvolutionPanel(product) {
     const panel = createElement('section', 'detail-panel');
-    panel.append(makeSectionTitle('05 / 边界', '演化、反证与下一次复核'));
+    panel.append(makeSectionTitle('05 / 边界', '演化、反证与待办'));
     panel.append(createElement('p', 'detail-lead', product.tabs.evolution.summary));
     const timeline = createElement('div', 'timeline');
     product.tabs.evolution.timeline.forEach(event => {
         const item = createElement('div', 'timeline-item');
         append(item,
             createElement('span', 'timeline-date', formatDate(event.date)),
-            createElement('div', 'timeline-event', createElement('strong', '', event.type), createElement('p', '', event.event), makeEvidenceRefs(product, event.evidenceRefs)));
+            createElement('div', 'timeline-event', createElement('strong', '', timelineTypeLabel(event.type)), createElement('p', '', event.event), makeEvidenceRefs(product, event.evidenceRefs)));
         timeline.append(item);
     });
     const boundary = createElement('div', 'boundary-grid');
@@ -507,7 +524,7 @@ function renderEvolutionPanel(product) {
     append(counter, createElement('span', 'detail-label', '反证 / 不要过度推断'), createElement('p', '', product.tabs.evolution.counterEvidence));
     append(boundary, migration, counter);
     const uncertainties = createElement('div', 'uncertainty-list');
-    uncertainties.append(createElement('span', 'detail-label', '待复核问题'));
+    uncertainties.append(createElement('span', 'detail-label', '待人工事实复核问题'));
     product.uncertainties.forEach(uncertainty => {
         const item = createElement('article', 'uncertainty-item');
         append(item, makeBadge(uncertainty.status === 'open' ? '开放问题' : uncertainty.status === 'watch' ? '持续观察' : '边界明确', `uncertainty-${uncertainty.status}`), createElement('h3', '', uncertainty.question), createElement('p', '', uncertainty.note), makeEvidenceRefs(product, uncertainty.evidenceRefs));
@@ -519,19 +536,19 @@ function renderEvolutionPanel(product) {
 
 function renderDetail(product) {
     clear(elements.detailContent);
-    const review = reviewState(product);
+    const archive = archiveState(product);
     const header = createElement('div', 'detail-header');
     const identity = createElement('div', 'detail-identity');
     append(identity, createElement('span', 'product-mark product-mark--large', product.logo || product.name.slice(0, 1)), createElement('div', '', createElement('span', 'detail-eyebrow', product.category), createElement('h2', '', product.name), createElement('p', '', product.company)));
     const meta = createElement('div', 'detail-status');
-    append(meta, makeBadge(review.label, `status-${review.key}`), createElement('span', '', review.detail));
+    append(meta, makeBadge(archive.label, `status-${archive.key}`), createElement('span', '', archive.detail));
     header.append(identity, meta);
     const summary = createElement('p', 'detail-summary', product.thesis.text);
     summary.id = 'detailSummary';
     const metaLine = createElement('div', 'detail-meta-line');
     append(metaLine,
-        createElement('span', '', `最近复核 ${formatDate(product.reviewedAt)}`),
-        createElement('span', '', `计划复核 ${formatDate(product.reviewDueAt)}`),
+        createElement('span', '', `档案整理 ${formatDate(product.archiveDate)}`),
+        createElement('span', '', `事实复核：${product.factReviewStatus}`),
         createElement('span', '', `${sourceCount(product)} 条来源`));
     if (product.detailLink && isHttps(product.detailLink)) {
         const link = createElement('a', 'official-link', product.lifecycle === 'historical' ? '官方状态说明 ↗' : '打开官方页面 ↗');
@@ -641,6 +658,9 @@ function handleModalKeyboard(event) {
         return;
     }
     if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        const activeElement = document.activeElement;
+        const isTabNavigationContext = activeElement instanceof Element && (activeElement.matches('[role="tab"]') || activeElement.closest('[role="tablist"]'));
+        if (!isTabNavigationContext) return;
         const current = TAB_IDS.indexOf(state.activeTab);
         let next = current;
         if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % TAB_IDS.length;

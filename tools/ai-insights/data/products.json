@@ -9,8 +9,8 @@
     "description": "ChatGPT 把对话、文件、图像和搜索等能力放在同一个入口，研究重点不是模型榜单，而是产品如何把一次性问答变成持续工作的上下文。",
     "detailLink": "https://chatgpt.com/",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "ChatGPT 的产品壁垒更像一套持续承接任务的入口，而不是某一个永远领先的模型版本。", "evidenceRefs": ["capabilities", "faq"] },
     "decisionThemes": ["distribution", "workflow", "trust"],
     "decisions": [
@@ -20,7 +20,7 @@
     ],
     "uncertainties": [
       { "question": "不同套餐、地区和设置下的能力差异，是否仍能被用户理解？", "status": "watch", "note": "官方 FAQ 明确提示可用能力取决于订阅和设置，本档案不把任一账户能力当成默认。", "evidenceRefs": ["faq"] },
-      { "question": "持续上下文在高风险工作中如何让用户快速发现错误延续？", "status": "open", "note": "当前来源没有提供可复核的错误发现率或生产结果，待后续专项复核。", "evidenceRefs": [] }
+      { "question": "持续上下文在高风险工作中如何让用户快速发现错误延续？", "status": "open", "note": "当前来源没有提供可复核的错误发现率或生产结果，待后续人工事实复核。", "evidenceRefs": [] }
     ],
     "keyMetrics": [
       { "id": "product-surface", "label": "公开产品形态", "value": "对话、文件、图像与搜索入口", "definition": "官方能力页列出的产品表面，不代表每个账户均可用。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["capabilities"], "caveat": "地区、套餐和灰度设置可能改变实际可用能力。" },
@@ -36,7 +36,7 @@
       "mechanism": { "summary": "产品把模型能力包在连续会话和工具入口里，体验价值来自上下文承接，不只来自单轮生成。", "system": ["对话承接任务意图", "文件和搜索补充外部上下文", "用户反馈和检查决定是否继续"], "humanRole": "涉及事实、隐私或外部行动时，人必须保留核验和批准。", "failureModes": ["来源不可用时答案退回模型猜测", "错误上下文可能在多轮中持续", "套餐或地区限制让同一入口表现不同"] },
       "tradeoffs": { "summary": "统一入口降低切换成本，也把能力差异、权限和信任问题集中到一个产品里。", "rows": [{ "decision": "入口整合", "gain": "减少工具切换", "cost": "能力边界更复杂", "boundary": "首次交互前说明可用范围" }, { "decision": "持续上下文", "gain": "更适合长任务", "cost": "错误会延续", "boundary": "提供可见的上下文和复核点" }, { "decision": "工具边界", "gain": "可接入新信息", "cost": "增加权限与等待", "boundary": "工具结果必须可回查" }] },
       "evidence": { "summary": "当前档案只把官方能力说明当作产品事实，不把用户规模、营收或模型排名当成结论。", "metricIds": ["product-surface", "context-boundary"], "missing": "没有纳入可复核的生产成功率或错误发现率。" },
-      "evolution": { "summary": "复核重点从单轮对话转向持续工作入口和工具边界。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：能力说明覆盖对话、文件、图像和搜索等入口。", "type": "review", "evidenceRefs": ["capabilities"] }, { "date": "2026-08-30", "event": "本轮复核：FAQ 明确提示能力受订阅和设置影响。", "type": "boundary", "evidenceRefs": ["faq"] }], "migrationBoundary": "适合从单轮问答迁移到需要连续协作的任务，但高风险流程仍需独立审批和证据检查。", "counterEvidence": "官方能力说明不能证明在具体组织或高风险场景中的生产效果。" }
+      "evolution": { "summary": "整理重点从单轮对话转向持续工作入口和工具边界。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：能力说明覆盖对话、文件、图像和搜索等入口。", "type": "archive", "evidenceRefs": ["capabilities"] }, { "date": "2026-08-30", "event": "档案整理：FAQ 明确提示能力受订阅和设置影响。", "type": "boundary", "evidenceRefs": ["faq"] }], "migrationBoundary": "适合从单轮问答迁移到需要连续协作的任务，但高风险流程仍需独立审批和证据检查。", "counterEvidence": "官方能力说明不能证明在具体组织或高风险场景中的生产效果。" }
     }
   },
   {
@@ -49,8 +49,8 @@
     "description": "Midjourney 的研究价值在于它把生成模型、社区展示和审美偏好绑在一起，用户购买的不只是一次生成，而是一套可被识别的创作语境。",
     "detailLink": "https://www.midjourney.com/",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Midjourney 的差异化来自审美标准和社区循环，模型能力只是用户感知价值的一部分。", "evidenceRefs": ["home", "website"] },
     "decisionThemes": ["creation", "community", "distribution"],
     "decisions": [
@@ -76,7 +76,7 @@
       "mechanism": { "summary": "产品把模型输出放入社区浏览和复用的循环中，让结果成为下一次创作的输入。", "system": ["Create 生成作品", "Explore 提供可观察样本", "提示词与参数帮助用户复用方法"], "humanRole": "用户仍需做审美筛选、版权判断和公开范围选择。", "failureModes": ["生成结果风格趋同", "社区公开造成隐私或署名争议", "套餐差异让首次试用受阻"] },
       "tradeoffs": { "summary": "审美和社区增强了偏好，也把产品从工具推向文化与身份表达。", "rows": [{ "decision": "审美标准", "gain": "形成可识别偏好", "cost": "表达范围可能收窄", "boundary": "允许用户控制风格与参考来源" }, { "decision": "社区展示", "gain": "降低学习成本", "cost": "公开和复用有边界风险", "boundary": "让署名与隐私选项可见" }, { "decision": "订阅门槛", "gain": "明确资源和隐私层级", "cost": "第一次体验更重", "boundary": "套餐差异需要在创作前说明" }] },
       "evidence": { "summary": "证据主要来自产品站和官方帮助文档，支持的是产品表面与套餐机制，不支持营收或团队效率结论。", "metricIds": ["surface", "access"], "missing": "没有纳入社区质量、创作者留存或版权争议的可核查数据。" },
-      "evolution": { "summary": "复核重点从 Discord 入口转向网站创作、社区浏览与个性化能力的组合。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方站点同时呈现 Explore、Create 和个性化入口。", "type": "review", "evidenceRefs": ["home", "website"] }, { "date": "2026-08-30", "event": "本轮复核：官方套餐页将生成资源与隐私能力放入订阅差异。", "type": "boundary", "evidenceRefs": ["plans"] }], "migrationBoundary": "适合需要视觉探索和社区学习的创作任务，不应把其风格偏好直接当成所有专业设计的质量标准。", "counterEvidence": "官网展示能证明产品入口存在，不能证明社区循环一定带来更好的创作结果。" }
+      "evolution": { "summary": "整理重点从 Discord 入口转向网站创作、社区浏览与个性化能力的组合。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方站点同时呈现 Explore、Create 和个性化入口。", "type": "archive", "evidenceRefs": ["home", "website"] }, { "date": "2026-08-30", "event": "档案整理：官方套餐页将生成资源与隐私能力放入订阅差异。", "type": "boundary", "evidenceRefs": ["plans"] }], "migrationBoundary": "适合需要视觉探索和社区学习的创作任务，不应把其风格偏好直接当成所有专业设计的质量标准。", "counterEvidence": "官网展示能证明产品入口存在，不能证明社区循环一定带来更好的创作结果。" }
     }
   },
   {
@@ -89,8 +89,8 @@
     "description": "DeepSeek 的产品研究重点是模型、API 兼容性和开发者迁移之间的关系。成本效率只有被接入现有工作流，才会变成真实的采用优势。",
     "detailLink": "https://deepseek.com/",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "DeepSeek 的产品力量不只在模型效率，而在于把低迁移成本和开放接口组合成采用理由。", "evidenceRefs": ["home", "api", "updates"] },
     "decisionThemes": ["cost", "openness", "ecosystem"],
     "decisions": [
@@ -116,7 +116,7 @@
       "mechanism": { "summary": "产品通过模型服务、兼容接口和文档变更记录，缩短开发者从评估到接入的路径。", "system": ["模型端点提供生成能力", "兼容 API 降低接入改造", "更新日志提示迁移和弃用边界"], "humanRole": "开发者必须在自己的任务集上验证质量、延迟、成本和稳定性。", "failureModes": ["版本更新改变输出行为", "兼容 API 隐藏能力差异", "服务可用性或限流影响下游体验"] },
       "tradeoffs": { "summary": "开放与低迁移成本能扩大生态，但会把模型变化管理责任交给接入方。", "rows": [{ "decision": "成本迁移", "gain": "降低替换门槛", "cost": "成本口径易漂移", "boundary": "按真实负载记录总成本" }, { "decision": "兼容接口", "gain": "复用现有工具链", "cost": "差异不易发现", "boundary": "建立行为回归测试" }, { "decision": "开放节奏", "gain": "更容易评估变化", "cost": "文档维护成本高", "boundary": "版本和弃用都进入变更管理" }] },
       "evidence": { "summary": "官方站点、API 文档和更新日志支持接入机制判断，不支持未经核查的市场规模或训练成本数字。", "metricIds": ["api-compatibility", "version-surface"], "missing": "没有纳入独立模型评测、生产成本或服务可用性数据。" },
-      "evolution": { "summary": "复核重点从模型发布转向版本变化、API 兼容和迁移回归。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方站点同时提供产品、API、文档和模型研究入口。", "type": "review", "evidenceRefs": ["home"] }, { "date": "2026-08-30", "event": "本轮复核：API 更新日志继续记录模型和弃用变化。", "type": "boundary", "evidenceRefs": ["updates"] }], "migrationBoundary": "适合有明确回归集、可切换模型并能承担版本维护的团队，不适合把兼容接口当成免验证替换。", "counterEvidence": "官方文档描述接入方式，不能替代独立的业务质量和成本测量。" }
+      "evolution": { "summary": "整理重点从模型发布转向版本变化、API 兼容和迁移回归。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方站点同时提供产品、API、文档和模型研究入口。", "type": "archive", "evidenceRefs": ["home"] }, { "date": "2026-08-30", "event": "档案整理：API 更新日志继续记录模型和弃用变化。", "type": "boundary", "evidenceRefs": ["updates"] }], "migrationBoundary": "适合有明确回归集、可切换模型并能承担版本维护的团队，不适合把兼容接口当成免验证替换。", "counterEvidence": "官方文档描述接入方式，不能替代独立的业务质量和成本测量。" }
     }
   },
   {
@@ -129,8 +129,8 @@
     "description": "Claude 的产品研究重点是如何把安全、长任务和协作表达成用户能感知的工作方式。安全不是页脚声明，而是影响产品选择和企业采用的约束。",
     "detailLink": "https://claude.com/product/overview",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Claude 的竞争判断不是把安全当作限制，而是把可控性变成专业用户愿意依赖的产品属性。", "evidenceRefs": ["overview", "docs"] },
     "decisionThemes": ["trust", "workflow", "enterprise"],
     "decisions": [
@@ -157,7 +157,7 @@
       "mechanism": { "summary": "产品把模型能力、可继续工作的输出和安全约束组合成专业协作体验。", "system": ["模型理解和生成内容", "工作空间承接编辑和继续处理", "安全边界限制高风险输出"], "humanRole": "用户需要在结果进入真实流程前承担最终核验责任。", "failureModes": ["安全拒答打断低风险工作", "输出被误当成可直接交付物", "组织权限和审计不足造成越权"] },
       "tradeoffs": { "summary": "可控性增强信任，也要求产品更清楚地解释拒绝、限制和人工接管。", "rows": [{ "decision": "可控协作", "gain": "高风险任务更可管理", "cost": "体验可能更保守", "boundary": "让拒绝原因和下一步可见" }, { "decision": "输出形态", "gain": "结果更容易进入工作流", "cost": "审核责任更重", "boundary": "明确草稿与可交付物边界" }, { "decision": "企业入口", "gain": "更贴近高价值工作", "cost": "集成和治理复杂", "boundary": "权限与审计先于自动化" }] },
       "evidence": { "summary": "官方产品页、安全资料和企业页支持产品定位判断，不把外部基准或融资信息混进档案结论。", "metricIds": ["work-surface", "safety-surface"], "missing": "没有纳入跨组织的安全事件、生产准确率或企业 ROI 数据。" },
-      "evolution": { "summary": "复核重点从模型能力转向输出如何进入协作流程，以及安全边界如何被用户理解。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方产品页把 Claude 放在代码、研究、分析和创作任务中。", "type": "review", "evidenceRefs": ["overview"] }, { "date": "2026-08-30", "event": "本轮复核：安全研究和企业场景共同构成产品边界。", "type": "boundary", "evidenceRefs": ["safety", "enterprise"] }], "migrationBoundary": "适合需要协作、长任务和治理边界的团队，不适合把安全标签当成业务风险已被自动解决。", "counterEvidence": "官方定位说明不能证明具体组织中的安全或效率结果。" }
+      "evolution": { "summary": "整理重点从模型能力转向输出如何进入协作流程，以及安全边界如何被用户理解。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方产品页把 Claude 放在代码、研究、分析和创作任务中。", "type": "archive", "evidenceRefs": ["overview"] }, { "date": "2026-08-30", "event": "档案整理：安全研究和企业场景共同构成产品边界。", "type": "boundary", "evidenceRefs": ["safety", "enterprise"] }], "migrationBoundary": "适合需要协作、长任务和治理边界的团队，不适合把安全标签当成业务风险已被自动解决。", "counterEvidence": "官方定位说明不能证明具体组织中的安全或效率结果。" }
     }
   },
   {
@@ -170,8 +170,8 @@
     "description": "Cursor 的产品研究重点是工作流嵌入：补全、上下文检索和 Agent 操作都发生在开发者已有的编辑环境中，迁移成本因此比新增聊天窗口更低。",
     "detailLink": "https://cursor.com/",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Cursor 的核心产品决策是把 AI 的主动性放进工程师熟悉的编辑器，让工作流改变小于能力收益。", "evidenceRefs": ["features", "docs"] },
     "decisionThemes": ["workflow", "autonomy", "control"],
     "decisions": [
@@ -197,7 +197,7 @@
       "mechanism": { "summary": "Cursor 把编辑器操作、代码库上下文和 Agent 执行循环组合起来，缩短从意图到变更的路径。", "system": ["Tab 预测下一步编辑", "代码库检索补充上下文", "Agent 执行多步修改并返回结果"], "humanRole": "工程师必须在关键边界检查修改范围、权限和测试结果。", "failureModes": ["错误检索导致错误修改", "Agent 变更跨文件传播影响", "自动化速度超过审查速度"] },
       "tradeoffs": { "summary": "工作流嵌入带来更快的行动，也让 AI 错误更接近真实代码和发布路径。", "rows": [{ "decision": "编辑器嵌入", "gain": "减少环境切换", "cost": "错误更接近代码", "boundary": "所有变更都可见、可回退" }, { "decision": "代码上下文", "gain": "减少手动粘贴", "cost": "索引错误会放大", "boundary": "显示引用范围并允许重建索引" }, { "decision": "人留在环", "gain": "保留工程判断", "cost": "确认点影响速度", "boundary": "按任务风险分层审批" }] },
       "evidence": { "summary": "官方功能页和文档支持编辑器嵌入、代码上下文与 Agent 的产品机制，不支持通用生产效率数字。", "metricIds": ["integration", "control"], "missing": "没有纳入具体仓库的完成时间、缺陷率或代码审查结果。" },
-      "evolution": { "summary": "复核重点从代码补全扩展到代码库理解、计划和 Agent 执行的控制边界。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方功能页同时展示 Tab、编辑和 Agent 能力。", "type": "review", "evidenceRefs": ["features"] }, { "date": "2026-08-30", "event": "本轮复核：官方文档将理解、计划、修复和审查放进同一开发流程。", "type": "boundary", "evidenceRefs": ["docs"] }], "migrationBoundary": "适合已有测试、代码审查和分支纪律的团队，不适合把 Agent 当成无人审查的发布机器人。", "counterEvidence": "官方功能说明不能证明某个仓库的真实提效，必须用自己的任务和回归集测量。" }
+      "evolution": { "summary": "整理重点从代码补全扩展到代码库理解、计划和 Agent 执行的控制边界。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方功能页同时展示 Tab、编辑和 Agent 能力。", "type": "archive", "evidenceRefs": ["features"] }, { "date": "2026-08-30", "event": "档案整理：官方文档将理解、计划、修复和审查放进同一开发流程。", "type": "boundary", "evidenceRefs": ["docs"] }], "migrationBoundary": "适合已有测试、代码审查和分支纪律的团队，不适合把 Agent 当成无人审查的发布机器人。", "counterEvidence": "官方功能说明不能证明某个仓库的真实提效，必须用自己的任务和回归集测量。" }
     }
   },
   {
@@ -210,8 +210,8 @@
     "description": "Notion AI 的研究价值在于嵌入式 AI：用户不必进入新的 AI 工作台，就能在页面、数据库和团队知识里调用生成、检索和自动化能力。",
     "detailLink": "https://www.notion.com/product/ai",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Notion AI 最强的产品选择是让 AI 成为既有工作空间的动作，而不是要求团队建立另一套知识入口。", "evidenceRefs": ["product", "connectors"] },
     "decisionThemes": ["workflow", "context", "enterprise"],
     "decisions": [
@@ -220,7 +220,7 @@
       { "id": "自动化入口", "title": "从一次生成走向可重复任务", "choice": "将 Agent、会议记录和自动填充等能力放进团队反复执行的工作。", "why": "稳定重复的工作更容易定义触发器、输出格式和人工抽查点。", "tradeoff": "自动化从草稿变成流程后，错误会以更低的可见度重复发生。", "evidenceRefs": ["product", "guide"] }
     ],
     "uncertainties": [
-      { "question": "连接外部应用后，用户是否能清楚知道答案来自哪个权限范围？", "status": "open", "note": "官方连接器文档说明了连接与引用方向，但具体权限模型需按连接器复核。", "evidenceRefs": ["connectors"] },
+      { "question": "连接外部应用后，用户是否能清楚知道答案来自哪个权限范围？", "status": "open", "note": "官方连接器文档说明了连接与引用方向，但具体权限模型需按连接器人工事实复核。", "evidenceRefs": ["connectors"] },
       { "question": "自动化任务的错误是否能在下一次运行前被及时发现？", "status": "watch", "note": "当前来源支持功能存在，不提供组织内的错误发现率或人工接管结果。", "evidenceRefs": [] }
     ],
     "keyMetrics": [
@@ -237,7 +237,7 @@
       "mechanism": { "summary": "Notion AI 把生成、检索和自动化动作贴着团队已有内容放置，降低上下文搬运成本。", "system": ["页面与数据库提供结构化上下文", "AI 在内容附近提供写作和检索动作", "连接器扩展外部知识范围"], "humanRole": "团队需要维护权限、知识新鲜度和自动化抽查。", "failureModes": ["旧页面成为错误依据", "连接器权限造成信息越界", "自动填充把错误复制到数据库"] },
       "tradeoffs": { "summary": "嵌入式 AI 让采用更自然，也让数据边界和错误传播更不容易被察觉。", "rows": [{ "decision": "嵌入工作流", "gain": "减少上下文搬运", "cost": "修改不易察觉", "boundary": "展示输入范围和变更记录" }, { "decision": "知识连接", "gain": "跨工具检索", "cost": "权限更复杂", "boundary": "每条答案保留来源和权限边界" }, { "decision": "自动化入口", "gain": "降低重复工作", "cost": "错误可重复传播", "boundary": "设置抽查和暂停机制" }] },
       "evidence": { "summary": "官方产品、连接器和指南支持嵌入式 AI 的机制判断，不纳入用户规模和收入等未经独立核查的数字。", "metricIds": ["workspace-surface", "automation-surface"], "missing": "没有纳入组织知识质量、权限误用或自动化回归数据。" },
-      "evolution": { "summary": "复核重点从写作助手扩展到连接器、Agent 和可重复团队任务。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方产品页把 AI 放在页面、任务和数据库等工作对象里。", "type": "review", "evidenceRefs": ["product"] }, { "date": "2026-08-30", "event": "本轮复核：连接器文档强调外部内容检索与引用。", "type": "boundary", "evidenceRefs": ["connectors"] }], "migrationBoundary": "适合已有稳定知识结构和权限管理的团队，不适合把内容散乱的工作空间直接当成可靠知识库。", "counterEvidence": "产品页能证明入口和能力，不能证明每个工作空间都能获得更高质量的决策。" }
+      "evolution": { "summary": "整理重点从写作助手扩展到连接器、Agent 和可重复团队任务。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方产品页把 AI 放在页面、任务和数据库等工作对象里。", "type": "archive", "evidenceRefs": ["product"] }, { "date": "2026-08-30", "event": "档案整理：连接器文档强调外部内容检索与引用。", "type": "boundary", "evidenceRefs": ["connectors"] }], "migrationBoundary": "适合已有稳定知识结构和权限管理的团队，不适合把内容散乱的工作空间直接当成可靠知识库。", "counterEvidence": "产品页能证明入口和能力，不能证明每个工作空间都能获得更高质量的决策。" }
     }
   },
   {
@@ -250,8 +250,8 @@
     "description": "Sora 保留在档案库中，但不再按当前产品推荐。它既记录视频生成从研究展示走向产品的路径，也记录官方停止提供后产品研究如何处理生命周期变化。",
     "detailLink": "https://help.openai.com/en/articles/20001152",
     "lifecycle": "historical",
-    "reviewedAt": "2026-04-26",
-    "reviewDueAt": "2026-07-26",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Sora 最值得研究的不是一次生成效果，而是从研究展示、产品化到停止提供的完整生命周期信号。", "evidenceRefs": ["launch", "sunset"] },
     "decisionThemes": ["creation", "safety", "distribution"],
     "decisions": [
@@ -264,14 +264,14 @@
       { "question": "未来视频生成产品会把安全门槛设计成什么样的默认体验？", "status": "open", "note": "这是跨产品的后续研究问题，当前 Sora 档案不推断未来产品路线。", "evidenceRefs": ["safety"] }
     ],
     "keyMetrics": [
-      { "id": "lifecycle", "label": "档案状态", "value": "历史档案，不作为当前产品推荐", "definition": "官方帮助页对 Sora 停止提供的状态说明。", "kind": "external-research", "asOf": "2026-04-26", "sourceRefs": ["sunset"], "caveat": "历史状态只描述产品可用性，不评价模型研究价值。" },
-      { "id": "safety-surface", "label": "部署约束", "value": "视频生成需要身份、版权与滥用风险控制", "definition": "官方产品研究和系统卡对视频生成部署安全的定性说明。", "kind": "external-research", "asOf": "2026-04-26", "sourceRefs": ["safety", "sora2"], "caveat": "这是研究边界，不是某个版本的生产安全指标。" }
+      { "id": "lifecycle", "label": "档案状态", "value": "历史档案，不作为当前产品推荐", "definition": "官方帮助页对 Sora 停止提供的状态说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["sunset"], "caveat": "历史状态只描述产品可用性，不评价模型研究价值。" },
+      { "id": "safety-surface", "label": "部署约束", "value": "视频生成需要身份、版权与滥用风险控制", "definition": "官方产品研究和系统卡对视频生成部署安全的定性说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["safety", "sora2"], "caveat": "这是研究边界，不是某个版本的生产安全指标。" }
     ],
     "sources": [
-      { "id": "launch", "title": "Sora is here", "url": "https://openai.com/index/sora-is-here/", "date": "2024-12-09", "type": "official" },
-      { "id": "sora2", "title": "Sora 2 is here", "url": "https://openai.com/index/sora-2/", "date": "2025-09-30", "type": "official" },
-      { "id": "safety", "title": "Overview of Sora 2 system card", "url": "https://cdn.openai.com/pdf/50d5973c-c4ff-4c2d-986f-c72b5d0ff069/sora_2_system_card.pdf", "date": "2025-09-30", "type": "official" },
-      { "id": "sunset", "title": "What to know about the Sora discontinuation", "url": "https://help.openai.com/en/articles/20001152", "date": "2026-04-26", "type": "official" }
+      { "id": "launch", "title": "Sora is here", "url": "https://openai.com/index/sora-is-here/", "date": "2026-08-30", "type": "official" },
+      { "id": "sora2", "title": "Sora 2 is here", "url": "https://openai.com/index/sora-2/", "date": "2026-08-30", "type": "official" },
+      { "id": "safety", "title": "Overview of Sora 2 system card", "url": "https://cdn.openai.com/pdf/50d5973c-c4ff-4c2d-986f-c72b5d0ff069/sora_2_system_card.pdf", "date": "2026-08-30", "type": "official" },
+      { "id": "sunset", "title": "What to know about the Sora discontinuation", "url": "https://help.openai.com/en/articles/20001152", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
       "summary": { "problem": "视频生成产品需要同时处理表达能力、部署安全和生命周期变化。", "whyAi": "生成模型能压缩制作成本，但拟真内容的外部影响让产品边界先于功能扩张。", "humanRole": "人负责判断内容权利、传播风险和停止服务后的迁移安排。", "decisionIds": ["研究到产品", "安全部署", "生命周期"] },
@@ -291,8 +291,8 @@
     "description": "Perplexity 的产品研究重点是答案与来源如何同时交付。它把搜索从链接发现推进到信息综合，但引用存在不等于结论自动可靠。",
     "detailLink": "https://www.perplexity.ai/",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Perplexity 的关键产品决策是把来源放进答案流，使验证成为搜索体验的一部分，而不是答案之后的补救。", "evidenceRefs": ["what", "how"] },
     "decisionThemes": ["retrieval", "trust", "workflow"],
     "decisions": [
@@ -318,7 +318,7 @@
       "mechanism": { "summary": "Perplexity 先理解问题，再检索网页、综合回答并提供引用，让搜索结果成为可回查的工作对象。", "system": ["理解问题与搜索意图", "检索多个网页来源", "生成带引用的综合回答"], "humanRole": "用户需要从结论回到来源，尤其检查决定性判断。", "failureModes": ["搜索结果遗漏关键来源", "摘要把多个来源的边界混在一起", "链接存在但不支持具体句子"] },
       "tradeoffs": { "summary": "答案优先减少阅读成本，也提高了引用错误和摘要过度概括的风险。", "rows": [{ "decision": "答案优先", "gain": "更快形成理解", "cost": "容易跳过原文", "boundary": "让来源在结论旁可见" }, { "decision": "检索模式", "gain": "匹配不同研究深度", "cost": "选择成本增加", "boundary": "在开始前说明时间和资源差异" }, { "decision": "可验证答案", "gain": "信任可回查", "cost": "引用质量成为新瓶颈", "boundary": "逐条检查来源支持关系" }] },
       "evidence": { "summary": "官方帮助文档支持引用、实时检索和搜索模式的产品机制，不支持把引用数量当成答案准确率。", "metricIds": ["citation-surface", "search-depth"], "missing": "没有纳入逐条引用正确率、来源覆盖率或高风险领域评测。" },
-      "evolution": { "summary": "复核重点从“回答带引用”延伸到研究深度和引用是否真正支撑判断。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方帮助中心把答案、实时信息和来源链接绑定在一起。", "type": "review", "evidenceRefs": ["what"] }, { "date": "2026-08-30", "event": "本轮复核：官方文档区分标准搜索、Pro Search 和 Research。", "type": "boundary", "evidenceRefs": ["how"] }], "migrationBoundary": "适合需要快速形成研究草稿并保留来源入口的任务，不适合把自动摘要直接当作最终证据。", "counterEvidence": "官方产品说明支持引用机制，不能证明所有领域和问题都能得到足够完整的来源。" }
+      "evolution": { "summary": "整理重点从“回答带引用”延伸到研究深度和引用是否真正支撑判断。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方帮助中心把答案、实时信息和来源链接绑定在一起。", "type": "archive", "evidenceRefs": ["what"] }, { "date": "2026-08-30", "event": "档案整理：官方文档区分标准搜索、Pro Search 和 Research。", "type": "boundary", "evidenceRefs": ["how"] }], "migrationBoundary": "适合需要快速形成研究草稿并保留来源入口的任务，不适合把自动摘要直接当作最终证据。", "counterEvidence": "官方产品说明支持引用机制，不能证明所有领域和问题都能得到足够完整的来源。" }
     }
   },
   {
@@ -331,8 +331,8 @@
     "description": "Claude Code 的产品研究重点是从“写代码”走向“完成工程任务”：文件、命令、测试和 Git 都进入同一执行循环，但权限和回退必须成为一等设计。",
     "detailLink": "https://code.claude.com/docs/en/overview",
     "lifecycle": "current",
-    "reviewedAt": "2026-08-30",
-    "reviewDueAt": "2026-11-30",
+    "archiveDate": "2026-08-30",
+    "factReviewStatus": "待人工事实复核",
     "thesis": { "text": "Claude Code 的真正变化是把工程任务的执行权交给 Agent，同时迫使团队重新设计权限、审查和回退。", "evidenceRefs": ["docs", "product"] },
     "decisionThemes": ["autonomy", "control", "ecosystem"],
     "decisions": [
@@ -358,7 +358,7 @@
       "mechanism": { "summary": "Claude Code 把模型放进终端工具循环，通过观察真实环境来推进工程任务。", "system": ["读取项目和任务上下文", "执行命令并观察输出", "根据结果调整计划或请求人工介入"], "humanRole": "人要为工具权限、停止条件和最终交付负责。", "failureModes": ["命令权限过大造成越权", "错误计划在多个文件中传播", "工具输出包含未审查的外部指令"] },
       "tradeoffs": { "summary": "执行能力把 AI 从建议者变成协作者，也把软件工程的安全边界推到产品前台。", "rows": [{ "decision": "终端原生", "gain": "完成真实工程闭环", "cost": "影响面更大", "boundary": "默认最小权限和可回退工作区" }, { "decision": "执行循环", "gain": "能处理多步任务", "cost": "过程更难预测", "boundary": "日志、停止条件和人工检查点" }, { "decision": "工具生态", "gain": "可连接真实系统", "cost": "供应链边界扩大", "boundary": "逐工具审核权限和数据流" }] },
       "evidence": { "summary": "官方文档和协议文档支持终端执行与扩展机制，不把个人使用体验或厂商宣传数字写成生产效果。", "metricIds": ["execution-surface", "extension-surface"], "missing": "没有纳入任务完成时间、回退率或生产事故数据。" },
-      "evolution": { "summary": "复核重点从终端写代码转向可授权、可审计、可回退的工程 Agent。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方 Claude Code 文档把理解、计划、修复和审查放进工程流程。", "type": "review", "evidenceRefs": ["docs"] }, { "date": "2026-08-30", "event": "本轮复核：MCP 文档提供了扩展工具的独立协议入口。", "type": "boundary", "evidenceRefs": ["mcp"] }], "migrationBoundary": "适合已有测试、权限和回退纪律的工程团队，不适合在没有隔离和审批的生产环境直接放大执行权限。", "counterEvidence": "官方文档能证明工具能力和协议入口，不能证明某个团队因此更快或更安全。" }
+      "evolution": { "summary": "整理重点从终端写代码转向可授权、可审计、可回退的工程 Agent。", "timeline": [{ "date": "2026-08-30", "event": "档案整理：官方 Claude Code 文档把理解、计划、修复和审查放进工程流程。", "type": "archive", "evidenceRefs": ["docs"] }, { "date": "2026-08-30", "event": "档案整理：MCP 文档提供了扩展工具的独立协议入口。", "type": "boundary", "evidenceRefs": ["mcp"] }], "migrationBoundary": "适合已有测试、权限和回退纪律的工程团队，不适合在没有隔离和审批的生产环境直接放大执行权限。", "counterEvidence": "官方文档能证明工具能力和协议入口，不能证明某个团队因此更快或更安全。" }
     }
   }
 ]

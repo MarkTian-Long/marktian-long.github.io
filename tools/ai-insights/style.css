@@ -458,12 +458,7 @@ a:focus-visible {
     font-weight: 700;
 }
 
-.status-current {
-    background: var(--ai-sage-soft);
-    color: var(--ai-sage);
-}
-
-.status-due {
+.status-pending {
     background: var(--ai-gold-soft);
     color: var(--ai-gold);
 }
@@ -534,7 +529,7 @@ a:focus-visible {
 }
 
 .evidence-count,
-.review-date {
+.archive-date {
     color: var(--ai-muted);
     font-size: 0.76rem;
 }

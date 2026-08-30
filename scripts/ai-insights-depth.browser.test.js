@@ -15,6 +15,13 @@ const products = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 const invalidProduct = JSON.parse(JSON.stringify(products[0]));
 invalidProduct.id = 'broken-metric';
 invalidProduct.keyMetrics[0].definition = '';
+const invalidReferenceProduct = JSON.parse(JSON.stringify(products[0]));
+invalidReferenceProduct.id = 'broken-references';
+invalidReferenceProduct.tabs.summary.decisionIds = ['missing-decision'];
+invalidReferenceProduct.tabs.evidence.metricIds = ['missing-metric'];
+const invalidDateProduct = JSON.parse(JSON.stringify(products[0]));
+invalidDateProduct.id = 'broken-date';
+invalidDateProduct.archiveDate = '2026-02-30';
 
 function startServer() {
   return new Promise((resolve, reject) => {
@@ -56,6 +63,8 @@ test('AI Insights supports decision filters, deep links, keyboard modal behavior
     assert.ok(await page.locator('#themeFilters [data-filter-group="theme"]').count() >= 2);
     assert.match(await page.locator('#dataBoundary').textContent(), /静态研究档案/);
     assert.match(await page.locator('#dataBoundary').textContent(), /非实时/);
+    assert.match(await page.locator('#dataBoundary').textContent(), /档案整理日期/);
+    assert.match(await page.locator('#dataBoundary').textContent(), /待人工事实复核/);
     const workflowLinks = page.locator('.workflow-nav a');
     assert.deepEqual(await workflowLinks.evaluateAll(links => links.map(link => link.textContent.trim())), [
       '01 信源',
@@ -82,6 +91,9 @@ test('AI Insights supports decision filters, deep links, keyboard modal behavior
 
     await page.locator('#clearFilters').click();
     await waitForProducts(page);
+    const firstCardText = await page.locator('.product-card').first().textContent();
+    assert.match(firstCardText, /整理 2026\.08\.30/);
+    assert.doesNotMatch(firstCardText, /最近复核|计划复核|复核 2026/);
     const firstCard = page.locator('.product-open').first();
     await firstCard.focus();
     await page.keyboard.press('Enter');
@@ -90,24 +102,40 @@ test('AI Insights supports decision filters, deep links, keyboard modal behavior
     assert.equal(await page.locator('[role="tab"][aria-selected="true"]').count(), 1);
     assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').count(), 1);
     assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').getAttribute('id'), 'tab-summary');
+    const detailText = await page.locator('#detailContent').textContent();
+    assert.match(detailText, /档案整理 2026\.08\.30/);
+    assert.match(detailText, /事实复核：待人工事实复核/);
+    assert.doesNotMatch(detailText, /最近复核|计划复核/);
     await page.locator('#detailClose').focus();
     await page.keyboard.press('Shift+Tab');
     assert.equal(await page.evaluate(() => document.activeElement?.classList.contains('source-link')), true);
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('[role="tab"][aria-selected="true"]').getAttribute('data-tab'), 'summary');
+    assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').getAttribute('id'), 'tab-summary');
     await page.keyboard.press('Tab');
     assert.equal(await page.evaluate(() => document.activeElement?.id), 'detailClose');
     await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('[role="tab"][aria-selected="true"]').getAttribute('data-tab'), 'summary');
+    await page.locator('[role="tab"][data-tab="summary"]').focus();
+    await page.keyboard.press('ArrowRight');
     assert.match(await page.locator('[role="tab"][aria-selected="true"]').getAttribute('data-tab'), /mechanism/);
     assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').getAttribute('id'), 'tab-mechanism');
+    await page.keyboard.press('End');
+    assert.equal(await page.locator('[role="tab"][aria-selected="true"]').getAttribute('data-tab'), 'evolution');
+    await page.keyboard.press('Home');
+    assert.equal(await page.locator('[role="tab"][aria-selected="true"]').getAttribute('data-tab'), 'summary');
     await page.keyboard.press('Escape');
     await page.locator('#detailModal.hidden').waitFor({ state: 'attached' });
     assert.equal(await page.evaluate(() => document.activeElement?.id), await firstCard.getAttribute('id'));
 
-    await page.goto(`${url}/tools/ai-insights/index.html?product=chatgpt&tab=tradeoffs`, { waitUntil: 'domcontentloaded' });
-    await page.locator('#detailModal:not(.hidden)').waitFor({ state: 'visible' });
-    assert.equal(await page.locator('#detailModal').getAttribute('data-product-id'), 'chatgpt');
-    assert.equal(await page.locator('[role="tab"][data-tab="tradeoffs"]').getAttribute('aria-selected'), 'true');
-    assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').count(), 1);
-    assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').getAttribute('id'), 'tab-tradeoffs');
+    for (const tabId of ['summary', 'mechanism', 'tradeoffs', 'evidence', 'evolution']) {
+      await page.goto(`${url}/tools/ai-insights/index.html?product=chatgpt&tab=${tabId}`, { waitUntil: 'domcontentloaded' });
+      await page.locator('#detailModal:not(.hidden)').waitFor({ state: 'visible' });
+      assert.equal(await page.locator('#detailModal').getAttribute('data-product-id'), 'chatgpt');
+      assert.equal(await page.locator(`[role="tab"][data-tab="${tabId}"]`).getAttribute('aria-selected'), 'true');
+      assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').count(), 1);
+      assert.equal(await page.locator('[role="tabpanel"]:not([hidden])').getAttribute('id'), `tab-${tabId}`);
+    }
 
     await page.goto(`${url}/tools/ai-insights/index.html?product=chatgpt&tab=not-a-tab`, { waitUntil: 'domcontentloaded' });
     await page.locator('#deepLinkNotice').waitFor({ state: 'visible' });
@@ -151,8 +179,23 @@ test('AI Insights keeps valid records, explains load failures, and recovers on r
         partial: /部分|无效/,
       },
       {
+        name: 'partial-dangling-references',
+        first: { status: 200, contentType: 'application/json', body: JSON.stringify([products[0], invalidReferenceProduct]) },
+        partial: /部分|无效/,
+      },
+      {
+        name: 'partial-invalid-date',
+        first: { status: 200, contentType: 'application/json', body: JSON.stringify([products[0], invalidDateProduct]) },
+        partial: /部分|无效/,
+      },
+      {
         name: 'all-invalid',
         first: { status: 200, contentType: 'application/json', body: JSON.stringify([invalidProduct]) },
+        error: /有效档案|无效|加载失败/,
+      },
+      {
+        name: 'all-dangling-references',
+        first: { status: 200, contentType: 'application/json', body: JSON.stringify([invalidReferenceProduct]) },
         error: /有效档案|无效|加载失败/,
       },
     ];
@@ -174,6 +217,7 @@ test('AI Insights keeps valid records, explains load failures, and recovers on r
       } else {
         await page.locator('#loadError').waitFor({ state: 'visible' });
         assert.match(await page.locator('#loadError').textContent(), scenario.error);
+        assert.equal(await page.locator('#emptyState').isHidden(), true, `${scenario.name} should not show an empty-result state`);
       }
 
       await page.locator('#retryLoad').click();
