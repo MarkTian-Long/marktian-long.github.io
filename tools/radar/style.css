@@ -126,6 +126,47 @@ button {
     gap: var(--radar-space-4);
 }
 
+.semantic-nav {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.semantic-nav-list {
+    display: flex;
+    justify-content: center;
+    gap: var(--radar-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.semantic-nav a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0 var(--radar-space-3);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--radar-text-soft);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--radar-transition), border-color var(--radar-transition), color var(--radar-transition);
+}
+
+.semantic-nav a:hover {
+    border-color: var(--radar-line);
+    background: var(--radar-surface-soft);
+    color: var(--radar-blue-dark);
+}
+
+.semantic-nav a[aria-current="step"] {
+    border-color: var(--radar-blue);
+    background: var(--radar-blue-soft);
+    color: var(--radar-blue-dark);
+}
+
 .eyebrow,
 .section-kicker,
 .note-index {
@@ -896,6 +937,15 @@ h3 {
     }
 
     .header-meta {
+        justify-content: flex-start;
+    }
+
+    .semantic-nav {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .semantic-nav-list {
         justify-content: flex-start;
     }
 

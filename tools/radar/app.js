@@ -17,7 +17,7 @@
         updateCadence: { daily: '每日', weekly: '每周', monthly: '每月', irregular: '不定期', ongoing: '持续' },
         priority: { core: '核心', supporting: '补充', watch: '观察' },
         access: { open: '开放', partial: '部分开放', subscription: '订阅', account: '需登录' },
-        manualStatus: { reviewed: '已复核', 'needs-review': '待复核', 'not-reviewed': '未复核' },
+        manualStatus: { reviewed: '已逐条复核', 'needs-review': '待逐条复核', 'not-reviewed': '尚未逐条复核' },
         stage: { search: '搜索', verify: '验证', synthesize: '综合', distill: '沉淀' },
         cadence: { quarterly: '每季度', monthly: '每月', weekly: '每周' }
     };
@@ -71,8 +71,10 @@
             counts[source.language] = (counts[source.language] || 0) + 1;
             return counts;
         }, {});
-        getElement('dataStatus').textContent = `人工复核清单 · ${data.sources.length} 个来源`;
-        getElement('coverageSummary').textContent = `${data.sources.length} 个来源 · 英文 ${languageCounts.en || 0} · 中文 ${languageCounts.zh || 0} · 覆盖 ${data.meta.coverageDimensions.join('、')}`;
+        const reviewedCount = data.sources.filter((source) => source.manualStatus === 'reviewed').length;
+        const reviewSummary = reviewedCount > 0 ? `已逐条复核 ${reviewedCount} 条` : '待逐条复核';
+        getElement('dataStatus').textContent = `人工整理清单 · ${data.sources.length} 个来源 · ${reviewSummary}`;
+        getElement('coverageSummary').textContent = `${data.sources.length} 个来源 · 英文 ${languageCounts.en || 0} · 中文 ${languageCounts.zh || 0} · ${reviewSummary} · 覆盖 ${data.meta.coverageDimensions.join('、')}`;
         getElement('lastUpdated').textContent = data.meta.updatedAt;
         getElement('reviewCadence').textContent = LABELS.cadence[data.meta.reviewCadence] || data.meta.reviewCadence;
         const nextStep = getElement('nextStep');
@@ -214,7 +216,7 @@
         card.append(retention);
 
         const footer = createElement('div', 'source-card-footer');
-        footer.append(createElement('span', 'checked-date', `最近复核 ${source.lastCheckedAt}`));
+        footer.append(createElement('span', 'checked-date', source.lastReviewedAt ? `最近逐条复核 ${source.lastReviewedAt}` : '逐条复核日期：待补'));
         footer.append(createElement('span', 'source-action', '打开来源 ↗'));
         card.append(footer);
         return card;

@@ -71,8 +71,23 @@ test('radar supports intent ordering, combined filters, keyboard controls, and s
 
     assert.equal(await page.locator('.source-card').count(), 11);
     assert.match(await page.locator('#resultsSummary').textContent(), /11/);
-    assert.match(await page.locator('#dataStatus').textContent(), /人工复核/);
+    assert.match(await page.locator('#dataStatus').textContent(), /待逐条复核/);
     assert.equal(await page.locator('.workflow-step').count(), 4);
+
+    const semanticNav = page.locator('nav[data-radar-nav]');
+    assert.equal(await semanticNav.count(), 1);
+    const navItems = await semanticNav.locator('a').evaluateAll((links) => links.map((link) => ({
+      label: link.textContent.trim(),
+      href: link.getAttribute('href'),
+      current: link.getAttribute('aria-current'),
+    })));
+    assert.deepEqual(navItems, [
+      { label: '1 信源', href: '../radar/index.html', current: 'step' },
+      { label: '2 信号', href: '../trends/index.html', current: null },
+      { label: '3 分析', href: '../ai-insights/index.html', current: null },
+      { label: '4 方法', href: '../agent-hub/index.html', current: null },
+    ]);
+    assert.equal(await semanticNav.locator('[aria-current="step"]').count(), 1);
 
     const sourceLinks = await page.locator('.source-card').evaluateAll((links) => links.map((link) => ({
       href: link.href,

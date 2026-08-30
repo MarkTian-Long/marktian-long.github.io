@@ -39,7 +39,8 @@ test('radar data exports the versioned contract metadata and four unique researc
   assert.deepEqual(Object.keys(data).sort(), ['intents', 'meta', 'sources', 'workflowTools'].sort());
   assert.equal(data.meta.schemaVersion, 1);
   assert.equal(data.meta.noRealtimeProbe, true);
-  assert.match(data.meta.statusSemantics, /人工复核/);
+  assert.match(data.meta.statusSemantics, /逐条复核/);
+  assert.match(data.meta.statusSemantics, /不代表实时/);
   assertDate(data.meta.updatedAt, 'meta.updatedAt');
   assertUniqueIds(data.intents, 'intents');
   assert.equal(data.intents.length, 4, 'the radar must define four research intents');
@@ -78,8 +79,10 @@ test('radar sources contain complete editorial metadata with safe URLs and contr
     assert.ok(Array.isArray(source.blindSpot) && source.blindSpot.length > 0, `${source.id}.blindSpot is required`);
     assert.equal(typeof source.retentionReason, 'string');
     assert.ok(source.retentionReason.trim().length > 0, `${source.id}.retentionReason is required`);
-    assertDate(source.lastCheckedAt, `${source.id}.lastCheckedAt`);
+    assert.equal(source.lastReviewedAt, null, `${source.id}.lastReviewedAt must stay empty until individually reviewed`);
+    assert.equal(Object.prototype.hasOwnProperty.call(source, 'lastCheckedAt'), false, `${source.id} must use lastReviewedAt`);
     assert.ok(statuses.has(source.manualStatus), `${source.id}.manualStatus must be controlled`);
+    assert.equal(source.manualStatus, 'not-reviewed', `${source.id} must not imply an unsupported manual review`);
   });
 });
 

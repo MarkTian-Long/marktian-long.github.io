@@ -7,7 +7,7 @@
             updatedAt: '2026-08-30',
             reviewCadence: 'quarterly',
             noRealtimeProbe: true,
-            statusSemantics: '所有状态均为人工复核记录，不代表实时可达检测或内容持续更新。',
+            statusSemantics: '每条来源的状态只表达是否完成逐条人工复核；当前未逐条复核的来源保持 not-reviewed，复核日期为空，不代表实时可达检测或内容持续更新。',
             coverageDimensions: ['语言', '来源类型', '主题', '优先级'],
             topicOptions: [
                 { id: 'research', label: '研究前沿' },
@@ -71,8 +71,8 @@
                 bestFor: ['验证新模型与 AI 工具的真实用法', '寻找可复现的技术线索'],
                 blindSpot: ['个人作者视角，不能代表行业共识', '对中国市场信号覆盖有限'],
                 retentionReason: '能把快速变化的模型能力翻译成可操作的实验与判断。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'paul-graham',
@@ -89,8 +89,8 @@
                 bestFor: ['建立创业与产品的长期判断框架', '给短期 AI 热点寻找反例'],
                 blindSpot: ['并非 AI 专题来源', '观点带有鲜明的硅谷创业语境'],
                 retentionReason: '用低频、长周期的思想材料抵抗热点驱动的过度反应。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'the-batch',
@@ -107,8 +107,8 @@
                 bestFor: ['每周补齐研究与产业脉络', '把论文和技术变化翻译成应用问题'],
                 blindSpot: ['编辑后的摘要不等于一手证据', '节奏固定，难覆盖当天突发信号'],
                 retentionReason: '为高频研究线索提供稳定的周度整理与解释层。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'bens-bites',
@@ -125,8 +125,8 @@
                 bestFor: ['捕捉产品发布和工具变化', '形成值得二次验证的线索池'],
                 blindSpot: ['速递形式容易压缩背景', '商业信号需要回到原始公告核验'],
                 retentionReason: '高频发现层，适合把“今天发生了什么”转成待验证清单。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'hacker-news',
@@ -143,8 +143,8 @@
                 bestFor: ['观察技术从业者的真实反馈', '发现项目、论文与实现的讨论入口'],
                 blindSpot: ['社区样本偏向英文技术圈', '热度与重要性并不等价'],
                 retentionReason: '提供官方叙事之外的质疑、经验和项目线索。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'import-ai',
@@ -161,8 +161,8 @@
                 bestFor: ['理解研究进展背后的政策与竞争语境', '追踪模型能力之外的制度变化'],
                 blindSpot: ['更新节奏不完全固定', '作者判断需要和一手材料交叉验证'],
                 retentionReason: '把研究前沿放回政策、产业和社会影响的长链路中。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'sspai-ai',
@@ -179,8 +179,8 @@
                 bestFor: ['观察中文用户的真实工具体验', '比较工具进入日常工作流的阻力'],
                 blindSpot: ['评测样本和作者偏好会影响结论', '不覆盖所有底层研究进展'],
                 retentionReason: '补足英文技术圈之外的中文体验与使用场景。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'geekpark',
@@ -197,8 +197,8 @@
                 bestFor: ['跟踪国内 AI 产品与公司动态', '理解产品发布背后的市场语境'],
                 blindSpot: ['媒体报道有选题与采访边界', '深度技术细节覆盖有限'],
                 retentionReason: '作为国内产品信号的桥接层，补齐地域和市场差异。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'latepost',
@@ -215,8 +215,8 @@
                 bestFor: ['理解公司战略与组织变化', '为行业判断寻找深度事实材料'],
                 blindSpot: ['部分内容受订阅限制', '报道滞后于即时新闻'],
                 retentionReason: '提供比热榜更慢、更接近组织事实的行业纵深。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'investment-notebook',
@@ -233,8 +233,8 @@
                 bestFor: ['梳理 AI 商业模式与竞争格局', '把产品新闻转译为商业问题'],
                 blindSpot: ['分析结论需要回到公司披露核验', '更新频率可能受作者节奏影响'],
                 retentionReason: '补足技术和产品信号之后的价值分配与商业解释层。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             },
             {
                 id: 'guixingren',
@@ -251,8 +251,8 @@
                 bestFor: ['对照中美 AI 生态叙事', '发现跨市场产品和公司线索'],
                 blindSpot: ['跨市场报道容易牺牲细节', '媒体选题不等于完整市场样本'],
                 retentionReason: '用于发现跨地域差异和需要进一步核验的生态信号。',
-                lastCheckedAt: '2026-08-30',
-                manualStatus: 'reviewed'
+                lastReviewedAt: null,
+                manualStatus: 'not-reviewed'
             }
         ],
         workflowTools: [

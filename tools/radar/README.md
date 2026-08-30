@@ -5,9 +5,10 @@
 ## 功能描述
 
 - 四个研究意图：研究前沿、产品信号、行业与商业、实践与构建。
-- 11 个中英文来源：每个来源都记录类型、角色、主题、更新节奏、优先级、访问方式、适合任务、盲区、保留理由、最近人工复核日期和人工状态。
+- 11 个中英文来源：每个来源都记录类型、角色、主题、更新节奏、优先级、访问方式、适合任务、盲区、保留理由、逐条复核日期和人工状态；当前数据尚未逐条打开复核。
 - 所有筛选和排序都在浏览器本地完成；意图预设只改变推荐顺序，不把来源标记为“实时可信”。
 - 四步信息工作流：搜索 → 验证 → 综合 → 沉淀，并提供进入 `tools/trends/index.html` 的交接入口。
+- 页面顶部提供四页统一语义导航：`1 信源` → `2 信号` → `3 分析` → `4 方法`。
 
 ## 文件结构
 
@@ -29,9 +30,11 @@
 
 ### `sources`
 
-每条来源要求有唯一 `id`、安全的 `https` `url`，以及以下字段：`language`、`type`、`role`、`topics`、`updateCadence`、`priority`、`access`、`bestFor`、`blindSpot`、`retentionReason`、`lastCheckedAt`、`manualStatus`。
+每条来源要求有唯一 `id`、安全的 `https` `url`，以及以下字段：`language`、`type`、`role`、`topics`、`updateCadence`、`priority`、`access`、`bestFor`、`blindSpot`、`retentionReason`、`lastReviewedAt`、`manualStatus`。
 
-`manualStatus` 只允许 `reviewed`、`needs-review`、`not-reviewed`。它表示最后一次人工检查记录，不代表当前页面可达、内容仍在更新或观点已经被事实证明。`lastCheckedAt` 也必须是实际复核日期，不能用页面访问时间自动生成。
+`manualStatus` 只允许 `reviewed`、`needs-review`、`not-reviewed`。它表示是否完成逐条人工检查，不代表当前页面可达、内容仍在更新或观点已经被事实证明。`lastReviewedAt` 必须是实际逐条复核日期；尚未逐条复核时必须为 `null`，不能用页面编辑或访问时间冒充。
+
+当前这份数据的 11 条来源均为 `not-reviewed`，`lastReviewedAt` 均为 `null`。没有逐条复核证据时，页面使用“尚未逐条复核 / 逐条复核日期：待补”的诚实语义。
 
 ### `workflowTools`
 
@@ -43,7 +46,7 @@
 
 1. 逐条打开来源，确认入口仍指向预期的站点和内容类型；不把打不开一次等同于来源失效。
 2. 重新检查每条来源的角色、主题、适合任务和盲区，尤其区分一手事实、编辑分析和社区讨论。
-3. 更新 `lastCheckedAt`、`manualStatus`、`retentionReason`，并同步检查四个意图仍各自引用至少两条来源。
+3. 逐条确认后再更新 `lastReviewedAt`、`manualStatus`、`retentionReason`；未打开确认的来源保持 `not-reviewed` 与 `null`，并同步检查四个意图仍各自引用至少两条来源。
 4. 运行 `node --test radar-depth.test.js` 和 `node --test radar-depth.browser.test.js`；再运行 `node --check ../tools/radar/data.js`、`node --check ../tools/radar/app.js`。
 
 ## 访问方式与限制
