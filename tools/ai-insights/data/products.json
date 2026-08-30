@@ -4,318 +4,119 @@
     "name": "ChatGPT",
     "company": "OpenAI",
     "category": "通用大模型",
-    "logo": "🤖",
-    "tagline": "从对话工具到 AI 操作系统",
-    "description": "全球首个现象级 AI 对话产品，2 个月破亿用户。通过 RLHF 持续优化体验，从单一对话发展为 GPTs 生态平台 + Agent 执行系统。",
-    "highlights": [
-      "2亿+ MAU，史上增长最快消费级产品",
-      "GPTs 平台 UGC 生态，首周 300 万+ 创建",
-      "记忆 + Projects + Canvas，粘性持续提升"
+    "logo": "C",
+    "tagline": "把模型能力组织成可持续使用的工作入口",
+    "description": "ChatGPT 把对话、文件、图像和搜索等能力放在同一个入口，研究重点不是模型榜单，而是产品如何把一次性问答变成持续工作的上下文。",
+    "detailLink": "https://chatgpt.com/",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "ChatGPT 的产品壁垒更像一套持续承接任务的入口，而不是某一个永远领先的模型版本。", "evidenceRefs": ["capabilities", "faq"] },
+    "decisionThemes": ["distribution", "workflow", "trust"],
+    "decisions": [
+      { "id": "入口整合", "title": "把多种能力放进同一工作入口", "choice": "让用户从对话继续到文件、图像或搜索，而不是为每种任务切换产品。", "why": "任务通常会在理解、生成和验证之间来回移动，统一入口能减少上下文重建。", "tradeoff": "入口越宽，能力边界和套餐差异越容易变得不透明。", "evidenceRefs": ["capabilities", "faq"] },
+      { "id": "持续上下文", "title": "把一次回答变成连续协作", "choice": "围绕会话上下文和工作资料提供持续协作，而不是只优化单轮回答。", "why": "复杂任务的价值来自多轮修订，用户不必每轮重新解释背景。", "tradeoff": "上下文越持久，隐私、误记和错误延续的风险越高。", "evidenceRefs": ["faq"] },
+      { "id": "工具边界", "title": "用工具扩展模型，但保留用户判断", "choice": "通过搜索和文件等工具补足模型知识边界，同时把来源和操作结果留给用户检查。", "why": "需要新信息或外部动作的任务，不能只靠模型内部记忆完成。", "tradeoff": "工具调用会增加等待、权限和错误处理成本。", "evidenceRefs": ["capabilities", "search"] }
     ],
-    "pmInsights": [
-      "免费策略构建数据飞轮 → RLHF 持续优化的增长闭环",
-      "功能上线时机比功能本身更重要（记忆功能的克制设计）",
-      "从对话到 Agent，产品形态持续进化"
+    "uncertainties": [
+      { "question": "不同套餐、地区和设置下的能力差异，是否仍能被用户理解？", "status": "watch", "note": "官方 FAQ 明确提示可用能力取决于订阅和设置，本档案不把任一账户能力当成默认。", "evidenceRefs": ["faq"] },
+      { "question": "持续上下文在高风险工作中如何让用户快速发现错误延续？", "status": "open", "note": "当前来源没有提供可复核的错误发现率或生产结果，待后续专项复核。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "GPT-4o",
-      "RLHF",
-      "Tool Use",
-      "RAG"
-    ],
-    "businessModel": "Freemium（免费 + Plus $20/月 + Enterprise）+ API",
-    "launchDate": "2022-11",
-    "trend": "up",
-    "stars": 5,
-    "detailLink": "https://chatgpt.com",
-    "issue": 1,
-    "oneLiner": "ChatGPT 真正的护城河不是模型，是 2 亿用户的行为数据飞轮",
     "keyMetrics": [
-      { "label": "月活用户 MAU", "value": "2亿+", "source": "OpenAI 官方", "date": "2023-11", "url": "https://openai.com/blog/chatgpt-100-million" },
-      { "label": "破亿用户耗时", "value": "2个月", "source": "Reuters", "date": "2023-02", "url": "" },
-      { "label": "GPTs 创建数（首周）", "value": "300万+", "source": "OpenAI DevDay", "date": "2023-11", "url": "" },
-      { "label": "Plus 订阅价格", "value": "$20/月", "source": "OpenAI 官方定价", "date": "2023-02", "url": "https://openai.com/chatgpt/pricing" }
-    ],
-    "timeline": [
-      { "date": "2022-11", "event": "ChatGPT 正式发布，5天达100万用户", "type": "launch" },
-      { "date": "2023-02", "event": "2个月突破1亿MAU，史上最快消费级产品", "type": "milestone" },
-      { "date": "2023-03", "event": "ChatGPT Plus 正式推出，$20/月订阅", "type": "feature" },
-      { "date": "2023-11", "event": "GPTs 平台发布，首周300万+ 创建", "type": "feature" },
-      { "date": "2024-05", "event": "GPT-4o 发布，多模态能力全面升级", "type": "milestone" },
-      { "date": "2024-09", "event": "o1 推理模型发布，数学/代码推理大幅提升", "type": "feature" },
-      { "date": "2025-01", "event": "Operator 发布，AI Agent 执行真实世界任务", "type": "feature" }
+      { "id": "product-surface", "label": "公开产品形态", "value": "对话、文件、图像与搜索入口", "definition": "官方能力页列出的产品表面，不代表每个账户均可用。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["capabilities"], "caveat": "地区、套餐和灰度设置可能改变实际可用能力。" },
+      { "id": "context-boundary", "label": "能力可用边界", "value": "随订阅与设置变化", "definition": "官方 FAQ 对产品入口、账户和设置差异的定性说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["faq"], "caveat": "这是维护边界，不是用户结果或性能指标。" }
     ],
     "sources": [
-      { "title": "ChatGPT Reaches 100 Million Users", "url": "https://www.reuters.com/technology/chatgpt-sets-record-fastest-growing-user-base-analyst-note-2023-02-01/", "date": "2023-02-01", "type": "media" },
-      { "title": "OpenAI DevDay 2023 Keynote", "url": "https://openai.com/blog/new-models-and-developer-products-announced-at-devday", "date": "2023-11-06", "type": "official" },
-      { "title": "OpenAI 2024 Annual Revenue Report", "url": "", "date": "2024-12", "type": "report" }
+      { "id": "capabilities", "title": "ChatGPT Capabilities Overview", "url": "https://help.openai.com/en/articles/9260256", "date": "2026-08-30", "type": "official" },
+      { "id": "faq", "title": "What is ChatGPT: FAQ", "url": "https://help.openai.com/en/articles/12677804-what-is-chatgpt-faq", "date": "2026-08-30", "type": "official" },
+      { "id": "search", "title": "Searching the web with ChatGPT", "url": "https://help.openai.com/en/articles/9237897", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "ChatGPT 是 OpenAI 于 2022 年 11 月发布的对话式 AI 产品，2 个月内突破 1 亿用户，成为史上增长最快的消费级产品。它的核心定位从「聊天机器人」持续进化，如今已是集对话、创作、代码、Agent 执行于一体的 AI 操作系统。",
-        "features": [
-          "GPTs 平台：用户可创建自定义 AI，首周 300 万+ 创建，构建 UGC 生态",
-          "记忆功能：跨会话记住用户偏好，大幅提升长期粘性",
-          "Canvas 协作：文档/代码的交互式编辑范式，超越纯对话形式",
-          "Projects：将对话、文件、记忆整合为工作项目单元"
-        ]
-      },
-      "tech": {
-        "summary": "ChatGPT 的技术核心是 GPT-4o 多模态模型 + RLHF 持续优化机制。用户反馈直接成为训练数据，形成「使用→反馈→优化→更好用→更多使用」的飞轮。Tool Use 能力让模型可以调用外部工具，是 Agent 功能的基础。",
-        "points": [
-          "GPT-4o：多模态（文字/图片/语音/视频）统一模型",
-          "RLHF：人类反馈强化学习，用户行为直接优化模型",
-          "Tool Use：模型调用搜索、代码执行、文件读取等外部工具",
-          "RAG：检索增强生成，支持用户上传文件进行知识问答"
-        ]
-      },
-      "competition": {
-        "summary": "ChatGPT 面临来自 Claude、Gemini、国内各大模型的竞争，但其核心优势在于品牌认知度和生态规模。",
-        "table": [
-          {
-            "type": "通用对话",
-            "name": "Claude",
-            "strength": "长文本/安全/编程",
-            "scene": "专业写作、代码",
-            "limit": "品牌认知度低于 ChatGPT"
-          },
-          {
-            "type": "通用对话",
-            "name": "Gemini",
-            "strength": "Google 生态集成",
-            "scene": "搜索增强、办公",
-            "limit": "对话体验不及 ChatGPT"
-          },
-          {
-            "type": "国产模型",
-            "name": "文心一言",
-            "strength": "中文优化、百度生态",
-            "scene": "国内企业用户",
-            "limit": "国际化能力弱"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "免费策略是数据飞轮的入口，不是让利，是投资",
-          "功能上线时机比功能本身更重要——记忆功能的克制发布节奏值得研究",
-          "从对话工具到 AI 操作系统，每次形态升级都重新定义了竞争边界"
-        ],
-        "myTake": "ChatGPT 最值得学的不是技术，是产品节奏感。它知道什么时候该激进（抢先发布）、什么时候该克制（记忆功能慢慢推）。这种对用户心理的把握，比任何单一功能都更难复制。"
-      }
+      "summary": { "problem": "用户需要在理解、生成和验证之间连续推进，而不是只得到一段文字。", "whyAi": "自然语言能承接开放式任务，但外部信息、权限和错误判断仍需要工具与人共同完成。", "humanRole": "人负责定义目标、检查来源和批准外部影响。", "decisionIds": ["入口整合", "持续上下文", "工具边界"] },
+      "mechanism": { "summary": "产品把模型能力包在连续会话和工具入口里，体验价值来自上下文承接，不只来自单轮生成。", "system": ["对话承接任务意图", "文件和搜索补充外部上下文", "用户反馈和检查决定是否继续"], "humanRole": "涉及事实、隐私或外部行动时，人必须保留核验和批准。", "failureModes": ["来源不可用时答案退回模型猜测", "错误上下文可能在多轮中持续", "套餐或地区限制让同一入口表现不同"] },
+      "tradeoffs": { "summary": "统一入口降低切换成本，也把能力差异、权限和信任问题集中到一个产品里。", "rows": [{ "decision": "入口整合", "gain": "减少工具切换", "cost": "能力边界更复杂", "boundary": "首次交互前说明可用范围" }, { "decision": "持续上下文", "gain": "更适合长任务", "cost": "错误会延续", "boundary": "提供可见的上下文和复核点" }, { "decision": "工具边界", "gain": "可接入新信息", "cost": "增加权限与等待", "boundary": "工具结果必须可回查" }] },
+      "evidence": { "summary": "当前档案只把官方能力说明当作产品事实，不把用户规模、营收或模型排名当成结论。", "metricIds": ["product-surface", "context-boundary"], "missing": "没有纳入可复核的生产成功率或错误发现率。" },
+      "evolution": { "summary": "复核重点从单轮对话转向持续工作入口和工具边界。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：能力说明覆盖对话、文件、图像和搜索等入口。", "type": "review", "evidenceRefs": ["capabilities"] }, { "date": "2026-08-30", "event": "本轮复核：FAQ 明确提示能力受订阅和设置影响。", "type": "boundary", "evidenceRefs": ["faq"] }], "migrationBoundary": "适合从单轮问答迁移到需要连续协作的任务，但高风险流程仍需独立审批和证据检查。", "counterEvidence": "官方能力说明不能证明在具体组织或高风险场景中的生产效果。" }
     }
   },
   {
     "id": "midjourney",
     "name": "Midjourney",
-    "company": "Midjourney Inc.",
+    "company": "Midjourney",
     "category": "AI 创作",
-    "logo": "🎨",
-    "tagline": "从创作工具到创意社区",
-    "description": "AI 图像生成标杆产品。以 Discord Bot 起步，靠美学调教和社区效应实现差异化。仅 ~40 人团队达到约 $1亿 ARR。",
-    "highlights": [
-      "Discord 社区 → 自来水增长，零冷启动成本",
-      "V5/V6 每次版本升级引发病毒传播",
-      "关闭免费试用后付费转化率提升"
+    "logo": "M",
+    "tagline": "用社区与审美标准建立图像生成的产品偏好",
+    "description": "Midjourney 的研究价值在于它把生成模型、社区展示和审美偏好绑在一起，用户购买的不只是一次生成，而是一套可被识别的创作语境。",
+    "detailLink": "https://www.midjourney.com/",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Midjourney 的差异化来自审美标准和社区循环，模型能力只是用户感知价值的一部分。", "evidenceRefs": ["home", "website"] },
+    "decisionThemes": ["creation", "community", "distribution"],
+    "decisions": [
+      { "id": "审美标准", "title": "先建立可识别的审美标准", "choice": "把输出风格和创作体验作为核心产品判断，而不是只追逐功能数量。", "why": "创作者会为稳定且有辨识度的结果形成偏好，审美成为选择产品的语言。", "tradeoff": "强风格可能限制部分用户的表达范围，也难以用通用基准完全衡量。", "evidenceRefs": ["home", "website"] },
+      { "id": "社区展示", "title": "让作品展示本身成为学习入口", "choice": "通过 Explore、提示词和作品信息，让用户从别人的结果反推创作方法。", "why": "新用户需要看到可模仿的结果，社区能降低第一次创作的理解成本。", "tradeoff": "公开展示和可复用提示词会带来隐私、署名和风格挪用问题。", "evidenceRefs": ["website"] },
+      { "id": "订阅门槛", "title": "用订阅制管理生成资源", "choice": "把生成能力放进订阅套餐，用资源额度和隐私能力区分使用场景。", "why": "生成成本和隐私要求都需要明确的产品边界，免费试用不是唯一增长手段。", "tradeoff": "首次体验门槛更高，用户需要先理解套餐差异。", "evidenceRefs": ["plans"] }
     ],
-    "pmInsights": [
-      "产品载体选择决定用户获取方式（Discord 反常识决策）",
-      "美学调教降低使用门槛 = Prompt Engineering 的产品价值",
-      "当 PMF 足够强时，免费策略不是必须的"
+    "uncertainties": [
+      { "question": "社区作品的公开程度与创作者对隐私、署名的期待是否匹配？", "status": "open", "note": "官方文档说明了 Explore 和作品信息，但本档案没有纳入创作者行为或投诉数据。", "evidenceRefs": ["website"] },
+      { "question": "强审美是否会在不同文化和专业创作场景中变成同质化？", "status": "watch", "note": "这是产品判断，不用单一质量分数代替，需持续观察模型与社区变化。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "Diffusion Model",
-      "图像生成",
-      "Prompt 优化"
-    ],
-    "businessModel": "纯订阅制（$10/$30/$60/$120 月）",
-    "launchDate": "2022-03",
-    "trend": "up",
-    "stars": 5,
-    "detailLink": "https://www.midjourney.com",
-    "issue": 2,
-    "oneLiner": "Midjourney 证明：当 PMF 足够强，免费增长不是必须的",
     "keyMetrics": [
-      { "label": "年化营收 ARR", "value": "$5亿", "source": "Sacra", "date": "2025-05", "url": "https://sacra.com/c/midjourney/" },
-      { "label": "网站月访客 MAU", "value": "1,983万", "source": "DemandSage", "date": "2026-01", "url": "https://www.demandsage.com/midjourney-statistics/" },
-      { "label": "Discord 注册用户", "value": "2,100万", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/c/midjourney/" },
-      { "label": "首轮外部融资", "value": "$1.5亿 Series B，估值 $100亿", "source": "SalesTools AI", "date": "2025-10", "url": "https://salestools.io/en/report/midjourney-raises-150m-series-b" },
-      { "label": "团队规模", "value": "约107-163人", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/c/midjourney/" }
-    ],
-    "timeline": [
-      { "date": "2021-08", "event": "David Holz 创立 Midjourney", "type": "launch" },
-      { "date": "2022-03", "event": "公测发布，两个月内实现盈利，零外部融资", "type": "launch" },
-      { "date": "2022-12", "event": "年收入达 $5000 万，纯订阅制验证 PMF", "type": "milestone" },
-      { "date": "2023-03", "event": "关闭免费试用，付费转化率反而提升", "type": "milestone" },
-      { "date": "2023-07", "event": "V5.2 发布，画质和美学一致性大幅提升", "type": "feature" },
-      { "date": "2024-01", "event": "V6 发布，提示词理解和细节表现突破", "type": "feature" },
-      { "date": "2024-12", "event": "年收入达 $3 亿，ARR 超 $4 亿", "type": "milestone" },
-      { "date": "2025-10", "event": "首次对外融资：Series B $1.5亿，Lightspeed 领投，估值 $100 亿", "type": "funding" }
+      { "id": "surface", "label": "公开创作表面", "value": "Explore、Create、编辑与个性化", "definition": "官方站点和网站概览展示的创作与浏览入口。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["home", "website"], "caveat": "页面能力会随产品版本和账户状态变化。" },
+      { "id": "access", "label": "使用门槛", "value": "订阅套餐管理生成与隐私能力", "definition": "官方套餐说明对订阅、Relax 模式和 Stealth Mode 的定性描述。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["plans"], "caveat": "价格、额度和功能会变化，本档案不固化价格数字。" }
     ],
     "sources": [
-      { "title": "Midjourney revenue, funding & news", "url": "https://sacra.com/c/midjourney/", "date": "2025-06", "type": "report" },
-      { "title": "Midjourney Statistics 2026 (Active Users & Revenue)", "url": "https://www.demandsage.com/midjourney-statistics/", "date": "2026-01", "type": "report" },
-      { "title": "Midjourney Raises $150M in Series B at $10B Valuation", "url": "https://salestools.io/en/report/midjourney-raises-150m-series-b", "date": "2025-10-11", "type": "media" }
+      { "id": "home", "title": "Midjourney official site", "url": "https://www.midjourney.com/", "date": "2026-08-30", "type": "official" },
+      { "id": "website", "title": "Website Overview", "url": "https://docs.midjourney.com/hc/en-us/articles/33329460426765-Website-Overview", "date": "2026-08-30", "type": "official" },
+      { "id": "plans", "title": "Comparing Midjourney Plans", "url": "https://docs.midjourney.com/hc/en-us/articles/27870484040333-Comparing-Midjourney-Plans", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Midjourney 是 AI 图像生成的标杆产品，以 Discord Bot 起步，靠极致的美学调教和社区效应实现差异化。仅约 40 人的团队达到约 1 亿美元 ARR，是 AI 领域效率最高的商业化案例之一。",
-        "features": [
-          "Discord Bot 入口：在用户已有社区中运行，零冷启动成本",
-          "高美学一致性：V5/V6 版本的画风调教形成独特的 Midjourney 美学",
-          "Prompt 智能优化：降低使用门槛，非设计师也能产出专业级图片",
-          "版本迭代病毒传播：每次大版本升级都引发社区内大规模二次传播"
-        ]
-      },
-      "tech": {
-        "summary": "Midjourney 使用自研的 Diffusion 模型，核心技术优势在于美学方向的精细调教，而非单纯的参数规模。其 Prompt 优化层将用户的模糊意图转化为高质量生成指令，这本身就是重要的产品技术壁垒。",
-        "points": [
-          "自研 Diffusion Model：不依赖 Stable Diffusion 开源底座",
-          "美学调教层：大量人工标注确立独特视觉风格",
-          "Prompt 优化：自动增强用户输入，降低专业门槛",
-          "Discord 基础设施：Bot 架构天然支持社区互动和内容传播"
-        ]
-      },
-      "competition": {
-        "summary": "图像生成赛道竞争激烈，但 Midjourney 通过品牌美学和社区形成了难以复制的护城河。",
-        "table": [
-          {
-            "type": "AI 图像生成",
-            "name": "DALL·E 3",
-            "strength": "ChatGPT 内置，用户基数大",
-            "scene": "快速原型、插图",
-            "limit": "美学风格不如 Midjourney"
-          },
-          {
-            "type": "开源图像生成",
-            "name": "Stable Diffusion",
-            "strength": "完全开源可自部署",
-            "scene": "开发者、本地部署",
-            "limit": "需要较高技术门槛"
-          },
-          {
-            "type": "设计工具",
-            "name": "Adobe Firefly",
-            "strength": "无版权风险、Adobe 生态",
-            "scene": "商业设计、办公",
-            "limit": "生成质量和自由度不及 MJ"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "产品载体的选择决定了用户获取方式——Discord 是反常识但高度正确的决策",
-          "关闭免费试用反而提升了付费转化，说明强 PMF 下免费不是必须条件",
-          "美学品牌是护城河——用户愿意付费不只是为功能，是为「Midjourney 风格」"
-        ],
-        "myTake": "Midjourney 最反直觉的地方：它在最火的时候关掉了免费试用。大多数产品经理会本能地反对这个决策。但结果证明，当产品足够好，稀缺感是正向的。这让我重新思考「增长黑客」思维的适用边界。"
-      }
+      "summary": { "problem": "创作者不仅要生成图片，还要找到可学习的风格和持续创作的反馈。", "whyAi": "生成模型能压缩表达成本，但审美选择、署名和公开边界仍不是自动问题。", "humanRole": "人负责选择风格、确认使用边界和判断作品是否适合公开。", "decisionIds": ["审美标准", "社区展示", "订阅门槛"] },
+      "mechanism": { "summary": "产品把模型输出放入社区浏览和复用的循环中，让结果成为下一次创作的输入。", "system": ["Create 生成作品", "Explore 提供可观察样本", "提示词与参数帮助用户复用方法"], "humanRole": "用户仍需做审美筛选、版权判断和公开范围选择。", "failureModes": ["生成结果风格趋同", "社区公开造成隐私或署名争议", "套餐差异让首次试用受阻"] },
+      "tradeoffs": { "summary": "审美和社区增强了偏好，也把产品从工具推向文化与身份表达。", "rows": [{ "decision": "审美标准", "gain": "形成可识别偏好", "cost": "表达范围可能收窄", "boundary": "允许用户控制风格与参考来源" }, { "decision": "社区展示", "gain": "降低学习成本", "cost": "公开和复用有边界风险", "boundary": "让署名与隐私选项可见" }, { "decision": "订阅门槛", "gain": "明确资源和隐私层级", "cost": "第一次体验更重", "boundary": "套餐差异需要在创作前说明" }] },
+      "evidence": { "summary": "证据主要来自产品站和官方帮助文档，支持的是产品表面与套餐机制，不支持营收或团队效率结论。", "metricIds": ["surface", "access"], "missing": "没有纳入社区质量、创作者留存或版权争议的可核查数据。" },
+      "evolution": { "summary": "复核重点从 Discord 入口转向网站创作、社区浏览与个性化能力的组合。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方站点同时呈现 Explore、Create 和个性化入口。", "type": "review", "evidenceRefs": ["home", "website"] }, { "date": "2026-08-30", "event": "本轮复核：官方套餐页将生成资源与隐私能力放入订阅差异。", "type": "boundary", "evidenceRefs": ["plans"] }], "migrationBoundary": "适合需要视觉探索和社区学习的创作任务，不应把其风格偏好直接当成所有专业设计的质量标准。", "counterEvidence": "官网展示能证明产品入口存在，不能证明社区循环一定带来更好的创作结果。" }
     }
   },
   {
     "id": "deepseek",
     "name": "DeepSeek",
-    "company": "深度求索",
+    "company": "DeepSeek",
     "category": "通用大模型",
-    "logo": "🔬",
-    "tagline": "极致性价比的大模型挑战者",
-    "description": "中国 AI 创业公司，以极低训练成本和开源策略快速崛起。DeepSeek-V3/R1 在多项基准测试中比肩 GPT-4 级别，但推理成本降低 90%+。",
-    "highlights": [
-      "训练成本仅为同级模型的 1/10",
-      "开源策略快速建立开发者生态",
-      "R1 在数学和编程推理上表现突出"
+    "logo": "D",
+    "tagline": "用开放接口和成本效率重写模型采用门槛",
+    "description": "DeepSeek 的产品研究重点是模型、API 兼容性和开发者迁移之间的关系。成本效率只有被接入现有工作流，才会变成真实的采用优势。",
+    "detailLink": "https://deepseek.com/",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "DeepSeek 的产品力量不只在模型效率，而在于把低迁移成本和开放接口组合成采用理由。", "evidenceRefs": ["home", "api", "updates"] },
+    "decisionThemes": ["cost", "openness", "ecosystem"],
+    "decisions": [
+      { "id": "成本迁移", "title": "把成本效率变成迁移理由", "choice": "以模型与 API 的成本效率吸引已有兼容调用方式的开发者。", "why": "开发者更容易先替换模型端点，再逐步调整产品行为，迁移路径短。", "tradeoff": "价格或性能差异会随模型版本、配额和上下文需求变化。", "evidenceRefs": ["api", "updates"] },
+      { "id": "兼容接口", "title": "优先兼容已有开发习惯", "choice": "提供与常见 SDK 和 API 形态相近的接入方式，减少接入改造。", "why": "生态采用的摩擦往往来自接口和工具链，而不只是模型质量。", "tradeoff": "兼容层可能掩盖能力差异，调用方仍需验证输出和错误语义。", "evidenceRefs": ["api"] },
+      { "id": "开放节奏", "title": "用公开文档和变更记录降低不确定性", "choice": "通过 API 文档和更新日志让开发者知道模型名、兼容边界和迁移变化。", "why": "模型产品变化快，版本记录是开发者决定是否依赖它的基础。", "tradeoff": "文档更新速度如果跟不上模型变化，开放会转化为运维风险。", "evidenceRefs": ["api", "updates"] }
     ],
-    "pmInsights": [
-      "成本是产品竞争力的核心维度之一",
-      "开源 vs 闭源的产品策略选择：不同阶段不同答案",
-      "技术突破可以重新定义市场格局"
+    "uncertainties": [
+      { "question": "模型版本快速变化时，已有应用如何维持行为一致性？", "status": "watch", "note": "更新日志能说明版本变化，但没有在本档案中建立跨版本回归数据。", "evidenceRefs": ["updates"] },
+      { "question": "成本优势在限流、数据合规和运维成本后是否仍成立？", "status": "open", "note": "当前档案不采用未经核查的价格或 TCO 数字，需按具体业务负载测量。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "MoE 架构",
-      "开源模型",
-      "RLHF"
-    ],
-    "businessModel": "开源 + API 计费（极低价格）",
-    "launchDate": "2024-01",
-    "trend": "up",
-    "stars": 4,
-    "detailLink": "https://www.deepseek.com",
-    "issue": 3,
-    "oneLiner": "DeepSeek 重新定义了 AI 军备竞赛的规则：不是谁算力多，是谁算法省",
     "keyMetrics": [
-      { "label": "月活跃用户 MAU", "value": "3,800万", "source": "DemandSage", "date": "2025-04", "url": "https://www.demandsage.com/deepseek-statistics/" },
-      { "label": "App 下载总量", "value": "5,720万次", "source": "Business of Apps", "date": "2025-05", "url": "https://www.businessofapps.com/data/deepseek-statistics/" },
-      { "label": "V3 训练成本", "value": "$557.6万", "source": "DeepSeek 技术报告 / CNBC", "date": "2025-01", "url": "https://www.cnbc.com/2025/01/31/deepseeks-hardware-spend-could-be-as-high-as-500-million-report.html" },
-      { "label": "年化营收估算", "value": "$2.2亿（API+企业服务）", "source": "Business of Apps", "date": "2025-06", "url": "https://www.businessofapps.com/data/deepseek-statistics/" },
-      { "label": "企业客户数", "value": "26,000+", "source": "SQ Magazine", "date": "2025-06", "url": "" }
-    ],
-    "timeline": [
-      { "date": "2023-07", "event": "深度求索由梁文锋（High-Flyer 对冲基金创始人）创立", "type": "launch" },
-      { "date": "2024-05", "event": "DeepSeek-V2 发布，MoE 架构大幅降低推理成本", "type": "feature" },
-      { "date": "2024-12", "event": "DeepSeek-V3（671B 参数）发布，训练成本仅 $557 万", "type": "milestone" },
-      { "date": "2025-01", "event": "DeepSeek-R1 发布，MIT 开源授权，数学推理比肩 o1", "type": "milestone" },
-      { "date": "2025-01", "event": "登顶美国 iOS 免费榜第一，Nvidia 单日股价跌 18%", "type": "milestone" },
-      { "date": "2025-05", "event": "DeepSeek-R1-0528 更新发布，推理能力进一步提升", "type": "feature" }
+      { "id": "api-compatibility", "label": "接入方式", "value": "兼容常见 API 形态", "definition": "官方 API 文档对 base URL、SDK 兼容和调用方式的说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["api"], "caveat": "兼容接口不等于模型行为、参数和错误语义完全相同。" },
+      { "id": "version-surface", "label": "版本变化", "value": "由官方更新日志持续维护", "definition": "更新日志记录模型名称、接口能力和弃用时间等变化。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["updates"], "caveat": "文档存在不代表调用方已经完成兼容性回归。" }
     ],
     "sources": [
-      { "title": "DeepSeek Revenue and Usage Statistics (2025)", "url": "https://www.businessofapps.com/data/deepseek-statistics/", "date": "2025-05", "type": "report" },
-      { "title": "DeepSeek AI Statistics 2026", "url": "https://www.demandsage.com/deepseek-statistics/", "date": "2025-04", "type": "report" },
-      { "title": "DeepSeek's hardware spend could be as high as $500M", "url": "https://www.cnbc.com/2025/01/31/deepseeks-hardware-spend-could-be-as-high-as-500-million-report.html", "date": "2025-01-31", "type": "media" },
-      { "title": "DeepSeek - Wikipedia", "url": "https://en.wikipedia.org/wiki/DeepSeek", "date": "2025-01", "type": "media" }
+      { "id": "home", "title": "DeepSeek official site", "url": "https://deepseek.com/", "date": "2026-08-30", "type": "official" },
+      { "id": "api", "title": "DeepSeek API: Your First API Call", "url": "https://api-docs.deepseek.com/guides/function_calling", "date": "2026-08-30", "type": "official" },
+      { "id": "updates", "title": "DeepSeek API Change Log", "url": "https://api-docs.deepseek.com/updates", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "DeepSeek 是深度求索于 2024 年推出的系列大模型，以极低训练成本和开源策略快速崛起。DeepSeek-V3/R1 在多项基准测试中比肩 GPT-4 级别，但推理成本降低 90%+，彻底打破了「顶级模型必然昂贵」的行业认知。",
-        "features": [
-          "极致成本优化：V3 训练成本约 557 万美元，是同级模型的 1/10",
-          "开源策略：模型权重完全开放，快速建立开发者生态",
-          "R1 推理模型：在数学和编程推理任务上表现突出，对标 o1",
-          "API 极低定价：推理成本远低于 OpenAI，吸引大量企业迁移"
-        ]
-      },
-      "tech": {
-        "summary": "DeepSeek 的核心技术突破在于 MoE（混合专家）架构的工程优化。通过只激活模型的一部分参数来处理每个 token，大幅降低计算量。同时在 RLHF 流程上做了创新，用更少的人工标注数据达到更好的对齐效果。",
-        "points": [
-          "MoE 架构：每次只激活部分专家网络，降低计算成本",
-          "FP8 混合精度训练：在不损失精度的前提下减少显存占用",
-          "Multi-head Latent Attention：压缩 KV Cache，降低推理成本",
-          "Group Relative Policy Optimization：更高效的强化学习对齐方案"
-        ]
-      },
-      "competition": {
-        "summary": "DeepSeek 的出现对整个 AI 行业的定价体系形成了冲击，迫使 OpenAI 等公司加速降价。",
-        "table": [
-          {
-            "type": "顶级闭源模型",
-            "name": "GPT-4o",
-            "strength": "生态最完善、品牌最强",
-            "scene": "企业级应用",
-            "limit": "价格昂贵，中国访问受限"
-          },
-          {
-            "type": "顶级闭源模型",
-            "name": "Claude 3.5",
-            "strength": "长文本、编程、安全",
-            "scene": "专业代码/文档",
-            "limit": "同样价格较高"
-          },
-          {
-            "type": "国产开源模型",
-            "name": "Qwen 2.5",
-            "strength": "中文优化、阿里生态",
-            "scene": "国内企业应用",
-            "limit": "国际影响力不及 DeepSeek"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "成本是产品竞争力的核心维度——「同等质量更便宜」本身就是强大的产品力",
-          "开源在特定阶段是最高效的市场占领策略，不是让利，是建立标准",
-          "技术突破可以重新定义市场格局——DeepSeek 让 AI 军备竞赛的焦点从算力转向算法效率"
-        ],
-        "myTake": "DeepSeek 给我最大的启示是：在一个所有人都在堆算力的赛道里，找到一个正交的竞争维度（成本效率）反而创造了降维优势。这不只是技术故事，是产品战略故事。"
-      }
+      "summary": { "problem": "应用团队需要在模型质量、成本和已有接入方式之间做可回退的选择。", "whyAi": "模型服务能影响生成能力和成本，但迁移风险来自行为差异而非换一个 URL。", "humanRole": "人负责定义回归集、成本口径和可接受的模型行为变化。", "decisionIds": ["成本迁移", "兼容接口", "开放节奏"] },
+      "mechanism": { "summary": "产品通过模型服务、兼容接口和文档变更记录，缩短开发者从评估到接入的路径。", "system": ["模型端点提供生成能力", "兼容 API 降低接入改造", "更新日志提示迁移和弃用边界"], "humanRole": "开发者必须在自己的任务集上验证质量、延迟、成本和稳定性。", "failureModes": ["版本更新改变输出行为", "兼容 API 隐藏能力差异", "服务可用性或限流影响下游体验"] },
+      "tradeoffs": { "summary": "开放与低迁移成本能扩大生态，但会把模型变化管理责任交给接入方。", "rows": [{ "decision": "成本迁移", "gain": "降低替换门槛", "cost": "成本口径易漂移", "boundary": "按真实负载记录总成本" }, { "decision": "兼容接口", "gain": "复用现有工具链", "cost": "差异不易发现", "boundary": "建立行为回归测试" }, { "decision": "开放节奏", "gain": "更容易评估变化", "cost": "文档维护成本高", "boundary": "版本和弃用都进入变更管理" }] },
+      "evidence": { "summary": "官方站点、API 文档和更新日志支持接入机制判断，不支持未经核查的市场规模或训练成本数字。", "metricIds": ["api-compatibility", "version-surface"], "missing": "没有纳入独立模型评测、生产成本或服务可用性数据。" },
+      "evolution": { "summary": "复核重点从模型发布转向版本变化、API 兼容和迁移回归。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方站点同时提供产品、API、文档和模型研究入口。", "type": "review", "evidenceRefs": ["home"] }, { "date": "2026-08-30", "event": "本轮复核：API 更新日志继续记录模型和弃用变化。", "type": "boundary", "evidenceRefs": ["updates"] }], "migrationBoundary": "适合有明确回归集、可切换模型并能承担版本维护的团队，不适合把兼容接口当成免验证替换。", "counterEvidence": "官方文档描述接入方式，不能替代独立的业务质量和成本测量。" }
     }
   },
   {
@@ -323,108 +124,40 @@
     "name": "Claude",
     "company": "Anthropic",
     "category": "通用大模型",
-    "logo": "🧠",
-    "tagline": "安全优先的 AI 助手",
-    "description": "Anthropic 旗舰产品，强调 AI 安全与对齐。Claude 3.5 Sonnet 在编程、推理、长文本理解上表现顶级，200K token 超长上下文窗口。",
-    "highlights": [
-      "200K 上下文窗口，长文档处理能力最强",
-      "Constitutional AI 安全训练方案",
-      "Artifacts 功能开创交互式代码/文档新范式"
+    "logo": "A",
+    "tagline": "把可控性与协作体验放进通用助手",
+    "description": "Claude 的产品研究重点是如何把安全、长任务和协作表达成用户能感知的工作方式。安全不是页脚声明，而是影响产品选择和企业采用的约束。",
+    "detailLink": "https://claude.com/product/overview",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Claude 的竞争判断不是把安全当作限制，而是把可控性变成专业用户愿意依赖的产品属性。", "evidenceRefs": ["overview", "docs"] },
+    "decisionThemes": ["trust", "workflow", "enterprise"],
+    "decisions": [
+      { "id": "可控协作", "title": "让安全约束进入协作体验", "choice": "把安全、原则和人工判断放进用户与系统的协作过程，而不是只放在免责声明里。", "why": "专业工作需要知道系统何时拒绝、何时不确定，以及用户怎样继续处理。", "tradeoff": "更强的约束可能让部分低风险任务显得保守。", "evidenceRefs": ["overview", "safety"] },
+      { "id": "输出形态", "title": "把输出变成可继续工作的对象", "choice": "通过可编辑、可继续处理的输出形态承接写作、分析和代码任务。", "why": "用户真正需要的是把结果带入下一步，而不是复制一段完整回答。", "tradeoff": "结果越接近工作产物，权限、版本和审核责任越需要前置。", "evidenceRefs": ["overview"] },
+      { "id": "企业入口", "title": "用企业场景承接高价值任务", "choice": "围绕代码、研究、分析和团队协作建立面向组织的入口。", "why": "企业愿意为可控、可追踪和能嵌入流程的协作能力付费。", "tradeoff": "组织场景带来更高的集成、权限和合规成本。", "evidenceRefs": ["overview", "enterprise"] }
     ],
-    "pmInsights": [
-      "安全性不是限制，而是差异化卖点（Constitutional AI）",
-      "Artifacts 功能验证：AI 产品不只是对话，结果呈现方式同等重要",
-      "B2B 客户核心关注安全 + 可控，这是 Claude 的核心壁垒"
+    "uncertainties": [
+      { "question": "用户能否在不牺牲效率的情况下理解安全拒答和不确定性？", "status": "watch", "note": "官方产品页强调协作和安全方向，但没有给出统一的拒答体验测量。", "evidenceRefs": ["overview", "safety"] },
+      { "question": "可编辑输出进入组织流程后，责任边界由谁最终承担？", "status": "open", "note": "需要结合具体组织的权限、审计和人工审批设计，不能从产品能力页推断。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "Constitutional AI",
-      "超长上下文",
-      "RLHF"
-    ],
-    "businessModel": "Freemium + API + Enterprise",
-    "launchDate": "2023-03",
-    "trend": "up",
-    "stars": 5,
-    "detailLink": "https://claude.ai",
-    "issue": 4,
-    "oneLiner": "Claude 证明了「安全」可以是差异化卖点，而不只是合规负担",
     "keyMetrics": [
-      { "label": "月活跃用户 MAU", "value": "3,000万", "source": "DemandSage", "date": "2025-06", "url": "https://www.demandsage.com/claude-ai-statistics/" },
-      { "label": "Anthropic 年化营收", "value": "$140亿", "source": "DemandSage", "date": "2026-02", "url": "https://www.demandsage.com/claude-ai-statistics/" },
-      { "label": "Anthropic 估值", "value": "$3,800亿", "source": "Anthropic 官方", "date": "2026-02", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation" },
-      { "label": "最新融资轮次", "value": "Series G $300亿，估值 $3,800亿", "source": "Anthropic 官方", "date": "2026-02", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation" },
-      { "label": "SWE-bench 编程得分", "value": "77.2%（Claude Sonnet 4.5）", "source": "Anthropic 官方", "date": "2025-09", "url": "" }
-    ],
-    "timeline": [
-      { "date": "2021-01", "event": "Anthropic 由 Dario Amodei 等前 OpenAI 团队成员创立", "type": "launch" },
-      { "date": "2023-03", "event": "Claude 1.0 公开发布，首个面向公众的 Anthropic 产品", "type": "launch" },
-      { "date": "2023-11", "event": "Claude 2.1 发布，首次支持 200K token 超长上下文", "type": "feature" },
-      { "date": "2024-03", "event": "Claude 3 系列发布（Haiku/Sonnet/Opus），支持多模态", "type": "milestone" },
-      { "date": "2024-06", "event": "Claude 3.5 Sonnet 发布，编程和推理性能超越 Opus 3", "type": "milestone" },
-      { "date": "2025-03", "event": "Series E 融资 $35亿，估值 $615亿，Lightspeed 领投", "type": "funding" },
-      { "date": "2025-05", "event": "Claude 4 系列发布（Sonnet 4 + Opus 4）", "type": "milestone" },
-      { "date": "2025-09", "event": "Series F 融资 $130亿，估值 $1,830亿", "type": "funding" },
-      { "date": "2026-02", "event": "Series G 融资 $300亿，估值 $3,800亿", "type": "funding" }
+      { "id": "work-surface", "label": "工作场景覆盖", "value": "代码、研究、分析与创作", "definition": "官方产品页展示的典型工作任务，不是生产效果排名。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["overview"], "caveat": "场景覆盖不代表每个组织都能直接落地。" },
+      { "id": "safety-surface", "label": "安全表达方式", "value": "作为产品协作边界持续出现", "definition": "官方产品和安全资料对模型行为、原则与使用边界的定性说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["safety"], "caveat": "定性原则不能替代具体业务的风险评估。" }
     ],
     "sources": [
-      { "title": "Claude Statistics 2026: Active Users & Revenue", "url": "https://www.demandsage.com/claude-ai-statistics/", "date": "2026-02", "type": "report" },
-      { "title": "Amazon-backed Anthropic valued at $61.5B after latest round", "url": "https://www.cnbc.com/2025/03/03/amazon-backed-ai-firm-anthropic-valued-at-61point5-billion-after-latest-round.html", "date": "2025-03-03", "type": "media" },
-      { "title": "Anthropic raises Series F at $183B post-money valuation", "url": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation", "date": "2025-09", "type": "official" },
-      { "title": "Claude Statistics 2026", "url": "https://backlinko.com/claude-users", "date": "2026-02", "type": "report" }
+      { "id": "overview", "title": "Claude product overview", "url": "https://claude.com/product/overview", "date": "2026-08-30", "type": "official" },
+      { "id": "docs", "title": "Claude documentation", "url": "https://docs.anthropic.com/", "date": "2026-08-30", "type": "official" },
+      { "id": "safety", "title": "Anthropic safety and alignment research", "url": "https://www.anthropic.com/research", "date": "2026-08-30", "type": "official" },
+      { "id": "enterprise", "title": "Anthropic enterprise solutions", "url": "https://www.anthropic.com/enterprise", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Claude 是 Anthropic 的旗舰 AI 产品，强调 AI 安全与对齐。Claude 3.5 Sonnet 在编程、推理、长文本理解上表现顶级，200K token 超长上下文窗口是目前最强之一。其核心差异化是 Constitutional AI 训练方案和对企业客户的高度可控性。",
-        "features": [
-          "200K 上下文窗口：可处理整本书、大型代码库，长文档能力最强",
-          "Artifacts：交互式代码/文档输出，开创 AI 产品新交互范式",
-          "Projects：持久化工作空间，支持跨会话上下文保留",
-          "强编程能力：代码生成、调试、解释在多项基准测试名列前茅"
-        ]
-      },
-      "tech": {
-        "summary": "Claude 的核心技术差异是 Constitutional AI（宪法 AI）训练方案。不同于传统 RLHF 依赖大量人工标注，Constitutional AI 让模型根据一套明确的原则自我评估和改进，更可解释、更可控。这也是 Anthropic 在 AI 安全研究上的核心成果。",
-        "points": [
-          "Constitutional AI：基于原则的自我改进训练，减少有害输出",
-          "超长上下文：200K token 窗口，业界领先的长文本处理",
-          "强代码能力：在 SWE-bench 等编程基准上持续领先",
-          "Artifacts：可执行的交互式输出，超越纯文字对话形式"
-        ]
-      },
-      "competition": {
-        "summary": "Claude 在专业用户群体中口碑极好，但在消费者市场品牌认知度仍落后于 ChatGPT。",
-        "table": [
-          {
-            "type": "通用对话",
-            "name": "ChatGPT",
-            "strength": "品牌最强、生态最大",
-            "scene": "通用消费者",
-            "limit": "安全性不如 Claude"
-          },
-          {
-            "type": "企业 AI",
-            "name": "Gemini for Workspace",
-            "strength": "Google 办公套件集成",
-            "scene": "Google 生态企业",
-            "limit": "对话质量不及 Claude"
-          },
-          {
-            "type": "代码助手",
-            "name": "GitHub Copilot",
-            "strength": "IDE 深度集成",
-            "scene": "日常编码",
-            "limit": "不具备通用对话能力"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "安全性不是限制，而是差异化卖点——Constitutional AI 让 B2B 客户愿意为「可控」付溢价",
-          "Artifacts 功能验证：AI 产品不只是对话，结果的呈现方式和交互方式同等重要",
-          "专注特定用户群的极致体验，比追求全面覆盖更有效"
-        ],
-        "myTake": "Claude 让我最印象深刻的是 Artifacts。这个功能本质上是在回答一个问题：「AI 生成的结果，应该怎么呈现？」纯文字是一个答案，但可以交互、可以直接运行的 Artifact 是另一个维度的答案。这种对输出形态的思考，是很多 AI 产品忽视的。"
-      }
+      "summary": { "problem": "专业用户需要一个能一起工作、知道边界并能把结果带入流程的通用助手。", "whyAi": "语言模型能参与开放任务，但安全、权限和责任不能由生成本身解决。", "humanRole": "人负责定义可接受风险、审批外部影响并处理系统无法判断的部分。", "decisionIds": ["可控协作", "输出形态", "企业入口"] },
+      "mechanism": { "summary": "产品把模型能力、可继续工作的输出和安全约束组合成专业协作体验。", "system": ["模型理解和生成内容", "工作空间承接编辑和继续处理", "安全边界限制高风险输出"], "humanRole": "用户需要在结果进入真实流程前承担最终核验责任。", "failureModes": ["安全拒答打断低风险工作", "输出被误当成可直接交付物", "组织权限和审计不足造成越权"] },
+      "tradeoffs": { "summary": "可控性增强信任，也要求产品更清楚地解释拒绝、限制和人工接管。", "rows": [{ "decision": "可控协作", "gain": "高风险任务更可管理", "cost": "体验可能更保守", "boundary": "让拒绝原因和下一步可见" }, { "decision": "输出形态", "gain": "结果更容易进入工作流", "cost": "审核责任更重", "boundary": "明确草稿与可交付物边界" }, { "decision": "企业入口", "gain": "更贴近高价值工作", "cost": "集成和治理复杂", "boundary": "权限与审计先于自动化" }] },
+      "evidence": { "summary": "官方产品页、安全资料和企业页支持产品定位判断，不把外部基准或融资信息混进档案结论。", "metricIds": ["work-surface", "safety-surface"], "missing": "没有纳入跨组织的安全事件、生产准确率或企业 ROI 数据。" },
+      "evolution": { "summary": "复核重点从模型能力转向输出如何进入协作流程，以及安全边界如何被用户理解。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方产品页把 Claude 放在代码、研究、分析和创作任务中。", "type": "review", "evidenceRefs": ["overview"] }, { "date": "2026-08-30", "event": "本轮复核：安全研究和企业场景共同构成产品边界。", "type": "boundary", "evidenceRefs": ["safety", "enterprise"] }], "migrationBoundary": "适合需要协作、长任务和治理边界的团队，不适合把安全标签当成业务风险已被自动解决。", "counterEvidence": "官方定位说明不能证明具体组织中的安全或效率结果。" }
     }
   },
   {
@@ -432,214 +165,79 @@
     "name": "Cursor",
     "company": "Anysphere",
     "category": "AI 开发工具",
-    "logo": "⌨️",
-    "tagline": "AI-native 代码编辑器",
-    "description": "基于 VS Code 的 AI 编程编辑器，将大模型深度集成到编码工作流。Tab 补全 + Chat 结合，开创了 AI IDE 品类。",
-    "highlights": [
-      "Cmd+K 代码编辑 + Tab 智能补全，极致开发体验",
-      "Codebase 理解能力：基于整个项目上下文回答",
-      "ARR 增速极快，开发者社区高度活跃"
+    "logo": "C",
+    "tagline": "让 AI 进入编辑器，而不是让工程师离开工作流",
+    "description": "Cursor 的产品研究重点是工作流嵌入：补全、上下文检索和 Agent 操作都发生在开发者已有的编辑环境中，迁移成本因此比新增聊天窗口更低。",
+    "detailLink": "https://cursor.com/",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Cursor 的核心产品决策是把 AI 的主动性放进工程师熟悉的编辑器，让工作流改变小于能力收益。", "evidenceRefs": ["features", "docs"] },
+    "decisionThemes": ["workflow", "autonomy", "control"],
+    "decisions": [
+      { "id": "编辑器嵌入", "title": "在已有编辑环境里交付 AI", "choice": "把补全、编辑和 Agent 能力放进代码编辑器，而不是要求工程师迁移到新聊天工具。", "why": "代码、文件和反馈本来就在编辑器里，减少环境切换就能缩短第一次收益路径。", "tradeoff": "编辑器内的自动化更接近真实变更，也更容易造成上下文或修改风险。", "evidenceRefs": ["features", "docs"] },
+      { "id": "代码上下文", "title": "用代码库上下文替代手动粘贴", "choice": "通过代码库检索帮助模型理解项目，而不是让用户每次手动拼装上下文。", "why": "跨文件任务的瓶颈常常是找到相关约束和调用关系。", "tradeoff": "索引错误或过期会让模型在错误上下文上快速行动。", "evidenceRefs": ["features", "docs"] },
+      { "id": "人留在环", "title": "Agent 自动执行但保留工程师在环", "choice": "让 Agent 处理多步任务，同时把变更和检查留给工程师确认。", "why": "工程任务需要执行能力，但代码审查和风险判断不能只由生成模型决定。", "tradeoff": "确认点过多会削弱自动化价值，过少则放大错误变更。", "evidenceRefs": ["features", "docs"] }
     ],
-    "pmInsights": [
-      "AI 产品的核心不是 AI 能力，而是把 AI 无缝融入用户已有工作流",
-      "基于成熟产品（VS Code）改造 vs 从零开发：复用生态降低迁移成本",
-      "订阅制 + 使用量模式的混合商业化"
+    "uncertainties": [
+      { "question": "复杂项目中，代码库检索是否能稳定找到真正相关的约束？", "status": "watch", "note": "官方页面说明了 codebase understanding，但没有给出具体仓库的检索召回证据。", "evidenceRefs": ["features"] },
+      { "question": "Agent 自动变更的默认权限和审查点，是否适合不同风险等级的工程任务？", "status": "open", "note": "需要按仓库权限、测试质量和发布流程单独设计。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "GPT-4 / Claude 集成",
-      "RAG 代码索引",
-      "VS Code Fork"
-    ],
-    "businessModel": "Freemium（$20/月 Pro + Business）",
-    "launchDate": "2023-03",
-    "trend": "up",
-    "stars": 4,
-    "detailLink": "https://www.cursor.com",
-    "issue": 5,
-    "oneLiner": "Cursor 的本质不是更好的代码补全，是把 AI 无缝嵌入程序员已有的工作流",
     "keyMetrics": [
-      { "label": "年化营收 ARR", "value": "$12亿", "source": "SaaStr / Sacra", "date": "2025-12", "url": "https://www.saastr.com/cursor-hit-1b-arr-in-17-months-the-fastest-b2b-to-scale-ever-and-its-not-even-close/" },
-      { "label": "公司估值", "value": "$293亿", "source": "CNBC", "date": "2025-11", "url": "https://www.cnbc.com/2025/11/13/cursor-ai-startup-funding-round-valuation.html" },
-      { "label": "付费用户数", "value": "72万", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/research/cursor-at-200m-arr/" },
-      { "label": "日活跃用户 DAU", "value": "100万+", "source": "TapTwiceDigital", "date": "2025-06", "url": "" },
-      { "label": "每日代码生成量", "value": "约10亿行", "source": "Sacra", "date": "2025-06", "url": "https://sacra.com/research/cursor-at-200m-arr/" }
-    ],
-    "timeline": [
-      { "date": "2022-01", "event": "Anysphere 由 MIT 学生 Michael Truell 等 4 人创立", "type": "launch" },
-      { "date": "2023-03", "event": "Cursor 编辑器正式公开发布", "type": "launch" },
-      { "date": "2023-10", "event": "种子轮 $800 万，OpenAI Startup Fund 领投", "type": "funding" },
-      { "date": "2024-08", "event": "Series A $6000 万，估值 $4亿", "type": "funding" },
-      { "date": "2024-12", "event": "Series B $1.05亿，估值 $25亿，Thrive Capital 领投", "type": "funding" },
-      { "date": "2025-03", "event": "ARR 突破 $2亿，增速史上最快 SaaS", "type": "milestone" },
-      { "date": "2025-06", "event": "Series C，估值 $99亿", "type": "funding" },
-      { "date": "2025-11", "event": "Series D $23亿，估值 $293亿，Accel+Coatue 领投，Nvidia/Google 参投", "type": "funding" },
-      { "date": "2025-12", "event": "ARR 达 $12亿，从 $0 到 $10亿 仅用 17 个月", "type": "milestone" }
+      { "id": "integration", "label": "工作流位置", "value": "代码编辑器内的补全、编辑与 Agent", "definition": "官方功能页对 Tab、Multi-Line Edits、Agent 和代码上下文的产品说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["features"], "caveat": "功能入口存在不代表每个项目都能获得同等效果。" },
+      { "id": "control", "label": "控制方式", "value": "自动执行与人工确认并存", "definition": "官方功能说明对 Agent 执行任务和程序员保持在环的描述。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["features", "docs"], "caveat": "实际风险取决于仓库权限、分支策略和测试门禁。" }
     ],
     "sources": [
-      { "title": "AI startup Cursor raises $2.3B at $29.3B valuation", "url": "https://www.cnbc.com/2025/11/13/cursor-ai-startup-funding-round-valuation.html", "date": "2025-11-13", "type": "media" },
-      { "title": "Cursor Hit $1B ARR in 17 Months — The Fastest B2B SaaS Ever", "url": "https://www.saastr.com/cursor-hit-1b-arr-in-17-months-the-fastest-b2b-to-scale-ever-and-its-not-even-close/", "date": "2025-12", "type": "media" },
-      { "title": "Cursor at $200M ARR", "url": "https://sacra.com/research/cursor-at-200m-arr/", "date": "2025-03", "type": "report" },
-      { "title": "Anysphere - Wikipedia", "url": "https://en.wikipedia.org/wiki/Anysphere", "date": "2025-11", "type": "media" }
+      { "id": "features", "title": "Cursor Features", "url": "https://www.cursor.com/features", "date": "2026-08-30", "type": "official" },
+      { "id": "docs", "title": "Cursor Documentation", "url": "https://cursor.com/docs", "date": "2026-08-30", "type": "official" },
+      { "id": "pricing", "title": "Cursor Pricing", "url": "https://www.cursor.com/pricing", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Cursor 是基于 VS Code 的 AI 编程编辑器，将大模型深度集成到编码工作流中。它不是独立的 AI 工具，而是在程序员最熟悉的环境里提供 AI 能力，最大限度降低迁移成本。Tab 补全 + Chat + Composer 的组合，开创了 AI IDE 品类。",
-        "features": [
-          "Tab 智能补全：预测下一步代码意图，不只是补全当前行",
-          "Cmd+K 内联编辑：选中代码直接用自然语言修改，无需切换窗口",
-          "Chat with Codebase：基于整个项目上下文回答，理解代码库全局",
-          "Composer：多文件同时编辑，执行跨文件的复杂重构任务"
-        ]
-      },
-      "tech": {
-        "summary": "Cursor 基于 VS Code 二次开发，复用了整个 VS Code 插件生态。核心技术是代码库的 RAG 索引——将整个项目建立语义索引，让模型在回答时有完整的代码上下文。模型层集成了 GPT-4 和 Claude，根据任务类型自动调度。",
-        "points": [
-          "VS Code Fork：复用成熟编辑器基础设施和插件生态",
-          "Codebase RAG：对项目代码建立向量索引，支持全局代码理解",
-          "多模型调度：根据任务复杂度调用不同模型（GPT-4/Claude）",
-          "Shadow Workspace：后台并行执行，不阻塞主编辑流程"
-        ]
-      },
-      "competition": {
-        "summary": "AI 编程助手赛道竞争激烈，但 Cursor 通过编辑器级深度集成建立了壁垒。",
-        "table": [
-          {
-            "type": "AI 代码补全",
-            "name": "GitHub Copilot",
-            "strength": "微软/GitHub 生态、品牌强",
-            "scene": "日常代码补全",
-            "limit": "编辑器集成深度不及 Cursor"
-          },
-          {
-            "type": "AI 编程助手",
-            "name": "Windsurf",
-            "strength": "Agentic 执行能力强",
-            "scene": "复杂任务自动化",
-            "limit": "用户基数小于 Cursor"
-          },
-          {
-            "type": "命令行工具",
-            "name": "Claude Code",
-            "strength": "终端原生、任务执行强",
-            "scene": "复杂工程任务",
-            "limit": "无 GUI，学习门槛高"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "AI 产品的核心不是 AI 能力，而是把 AI 无缝融入用户已有工作流——迁移成本越低，采用率越高",
-          "基于成熟产品改造（VS Code Fork）vs 从零开发：复用生态是降低冷启动成本的最优解",
-          "Tab 补全的「意图预测」设计哲学：AI 应该预测你要做什么，而不只是完成你已经开始做的"
-        ],
-        "myTake": "Cursor 让我重新理解了「工作流集成」的价值。很多 AI 产品都有强大的能力，但需要用户主动切换到新工具去使用。Cursor 选择寄生在程序员最熟悉的环境里，这个「不改变习惯」的设计决策，比任何功能创新都更有力量。"
-      }
+      "summary": { "problem": "工程师需要把 AI 用在真实代码库里，而不是在编辑器和聊天窗口之间搬运上下文。", "whyAi": "代码任务包含重复检索和修改，但变更正确性仍需要项目上下文和人审。", "humanRole": "人负责确认范围、审查 diff、运行测试并决定是否合并。", "decisionIds": ["编辑器嵌入", "代码上下文", "人留在环"] },
+      "mechanism": { "summary": "Cursor 把编辑器操作、代码库上下文和 Agent 执行循环组合起来，缩短从意图到变更的路径。", "system": ["Tab 预测下一步编辑", "代码库检索补充上下文", "Agent 执行多步修改并返回结果"], "humanRole": "工程师必须在关键边界检查修改范围、权限和测试结果。", "failureModes": ["错误检索导致错误修改", "Agent 变更跨文件传播影响", "自动化速度超过审查速度"] },
+      "tradeoffs": { "summary": "工作流嵌入带来更快的行动，也让 AI 错误更接近真实代码和发布路径。", "rows": [{ "decision": "编辑器嵌入", "gain": "减少环境切换", "cost": "错误更接近代码", "boundary": "所有变更都可见、可回退" }, { "decision": "代码上下文", "gain": "减少手动粘贴", "cost": "索引错误会放大", "boundary": "显示引用范围并允许重建索引" }, { "decision": "人留在环", "gain": "保留工程判断", "cost": "确认点影响速度", "boundary": "按任务风险分层审批" }] },
+      "evidence": { "summary": "官方功能页和文档支持编辑器嵌入、代码上下文与 Agent 的产品机制，不支持通用生产效率数字。", "metricIds": ["integration", "control"], "missing": "没有纳入具体仓库的完成时间、缺陷率或代码审查结果。" },
+      "evolution": { "summary": "复核重点从代码补全扩展到代码库理解、计划和 Agent 执行的控制边界。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方功能页同时展示 Tab、编辑和 Agent 能力。", "type": "review", "evidenceRefs": ["features"] }, { "date": "2026-08-30", "event": "本轮复核：官方文档将理解、计划、修复和审查放进同一开发流程。", "type": "boundary", "evidenceRefs": ["docs"] }], "migrationBoundary": "适合已有测试、代码审查和分支纪律的团队，不适合把 Agent 当成无人审查的发布机器人。", "counterEvidence": "官方功能说明不能证明某个仓库的真实提效，必须用自己的任务和回归集测量。" }
     }
   },
   {
     "id": "notion-ai",
     "name": "Notion AI",
-    "company": "Notion Labs",
+    "company": "Notion",
     "category": "AI 效率工具",
-    "logo": "📝",
-    "tagline": "把 AI 嵌进你已有的笔记，而不是让你换一个新工具",
-    "description": "Notion AI 是工作台式 AI 的标杆案例。不造新入口，直接在用户已有的文档里提供 AI 能力，最小化迁移成本，最大化渗透率。",
-    "highlights": [
-      "Q Block、AI 自动填表、数据库 AI 汇总，深度嵌入工作流",
-      "$10/月 Add-on 模式，在现有订阅基础上低门槛升级",
-      "AI 功能带动 Notion 整体 ARR 显著提升"
-    ],
-    "pmInsights": [
-      "AI 最好的落地方式是融入已有工具，而非另建新工具",
-      "Add-on 定价是降低付费决策成本的有效策略",
-      "文档场景天然适合 AI：结构化内容 + 明确意图"
-    ],
-    "techStack": [
-      "GPT-4 API",
-      "RAG",
-      "Block Editor 集成"
-    ],
-    "businessModel": "Add-on（$10/月，叠加现有订阅）",
-    "launchDate": "2023-02",
-    "trend": "stable",
-    "stars": 4,
+    "logo": "N",
+    "tagline": "把 AI 放进团队已有的文档、任务和数据库",
+    "description": "Notion AI 的研究价值在于嵌入式 AI：用户不必进入新的 AI 工作台，就能在页面、数据库和团队知识里调用生成、检索和自动化能力。",
     "detailLink": "https://www.notion.com/product/ai",
-    "issue": 7,
-    "oneLiner": "Notion AI 的核心洞察：AI 功能的最佳载体，是用户已经每天打开的那个工具",
-    "keyMetrics": [
-      { "label": "Notion 总用户数", "value": "1亿", "source": "CNBC / super.so", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
-      { "label": "Notion 年化营收 ARR", "value": "$5亿", "source": "CNBC", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
-      { "label": "付费客户数", "value": "400万", "source": "GetLatka", "date": "2025-06", "url": "" },
-      { "label": "AI 功能付费渗透率", "value": "50%+", "source": "CNBC", "date": "2025-09", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html" },
-      { "label": "公司估值", "value": "约 $1,000亿（Series K）", "source": "SaaStr", "date": "2025-09", "url": "" }
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Notion AI 最强的产品选择是让 AI 成为既有工作空间的动作，而不是要求团队建立另一套知识入口。", "evidenceRefs": ["product", "connectors"] },
+    "decisionThemes": ["workflow", "context", "enterprise"],
+    "decisions": [
+      { "id": "嵌入工作流", "title": "让 AI 成为页面里的动作", "choice": "把写作、总结和数据库操作放在用户已经编辑和协作的空间里。", "why": "用户不需要为每个任务重新搬运上下文，AI 介入点更接近实际工作。", "tradeoff": "AI 功能越隐形，用户越需要知道它读了什么、改了什么。", "evidenceRefs": ["product", "guide"] },
+      { "id": "知识连接", "title": "把内部知识和外部连接放在同一检索面", "choice": "让 Workspace 和已连接的外部应用成为同一个问题的上下文来源。", "why": "团队信息往往分散在多个工具，减少搜索边界有助于形成完整答案。", "tradeoff": "连接范围扩大后，权限继承、来源新鲜度和数据隔离更难管理。", "evidenceRefs": ["connectors"] },
+      { "id": "自动化入口", "title": "从一次生成走向可重复任务", "choice": "将 Agent、会议记录和自动填充等能力放进团队反复执行的工作。", "why": "稳定重复的工作更容易定义触发器、输出格式和人工抽查点。", "tradeoff": "自动化从草稿变成流程后，错误会以更低的可见度重复发生。", "evidenceRefs": ["product", "guide"] }
     ],
-    "timeline": [
-      { "date": "2013-01", "event": "Notion 创立", "type": "launch" },
-      { "date": "2021-10", "event": "Series C $2.75亿，估值 $100亿，Coatue+Sequoia 领投", "type": "funding" },
-      { "date": "2022-11", "event": "发布 AI 功能预览，比 ChatGPT 发布早两周", "type": "feature" },
-      { "date": "2023-02", "event": "Notion AI 正式面向所有用户开放，$10/月 Add-on", "type": "launch" },
-      { "date": "2024-01", "event": "收入达 $4亿（同比增长 60%），AI 渗透率持续提升", "type": "milestone" },
-      { "date": "2025-09", "event": "ARR 突破 $5亿，同步发布 Notion AI Agent", "type": "milestone" },
-      { "date": "2025-09", "event": "Series K 完成，估值约 $1,000亿", "type": "funding" }
+    "uncertainties": [
+      { "question": "连接外部应用后，用户是否能清楚知道答案来自哪个权限范围？", "status": "open", "note": "官方连接器文档说明了连接与引用方向，但具体权限模型需按连接器复核。", "evidenceRefs": ["connectors"] },
+      { "question": "自动化任务的错误是否能在下一次运行前被及时发现？", "status": "watch", "note": "当前来源支持功能存在，不提供组织内的错误发现率或人工接管结果。", "evidenceRefs": [] }
+    ],
+    "keyMetrics": [
+      { "id": "workspace-surface", "label": "上下文范围", "value": "页面、文档、任务、数据库与连接应用", "definition": "官方产品页和帮助文档展示的 Notion AI 工作空间范围。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["product", "connectors"], "caveat": "连接应用、权限和套餐会影响实际检索范围。" },
+      { "id": "automation-surface", "label": "自动化方式", "value": "Agent、会议记录与数据库自动填充", "definition": "官方页面列出的可重复工作和结构化内容处理方式。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["product", "guide"], "caveat": "功能描述不代表任务已经达到可无人审查的可靠性。" }
     ],
     "sources": [
-      { "title": "Notion launches AI agent as it crosses $500M in annual revenue", "url": "https://www.cnbc.com/2025/09/18/notion-launches-ai-agent-as-it-crosses-500-million-in-annual-revenue.html", "date": "2025-09-18", "type": "media" },
-      { "title": "Notion has 100 Million Users", "url": "https://super.so/blog/notion-stats", "date": "2025-06", "type": "report" },
-      { "title": "Notion revenue, valuation & funding", "url": "https://sacra.com/c/notion/", "date": "2025-09", "type": "report" }
+      { "id": "product", "title": "Meet your AI team: Notion AI", "url": "https://www.notion.com/product/ai", "date": "2026-08-30", "type": "official" },
+      { "id": "connectors", "title": "Notion AI Connectors overview", "url": "https://www.notion.com/help/notion-ai-connectors", "date": "2026-08-30", "type": "official" },
+      { "id": "guide", "title": "Everything you can do with Notion AI", "url": "https://www.notion.com/en-gb/help/guides/everything-you-can-do-with-notion-ai", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Notion AI 于 2023 年 2 月正式推出，将 AI 写作、总结、翻译、数据填充等能力直接内嵌到 Notion 的 Block 编辑器中。它不是一个新产品，而是现有产品的 AI 升级——这个定位决定了它极高的渗透速度和用户接受度。",
-        "features": [
-          "AI 写作辅助：在任意 Block 中调出 AI，续写、改写、润色一键完成",
-          "文档总结：自动提取长文档要点，会议记录秒变 Action Items",
-          "数据库 AI 填充：根据已有字段自动推断并填写新列，大幅减少手动录入",
-          "Q&A 问答：基于整个 Workspace 内容回答问题，相当于私有知识库"
-        ]
-      },
-      "tech": {
-        "summary": "Notion AI 底层调用 OpenAI GPT-4 API，核心工程在于将 AI 能力无缝嵌入 Block 编辑器交互层。通过对 Workspace 内容建立 RAG 索引，实现基于私有内容的问答。技术本身并不神秘，但产品集成的流畅度是关键壁垒。",
-        "points": [
-          "GPT-4 API 调用：不自研模型，专注产品集成体验",
-          "Block 级 AI 触发：在编辑流中自然唤起，无需切换界面",
-          "Workspace RAG：对用户所有页面建立索引，支持跨文档问答",
-          "结构化数据 AI：数据库字段的 AI 推断填充，是差异化能力"
-        ]
-      },
-      "competition": {
-        "summary": "AI 效率工具赛道竞争激烈，但 Notion AI 凭借原有用户基础和深度集成建立了先发优势。",
-        "table": [
-          {
-            "type": "AI 写作助手",
-            "name": "Jasper",
-            "strength": "营销内容生成专精",
-            "scene": "市场营销团队",
-            "limit": "独立工具，迁移成本高"
-          },
-          {
-            "type": "协作文档 AI",
-            "name": "Coda AI",
-            "strength": "公式 + AI 结合，自动化强",
-            "scene": "运营流程管理",
-            "limit": "用户规模远小于 Notion"
-          },
-          {
-            "type": "微软生态",
-            "name": "Microsoft Copilot",
-            "strength": "Office 全家桶深度集成",
-            "scene": "企业 Office 用户",
-            "limit": "个人/小团队体验笨重"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "AI 产品不一定要独立存在——嵌入高频工具比另建新工具更快获得用户",
-          "Add-on 定价降低了「要不要试试 AI」的决策门槛，比捆绑销售转化率更高",
-          "文档 + AI 的组合验证了「结构化场景」是 AI 落地效果最好的领域之一"
-        ],
-        "myTake": "Notion AI 让我印象最深的是它的克制——它没有把 AI 做成一个独立的聊天界面，而是把 AI 藏在每一个 Block 后面。这种「AI 即工具，不是功能」的设计哲学，反而让 AI 用起来更自然。很多产品把 AI 做成一个大入口，其实是在告诉用户「你需要切换模式」，而 Notion 选择了「你根本不需要感知切换」。"
-      }
+      "summary": { "problem": "团队需要在已有文档和知识里完成写作、检索和重复工作，而不是维护孤立 AI 入口。", "whyAi": "结构化页面和组织知识为 AI 提供了上下文，但权限与来源仍需明确。", "humanRole": "人负责确认来源范围、审批自动化结果和维护知识结构。", "decisionIds": ["嵌入工作流", "知识连接", "自动化入口"] },
+      "mechanism": { "summary": "Notion AI 把生成、检索和自动化动作贴着团队已有内容放置，降低上下文搬运成本。", "system": ["页面与数据库提供结构化上下文", "AI 在内容附近提供写作和检索动作", "连接器扩展外部知识范围"], "humanRole": "团队需要维护权限、知识新鲜度和自动化抽查。", "failureModes": ["旧页面成为错误依据", "连接器权限造成信息越界", "自动填充把错误复制到数据库"] },
+      "tradeoffs": { "summary": "嵌入式 AI 让采用更自然，也让数据边界和错误传播更不容易被察觉。", "rows": [{ "decision": "嵌入工作流", "gain": "减少上下文搬运", "cost": "修改不易察觉", "boundary": "展示输入范围和变更记录" }, { "decision": "知识连接", "gain": "跨工具检索", "cost": "权限更复杂", "boundary": "每条答案保留来源和权限边界" }, { "decision": "自动化入口", "gain": "降低重复工作", "cost": "错误可重复传播", "boundary": "设置抽查和暂停机制" }] },
+      "evidence": { "summary": "官方产品、连接器和指南支持嵌入式 AI 的机制判断，不纳入用户规模和收入等未经独立核查的数字。", "metricIds": ["workspace-surface", "automation-surface"], "missing": "没有纳入组织知识质量、权限误用或自动化回归数据。" },
+      "evolution": { "summary": "复核重点从写作助手扩展到连接器、Agent 和可重复团队任务。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方产品页把 AI 放在页面、任务和数据库等工作对象里。", "type": "review", "evidenceRefs": ["product"] }, { "date": "2026-08-30", "event": "本轮复核：连接器文档强调外部内容检索与引用。", "type": "boundary", "evidenceRefs": ["connectors"] }], "migrationBoundary": "适合已有稳定知识结构和权限管理的团队，不适合把内容散乱的工作空间直接当成可靠知识库。", "counterEvidence": "产品页能证明入口和能力，不能证明每个工作空间都能获得更高质量的决策。" }
     }
   },
   {
@@ -647,105 +245,40 @@
     "name": "Sora",
     "company": "OpenAI",
     "category": "AI 创作",
-    "logo": "🎬",
-    "tagline": "文字生成视频，重新定义内容创作的起点",
-    "description": "OpenAI 的视频生成模型，将文字 prompt 直接转化为高质量视频。Sora 的发布重新定义了 AI 创作的边界，也引发了整个影视行业对 AI 冲击的广泛讨论。",
-    "highlights": [
-      "最长 60 秒、1080p 视频生成，物理世界理解能力领先",
-      "对镜头语言的理解（推进、旋转、慢动作）远超同类产品",
-      "发布即引发行业震动，带动 OpenAI 品牌价值大幅提升"
+    "logo": "S",
+    "tagline": "一份关于视频生成与产品生命周期边界的历史档案",
+    "description": "Sora 保留在档案库中，但不再按当前产品推荐。它既记录视频生成从研究展示走向产品的路径，也记录官方停止提供后产品研究如何处理生命周期变化。",
+    "detailLink": "https://help.openai.com/en/articles/20001152",
+    "lifecycle": "historical",
+    "reviewedAt": "2026-04-26",
+    "reviewDueAt": "2026-07-26",
+    "thesis": { "text": "Sora 最值得研究的不是一次生成效果，而是从研究展示、产品化到停止提供的完整生命周期信号。", "evidenceRefs": ["launch", "sunset"] },
+    "decisionThemes": ["creation", "safety", "distribution"],
+    "decisions": [
+      { "id": "研究到产品", "title": "先展示能力，再建立可用产品边界", "choice": "用研究和产品页面把世界模拟、视频生成与可用入口分开表达。", "why": "生成能力的演示效果不等于用户可以稳定使用的产品体验。", "tradeoff": "展示与可用性之间的距离会制造期待管理压力。", "evidenceRefs": ["launch", "sora2"] },
+      { "id": "安全部署", "title": "把内容安全作为上线条件", "choice": "在视频生成产品中加入针对身份、版权和滥用风险的部署约束。", "why": "视频的传播和拟真度会放大错误或滥用的外部影响。", "tradeoff": "限制越多，创作者可用的表达空间和发布节奏越受影响。", "evidenceRefs": ["sora2", "safety"] },
+      { "id": "生命周期", "title": "把停止提供当作产品事实记录", "choice": "将 Sora 从当前产品列表转为历史档案，并以官方帮助页作为状态依据。", "why": "停止提供会改变用户迁移和内容导出判断。", "tradeoff": "历史档案不再适合作为当前选型推荐，但保留了生命周期学习价值。", "evidenceRefs": ["sunset"] }
     ],
-    "pmInsights": [
-      "技术演示本身就是最强的产品营销",
-      "视频生成的核心壁垒是「世界模型」，而非单纯的生成质量",
-      "创作工具类 AI 的商业化路径：从专业用户到大众普及"
+    "uncertainties": [
+      { "question": "停止提供后，用户生成内容的导出和迁移路径是否能满足不同用户需要？", "status": "watch", "note": "官方帮助页提供了停止提供和导出说明，具体内容可用性仍取决于账户状态和时间窗口。", "evidenceRefs": ["sunset"] },
+      { "question": "未来视频生成产品会把安全门槛设计成什么样的默认体验？", "status": "open", "note": "这是跨产品的后续研究问题，当前 Sora 档案不推断未来产品路线。", "evidenceRefs": ["safety"] }
     ],
-    "techStack": [
-      "Diffusion Transformer",
-      "世界模型",
-      "时序一致性"
-    ],
-    "businessModel": "订阅制（Plus/Pro 用户可用）",
-    "launchDate": "2024-02",
-    "trend": "stable",
-    "stars": 5,
-    "detailLink": "https://sora.com",
-    "issue": 8,
-    "oneLiner": "Sora 的意义不只是「视频更好看」，而是证明 AI 开始理解物理世界的运行规律",
     "keyMetrics": [
-      { "label": "Plus 用户月可生成视频", "value": "50个（480p）", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
-      { "label": "Pro 用户月可生成视频", "value": "500个（1080p 优先）", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
-      { "label": "最长视频时长", "value": "60秒", "source": "OpenAI 官方", "date": "2024-12", "url": "https://openai.com/index/sora-is-here/" },
-      { "label": "迪士尼战略投资", "value": "迪士尼向 OpenAI 投资 $10亿，获授权 200+ 迪士尼角色", "source": "OpenAI / 媒体报道", "date": "2025-12", "url": "" }
-    ],
-    "timeline": [
-      { "date": "2024-02", "event": "OpenAI 首次公开展示 Sora 视频生成效果，震动行业", "type": "launch" },
-      { "date": "2024-11", "event": "部分测试用户因不满不平等访问权限，在 HuggingFace 集体抗议泄露 API Key", "type": "milestone" },
-      { "date": "2024-12", "event": "Sora 正式向美国/加拿大 ChatGPT Plus/Pro 用户开放", "type": "launch" },
-      { "date": "2025-02", "event": "Sora 视频生成集成进 ChatGPT 聊天界面", "type": "feature" },
-      { "date": "2025-09", "event": "Sora 2 发布，推出 iOS App，音频同步与物理引擎全面升级", "type": "milestone" },
-      { "date": "2025-11", "event": "Sora 2 Android App 发布", "type": "feature" },
-      { "date": "2025-12", "event": "迪士尼向 OpenAI 投资 $10亿，Sora 2 开放 200+ 迪士尼角色生成", "type": "milestone" }
+      { "id": "lifecycle", "label": "档案状态", "value": "历史档案，不作为当前产品推荐", "definition": "官方帮助页对 Sora 停止提供的状态说明。", "kind": "external-research", "asOf": "2026-04-26", "sourceRefs": ["sunset"], "caveat": "历史状态只描述产品可用性，不评价模型研究价值。" },
+      { "id": "safety-surface", "label": "部署约束", "value": "视频生成需要身份、版权与滥用风险控制", "definition": "官方产品研究和系统卡对视频生成部署安全的定性说明。", "kind": "external-research", "asOf": "2026-04-26", "sourceRefs": ["safety", "sora2"], "caveat": "这是研究边界，不是某个版本的生产安全指标。" }
     ],
     "sources": [
-      { "title": "Sora is here", "url": "https://openai.com/index/sora-is-here/", "date": "2024-12-09", "type": "official" },
-      { "title": "Sora 2 is here", "url": "https://openai.com/index/sora-2/", "date": "2025-09-30", "type": "official" },
-      { "title": "OpenAI releases Sora, its AI video generation tool", "url": "https://www.cnbc.com/2024/12/09/openai-releases-sora-its-buzzy-ai-video-generation-tool.html", "date": "2024-12-09", "type": "media" },
-      { "title": "Sora (text-to-video model) - Wikipedia", "url": "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)", "date": "2025-09", "type": "media" }
+      { "id": "launch", "title": "Sora is here", "url": "https://openai.com/index/sora-is-here/", "date": "2024-12-09", "type": "official" },
+      { "id": "sora2", "title": "Sora 2 is here", "url": "https://openai.com/index/sora-2/", "date": "2025-09-30", "type": "official" },
+      { "id": "safety", "title": "Overview of Sora 2 system card", "url": "https://cdn.openai.com/pdf/50d5973c-c4ff-4c2d-986f-c72b5d0ff069/sora_2_system_card.pdf", "date": "2025-09-30", "type": "official" },
+      { "id": "sunset", "title": "What to know about the Sora discontinuation", "url": "https://help.openai.com/en/articles/20001152", "date": "2026-04-26", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Sora 是 OpenAI 于 2024 年 2 月发布的文字转视频模型，能够根据文字描述生成最长 60 秒的高清视频。它的发布在创作领域引发了巨大震动——不只是因为生成质量高，更因为它对镜头运动、物理规律、场景连贯性的理解达到了新高度。",
-        "features": [
-          "长视频生成：最长 60 秒，1080p 分辨率，时序连贯性强",
-          "镜头语言理解：支持推进、拉远、环绕等专业摄影机运动描述",
-          "物理世界建模：液体流动、光影变化、物体碰撞符合真实物理规律",
-          "多场景拼接：可在单个视频中跨越不同场景，保持角色和风格一致性"
-        ]
-      },
-      "tech": {
-        "summary": "Sora 使用 Diffusion Transformer 架构，将视频理解为时空 patch 的序列，用类似 GPT 的方式建模视频生成。其核心突破是把视频生成从「帧帧生成」升级为「理解时间维度的世界模型」，这也是它物理一致性远超同类的根本原因。",
-        "points": [
-          "Diffusion Transformer：结合扩散模型和 Transformer，统一图像与视频生成",
-          "时空 Patch：将视频切分为时间+空间的 token，建模长程依赖",
-          "世界模型能力：对物理规律的隐式建模，不只是像素预测",
-          "大规模视频预训练：海量视频数据训练，理解真实世界的运动规律"
-        ]
-      },
-      "competition": {
-        "summary": "视频生成赛道竞争激烈，但 Sora 在视频长度和物理一致性上仍保持领先。",
-        "table": [
-          {
-            "type": "AI 视频生成",
-            "name": "Runway Gen-3",
-            "strength": "专业视频编辑集成，创作者生态好",
-            "scene": "专业视频创作者",
-            "limit": "视频长度和一致性不及 Sora"
-          },
-          {
-            "type": "AI 视频生成",
-            "name": "Pika Labs",
-            "strength": "易用性好，门槛低",
-            "scene": "社交媒体内容创作",
-            "limit": "生成质量有明显差距"
-          },
-          {
-            "type": "国产视频生成",
-            "name": "可灵（快手）",
-            "strength": "中文场景优化，国内可用",
-            "scene": "国内创作者",
-            "limit": "国际影响力和技术深度不及 Sora"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "「世界模型」是下一代 AI 的核心竞争维度——理解物理规律比生成漂亮画面更难复制",
-          "Sora 的发布策略（只放演示视频，不急于开放）本身就是极致的产品营销",
-          "视频生成会重构内容创作流程：从「拍摄 + 剪辑」变为「描述 + 迭代」"
-        ],
-        "myTake": "Sora 最让我着迷的不是视频效果，而是 OpenAI 对它的定位描述：「世界模拟器」。这意味着 OpenAI 认为视频生成只是一个表象，底层是 AI 对物理世界运行规律的建模能力。如果这个方向成立，Sora 的意义将远超「创作工具」，而是通向 AGI 路径上的一个重要里程碑。"
-      }
+      "summary": { "problem": "视频生成产品需要同时处理表达能力、部署安全和生命周期变化。", "whyAi": "生成模型能压缩制作成本，但拟真内容的外部影响让产品边界先于功能扩张。", "humanRole": "人负责判断内容权利、传播风险和停止服务后的迁移安排。", "decisionIds": ["研究到产品", "安全部署", "生命周期"] },
+      "mechanism": { "summary": "Sora 的档案机制由生成能力、部署约束和生命周期状态共同组成。", "system": ["文字或图像提示触发视频生成", "安全系统限制高风险内容", "官方帮助页维护停止提供后的用户路径"], "humanRole": "创作者负责内容权利和使用目的，产品方负责发布与下线沟通。", "failureModes": ["演示效果被误读为稳定能力", "拟真内容扩大滥用影响", "停止提供后用户仍按当前服务做决策"] },
+      "tradeoffs": { "summary": "Sora 的历史价值在于展示产品叙事如何被可用性和生命周期事实重新约束。", "rows": [{ "decision": "研究到产品", "gain": "让新能力被理解", "cost": "期待管理压力", "boundary": "区分演示、研究和可用产品" }, { "decision": "安全部署", "gain": "降低滥用风险", "cost": "可用表达受限", "boundary": "把安全条件写进首次体验" }, { "decision": "生命周期", "gain": "避免过时推荐", "cost": "失去当前选型价值", "boundary": "显示停止日期和迁移说明" }] },
+      "evidence": { "summary": "当前档案优先使用 OpenAI 官方发布、系统卡和帮助页，明确区分历史状态与模型研究价值。", "metricIds": ["lifecycle", "safety-surface"], "missing": "没有把历史演示视频或外部评论当成当前生产指标。" },
+      "evolution": { "summary": "产品从研究和发布档案转为生命周期复盘，当前页面不会暗示 Sora 仍可使用。", "timeline": [{ "date": "2024-12-09", "event": "官方发布 Sora 产品页面，描述从研究预览走向产品。", "type": "launch", "evidenceRefs": ["launch"] }, { "date": "2026-04-26", "event": "官方帮助页说明 Sora 产品停止提供，档案转为历史状态。", "type": "retirement", "evidenceRefs": ["sunset"] }], "migrationBoundary": "只适合作为视频生成产品生命周期和安全部署的案例研究，不适合作为当前生成服务选型。", "counterEvidence": "早期发布页面仍能说明产品设计意图，但不能覆盖停止提供后的当前可用性。" }
     }
   },
   {
@@ -753,106 +286,39 @@
     "name": "Perplexity AI",
     "company": "Perplexity",
     "category": "AI 搜索",
-    "logo": "🔍",
-    "tagline": "AI 原生搜索引擎",
-    "description": "重新定义搜索：不返回链接，直接给出带引用的结构化答案。对标 Google 搜索，用 AI 做信息整合而非信息检索。",
-    "highlights": [
-      "搜索结果直接引用来源，可验证可溯源",
-      "Pro Search 多步推理，复杂问题深度解答",
-      "月活过千万，广告 + 订阅双轨商业化"
+    "logo": "P",
+    "tagline": "把搜索结果组织成可回查的答案",
+    "description": "Perplexity 的产品研究重点是答案与来源如何同时交付。它把搜索从链接发现推进到信息综合，但引用存在不等于结论自动可靠。",
+    "detailLink": "https://www.perplexity.ai/",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Perplexity 的关键产品决策是把来源放进答案流，使验证成为搜索体验的一部分，而不是答案之后的补救。", "evidenceRefs": ["what", "how"] },
+    "decisionThemes": ["retrieval", "trust", "workflow"],
+    "decisions": [
+      { "id": "答案优先", "title": "先给综合答案，再保留来源入口", "choice": "把多来源信息组织成对话式回答，并在回答中保留原始来源链接。", "why": "用户真正想完成的往往是理解和比较，而不是逐个打开链接。", "tradeoff": "摘要越完整，用户越可能跳过原文，引用质量和覆盖变得更关键。", "evidenceRefs": ["what", "how"] },
+      { "id": "检索模式", "title": "按问题复杂度切换搜索深度", "choice": "提供标准搜索、Pro Search 和 Research 等不同深度的检索路径。", "why": "简单查找和复杂研究的时间、成本和证据要求不同。", "tradeoff": "模式越多，用户越需要理解等待和资源差异。", "evidenceRefs": ["how"] },
+      { "id": "可验证答案", "title": "把引用设计成信任界面", "choice": "让答案中的关键信息能回到来源，而不是只呈现模型生成的自然语言。", "why": "搜索型产品的可信度来自用户能否快速检查关键判断。", "tradeoff": "来源链接可能失效、质量不一或并不真正支持那句判断。", "evidenceRefs": ["what", "how"] }
     ],
-    "pmInsights": [
-      "搜索产品的核心从「找到信息」变为「理解信息」",
-      "溯源设计在专业场景（金融/学术）中至关重要",
-      "AI 搜索 vs 传统搜索：不是替代，是体验升维"
+    "uncertainties": [
+      { "question": "引用是否真的支持对应句子，而不是只作为答案装饰？", "status": "open", "note": "官方说明引用和链接是产品能力，但没有给出逐条引用正确性的独立测量。", "evidenceRefs": ["what"] },
+      { "question": "Research 等深度模式的时间和资源成本，用户能否在开始前做出正确选择？", "status": "watch", "note": "官方帮助文档描述不同搜索方式，具体等待和额度会随产品变化。", "evidenceRefs": ["how"] }
     ],
-    "techStack": [
-      "RAG",
-      "实时检索",
-      "多模型调度"
-    ],
-    "businessModel": "Freemium（$20/月 Pro）+ 广告",
-    "launchDate": "2022-12",
-    "trend": "up",
-    "stars": 4,
-    "detailLink": "https://www.perplexity.ai",
-    "issue": 6,
-    "oneLiner": "Perplexity 把搜索的核心从「找到信息」重新定义为「理解信息」",
     "keyMetrics": [
-      { "label": "月活跃用户 MAU", "value": "4,500万", "source": "DemandSage", "date": "2026-01", "url": "https://www.demandsage.com/perplexity-ai-statistics/" },
-      { "label": "月查询量", "value": "7.8亿次", "source": "DemandSage", "date": "2025-07", "url": "https://www.demandsage.com/perplexity-ai-statistics/" },
-      { "label": "年化营收 ARR", "value": "$2亿", "source": "Sacra", "date": "2025-07", "url": "https://sacra.com/c/perplexity/" },
-      { "label": "公司估值", "value": "$212亿", "source": "Tracxn", "date": "2026-01", "url": "" },
-      { "label": "累计融资总额", "value": "$12.2亿（10轮）", "source": "Tracxn", "date": "2026-01", "url": "" }
-    ],
-    "timeline": [
-      { "date": "2022-08", "event": "Perplexity AI 创立，日查询量仅 3,000 次", "type": "launch" },
-      { "date": "2024-01", "event": "Series B，Nvidia 首次参投，估值约 $5亿", "type": "funding" },
-      { "date": "2024-08", "event": "Series C，SoftBank Vision Fund 首次参投", "type": "funding" },
-      { "date": "2024-12", "event": "Series D $5亿，估值 $90亿", "type": "funding" },
-      { "date": "2025-06", "event": "新一轮 $5亿融资，估值 $140亿，MAU 从 400万增至 2,200万（+450%）", "type": "funding" },
-      { "date": "2025-07", "event": "ARR 达 $1.5亿，月查询量 7.8亿次", "type": "milestone" },
-      { "date": "2025-09", "event": "新一轮 $2亿融资，估值 $200亿（TechCrunch 报道）", "type": "funding" }
+      { "id": "citation-surface", "label": "答案结构", "value": "综合回答 + 原始来源链接", "definition": "官方帮助中心对回答、实时搜索和引用链接的产品说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["what"], "caveat": "引用存在不等于每个引用都支持对应判断。" },
+      { "id": "search-depth", "label": "检索深度", "value": "标准搜索、Pro Search 与 Research", "definition": "官方工作方式说明中对搜索模式和深度的定性区分。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["how"], "caveat": "模式名称、额度和耗时可能随产品更新。" }
     ],
     "sources": [
-      { "title": "Perplexity reportedly raised $200M at $20B valuation", "url": "https://techcrunch.com/2025/09/10/perplexity-reportedly-raised-200m-at-20b-valuation/", "date": "2025-09-10", "type": "media" },
-      { "title": "Perplexity AI Statistics 2026", "url": "https://www.demandsage.com/perplexity-ai-statistics/", "date": "2026-01", "type": "report" },
-      { "title": "Perplexity AI - Wikipedia", "url": "https://en.wikipedia.org/wiki/Perplexity_AI", "date": "2025-09", "type": "media" },
-      { "title": "Perplexity revenue, valuation & funding", "url": "https://sacra.com/c/perplexity/", "date": "2025-07", "type": "report" }
+      { "id": "what", "title": "What is Perplexity?", "url": "https://www.perplexity.ai/help-center/en/articles/10352155-what-is-perplexity", "date": "2026-08-30", "type": "official" },
+      { "id": "how", "title": "How does Perplexity work?", "url": "https://www.perplexity.ai/help-center/en/articles/10352895-how-does-perplexity-work", "date": "2026-08-30", "type": "official" },
+      { "id": "home", "title": "Perplexity official site", "url": "https://www.perplexity.ai/", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Perplexity AI 是新一代 AI 搜索引擎，不返回链接列表，而是直接给出带引用来源的结构化答案。它重新定义了搜索体验：不是帮你找到信息在哪里，而是帮你直接理解信息。月活过千万，已成为 AI 搜索的标杆产品。",
-        "features": [
-          "直接答案 + 引用来源：不是网页列表，是带溯源的结构化回答",
-          "Pro Search：多步推理模式，自动拆解复杂问题逐步搜索",
-          "Spaces：知识库功能，收藏和组织搜索结果",
-          "实时性：接入最新网页内容，克服大模型知识截止限制"
-        ]
-      },
-      "tech": {
-        "summary": "Perplexity 的核心技术是 RAG（检索增强生成）的产品化应用。实时爬取目标网页，将内容作为上下文注入模型，生成有引用的答案。底层模型是多家大模型的混合调度（OpenAI、自研模型），根据问题类型选择最优模型。",
-        "points": [
-          "实时 RAG：每次查询实时检索网页，不受训练数据截止日期限制",
-          "引用生成：答案中每个关键信息标注来源，支持一键验证",
-          "多模型调度：Pro Search 使用更强模型，普通搜索用轻量模型",
-          "索引系统：自建网页爬虫索引，不完全依赖 Google/Bing API"
-        ]
-      },
-      "competition": {
-        "summary": "Perplexity 面临来自传统搜索引擎 AI 化和独立 AI 搜索产品的双重竞争。",
-        "table": [
-          {
-            "type": "传统搜索 AI 化",
-            "name": "Google AI Overview",
-            "strength": "搜索流量最大、SEO 生态",
-            "scene": "日常搜索",
-            "limit": "体验改进保守，不如 Perplexity 激进"
-          },
-          {
-            "type": "传统搜索 AI 化",
-            "name": "Bing Copilot",
-            "strength": "微软生态、Office 集成",
-            "scene": "办公场景搜索",
-            "limit": "用户习惯仍偏向 Google"
-          },
-          {
-            "type": "AI 对话",
-            "name": "ChatGPT Search",
-            "strength": "用户基数大",
-            "scene": "通用问答搜索",
-            "limit": "实时性和引用体验不及 Perplexity"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "搜索产品的核心价值从「找到信息」转移到「理解信息」——这是用户真正的需求",
-          "引用设计在专业场景（研究/金融/医疗）中是核心信任建立机制",
-          "AI 搜索不是替代传统搜索，是在特定场景（需要综合理解而非简单查找）的体验升维"
-        ],
-        "myTake": "Perplexity 最值得学的是它敢于「不返回链接」。这在搜索领域是极大的范式突破——搜索引擎的商业模式本来就建立在「给你链接，让你点击」上。Perplexity 选择直接给答案，颠覆了整个流量逻辑。这种对用户体验的极致追求，是传统搜索公司因为商业模式限制而不敢做的。"
-      }
+      "summary": { "problem": "用户需要快速理解多来源信息，并保留回查原文的路径。", "whyAi": "模型可以综合和组织信息，但检索范围、来源质量和引用对应关系需要被看见。", "humanRole": "人负责检查关键来源、判断证据质量和决定是否把答案带入高风险决策。", "decisionIds": ["答案优先", "检索模式", "可验证答案"] },
+      "mechanism": { "summary": "Perplexity 先理解问题，再检索网页、综合回答并提供引用，让搜索结果成为可回查的工作对象。", "system": ["理解问题与搜索意图", "检索多个网页来源", "生成带引用的综合回答"], "humanRole": "用户需要从结论回到来源，尤其检查决定性判断。", "failureModes": ["搜索结果遗漏关键来源", "摘要把多个来源的边界混在一起", "链接存在但不支持具体句子"] },
+      "tradeoffs": { "summary": "答案优先减少阅读成本，也提高了引用错误和摘要过度概括的风险。", "rows": [{ "decision": "答案优先", "gain": "更快形成理解", "cost": "容易跳过原文", "boundary": "让来源在结论旁可见" }, { "decision": "检索模式", "gain": "匹配不同研究深度", "cost": "选择成本增加", "boundary": "在开始前说明时间和资源差异" }, { "decision": "可验证答案", "gain": "信任可回查", "cost": "引用质量成为新瓶颈", "boundary": "逐条检查来源支持关系" }] },
+      "evidence": { "summary": "官方帮助文档支持引用、实时检索和搜索模式的产品机制，不支持把引用数量当成答案准确率。", "metricIds": ["citation-surface", "search-depth"], "missing": "没有纳入逐条引用正确率、来源覆盖率或高风险领域评测。" },
+      "evolution": { "summary": "复核重点从“回答带引用”延伸到研究深度和引用是否真正支撑判断。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方帮助中心把答案、实时信息和来源链接绑定在一起。", "type": "review", "evidenceRefs": ["what"] }, { "date": "2026-08-30", "event": "本轮复核：官方文档区分标准搜索、Pro Search 和 Research。", "type": "boundary", "evidenceRefs": ["how"] }], "migrationBoundary": "适合需要快速形成研究草稿并保留来源入口的任务，不适合把自动摘要直接当作最终证据。", "counterEvidence": "官方产品说明支持引用机制，不能证明所有领域和问题都能得到足够完整的来源。" }
     }
   },
   {
@@ -860,104 +326,39 @@
     "name": "Claude Code",
     "company": "Anthropic",
     "category": "AI 开发工具",
-    "logo": "🖥️",
-    "tagline": "终端原生的 AI 编程助手，把 Agent 带入真实工程环境",
-    "description": "Anthropic 推出的命令行 AI 编程工具，直接在终端环境中操作代码库、执行命令、提交代码。与 Cursor 的 GUI 路线不同，Claude Code 走的是「深度工程集成」路线。",
-    "highlights": [
-      "直接读写文件、执行 shell 命令、操作 git，真正的 Agentic 编程",
-      "对大型代码库的全局理解能力，能跨文件完成复杂重构",
-      "Anthropic 官方出品，与 Claude 模型能力深度绑定"
+    "logo": "CC",
+    "tagline": "让 Agent 直接进入终端与工程执行链",
+    "description": "Claude Code 的产品研究重点是从“写代码”走向“完成工程任务”：文件、命令、测试和 Git 都进入同一执行循环，但权限和回退必须成为一等设计。",
+    "detailLink": "https://code.claude.com/docs/en/overview",
+    "lifecycle": "current",
+    "reviewedAt": "2026-08-30",
+    "reviewDueAt": "2026-11-30",
+    "thesis": { "text": "Claude Code 的真正变化是把工程任务的执行权交给 Agent，同时迫使团队重新设计权限、审查和回退。", "evidenceRefs": ["docs", "product"] },
+    "decisionThemes": ["autonomy", "control", "ecosystem"],
+    "decisions": [
+      { "id": "终端原生", "title": "把 Agent 放进工程师已有的终端环境", "choice": "通过终端直接读取文件、执行命令和反馈结果，而不是只返回代码建议。", "why": "真实工程任务的完成条件通常包括测试、构建和版本控制。", "tradeoff": "终端权限接近真实系统，错误操作的影响面大于编辑器内建议。", "evidenceRefs": ["docs", "product"] },
+      { "id": "执行循环", "title": "用计划、执行和观察形成任务循环", "choice": "让 Agent 在多步骤任务中读取状态、采取动作并根据结果调整。", "why": "跨文件和跨命令任务无法靠一次生成完成，需要观察实际环境。", "tradeoff": "循环越自主，越需要清晰的停止条件、日志和人工接管。", "evidenceRefs": ["docs"] },
+      { "id": "工具生态", "title": "用可扩展工具连接外部系统", "choice": "通过 MCP 等工具协议扩展 Agent 能力，而不是把所有集成写死在核心产品中。", "why": "工程环境差异很大，可扩展协议能把工具选择交给团队。", "tradeoff": "第三方工具会引入新的权限、供应链和数据边界。", "evidenceRefs": ["docs", "mcp"] }
     ],
-    "pmInsights": [
-      "终端 vs GUI：不同工程师群体有截然不同的工具偏好，不存在「更好」只有「更适合」",
-      "Agentic 编程是下一个范式——从「AI 辅助写代码」到「AI 执行工程任务」",
-      "工具的信任建立需要时间：让 AI 直接执行命令是比代码补全更高的信任门槛"
+    "uncertainties": [
+      { "question": "终端 Agent 的默认权限，如何在不同仓库风险等级下保持可控？", "status": "open", "note": "官方文档描述工作方式和工具扩展，但具体权限策略必须由使用团队配置和审查。", "evidenceRefs": ["docs"] },
+      { "question": "更高自主性是否真的减少工程总时间，还是把审查和回退成本后移？", "status": "watch", "note": "没有把厂商宣传或个人体验当成生产结果，需用任务级数据测量。", "evidenceRefs": [] }
     ],
-    "techStack": [
-      "Claude 3.5/4",
-      "Terminal 集成",
-      "MCP 协议"
-    ],
-    "businessModel": "按 token 计费（调用 Claude API）",
-    "launchDate": "2025-02",
-    "trend": "up",
-    "stars": 4,
-    "detailLink": "https://claude.ai/code",
-    "issue": 9,
-    "oneLiner": "Claude Code 代表了 AI 编程的下一个形态：不是帮你写代码，而是替你执行工程任务",
     "keyMetrics": [
-      { "label": "营收贡献（年化）", "value": "$5亿+（占 Anthropic 总营收主要部分）", "source": "Medium / 行业分析", "date": "2025-12", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
-      { "label": "用户增长", "value": "GA 后 6 个月增长 10x", "source": "Medium", "date": "2025-12", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
-      { "label": "营收增速", "value": "GA 后 2 个月内增长 5.5x", "source": "Medium", "date": "2025-07", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70" },
-      { "label": "npm 版本更新数", "value": "2025年内发布 176 次更新", "source": "npm / GitHub", "date": "2025-12", "url": "https://www.npmjs.com/package/@anthropic-ai/claude-code" }
-    ],
-    "timeline": [
-      { "date": "2025-02", "event": "Claude Code 作为研究预览版发布（终端 CLI 工具）", "type": "launch" },
-      { "date": "2025-05", "event": "GA 正式发布，随 Claude 4 系列同步推出", "type": "launch" },
-      { "date": "2025-07", "event": "营收较 5 月增长 5.5x，成为 Anthropic 重要收入来源", "type": "milestone" },
-      { "date": "2025-08", "event": "Claude for Chrome 发布，可直接控制浏览器执行任务", "type": "feature" },
-      { "date": "2025-10", "event": "iOS App 发布；Anthropic 将 Claude Code 带到 Web 端", "type": "feature" },
-      { "date": "2025-12", "event": "年化营收突破 $10亿 run rate，6 个月内达成", "type": "milestone" },
-      { "date": "2026-01", "event": "Claude Cowork（GUI 版本）研究预览发布", "type": "feature" }
+      { "id": "execution-surface", "label": "执行范围", "value": "文件、命令、测试与 Git 工程操作", "definition": "官方文档对 Claude Code 作为 coding agent 和工程任务工具的产品说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["docs", "product"], "caveat": "能力可用不等于仓库已经授权 Agent 执行所有动作。" },
+      { "id": "extension-surface", "label": "扩展方式", "value": "通过 MCP 与工具连接外部系统", "definition": "官方文档对工具扩展和 MCP 连接方式的定性说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["mcp"], "caveat": "外部工具的安全、权限和数据处理责任需要单独审核。" }
     ],
     "sources": [
-      { "title": "Anthropic brings Claude Code to the web", "url": "https://techcrunch.com/2025/10/20/anthropic-brings-claude-code-to-the-web/", "date": "2025-10-20", "type": "media" },
-      { "title": "The Evolution of Claude Code in 2025", "url": "https://medium.com/@lmpo/the-evolution-of-claude-code-in-2025-a7355dcb7f70", "date": "2025-12", "type": "media" },
-      { "title": "@anthropic-ai/claude-code on npm", "url": "https://www.npmjs.com/package/@anthropic-ai/claude-code", "date": "2025-12", "type": "official" }
+      { "id": "docs", "title": "Claude Code overview", "url": "https://docs.anthropic.com/en/docs/claude-code/overview", "date": "2026-08-30", "type": "official" },
+      { "id": "product", "title": "Claude Code by Anthropic", "url": "https://www.anthropic.com/claude-code", "date": "2026-08-30", "type": "official" },
+      { "id": "mcp", "title": "Model Context Protocol documentation", "url": "https://modelcontextprotocol.io/docs/getting-started/intro", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "overview": {
-        "intro": "Claude Code 是 Anthropic 于 2025 年推出的终端原生 AI 编程工具。它不是编辑器插件，而是直接在命令行环境中运行，能够读写文件、执行 shell 命令、操作 git 仓库，完成跨文件的复杂工程任务。它代表了与 Cursor 完全不同的 AI 编程路线——更深、更自主、更接近真实的工程工作流。",
-        "features": [
-          "文件系统操作：直接读写项目文件，无需人工粘贴代码",
-          "Shell 命令执行：运行测试、构建、部署命令，形成完整工程闭环",
-          "Git 集成：自动 diff、commit、branch 操作，理解代码变更上下文",
-          "MCP 协议：通过 Model Context Protocol 扩展工具能力，接入外部系统"
-        ]
-      },
-      "tech": {
-        "summary": "Claude Code 基于 Claude 3.5/4 模型，核心是 Tool Use 能力的工程化落地——让模型能够调用文件读写、命令执行等真实工具，而不只是生成文字。MCP（Model Context Protocol）是 Anthropic 推出的开放协议，让 Claude Code 可以通过统一接口接入各类外部工具和数据源。",
-        "points": [
-          "Tool Use：模型直接调用工具执行操作，不只是生成文字建议",
-          "长上下文理解：200K token 窗口支持加载整个代码库进行全局分析",
-          "MCP 协议：开放的工具扩展协议，第三方可接入自定义工具",
-          "Agent 循环：自动规划→执行→观察→调整，完成多步骤复杂任务"
-        ]
-      },
-      "competition": {
-        "summary": "AI 编程助手赛道呈现 GUI 和终端两条路线并行，服务不同偏好的工程师群体。",
-        "table": [
-          {
-            "type": "GUI AI 编辑器",
-            "name": "Cursor",
-            "strength": "VS Code 生态、视觉反馈好",
-            "scene": "日常编码、前端开发",
-            "limit": "Agentic 深度不及 Claude Code"
-          },
-          {
-            "type": "终端 AI 工具",
-            "name": "Aider",
-            "strength": "开源、轻量、可自定义",
-            "scene": "开源项目、本地部署",
-            "limit": "模型能力受限于接入的 API"
-          },
-          {
-            "type": "云端 AI 开发",
-            "name": "GitHub Copilot Workspace",
-            "strength": "GitHub 生态深度集成",
-            "scene": "Issue 到 PR 全流程",
-            "limit": "仍在早期，能力较弱"
-          }
-        ]
-      },
-      "insights": {
-        "points": [
-          "「AI 写代码」和「AI 执行工程任务」是两个不同的产品范式，后者代表更高阶的 Agentic 能力",
-          "终端工具的目标用户是高级工程师——他们不需要 GUI，需要的是深度控制权和可扩展性",
-          "MCP 协议是 Anthropic 的生态战略——通过开放协议建立工具集成标准，类似 USB-C 之于硬件"
-        ],
-        "myTake": "作为每天使用 Claude Code 的用户，我最深的感受是：它改变了我对「完成一个任务」的定义。以前我会想「我要写什么代码」，现在我会想「我要达到什么结果，Claude Code 去执行」。这个心智模型的转变，比任何单一功能都更根本。这也是我认为 Agentic 编程会是未来主流的原因——不是因为它更快，而是因为它让工程师真正专注在「想清楚要做什么」，而不是「怎么做」。"
-      }
+      "summary": { "problem": "工程师需要完成包含文件、命令、测试和版本控制的真实任务，而不仅是得到代码建议。", "whyAi": "Agent 能观察环境并执行多步动作，但执行权带来权限、日志和回退要求。", "humanRole": "人负责授权范围、审查变更、确认发布和处理不可逆外部影响。", "decisionIds": ["终端原生", "执行循环", "工具生态"] },
+      "mechanism": { "summary": "Claude Code 把模型放进终端工具循环，通过观察真实环境来推进工程任务。", "system": ["读取项目和任务上下文", "执行命令并观察输出", "根据结果调整计划或请求人工介入"], "humanRole": "人要为工具权限、停止条件和最终交付负责。", "failureModes": ["命令权限过大造成越权", "错误计划在多个文件中传播", "工具输出包含未审查的外部指令"] },
+      "tradeoffs": { "summary": "执行能力把 AI 从建议者变成协作者，也把软件工程的安全边界推到产品前台。", "rows": [{ "decision": "终端原生", "gain": "完成真实工程闭环", "cost": "影响面更大", "boundary": "默认最小权限和可回退工作区" }, { "decision": "执行循环", "gain": "能处理多步任务", "cost": "过程更难预测", "boundary": "日志、停止条件和人工检查点" }, { "decision": "工具生态", "gain": "可连接真实系统", "cost": "供应链边界扩大", "boundary": "逐工具审核权限和数据流" }] },
+      "evidence": { "summary": "官方文档和协议文档支持终端执行与扩展机制，不把个人使用体验或厂商宣传数字写成生产效果。", "metricIds": ["execution-surface", "extension-surface"], "missing": "没有纳入任务完成时间、回退率或生产事故数据。" },
+      "evolution": { "summary": "复核重点从终端写代码转向可授权、可审计、可回退的工程 Agent。", "timeline": [{ "date": "2026-08-30", "event": "本轮复核：官方 Claude Code 文档把理解、计划、修复和审查放进工程流程。", "type": "review", "evidenceRefs": ["docs"] }, { "date": "2026-08-30", "event": "本轮复核：MCP 文档提供了扩展工具的独立协议入口。", "type": "boundary", "evidenceRefs": ["mcp"] }], "migrationBoundary": "适合已有测试、权限和回退纪律的工程团队，不适合在没有隔离和审批的生产环境直接放大执行权限。", "counterEvidence": "官方文档能证明工具能力和协议入口，不能证明某个团队因此更快或更安全。" }
     }
   }
 ]

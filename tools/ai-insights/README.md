@@ -1,87 +1,65 @@
-# AI 产品拆解
+# AI 产品研究档案
 
-## 功能描述
+## 这是什么
 
-AI PM 视角的产品深度拆解，每条记录包含期号、一句话核心洞察、四维拆解（产品概述 / 技术架构 / 竞品分析 / 启示总结）。体现作者对 AI 产品生态的持续关注与独立判断。
+这是一个静态、可回查的 AI 产品拆解档案库。它不做实时榜单，也不把未经核对的规模、营收、估值或模型排名包装成结论；每条档案把产品判断、关键取舍、公开来源和仍待复核的问题放在一起，方便产品评估、竞品讨论和迁移前复盘。
 
-## 数据来源
+当前保留 9 个产品档案：ChatGPT、Midjourney、DeepSeek、Claude、Cursor、Notion AI、Sora、Perplexity、Claude Code。Sora 以历史档案呈现，避免把已变化的产品状态当成当前推荐。
 
-手动维护 `data/products.json`，每个产品条目包含以下字段：
+## 使用方式
 
-### 基础字段（原有）
+1. 在类别或决策主题中筛选档案，组合筛选可缩小比较范围。
+2. 打开一条档案，使用五个分区阅读：决策摘要、产品机制、竞争取舍、证据账本、演化与边界。
+3. 通过 `?product=<id>&tab=<tab-id>` 直接打开指定产品和分区；无效参数会保留列表并给出提示。
+4. 在档案内使用 Tab 移动焦点、方向键切换分区、Esc 关闭弹窗；关闭后焦点回到打开按钮。
 
-| 字段 | 说明 |
-| --- | --- |
-| `id` | 唯一标识符（英文小写） |
-| `name` / `company` | 产品名 / 公司 |
-| `category` | 分类（通用大模型 / AI 创作 / AI 搜索 等） |
-| `logo` | emoji 图标 |
-| `tagline` | 一句话产品定位 |
-| `description` | 产品描述（fallback 用） |
-| `highlights` | 核心亮点数组（fallback 用） |
-| `pmInsights` | PM 视角洞察数组（fallback 用） |
-| `techStack` | 技术关键词数组 |
-| `businessModel` | 商业模式 |
-| `launchDate` | 上线时间（YYYY-MM） |
-| `trend` | 趋势方向（`up` / `stable` / `down`） |
-| `stars` | 推荐等级（1-5） |
-| `detailLink` | 官网链接 |
+页脚工作流按固定顺序连接：`01 信源 → 02 信号 → 03 分析 → 04 方法`。四项均使用工具目录内的相对链接，本页 `03 分析` 是唯一带 `aria-current="step"` 的步骤。
 
-### 新增字段（四Tab拆解）
+## 数据契约
 
-| 字段 | 说明 |
-| --- | --- |
-| `issue` | 期号（整数，显示为 #001 格式） |
-| `oneLiner` | 一句话核心洞察（卡片正文展示） |
-| `tabs.overview` | 产品概述：`intro`（段落）+ `features`（数组） |
-| `tabs.tech` | 技术架构：`summary`（段落）+ `points`（数组） |
-| `tabs.competition` | 竞品分析：`summary`（段落）+ `table`（数组，含 type/name/strength/scene/limit） |
-| `tabs.insights` | 启示总结：`points`（数组）+ `myTake`（个人判断段落） |
+数据源是 [`data/products.json`](data/products.json)，页面只通过静态 JSON 加载，不调用模型、爬虫或公开 API。每个产品至少包含：
 
-> `tabs` 字段不存在时，弹窗自动 fallback 到 `highlights` / `pmInsights` 的原有展示，向后兼容。
+- `id`、`name`、`company`、`category`、`lifecycle`、`reviewedAt`、`reviewDueAt`
+- `thesis`：作者判断及其 `evidenceRefs`
+- `decisionThemes`：用于主题筛选的稳定主题 ID
+- `decisions`：至少三条，每条包含选择、原因、取舍和来源引用
+- `uncertainties`：至少两条，明确开放问题、观察状态或边界
+- `keyMetrics`：每项包含定义、`kind`、`asOf`、`sourceRefs` 和 caveat；`kind` 只能是 `target`、`proxy`、`offline-measured`、`production-result`、`external-research`
+- `sources`：带唯一 ID、标题、日期、类型和 HTTPS URL 的来源账本
+- `tabs.summary`、`tabs.mechanism`、`tabs.tradeoffs`、`tabs.evidence`、`tabs.evolution`
 
-### 扩展字段（三个 Tab 始终显示，空数据有空态提示）
+引用不存在的来源会使档案在质量测试中失败。来源日期表示本轮资料核对日期，不等于产品事件发生日期；产品事件日期只在时间线中单独表达。缺少直接来源的判断会明确显示“暂无直接来源”，而不是补造证据。
 
-| 字段 | 说明 |
-| --- | --- |
-| `keyMetrics` | 关键数据指标数组：`label` / `value` / `source` / `date` / `url` |
-| `timeline` | 产品时间线数组：`date` / `event` / `type`（launch/milestone/feature/funding） |
-| `sources` | 信息来源数组：`title` / `url` / `date` / `type`（official/media/report） |
+## 本地运行
 
-> 三个 Tab（关键数据 / 时间线 / 信息来源）始终渲染；字段为空时显示"待补充"空态提示。产品卡片若缺少这三个字段，底部会显示"数据待补充"标签。
-
-## 文件结构
+页面需要 HTTP 服务才能读取 JSON，不能直接双击 `index.html`。从仓库根目录启动任意静态服务器，然后打开：
 
 ```text
-tools/ai-insights/
-├── README.md          ← 本文件
-├── index.html         ← 工具主页面
-├── style.css          ← 私有样式
-├── script.js          ← 数据加载 + 渲染逻辑
-└── data/
-    └── products.json  ← AI 产品数据源（当前 9 条）
+http://127.0.0.1:<port>/tools/ai-insights/index.html
 ```
 
-## 维护指南
+## 验证
 
-### 添加新产品（推荐方式）
+静态数据契约测试：
 
-在对话中输入 `/analyze-product 产品名`，Claude 会联网搜索、生成完整 JSON、质量自检后确认写入。
+```powershell
+cd scripts
+node --test ai-insights-depth.test.js
+```
 
-支持多种模式：
-- `/analyze-product` 或 `/analyze-product --scan`：健康检查，输出数据库现状报告
-- `/analyze-product --fill-gaps`：自动扫描并补全字段残缺的现有产品
-- `/analyze-product 产品A, 产品B`：批量采集多个产品
-- `/analyze-product --update <id>`：强制更新指定产品
+浏览器测试使用 Node 内置 `node:test`、Playwright Chromium 和项目的 `createStaticServer`：
 
-### 手动添加新产品
+```powershell
+cd scripts
+$env:NODE_PATH = 'D:\CS\Coding\qiuzhi\scripts\node_modules'
+node --test ai-insights-depth.browser.test.js
+```
 
-在 `data/products.json` 末尾追加新对象，`issue` 期号顺序递增，`tabs` 四个维度都填写。
+浏览器测试覆盖筛选、空结果、五个分区深链、无效深链、键盘可用性、工作流链接以及 404、非法 JSON、部分无效记录和重试恢复。若当前环境不能启动 Chromium，需在具备浏览器权限的环境重新执行，不以静态测试替代真实页面复核。
 
-### 修改已有产品
+## 维护边界
 
-直接在 `data/products.json` 中找到对应 `id` 修改即可。
-
-### 分类筛选
-
-页面自动从数据中提取所有 `category` 生成筛选按钮，无需手动配置。
+- 修改产品事实前，优先核对官方页面；只写入可以回查的公开事实和明确的个人判断。
+- 不在本工具中接入实时抓取、模型调用或公开 API key。
+- 新增产品应补齐完整契约、来源引用、反证/迁移边界和复核日期，并同步更新测试期望。
+- 页面视觉改动完成后，要在桌面和移动视口进行真实页面截图审查，特别检查弹窗、来源账本、键盘焦点和横向溢出。
