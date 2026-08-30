@@ -9,6 +9,7 @@ const {
   absoluteUrl,
   buildArticleJsonLd,
   buildEntryJsonLd,
+  resolveArticleImage,
   ensureArticleSeo,
   ensureEntryPageSeo
 } = require('./search-foundation');
@@ -250,7 +251,6 @@ function checkArticles(rootDir, config, posts, errors, messages) {
   const scriptErrorStart = errors.length;
   checkArticleFileSet(rootDir, posts, errors);
   const feedUrl = absoluteUrl(config.siteUrl, config.blog.feedPath);
-  const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
   let checked = 0;
   let articlesWithValidScripts = 0;
   let articlesWithSharedRuntime = 0;
@@ -271,6 +271,7 @@ function checkArticles(rootDir, config, posts, errors, messages) {
       articlesWithValidScripts++;
     }
     const expectedUrl = articleUrl(config, post);
+    const expectedImage = resolveArticleImage(config, post);
     const expectedHtml = ensureArticleSeo(html, post, config);
     if (normalizeNewlines(html) !== normalizeNewlines(expectedHtml)) {
       errors.push(`${relPath} generated SEO block is stale`);
@@ -287,10 +288,15 @@ function checkArticles(rootDir, config, posts, errors, messages) {
         ['property', 'og:title', post.title],
         ['property', 'og:description', post.summary],
         ['property', 'og:url', expectedUrl],
-        ['property', 'og:image', imageUrl],
+        ['property', 'og:image', expectedImage.url],
+        ['property', 'og:image:width', String(expectedImage.width)],
+        ['property', 'og:image:height', String(expectedImage.height)],
+        ['property', 'og:image:alt', expectedImage.alt],
+        ['name', 'twitter:card', 'summary_large_image'],
         ['name', 'twitter:title', post.title],
         ['name', 'twitter:description', post.summary],
-        ['name', 'twitter:image', imageUrl]
+        ['name', 'twitter:image', expectedImage.url],
+        ['name', 'twitter:image:alt', expectedImage.alt]
       ],
       errors
     });

@@ -42,6 +42,9 @@ const config = Object.freeze({
     path: '/tools/blog/',
     feedPath: '/feed.xml',
     imagePath: '/assets/images/og-cover.png',
+    imageAlt: 'Leo · AI · Product · Builder',
+    imageWidth: 1200,
+    imageHeight: 630,
     feedLimit: 20
   }
 });
@@ -129,9 +132,14 @@ test('ensureArticleSeo inserts an idempotent head block without changing body', 
     '<meta property="og:description" content="Old summary" />',
     '<meta property="og:url" content="https://old.example/post.html" />',
     '<meta property="og:image" content="https://old.example/cover.png" />',
+    '<meta property="og:image:width" content="600" />',
+    '<meta property="og:image:height" content="315" />',
+    '<meta property="og:image:alt" content="Old alt" />',
+    '<meta name="twitter:card" content="summary" />',
     '<meta name="twitter:title" content="Old title" />',
     '<meta name="twitter:description" content="Old summary" />',
     '<meta name="twitter:image" content="https://old.example/cover.png" />',
+    '<meta name="twitter:image:alt" content="Old alt" />',
     '</head>',
     '<body>',
     '<main><h1>Visible body</h1><p>Do not touch.</p></main>',
@@ -159,6 +167,49 @@ test('ensureArticleSeo inserts an idempotent head block without changing body', 
   assert.match(once, /<meta property="og:description" content="Summary with &quot;quotes&quot; &amp; angle &lt;brackets&gt;\." \/>/);
   assert.match(once, /<meta name="twitter:title" content="Example &lt;Post&gt;" \/>/);
   assert.match(once, /<meta name="twitter:description" content="Summary with &quot;quotes&quot; &amp; angle &lt;brackets&gt;\." \/>/);
+});
+
+test('article SEO uses one per-post cover object with a legacy fallback', () => {
+  const sourceHtml = '<html><head><title>A</title></head><body>x</body></html>';
+  const visualPost = {
+    slug: 'new-post',
+    title: 'New post',
+    summary: 'New post summary',
+    url: 'posts/new-post.html',
+    visuals: {
+      cover: {
+        src: 'assets/images/blog/new-post/cover.jpg',
+        alt: 'Meaningful alt',
+        width: 1200,
+        height: 630
+      },
+      inline: []
+    }
+  };
+  const legacyPost = {
+    slug: 'legacy-post',
+    title: 'Legacy post',
+    summary: 'Legacy post summary',
+    url: 'posts/legacy-post.html'
+  };
+
+  const visualHtml = ensureArticleSeo(sourceHtml, visualPost, config);
+  const legacyHtml = ensureArticleSeo(sourceHtml, legacyPost, config);
+  const visualJsonLd = JSON.parse(visualHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const legacyJsonLd = JSON.parse(legacyHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+
+  assert.match(visualHtml, /og:image" content="https:\/\/marktian-long\.github\.io\/assets\/images\/blog\/new-post\/cover\.jpg"/);
+  assert.match(visualHtml, /og:image:width" content="1200"/);
+  assert.match(visualHtml, /og:image:height" content="630"/);
+  assert.match(visualHtml, /og:image:alt" content="Meaningful alt"/);
+  assert.match(visualHtml, /twitter:card" content="summary_large_image"/);
+  assert.match(visualHtml, /twitter:image:alt" content="Meaningful alt"/);
+  assert.deepEqual(visualJsonLd.image, ['https://marktian-long.github.io/assets/images/blog/new-post/cover.jpg']);
+
+  assert.match(legacyHtml, /og:image" content="https:\/\/marktian-long\.github\.io\/assets\/images\/og-cover\.png"/);
+  assert.match(legacyHtml, /og:image:alt" content="Leo · AI · Product · Builder"/);
+  assert.match(legacyHtml, /twitter:card" content="summary_large_image"/);
+  assert.deepEqual(legacyJsonLd.image, ['https://marktian-long.github.io/assets/images/og-cover.png']);
 });
 
 test('SEO rewrites preserve unrelated JSON-LD scripts', () => {
@@ -450,7 +501,7 @@ function makeCheckFixture(postOverrides = {}) {
     path.join(rootDir, 'tools/blog/data/posts-meta.json'),
     JSON.stringify({
       version: 4,
-      image_contract: { version: 1, legacy_without_visuals: posts.map(post => post.slug) },
+      image_contract: { version: 1, legacy_without_visuals: posts.filter(post => !post.visuals).map(post => post.slug) },
       posts
     }, null, 2),
     'utf8'
@@ -497,6 +548,23 @@ test('checkSearchFoundation passes a complete fixture', () => {
   const result = checkSearchFoundation({ rootDir, siteConfig: config });
 
   assert.equal(result.code, 0);
+});
+
+test('checkSearchFoundation accepts a per-post social cover', () => {
+  const { rootDir } = makeCheckFixture({
+    visuals: {
+      cover: {
+        src: 'assets/images/blog/example/cover.jpg',
+        alt: 'Example system map',
+        width: 1200,
+        height: 630
+      },
+      inline: []
+    }
+  });
+  const result = checkSearchFoundation({ rootDir, siteConfig: config });
+
+  assert.equal(result.code, 0, result.errors.join('\n'));
 });
 
 test('checkSearchFoundation accepts escaped social metadata values', () => {
