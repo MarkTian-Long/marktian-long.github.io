@@ -15,10 +15,90 @@ var draftContent = '';
 var confHistory = [];           // [{ nodeId, val }]
 var logWarnCount = 0;
 var doneSets = new Set();       // 已完成的节点 ID 集合
+var auditTrail = [];            // 可复现的人工/系统决策轨迹
+var fallbackHistory = [];       // 降级路径选择
+var dynamicInsertions = [];     // 动态插入节点记录
+var rerunHistory = [];          // 重跑记录
 
 // Screen1 配置器状态
 var s1SelectedTemplate = 'quick';  // 当前选中的模板 ID
-var researchTopic = 'Transformer in Drug Discovery';
+var researchTopic = DEMO_META.defaultTopic;
+var taskContract = null;           // 本次任务锁定的研究协议与固定数据包快照
+var topicInputBound = false;
+
+// ---- 深化契约：任务启动时锁定协议和数据包 ----
+function recordAuditEvent(event) {
+  var input = event || {};
+  var normalized = {
+    version: DEMO_META.version,
+    timestamp: input.timestamp || new Date().toISOString(),
+    node: String(input.node || 'task'),
+    action: String(input.action || 'unknown'),
+    reason: String(input.reason || '未提供理由'),
+    impactScope: String(input.impactScope || '未声明影响范围'),
+    mode: String(input.mode || DEMO_META.mode)
+  };
+  auditTrail.push(normalized);
+  return cloneData(normalized);
+}
+
+function getAuditTrailSnapshot() {
+  return cloneData(auditTrail);
+}
+
+function cloneData(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function getDefaultResearchProtocol() {
+  return RESEARCH_PROTOCOLS[DEFAULT_RESEARCH_PROTOCOL_ID];
+}
+
+function createTaskContractSnapshot(topic) {
+  var requestedTopic = String(topic || DEMO_META.defaultTopic).trim() || DEMO_META.defaultTopic;
+  var protocol = getDefaultResearchProtocol();
+  return {
+    version: DEMO_META.version,
+    requestedTopic: requestedTopic,
+    titleTopic: requestedTopic,
+    topicMode: requestedTopic === DEMO_META.defaultTopic ? 'preset' : 'custom-title-only',
+    protocol: cloneData(protocol),
+    dataPackage: cloneData(FIXED_DATA_PACKAGE),
+    pipeline: activePipeline.slice(),
+    templateId: s1SelectedTemplate || 'custom'
+  };
+}
+
+function getTaskContractSnapshot() {
+  return taskContract ? cloneData(taskContract) : null;
+}
+
+function renderResearchProtocolCard() {
+  var card = document.getElementById('researchProtocolCard');
+  if (!card) return;
+  var protocol = getDefaultResearchProtocol();
+  card.innerHTML =
+    '<div class="s1-protocol-kicker">研究协议预检</div>' +
+    '<div class="s1-protocol-title">' + escHtml(protocol.name) + '</div>' +
+    '<div class="s1-protocol-question">' + escHtml(protocol.question) + '</div>' +
+    '<div class="s1-protocol-meta"><span>年份：' + protocol.years[0] + '–' + protocol.years[1] + '</span>' +
+      '<span>来源：' + protocol.sources.length + ' 类</span></div>' +
+    '<div class="s1-protocol-boundary"><strong>' + escHtml(FIXED_DATA_PACKAGE.label) + '</strong>：' +
+      escHtml(FIXED_DATA_PACKAGE.topic) + ' · ' + escHtml(FIXED_DATA_PACKAGE.scope) + '</div>' +
+    '<div class="s1-protocol-rules">纳入 ' + protocol.inclusionRules.length + ' 条 · 排除 ' +
+      protocol.exclusionRules.length + ' 条 · 交付物 ' + protocol.deliverables.length + ' 项</div>';
+}
+
+function updateTopicScopeNotice() {
+  var input = document.getElementById('topicInput');
+  var notice = document.getElementById('topicScopeNotice');
+  if (!input || !notice) return;
+  var topic = input.value.trim() || DEMO_META.defaultTopic;
+  notice.textContent = topic === DEMO_META.defaultTopic
+    ? '当前主题匹配固定数据包，可按预设协议演示。'
+    : '流程演示，结果仍使用预设数据包；当前主题只会写入任务标题。';
+  notice.className = 's1-topic-scope' + (topic === DEMO_META.defaultTopic ? '' : ' custom');
+}
 
 // ---- 工具函数 ----
 function escHtml(str) {
@@ -54,6 +134,13 @@ function showToast(msg) {
 function renderScreen1() {
   renderNodeGrid();
   renderTemplateButtons();
+  renderResearchProtocolCard();
+  var topicInput = document.getElementById('topicInput');
+  if (topicInput && !topicInputBound && topicInput.addEventListener) {
+    topicInput.addEventListener('input', updateTopicScopeNotice);
+    topicInputBound = true;
+  }
+  updateTopicScopeNotice();
   updateStartBtn();
 }
 
@@ -137,6 +224,8 @@ function selectTemplate(templateId) {
   ensureRequiredNodes();
   renderNodeGrid();
   renderTemplateButtons();
+  renderResearchProtocolCard();
+  updateTopicScopeNotice();
   updateStartBtn();
 }
 
@@ -182,7 +271,7 @@ function ensureRequiredNodes() {
 function startTask() {
   var topicInput = document.getElementById('topicInput');
   if (topicInput) {
-    researchTopic = topicInput.value.trim() || 'Transformer in Drug Discovery';
+    researchTopic = topicInput.value.trim() || DEMO_META.defaultTopic;
   }
 
   ensureRequiredNodes();
@@ -190,6 +279,18 @@ function startTask() {
     showToast('请先选择至少一个节点或选择预设模板');
     return;
   }
+
+  taskContract = createTaskContractSnapshot(researchTopic);
+  auditTrail = [];
+  fallbackHistory = [];
+  dynamicInsertions = [];
+  rerunHistory = [];
+  recordAuditEvent({
+    node: 'task',
+    action: 'task-start',
+    reason: '锁定预设研究协议与固定演示数据包',
+    impactScope: '整条演示管线'
+  });
 
   // 初始化节点状态
   nodeState = {};
@@ -226,10 +327,19 @@ function restart() {
   doneSets.clear();
   nodeState = {};
   nodeUserData = {};
+  taskContract = null;
+  researchTopic = DEMO_META.defaultTopic;
+  auditTrail = [];
+  fallbackHistory = [];
+  dynamicInsertions = [];
+  rerunHistory = [];
 
   // 重置为快速综述模板
   s1SelectedTemplate = 'quick';
   activePipeline = PIPELINE_TEMPLATES.quick.nodes.slice();
+
+  var topicInput = document.getElementById('topicInput');
+  if (topicInput) topicInput.value = researchTopic;
 
   // 清空日志
   var logBody = document.getElementById('logBody');
@@ -318,7 +428,7 @@ function sendChatMsg() {
     var nodeDesc = curNode && NODE_REGISTRY[curNode] && NODE_REGISTRY[curNode].desc ? NODE_REGISTRY[curNode].desc : '暂无详细说明';
     resp = '「' + nodeName + '」：' + nodeDesc + '。如需了解更多，可继续追问。';
   } else if (/上传|论文|文献/.test(msg)) {
-    resp = '请点击输入框左侧的 📎 按钮上传 PDF 文献，系统将自动加入检索池。';
+    resp = '当前为固定数据包演示；📎 仅记录附件入口，不读取或合并外部文献，任务结果不会改变。';
   } else {
     resp = '已记录问题，实际产品中将由 LLM 实时响应。';
   }
@@ -340,7 +450,7 @@ function appendChatMsg(role, avatar, text) {
 function handleUploadPaper(input) {
   if (!input.files || !input.files[0]) return;
   var fileName = input.files[0].name;
-  appendChatMsg('agent', '🤖', '已将《' + escHtml(fileName) + '》加入检索池，将在下次相关节点执行时纳入分析。');
+  appendChatMsg('agent', '🤖', '已记录《' + fileName + '》的附件入口；固定数据包不会读取或合并该文件，任务结果不会改变。');
   input.value = '';
 }
 

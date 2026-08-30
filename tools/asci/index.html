@@ -14,12 +14,12 @@
   <div id="screen1" class="asci-screen">
     <div class="asci-topbar">
       <span class="asci-topbar-title">🔬 ASCI · 科研文献综述工具</span>
-      <span class="asci-badge asci-badge-running">AI 驱动的全链路综述 Agent</span>
+      <span class="asci-badge asci-badge-running">固定数据包演示</span>
     </div>
     <div class="s1-wrap">
       <div>
         <div class="s1-title">ASCI 科研文献综述<br><span>配置你的研究流程</span></div>
-        <div class="s1-sub" style="margin-top:8px">选择预设模板或自定义节点组合，体验非线性 AI Agent 文献综述执行过程</div>
+        <div class="s1-sub" style="margin-top:8px">选择预设模板或自定义节点组合，体验非线性科研任务执行过程</div>
       </div>
 
       <!-- 研究主题输入 -->
@@ -27,7 +27,8 @@
         <div class="s1-topic-label">研究主题</div>
         <input class="s1-topic-input" id="topicInput" type="text"
           placeholder="输入你的研究主题…" value="Transformer in Drug Discovery" />
-        <div class="s1-topic-hint">Demo 使用预设 Mock 数据；修改主题后可展示真实 Agent 的任务适配能力</div>
+        <div class="s1-topic-hint">使用固定演示数据包；修改主题只改变任务标题，不会触发真实论文检索。</div>
+        <div class="s1-topic-scope" id="topicScopeNotice"></div>
       </div>
 
       <!-- 流程配置器 -->
@@ -40,6 +41,7 @@
 
         <!-- 右：模板 + 启动 -->
         <div class="s1-pipeline-wrap">
+          <div class="s1-protocol-card" id="researchProtocolCard"></div>
           <div class="s1-node-grid-title">预设模板</div>
           <div class="s1-templates" id="templateButtons"></div>
 
@@ -85,7 +87,7 @@
             </div>
           </div>
           <div class="asci-chat-input-row">
-            <label class="asci-chat-upload-btn" title="上传 PDF 文献">
+            <label class="asci-chat-upload-btn" title="附件入口（仅演示，不并入固定数据包）">
               📎
               <input type="file" accept=".pdf" style="display:none" onchange="handleUploadPaper(this)" />
             </label>
@@ -112,7 +114,7 @@
         <!-- 工具调用记录 -->
         <div class="panel-section">
           <div class="panel-label">AI 工具调用</div>
-          <div class="panel-sublabel">任务全程累计调用的外部 API 与算法模型</div>
+          <div class="panel-sublabel">固定数据包内的模拟工具调用（不发起外部请求）</div>
           <div class="artifacts-tools" id="artifactsTools">
             <span class="artifacts-empty">暂无</span>
           </div>
@@ -141,29 +143,30 @@
   <!-- ========== SCREEN 3: 结果评估 ========== -->
   <div id="screen3" class="asci-screen hidden">
     <div class="asci-topbar">
-      <span class="asci-topbar-title">✅ 任务完成 · 文献综述结果</span>
+      <span class="asci-topbar-title">✅ 任务完成 · 固定演示结果</span>
       <span class="asci-badge asci-badge-done">已完成</span>
     </div>
     <div class="s3-wrap">
       <div class="s3-topbar">
         <div class="s3-title-main" id="s3Title"></div>
       </div>
+      <div class="s3-boundary-note">本页内容来自固定演示数据包；示例来源、结果摘要和流程指标仅用于展示任务编排，不代表真实检索或科研结论。</div>
       <div class="s3-grid">
         <div class="s3-card s3-full">
-          <div class="s3-card-label">综述摘要</div>
+          <div class="s3-card-label">固定演示摘要</div>
           <div class="s3-abstract" id="s3Abstract"></div>
         </div>
         <div class="s3-card">
-          <div class="s3-card-label">关键发现</div>
+          <div class="s3-card-label">内置示例发现</div>
           <ul class="s3-findings" id="s3Findings"></ul>
         </div>
         <div class="s3-card">
-          <div class="s3-card-label">可信度评估</div>
+          <div class="s3-card-label">模拟流程指标</div>
           <div class="cred-bar-wrap" id="s3CredBars"></div>
           <div class="cred-summary" id="s3CredSummary"></div>
         </div>
         <div class="s3-card s3-full">
-          <div class="s3-card-label">来源溯源</div>
+          <div class="s3-card-label">内置示例来源</div>
           <table class="s3-table" id="s3Table">
             <thead>
               <tr>
@@ -173,6 +176,12 @@
             <tbody id="s3TableBody"></tbody>
           </table>
           <div class="s3-table-footer" id="s3TableFooter"></div>
+        </div>
+        <div class="s3-card s3-full" id="s3ProcessManifest">
+          <div class="s3-card-label">本次过程清单</div>
+          <div class="s3-manifest-summary" id="s3ManifestSummary"></div>
+          <div class="s3-manifest-facts" id="s3ManifestFacts"></div>
+          <button class="s3-manifest-export" id="manifestExportBtn" onclick="exportProcessManifest(this)">导出安全过程清单 JSON</button>
         </div>
       </div>
       <div class="s3-actions">

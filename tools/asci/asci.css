@@ -849,7 +849,8 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  margin-bottom: 24px
+  margin-bottom: 24px;
+  min-width: 0
 }
 
 .s3-full {
@@ -860,7 +861,8 @@ body {
   background: var(--asci-surface);
   border: 1px solid var(--asci-border);
   border-radius: var(--asci-radius);
-  padding: 20px
+  padding: 20px;
+  min-width: 0
 }
 
 .s3-card-label {
@@ -3306,4 +3308,305 @@ body {
   background: rgba(234,88,12,.15);
   color: #9a3412;
   font-weight: 600;
+}
+
+.s3-boundary-note {
+  margin: -10px 0 20px;
+  padding: 9px 12px;
+  border: 1px solid var(--asci-border);
+  border-radius: 8px;
+  background: var(--asci-surface2);
+  color: var(--asci-text-dim);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ============================================================ */
+/* ---- 深化演示：研究协议预检与数据边界 ---- */
+/* ============================================================ */
+.s1-topic-scope {
+  margin-top: 7px;
+  padding: 7px 10px;
+  border: 1px solid var(--asci-border);
+  border-radius: 7px;
+  background: var(--asci-surface2);
+  color: var(--asci-text-dim);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.s1-topic-scope.custom {
+  border-color: var(--asci-yellow);
+  background: var(--asci-surface2);
+  color: var(--asci-yellow);
+}
+
+.s1-protocol-card {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid var(--asci-blue);
+  border-radius: 9px;
+  background: var(--asci-blue-dim);
+}
+
+.s1-protocol-kicker {
+  color: var(--asci-blue);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.s1-protocol-title {
+  margin-top: 4px;
+  color: var(--asci-text);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.s1-protocol-question {
+  margin-top: 6px;
+  color: var(--asci-text-dim);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.s1-protocol-meta,
+.s1-protocol-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+  margin-top: 8px;
+  color: var(--asci-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.s1-protocol-boundary {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--asci-border);
+  color: var(--asci-text-dim);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.s1-protocol-boundary strong {
+  color: var(--asci-blue);
+}
+
+@media (max-width: 720px) {
+  html,
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .s1-wrap {
+    justify-content: flex-start;
+    padding: 24px 14px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .s1-title {
+    font-size: 24px;
+  }
+
+  .s1-configurator {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .s1-node-grid-wrap,
+  .s1-pipeline-wrap {
+    width: 100%;
+    max-height: none;
+  }
+}
+
+/* ============================================================ */
+/* ---- 深化演示：可复现过程清单 ---- */
+/* ============================================================ */
+.s3-manifest-summary {
+  padding: 10px 12px;
+  border-left: 3px solid var(--asci-blue);
+  background: var(--asci-blue-dim);
+  color: var(--asci-text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.s3-manifest-facts {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.s3-manifest-fact {
+  padding: 6px 9px;
+  border: 1px solid var(--asci-border);
+  border-radius: 6px;
+  background: var(--asci-surface2);
+  color: var(--asci-text-dim);
+  font-size: 11px;
+  line-height: 1.4;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.s3-manifest-export {
+  margin-top: 14px;
+  padding: 9px 12px;
+  border: 1px solid var(--asci-blue);
+  border-radius: 7px;
+  background: var(--asci-surface);
+  color: var(--asci-blue);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .15s, color .15s, opacity .15s;
+}
+
+.s3-manifest-export:hover:not(:disabled) {
+  background: var(--asci-blue);
+  color: var(--asci-surface);
+}
+
+.s3-manifest-export:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+@media (max-width: 720px) {
+  .s3-wrap {
+    padding: 20px 14px;
+    overflow-x: hidden;
+  }
+
+  .s3-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .s3-card {
+    padding: 16px;
+  }
+
+  .s3-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .s3-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---- 深化演示：执行页移动端纵向布局 ---- */
+@media (max-width: 720px) {
+  #screen2 {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  #screen2 .asci-topbar {
+    min-height: 52px;
+    height: auto;
+    padding: 10px 14px;
+  }
+
+  #screen2 .asci-topbar-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  #screen2 .asci-execution {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 52px);
+    overflow: visible;
+  }
+
+  #screen2 .asci-tree {
+    order: 1;
+    flex: 0 0 auto;
+    max-height: 240px;
+    overflow-y: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--asci-border);
+    padding: 10px 12px;
+  }
+
+  #screen2 .asci-center-wrap {
+    order: 2;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: 460px;
+    overflow: visible;
+  }
+
+  #screen2 .asci-main-content {
+    flex: 0 0 auto;
+    min-height: 280px;
+    max-height: none;
+    overflow: visible;
+    padding: 12px 14px;
+  }
+
+  #screen2 .asci-chat-section {
+    flex: 0 0 180px;
+    min-height: 180px;
+  }
+
+  #screen2 .asci-artifacts {
+    order: 3;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    border-left: 0;
+    border-top: 1px solid var(--asci-border);
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  #screen2 .asci-controls {
+    order: 4;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  #screen2 .ctrl-progress {
+    flex: 1 1 100%;
+    order: -1;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  #screen2 .asci-btn-next {
+    margin-left: auto;
+  }
+
+  #screen2 .asci-chat-input-row {
+    flex-wrap: wrap;
+  }
+
+  #screen2 .asci-chat-input {
+    min-width: 0;
+  }
 }

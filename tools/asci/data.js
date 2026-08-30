@@ -1,16 +1,94 @@
 // ============================================================
 // data.js — ASCI 数据层
-// 包含：NODE_REGISTRY（节点注册表）、PIPELINE_TEMPLATES（预设模板）
+// 包含：演示边界、研究协议、NODE_REGISTRY（节点注册表）、PIPELINE_TEMPLATES（预设模板）
 //       MOCK_STEPS（向后兼容）、MOCK_RESULT、PAPER_DATA、S3_ABSTRACTS
 // ============================================================
 
-// ---- 节点注册表（15 个节点，5 类）----
+// ---- 深化演示契约：固定数据包，不接入真实论文检索 ----
+var FIXED_DATA_PACKAGE = {
+  id: 'asci-transformer-drug-discovery-v1',
+  version: 'v1',
+  label: '固定演示数据包',
+  topic: 'Transformer in Drug Discovery',
+  scope: '内置节点日志、论文摘要示例、结构化结果和预设失败路径',
+  mode: 'mock-only',
+  realRetrieval: false,
+  inputBehavior: '主题输入仅用于任务标题；不会改变数据包内容，也不会触发真实论文检索。',
+  exclusions: ['真实数据库请求', '真实全文下载', '真实科研正确率评估', '生产凭证']
+};
+
+var DEMO_META = {
+  version: 'asci-depth-v1',
+  mode: 'fixed-demo-packet',
+  realRetrieval: false,
+  dataPackageId: FIXED_DATA_PACKAGE.id,
+  defaultTopic: FIXED_DATA_PACKAGE.topic,
+  defaultProtocolId: 'transformer-drug-discovery-v1',
+  confidenceMetric: {
+    label: '模拟流程指标',
+    meaning: '用于展示演示节点的过程状态与人工决策影响',
+    notClaims: ['论文真实性', '综述正确率', '真实检索召回率']
+  },
+  boundary: FIXED_DATA_PACKAGE.inputBehavior
+};
+
+var DEFAULT_RESEARCH_PROTOCOL_ID = DEMO_META.defaultProtocolId;
+
+var RESEARCH_PROTOCOLS = {
+  'transformer-drug-discovery-v1': {
+    id: 'transformer-drug-discovery-v1',
+    name: 'Transformer in Drug Discovery · 预设研究协议',
+    question: '在 2018–2024 年公开研究中，Transformer 如何用于分子属性预测、药物-靶点相互作用、分子生成与多组学整合？',
+    years: [2018, 2024],
+    sources: ['PubMed 示例索引', 'Semantic Scholar 示例索引', '内置论文摘要样本'],
+    inclusionRules: [
+      '研究对象涉及 Transformer 或其注意力变体',
+      '报告药物发现相关任务、方法或基准结果',
+      '能够从固定演示数据包中获得结构化摘要或元数据'
+    ],
+    exclusionRules: [
+      '与药物发现任务无直接关系的泛化论文',
+      '固定数据包中没有可用摘要或方法信息的条目',
+      '重复条目或无法在演示范围内进行一致比较的结果'
+    ],
+    deliverables: ['结构化综述摘要', '关键发现与争议处置记录', '可复现过程清单与安全导出'],
+    dataPackageId: FIXED_DATA_PACKAGE.id,
+    mode: 'fixed-demo-packet'
+  }
+};
+
+var SIMULATED_PROCESS_METRICS = {
+  label: '模拟流程指标',
+  note: '用于展示固定演示数据包中的流程覆盖、人工闭环与状态变化；不代表论文真实性或综述正确率。',
+  items: [
+    {
+      id: 'node-coverage',
+      name: '节点覆盖',
+      score: 8.5,
+      note: '反映已完成演示节点的过程覆盖，不代表检索召回率。'
+    },
+    {
+      id: 'hitl-closure',
+      name: '人工闭环',
+      score: 7.8,
+      note: '反映关键人工处置是否留下过程记录。'
+    },
+    {
+      id: 'process-consistency',
+      name: '过程一致性',
+      score: 7.2,
+      note: '反映固定数据包内状态与审计记录的结构一致性。'
+    }
+  ]
+};
+
+// ---- 节点注册表（14 个节点，5 类）----
 var NODE_REGISTRY = {
   'data-source-config': {
     id: 'data-source-config',
     icon: '🗄️',
     name: '数据源配置',
-    desc: '选择检索数据库（PubMed/arXiv/Semantic Scholar），机构账号可解锁全文权限和付费库',
+    desc: '展示固定演示数据包中的来源映射与权限边界，不发起数据库请求',
     required: true,
     category: 'config',
     categoryLabel: '配置',
@@ -18,33 +96,33 @@ var NODE_REGISTRY = {
     riskLabel: '低风险',
     deps: [],
     hasFullUI: true,
-    tools: ['Source Selector'],
+    tools: ['Mock Source Selector'],
     subs: ['数据库选择', '访问权限配置'],
     logs: [
-      { level: 'INFO', text: '加载可用数据源列表...' },
-      { level: 'INFO', text: '检测到 6 个数据源，3 个已授权（PubMed/arXiv/Semantic Scholar）' },
-      { level: 'INFO', text: '根据研究主题推荐默认数据源组合...' },
-      { level: 'INFO', text: '✓ 数据源配置就绪' }
+      { level: 'INFO', text: '加载固定演示数据包中的来源映射...' },
+      { level: 'INFO', text: '展示 6 个示例来源，3 个标记为可用（PubMed/arXiv/Semantic Scholar）' },
+      { level: 'INFO', text: '根据预设研究协议展示默认来源组合...' },
+      { level: 'INFO', text: '✓ 来源配置就绪（未发起外部请求）' }
     ],
     result: {
       type: 'datasource',
       sources: [
-        { id: 'pubmed', name: 'PubMed', note: '生物医学核心', authorized: true, recommended: true },
-        { id: 'arxiv', name: 'arXiv', note: '预印本，CS/物理', authorized: true, recommended: true },
-        { id: 'semantic', name: 'Semantic Scholar', note: '跨学科', authorized: true, recommended: true },
-        { id: 'ieee', name: 'IEEE Xplore', note: '工程/电子', authorized: false, recommended: false },
-        { id: 'acm', name: 'ACM DL', note: '计算机科学', authorized: false, recommended: false },
-        { id: 'scopus', name: 'Scopus', note: '综合引文数据库', authorized: false, recommended: false }
+        { id: 'pubmed', name: 'PubMed 示例索引', note: '固定包·生物医学示例', authorized: true, recommended: true },
+        { id: 'arxiv', name: 'arXiv 示例索引', note: '固定包·预印本示例', authorized: true, recommended: true },
+        { id: 'semantic', name: 'Semantic Scholar 示例索引', note: '固定包·跨学科示例', authorized: true, recommended: true },
+        { id: 'ieee', name: 'IEEE Xplore（示例）', note: '工程/电子', authorized: false, recommended: false },
+        { id: 'acm', name: 'ACM DL（示例）', note: '计算机科学', authorized: false, recommended: false },
+        { id: 'scopus', name: 'Scopus（示例）', note: '综合引文数据库', authorized: false, recommended: false }
       ],
       selected: ['pubmed', 'arxiv', 'semantic'],
-      hint: '已授权数据源免费使用，付费数据库需配置机构凭证。'
+      hint: '当前为固定演示包；权限字段仅用于展示流程，不保存或调用机构凭证。'
     }
   },
   'keyword-extract': {
     id: 'keyword-extract',
     icon: '🔑',
     name: '关键词提取',
-    desc: '从研究主题提取核心词，映射 MeSH 标准术语，生成检索策略',
+    desc: '从预设主题提取核心词，映射内置术语示例，生成检索策略',
     required: true,
     retryable: true,
     category: 'discovery',
@@ -53,12 +131,12 @@ var NODE_REGISTRY = {
     riskLabel: '低风险',
     deps: [],
     hasFullUI: true,
-    tools: ['NLP Parser', 'MeSH API'],
+    tools: ['Mock NLP Parser', '预设术语映射'],
     subs: ['主题词拆解', 'MeSH 术语映射'],
     logs: [
-      { level: 'INFO', text: '解析任务描述：Transformer in Drug Discovery' },
-      { level: 'INFO', text: '提取核心主题词：Transformer, Drug Discovery, Molecular Property' },
-      { level: 'INFO', text: '调用 MeSH API 映射标准术语 (3 terms)' },
+      { level: 'INFO', text: '解析固定演示主题：Transformer in Drug Discovery' },
+      { level: 'INFO', text: '从数据包映射核心主题词：Transformer, Drug Discovery, Molecular Property' },
+      { level: 'INFO', text: '使用内置术语映射示例（3 terms）' },
       { level: 'INFO', text: '✓ 关键词提取完成，共 8 个检索词' }
     ],
     result: {
@@ -73,14 +151,14 @@ var NODE_REGISTRY = {
         { term: 'Deep Learning', mesh: 'Deep Learning', editable: true },
         { term: 'Binding Affinity', mesh: 'Protein Binding', editable: true }
       ],
-      hint: '可删除不相关词，或添加遗漏的领域术语。确认后进入数据库检索。'
+      hint: '可删除不相关词，或添加遗漏的领域术语。确认后进入固定数据包检索演示。'
     }
   },
   'db-search': {
     id: 'db-search',
     icon: '🔍',
     name: '数据库检索',
-    desc: '在已选数据库执行关键词检索，返回初始候选文献列表',
+    desc: '在固定演示数据包的示例索引中模拟关键词检索，返回候选示例记录列表',
     required: true,
     retryable: true,
     category: 'discovery',
@@ -89,22 +167,22 @@ var NODE_REGISTRY = {
     riskLabel: '低风险',
     deps: ['keyword-extract'],
     hasFullUI: true,
-    tools: ['PubMed API', 'Semantic Scholar', 'Deduplicator'],
-    subs: ['PubMed 检索', 'Semantic Scholar 检索', '去重合并'],
+    tools: ['Mock PubMed Index', 'Mock Semantic Index', 'Deduplicator'],
+    subs: ['PubMed 示例检索', 'Semantic Scholar 示例检索', '去重合并'],
     logs: [
-      { level: 'INFO', text: '查询 PubMed：Transformer AND Drug Discovery [2018:2024]' },
-      { level: 'INFO', text: 'PubMed 返回 142 条记录' },
-      { level: 'INFO', text: '查询 Semantic Scholar API (top_k=200)' },
-      { level: 'INFO', text: 'Semantic Scholar 返回 198 条记录' },
-      { level: 'INFO', text: '去重合并：340 → 276 篇（移除 64 条重复）' },
-      { level: 'INFO', text: '✓ 数据库检索完成，候选文献 276 篇' }
+      { level: 'INFO', text: '模拟查询固定包中的 PubMed 示例索引：Transformer AND Drug Discovery [2018:2024]' },
+      { level: 'INFO', text: '固定包返回 142 条示例记录' },
+      { level: 'INFO', text: '模拟查询固定包中的 Semantic Scholar 示例索引（top_k=200）' },
+      { level: 'INFO', text: '固定包返回 198 条示例记录' },
+      { level: 'INFO', text: '去重合并：340 → 276 条示例记录（移除 64 条重复）' },
+      { level: 'INFO', text: '✓ 固定数据包检索演示完成，候选示例记录 276 条' }
     ],
     result: {
       type: 'search',
       query: 'Transformer AND ("Drug Discovery" OR "Molecular Property") [2018:2024]',
       sources: [
-        { name: 'PubMed', count: 142, color: '#2563eb' },
-        { name: 'Semantic Scholar', count: 198, color: '#7c3aed' },
+        { name: 'PubMed 示例', count: 142, color: '#2563eb' },
+        { name: 'Semantic Scholar 示例', count: 198, color: '#7c3aed' },
         { name: '去重后合计', count: 276, color: '#059669' }
       ],
       yearRange: { min: 2018, max: 2024, current: [2018, 2024] },
@@ -115,14 +193,14 @@ var NODE_REGISTRY = {
         { title: 'Transformer-based DTI Prediction for Drug Discovery', year: 2022, key: null },
         { title: 'REINVENT 2.0: An AI Tool for De Novo Drug Design', year: 2020, key: null }
       ],
-      hint: '可调整时间范围后点击"重新检索"，或直接确认当前结果。'
+      hint: '可调整时间范围后在固定数据包内重算，或直接确认当前结果。'
     }
   },
   'citation-chase': {
     id: 'citation-chase',
     icon: '🔗',
     name: '引文追踪',
-    desc: '通过正向/反向引文链接发现检索遗漏的相关论文',
+    desc: '在固定演示数据包中模拟正向/反向引文链接，展示候选扩展',
     demoUnavailable: true,
     category: 'discovery',
     categoryLabel: '发现',
@@ -130,19 +208,19 @@ var NODE_REGISTRY = {
     riskLabel: '低风险',
     deps: ['db-search'],
     hasFullUI: false,
-    tools: ['Citation Graph API', 'Backward Chaser'],
+    tools: ['Mock Citation Graph', 'Backward Chaser'],
     subs: ['正向引文追踪', '反向引文追踪'],
     logs: [
-      { level: 'INFO', text: '基于 276 篇候选文献构建引文图谱...' },
-      { level: 'INFO', text: '反向追踪（查引用了谁）：新增 34 篇相关文献' },
-      { level: 'INFO', text: '正向追踪（被谁引用）：发现 12 篇近期重要引用' },
-      { level: 'INFO', text: '合并去重后，新增候选文献 41 篇（总计 317 篇）' },
-      { level: 'INFO', text: '✓ 引文追踪完成' }
+      { level: 'INFO', text: '基于固定包中的 276 条示例记录构建引文图谱...' },
+      { level: 'INFO', text: '反向追踪（查引用了谁）：新增 34 条相关示例记录' },
+      { level: 'INFO', text: '正向追踪（被谁引用）：发现 12 条近期引用示例' },
+      { level: 'INFO', text: '合并去重后，新增候选示例记录 41 条（总计 317 条）' },
+      { level: 'INFO', text: '✓ 引文追踪演示完成（未请求外部引文服务）' }
     ],
     result: {
       type: 'citation',
       summary: '引文追踪完成',
-      details: '通过正向（被引）和反向（引用）追踪，在原有 276 篇基础上新增 41 篇候选文献，总量扩展至 317 篇。追踪深度：2 跳。核心文献（Attention Is All You Need）引用网络中发现 12 篇近期高被引新作。',
+      details: '通过正向（被引）和反向（引用）追踪，在原有 276 条示例记录基础上新增 41 条候选示例，总量扩展至 317 条。追踪深度：2 跳。核心示例（Attention Is All You Need）引用网络中发现 12 条近期引用示例。',
       newPapers: [
         { title: 'BERT: Pre-training of Deep Bidirectional Transformers', authors: 'Devlin et al.', year: 2019, chaseType: 'backward' },
         { title: 'Graph Neural Networks: A Review of Methods', authors: 'Zhou et al.', year: 2020, chaseType: 'backward' },
@@ -153,14 +231,14 @@ var NODE_REGISTRY = {
         { title: 'Drug Discovery with Generative Deep Learning', authors: 'Schneider et al.', year: 2020, chaseType: 'backward' },
         { title: 'Molecular Fingerprints and Pharmacophores', authors: 'Cereto-Massagué et al.', year: 2015, chaseType: 'backward' }
       ],
-      bibtexMock: '@article{devlin2019bert,...}\n@article{zhou2020gnn,...}\n...(共 41 篇 BibTeX)'
+      bibtexMock: '@article{devlin2019bert,...}\n@article{zhou2020gnn,...}\n...(共 41 条示例 BibTeX)'
     }
   },
   'expand-search': {
     id: 'expand-search',
     icon: '🔭',
     name: '焦点扩展搜索',
-    desc: '基于已纳入文献识别相邻主题，扩展搜索覆盖面',
+    desc: '基于固定包中的已纳入示例识别相邻主题，展示扩展搜索路径',
     demoUnavailable: true,
     category: 'screening',
     categoryLabel: '筛选',
@@ -168,26 +246,26 @@ var NODE_REGISTRY = {
     riskLabel: '低风险',
     deps: ['abstract-screen'],
     hasFullUI: false,
-    tools: ['Topic Expander', 'Semantic Embed'],
+    tools: ['Mock Topic Expander', 'Semantic Embed'],
     subs: ['相邻主题识别', '扩展检索'],
     logs: [
       { level: 'INFO', text: '分析已纳入文献的主题分布...' },
       { level: 'INFO', text: '识别相邻高价值主题：Graph Transformer、Protein Language Model' },
-      { level: 'INFO', text: '扩展检索相邻主题，新增候选 28 篇' },
-      { level: 'INFO', text: '✓ 焦点扩展完成，共新增 28 篇候选文献' }
+      { level: 'INFO', text: '在固定包中模拟扩展相邻主题，新增候选示例 28 条' },
+      { level: 'INFO', text: '✓ 焦点扩展演示完成，共新增 28 条候选示例' }
     ],
     result: {
       type: 'simple',
       icon: '🔭',
       summary: '焦点扩展搜索完成',
-      details: '基于已纳入的 21 篇文献，系统识别出 2 个高关联相邻主题：Graph Transformer（图神经网络+Transformer 融合）和 Protein Language Model（ESM 系列蛋白质语言模型）。在这两个方向扩展检索，新增 28 篇候选文献，建议优先阅读 ESM-2 相关论文。'
+      details: '基于已纳入的 21 条示例记录，系统识别出 2 个高关联相邻主题：Graph Transformer（图神经网络+Transformer 融合）和 Protein Language Model（ESM 系列蛋白质语言模型）。在这两个方向扩展示例路径，新增 28 条候选示例，建议优先查看 ESM-2 相关示例。'
     }
   },
   'abstract-screen': {
     id: 'abstract-screen',
     icon: '📋',
     name: '摘要筛选',
-    desc: '用 SciBERT 对摘要打分，阈值过滤，边界文献需人工判断',
+    desc: '用内置模拟评分对摘要示例排序，阈值过滤，边界文献需人工判断',
     retryable: true,
     category: 'filter',
     categoryLabel: '筛选',
@@ -196,12 +274,12 @@ var NODE_REGISTRY = {
     checkpoint: true,
     deps: ['db-search'],
     hasFullUI: true,
-    tools: ['Relevance Scorer', 'Threshold Filter'],
+    tools: ['Mock Relevance Scorer', 'Threshold Filter'],
     subs: ['相关性打分', '阈值过滤', '👤 Human Checkpoint'],
     logs: [
-      { level: 'INFO', text: '对 276 篇文献进行相关性评分（模型：SciBERT-ft）' },
-      { level: 'INFO', text: '评分完成，阈值 0.72 过滤后剩余 21 篇' },
-      { level: 'WARN', text: '3 篇文献置信度处于边界区间 [0.72–0.75]，触发 Human Checkpoint' },
+      { level: 'INFO', text: '对 276 条示例记录进行相关性评分（模型：SciBERT-ft）' },
+      { level: 'INFO', text: '评分完成，阈值 0.72 过滤后剩余 21 条示例记录' },
+      { level: 'WARN', text: '3 条示例记录的模拟评分处于边界区间 [0.72–0.75]，触发 Human Checkpoint' },
       { level: 'INFO', text: '⏸ 等待人工确认边界文献...' }
     ],
     result: {
@@ -232,19 +310,19 @@ var NODE_REGISTRY = {
     id: 'fulltext-read',
     icon: '📖',
     name: '全文精读',
-    desc: '下载全文 PDF，提取方法论和关键发现，标注潜在矛盾',
+    desc: '读取固定包中的摘要/元数据示例，提取方法论和关键发现，标注潜在矛盾',
     category: 'filter',
     categoryLabel: '筛选',
     risk: 'high',
     riskLabel: '高风险',
     deps: ['abstract-screen'],
     hasFullUI: true,
-    tools: ['PDF Parser', 'Method Extractor', 'Contradiction Detector'],
+    tools: ['Mock Document Parser', 'Method Extractor', 'Contradiction Detector'],
     subs: ['方法论提取', '关键发现提取', '矛盾检测'],
     logs: [
-      { level: 'INFO', text: '下载全文 PDF (21 篇)，解析文档结构' },
-      { level: 'WARN', text: '全文覆盖率 67%（14/21 篇为 OA），7 篇降级为摘要+元数据分析' },
-      { level: 'INFO', text: '提取方法论章节：21/21 篇' },
+      { level: 'INFO', text: '读取固定包中的文档示例（21 条），解析结构化字段' },
+      { level: 'WARN', text: '示例字段覆盖率 67%（14/21 条含扩展字段），其余降级为摘要+元数据分析' },
+      { level: 'INFO', text: '提取方法论章节：21/21 条示例记录' },
       { level: 'INFO', text: '识别关键发现：共 47 条 findings' },
       { level: 'WARN', text: '发现潜在矛盾：Liu et al.(2022) 与 Wang et al.(2023) 在 AUROC 指标上结论相悖' },
       { level: 'INFO', text: '矛盾已标注，等待人工处置...' }
@@ -259,7 +337,7 @@ var NODE_REGISTRY = {
         { text: 'Transformer DTI 双编码器在 BindingDB AUROC=0.924，显著优于 GNN 基线 0.871', source: 'Liu et al., 2022' }
         // Mock 简化：边界文献全部纳入为假设，findingsList 展示前 3 条
       ],
-      hint: '全文精读完成，矛盾检测将在后续节点处置。'
+      hint: '固定包文档示例读取完成，矛盾检测将在后续节点处置。'
     }
   },
   'quality-assess': {
@@ -276,16 +354,16 @@ var NODE_REGISTRY = {
     tools: ['GRADE Scorer', 'Bias Detector'],
     subs: ['GRADE 评级', '偏倚风险评估'],
     logs: [
-      { level: 'INFO', text: '对 21 篇全文精读结果进行 GRADE 方法学评估...' },
+      { level: 'INFO', text: '对 21 条固定包文档示例进行 GRADE 方法学评估...' },
       { level: 'INFO', text: '评估维度：样本量、随机性、盲法、结局报告完整性' },
-      { level: 'WARN', text: '3 篇文献存在数据集重叠风险（相同 BindingDB 测试集）' },
-      { level: 'INFO', text: '✓ 质量评估完成：高质量 8 篇 / 中等 11 篇 / 低质量 2 篇' }
+      { level: 'WARN', text: '3 条示例记录存在数据集重叠风险（相同 BindingDB 测试集）' },
+      { level: 'INFO', text: '✓ 质量标签演示完成：A 级 8 条 / B 级 11 条 / C 级 2 条' }
     ],
     result: {
       type: 'simple',
       icon: '🏅',
       summary: '方法学质量评估完成',
-      details: '基于 GRADE 框架对 21 篇文献进行质量评估。高质量（证据等级 A）：8 篇，均有充足样本量且独立测试集验证；中等质量（B）：11 篇，存在数据集重叠或样本量不足；低质量（C）：2 篇，缺乏对照实验。建议在综述中明确标注各文献证据等级。'
+      details: '基于 GRADE 框架对 21 条固定包示例记录进行质量标签演示。A 级：8 条；B 级：11 条；C 级：2 条。标签只用于展示流程分支，不代表真实证据等级或科研结论。'
     }
   },
   'contradiction-detect': {
@@ -333,8 +411,8 @@ var NODE_REGISTRY = {
         options: [
           { id: 'A', label: '采信 Liu 2022', reason: '同类任务基准更匹配' },
           { id: 'B', label: '采信 Wang 2023', reason: '更新、期刊更高' },
-          { id: 'both', label: '两篇均纳入并标注争议', reason: '保留学术争议' },
-          { id: 'exclude', label: '排除两篇，仅用其他文献', reason: '矛盾无法调和' }
+          { id: 'both', label: '两条均纳入并标注争议', reason: '保留示例争议' },
+          { id: 'exclude', label: '排除两条，仅用其他示例', reason: '矛盾无法调和' }
         ],
         decision: null
       },
@@ -355,7 +433,7 @@ var NODE_REGISTRY = {
     tools: ['BERTopic', 'Cluster Viz'],
     subs: ['主题建模', '聚类可视化'],
     logs: [
-      { level: 'INFO', text: '对 21 篇纳入文献进行主题建模（BERTopic）...' },
+      { level: 'INFO', text: '对 21 条纳入示例记录进行主题建模（BERTopic）...' },
       { level: 'INFO', text: '识别 4 个主要主题聚类' },
       { level: 'INFO', text: '✓ 主题聚类完成：分子属性预测 / DTI / 从头生成 / 多组学' }
     ],
@@ -363,7 +441,7 @@ var NODE_REGISTRY = {
       type: 'simple',
       icon: '🗂️',
       summary: '主题聚类完成',
-      details: '基于 BERTopic 对 21 篇文献摘要进行主题建模，识别 4 个高内聚主题：① 分子属性预测（8 篇，核心：ChemBERTa/MolBERT 预训练范式）② 药物-靶点相互作用（5 篇，核心：双编码器架构）③ 从头分子生成（5 篇，核心：REINVENT 变体）④ 多组学整合（3 篇，核心：跨模态注意力）。主题分布清晰，适合按聚类组织综述章节。'
+      details: '基于 BERTopic 对 21 条示例摘要进行主题建模，识别 4 个高内聚主题：① 分子属性预测（8 条，核心：ChemBERTa/MolBERT 预训练范式）② 药物-靶点相互作用（5 条，核心：双编码器架构）③ 从头分子生成（5 条，核心：REINVENT 变体）④ 多组学整合（3 条，核心：跨模态注意力）。主题分布用于展示聚类组织方式，不代表真实研究分布。'
     }
   },
   'meta-analysis': {
@@ -408,7 +486,7 @@ var NODE_REGISTRY = {
     tools: ['Outline Generator'],
     subs: ['生成大纲', '结构优化'],
     logs: [
-      { level: 'INFO', text: '基于 21 篇纳入文献生成综述大纲...' },
+      { level: 'INFO', text: '基于 21 条纳入示例记录生成综述大纲...' },
       { level: 'INFO', text: '结构优化：按主题聚类组织章节顺序' },
       { level: 'INFO', text: '✓ 综述大纲生成完成（5 节）' }
     ],
@@ -439,15 +517,15 @@ var NODE_REGISTRY = {
     subs: ['生成大纲', '段落撰写', '引用插入'],
     logs: [
       { level: 'INFO', text: '启动综述报告生成模块...' },
-      { level: 'INFO', text: '加载全文精读结果与矛盾处置记录...' },
+      { level: 'INFO', text: '加载固定包精读结果与矛盾处置记录...' },
       { level: 'ERROR', text: '[ERROR-1] 报告结构生成失败：上下文窗口溢出，内容截断', _trigger: 'error1' },
       { level: 'WARN', text: '[重试 1/3] 扩大上下文窗口至 128K，重新生成...' },
       { level: 'ERROR', text: '[ERROR-2] 输出结构异常：章节编号错位，与已有文献结论矛盾', _trigger: 'error2' },
       { level: 'WARN', text: '[重试 2/3] 切换备用模型（降低温度至 0.2）...' },
-      { level: 'ERROR', text: '[ERROR-3] 置信度极低（23%）：生成内容与矛盾处置结果不一致', _trigger: 'error3' },
+      { level: 'ERROR', text: '[ERROR-3] 模拟过程指标偏低（23%）：生成内容与矛盾处置结果不一致', _trigger: 'error3' },
       { level: 'INFO', text: '根据 47 条 findings 生成综述大纲（5 节）' },
       { level: 'INFO', text: '撰写各段落，自动插入 APA 引用格式' },
-      { level: 'INFO', text: '引用文献 21 篇，精选核心 6 篇进入摘要层' },
+      { level: 'INFO', text: '引用示例记录 21 条，精选核心示例 6 条进入摘要层' },
       { level: 'INFO', text: '✓ 综述生成完成，总字数约 2400 字' }
     ],
     result: {
@@ -513,7 +591,7 @@ var PIPELINE_TEMPLATES = {
   }
 };
 
-// ---- 节点置信度配置 ----
+// ---- 节点模拟过程指标配置 ----
 var CONF_BY_NODE = {
   'data-source-config': 96,
   'keyword-extract': 95,
@@ -535,9 +613,9 @@ var CONF_BY_NODE = {
 var NODE_SUMMARIES = {
   'data-source-config': function () { return '3 个数据源已配置'; },
   'keyword-extract': function () { return '8 个检索词'; },
-  'db-search': function () { return '276 篇候选'; },
-  'citation-chase': function () { return '+41 篇（引文追踪）'; },
-  'expand-search': function () { return '+28 篇（焦点扩展）'; },
+  'db-search': function () { return '276 条候选示例'; },
+  'citation-chase': function () { return '+41 条（引文追踪示例）'; },
+  'expand-search': function () { return '+28 条（焦点扩展示例）'; },
   'abstract-screen': function (ud) {
     var inc = 18, hold = 0, exc = 0;
     if (ud && ud.borderline) {
@@ -547,22 +625,22 @@ var NODE_SUMMARIES = {
         else if (p.decision === 'exclude') exc++;
       });
     }
-    return inc + ' 篇纳入' + (hold > 0 ? ' · ' + hold + ' 篇待定' : '');
+    return inc + ' 条示例纳入' + (hold > 0 ? ' · ' + hold + ' 条待定' : '');
   },
   'fulltext-read': function () { return '47 条 Findings · 1 处矛盾'; },
-  'quality-assess': function () { return '8 篇 A / 11 篇 B / 2 篇 C'; },
+  'quality-assess': function () { return '8 条 A / 11 条 B / 2 条 C'; },
   'contradiction-detect': function () { return '1 处矛盾已处置'; },
   'theme-cluster': function () { return '4 个主题聚类'; },
   'meta-analysis': function () { return 'AUROC 提升 +0.073'; },
   'outline-gen': function () { return '5 节大纲'; },
   'review-write': function () { return '2400 字综述'; },
-  'bibtex-export': function () { return '276 条文献导出'; }
+  'bibtex-export': function () { return '276 条示例引用导出'; }
 };
 
 // ---- Mock 最终结果 ----
 var MOCK_RESULT = {
   title: 'Transformer 架构在药物发现中的应用综述',
-  abstract: 'Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本综述系统梳理了 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个核心场景中的应用进展，汇总分析 21 篇高质量文献，重点探讨模型架构演化路径、基准数据集选取策略及临床转化瓶颈。研究表明，预训练-微调范式已成为药物发现 AI 的主流方法，但可解释性不足与标注数据稀缺仍是限制规模化落地的关键障碍。',
+  abstract: '固定演示摘要：以下内容来自内置示例文本，仅用于展示输出结构，不代表真实综述结论。Transformer 架构自 2017 年提出以来，凭借其自注意力机制在自然语言处理领域取得突破性进展，并迅速渗透至生物医学与药物发现领域。本示例梳理 2018–2024 年间 Transformer 在分子属性预测、药物-靶点相互作用识别、从头分子生成及多组学数据整合四个场景中的应用，汇总 21 条示例记录，重点展示模型架构演化路径、基准数据集选取策略及临床转化瓶颈。示例文本呈现预训练-微调范式、可解释性与标注数据等讨论线索，但不应被当作研究结论。',
   findings: [
     '预训练 Transformer（如 ChemBERTa、MolBERT）在分子属性预测任务上平均 AUROC 提升 8.3%，优于传统 ECFP 指纹方法。',
     '药物-靶点相互作用（DTI）任务中，Transformer 双编码器架构在 BindingDB 数据集 AUROC 达 0.924，显著优于图神经网络基线。',
@@ -576,13 +654,6 @@ var MOCK_RESULT = {
     { title: 'REINVENT 2.0 with Transformer Prior', authors: 'Blaschke et al.', year: 2020, journal: 'J. Chem. Inf. Model. (SCI Q1)', score: 7.9, doi: 'https://doi.org/10.26434/chemrxiv.12058026' },
     { title: 'Multi-omics Integration via Transformer', authors: 'Wang et al.', year: 2023, journal: 'Nature Methods (SCI Q1)', score: 7.6, doi: 'https://doi.org/10.1038/s41592-023-01970-4' }
   ],
-  credibility: {
-    sourceQuality: { score: 8.5, note: '87% 文献来自 SCI Q1 期刊，核心论文高被引（>500 次）' },
-    reasoning: { score: 7.8, note: '推理链路清晰，结论均有文献支撑，逻辑一致' },
-    consistency: { score: 7.2, note: 'Liu(2022) 与 Wang(2023) AUROC 指标存在 0.06 差异，已标注' },
-    overall: 7.8,
-    suggestion: '综合评分 7.8/10。建议对全文精读步骤中检测到的矛盾标注（Liu vs Wang AUROC）进行人工复核后再提交。'
-  }
 };
 
 // ---- 论文弹窗数据 ----
@@ -687,9 +758,9 @@ var PIPELINE_GROUPS = [
 
 // ---- 分组汇总文字 ----
 var GROUP_SUMMARIES = {
-  config:    '数据源配置就绪，3 个授权数据库。',
-  discovery: '文献发现完成，候选文献 276 篇。',
-  filter:    '质量筛选完成，21 篇高质量文献纳入。',
+  config:    '数据源配置就绪，3 个示例来源。',
+  discovery: '文献发现完成，候选示例记录 276 条。',
+  filter:    '质量筛选完成，21 条示例记录纳入流程。',
   analysis:  '深度分析完成，矛盾已处置，主题聚类清晰。',
   output:    '综述输出完成，可导出草稿与参考文献。'
 };
@@ -732,7 +803,7 @@ var MOCK_RETRY_RESULTS = {
     threshold: 0.68,
     included: 28,
     borderline: [],
-    hint: '放宽阈值后纳入文献从 18 篇增至 28 篇。',
+    hint: '放宽阈值后纳入示例记录从 18 条增至 28 条。',
     _retryHint: '放宽阈值后纳入增加'
   },
   'db-search': {
@@ -751,7 +822,7 @@ var MOCK_RETRY_RESULTS = {
       { title: 'Transformer-based DTI Prediction', year: 2022, key: null },
       { title: 'Graph Transformer for Molecular Property', year: 2023, key: null }
     ],
-    hint: '扩展检索词后候选文献从 276 篇增至 341 篇。',
+    hint: '固定包内扩展示例后候选示例记录从 276 条增至 341 条。',
     _retryHint: '扩展检索词后候选增加'
   }
 };

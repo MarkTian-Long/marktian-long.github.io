@@ -266,7 +266,7 @@ function renderSearchResult(body, nodeId, ud) {
     '<input class="year-input" id="yearFrom_' + nodeId + '" type="number" value="' + ud.yearRange.current[0] + '" min="2010" max="2024" />' +
     '<span style="color:var(--asci-text-muted);font-size:12px"> — </span>' +
     '<input class="year-input" id="yearTo_' + nodeId + '" type="number" value="' + ud.yearRange.current[1] + '" min="2010" max="2024" />' +
-    '<button class="re-search-btn" onclick="reSearch(\'' + nodeId + '\')">重新检索</button>' +
+    '<button class="re-search-btn" onclick="reSearch(\'' + nodeId + '\')">重算示例</button>' +
     '</div>';
   if (ud.preview && ud.preview.length > 0) {
     html += '<div class="paper-preview-block">' +
@@ -305,7 +305,7 @@ function exportSearchResults(btn, count) {
 }
 
 function exportIncludedPapers(btn, count) {
-  showToast('已导出 ' + count + ' 篇纳入文献');
+  showToast('已导出 ' + count + ' 条纳入示例记录');
 }
 
 function reSearch(nodeId) {
@@ -319,7 +319,7 @@ function reSearch(nodeId) {
   ud.sources[1].count = Math.round(198 * factor);
   ud.sources[2].count = Math.round(276 * factor);
   ud.query = 'Transformer AND ("Drug Discovery" OR "Molecular Property") [' + from + ':' + to + ']';
-  appendLog('INFO', '重新检索：时间范围调整为 ' + from + '–' + to + '，候选文献 ' + ud.sources[2].count + ' 篇', nodeId);
+  appendLog('INFO', '固定包示例重算：时间范围调整为 ' + from + '–' + to + '，候选示例记录 ' + ud.sources[2].count + ' 条', nodeId);
   var body = document.getElementById('nodeBody_' + nodeId);
   renderSearchResult(body, nodeId, ud);
 }
@@ -335,9 +335,9 @@ function renderScreeningResult(body, nodeId, ud) {
   var totalInc = ud.included + incCount;
 
   var html = '<div class="decision-count-bar">' +
-    '<span class="dc-badge dc-include">✅ 纳入 ' + totalInc + ' 篇</span>' +
-    (holdCount > 0 ? '<span class="dc-badge dc-hold">⏸ 暂缓 ' + holdCount + ' 篇</span>' : '') +
-    (excCount > 0 ? '<span class="dc-badge dc-exclude">❌ 排除 ' + excCount + ' 篇</span>' : '') +
+    '<span class="dc-badge dc-include">✅ 纳入 ' + totalInc + ' 条示例记录</span>' +
+    (holdCount > 0 ? '<span class="dc-badge dc-hold">⏸ 暂缓 ' + holdCount + ' 条</span>' : '') +
+    (excCount > 0 ? '<span class="dc-badge dc-exclude">❌ 排除 ' + excCount + ' 条</span>' : '') +
     '</div>';
 
   html += '<div class="batch-actions">' +
@@ -360,8 +360,8 @@ function renderScreeningResult(body, nodeId, ud) {
     '阈值 <strong>0.72</strong> = 自动纳入；<strong>0.65–0.72</strong> = 边界文献，需人工判断。' +
     '</div>';
 
-  html += '<div class="included-count" id="includedCount_' + nodeId + '">✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）</div>';
-  html += '<div style="font-size:11px;font-weight:700;color:var(--asci-text-muted);margin-bottom:6px">边界文献（逐篇判断）</div>';
+  html += '<div class="included-count" id="includedCount_' + nodeId + '">✓ 高分自动纳入：<strong>' + ud.included + ' 条示例记录</strong>（边界示例记录另行判断）</div>';
+  html += '<div style="font-size:11px;font-weight:700;color:var(--asci-text-muted);margin-bottom:6px">边界示例记录（逐条判断）</div>';
 
   html += '<div class="borderline-list">';
   ud.borderline.forEach(function (p, i) {
@@ -387,7 +387,7 @@ function renderScreeningResult(body, nodeId, ud) {
   var paperKeys = INCLUDED_PAPER_KEYS;
   var includedCount = Math.min(ud.included, paperKeys.length);
   html += '<details class="included-paper-list">' +
-    '<summary>查看已纳入 ' + ud.included + ' 篇文章清单（示例 ' + includedCount + ' 条）</summary>' +
+    '<summary>查看已纳入 ' + ud.included + ' 条示例记录清单（展示 ' + includedCount + ' 条）</summary>' +
     '<div class="included-papers-inner">';
   for (var k = 0; k < includedCount; k++) {
     var p = PAPER_DATA[paperKeys[k]];
@@ -423,10 +423,11 @@ function toggleBlDetail(nodeId, i) {
 }
 
 function blDecide(nodeId, i, decision) {
+  var paper = transitionScreeningDecision(nodeId, i, decision);
+  if (!paper) return;
   var ud = nodeUserData[nodeId];
-  ud.borderline[i].decision = decision;
   var decisionLabel = decision === 'include' ? '纳入' : decision === 'maybe' ? '待定' : '排除';
-  appendLog('INFO', '用户决策边界文献 "' + ud.borderline[i].title + '"：' + decisionLabel, nodeId);
+  appendLog('INFO', '用户决策边界文献 "' + paper.title + '"：' + decisionLabel, nodeId);
   appendHitlDecisionLog(NODE_REGISTRY[nodeId].name + ' 边界文献 ' + (i + 1), decisionLabel);
   var body = document.getElementById('nodeBody_' + nodeId);
   renderScreeningResult(body, nodeId, ud);
@@ -440,8 +441,17 @@ function blBatchAction(nodeId, action) {
   if (action === 'sort') {
     ud.borderline.sort(function (a, b) { return b.score - a.score; });
     appendLog('INFO', '用户操作：边界文献按评分降序排列', nodeId);
+    recordAuditEvent({
+      node: nodeId,
+      action: 'screening-sort',
+      reason: '人工按相关性评分重新排列边界文献',
+      impactScope: '摘要筛选中的边界文献展示顺序'
+    });
   } else {
-    ud.borderline.forEach(function (p) { p.decision = action; });
+    ud.borderline.forEach(function (p, i) {
+      transitionScreeningDecision(nodeId, i, action);
+    });
+    ud = nodeUserData[nodeId];
     var label = action === 'include' ? '全部纳入' : '全部排除';
     appendLog('INFO', '用户批量操作：' + label + '所有边界文献', nodeId);
     appendHitlDecisionLog(NODE_REGISTRY[nodeId].name + ' 批量操作', label);
@@ -462,12 +472,12 @@ function updateThreshold(nodeId, val) {
   var delta = Math.round((0.72 - ud.threshold) * 200);
   ud.included = Math.max(5, base + delta);
   var includedCountEl = document.getElementById('includedCount_' + nodeId);
-  if (includedCountEl) includedCountEl.innerHTML = '✓ 高置信度纳入：<strong>' + ud.included + ' 篇</strong>（边界文献另行判断）';
+  if (includedCountEl) includedCountEl.innerHTML = '✓ 高分自动纳入：<strong>' + ud.included + ' 条示例记录</strong>（边界示例记录另行判断）';
   var preview = document.getElementById('threshPreview_' + nodeId);
   if (preview) {
     var diff = ud.included - prevIncluded;
-    if (diff > 0) preview.textContent = '↑ 纳入 +' + diff + ' 篇';
-    else if (diff < 0) preview.textContent = '↓ 纳入 ' + diff + ' 篇';
+    if (diff > 0) preview.textContent = '↑ 纳入 +' + diff + ' 条';
+    else if (diff < 0) preview.textContent = '↓ 纳入 ' + diff + ' 条';
     else preview.textContent = '';
   }
 }
@@ -475,12 +485,12 @@ function updateThreshold(nodeId, val) {
 // ---- 全文精读结果（Fix 3：只显示发现列表，不含矛盾处置）----
 function renderFulltextResult(body, nodeId, ud) {
   var html = '<div class="fulltext-boundary-notice">' +
-    '<strong>数据边界说明</strong>：当前接入开放获取数据库（PubMed、arXiv、Semantic Scholar），全文覆盖率约 67%（OA 论文）。' +
-    '付费数据库全文接入为后续规划。无全文论文已降级为摘要+元数据分析，输出中标注数据完整度。' +
+    '<strong>数据边界说明</strong>：当前读取固定演示数据包中的摘要与元数据示例，扩展字段覆盖率约 67%。' +
+    '本节点不下载外部 PDF；缺少扩展字段的条目降级为摘要+元数据分析，输出中标注数据完整度。' +
     '</div>';
 
   html += '<div class="decision-count-bar">' +
-    '<span class="dc-badge dc-include">📄 已处理 21 篇全文</span>' +
+    '<span class="dc-badge dc-include">📄 已处理 21 条文档示例</span>' +
     '<span class="dc-badge dc-hold">📋 ' + ud.findings + ' 条 Findings</span>' +
     '</div>';
 
@@ -578,9 +588,9 @@ function exportFindings(btn) {
 }
 
 function contraDecide(nodeId, optId) {
+  var opt = transitionContradictionDecision(nodeId, optId);
+  if (!opt) return;
   var ud = nodeUserData[nodeId];
-  ud.contradiction.decision = optId;
-  var opt = ud.contradiction.options.find(function (o) { return o.id === optId; });
   var label = opt ? opt.label : optId;
   appendLog('INFO', '用户处置矛盾文献：' + label, nodeId);
   appendHitlDecisionLog(NODE_REGISTRY[nodeId].name + ' 矛盾处置', label);
@@ -624,7 +634,7 @@ function renderSimpleResult(body, nodeId, ud) {
 function renderCitationResult(body, nodeId, ud) {
   var html = '<div class="citation-result-wrap">';
   html += '<div class="citation-summary-header"><strong>' + escHtml(ud.summary) + '</strong><p>' + escHtml(ud.details) + '</p></div>';
-  html += '<div class="citation-new-papers-label">新增文献（示例 ' + (ud.newPapers ? ud.newPapers.length : 0) + ' 篇）</div>';
+  html += '<div class="citation-new-papers-label">新增示例记录（' + (ud.newPapers ? ud.newPapers.length : 0) + ' 条）</div>';
   html += '<div class="citation-paper-list">';
   (ud.newPapers || []).forEach(function (p) {
     var tagClass = p.chaseType === 'backward' ? 'chase-backward' : 'chase-forward';
@@ -693,6 +703,161 @@ function closePaperModal(overlay) {
   if (overlay && overlay.parentNode) overlay.remove();
 }
 
+// ---- 可复现过程清单 ----
+function buildProcessManifest() {
+  var contract = taskContract || createTaskContractSnapshot(researchTopic);
+  var audit = getAuditTrailSnapshot();
+  var hitlActions = ['screening-decision', 'screening-sort', 'contradiction-decision', 'degrade', 'human-draft'];
+  var screening = nodeUserData['abstract-screen'];
+  var exclusions = screening && screening.borderline
+    ? screening.borderline.filter(function (paper) { return paper.decision === 'exclude'; }).map(function (paper) {
+      return { id: paper.id, title: paper.title, decision: paper.decision };
+    })
+    : [];
+
+  return {
+    manifestVersion: 'asci-process-manifest-v1',
+    generatedAt: new Date().toISOString(),
+    demo: {
+      version: DEMO_META.version,
+      mode: DEMO_META.mode,
+      realRetrieval: false,
+      dataPackageId: DEMO_META.dataPackageId,
+      boundary: DEMO_META.boundary
+    },
+    task: {
+      requestedTopic: contract.requestedTopic,
+      titleTopic: contract.titleTopic,
+      topicMode: contract.topicMode,
+      templateId: contract.templateId,
+      pipeline: activePipeline.slice(),
+      protocol: cloneData(contract.protocol),
+      dataPackage: cloneData(contract.dataPackage)
+    },
+    execution: {
+      nodes: activePipeline.map(function (nodeId) {
+        var node = NODE_REGISTRY[nodeId];
+        return {
+          id: nodeId,
+          name: node ? node.name : nodeId,
+          status: doneSets.has(nodeId) ? 'done' : nodeState[nodeId] || 'pending',
+          executed: doneSets.has(nodeId)
+        };
+      }),
+      dynamicInsertions: cloneData(dynamicInsertions),
+      hitlDecisions: audit.filter(function (event) { return hitlActions.indexOf(event.action) >= 0; }),
+      exclusions: exclusions,
+      contradictions: audit.filter(function (event) { return event.action === 'contradiction-decision'; }),
+      rollbacks: audit.filter(function (event) { return event.action === 'rollback'; }),
+      fallbacks: cloneData(fallbackHistory),
+      reruns: cloneData(rerunHistory),
+      humanEditing: {
+        used: humanEdited,
+        characterCount: humanEdited ? String(draftContent || '').length : 0
+      },
+      auditTrail: audit
+    },
+    metrics: {
+      label: SIMULATED_PROCESS_METRICS.label,
+      items: cloneData(SIMULATED_PROCESS_METRICS.items),
+      values: confHistory.map(function (entry) {
+        return { nodeId: entry.nodeId, value: entry.val };
+      }),
+      note: SIMULATED_PROCESS_METRICS.note
+    },
+    resultSummary: {
+      title: MOCK_RESULT.title,
+      findingCount: MOCK_RESULT.findings.length,
+      sourceCount: MOCK_RESULT.sources.length,
+      humanEdited: humanEdited
+    },
+    security: {
+      contains: ['研究协议快照', '节点状态', '人工决策与降级路径', '结构化结果摘要'],
+      excludes: ['原始论文全文与摘要', '生产凭证', '真实外部 API 响应', '论文真实性或科研正确率结论']
+    }
+  };
+}
+
+var processManifestDownloadAdapter = null;
+
+function setProcessManifestDownloadAdapter(adapter) {
+  processManifestDownloadAdapter = adapter || null;
+}
+
+function createDefaultProcessManifestDownloadAdapter() {
+  return {
+    createBlob: function (parts, options) { return new Blob(parts, options); },
+    download: function (blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+    }
+  };
+}
+
+function exportProcessManifest(btn, adapter) {
+  var button = btn || document.getElementById('manifestExportBtn');
+  var originalText = button ? button.textContent : '';
+  if (button) {
+    button.disabled = true;
+    button.textContent = '生成中…';
+  }
+
+  try {
+    var manifest = buildProcessManifest();
+    var payload = JSON.stringify(manifest, null, 2);
+    var downloader = adapter || processManifestDownloadAdapter || createDefaultProcessManifestDownloadAdapter();
+    var blob = downloader.createBlob([payload], { type: 'application/json;charset=utf-8' });
+    downloader.download(blob, 'asci-process-manifest.json');
+    if (button) {
+      button.disabled = false;
+      button.textContent = '✓ 已导出';
+      setTimeout(function () { button.textContent = originalText; }, 2000);
+    }
+    showToast('过程清单已安全导出');
+    return { ok: true, manifest: manifest };
+  } catch (error) {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+    showToast('导出失败，请重试；过程状态已保留');
+    return { ok: false, error: String(error && error.message ? error.message : error) };
+  }
+}
+
+function renderProcessManifestSummary() {
+  var summaryEl = document.getElementById('s3ManifestSummary');
+  var factsEl = document.getElementById('s3ManifestFacts');
+  if (!summaryEl || !factsEl) return;
+
+  var manifest = buildProcessManifest();
+  var nodes = manifest.execution.nodes;
+  var completedCount = nodes.filter(function (node) { return node.executed; }).length;
+  var fallbackLabel = manifest.execution.fallbacks.length
+    ? manifest.execution.fallbacks.map(function (item) {
+      return item.choice === 'retry' ? '调整参数重试' : item.choice === 'model' ? '切换备用模型' : '人工接管';
+    }).join('、')
+    : '无';
+
+  summaryEl.textContent = manifest.task.protocol.name + ' · ' + manifest.demo.dataPackageId;
+  factsEl.innerHTML = [
+    '实际执行节点：' + completedCount + ' / ' + nodes.length + '（当前管线含 ' + nodes.length + ' 个）',
+    '动态插入：' + manifest.execution.dynamicInsertions.length + ' 个',
+    'HITL 决策：' + manifest.execution.hitlDecisions.length + ' 条',
+    '排除项：' + manifest.execution.exclusions.length + ' 条',
+    '矛盾处置：' + manifest.execution.contradictions.length + ' 条',
+    '回退：' + manifest.execution.rollbacks.length + ' 次',
+    '降级路径：' + fallbackLabel,
+    '人工编辑：' + (manifest.execution.humanEditing.used ? '已提交（仅导出字符数）' : '未使用')
+  ].map(function (fact) {
+    return '<span class="s3-manifest-fact">' + escHtml(fact) + '</span>';
+  }).join('');
+}
+
 // ---- Screen 3 渲染 ----
 function renderScreen3() {
   var r = MOCK_RESULT;
@@ -725,41 +890,34 @@ function renderScreen3() {
       tb.innerHTML += '<tr><td><span class="s3-paper-link" onclick="showPaperModal(\'s3_' + idx + '\')">' + s.title + '</span></td>' +
         '<td>' + s.authors + '</td><td>' + s.year + '</td><td>' + s.journal + '</td><td class="s3-score">' + s.score + '</td></tr>';
     });
-    var q1Count = r.sources.filter(function (s) {
-      return s.journal.indexOf('Q1') >= 0 || s.journal.indexOf('NeurIPS') >= 0 || s.journal.indexOf('Nature') >= 0;
-    }).length;
     var footerEl = document.getElementById('s3TableFooter');
     if (footerEl) {
-      footerEl.innerHTML = '共引用 ' + r.sources.length + ' 篇文献，' +
-        Math.round(q1Count / r.sources.length * 100) + '% 来自 SCI Q1 / 顶会期刊' +
-        '&nbsp;&nbsp;<button class="s3-export-btn" onclick="exportReferences(this)">📋 复制参考文献（BibTeX）</button>';
+      footerEl.innerHTML = '共展示 ' + r.sources.length + ' 条内置示例；相关性分数仅用于流程演示。' +
+        '&nbsp;&nbsp;<button class="s3-export-btn" onclick="exportReferences(this)">📋 复制示例引用（BibTeX）</button>';
     }
   }
 
-  var cred = r.credibility;
-  var bars = [
-    { name: '来源质量', score: cred.sourceQuality.score, note: cred.sourceQuality.note },
-    { name: '推理链路', score: cred.reasoning.score, note: cred.reasoning.note },
-    { name: '数据一致性', score: cred.consistency.score, note: cred.consistency.note }
-  ];
+  var bars = SIMULATED_PROCESS_METRICS.items;
   var credWrap = document.getElementById('s3CredBars');
   if (credWrap) {
     credWrap.innerHTML = '';
     bars.forEach(function (b) {
       var pct = b.score / 10 * 100;
       credWrap.innerHTML += '<div class="cred-bar-item">' +
-        '<div class="cred-bar-top"><span class="cred-bar-name">' + b.name + '</span><span class="cred-bar-score">' + b.score + ' / 10</span></div>' +
+        '<div class="cred-bar-top"><span class="cred-bar-name">' + escHtml(b.name) + '</span><span class="cred-bar-score">' + b.score + ' / 10</span></div>' +
         '<div class="cred-bar-track"><div class="cred-bar-fill" style="width:' + pct + '%"></div></div>' +
-        '<div class="cred-bar-note">' + b.note + '</div>' +
+        '<div class="cred-bar-note">' + escHtml(b.note) + '</div>' +
         '</div>';
     });
   }
   var credSummary = document.getElementById('s3CredSummary');
   if (credSummary) {
-    credSummary.innerHTML = '<strong>综合评分 ' + cred.overall + ' / 10</strong> · ' + cred.suggestion;
+    credSummary.innerHTML = '<strong>' + escHtml(SIMULATED_PROCESS_METRICS.label) + '</strong> · ' +
+      escHtml(SIMULATED_PROCESS_METRICS.note);
   }
 
   renderScreen3HitlSummary();
+  renderProcessManifestSummary();
 }
 
 function renderScreen3HitlSummary() {
@@ -812,7 +970,7 @@ function renderScreen3HitlSummary() {
 
 // ---- 接受结果 ----
 function acceptResult() {
-  showToast('✅ 结果已保存至知识库');
+  showToast('✅ 演示结果已确认（仅当前页面）');
 }
 
 // ---- 导出参考文献 ----

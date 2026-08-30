@@ -4,7 +4,168 @@
 //       降级策略、非线性扩展、确认 Modal、日志相关
 // ============================================================
 
-// ---- 置信度计算 ----
+// ---- 可调用状态转换（同时写入审计轨迹） ----
+function ensureNodeUserData(nodeId) {
+  if (!nodeUserData[nodeId] && NODE_REGISTRY[nodeId] && NODE_REGISTRY[nodeId].result) {
+    nodeUserData[nodeId] = cloneData(NODE_REGISTRY[nodeId].result);
+  }
+  return nodeUserData[nodeId];
+}
+
+function transitionScreeningDecision(nodeId, paperIndex, decision) {
+  var allowed = ['include', 'maybe', 'exclude'];
+  var ud = ensureNodeUserData(nodeId);
+  var paper = ud && ud.borderline ? ud.borderline[paperIndex] : null;
+  if (!paper || allowed.indexOf(decision) < 0) return null;
+
+  paper.decision = decision;
+  recordAuditEvent({
+    node: nodeId,
+    action: 'screening-decision',
+    reason: '人工将「' + paper.title + '」标记为' +
+      (decision === 'include' ? '纳入' : decision === 'maybe' ? '暂缓' : '排除'),
+    impactScope: '摘要筛选中的单篇边界文献'
+  });
+  return cloneData(paper);
+}
+
+function transitionContradictionDecision(nodeId, optId) {
+  var ud = ensureNodeUserData(nodeId);
+  var contradiction = ud && ud.contradiction;
+  var opt = contradiction && contradiction.options
+    ? contradiction.options.find(function (item) { return item.id === optId; })
+    : null;
+  if (!opt) return null;
+
+  contradiction.decision = optId;
+  recordAuditEvent({
+    node: nodeId,
+    action: 'contradiction-decision',
+    reason: '人工处置「' + contradiction.metric + '」：' + opt.label,
+    impactScope: '冲突主张的综述纳入与表述策略'
+  });
+  return cloneData(opt);
+}
+
+function transitionRollback(targetIdx) {
+  var idx = Number(targetIdx);
+  if (!Number.isInteger(idx) || idx < -1 || idx >= activePipeline.length) return null;
+
+  var removedNodeIds = activePipeline.slice(idx + 1);
+  removedNodeIds.forEach(function (nid) {
+    doneSets.delete(nid);
+    delete nodeUserData[nid];
+    nodeState[nid] = 'pending';
+  });
+  if (removedNodeIds.indexOf('review-write') >= 0) {
+    humanEdited = false;
+    draftContent = '';
+    degradeMode = false;
+  }
+  currentNodeIdx = idx;
+  isRunning = false;
+  awaitingCheckpoint = false;
+  var keepNodeIds = activePipeline.slice(0, idx + 1);
+  confHistory = confHistory.filter(function (entry) {
+    return keepNodeIds.indexOf(entry.nodeId) >= 0;
+  });
+
+  recordAuditEvent({
+    node: idx >= 0 ? activePipeline[idx] : 'task',
+    action: 'rollback',
+    reason: '回退并清除后续节点的失效执行结果',
+    impactScope: removedNodeIds.length
+      ? '回退点之后的 ' + removedNodeIds.length + ' 个节点'
+      : '当前任务位置'
+  });
+  return { targetIdx: idx, removedNodeIds: removedNodeIds.slice() };
+}
+
+function transitionDynamicInsertion(nodeId, afterNodeId) {
+  if (!NODE_REGISTRY[nodeId] || activePipeline.indexOf(nodeId) >= 0) return null;
+  var afterIdx = activePipeline.indexOf(afterNodeId);
+  if (afterIdx < 0) return null;
+
+  activePipeline.splice(afterIdx + 1, 0, nodeId);
+  nodeState[nodeId] = 'pending';
+  var insertion = { nodeId: nodeId, afterNodeId: afterNodeId };
+  dynamicInsertions.push(insertion);
+  recordAuditEvent({
+    node: nodeId,
+    action: 'dynamic-insert',
+    reason: '人工选择在「' + afterNodeId + '」之后追加演示节点',
+    impactScope: '当前管线顺序与后续待执行节点'
+  });
+  return cloneData(insertion);
+}
+
+function transitionRetry(nodeId) {
+  var node = NODE_REGISTRY[nodeId];
+  if (!node || !node.retryable) return null;
+  var nodeIdx = activePipeline.indexOf(nodeId);
+  if (nodeIdx < 0) return null;
+  var downstream = computeDownstreamSet(nodeId);
+  var resetNodeIds = downstream.filter(function (nid) {
+    return activePipeline.indexOf(nid) >= 0;
+  });
+  var resetSet = [nodeId].concat(resetNodeIds);
+  resetSet.forEach(function (nid) {
+    doneSets.delete(nid);
+    nodeState[nid] = 'pending';
+    delete nodeUserData[nid];
+  });
+  if (resetSet.indexOf('review-write') >= 0) {
+    humanEdited = false;
+    draftContent = '';
+    degradeMode = false;
+  }
+  confHistory = confHistory.filter(function (entry) {
+    return resetSet.indexOf(entry.nodeId) < 0;
+  });
+  currentNodeIdx = nodeIdx - 1;
+  isRunning = false;
+  rerunHistory.push({ nodeId: nodeId, resetNodeIds: resetNodeIds.slice() });
+  recordAuditEvent({
+    node: nodeId,
+    action: 'rerun',
+    reason: '人工发起重跑并重新计算依赖节点',
+    impactScope: resetNodeIds.length
+      ? '当前节点及 ' + resetNodeIds.length + ' 个下游节点'
+      : '当前节点'
+  });
+  return { nodeIdx: nodeIdx, resetNodeIds: resetNodeIds.slice() };
+}
+
+function transitionDegrade(choice, nodeId) {
+  var allowed = ['retry', 'model', 'human'];
+  if (allowed.indexOf(choice) < 0) return null;
+  degradeMode = true;
+  var decision = { nodeId: nodeId, choice: choice };
+  fallbackHistory.push(decision);
+  recordAuditEvent({
+    node: nodeId,
+    action: 'degrade',
+    reason: '连续失败后选择降级路径：' + choice,
+    impactScope: '当前失败节点及其结果交付方式'
+  });
+  return cloneData(decision);
+}
+
+function transitionHumanDraft(nodeId, draft) {
+  var text = String(draft || '').trim();
+  if (!text) return null;
+  draftContent = draft;
+  humanEdited = true;
+  recordAuditEvent({
+    node: nodeId,
+    action: 'human-draft',
+    reason: '人工编辑并提交 AI 草稿，接回自动流程',
+    impactScope: '当前节点的文本交付物'
+  });
+  return { nodeId: nodeId, characterCount: text.length };
+}
+
+// ---- 模拟流程分数计算 ----
 function calcConfidence(nodeId) {
   var base = CONF_BY_NODE[nodeId] || 80;
   var delta = 0;
@@ -17,7 +178,7 @@ function calcConfidence(nodeId) {
     }
   }
   if (nodeId === 'fulltext-read') {
-    return 75; // Fix 3：fulltext-read 职责已拆分，固定置信度 75
+    return 75; // Fix 3：fulltext-read 职责已拆分，固定模拟流程分数 75
   }
   if (nodeId === 'contradiction-detect') {
     var ud2 = nodeUserData[nodeId];
@@ -122,7 +283,7 @@ function updateNextBtnState() {
         var undecided = ud2.borderline.filter(function (p) { return !p.decision; }).length;
         if (undecided > 0) {
           document.getElementById('nextBtn').disabled = true;
-          document.getElementById('ctrlProgress').textContent = '还有 ' + undecided + ' 篇边界文献待判断';
+          document.getElementById('ctrlProgress').textContent = '还有 ' + undecided + ' 条边界示例记录待判断';
           return;
         }
       }
@@ -132,6 +293,11 @@ function updateNextBtnState() {
   var btn = document.getElementById('nextBtn');
   if (currentNodeIdx < activePipeline.length - 1 && !isRunning) {
     btn.disabled = false;
+    var ctrlProgress = document.getElementById('ctrlProgress');
+    if (currentNodeId && doneSets.has(currentNodeId) && ctrlProgress &&
+      /^(还有|⚠ 请先处置)/.test(ctrlProgress.textContent)) {
+      ctrlProgress.textContent = '节点完成 · 请确认后继续';
+    }
   }
 }
 
@@ -154,7 +320,7 @@ function updatePanel(nodeId, state) {
   }
 }
 
-// ---- 置信度折线图更新 ----
+// ---- 模拟流程分数折线图更新 ----
 function updateConfMiniChart() {
   var svg = document.getElementById('confMiniChart');
   var line = document.getElementById('confMiniLine');
@@ -263,7 +429,7 @@ function finishNode(nodeId) {
       .map(function (s) { return s.name; });
     appendHitlDecisionLog(
       '数据源配置',
-      '已选 ' + selectedNames.join(' / ') + '，共 ' + selectedNames.length + ' 个授权数据库'
+      '已选 ' + selectedNames.join(' / ') + '，共 ' + selectedNames.length + ' 个示例来源'
     );
   }
 
@@ -331,10 +497,8 @@ function renderNonlinearActions(nodeId) {
 
 // ---- 插入非线性节点 ----
 function insertNonlinearNode(nodeId, afterNodeId) {
-  var afterIdx = activePipeline.indexOf(afterNodeId);
-  if (afterIdx < 0) return;
-  activePipeline.splice(afterIdx + 1, 0, nodeId);
-  nodeState[nodeId] = 'pending';
+  var insertion = transitionDynamicInsertion(nodeId, afterNodeId);
+  if (!insertion) return;
   appendLog('INFO', '已插入节点：' + NODE_REGISTRY[nodeId].name + '（将在当前位置之后执行）');
   renderTree();
   showToast('已添加：' + NODE_REGISTRY[nodeId].name);
@@ -390,30 +554,16 @@ function handleBack() {
 }
 
 function doBack(targetIdx) {
-  // 清除 targetIdx+1 及之后的所有节点状态
-  for (var i = targetIdx + 1; i < activePipeline.length; i++) {
-    var nid = activePipeline[i];
-    doneSets.delete(nid);
-    delete nodeUserData[nid];
-    nodeState[nid] = 'pending';
-  }
+  var rollback = transitionRollback(targetIdx);
+  if (!rollback) return;
 
   // 裁剪日志：移除 data-nodeid 在 targetIdx+1 之后的行
-  var removedNodeIds = activePipeline.slice(targetIdx + 1);
+  var removedNodeIds = rollback.removedNodeIds;
   var logLines = document.getElementById('logBody').querySelectorAll('.log-line[data-nodeid]');
   logLines.forEach(function (line) {
     if (removedNodeIds.indexOf(line.getAttribute('data-nodeid')) >= 0) line.remove();
   });
 
-  currentNodeIdx = targetIdx;
-  isRunning = false;
-  awaitingCheckpoint = false;
-
-  // 截断置信度历史
-  var keepNodeIds = activePipeline.slice(0, targetIdx + 1);
-  confHistory = confHistory.filter(function (c) {
-    return keepNodeIds.indexOf(c.nodeId) >= 0;
-  });
   updateConfMiniChart();
 
   if (targetIdx < 0) {
@@ -491,6 +641,7 @@ function showDegradePanel(nodeId) {
 }
 
 function handleDegrade(choice, nodeId) {
+  if (!transitionDegrade(choice, nodeId)) return;
   var label = choice === 'retry' ? '调整参数重试' : choice === 'model' ? '切换备用模型' : '人工接管';
   var nodeName = NODE_REGISTRY[nodeId] ? NODE_REGISTRY[nodeId].name : nodeId;
   appendHitlDecisionLog(nodeName + ' · 异常处理', label);
@@ -536,8 +687,7 @@ function submitDraft(nodeId) {
     alert('请输入内容后再提交');
     return;
   }
-  draftContent = ta.value;
-  humanEdited = true;
+  if (!transitionHumanDraft(nodeId, ta.value)) return;
   appendLog('INFO', '✓ 人工草稿已提交，接回自动流程', nodeId);
   var nodeName = NODE_REGISTRY[nodeId] ? NODE_REGISTRY[nodeId].name : nodeId;
   appendHitlDecisionLog(nodeName + ' · 草稿编辑', '人工修改完成');
@@ -570,7 +720,7 @@ function jumpToDegradeDemo() {
   });
   currentNodeIdx = activePipeline.length - 2;
 
-  // 补齐置信度历史
+  // 补齐模拟流程分数历史
   confHistory = [];
   demoNodes.forEach(function (nid) {
     confHistory.push({ nodeId: nid, val: CONF_BY_NODE[nid] || 80 });
@@ -663,8 +813,8 @@ function initiateRetry(nodeId) {
     paramHtml = '<div class="retry-modal-param">' +
       '<label>检索策略</label>' +
       '<select id="retrySelect">' +
-      '<option value="standard" selected>标准检索（当前：276 篇）</option>' +
-      '<option value="expanded">扩展检索（含 SMILES/Protein Binding，预计 341 篇）</option>' +
+      '<option value="standard" selected>标准示例路径（当前：276 条）</option>' +
+      '<option value="expanded">扩展示例路径（含 SMILES/Protein Binding，预计 341 条）</option>' +
       '</select>' +
       '</div>';
   } else if (nodeId === 'keyword-extract') {
@@ -719,32 +869,10 @@ function initiateRetry(nodeId) {
 function confirmRetry(nodeId, overlay) {
   if (overlay) overlay.remove();
 
-  var nodeIdx = activePipeline.indexOf(nodeId);
-  if (nodeIdx < 0) return;
-
-  // 计算下游可达集，过滤出在当前管线中的节点
-  var downstream = computeDownstreamSet(nodeId);
-  var toReset = downstream.filter(function (nid) {
-    return activePipeline.indexOf(nid) >= 0;
-  });
-
-  // 清除重跑节点自身
-  doneSets.delete(nodeId);
-  nodeState[nodeId] = 'pending';
-  delete nodeUserData[nodeId];
-
-  // 清除下游依赖节点
-  toReset.forEach(function (nid) {
-    doneSets.delete(nid);
-    nodeState[nid] = 'pending';
-    delete nodeUserData[nid];
-  });
-
-  // 截断 confHistory：移除重跑节点及其下游的记录
-  var resetSet = [nodeId].concat(toReset);
-  confHistory = confHistory.filter(function (c) {
-    return resetSet.indexOf(c.nodeId) < 0;
-  });
+  var retry = transitionRetry(nodeId);
+  if (!retry) return;
+  var nodeIdx = retry.nodeIdx;
+  var toReset = retry.resetNodeIds;
 
   appendLog('INFO', '重跑影响范围：将被重置的节点：' + toReset.map(function (nid) {
     return NODE_REGISTRY[nid] ? NODE_REGISTRY[nid].name : nid;
@@ -758,8 +886,6 @@ function confirmRetry(nodeId, overlay) {
     // 确保 nodeUserData 被彻底清除，下次 renderNodeResult 会从新 result 重新初始化
     delete nodeUserData[nodeId];
   }
-
-  currentNodeIdx = nodeIdx - 1;
 
   updateConfMiniChart();
   renderTree();
