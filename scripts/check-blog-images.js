@@ -36,7 +36,7 @@ function validateRenderedPostImages(rootDir, metadata) {
     if (!fs.existsSync(postPath) || !fs.statSync(postPath).isFile()) {
       throw new Error(`Missing rendered blog article: tools/blog/posts/${post.slug}.html`);
     }
-    const html = fs.readFileSync(postPath, 'utf8');
+    const html = fs.readFileSync(postPath, 'utf8').replace(/\r\n?/g, '\n');
     const coverMarker = '<figure class="post-cover">';
     const coverCount = occurrenceCount(html, coverMarker);
     if (!post.visuals) {
@@ -50,7 +50,7 @@ function validateRenderedPostImages(rootDir, metadata) {
     const coverStart = html.indexOf(coverMarker);
     const headerStart = html.indexOf('<header class="post-header"');
     const headerEnd = html.indexOf('</header>', headerStart);
-    const dividerStart = html.indexOf('<hr class="divider"', coverStart);
+    const dividerStart = html.indexOf('<hr class="divider"', headerEnd);
     if (headerStart === -1 || headerEnd === -1 || dividerStart === -1
       || !(headerEnd < coverStart && coverStart < dividerStart)) {
       throw new Error(`Post ${post.slug} rendered post-cover must sit between the article header and divider`);

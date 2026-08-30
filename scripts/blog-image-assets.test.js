@@ -77,7 +77,12 @@ async function writeMetadata(rootDir, value) {
   fs.writeFileSync(metadataPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
-function writePostHtml(rootDir, slug, visuals, { includeCover = true, includeInline = true } = {}) {
+function writePostHtml(rootDir, slug, visuals, {
+  includeCover = true,
+  includeInline = true,
+  coverAfterDivider = false,
+  lineEnding = '\n',
+} = {}) {
   const postPath = path.join(rootDir, 'tools', 'blog', 'posts', `${slug}.html`);
   fs.mkdirSync(path.dirname(postPath), { recursive: true });
   const cover = includeCover
@@ -86,11 +91,10 @@ function writePostHtml(rootDir, slug, visuals, { includeCover = true, includeInl
   const figures = includeInline
     ? visuals.inline.map(image => `<figure class="post-figure">\n  <img src="../../../${image.src}" alt="${image.alt}" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" />\n  <figcaption>${image.caption}</figcaption>\n</figure>`).join('\n')
     : '';
-  fs.writeFileSync(
-    postPath,
-    `<main><header class="post-header">Header</header>\n${cover}\n<hr class="divider" />\n<div class="post-body">${figures}</div></main>`,
-    'utf8',
-  );
+  const body = coverAfterDivider
+    ? `<main><header class="post-header">Header</header>\n<hr class="divider" />\n<div class="post-body">${cover}\n${figures}</div>\n<hr class="divider" /></main>`
+    : `<main><header class="post-header">Header</header>\n${cover}\n<hr class="divider" />\n<div class="post-body">${figures}</div></main>`;
+  fs.writeFileSync(postPath, body.replace(/\n/g, lineEnding), 'utf8');
 }
 
 test('cover preparation writes a bounded 1200x630 JPEG under the slug directory', async () => {
@@ -226,6 +230,8 @@ test('asset validation requires declared covers and inline images in the rendere
   await writeMetadata(missingCoverRoot, metadata(slug, coverOnly));
   writePostHtml(missingCoverRoot, slug, coverOnly, { includeCover: false });
   await assert.rejects(() => validateBlogImages({ rootDir: missingCoverRoot }), /rendered.*post-cover/i);
+  writePostHtml(missingCoverRoot, slug, coverOnly, { coverAfterDivider: true });
+  await assert.rejects(() => validateBlogImages({ rootDir: missingCoverRoot }), /between.*header.*divider/i);
 
   const missingInlineRoot = fixtureRoot();
   const secondInput = await createInput(missingInlineRoot);
@@ -236,6 +242,20 @@ test('asset validation requires declared covers and inline images in the rendere
   await writeMetadata(missingInlineRoot, metadata(slug, withInline));
   writePostHtml(missingInlineRoot, slug, withInline, { includeInline: false });
   await assert.rejects(() => validateBlogImages({ rootDir: missingInlineRoot }), /rendered.*post-figure|context-loop/i);
+});
+
+test('asset validation accepts generator markup after a CRLF checkout', async () => {
+  const rootDir = fixtureRoot();
+  const slug = 'sample-post';
+  const inputPath = await createInput(rootDir);
+  await prepareBlogImage({ rootDir, slug, role: 'cover', inputPath });
+  await prepareBlogImage({ rootDir, slug, role: 'inline', name: 'context-loop', inputPath });
+  const visuals = coverVisual(slug);
+  visuals.inline = [inlineVisual(slug)];
+  await writeMetadata(rootDir, metadata(slug, visuals));
+  writePostHtml(rootDir, slug, visuals, { lineEnding: '\r\n' });
+
+  assert.deepEqual(await validateBlogImages({ rootDir }), { declared: 2, checked: 2 });
 });
 
 test('asset validation rejects missing and orphan blog images', async () => {
