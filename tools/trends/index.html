@@ -171,6 +171,7 @@
         .status-chip.historical { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent); }
         .verification-chip { background: var(--color-teal-soft); color: var(--color-teal); }
         .meta-line { margin: 0; color: var(--color-ink-faint); font-family: var(--font-mono); font-size: var(--font-xs); }
+        .historical-caveat { color: var(--color-warning); font-family: var(--font); font-weight: 700; }
 
         .workflow {
             display: grid;
@@ -404,7 +405,8 @@
             <div class="snapshot-meta" aria-live="polite">
                 <span class="status-chip" id="snapshot-status">加载中…</span>
                 <span class="verification-chip" id="verification-status">等待数据</span>
-                <p class="meta-line" id="snapshot-dates">观察 — · 复核 —</p>
+                <p class="meta-line" id="snapshot-dates">快照观察 — · 契约/结构复核 —</p>
+                <p class="meta-line historical-caveat" id="historical-caveat">历史事实未在本轮重验</p>
                 <p class="meta-line" id="snapshot-id">snapshot —</p>
             </div>
         </div>
@@ -437,8 +439,8 @@
             </div>
             <ul class="trust-list">
                 <li><strong>AI 辅助发现</strong>抓取脚本只生成候选，不直接进入公开快照。</li>
-                <li><strong>人工复核写入</strong>公开 JSON 需要完整来源、时间、指标与判断字段。</li>
-                <li><strong>静态快照</strong>页面不会实时抓取；过期状态会明确提示，不把旧数据说成当前热度。</li>
+                <li><strong>契约/结构复核</strong>公开 JSON 已通过字段完整性检查；这不等于历史事实在本轮重新核验。</li>
+                <li><strong>历史事实未重验</strong>页面不会实时抓取；历史事实未在本轮重验，过期状态会明确提示，不把旧数据说成当前热度。</li>
             </ul>
         </section>
 

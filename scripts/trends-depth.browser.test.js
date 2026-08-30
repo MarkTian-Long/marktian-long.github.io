@@ -84,7 +84,15 @@ test('trends v2 page renders research states, keyboard actions and recoverable l
     await page.goto(`${url}/tools/trends/index.html`, { waitUntil: 'domcontentloaded' });
     await page.locator('#app[data-state="ready"]').waitFor();
     assert.match(await page.locator('#snapshot-status').textContent(), /历史快照，不代表当前热度/);
-    assert.doesNotMatch(await page.locator('body').textContent(), /Claude 点评|Codex 点评|最新/);
+    assert.equal(await page.locator('#verification-status').textContent(), '契约/结构复核');
+    assert.match(await page.locator('#snapshot-dates').textContent(), /快照观察 2026-05-19 · 契约\/结构复核 2026-08-30/);
+    assert.match(await page.locator('#historical-caveat').textContent(), /历史事实未在本轮重验/);
+    assert.doesNotMatch(await page.locator('body').textContent(), /Claude 点评|Codex 点评|最新|manual_reviewed|candidate/);
+    assert.ok(await page.locator('.signal-meta').first().evaluate(meta => {
+      const text = meta.textContent || '';
+      return /快照观察 2026-05-19/.test(text) && /历史事实未在本轮重验/.test(text);
+    }));
+    assert.doesNotMatch(await page.locator('.signal-meta').first().textContent(), /manual_reviewed|candidate/);
     assert.equal(await page.locator('[role="tab"][data-board-id]').count(), 5);
     assert.equal(await page.locator('#workflow .workflow-step').count(), 4);
     assert.deepEqual(await page.locator('#workflow .workflow-title').allTextContents(), ['1 信源', '2 信号', '3 分析', '4 方法']);

@@ -42,8 +42,9 @@
         const freshness = validation.freshness;
         elements.status.className = `status-chip ${freshness ? freshness.status : ''}`;
         elements.status.textContent = freshness ? freshness.label : '状态未知';
-        elements.verification.textContent = state.data.verification_level === 'manual_reviewed' ? '人工复核写入' : state.data.verification_level;
-        elements.dates.textContent = `观察 ${formatDate(state.data.observed_at)} · 复核 ${formatDate(state.data.reviewed_at)}`;
+        elements.verification.textContent = '契约/结构复核';
+        elements.dates.textContent = `快照观察 ${formatDate(state.data.observed_at)} · 契约/结构复核 ${formatDate(state.data.reviewed_at)}`;
+        elements.historicalCaveat.textContent = '历史事实未在本轮重验';
         elements.snapshotId.textContent = `snapshot ${state.data.snapshot_id}`;
     }
 
@@ -122,8 +123,9 @@
         const summary = make('p', 'signal-summary', item.summary);
         const meta = make('div', 'signal-meta');
         append(meta,
-            make('span', '', `观察 ${formatDate(item.observed_at)}`),
-            make('span', '', `复核等级 ${item.verification_level}`),
+            make('span', '', `快照观察 ${formatDate(item.observed_at)}`),
+            make('span', '', '历史事实未在本轮重验'),
+            make('span', '', '结构字段已复核'),
             ...item.actions.map(action => make('span', 'action-chip', actionLabels[action] || action)));
         const metrics = make('div', 'metric-list');
         item.metrics.forEach(metric => {
@@ -172,7 +174,7 @@
             const card = make('article', 'source-card');
             const title = make('h3', '', `${board.icon} ${source.name}`);
             const description = make('p', '', `对应板块：${board.title}。${board.ranking_basis}`);
-            const meta = make('p', 'meta-line', `来源记录 ${formatDate(source.as_of)} · 页面观察 ${formatDate(state.data.observed_at)}`);
+            const meta = make('p', 'meta-line', `来源记录 ${formatDate(source.as_of)} · 快照观察 ${formatDate(state.data.observed_at)}`);
             const link = make('a', 'source-link', source.url);
             if (contract.isSafeUrl(source.url)) {
                 link.href = source.url;
@@ -227,7 +229,7 @@
         Object.assign(elements, {
             app: get('app'), loading: get('loading-state'), error: get('error-state'), content: get('workspace-content'),
             errorDetail: get('error-detail'), retry: get('retry-button'), status: get('snapshot-status'),
-            verification: get('verification-status'), dates: get('snapshot-dates'), snapshotId: get('snapshot-id'),
+            verification: get('verification-status'), dates: get('snapshot-dates'), historicalCaveat: get('historical-caveat'), snapshotId: get('snapshot-id'),
             featured: get('featured-card'), featuredCaption: get('featured-caption'), boardTabs: get('board-tabs'),
             boardIntro: get('board-intro'), signals: get('signals-list'), filterEmpty: get('filter-empty'),
             sources: get('sources-list'), action: get('action-filter'), viewSignals: get('view-tab-signals'),
