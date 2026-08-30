@@ -8,7 +8,7 @@
       <title>我为什么开始给自己搭 Harness？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</guid>
-      <description>Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。</description>
+      <description>当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。</description>
     </item>
     <item>
       <title>当人和 AI 都在改变，“对齐”还能一次完成吗？</title>

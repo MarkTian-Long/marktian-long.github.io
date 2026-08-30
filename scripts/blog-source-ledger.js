@@ -3,6 +3,7 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+const { parseSourceMarkdown } = require('../tools/blog/markdown-source');
 
 const LEGACY = Object.freeze({
   'training-vs-inference': 'training-vs-inference-final.md', 'ai-chips-explainer': 'ai-chips-explainer-v4.md',
@@ -38,14 +39,30 @@ function createLedger(rootDir) {
     if (BLOCKED.has(slug) !== (sourceStatus === 'blocked')) throw new Error(`Unexpected source status: ${slug}`);
     const html = fs.readFileSync(path.join(rootDir, 'tools/blog/posts', `${slug}.html`), 'utf8');
     const sourceMarkdown = sourcePath ? fs.readFileSync(path.join(rootDir, sourcePath), 'utf8').replace(/\r\n/g, '\n') : null;
-    const sourceTitle = sourceMarkdown ? markdownTitle(sourceMarkdown, sourcePath) : null;
+    let sourceTitle = sourceMarkdown ? markdownTitle(sourceMarkdown, sourcePath) : null;
+    let sourceSummary = null;
+    let summaryStatus = sourceMarkdown ? 'unparseable' : 'not-applicable';
+    let summaryError = null;
+    if (sourceMarkdown) {
+      try {
+        const parsed = parseSourceMarkdown(sourceMarkdown, sourcePath);
+        sourceTitle = parsed.sourceTitle;
+        sourceSummary = parsed.sourceSummary;
+        summaryStatus = sourceSummary === post.summary ? 'match' : 'mismatch';
+      } catch (error) {
+        summaryError = error.message;
+      }
+    }
     if (sourceTitle && normalizeTitle(sourceTitle) !== normalizeTitle(post.title)) {
       throw new Error(`Source title does not match metadata for ${slug}: ${sourcePath}`);
     }
-    const regenerated = sourcePath ? require('node:child_process').spawnSync(process.execPath, ['tools/blog/generate-post.js', sourcePath, path.join(rootDir, 'tools/blog/posts', `${slug}.html`)], { cwd: rootDir }).status === 0 : false;
+    const regenerated = sourcePath && summaryStatus === 'match'
+      ? require('node:child_process').spawnSync(process.execPath, ['tools/blog/generate-post.js', sourcePath, path.join(rootDir, 'tools/blog/posts', `${slug}.html`)], { cwd: rootDir }).status === 0
+      : false;
     return { slug, html_path: `tools/blog/posts/${slug}.html`, source_path: sourcePath, source_status: sourceStatus,
       source_mapping_basis: sourceStatus === 'source-confirmed' ? 'exact-slug' : sourceStatus === 'legacy-frozen' ? 'legacy-title-match' : 'no-source',
-      source_title: sourceTitle, metadata_title: post.title, title_verified: Boolean(sourceTitle),
+      source_title: sourceTitle, source_summary: sourceSummary, summary_status: summaryStatus, summary_error: summaryError,
+      metadata_title: post.title, title_verified: Boolean(sourceTitle),
       regeneration_status: sourceStatus === 'source-confirmed' ? (regenerated ? 'render-confirmed' : 'frozen-required') : 'not-eligible',
       html_editorial_sha256: sha256(postBody(html)), markdown_sha256: sourceMarkdown ? sha256(sourceMarkdown) : null };
   });

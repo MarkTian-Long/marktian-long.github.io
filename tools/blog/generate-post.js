@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../../scripts/site-config.js');
 const { articleUrl, ensureArticleSeo } = require('../../scripts/search-foundation.js');
+const { parseSourceMarkdown } = require('./markdown-source.js');
 
 const generatorArgs = process.argv.slice(2);
 if (generatorArgs.includes('--write') && generatorArgs.includes('--candidate')) throw new Error('Choose exactly one generator mode');
@@ -26,6 +27,13 @@ if (typeof metadata.share_quote !== 'string' || !metadata.share_quote.trim()) {
 }
 
 const markdown = fs.readFileSync(sourcePath, 'utf8').replace(/\r/g, '');
+const { sourceTitle, sourceSummary } = parseSourceMarkdown(markdown, sourcePath);
+if (metadata.title !== sourceTitle) {
+  throw new Error(`Metadata title does not match final Markdown H1: ${slug}`);
+}
+if (metadata.summary !== sourceSummary) {
+  throw new Error(`Metadata summary does not match final Markdown blockquote: ${slug}`);
+}
 const lines = markdown.split('\n');
 const escapeHtml = value => value
   .replace(/&/g, '&amp;')

@@ -4,7 +4,7 @@ date:    2026.08
 title:   我为什么开始给自己搭 Harness？
 tags:    [工程演进, 决策框架]
 slug:    personal-harness
-summary: Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。
+summary: 当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。
 share_quote: 真正的 AI 杠杆，不只是让一次任务做得更快，而是让每一次合作，都能成为下一次合作的起点。
 category: 技术
 -->
@@ -14,17 +14,17 @@ category: 技术
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>我为什么开始给自己搭 Harness？ — Leo 的思考碎片</title>
 <!-- search-foundation:start -->
-<meta name="description" content="Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。" />
+<meta name="description" content="当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。" />
 <link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/personal-harness.html" />
 <link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
 <meta property="og:title" content="我为什么开始给自己搭 Harness？" />
-<meta property="og:description" content="Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。" />
+<meta property="og:description" content="当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。" />
 <meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/personal-harness.html" />
 <meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
 <meta name="twitter:title" content="我为什么开始给自己搭 Harness？" />
-<meta name="twitter:description" content="Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。" />
+<meta name="twitter:description" content="当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。" />
 <meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"我为什么开始给自己搭 Harness？","description":"Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。","url":"https://marktian-long.github.io/tools/blog/posts/personal-harness.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/personal-harness.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"我为什么开始给自己搭 Harness？","description":"当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。","url":"https://marktian-long.github.io/tools/blog/posts/personal-harness.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/personal-harness.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
 <!-- search-foundation:end -->
 <meta property="og:type" content="article" />
   <meta name="twitter:card" content="summary" />
@@ -57,7 +57,7 @@ category: 技术
     <div class="two-col">
       <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、一个模型要真正工作，还缺哪几层东西？</a></li><li><a href="#section-2">二、对我来说，Personal Harness 首先改变了“怎么开始工作”</a></li><li><a href="#section-3">三、比“记住结果”更重要的，是留下判断的来路</a></li><li><a href="#section-4">四、这套 Harness 不是一次设计出来的，而是被问题一点点逼出来的</a></li><li><a href="#section-5">五、好的 Harness，应该让人和模型都少做无效工作</a></li><li><a href="#section-6">六、让 AI 知道更多，不等于让它做得更多</a></li><li><a href="#section-7">七、不是每个人都需要 Personal Harness</a></li><li><a href="#section-8">八、如果未来把它分享出来，我更想分享“起点”，而不是我的答案</a></li><li><a href="#section-9">参考资料</a></li></ul></nav></aside>
       <main>
-        <header class="post-header"><div class="post-meta"><span class="post-date">2026.08</span><span id="post-tags"></span></div><h1 class="post-title">我为什么开始给自己搭 Harness？</h1><p class="post-summary">Personal Harness 不是给 AI 多放一份用户说明，而是把个人的 Context、Memory、工具、方法、判断历史和权限边界组织成一个能长期协作的工作环境。本文从真实重复成本出发，讨论它如何减少每次重新解释和整理的负担，以及哪些机制应该随着模型进步被删除。</p></header>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.08</span><span id="post-tags"></span></div><h1 class="post-title">我为什么开始给自己搭 Harness？</h1><p class="post-summary">当 AI 成为长期协作者，真正值得积累的不只是 Prompt，而是你和 AI 一起工作的方式。Personal Harness 试图解决的，是怎样把 Context、Memory、工具、方法和反馈组织起来，让 AI 越来越理解真实的工作环境，而人越来越少需要重复解释、整理和操作。</p></header>
         <hr class="divider" />
         <div class="post-body"><p>在 LLM 出现以前，我就经常被一件很普通的事情困扰：整理自己电脑里的文件。资料越来越多以后，文件应该放在哪里、哪个版本才是最新的、一个项目上次做到哪、还有什么事情没处理，都会慢慢变成负担。自己当然可以设计目录、定命名规则、做项目记录，但这些事情本身也需要持续维护，规模一大，很容易又乱回去。</p>
 <p>LLM 出现以后，我很快意识到一个可能性：<strong>这些原本必须由人持续维护的数字工作环境，有没有可能逐渐交给 AI？</strong> 但刚开始使用网页版 ChatGPT 时，这还只是一个模糊想法。那时 AI 对我来说更多还是一个聊天窗口，我真正能优化的主要是 Prompt：怎样把需求、背景和约束说得更清楚。</p>

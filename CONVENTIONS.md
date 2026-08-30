@@ -313,7 +313,7 @@ git status --short
 | slug | string | 文件名不含 .html，唯一标识符，kebab-case |
 | date | string | 格式 `YYYY.MM` |
 | title | string | 完整标题 |
-| summary | string | 1-2 句自然摘要：说明对象/问题、核心判断及关键机制或边界（用于搜索和主页展示） |
+| summary | string | 标题下唯一 Markdown blockquote 经结构解析和空白规范化后的原文；用于文章页、主页、搜索、SEO、RSS 与分享海报 |
 | share_quote | string | 发布阶段从最终正文选择的完整原句，用于分享海报；Markdown 不携带该字段，规则见 WRITING_GUIDE.md |
 | tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
 | topics | string[] | 话题领域标签，见 WRITING_GUIDE.md 标签库 |
@@ -332,7 +332,7 @@ git status --short
 
 ### 搜索元数据与发现资产
 - `posts-meta.json` 仍是文章 `title`、`summary`、`url` 的单一来源；canonical、标准 description、JSON-LD、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。
-- 新文章发布流程：先更新 `posts-meta.json`（包括 `concepts`）→ 在 `docs/blog/<slug>.md` 保存源稿 → `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。
+- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts`）→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js`。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在不一致时直接失败。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。

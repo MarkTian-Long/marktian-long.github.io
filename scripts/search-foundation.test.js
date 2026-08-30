@@ -633,13 +633,13 @@ test('search asset freshness checks tolerate Windows CRLF checkouts', () => {
 test('generate-post CLI produces centralized SEO metadata without changing URL shape', () => {
   const rootDir = path.resolve(__dirname, '..');
   const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-post-cli-'));
-  const outputPath = path.join(outputDir, 'agent-boundary.html');
+  const outputPath = path.join(outputDir, 'fde-blog-v3.html');
   const result = spawnSync(
     process.execPath,
     [
       path.join(rootDir, 'tools/blog/generate-post.js'),
       '--write',
-      path.join(rootDir, 'docs/blog/agent-boundary.md'),
+      path.join(rootDir, 'docs/blog/fde-blog-v3.md'),
       outputPath
     ],
     { cwd: rootDir, encoding: 'utf8' }
