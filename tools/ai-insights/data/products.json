@@ -247,24 +247,29 @@
     "category": "AI 创作",
     "logo": "S",
     "tagline": "一份关于视频生成与产品生命周期边界的历史档案",
-    "description": "Sora 保留在档案库中，但不再按当前产品推荐。它既记录视频生成从研究展示走向产品的路径，也记录官方停止提供后产品研究如何处理生命周期变化。",
+    "description": "Sora 保留在档案库中，但不再把不同 surface 的状态压成一个结论。它既记录视频生成从研究展示走向产品的路径，也记录 web、app 与 API 在不同时间点进入停止服务窗口后，产品研究如何处理生命周期变化。",
     "detailLink": "https://help.openai.com/en/articles/20001152",
     "lifecycle": "historical",
     "archiveDate": "2026-08-30",
     "factReviewStatus": "待人工事实复核",
-    "thesis": { "text": "Sora 最值得研究的不是一次生成效果，而是从研究展示、产品化到停止提供的完整生命周期信号。", "evidenceRefs": ["launch", "sunset"] },
+    "surfaces": [
+      { "id": "web", "label": "Web", "status": "ended", "statusDate": "2026-04-26", "summary": "已于 2026-04-26 停止服务", "evidenceRefs": ["sunset"] },
+      { "id": "app", "label": "App", "status": "ended", "statusDate": "2026-04-26", "summary": "已于 2026-04-26 停止服务", "evidenceRefs": ["sunset"] },
+      { "id": "api", "label": "API", "status": "available", "asOf": "2026-08-31", "retirementDate": "2026-09-24", "summary": "截至 2026-08-31 仍可用；计划于 2026-09-24 退役", "evidenceRefs": ["sunset"] }
+    ],
+    "thesis": { "text": "Sora 最值得研究的不是一次生成效果，而是从研究展示、产品化到 web/app 停止与 API 计划退役的完整生命周期信号。", "evidenceRefs": ["launch", "sunset"] },
     "decisionThemes": ["creation", "safety", "distribution"],
     "decisions": [
       { "id": "研究到产品", "title": "先展示能力，再建立可用产品边界", "choice": "用研究和产品页面把世界模拟、视频生成与可用入口分开表达。", "why": "生成能力的演示效果不等于用户可以稳定使用的产品体验。", "tradeoff": "展示与可用性之间的距离会制造期待管理压力。", "evidenceRefs": ["launch", "sora2"] },
       { "id": "安全部署", "title": "把内容安全作为上线条件", "choice": "在视频生成产品中加入针对身份、版权和滥用风险的部署约束。", "why": "视频的传播和拟真度会放大错误或滥用的外部影响。", "tradeoff": "限制越多，创作者可用的表达空间和发布节奏越受影响。", "evidenceRefs": ["sora2", "safety"] },
-      { "id": "生命周期", "title": "把停止提供当作产品事实记录", "choice": "将 Sora 从当前产品列表转为历史档案，并以官方帮助页作为状态依据。", "why": "停止提供会改变用户迁移和内容导出判断。", "tradeoff": "历史档案不再适合作为当前选型推荐，但保留了生命周期学习价值。", "evidenceRefs": ["sunset"] }
+      { "id": "生命周期", "title": "按 surface 记录生命周期", "choice": "将 web/app 与 API 的状态分开记录，并以官方帮助页作为不同停止时间的依据。", "why": "同一产品名下的不同入口可能在不同日期停止，用户迁移判断不能只看一个总状态。", "tradeoff": "状态表达更准确，但读者需要同时理解入口差异和各自的截止窗口。", "evidenceRefs": ["sunset"] }
     ],
     "uncertainties": [
       { "question": "停止提供后，用户生成内容的导出和迁移路径是否能满足不同用户需要？", "status": "watch", "note": "官方帮助页提供了停止提供和导出说明，具体内容可用性仍取决于账户状态和时间窗口。", "evidenceRefs": ["sunset"] },
       { "question": "未来视频生成产品会把安全门槛设计成什么样的默认体验？", "status": "open", "note": "这是跨产品的后续研究问题，当前 Sora 档案不推断未来产品路线。", "evidenceRefs": ["safety"] }
     ],
     "keyMetrics": [
-      { "id": "lifecycle", "label": "档案状态", "value": "历史档案，不作为当前产品推荐", "definition": "官方帮助页对 Sora 停止提供的状态说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["sunset"], "caveat": "历史状态只描述产品可用性，不评价模型研究价值。" },
+      { "id": "lifecycle", "label": "分 surface 状态", "value": "Web / App 已停止；API 截至 2026-08-31 可用，计划 2026-09-24 退役", "definition": "官方帮助页分别说明 Sora 网页版、应用端与 API 的停止服务时间。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["sunset"], "caveat": "这是按入口拆开的生命周期快照，不替代对 API 账户、额度和迁移窗口的人工核对。" },
       { "id": "safety-surface", "label": "部署约束", "value": "视频生成需要身份、版权与滥用风险控制", "definition": "官方产品研究和系统卡对视频生成部署安全的定性说明。", "kind": "external-research", "asOf": "2026-08-30", "sourceRefs": ["safety", "sora2"], "caveat": "这是研究边界，不是某个版本的生产安全指标。" }
     ],
     "sources": [
@@ -274,11 +279,11 @@
       { "id": "sunset", "title": "What to know about the Sora discontinuation", "url": "https://help.openai.com/en/articles/20001152", "date": "2026-08-30", "type": "official" }
     ],
     "tabs": {
-      "summary": { "problem": "视频生成产品需要同时处理表达能力、部署安全和生命周期变化。", "whyAi": "生成模型能压缩制作成本，但拟真内容的外部影响让产品边界先于功能扩张。", "humanRole": "人负责判断内容权利、传播风险和停止服务后的迁移安排。", "decisionIds": ["研究到产品", "安全部署", "生命周期"] },
-      "mechanism": { "summary": "Sora 的档案机制由生成能力、部署约束和生命周期状态共同组成。", "system": ["文字或图像提示触发视频生成", "安全系统限制高风险内容", "官方帮助页维护停止提供后的用户路径"], "humanRole": "创作者负责内容权利和使用目的，产品方负责发布与下线沟通。", "failureModes": ["演示效果被误读为稳定能力", "拟真内容扩大滥用影响", "停止提供后用户仍按当前服务做决策"] },
-      "tradeoffs": { "summary": "Sora 的历史价值在于展示产品叙事如何被可用性和生命周期事实重新约束。", "rows": [{ "decision": "研究到产品", "gain": "让新能力被理解", "cost": "期待管理压力", "boundary": "区分演示、研究和可用产品" }, { "decision": "安全部署", "gain": "降低滥用风险", "cost": "可用表达受限", "boundary": "把安全条件写进首次体验" }, { "decision": "生命周期", "gain": "避免过时推荐", "cost": "失去当前选型价值", "boundary": "显示停止日期和迁移说明" }] },
-      "evidence": { "summary": "当前档案优先使用 OpenAI 官方发布、系统卡和帮助页，明确区分历史状态与模型研究价值。", "metricIds": ["lifecycle", "safety-surface"], "missing": "没有把历史演示视频或外部评论当成当前生产指标。" },
-      "evolution": { "summary": "产品从研究和发布档案转为生命周期复盘，当前页面不会暗示 Sora 仍可使用。", "timeline": [{ "date": "2024-12-09", "event": "官方发布 Sora 产品页面，描述从研究预览走向产品。", "type": "launch", "evidenceRefs": ["launch"] }, { "date": "2026-04-26", "event": "官方帮助页说明 Sora 产品停止提供，档案转为历史状态。", "type": "retirement", "evidenceRefs": ["sunset"] }], "migrationBoundary": "只适合作为视频生成产品生命周期和安全部署的案例研究，不适合作为当前生成服务选型。", "counterEvidence": "早期发布页面仍能说明产品设计意图，但不能覆盖停止提供后的当前可用性。" }
+      "summary": { "problem": "视频生成产品需要同时处理表达能力、部署安全和不同 surface 的生命周期变化。", "whyAi": "生成模型能压缩制作成本，但拟真内容的外部影响让产品边界先于功能扩张。", "humanRole": "人负责判断内容权利、传播风险和不同 surface 的迁移安排。", "decisionIds": ["研究到产品", "安全部署", "生命周期"] },
+      "mechanism": { "summary": "Sora 的档案机制由生成能力、部署约束和 web、app、API 三类 surface 的生命周期共同组成。", "system": ["文字或图像提示触发视频生成", "安全系统限制高风险内容", "官方帮助页分别维护不同 surface 的停止服务路径"], "humanRole": "创作者负责内容权利和使用目的，产品方负责发布、迁移与下线沟通。", "failureModes": ["演示效果被误读为稳定能力", "拟真内容扩大滥用影响", "把 web/app 的状态外推到 API，导致迁移判断失真"] },
+      "tradeoffs": { "summary": "Sora 的历史价值在于展示产品叙事如何被可用性和分 surface 的生命周期事实重新约束。", "rows": [{ "decision": "研究到产品", "gain": "让新能力被理解", "cost": "期待管理压力", "boundary": "区分演示、研究和可用产品" }, { "decision": "安全部署", "gain": "降低滥用风险", "cost": "可用表达受限", "boundary": "把安全条件写进首次体验" }, { "decision": "生命周期", "gain": "避免过时推荐", "cost": "需要维护多个入口的状态", "boundary": "按 surface 显示停止日期和迁移说明" }] },
+      "evidence": { "summary": "当前档案优先使用 OpenAI 官方发布、系统卡和帮助页，明确区分 web/app 的历史状态与 API 的计划退役窗口。", "metricIds": ["lifecycle", "safety-surface"], "missing": "没有把历史演示视频或外部评论当成当前生产指标。" },
+      "evolution": { "summary": "产品从研究和发布档案转为分 surface 生命周期复盘，页面明确保留 API 截至 2026-08-31 的可用窗口与计划退役日期。", "timeline": [{ "date": "2024-12-09", "event": "官方发布 Sora 产品页面，描述从研究预览走向产品。", "type": "launch", "evidenceRefs": ["launch"] }, { "date": "2026-04-26", "event": "官方帮助页说明 Sora 的 web 与 app 体验停止服务，两个 surface 进入历史状态。", "type": "retirement", "evidenceRefs": ["sunset"] }, { "date": "2026-08-31", "event": "截至该日，官方仍将 Sora API 列为可用窗口，并计划于 2026-09-24 退役。", "type": "boundary", "evidenceRefs": ["sunset"] }], "migrationBoundary": "web/app 不适合作为当前选型；在 2026-09-24 前若涉及 API 迁移，仍必须单独核对账户、额度、兼容性与退役窗口。", "counterEvidence": "web/app 的停止服务日期不能外推为 API 已经到达计划退役日，三个 surface 需要分开判断。" }
     }
   },
   {

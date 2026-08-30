@@ -624,6 +624,7 @@ a:focus-visible {
     width: min(980px, 100%);
     max-height: min(900px, 92vh);
     overflow: auto;
+    overflow-wrap: anywhere;
     padding: var(--ai-space-8);
     border: 1px solid var(--ai-line-strong);
     border-radius: var(--ai-radius-lg);
@@ -791,10 +792,59 @@ a:focus-visible {
     background: var(--ai-accent-soft);
 }
 
+.surface-statuses {
+    display: grid;
+    gap: var(--ai-space-4);
+}
+
+.surface-status-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--ai-space-3);
+}
+
+.surface-status-item {
+    display: grid;
+    min-width: 0;
+    gap: var(--ai-space-2);
+    padding: var(--ai-space-4);
+    border: 1px solid var(--ai-line);
+    border-radius: var(--ai-radius-sm);
+    background: var(--ai-surface);
+}
+
+.surface-status-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ai-space-2);
+    align-items: center;
+}
+
+.surface-status-item p {
+    color: var(--ai-ink-soft);
+    font-size: 0.86rem;
+}
+
+.surface-status-available {
+    background: var(--ai-sage-soft);
+    color: var(--ai-sage);
+}
+
+.surface-status-ended {
+    background: var(--ai-danger-soft);
+    color: var(--ai-danger);
+}
+
+.surface-status-sunset-scheduled {
+    background: var(--ai-gold-soft);
+    color: var(--ai-gold);
+}
+
 .detail-copy,
 .detail-panel p {
     margin: 0;
     color: var(--ai-ink-soft);
+    overflow-wrap: anywhere;
 }
 
 .detail-copy {
@@ -910,6 +960,7 @@ a:focus-visible {
     color: var(--ai-accent-deep);
     font-size: 1.7rem;
     letter-spacing: -0.04em;
+    overflow-wrap: anywhere;
 }
 
 .metric-definition,
@@ -1071,7 +1122,8 @@ a:focus-visible {
     .research-controls,
     .summary-grid,
     .mechanism-grid,
-    .boundary-grid {
+    .boundary-grid,
+    .surface-status-list {
         grid-template-columns: 1fr;
     }
 

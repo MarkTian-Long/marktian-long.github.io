@@ -10,6 +10,14 @@ const TAB_LABELS = {
     evolution: '演化与边界',
 };
 const VALID_METRIC_KINDS = new Set(['target', 'proxy', 'offline-measured', 'production-result', 'external-research']);
+const VALID_LIFECYCLES = new Set(['current', 'historical']);
+const VALID_UNCERTAINTY_STATUSES = new Set(['open', 'watch', 'bounded']);
+const VALID_SOURCE_TYPES = new Set(['official']);
+const VALID_TIMELINE_TYPES = new Set(['archive', 'boundary', 'launch', 'retirement']);
+const VALID_SURFACE_IDS = new Set(['web', 'app', 'api']);
+const VALID_SURFACE_STATUSES = new Set(['available', 'ended', 'sunset-scheduled']);
+const SLUG_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SAFE_ID_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N}_-]*$/u;
 const THEME_LABELS = {
     distribution: '分发',
     workflow: '工作流',
@@ -125,13 +133,31 @@ function isNonEmptyString(value) {
     return typeof value === 'string' && value.trim().length > 0;
 }
 
+function isSlugId(value) {
+    return typeof value === 'string' && SLUG_ID_PATTERN.test(value);
+}
+
+function isSafeId(value) {
+    return typeof value === 'string' && SAFE_ID_PATTERN.test(value);
+}
+
+function isStringArray(value, minimum = 0) {
+    return Array.isArray(value) && value.length >= minimum && value.every(isNonEmptyString);
+}
+
+function refsResolve(refs, ids, required = false) {
+    return Array.isArray(refs) && (!required || refs.length > 0) && refs.every(ref => typeof ref === 'string' && ids.has(ref));
+}
+
 function isValidProduct(product) {
-    if (!isObject(product) || !product.id || !product.name || !product.category) return false;
+    if (!isObject(product) || !isSlugId(product.id)) return false;
+    if (!isNonEmptyString(product.name) || !isNonEmptyString(product.company) || !isNonEmptyString(product.category) || !isNonEmptyString(product.logo) || !isNonEmptyString(product.tagline) || !isNonEmptyString(product.description)) return false;
+    if (!VALID_LIFECYCLES.has(product.lifecycle)) return false;
     if (!isIsoDate(product.archiveDate) || product.factReviewStatus !== '待人工事实复核') return false;
     if ('reviewedAt' in product || 'reviewDueAt' in product) return false;
     if (!isNonEmptyString(product.detailLink) || !isHttps(product.detailLink)) return false;
     if (!isObject(product.thesis) || !isNonEmptyString(product.thesis.text) || !Array.isArray(product.thesis.evidenceRefs)) return false;
-    if (!Array.isArray(product.decisionThemes) || product.decisionThemes.length < 3) return false;
+    if (!Array.isArray(product.decisionThemes) || product.decisionThemes.length < 3 || !product.decisionThemes.every(theme => isNonEmptyString(theme) && Object.prototype.hasOwnProperty.call(THEME_LABELS, theme))) return false;
     if (!Array.isArray(product.decisions) || product.decisions.length < 3) return false;
     if (!Array.isArray(product.uncertainties) || product.uncertainties.length < 2) return false;
     if (!Array.isArray(product.sources) || product.sources.length < 2) return false;
@@ -140,30 +166,48 @@ function isValidProduct(product) {
 
     const sourceIds = new Set();
     for (const source of product.sources) {
-        if (!source || !isNonEmptyString(source.id) || sourceIds.has(source.id) || !isNonEmptyString(source.title) || !isIsoDate(source.date) || !isHttps(source.url)) return false;
+        if (!isObject(source) || !isSlugId(source.id) || sourceIds.has(source.id) || !isNonEmptyString(source.title) || !isIsoDate(source.date) || !VALID_SOURCE_TYPES.has(source.type) || !isHttps(source.url)) return false;
         sourceIds.add(source.id);
     }
-    const refsResolve = refs => Array.isArray(refs) && refs.length > 0 && refs.every(ref => sourceIds.has(ref));
-    if (!refsResolve(product.thesis.evidenceRefs)) return false;
-    const decisionIds = new Set(product.decisions.map(decision => decision?.id));
+    if (!refsResolve(product.thesis.evidenceRefs, sourceIds, true)) return false;
+    const decisionIds = new Set();
+    for (const decision of product.decisions) {
+        if (!isObject(decision) || !isSafeId(decision.id) || decisionIds.has(decision.id) || !isNonEmptyString(decision.title) || !isNonEmptyString(decision.choice) || !isNonEmptyString(decision.why) || !isNonEmptyString(decision.tradeoff) || !refsResolve(decision.evidenceRefs, sourceIds, true)) return false;
+        decisionIds.add(decision.id);
+    }
     if (decisionIds.size !== product.decisions.length) return false;
-    if (product.decisions.some(decision => !decision || !isNonEmptyString(decision.id) || !isNonEmptyString(decision.title) || !isNonEmptyString(decision.choice) || !isNonEmptyString(decision.why) || !isNonEmptyString(decision.tradeoff) || !refsResolve(decision.evidenceRefs))) return false;
-    if (product.uncertainties.some(uncertainty => !uncertainty || !isNonEmptyString(uncertainty.question) || !['open', 'watch', 'bounded'].includes(uncertainty.status) || !isNonEmptyString(uncertainty.note) || !Array.isArray(uncertainty.evidenceRefs) || uncertainty.evidenceRefs.some(ref => !sourceIds.has(ref)))) return false;
-    const metricIds = new Set(product.keyMetrics.map(metric => metric?.id));
+    if (product.uncertainties.some(uncertainty => !isObject(uncertainty) || !isNonEmptyString(uncertainty.question) || !VALID_UNCERTAINTY_STATUSES.has(uncertainty.status) || !isNonEmptyString(uncertainty.note) || !refsResolve(uncertainty.evidenceRefs, sourceIds))) return false;
+    const metricIds = new Set();
+    if (product.keyMetrics.some(metric => !isObject(metric) || !isSlugId(metric.id) || metricIds.has(metric.id) || !isNonEmptyString(metric.label) || !isNonEmptyString(metric.value) || !isNonEmptyString(metric.definition) || !VALID_METRIC_KINDS.has(metric.kind) || !isIsoDate(metric.asOf) || !refsResolve(metric.sourceRefs, sourceIds, true) || !isNonEmptyString(metric.caveat))) return false;
+    product.keyMetrics.forEach(metric => metricIds.add(metric.id));
     if (metricIds.size !== product.keyMetrics.length) return false;
-    if (product.keyMetrics.some(metric => !metric || !isNonEmptyString(metric.id) || !isNonEmptyString(metric.label) || !isNonEmptyString(metric.value) || !isNonEmptyString(metric.definition) || !VALID_METRIC_KINDS.has(metric.kind) || !isIsoDate(metric.asOf) || !refsResolve(metric.sourceRefs) || !isNonEmptyString(metric.caveat))) return false;
 
     const summary = product.tabs.summary;
     const mechanism = product.tabs.mechanism;
     const tradeoffs = product.tabs.tradeoffs;
     const evidence = product.tabs.evidence;
     const evolution = product.tabs.evolution;
-    if (!isNonEmptyString(summary.problem) || !isNonEmptyString(summary.whyAi) || !isNonEmptyString(summary.humanRole) || !Array.isArray(summary.decisionIds) || !summary.decisionIds.length || summary.decisionIds.some(id => !decisionIds.has(id))) return false;
-    if (!isNonEmptyString(mechanism.summary) || !Array.isArray(mechanism.system) || !mechanism.system.every(isNonEmptyString) || !isNonEmptyString(mechanism.humanRole) || !Array.isArray(mechanism.failureModes) || !mechanism.failureModes.every(isNonEmptyString)) return false;
-    if (!isNonEmptyString(tradeoffs.summary) || !Array.isArray(tradeoffs.rows) || tradeoffs.rows.length < 1 || tradeoffs.rows.some(row => !row || !isNonEmptyString(row.decision) || !isNonEmptyString(row.gain) || !isNonEmptyString(row.cost) || !isNonEmptyString(row.boundary))) return false;
-    if (!isNonEmptyString(evidence.summary) || !Array.isArray(evidence.metricIds) || !evidence.metricIds.length || evidence.metricIds.some(id => !metricIds.has(id)) || !isNonEmptyString(evidence.missing)) return false;
+    if (!isNonEmptyString(summary.problem) || !isNonEmptyString(summary.whyAi) || !isNonEmptyString(summary.humanRole) || !refsResolve(summary.decisionIds, decisionIds, true) || new Set(summary.decisionIds).size !== summary.decisionIds.length) return false;
+    if (!isNonEmptyString(mechanism.summary) || !isStringArray(mechanism.system, 1) || !isNonEmptyString(mechanism.humanRole) || !isStringArray(mechanism.failureModes, 1)) return false;
+    if (!isNonEmptyString(tradeoffs.summary) || !Array.isArray(tradeoffs.rows) || tradeoffs.rows.length < 1 || tradeoffs.rows.some(row => !isObject(row) || !decisionIds.has(row.decision) || !isNonEmptyString(row.gain) || !isNonEmptyString(row.cost) || !isNonEmptyString(row.boundary))) return false;
+    if (!isNonEmptyString(evidence.summary) || !refsResolve(evidence.metricIds, metricIds, true) || new Set(evidence.metricIds).size !== evidence.metricIds.length || !isNonEmptyString(evidence.missing)) return false;
     if (!isNonEmptyString(evolution.summary) || !Array.isArray(evolution.timeline) || evolution.timeline.length < 1 || !isNonEmptyString(evolution.migrationBoundary) || !isNonEmptyString(evolution.counterEvidence)) return false;
-    if (evolution.timeline.some(event => !event || !isIsoDate(event.date) || !isNonEmptyString(event.event) || !isNonEmptyString(event.type) || !refsResolve(event.evidenceRefs))) return false;
+    if (evolution.timeline.some(event => !isObject(event) || !isIsoDate(event.date) || !isNonEmptyString(event.event) || !VALID_TIMELINE_TYPES.has(event.type) || !refsResolve(event.evidenceRefs, sourceIds, true))) return false;
+
+    if (product.surfaces !== undefined) {
+        if (!Array.isArray(product.surfaces) || !product.surfaces.length) return false;
+        const surfaceIds = new Set();
+        for (const surface of product.surfaces) {
+            if (!isObject(surface) || !VALID_SURFACE_IDS.has(surface.id) || surfaceIds.has(surface.id) || !isNonEmptyString(surface.label) || !VALID_SURFACE_STATUSES.has(surface.status) || !isNonEmptyString(surface.summary) || !refsResolve(surface.evidenceRefs, sourceIds, true)) return false;
+            surfaceIds.add(surface.id);
+            for (const field of ['statusDate', 'asOf', 'retirementDate']) {
+                if (surface[field] !== undefined && !isIsoDate(surface[field])) return false;
+            }
+            if (surface.status === 'ended' && !isIsoDate(surface.statusDate)) return false;
+            if (surface.status === 'available' && !isIsoDate(surface.asOf)) return false;
+            if (surface.status === 'sunset-scheduled' && (!isIsoDate(surface.asOf) || !isIsoDate(surface.retirementDate))) return false;
+        }
+    }
     return true;
 }
 
@@ -172,10 +216,7 @@ function sourceMap(product) {
 }
 
 function sourceCount(product) {
-    const refs = new Set(product.thesis.evidenceRefs);
-    product.decisions.forEach(decision => decision.evidenceRefs.forEach(ref => refs.add(ref)));
-    product.keyMetrics.forEach(metric => metric.sourceRefs.forEach(ref => refs.add(ref)));
-    return refs.size;
+    return product.sources.length;
 }
 
 function formatDate(date) {
@@ -205,6 +246,40 @@ function timelineTypeLabel(type) {
     return TIMELINE_TYPE_LABELS[type] || type;
 }
 
+function surfaceStatusLabel(status) {
+    return {
+        available: '当前可用',
+        ended: '已停止',
+        'sunset-scheduled': '计划退役',
+    }[status] || status;
+}
+
+function surfaceSummary(product) {
+    return (product.surfaces || []).map(surface => `${surface.label}：${surface.summary}`).join('；');
+}
+
+function isVisibleFocusable(element) {
+    return Boolean(element && element.isConnected && !element.hidden && !element.disabled && element.offsetParent !== null);
+}
+
+function focusFirstVisibleControl() {
+    const candidates = [
+        elements.productGrid.querySelector('.product-open'),
+        elements.clearFilters,
+        elements.retryLoad,
+    ];
+    const target = candidates.find(isVisibleFocusable);
+    if (target) target.focus();
+    return target;
+}
+
+function focusFilterOption(group, value) {
+    const target = [...document.querySelectorAll('.filter-option')]
+        .find(button => button.dataset.filterGroup === group && button.dataset.value === value && isVisibleFocusable(button));
+    if (target) target.focus();
+    return target;
+}
+
 function renderFilterGroup(container, values, active, group, allLabel) {
     clear(container);
     const options = ['all', ...values];
@@ -221,6 +296,7 @@ function renderFilterGroup(container, values, active, group, allLabel) {
             else state.theme = value;
             renderFilters();
             renderGrid();
+            focusFilterOption(group, value);
         });
         container.append(button);
     });
@@ -281,7 +357,10 @@ function createCard(product) {
     append(open, top, identity, thesis, tags, evidence, footer);
     card.append(open);
     if (product.lifecycle === 'historical') {
-        const historical = createElement('p', 'card-warning', '历史状态：不作为当前选型推荐');
+        const warning = product.surfaces?.length
+            ? `按 surface：${surfaceSummary(product)}`
+            : '历史状态：不作为当前选型推荐';
+        const historical = createElement('p', 'card-warning', warning);
         card.append(historical);
     }
     return card;
@@ -324,6 +403,7 @@ function showLoadError(error) {
 }
 
 async function loadProducts() {
+    const retryWasFocused = document.activeElement === elements.retryLoad;
     state.loading = true;
     setHidden(elements.loadError, true);
     setHidden(elements.partialLoadNotice, true);
@@ -348,7 +428,12 @@ async function loadProducts() {
             error.code = 'invalid-json';
             throw error;
         }
-        const valid = payload.filter(isValidProduct);
+        const seenProductIds = new Set();
+        const valid = payload.filter(product => {
+            if (!isValidProduct(product) || seenProductIds.has(product.id)) return false;
+            seenProductIds.add(product.id);
+            return true;
+        });
         if (!valid.length) {
             const error = new Error('No valid records');
             error.code = 'no-valid-records';
@@ -365,6 +450,7 @@ async function loadProducts() {
             elements.partialLoadMessage.textContent = `已保留 ${valid.length} 份档案，跳过 ${payload.length - valid.length} 条无效记录。`;
         }
         handleDeepLink();
+        if (retryWasFocused && elements.detailModal.classList.contains('hidden')) focusFirstVisibleControl();
     } catch (error) {
         console.error('[ai-insights] load failed', error);
         showLoadError(error);
@@ -412,11 +498,28 @@ function makeEvidenceRefs(product, refs) {
     return wrapper;
 }
 
+function renderSurfaceStatuses(product) {
+    if (!product.surfaces?.length) return null;
+    const section = createElement('section', 'surface-statuses');
+    append(section, makeSectionTitle('SURFACE / 状态', '同一产品，不同入口分别判断'));
+    const list = createElement('div', 'surface-status-list');
+    product.surfaces.forEach(surface => {
+        const item = createElement('article', 'surface-status-item');
+        const head = createElement('div', 'surface-status-head');
+        append(head, createElement('strong', '', surface.label), makeBadge(surfaceStatusLabel(surface.status), `surface-status-${surface.status}`));
+        append(item, head, createElement('p', '', surface.summary), makeEvidenceRefs(product, surface.evidenceRefs));
+        list.append(item);
+    });
+    section.append(list);
+    return section;
+}
+
 function renderSummaryPanel(product) {
     const panel = createElement('section', 'detail-panel');
     panel.append(makeSectionTitle('01 / 判断', '先看结论，再看取舍'));
     const thesis = createElement('div', 'thesis-callout');
     append(thesis, createElement('span', 'detail-label', '我的判断'), createElement('p', '', product.thesis.text), makeEvidenceRefs(product, product.thesis.evidenceRefs));
+    const surfaces = renderSurfaceStatuses(product);
     const grid = createElement('div', 'summary-grid');
     append(grid,
         makeTextBlock('问题', product.tabs.summary.problem),
@@ -429,7 +532,7 @@ function renderSummaryPanel(product) {
         append(item, createElement('span', 'decision-number', `0${index + 1}`), createElement('div', '', createElement('strong', '', decision.title), createElement('p', '', decision.choice)));
         decisions.append(item);
     });
-    append(panel, thesis, grid, decisions);
+    append(panel, thesis, surfaces, grid, decisions);
     return panel;
 }
 
@@ -567,7 +670,7 @@ function renderDetail(product) {
         button.dataset.tab = tabId;
         button.setAttribute('role', 'tab');
         button.setAttribute('aria-controls', `tab-${tabId}`);
-        button.addEventListener('click', () => switchTab(tabId, true));
+        button.addEventListener('click', () => switchTab(tabId, { focus: true }));
         tabs.append(button);
     });
     const panels = [renderSummaryPanel(product), renderMechanismPanel(product), renderTradeoffsPanel(product), renderEvidencePanel(product), renderEvolutionPanel(product)];
@@ -587,7 +690,25 @@ function renderDetail(product) {
     append(elements.detailContent, header, summary, metaLine, tabs, ...panels, closeHint, archiveMark);
 }
 
-function switchTab(tabId, focus) {
+function detailPageUrl(productId, tabId) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('product', productId);
+    url.searchParams.set('tab', tabId);
+    return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function listPageUrl() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('product');
+    url.searchParams.delete('tab');
+    return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function pushHistoryUrl(url) {
+    if (window.history && window.history.pushState) window.history.pushState({}, '', url);
+}
+
+function switchTab(tabId, { focus = false, syncHistory = true } = {}) {
     if (!TAB_IDS.includes(tabId)) return;
     state.activeTab = tabId;
     document.querySelectorAll('.detail-tab').forEach(button => {
@@ -602,33 +723,45 @@ function switchTab(tabId, focus) {
         panel.hidden = id !== tabId;
         panel.classList.toggle('is-active', id === tabId);
     });
+    if (syncHistory && state.activeProductId) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('product') !== state.activeProductId || params.get('tab') !== tabId) pushHistoryUrl(detailPageUrl(state.activeProductId, tabId));
+    }
     if (focus) document.getElementById(`tab-button-${tabId}`)?.focus();
 }
 
-function openDetail(id, trigger, tabId = 'summary') {
+function openDetail(id, trigger, tabId = 'summary', { syncHistory = true } = {}) {
     const product = state.products.find(item => item.id === id);
     if (!product) return;
     state.activeProductId = id;
     state.activeTab = TAB_IDS.includes(tabId) ? tabId : 'summary';
-    state.lastFocused = trigger || document.activeElement;
+    const candidate = trigger || document.activeElement;
+    state.lastFocused = isVisibleFocusable(candidate) ? candidate : elements.productGrid.querySelector('.product-open');
+    if (syncHistory) pushHistoryUrl(detailPageUrl(id, state.activeTab));
     renderDetail(product);
     elements.detailModal.dataset.productId = id;
     elements.detailModal.setAttribute('aria-hidden', 'false');
     setHidden(elements.detailModal, false);
     document.body.classList.add('modal-open');
-    switchTab(state.activeTab, false);
+    switchTab(state.activeTab, { focus: false, syncHistory: false });
     requestAnimationFrame(() => elements.detailClose.focus());
 }
 
-function closeDetail() {
+function closeDetail({ syncHistory = true } = {}) {
+    const wasOpen = !elements.detailModal.classList.contains('hidden');
+    const restore = state.lastFocused;
+    if (syncHistory && wasOpen) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('product') || params.has('tab')) pushHistoryUrl(listPageUrl());
+    }
     setHidden(elements.detailModal, true);
     elements.detailModal.setAttribute('aria-hidden', 'true');
     elements.detailModal.removeAttribute('data-product-id');
     document.body.classList.remove('modal-open');
-    const restore = state.lastFocused;
     state.activeProductId = null;
     state.lastFocused = null;
-    if (restore && restore.isConnected) restore.focus();
+    if (!isVisibleFocusable(restore)) focusFirstVisibleControl();
+    else restore.focus();
 }
 
 function focusableInModal() {
@@ -659,7 +792,7 @@ function handleModalKeyboard(event) {
     }
     if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
         const activeElement = document.activeElement;
-        const isTabNavigationContext = activeElement instanceof Element && (activeElement.matches('[role="tab"]') || activeElement.closest('[role="tablist"]'));
+        const isTabNavigationContext = activeElement instanceof Element && activeElement.matches('[role="tab"], [role="tablist"]');
         if (!isTabNavigationContext) return;
         const current = TAB_IDS.indexOf(state.activeTab);
         let next = current;
@@ -668,7 +801,7 @@ function handleModalKeyboard(event) {
         if (event.key === 'Home') next = 0;
         if (event.key === 'End') next = TAB_IDS.length - 1;
         event.preventDefault();
-        switchTab(TAB_IDS[next], true);
+        switchTab(TAB_IDS[next], { focus: true });
     }
 }
 
@@ -677,14 +810,19 @@ function handleDeepLink() {
     const productId = params.get('product');
     const requestedTab = params.get('tab');
     setHidden(elements.deepLinkNotice, true);
-    if (!productId && !requestedTab) return;
+    if (!productId && !requestedTab) {
+        if (!elements.detailModal.classList.contains('hidden')) closeDetail({ syncHistory: false });
+        return;
+    }
     if (!productId) {
+        if (!elements.detailModal.classList.contains('hidden')) closeDetail({ syncHistory: false });
         elements.deepLinkNotice.textContent = '无法打开详情：URL 缺少 product 参数，已保留档案列表。';
         setHidden(elements.deepLinkNotice, false);
         return;
     }
     const product = state.products.find(item => item.id === productId);
     if (!product) {
+        if (!elements.detailModal.classList.contains('hidden')) closeDetail({ syncHistory: false });
         elements.deepLinkNotice.textContent = `无法打开产品档案“${productId}”：未找到对应记录。`;
         setHidden(elements.deepLinkNotice, false);
         return;
@@ -693,7 +831,7 @@ function handleDeepLink() {
         elements.deepLinkNotice.textContent = `未识别详情分区“${requestedTab}”，已打开 ${product.name} 的决策摘要。`;
         setHidden(elements.deepLinkNotice, false);
     }
-    openDetail(productId, null, requestedTab || 'summary');
+    openDetail(productId, null, requestedTab || 'summary', { syncHistory: false });
 }
 
 elements.clearFilters.addEventListener('click', () => {
@@ -708,5 +846,8 @@ elements.detailModal.addEventListener('click', event => {
     if (event.target === elements.detailModal) closeDetail();
 });
 document.addEventListener('keydown', handleModalKeyboard);
+window.addEventListener('popstate', () => {
+    if (!state.loading) handleDeepLink();
+});
 
 loadProducts();
