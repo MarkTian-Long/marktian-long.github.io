@@ -8,11 +8,12 @@
 
 | 区块 | 内容 |
 |------|------|
-| Hero | 一句话定位 + 三步引导（选场景 → 看决策怎么变 → 跑真实对话） |
+| Hero | 一句话定位 + 三步引导（选场景 → 看决策怎么变 → 跑完整模拟链路）+ 首屏可信边界 |
 | ① 业务场景选择器 | 银行 / 大型电商促销 / 创业公司 FAQ 三个场景，选中后点亮业务特性标签（错误容忍 / 性能约束 / 运营合规三维度） |
+| 场景验收卡 | 每个场景同步展示成功指标、硬护栏、成本约束、HITL 策略；每项标明目标或代理口径 |
 | ② 产品决策矩阵 | 9 张决策卡，每张含：一句产品判断 + 评估维度 + 三场景取舍表 + **PM·算法分工徽章** + 证据（真实案例 / 数据）。选场景后自动高亮该场景的取舍行并改写卡顶结论 |
 | ③ L4 请求链路图 | 一条请求的完整路径（输入合规 → 意图路由 → RAG/Text-to-SQL 双轨 → 生成 → 输出合规 → 返回）+ 横切基础设施层；点节点跳到对应决策卡 |
-| ④ 实战对话 Demo | 两列视角（用户 / 系统），4 条链路（FAQ / 物流 Text-to-SQL / 退换货 / 投诉→HITL） |
+| ④ 实战对话 Demo | 两列视角（用户 / 系统），4 条链路（FAQ / 物流 Text-to-SQL / 退换货 / 投诉→HITL），另有四类故障演练、运行复盘与安全 JSON 导出 |
 
 ## 分工徽章（全站视觉锚点）
 
@@ -22,9 +23,11 @@
 - 🟩 **算法主导**（绿描边）：解析 / Chunking、延迟优化…
 - 🟧 **共同决策**（蓝橙渐变）：Reranker 引入、主模型选型…
 
-## 对话引擎：Mock 预演
+## 可信边界与对话引擎：Mock 预演
 
-对话 Demo 走预设脚本逐步播放 Agent 链路 + HITL 触发，**稳定、不耗 token、断网可演**，适合方案研讨与产品演示。零依赖、零 API key。
+页面顶部明确区分两层：场景切换、节点状态转移、guardrail 分支、HITL 动作、运行复盘和导出是在浏览器中真实执行的交互；Agent 输出、知识库片段、订单/账户数据和坐席回复是预设内容。页面不连接真实模型、数据库、账号或客服系统，因此不把模拟链路称为真实对话，也不宣称生产准确率、延迟、成本或节省效果。
+
+对话 Demo 走预设脚本逐步播放 Agent 链路 + HITL 触发，**稳定、不耗 token、断网可演**，适合方案研讨与产品演示。零 API key。
 
 **Demo 随顶部场景联动**：银行 / 电商 / 创业各有一套贴合行业的 mock 对话（如银行演「查账户余额」「盗刷触发 HITL」，电商演「查订单物流」「315 投诉」，创业演「查订阅」「数据丢失投诉」）。顶部选什么场景，下方 Demo 就演什么。
 
@@ -36,19 +39,31 @@ FAQ 链:    Router → FAQ Agent
 投诉链:    Router → 情绪识别 → 升级判断 → [need_human] 暂停等人工 / [else] 安抚回复
 ```
 
-预设脚本与 Agent 定义都在 `gen_index.js` 的 `MOCK_SCRIPT` / `buildAgents()` 中结构化定义，改内容后重跑生成脚本即可。
+故障演练下拉框覆盖四类边界：知识过期、Prompt 注入、未授权数据查询、低置信意图。每个场景都有独立输入、触发节点、预期护栏、处置结果和风险等级；运行会真实改变链路节点为拦截、降级或等待人工。低置信路径可在 HITL 卡片上批准安抚、直接转人工或升级主管。
+
+每次运行结束都会生成复盘：经过节点、触发护栏、人工动作和待处理项。点击“导出安全 JSON”可下载当前场景的 9 张决策卡、4 项验收口径和脱敏运行轨迹；导出不包含用户原始输入、个人信息或虚构的性能数字。重置或切换场景会清空旧轨迹、日志和人工卡片。
+
+预设脚本、Agent 定义、验收口径、故障案例和页面结构都在 `gen_index.js` 中结构化定义，`index.html` 是生成产物，不直接编辑。
 
 ## 设计依据
 
-决策框架来自博客《从零搭建一个 LLM 智能客服：完整技术链路与关键决策》（`docs/blog/llm-customer-service-tech-guide.md`）。页面内的数据与案例均标注来源（如混合检索召回 78→91%、语义缓存降本 68.8%、Air Canada 客服幻觉判例）。
+决策框架来自博客《从零搭建一个 LLM 智能客服：完整技术链路与关键决策》（`docs/blog/llm-customer-service-tech-guide.md`）。页面保留定性决策依据；带数字的外部案例必须带来源日期与链接，例如 [Air Canada 客服幻觉判例（2024-02-20）](https://aibusiness.com/nlp/air-canada-held-responsible-for-chatbot-s-hallucinations-)。页面不把外部数字当成本工具的效果承诺。
 
 ## 文件结构
 
 ```
 tools/service-agent/
-├── index.html        # 主文件（由 gen_index.js 生成，约 64KB）
-├── gen_index.js      # 生成源（数据驱动：决策卡 / 场景 / mock 脚本）
+├── index.html        # 主文件（由 gen_index.js 生成）
+├── gen_index.js      # 唯一生成源（决策卡 / 场景 / mock / 故障 / 验收数据）
 └── README.md
 ```
 
-> `index.html` 由生成脚本产出。如需修改，编辑生成脚本逻辑后重新 `node gen_index.js`，或直接用 Edit 精确替换 `index.html`。
+生成与检查：
+
+```bash
+node tools/service-agent/gen_index.js --check
+node tools/service-agent/gen_index.js --write
+node tools/service-agent/gen_index.js --candidate build/candidate-site/service-agent/index.html
+```
+
+只编辑 `gen_index.js`，再显式运行 `--write` 更新 `index.html`。
