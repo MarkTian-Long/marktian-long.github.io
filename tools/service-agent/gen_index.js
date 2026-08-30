@@ -1783,6 +1783,10 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
+function normalizeLineEndings(value) {
+  return value.replace(/\r\n?/g, '\n');
+}
+
 const publicPath = path.join(__dirname, 'index.html');
 const candidatePath = GENERATOR_MODE === 'candidate' ? path.resolve(GENERATOR_ARGS[1] || '') : null;
 if (GENERATOR_MODE === 'candidate') {
@@ -1795,8 +1799,9 @@ if (GENERATOR_MODE === 'candidate') {
 } else {
   const current = fs.existsSync(publicPath) ? fs.readFileSync(publicPath, 'utf8') : '';
   if (GENERATOR_MODE === 'check') {
-    if (current !== html) process.exitCode = 1;
-    console.log(current === html ? '✓ check: public artifact is current' : '✗ check: public artifact is stale');
+    const isCurrent = normalizeLineEndings(current) === normalizeLineEndings(html);
+    if (!isCurrent) process.exitCode = 1;
+    console.log(isCurrent ? '✓ check: public artifact is current' : '✗ check: public artifact is stale');
   } else {
     fs.writeFileSync(publicPath, html, 'utf8');
     console.log('✓ 写出', publicPath, '·', html.length, 'bytes ·', CARDS.length, '决策卡');

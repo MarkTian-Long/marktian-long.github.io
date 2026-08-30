@@ -2,6 +2,7 @@
 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
@@ -23,6 +24,23 @@ function readPublicData() {
   const raw = match && match[1];
   assert.ok(raw, 'generated artifact must expose its structured public data');
   return JSON.parse(raw);
+}
+
+function runGeneratorWithTemporaryArtifact(content) {
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'service-agent-depth-'));
+  const temporaryGeneratorPath = path.join(temporaryRoot, 'gen_index.js');
+  const temporaryArtifactPath = path.join(temporaryRoot, 'index.html');
+  fs.copyFileSync(generatorPath, temporaryGeneratorPath);
+  fs.writeFileSync(temporaryArtifactPath, content, 'utf8');
+
+  try {
+    return spawnSync(process.execPath, [temporaryGeneratorPath, '--check'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    });
+  } finally {
+    fs.rmSync(temporaryRoot, { recursive: true, force: true });
+  }
 }
 
 test('service-agent keeps the mock boundary visible in the first screen', () => {
@@ -121,4 +139,19 @@ test('the generated public artifact is current under the generator check mode', 
   });
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(`${result.stdout}${result.stderr}`, /check: public artifact is current/);
+});
+
+test('generator check accepts CRLF and CR artifacts without changing generated content', () => {
+  const artifact = readArtifact();
+  const artifactBefore = fs.readFileSync(artifactPath);
+  const normalizedArtifact = artifact.replace(/\r\n?/g, '\n');
+
+  for (const lineEnding of ['\r\n', '\r']) {
+    const lineEndingArtifact = normalizedArtifact.replace(/\n/g, lineEnding);
+    const result = runGeneratorWithTemporaryArtifact(lineEndingArtifact);
+    assert.equal(result.status, 0, `${lineEnding === '\r' ? 'CR' : 'CRLF'}\n${result.stdout}\n${result.stderr}`);
+    assert.match(`${result.stdout}${result.stderr}`, /check: public artifact is current/);
+  }
+
+  assert.deepEqual(fs.readFileSync(artifactPath), artifactBefore);
 });
