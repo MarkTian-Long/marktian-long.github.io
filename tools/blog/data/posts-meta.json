@@ -3,7 +3,6 @@
   "image_contract": {
     "version": 1,
     "legacy_without_visuals": [
-      "alignment-under-change",
       "ai-rd-self-acceleration-rsi",
       "enterprise-agent-governance",
       "ai-work-system-competition",
@@ -79,14 +78,14 @@
         "inline": []
       },
       "relations": [
-        { "slug": "harness-engineering", "type": "builds_on" }
+        { "slug": "alignment-under-change", "type": "builds_on" }
       ]
     },
     {
       "slug": "alignment-under-change",
       "date": "2026.08",
       "title": "当人和 AI 都在改变，“对齐”还能一次完成吗？",
-      "summary": "当 AI 具备长期记忆、持续适应和可修改的 Harness，而人也会在互动中被 AI 影响，对齐就不再只是把固定价值写进模型。本文从 Alignment、Continual Learning 和个人 Harness 的变化治理出发，讨论哪些规则可以改、哪些信息应留在模型外部，以及什么样的验证机制才配让一次变化长期留下。",
+      "summary": "过去谈 AI Alignment，往往隐含着一个静态假设：人提供目标，AI 学会这个目标。但当 AI 开始长期记忆、持续适应甚至修改自身的 Harness，而人也会在长期互动中被 AI 影响，对齐越来越不像一个训练完成就结束的问题，更像一个持续治理过程：什么可以变，什么不该轻易变，以及一次变化什么时候有资格长期留下来。",
       "share_quote": "我们不只需要决定 AI 今天应该是什么样，还要决定它和我们明天可以怎样一起变化。",
       "tags": [
         "技术判断",
@@ -106,8 +105,18 @@
       ],
       "category": "技术",
       "url": "posts/alignment-under-change.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/alignment-under-change/candidate-change-gate.webp",
+            "alt": "候选变化通过独立验证门后分流为可保留的长期模块或可退役的归档项",
+            "caption": "候选变化先经独立验证，才进入长期机制；未通过或已失效的变化应保留在可退役状态。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      },
       "relations": [
-        { "slug": "harness-engineering", "type": "builds_on" },
         { "slug": "memory-system", "type": "builds_on" },
         { "slug": "llm-soft-quality", "type": "builds_on" },
         { "slug": "human-ai-boundary-shift", "type": "builds_on" }

@@ -63,6 +63,16 @@ test('legacy posts may omit visuals', () => {
   );
 });
 
+test('posts may register explanatory inline images without a cover', () => {
+  const current = post('body-only-post', { inline: [inline('body-only-post')] });
+  assert.doesNotThrow(() => validateImageContract(metadata([current])));
+});
+
+test('posts without a cover must retain one explanatory inline image', () => {
+  const current = post('empty-visual-post', { inline: [] });
+  assert.throws(() => validateImageContract(metadata([current])), /empty-visual-post.*without a cover.*inline/i);
+});
+
 test('the image contract and legacy exemption list are explicit and exact', () => {
   const legacy = post('legacy-boundary');
   assert.throws(
@@ -183,6 +193,12 @@ test('resolvePostCover uses the article cover or the configured legacy fallback'
   const currentCover = cover('new-post');
   assert.deepEqual(resolvePostCover(post('new-post', { cover: currentCover, inline: [] }), config), currentCover);
   assert.deepEqual(resolvePostCover(post('legacy-post'), config), {
+    src: 'assets/images/og-cover.png',
+    alt: 'Leo · AI · Product · Builder',
+    width: 1200,
+    height: 630,
+  });
+  assert.deepEqual(resolvePostCover(post('body-only-post', { inline: [inline('body-only-post')] }), config), {
     src: 'assets/images/og-cover.png',
     alt: 'Leo · AI · Product · Builder',
     width: 1200,

@@ -17,14 +17,33 @@ function postBody(html) {
   throw new Error('post-body is not closed');
 }
 
-function editorialBody(html) {
-  return postBody(html)
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function generatedInlineFigure(image) {
+  return '<figure class="post-figure">\n'
+    + `  <img src="../../../${image.src}" alt="${escapeHtml(image.alt)}" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" />\n`
+    + `  <figcaption>${escapeHtml(image.caption)}</figcaption>\n`
+    + '</figure>';
+}
+
+function editorialBody(html, inlineImages = []) {
+  let body = postBody(html).replace(/\r\n/g, '\n')
     .replace(/<div class="related-posts"[\s\S]*?<nav class="post-nav"/g, '<nav class="post-nav"')
     .replace(/<section class="continue-reading"[\s\S]*?<nav class="post-nav"/g, '<nav class="post-nav"');
+  for (const image of inlineImages) body = body.replace(generatedInlineFigure(image), '');
+  return body.replace(/\n{2,}/g, '\n');
 }
 
 function main() {
   const tracked = execFileSync('git', ['ls-files', 'tools/blog/posts'], { cwd: rootDir, encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
+  const metadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'));
+  const postsBySlug = new Map(metadata.posts.map((post) => [post.slug, post]));
   const changed = [];
   for (const relPath of tracked) {
     try {
@@ -34,11 +53,13 @@ function main() {
     }
     const baseline = execFileSync('git', ['show', `HEAD:${relPath}`], { cwd: rootDir, encoding: 'utf8' });
     const current = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
-    if (editorialBody(baseline).replace(/\r\n/g, '\n') !== editorialBody(current).replace(/\r\n/g, '\n')) changed.push(relPath);
+    const slug = path.basename(relPath, '.html');
+    const inlineImages = (postsBySlug.get(slug)?.visuals?.inline || []);
+    if (editorialBody(baseline, inlineImages) !== editorialBody(current, inlineImages)) changed.push(relPath);
   }
   if (changed.length) throw new Error(`Published article body changed: ${changed.join(', ')}`);
   console.log(`PASS historical post-body integrity: ${tracked.length} tracked articles unchanged.`);
 }
 
 if (require.main === module) main();
-module.exports = { postBody, editorialBody };
+module.exports = { postBody, editorialBody, generatedInlineFigure };

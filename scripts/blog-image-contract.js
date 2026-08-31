@@ -26,6 +26,13 @@ function assertExactKeys(value, keys, label) {
   }
 }
 
+function assertVisualKeys(value, label) {
+  const keys = Object.keys(value);
+  if (!keys.includes('inline') || keys.some(key => key !== 'cover' && key !== 'inline')) {
+    throw new Error(`${label} must contain inline and may optionally contain cover`);
+  }
+}
+
 function assertText(value, label) {
   if (typeof value !== 'string' || !value.trim() || value !== value.trim() || value.length > MAX_TEXT_LENGTH) {
     throw new Error(`${label} must be trimmed text between 1 and ${MAX_TEXT_LENGTH} characters`);
@@ -123,14 +130,17 @@ function validateImageContract(metadata) {
     }
     if (exempt) throw new Error(`Post ${post.slug} is still legacy-exempt but already has visuals`);
     assertPlainObject(post.visuals, `Post ${post.slug} visuals`);
-    assertExactKeys(post.visuals, ['cover', 'inline'], `Post ${post.slug} visuals`);
+    assertVisualKeys(post.visuals, `Post ${post.slug} visuals`);
     if (!Array.isArray(post.visuals.inline)) {
       throw new Error(`Post ${post.slug} inline images must be an array`);
     }
     if (post.visuals.inline.length > MAX_INLINE_IMAGES) {
       throw new Error(`Post ${post.slug} must have 0 to ${MAX_INLINE_IMAGES} inline images`);
     }
-    validateCover(post, paths);
+    if (post.visuals.cover !== undefined) validateCover(post, paths);
+    if (post.visuals.cover === undefined && post.visuals.inline.length === 0) {
+      throw new Error(`Post ${post.slug} without a cover must declare at least one inline image`);
+    }
     for (const image of post.visuals.inline) validateInlineImage(post, image, paths);
   }
   return true;

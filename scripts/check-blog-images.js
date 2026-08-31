@@ -44,21 +44,25 @@ function validateRenderedPostImages(rootDir, metadata) {
       continue;
     }
 
-    if (coverCount !== 1) {
-      throw new Error(`Post ${post.slug} must contain exactly one rendered post-cover`);
-    }
-    const coverStart = html.indexOf(coverMarker);
-    const headerStart = html.indexOf('<header class="post-header"');
-    const headerEnd = html.indexOf('</header>', headerStart);
-    const dividerStart = html.indexOf('<hr class="divider"', headerEnd);
-    if (headerStart === -1 || headerEnd === -1 || dividerStart === -1
-      || !(headerEnd < coverStart && coverStart < dividerStart)) {
-      throw new Error(`Post ${post.slug} rendered post-cover must sit between the article header and divider`);
-    }
     const cover = post.visuals.cover;
-    const expectedCoverImage = `<img src="../../../${cover.src}" alt="${escapeHtml(cover.alt)}" width="${cover.width}" height="${cover.height}" loading="eager" decoding="async" fetchpriority="high" />`;
-    if (!html.includes(expectedCoverImage)) {
-      throw new Error(`Post ${post.slug} rendered post-cover must match metadata`);
+    if (!cover) {
+      if (coverCount !== 0) throw new Error(`Post ${post.slug} without a cover must not render a post-cover`);
+    } else {
+      if (coverCount !== 1) {
+        throw new Error(`Post ${post.slug} must contain exactly one rendered post-cover`);
+      }
+      const coverStart = html.indexOf(coverMarker);
+      const headerStart = html.indexOf('<header class="post-header"');
+      const headerEnd = html.indexOf('</header>', headerStart);
+      const dividerStart = html.indexOf('<hr class="divider"', headerEnd);
+      if (headerStart === -1 || headerEnd === -1 || dividerStart === -1
+        || !(headerEnd < coverStart && coverStart < dividerStart)) {
+        throw new Error(`Post ${post.slug} rendered post-cover must sit between the article header and divider`);
+      }
+      const expectedCoverImage = `<img src="../../../${cover.src}" alt="${escapeHtml(cover.alt)}" width="${cover.width}" height="${cover.height}" loading="eager" decoding="async" fetchpriority="high" />`;
+      if (!html.includes(expectedCoverImage)) {
+        throw new Error(`Post ${post.slug} rendered post-cover must match metadata`);
+      }
     }
 
     const inlineMarker = '<figure class="post-figure">';

@@ -32,7 +32,7 @@
 
 | 类型 | 必需性 | 最终路径 | 输出格式 | 尺寸 | 大小上限 | 加载策略 |
 |------|--------|----------|----------|------|----------|----------|
-| 文章封面 | 所有非历史豁免的新文章必需 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
+| 文章封面 | 仅当能提供不同于正文图的独立文章级解释价值时添加 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
 | 正文图 | 按解释价值选择 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
 
 - 最终文件只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
@@ -69,7 +69,7 @@
 
 ## 5. 元数据契约
 
-`tools/blog/data/posts-meta.json` 使用版本 4。根级 `image_contract.legacy_without_visuals` 只列出允许没有 `visuals` 的历史文章；新文章不得加入该列表。新文章示例：
+`tools/blog/data/posts-meta.json` 使用版本 4。根级 `image_contract.legacy_without_visuals` 只列出允许没有 `visuals` 的历史文章；新文章不得加入该列表。非历史文章的 `visuals` 必须有 `inline`；`cover` 可省略，但省略时至少保留一张有解释价值的正文图，并让 OG 回退全站默认图。新文章示例：
 
 ```json
 {

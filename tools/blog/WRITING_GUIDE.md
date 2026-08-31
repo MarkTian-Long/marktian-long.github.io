@@ -399,7 +399,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ### Markdown 正文图片语法
 
-封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。按 0–2 张决策门保留的正文图必须在 Markdown 中独立成行：
+有独立文章级解释价值时，封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。无封面时，页面直接从 header 进入正文，且必须保留至少一张按决策门确认的正文图。正文图必须在 Markdown 中独立成行：
 
 ```markdown
 ![与论点相关的对象和关系](../../assets/images/blog/your-slug/context-feedback-loop.webp "这个回路会把本次任务的结果变成下次任务可复用的上下文。")
@@ -657,6 +657,23 @@ GitHub Pages 部署后无此问题。
 
 relations 是上游编辑评审已经确认的结果。GitHub / Codex 不根据 topics、tags、正文链接、参考资料或相似度自动增加、删除、修改或降级 relations；发布层只验证 target/type、计算正反向展示和排序。
 
+### publish_handoff 发布交接接口
+
+网页版在最终内容评审完成后，可在 Markdown 正文与参考资料**之后**附上唯一一个末尾 YAML transport block：
+
+```yaml
+publish_handoff:
+  relations:
+    - slug: alignment-under-change
+      type: builds_on
+  body_link_only:
+    - harness-engineering
+```
+
+- `relations` 是已确认的强关系。运行 `node tools/blog/publish-handoff.js --write <source.md>` 后，发布侧只校验 target slug 存在、非 self-reference、无重复，以及 type 为 `builds_on` / `revises` / `companion`；再以该终稿结果覆盖该文章 metadata 的 `relations`。`relations: []` 明确表示没有强关系，不得为了凑「继续阅读」另建关系。
+- `body_link_only` 只记录已评审为正文背景、定义复用或普通历史引用的站内文章。发布侧校验 slug 存在、非 self-reference、无重复，但不写入 `posts-meta.json`、不新增 metadata schema、不显示在页面，也不改变继续阅读算法；它不能因正文链接而升级为 relation。普通外链和全部参考资料无需列入。
+- 该命令读取、验证并执行交接后，会从 `docs/blog/<slug>.md` 剥离整个 block；生成器会拒绝尚含 `publish_handoff` 的源稿。因此交接数据不会进入正式 Markdown、HTML、RSS、Search、SEO 或分享卡片。不要手工把 `publish_handoff` 保存进 metadata，也不要让生成器或发布阶段重判关系语义。
+
 ### 自动同主题与正文去重
 
 显式强关系始终优先，且不因已在正文或参考资料出现而降级或排除。显式关系不足 3 篇时，自动同主题才补足默认目标；3 个显式关系不补同主题，4 个已经确认的显式关系允许全部展示。自动候选必须至少共享一个 `topic`；共享 topic 数、tag 数、category 和发布时间仅用于资格满足后的稳定排序。`concepts` 只服务历史语义召回，不参与前端推荐或关系。自动同主题主要承担内容发现，应优先排除正文或参考资料中已出现的站内历史文章，也不得替换显式关系。
@@ -693,7 +710,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 <meta name="twitter:image:alt"   content="与文章核心机制相关的图像描述" />
 ```
 
-> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。新文章的 OG、Twitter large image card 和 JSON-LD 共用 `visuals.cover`；只有 `legacy_without_visuals` 中的历史文章继续回退到全站 `assets/images/og-cover.png`，不因本契约批量补图。
+> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 和 JSON-LD；无封面或 `legacy_without_visuals` 中的历史文章回退到全站 `assets/images/og-cover.png`，不因本契约批量补图。
 
 ### 搜索发现维护
 

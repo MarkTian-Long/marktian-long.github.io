@@ -3,6 +3,7 @@ const path = require('path');
 const config = require('../../scripts/site-config.js');
 const { articleUrl, ensureArticleSeo } = require('../../scripts/search-foundation.js');
 const { parseSourceMarkdown } = require('./markdown-source.js');
+const { parsePublishHandoff } = require('./publish-handoff.js');
 
 function parseGeneratorArgs(generatorArgs) {
   if (generatorArgs.includes('--write') && generatorArgs.includes('--candidate')) throw new Error('Choose exactly one generator mode');
@@ -76,7 +77,7 @@ function articleAssetUrl(src) {
 }
 
 function renderPostCover(metadata) {
-  if (!metadata || !metadata.visuals) return '';
+  if (!metadata || !metadata.visuals || !metadata.visuals.cover) return '';
   const cover = metadata.visuals.cover;
   if (!cover || cover.src !== `assets/images/blog/${metadata.slug}/cover.jpg`) {
     throw new Error(`Post ${metadata.slug} cover must be a registered local article asset`);
@@ -91,7 +92,9 @@ function injectPostCover(template, metadata) {
   if ((template.match(/<!-- post-cover -->/g) || []).length !== 1) {
     throw new Error('Article template must contain one post-cover marker');
   }
-  return template.replace(marker, () => renderPostCover(metadata));
+  const coverHtml = renderPostCover(metadata);
+  if (!coverHtml) return template.replace(/^[\t ]*<!-- post-cover -->\r?\n?/m, '');
+  return template.replace(marker, () => coverHtml);
 }
 
 function resolveMarkdownImagePath(sourceRepoPath, imagePath) {
@@ -215,7 +218,7 @@ function buildPage(template, markdown, metadata, sourceRepoPath) {
   if (!/<script src="\.\.\/article-runtime\.js"><\/script>/.test(page)) {
     page = page.replace(/<body([^>]*)>/, '<body$1>\n  <script src="../article-runtime.js"></script>');
   }
-  page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\nshare_quote: ' + metadata.share_quote + '\ncategory: ' + metadata.category + '\n-->');
+  page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\ncategory: ' + metadata.category + '\n-->');
   page = page.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(metadata.title) + ' — Leo 的思考碎片</title>');
   page = page.replace(/(<meta property="og:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
   page = page.replace(/(<meta property="og:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
@@ -242,6 +245,12 @@ function generatePost({ mode, sourcePath, outputPath }) {
   }
 
   const slug = path.basename(outputPath, '.html');
+  const absoluteSourcePath = path.resolve(sourcePath);
+  const sourceRepoPath = path.relative(process.cwd(), absoluteSourcePath).replace(/\\/g, '/');
+  const markdown = fs.readFileSync(absoluteSourcePath, 'utf8').replace(/\r/g, '');
+  if (parsePublishHandoff(markdown, sourcePath).handoff) {
+    throw new Error(`Publish handoff must be applied before generating HTML: ${sourcePath}`);
+  }
   const metadata = JSON.parse(fs.readFileSync('tools/blog/data/posts-meta.json', 'utf8')).posts
     .find(post => post.slug === slug);
   if (!metadata) throw new Error('No metadata found for slug: ' + slug);
@@ -249,9 +258,6 @@ function generatePost({ mode, sourcePath, outputPath }) {
     throw new Error('No share_quote found for slug: ' + slug);
   }
 
-  const absoluteSourcePath = path.resolve(sourcePath);
-  const sourceRepoPath = path.relative(process.cwd(), absoluteSourcePath).replace(/\\/g, '/');
-  const markdown = fs.readFileSync(absoluteSourcePath, 'utf8').replace(/\r/g, '');
   const { sourceTitle, sourceSummary } = parseSourceMarkdown(markdown, sourcePath);
   if (metadata.title !== sourceTitle) {
     throw new Error(`Metadata title does not match final Markdown H1: ${slug}`);

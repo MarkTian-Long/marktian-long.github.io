@@ -24,19 +24,19 @@ type: workflow
 1. 发布阶段由 Codex 按 `tools/blog/WRITING_GUIDE.md` 从最终 Markdown 正文选择 `share_quote` 并写入 `posts-meta.json`；Markdown 不需要携带该字段。确认元数据包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。
 2. 审核 `summary` 是否自然说明对象/问题、核心判断及关键机制或边界；审核 `concepts` 是否为 4-7 个具体、去重、非泛词的语义锚点，且不与 `tags/topics` 精确重复。若分类、标签、摘要或 concepts 存在实质歧义时向用户确认。
 3. 在最终内容与元数据评审完成后、生成 HTML 前执行视觉阶段：
-   - 读取 `image_contract.legacy_without_visuals`。只有该清单中的历史文章可以不含 `visuals`；清单外的文章必须有一张封面，并判断是否需要 0-2 张能解释机制、关系、流程或对比的正文图。正文图没有明确解释价值时使用 0 张，不为装饰而添加。
+   - 读取 `image_contract.legacy_without_visuals`。只有该清单中的历史文章可以不含 `visuals`；清单外的文章必须声明 `inline`，并判断封面是否有不同于正文图的独立文章级解释价值。没有这种价值时不生成封面；无封面文章必须有 1-2 张能解释机制、关系、流程或对比的正文图，并让 OG/Twitter/JSON-LD 回退到全站默认图。正文图没有明确解释价值时不要为装饰而添加。
    - 默认使用 Codex 内置 `imagegen`，此模式不索取、读取或配置 API key。只有用户明确选择时才使用 CLI/API 回退。
    - 按 `tools/blog/VISUAL_GUIDE.md` 为每张图确定意图和提示词，检查完整分辨率结果；若存在明确缺陷，最多进行一次仅针对该缺陷的定向修订，不生成开放式候选批次。
    - 将选中的候选复制到 `build/blog-image-work/<slug>/`，不得只留在 Codex 的生成图片目录。记录每张最终图使用的完整 prompt 和生成模式。
-   - 使用下列命令生成受约束的公开资产；正文图为每张图使用唯一、描述性的 kebab-case `name`：
+   - 仅在封面确有独立解释价值时使用 cover 命令；正文图为每张图使用唯一、描述性的 kebab-case `name`：
 
      ```powershell
      node scripts/prepare-blog-image.js --slug <slug> --role cover --input build/blog-image-work/<slug>/<cover-candidate>
      node scripts/prepare-blog-image.js --slug <slug> --role inline --name <descriptive-name> --input build/blog-image-work/<slug>/<inline-candidate>
      ```
 
-   - 将最终路径、尺寸、alt、caption 写入该文章的 `visuals`；封面由生成器从元数据渲染，正文图同时按 `tools/blog/WRITING_GUIDE.md` 的 Markdown 图片语法放到确有解释价值的位置。
-   - 对于清单外的新图片契约文章，`imagegen` 失败、结果经一次定向修订仍不合格、或资产准备失败都必须阻断发布；不得静默回退到全站默认封面，也不得把文章临时加入 legacy 清单。
+   - 将最终路径、尺寸、alt、caption 写入该文章的 `visuals`；声明的封面由生成器从元数据渲染，正文图同时按 `tools/blog/WRITING_GUIDE.md` 的 Markdown 图片语法放到确有解释价值的位置。
+   - 对于清单外的新图片契约文章，已决定保留的图片在 `imagegen` 失败、结果经一次定向修订仍不合格、或资产准备失败时必须阻断发布；不得把文章临时加入 legacy 清单。无封面是已确认无独立解释价值时的正常路径，不是失败回退。
 4. 生成文章：
 
    ```powershell
@@ -69,7 +69,7 @@ node scripts/check-public-dist.js --out build/public-dist-blog-images
 
 然后：
 
-1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据、文章封面、声明的正文图和完整正文。
+1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据、完整正文，以及声明的封面和正文图；无封面文章不得渲染页首封面，并必须使用全站默认 OG 图。
 2. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
 3. 通过本地 HTTP 服务打开真实文章，在桌面/移动端和明/暗主题下使用视觉模型检查图片加载状态，并模拟一次图片加载失败；确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
 4. 执行项目要求的 review。

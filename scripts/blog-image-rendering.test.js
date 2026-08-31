@@ -69,6 +69,19 @@ test('legacy posts render no cover and consume the template marker', () => {
   assert.equal(renderPostCover({ slug: 'legacy-post' }), '');
 });
 
+test('body-only visual posts render no cover and consume the template marker', () => {
+  const template = '<header>Header</header>\n<!-- post-cover -->\n<hr class="divider" />';
+  const metadata = {
+    slug: 'body-only-post',
+    visuals: { inline: [] },
+  };
+  const html = injectPostCover(template, metadata);
+
+  assert.doesNotMatch(html, /post-cover|post-cover -->/);
+  assert.doesNotMatch(html, /Header<\/header>\n\s+\n/);
+  assert.equal(renderPostCover(metadata), '');
+});
+
 test('registered standalone Markdown images render semantic lazy figures', () => {
   const line = '![Context <loop>](../../assets/images/blog/sample-post/context-loop.webp "One & useful sentence")';
   const html = renderStandaloneImage(line, visualPost, 'docs/blog/sample-post.md');

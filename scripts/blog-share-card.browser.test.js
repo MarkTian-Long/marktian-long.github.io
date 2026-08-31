@@ -69,7 +69,12 @@ test('share-card renders and downloads a 1080×1920 poster across desktop and mo
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH
+        ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH }
+        : {}),
+    });
     const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
     await desktopContext.addInitScript(() => localStorage.setItem('blog_theme', 'dark'));
     await blockRemoteFonts(desktopContext);
