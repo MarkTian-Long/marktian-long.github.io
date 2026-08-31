@@ -39,7 +39,7 @@ const GENERATOR_CANDIDATE_ARG = GENERATOR_MODE === 'candidate' ? GENERATOR_EXTRA
 // 业务特性标签（文章三维度）
 const TAGS = {
   accuracy:  { label: '准确率敏感', dim: '错误容忍', desc: '答错有法律/财务/医疗代价，宁可拒答不可答错' },
-  latency:   { label: '延迟敏感',   dim: '性能约束', desc: '用户实时等待，首 token 超 2 秒就流失' },
+  latency:   { label: '延迟敏感',   dim: '性能约束', desc: '用户实时等待，先把首 token 目标设为不超过 2 秒，再用真实流量验证' },
   throughput:{ label: '吞吐量敏感', dim: '性能约束', desc: '高并发、成本压力大，要在预算内服务海量请求' },
   privacy:   { label: '隐私合规',   dim: '运营合规', desc: '数据不能出边界，第三方 API 受限' },
   freshness: { label: '知识更新频繁', dim: '运营合规', desc: '知识库变更快，慢同步就产生过时回答' },
@@ -131,7 +131,7 @@ const CARDS = [
     dims: ['分类准确率：路由错了，用户会在错误路径里打转', '高风险路径识别：该转人工却没转，是最严重的失误', '分类延迟：它是所有后续步骤的前置，延迟会直接叠加'],
     choices: {
       bank: '重点保高风险路径识别率——大额、账户安全、合规争议必须稳稳转人工，误转可以容忍。',
-      ecom: '分类延迟压到 50ms 内，意图类别随促销活动快速增减，分类器要能快速更新。',
+      ecom: '目标：分类延迟先压到 50ms 内，意图类别随促销活动快速增减，分类器要能快速更新，最终以实测校准。',
       startup: '意图类别少，先用关键词规则做简单分类，不必训练分类器。'
     },
     owner: 'pm',
@@ -148,20 +148,20 @@ const CARDS = [
       startup: '固定分块 + 托管解析服务起步，别在这层花太多工程时间，先跑通。'
     },
     owner: 'algo',
-    evidence: { text: '真实案例：某电商退货政策横跨两个 Chunk，系统只召回前半句，漏掉「但以下情形不适用」，引发客诉。加 Chunk 重叠后消失。' }
+    evidence: { kind: 'method-note', text: '示例情景：电商退货政策横跨两个 Chunk，系统只召回前半句，漏掉「但以下情形不适用」，引发客诉。用 Chunk 重叠修正后，再用评估集验证是否改善。' }
   },
   {
     group: '答案从哪来', title: '怎么找到对的内容', layer: '检索层 · 混合检索 + Reranker',
     node: 'rag',
     judge: '向量检索懂语义但漏精确词（订单号、条款编号），BM25 关键词检索相反——两路融合的混合检索是生产标配。Reranker 精排是可选项，要数据说话。',
-    dims: ['召回率@K / MRR：找没找到、排得靠不靠前', '精确匹配率：编号、SKU 这类字符串能不能命中', 'Reranker 边际收益：精排提升是否值回 50-200ms 延迟'],
+    dims: ['召回率@K / MRR：找没找到、排得靠不靠前', '精确匹配率：编号、SKU 这类字符串能不能命中', 'Reranker 边际收益：精排提升是否值得新增 50–200ms 延迟（启发式起点，需实测）'],
     choices: {
       bank: '适当提高 BM25 权重——条款编号精确命中比语义相似更关键；准确率敏感，优先评估上 Reranker。',
-      ecom: '稠密 0.7 / 稀疏 0.3 起步；延迟敏感，Reranker 要量化延迟增量再决定，谨慎引入。',
+      ecom: '启发式起点：稠密 0.7 / 稀疏 0.3；延迟敏感，Reranker 要量化延迟增量再决定，谨慎引入。',
       startup: '纯向量检索起步，先不上混合、不上 Reranker——数据不足以支撑 A/B 验证。'
     },
     owner: 'both',
-    evidence: { text: '生产实践通常用混合检索兼顾语义和精确词，但具体召回收益必须用自己的评估集验证。', href: 'https://dev.to/pooyagolchian/rag-pipelines-in-production-vector-database-benchmarks-chunking-strategies-and-hybrid-search-data-gbl' }
+    evidence: { kind: 'method-note', text: '方法说明：混合检索可同时照顾语义召回与精确匹配，是否需要 Reranker、权重如何设置，都要用自己的评估集和延迟预算验证。' }
   },
   {
     group: '答案从哪来', title: '查订单这类硬数据怎么办', layer: '检索层 · Text-to-SQL',
@@ -210,7 +210,7 @@ const CARDS = [
     choices: {
       bank: '每次修复必须过评估集验证，把 Faithfulness 当一票否决线。',
       ecom: '盯线上代理指标（Thumbs down 率、转人工率、会话完成率）+ A/B 量化每次变更。',
-      startup: '从第一天起收集 Thumbs down + 人工抽检，先不搭自动化 RAGAS，攒够 100 条再上。'
+      startup: '从第一天起收集 Thumbs down + 人工抽检，先不搭自动化 RAGAS，启发式起点是攒够约 100 条再评估是否上。'
     },
     owner: 'pm',
     evidence: { text: '评估集（Golden Dataset）的代表性和 Golden Answer 的业务正确性，PM 必须深度参与——哪些问题有代表性、正确答案是什么，算法无法独立判断。' }
@@ -231,7 +231,7 @@ const CARDS = [
   {
     group: '怎么跑得起来', title: '上线工程底线', layer: '工程层 · 延迟 / 缓存 / 可观测', collapsed: true,
     node: 'infra',
-    judge: '生产标准通常要求首 token 时延 p90 < 2 秒。Streaming 几乎所有系统都该默认开；语义缓存对高重复场景降本显著，但知识更新时必须主动失效。',
+    judge: '启发式起点：首 token 时延 p90 先以 < 2 秒作为待验证目标，不代表通用生产标准。Streaming 几乎所有系统都该默认开；语义缓存对高重复场景是否降本，要用自己的流量验证，知识更新时必须主动失效。',
     dims: ['TTFT p90：用户感知的「第一个字多久出现」', '语义缓存命中率 / 误命中率：复用回答省钱，但别复用错', '可观测性：每次请求的完整调用链要可追踪，否则无法排障'],
     choices: {
       bank: '强权限过滤 + PII 脱敏 + Prompt 注入防护，安全指标纳入监控。',
@@ -622,7 +622,8 @@ a:hover{text-decoration:underline}
 .dcard{background:var(--sa-surface);border:1px solid var(--sa-border);border-radius:var(--sa-radius);
   overflow:hidden;transition:.18s;scroll-margin-top:70px}
 .dcard:target,.dcard.flash{border-color:var(--sa-accent);box-shadow:0 0 0 1px var(--sa-accent)}
-.dcard-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer}
+.dcard-head{display:flex;align-items:flex-start;gap:12px;width:100%;padding:16px 18px;cursor:pointer;
+  border:0;background:transparent;color:var(--sa-text);font:inherit;text-align:left}
 .dcard-head .ttl{flex:1}
 .dcard-head .t1{font-size:16px;font-weight:700}
 .dcard-head .t2{font-size:11px;color:var(--sa-dim);margin-top:2px}
@@ -632,6 +633,7 @@ a:hover{text-decoration:underline}
 .owner-badge.own-both{background:linear-gradient(135deg,var(--sa-pm),var(--sa-both));color:#fff}
 .dcard-head .caret{color:var(--sa-dim);font-size:13px;transition:.2s;flex-shrink:0;margin-top:3px}
 .dcard.open .caret{transform:rotate(90deg)}
+.dcard-head:focus-visible,.fnode:focus-visible,.cnode:focus-visible,.hitl-btn:focus-visible{outline:3px solid var(--sa-accent);outline-offset:2px}
 .dcard .judge{padding:0 18px 14px;font-size:13.5px;color:var(--sa-text)}
 .dcard .judge .pin{color:var(--sa-accent);font-weight:700;font-size:12px;display:block;margin-bottom:3px}
 .dcard-body{display:none;border-top:1px solid var(--sa-border);padding:16px 18px;background:var(--sa-bg2)}
@@ -664,7 +666,8 @@ a:hover{text-decoration:underline}
 .flow-track{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center}
 .fnode{position:relative;flex:0 0 auto;min-width:118px;max-width:140px;background:var(--sa-card);
   border:1px solid var(--sa-border2);border-radius:11px;padding:11px 10px;text-align:center;
-  cursor:pointer;transition:.18s}
+  color:var(--sa-text);font:inherit;cursor:pointer;transition:.18s}
+.fnode:disabled{cursor:default;opacity:.82}
 .fnode.linkable:hover{border-color:var(--sa-accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(79,143,255,.2)}
 .fnode[data-state="active"]{border-color:var(--sa-accent);box-shadow:0 0 0 2px rgba(37,99,235,.14);background:rgba(37,99,235,.08)}
 .fnode[data-state="done"]{border-color:var(--sa-ok);background:rgba(5,150,105,.07)}
@@ -684,7 +687,8 @@ a:hover{text-decoration:underline}
   color:var(--sa-dim);margin:22px 0 11px;text-align:center}
 .cross-track{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .cnode{flex:0 0 auto;min-width:150px;background:var(--sa-bg2);border:1px dashed var(--sa-border2);
-  border-radius:11px;padding:10px 13px;cursor:pointer;transition:.18s;text-align:center}
+  border-radius:11px;padding:10px 13px;color:var(--sa-text);font:inherit;cursor:pointer;transition:.18s;text-align:center}
+.cnode:disabled{cursor:default;opacity:.82}
 .cnode:hover{border-color:var(--sa-accent2);border-style:solid;transform:translateY(-2px)}
 .cnode[data-state="active"]{border-style:solid;border-color:var(--sa-accent);background:rgba(37,99,235,.08)}
 .cnode[data-state="done"],.cnode[data-state="returned"]{border-style:solid;border-color:var(--sa-ok);background:rgba(5,150,105,.07)}
@@ -784,6 +788,7 @@ a:hover{text-decoration:underline}
 .run-review[data-final-status="blocked"] .review-status{color:var(--sa-danger);background:rgba(220,38,38,.08)}
 .run-review[data-final-status="completed"] .review-status{color:var(--sa-ok);background:rgba(5,150,105,.08)}
 .run-review[data-final-status="pending-human"] .review-status{color:var(--sa-warn);background:rgba(245,158,11,.10)}
+.run-review[data-final-status="resolving-human"] .review-status{color:var(--sa-accent);background:rgba(37,99,235,.08)}
 .review-outcome{font-size:12.5px;color:var(--sa-text);line-height:1.55;margin-bottom:10px}
 .review-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .review-item{background:var(--sa-bg2);border-radius:7px;padding:8px 9px;min-width:0}
@@ -798,7 +803,7 @@ a:hover{text-decoration:underline}
 .hitl-card-title{font-size:13px;font-weight:700;color:var(--sa-danger);margin-bottom:8px}
 .hitl-card-body{font-size:12.5px;color:var(--sa-muted);line-height:1.7;margin-bottom:11px}
 .hitl-card-actions{display:flex;gap:8px;flex-wrap:wrap}
-.hitl-btn{font-size:12px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--sa-border2);background:var(--sa-surface);color:var(--sa-text);transition:.15s}
+.hitl-btn{font-size:12px;font-weight:600;min-height:44px;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--sa-border2);background:var(--sa-surface);color:var(--sa-text);transition:.15s}
 .hitl-btn:hover:not(:disabled){transform:translateY(-1px)}
 .hitl-btn.approve:hover:not(:disabled){border-color:var(--sa-ok);color:var(--sa-ok)}
 .hitl-btn.reject:hover:not(:disabled){border-color:var(--sa-danger);color:var(--sa-danger)}
@@ -914,20 +919,20 @@ function buildCards(){
             </div>`).join('');
     const evid=c.evidence?`
           <div class="blk">
-            <div class="evid"><div class="et">${c.evidence.kind==='external-research'?'外部研究 / 案例':c.evidence.href?'参考资料':'PM 视角'}${c.evidence.sourceDate?` · ${esc(c.evidence.sourceDate)}`:''}</div>${esc(c.evidence.text)}${c.evidence.href?` <a href="${c.evidence.href}" target="_blank" rel="noopener">查看来源 ↗</a>`:''}</div>
+            <div class="evid"><div class="et">${c.evidence.kind==='external-research'?'外部研究 / 案例':c.evidence.kind==='method-note'?'方法说明':c.evidence.href?'参考资料':'PM 视角'}${c.evidence.sourceDate?` · ${esc(c.evidence.sourceDate)}`:''}</div>${esc(c.evidence.text)}${c.evidence.href?` <a href="${c.evidence.href}" target="_blank" rel="noopener">查看来源 ↗</a>`:''}</div>
           </div>`:'';
     html+=`
         <div class="dcard${c.collapsed?'':''}" id="${id}" data-owner="${c.owner}">
-          <div class="dcard-head" onclick="toggleCard(this)">
-            <div class="ttl">
-              <div class="t1">${esc(c.title)}</div>
-              <div class="t2">${esc(c.layer)}</div>
-            </div>
+          <button class="dcard-head" id="${id}-toggle" type="button" aria-expanded="false" aria-controls="${id}-body" onclick="toggleCard(this)">
+            <span class="ttl">
+              <span class="t1">${esc(c.title)}</span>
+              <span class="t2">${esc(c.layer)}</span>
+            </span>
             <span class="owner-badge ${ob.cls}">${ob.label}</span>
             <span class="caret">▸</span>
-          </div>
+          </button>
           <div class="judge"><span class="pin" data-scn-conclusion>本场景结论</span><span data-judge>${esc(c.judge)}</span></div>
-          <div class="dcard-body">
+          <div class="dcard-body" id="${id}-body" role="region" aria-labelledby="${id}-toggle">
             <div class="blk"><div class="blk-h">我们在权衡什么</div><ul class="dims">${dims}</ul></div>
             <div class="blk"><div class="blk-h">不同场景怎么选（高亮 = 当前场景）</div><div class="tradeoff">${rows}</div></div>
             ${evid}
@@ -945,8 +950,9 @@ function buildFlow(){
   function node(n){
     const link=n.card?cardIdByTitle[n.card]:null;
     const cls='fnode'+(n.id.startsWith('guard')?' guard':'')+(n.isBranch?' branch':'')+(link?' linkable':'');
-    const onclick=link?` onclick="jumpToCard('${link}')"`:'';
-    return `<div class="${cls}" id="flow-node-${n.id}" data-fnode="${n.id}" data-state="idle"${onclick}><div class="fl">${esc(n.label)}</div><div class="fs">${esc(n.sub)}</div></div>`;
+    const onclick=link?` onclick="jumpToCard('${link}',this)"`:'';
+    const control=link?` aria-controls="${link}" aria-expanded="false"`:' disabled aria-disabled="true"';
+    return `<button class="${cls}" id="flow-node-${n.id}" data-fnode="${n.id}" data-state="idle" type="button" aria-label="${esc(n.label)}：${esc(n.sub)}"${control}${onclick}><span class="fl">${esc(n.label)}</span><span class="fs">${esc(n.sub)}</span></button>`;
   }
   const get=id=>FLOW_NODES.find(n=>n.id===id);
   // 双轨：rag / sql 并列
@@ -955,8 +961,9 @@ function buildFlow(){
     node(get('gen')),arrow,node(get('guard-out')),arrow,node(get('reply'))].join('');
   function cnode(n){
     const link=n.card?cardIdByTitle[n.card]:null;
-    const onclick=link?` onclick="jumpToCard('${link}')"`:'';
-    return `<div class="cnode" id="flow-node-${n.id}" data-fnode="${n.id}" data-state="idle"${onclick}><div class="fl">${esc(n.label)}</div><div class="fs">${esc(n.sub)}</div></div>`;
+    const onclick=link?` onclick="jumpToCard('${link}',this)"`:'';
+    const control=link?` aria-controls="${link}" aria-expanded="false"`:' disabled aria-disabled="true"';
+    return `<button class="cnode" id="flow-node-${n.id}" data-fnode="${n.id}" data-state="idle" type="button" aria-label="${esc(n.label)}：${esc(n.sub)}"${control}${onclick}><span class="fl">${esc(n.label)}</span><span class="fs">${esc(n.sub)}</span></button>`;
   }
   const cross=FLOW_CROSS.map(cnode).join('');
   return `
@@ -979,7 +986,7 @@ var DEMO_META = ${JSON.stringify(DEMO_META)};
 var SCENARIOS = ${JSON.stringify(SCENARIOS)};
 var FAULT_CASES = ${JSON.stringify(FAULT_CASES)};
 var EXPORT_CARDS = ${JSON.stringify(CARDS.map(function(c){ return {
-  group:c.group,title:c.title,layer:c.layer,node:c.node,owner:c.owner,judge:c.judge,choices:c.choices,evidence:c.evidence||null
+  group:c.group,title:c.title,layer:c.layer,node:c.node,owner:c.owner,judge:c.judge,dims:c.dims,choices:c.choices,evidence:c.evidence||null
 }; }))};
 
 /* ---- 全局状态 ---- */
@@ -989,6 +996,7 @@ var runTrace = null;
 var runEpoch = 0;
 var _hitlScript = null;
 var _hitlEpoch = null;
+var _hitlReturnFocus = null;
 
 function cloneData(value){ return JSON.parse(JSON.stringify(value)); }
 function isRunCurrent(epoch){ return typeof epoch === 'undefined' || epoch === runEpoch; }
@@ -999,6 +1007,17 @@ function staleRunError(){
 }
 function assertRunCurrent(epoch){
   if(!isRunCurrent(epoch)) throw staleRunError();
+}
+function isTerminalRunStatus(status){ return status==='completed' || status==='blocked' || status==='pending-human'; }
+function setTraceStatus(status,outcome,epoch){
+  assertRunCurrent(epoch);
+  if(!runTrace) return;
+  runTrace.finalStatus=status;
+  runTrace.finalOutcome=outcome;
+  renderRunReview(epoch);
+}
+function displayUserText(userMsg,scriptItem){
+  return scriptItem && scriptItem.__preset ? String(userMsg) : '自定义输入（原文未展示）';
 }
 function createRunTrace(taskLabel, faultType){
   return {
@@ -1042,6 +1061,7 @@ function finishTrace(status, outcome, pendingHumanItems,epoch){
 function selectScenario(key){
   if(!SCENARIOS[key]) return;
   var epoch=++runEpoch;
+  clearCardFlashes();
   assertRunCurrent(epoch);
   currentScenario = key;
   restartDemo(epoch);
@@ -1121,17 +1141,31 @@ function applyScenarioToMatrix(key,epoch){
 /* ============ 决策卡展开 ============ */
 function toggleCard(head){
   assertRunCurrent(runEpoch);
-  head.closest('.dcard').classList.toggle('open');
+  var card=head.closest('.dcard');
+  if(!card) return;
+  var open=card.classList.toggle('open');
+  head.setAttribute('aria-expanded',String(open));
+  document.querySelectorAll('[aria-controls="'+card.id+'"]').forEach(function(control){
+    control.setAttribute('aria-expanded',String(open));
+  });
 }
-function jumpToCard(id){
+function clearCardFlashes(){
+  document.querySelectorAll('.dcard.flash').forEach(function(card){ card.classList.remove('flash'); });
+}
+function jumpToCard(id,source){
   var epoch=runEpoch;
   assertRunCurrent(epoch);
   var card = document.getElementById(id);
   if(!card) return;
   card.classList.add('open');
+  var toggle=card.querySelector('.dcard-head');
+  if(toggle) toggle.setAttribute('aria-expanded','true');
+  document.querySelectorAll('[aria-controls="'+id+'"]').forEach(function(control){
+    control.setAttribute('aria-expanded','true');
+  });
   card.scrollIntoView({behavior:'smooth', block:'center'});
   card.classList.add('flash');
-  setTimeout(function(){ if(isRunCurrent(epoch)) card.classList.remove('flash'); }, 1400);
+  setTimeout(function(){ card.classList.remove('flash'); }, 1400);
 }
 
 /* ============ Agent 定义（复用旧 demo） ============ */
@@ -1184,6 +1218,10 @@ function resetFlowNodes(epoch){
     el.dataset.state = 'idle';
     assertRunCurrent(epoch);
     el.removeAttribute('title');
+    if(el.hasAttribute('aria-controls')){
+      assertRunCurrent(epoch);
+      el.setAttribute('aria-expanded','false');
+    }
   });
 }
 function resetAllNodes(epoch){
@@ -1274,11 +1312,12 @@ async function callAgent(agentId, userContent, badgeType, mockOut,epoch){
 async function runChat(userMsg, scriptItem){
   if(isBusy) return;
   var epoch=++runEpoch;
+  _hitlReturnFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
   assertRunCurrent(epoch);
   disableInput(epoch); resetAllNodes(epoch); clearRunReview(epoch);
   assertRunCurrent(epoch);
   runTrace = createRunTrace(scriptItem && scriptItem.qLabel, null);
-  appendMessage('user', userMsg,epoch);
+  appendMessage('user', displayUserText(userMsg,scriptItem),epoch);
   var hitlTriggered=false;
   try{
     setFlowState('guard-in','active','输入检测',epoch);
@@ -1288,7 +1327,7 @@ async function runChat(userMsg, scriptItem){
     traceGuardrail('guard-in','输入合规检测','通过',epoch);
     setFlowState('router','active','意图分类',epoch);
     setNodeState('router','routing','分类中…',epoch);
-    appendLog('开始路由：'+userMsg.slice(0,18),'info',epoch);
+    appendLog('开始路由：'+(scriptItem && scriptItem.qLabel || '自定义输入'),'info',epoch);
     appendLayerTag('① 意图路由层 · 正在分流',epoch);
     var intentRaw = await callAgent('router', userMsg, null, scriptItem?scriptItem.intent:null,epoch);
     assertRunCurrent(epoch);
@@ -1396,7 +1435,7 @@ async function chainComplaint(userMsg,sc,epoch){
     appendLayerTag('⑤ HITL · 高风险，等待人工决策',epoch);
     traceGuardrail('hitl','HITL 触发条件',es.reason||'高风险请求',epoch);
     finishTrace('pending-human','等待人工决策',['人工确认是否安抚、接管或升级'],epoch);
-    showHumanIntervention(emo,es,userMsg,sc,epoch);
+    showHumanIntervention(emo,es,displayUserText(userMsg,sc),sc,epoch);
     return true; // 暂停等人工
   }else{
     setNodeState('escalation','done','无需升级',epoch);
@@ -1455,6 +1494,7 @@ async function runFaultCase(faultKey){
   var fault=currentFaultItems()[faultKey];
   if(!fault) return;
   var epoch=++runEpoch;
+  _hitlReturnFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
   assertRunCurrent(epoch);
   disableInput(epoch); resetAllNodes(epoch); clearRunReview(epoch);
   assertRunCurrent(epoch);
@@ -1512,26 +1552,37 @@ async function runFaultCase(faultKey){
 }
 
 /* ============ HITL ============ */
-function showHumanIntervention(emo,es,originalMsg,sc,epoch){
+function showHumanIntervention(emo,es,displayMsg,sc,epoch){
   assertRunCurrent(epoch);
   _hitlScript = sc;
   _hitlEpoch = epoch;
+  if(!_hitlReturnFocus) _hitlReturnFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
   var msgs=document.getElementById('chat-messages');
+  if(!msgs) return;
   assertRunCurrent(epoch);
-  var card=document.createElement('div'); card.id='hitl-card'; card.className='hitl-card'; card.dataset.originalMsg=originalMsg;
+  var card=document.createElement('div'); card.id='hitl-card'; card.className='hitl-card'; card.dataset.originalMsg=String(displayMsg);
+  card.setAttribute('role','dialog');
+  card.setAttribute('aria-modal','false');
+  card.setAttribute('aria-labelledby','hitl-title');
+  card.setAttribute('aria-describedby','hitl-description');
+  card.setAttribute('aria-live','assertive');
+  card.setAttribute('tabindex','-1');
   assertRunCurrent(epoch);
   card.dataset.faultType=sc && sc.faultType || '';
-  card.innerHTML='<div class="hitl-card-title">⚠️ 已触发人工审核（HITL 安全阀）</div>'+
-    '<div class="hitl-card-body">情绪强度：'+escH(String(emo.emotion_score||'N/A'))+'/10 · '+escH(emo.emotion_label||'')+'<br>'+
-    '核心诉求：'+escH(emo.core_complaint||originalMsg.slice(0,30))+'<br>'+
+  card.innerHTML='<div class="hitl-card-title" id="hitl-title">⚠️ 已触发人工审核（HITL 安全阀）</div>'+
+    '<div class="hitl-card-body" id="hitl-description">情绪强度：'+escH(String(emo.emotion_score||'N/A'))+'/10 · '+escH(emo.emotion_label||'')+'<br>'+
+    '核心诉求：'+escH(emo.core_complaint||displayMsg.slice(0,30))+'<br>'+
     '优先级：'+escH(es.priority||'medium')+' · '+escH(es.reason||'')+'</div>'+
     '<div class="hitl-card-actions">'+
-      '<button class="hitl-btn approve" data-hitl-action="approve" onclick="handleHITL(this,\\'approve\\')">✅ 批准 AI 安抚</button>'+
-      '<button class="hitl-btn reject" data-hitl-action="reject" onclick="handleHITL(this,\\'reject\\')">🚫 直接转人工</button>'+
-      '<button class="hitl-btn delegate" data-hitl-action="delegate" onclick="handleHITL(this,\\'delegate\\')">📞 升级主管</button>'+
+      '<button class="hitl-btn approve" type="button" data-hitl-action="approve" onclick="handleHITL(this,\\'approve\\')">✅ 批准 AI 安抚</button>'+
+      '<button class="hitl-btn reject" type="button" data-hitl-action="reject" onclick="handleHITL(this,\\'reject\\')">🚫 直接转人工</button>'+
+      '<button class="hitl-btn delegate" type="button" data-hitl-action="delegate" onclick="handleHITL(this,\\'delegate\\')">📞 升级主管</button>'+
     '</div>';
   assertRunCurrent(epoch);
   msgs.appendChild(card); msgs.scrollTop=msgs.scrollHeight;
+  var firstAction=card.querySelector('.hitl-btn');
+  assertRunCurrent(epoch);
+  if(firstAction) firstAction.focus();
 }
 async function handleHITL(btn,action){
   var epoch=_hitlEpoch;
@@ -1546,6 +1597,7 @@ async function handleHITL(btn,action){
   var resolved=false;
   try{
     if(action==='approve'){
+      setTraceStatus('resolving-human','人工批准后正在生成安全回复',epoch);
       appendLog('👤 人工批准 → AI 安抚','ok',epoch);
       setNodeState('hitl','done','已处理',epoch); setNodeState('soothe','active','安抚中…',epoch);
       setFlowState('hitl','done','人工已批准',epoch);
@@ -1571,6 +1623,8 @@ async function handleHITL(btn,action){
       appendLog('👤 升级至主管，等待人工跟进','warn',epoch);
       setNodeState('hitl','escalated','等待主管跟进',epoch);
       setFlowState('hitl','waiting','等待主管人工跟进',epoch);
+      setFlowState('reply','returned','已转人工',epoch);
+      traceNode('handoff-ack',epoch);
       appendMessage('assistant','您的问题已升级至客服主管处理，后续由人工团队跟进，感谢您的耐心等待。',epoch);
       finishTrace('pending-human','升级主管，等待人工跟进',
         (runTrace.pendingHumanItems||[]).concat('主管后续人工跟进'),epoch);
@@ -1585,7 +1639,21 @@ async function handleHITL(btn,action){
     assertRunCurrent(epoch);
     card.dataset.hitlState='pending-human';
   }
-  if(isRunCurrent(epoch)) enableInput(epoch);
+  if(isRunCurrent(epoch)){
+    enableInput(epoch);
+    restoreHITLFocus(epoch);
+  }
+}
+function restoreHITLFocus(epoch){
+  assertRunCurrent(epoch);
+  var target=_hitlReturnFocus;
+  _hitlReturnFocus=null;
+  if(target && document.contains(target) && !target.disabled){
+    target.focus();
+    return;
+  }
+  var fallback=document.getElementById('chat-input');
+  if(fallback && !fallback.disabled) fallback.focus();
 }
 
 /* ============ 输入控制 ============ */
@@ -1632,10 +1700,10 @@ function renderRunReview(epoch){
     return;
   }
   review.hidden=false;
-  review.dataset.state=runTrace.finalStatus==='pending-human'?'pending-human':'complete';
+  review.dataset.state=runTrace.finalStatus==='pending-human'?'pending-human':runTrace.finalStatus==='resolving-human'?'resolving-human':'complete';
   review.dataset.finalStatus=runTrace.finalStatus;
   review.dataset.faultType=runTrace.faultType || '';
-  var statusLabels={running:'运行中',completed:'已完成',blocked:'已拦截', 'pending-human':'等待人工'};
+  var statusLabels={running:'运行中',completed:'已完成',blocked:'已拦截', 'pending-human':'等待人工','resolving-human':'人工处理中'};
   var status=document.querySelector('[data-review-status]');
   var outcome=document.querySelector('[data-run-outcome]');
   var nodes=document.querySelector('[data-run-nodes]');
@@ -1648,7 +1716,7 @@ function renderRunReview(epoch){
   if(guards){ assertRunCurrent(epoch); guards.textContent=traceValue(runTrace.guardrails,function(item){return item.rule+'：'+item.result;},'未触发额外护栏'); }
   if(hitl){ assertRunCurrent(epoch); hitl.textContent=traceValue(runTrace.hitlActions,function(item){return item.label;},'未触发 HITL'); }
   if(pending){ assertRunCurrent(epoch); pending.textContent=traceValue(runTrace.pendingHumanItems,function(item){return item;},'无'); }
-  if(exportBtn){ assertRunCurrent(epoch); exportBtn.disabled=runTrace.finalStatus==='running'; }
+  if(exportBtn){ assertRunCurrent(epoch); exportBtn.disabled=!isTerminalRunStatus(runTrace.finalStatus); }
 }
 function buildExportPayload(){
   return {
@@ -1665,7 +1733,7 @@ function buildExportPayload(){
 function exportRunData(){
   var epoch=runEpoch;
   assertRunCurrent(epoch);
-  if(!runTrace || runTrace.finalStatus==='running') return;
+  if(!runTrace || !isTerminalRunStatus(runTrace.finalStatus)) return;
   var blob=new Blob([JSON.stringify(buildExportPayload(),null,2)],{type:'application/json'});
   var url=URL.createObjectURL(blob);
   var link=document.createElement('a');
@@ -1689,7 +1757,8 @@ function restartDemo(epoch){
   // 重置全部全局流程状态（feedback_global_state_reset）
   if(typeof epoch === 'undefined') epoch=++runEpoch;
   assertRunCurrent(epoch);
-  isBusy=false; _hitlScript=null; _hitlEpoch=null;
+  isBusy=false; _hitlScript=null; _hitlEpoch=null; _hitlReturnFocus=null;
+  clearCardFlashes();
   resetAllNodes(epoch);
   clearRunReview(epoch);
   var input=document.getElementById('chat-input'); if(input){ assertRunCurrent(epoch); input.value=''; }
@@ -1714,7 +1783,7 @@ function renderQuickButtons(epoch){
 }
 function sendQuick(key){
   if(isBusy) return;
-  var sc = currentScripts()[key];
+  var sc = Object.assign({},currentScripts()[key],{__preset:true});
   assertRunCurrent(runEpoch);
   document.getElementById('chat-input').value='';
   runChat(sc.q, sc);
@@ -1729,7 +1798,7 @@ function sendChat(){
   if(/物流|快递|订单|到哪|发货|余额|账单|账户|订阅|套餐/.test(msg)) key='logistics';
   else if(/退|换货|退款|提额|额度|退订/.test(msg)) key='return';
   else if(/投诉|曝光|媒体|愤怒|差评|315|工商|盗刷|崩|丢/.test(msg)) key='complaint';
-  var sc=Object.assign({},currentScripts()[key],{q:msg});
+  var sc=Object.assign({},currentScripts()[key],{q:msg,__preset:false});
   runChat(msg,sc);
 }
 
@@ -1753,11 +1822,12 @@ const publicData = {
   version: 1,
   mode: DEMO_META.mode,
   demoMeta: DEMO_META,
+  tags: TAGS,
   scenarios: SCENARIOS,
   faultCases: FAULT_CASES,
   decisionCards: CARDS.map(c=>({
     group:c.group,title:c.title,layer:c.layer,node:c.node,owner:c.owner,
-    judge:c.judge,choices:c.choices,evidence:c.evidence||null
+    judge:c.judge,dims:c.dims,choices:c.choices,evidence:c.evidence||null
   }))
 };
 const publicDataJson = JSON.stringify(publicData).replace(/</g, '\\u003c');
@@ -1903,7 +1973,7 @@ const html = `<!DOCTYPE html>
           <div class="run-review" id="run-review" hidden data-state="hidden" data-final-status="" data-fault-type="">
             <div class="review-head">
               <span class="review-title">运行复盘</span>
-              <span class="review-status" data-review-status>尚未运行</span>
+              <span class="review-status" role="status" aria-live="polite" data-review-status>尚未运行</span>
             </div>
             <div class="review-outcome" data-run-outcome></div>
             <div class="review-grid">
@@ -1925,7 +1995,7 @@ const html = `<!DOCTYPE html>
 <footer class="foot">
   <div class="wrap">
     本沙盘基于博客<a href="https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html" target="_blank" rel="noopener">《从零搭建一个 LLM 智能客服：完整技术链路与关键决策》</a>的决策框架构建 ·
-    数据与案例均标注来源 · <a href="../../index.html">← 返回 Leo Liu 主页</a>
+    公开数字与外部研究单独标注来源；其余为方法说明或示例情景 · <a href="../../index.html">← 返回 Leo Liu 主页</a>
   </div>
 </footer>
 

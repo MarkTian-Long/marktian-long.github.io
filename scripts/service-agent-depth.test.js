@@ -132,6 +132,91 @@ test('run review and export contracts carry trace data without invented performa
   assert.match(artifact, /id="service-agent-data"/);
 });
 
+test('all numeric decision copy is marked as target, proxy, heuristic, or traceable source', () => {
+  const data = readPublicData();
+  const artifact = readArtifact();
+  const displayFields = [];
+
+  for (const [tagKey, tag] of Object.entries(data.tags || {})) {
+    displayFields.push({ path: `tags.${tagKey}.label`, text: tag.label });
+    displayFields.push({ path: `tags.${tagKey}.dim`, text: tag.dim });
+    displayFields.push({ path: `tags.${tagKey}.desc`, text: tag.desc });
+  }
+  for (const [index, card] of data.decisionCards.entries()) {
+    displayFields.push({ path: `decisionCards[${index}].judge`, text: card.judge });
+    for (const [dimIndex, text] of card.dims || [].entries()) {
+      displayFields.push({ path: `decisionCards[${index}].dims[${dimIndex}]`, text });
+    }
+    for (const [scenario, text] of Object.entries(card.choices || {})) {
+      displayFields.push({ path: `decisionCards[${index}].choices.${scenario}`, text });
+    }
+    if (card.evidence && card.evidence.text) {
+      displayFields.push({
+        path: `decisionCards[${index}].evidence.text`,
+        text: card.evidence.text,
+        evidence: card.evidence,
+      });
+    }
+  }
+
+  assert.ok(displayFields.length > 0);
+  for (const field of displayFields) {
+    const hasNumericLiteral = /(?:^|[^\p{L}\d])\d+(?:[.,/–-]\d+)*(?=$|[^\p{L}\d])/u.test(field.text);
+    if (!hasNumericLiteral) continue;
+    if (field.evidence) {
+      assert.equal(field.evidence.kind, 'external-research', field.path);
+      assert.match(field.evidence.href || '', /^https:\/\//, field.path);
+      assert.match(field.evidence.sourceDate || '', /\d{4}/, field.path);
+      continue;
+    }
+    assert.match(
+      field.text,
+      /目标|代理|启发式|起点|示例|预设|模拟|实测|评估集|target|proxy|heuristic/i,
+      `${field.path} must explain its numeric status`
+    );
+  }
+
+  assert.doesNotMatch(artifact, /真实案例/);
+  assert.doesNotMatch(artifact, /生产标准通常/);
+  assert.doesNotMatch(artifact, /首 token 超 2 秒就流失/);
+  assert.doesNotMatch(artifact, /dev\.to/i);
+  assert.doesNotMatch(artifact, /数据与案例均标注来源/);
+});
+
+test('decision and flow controls expose keyboard disclosure semantics and HITL dialog semantics', () => {
+  const source = readSource();
+  const artifact = readArtifact();
+
+  assert.equal((artifact.match(/<button class="dcard-head"/g) || []).length, 9);
+  assert.doesNotMatch(artifact, /<div class="dcard-head"/);
+  assert.match(artifact, /class="dcard-head"[^>]+aria-expanded="false"[^>]+aria-controls="[^"]+-body"/);
+  assert.match(artifact, /<button class="fnode/);
+  assert.match(artifact, /<button class="cnode/);
+  assert.doesNotMatch(artifact, /<div class="fnode/);
+  assert.doesNotMatch(artifact, /<div class="cnode/);
+  assert.match(source, /setAttribute\(['"]aria-expanded['"]/);
+  assert.match(source, /setAttribute\(['"]role['"],['"]dialog['"]\)/);
+  assert.match(source, /setAttribute\(['"]aria-labelledby['"],['"]hitl-title['"]\)/);
+  assert.match(artifact, /class="review-status"[^>]+role="status"[^>]+aria-live="polite"/);
+  assert.match(source, /\.focus\(\)/);
+  assert.match(source, /restoreHITLFocus/);
+});
+
+test('approval is non-terminal until resolved, delegate traces handoff acknowledgement, and flash cleanup survives reset', () => {
+  const source = readSource();
+  const artifact = readArtifact();
+
+  assert.match(source, /resolving-human/);
+  assert.match(source, /function isTerminalRunStatus\s*\(/);
+  assert.match(source, /isTerminalRunStatus\(runTrace\.finalStatus\)/);
+  assert.match(source, /traceNode\(['"]handoff-ack['"]/);
+  assert.match(source, /function clearCardFlashes\s*\(/);
+  assert.match(source, /clearCardFlashes\(\)/);
+  assert.match(source, /自定义输入（原文未展示）/);
+  assert.doesNotMatch(source, /card\.dataset\.originalMsg=originalMsg/);
+  assert.match(artifact, /导出安全 JSON/);
+});
+
 test('the generated public artifact is current under the generator check mode', () => {
   const result = spawnSync(process.execPath, [generatorPath, '--check'], {
     cwd: repoRoot,

@@ -95,6 +95,28 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     await page.locator('#acceptance-card').waitFor({ state: 'visible' });
     assert.equal(await page.locator('.scn-card[data-scn="ecom"]').evaluate((card) => card.classList.contains('on')), true);
 
+    const firstDecision = page.locator('.dcard').first().locator('.dcard-head');
+    assert.equal(await firstDecision.evaluate((button) => button.tagName), 'BUTTON');
+    assert.equal(await firstDecision.getAttribute('aria-expanded'), 'false');
+    assert.ok(await firstDecision.getAttribute('aria-controls'));
+    await firstDecision.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await firstDecision.getAttribute('aria-expanded'), 'true');
+    await page.keyboard.press('Space');
+    assert.equal(await firstDecision.getAttribute('aria-expanded'), 'false');
+
+    const ragNode = page.locator('#flow-node-rag');
+    assert.equal(await ragNode.evaluate((button) => button.tagName), 'BUTTON');
+    assert.ok(await ragNode.getAttribute('aria-controls'));
+    assert.equal(await ragNode.getAttribute('aria-expanded'), 'false');
+    await ragNode.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await ragNode.getAttribute('aria-expanded'), 'true');
+    assert.equal(await firstDecision.getAttribute('aria-expanded'), 'false');
+    assert.equal(await page.locator('.dcard.flash').count(), 1);
+    await page.locator('#restart-demo-btn').click();
+    assert.equal(await page.locator('.dcard.flash').count(), 0);
+
     const snapshots = {};
     for (const scenario of ['ecom', 'bank', 'startup']) {
       await page.locator(`.scn-card[data-scn="${scenario}"]`).click();
@@ -122,30 +144,79 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     assert.equal(await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace()), null);
     assert.equal(await page.locator('[data-fnode]:not([data-state="idle"])').count(), 0);
 
-    await page.locator('#chat-input').fill('请查一下我的账户余额 '+sensitiveSentinel);
+    await page.locator('#chat-input').fill('请查一下我的订单到哪了？ '+sensitiveSentinel);
     await page.locator('#send-btn').click();
-    await page.locator('.scn-card[data-scn="bank"]').click();
-    await page.waitForTimeout(2200);
-    assert.equal(await page.locator('.scn-card[data-scn="bank"]').evaluate((card) => card.classList.contains('on')), true);
-    assert.equal(await page.locator('#chat-messages .user').count(), 0);
-    assert.equal(await page.locator('#chat-messages .assistant').count(), 1);
-    assert.equal(await page.locator('#chat-input').inputValue(), '');
-    assert.equal(await page.locator('#step-stream').textContent(), '');
-    assert.equal(await page.locator('#run-log').textContent(), '');
-    assert.equal(await page.locator('#run-review').isVisible(), false);
-    assert.equal(await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace()), null);
-    assert.equal(await page.locator('[data-fnode]:not([data-state="idle"])').count(), 0);
-    const leakedSensitiveState = await page.evaluate((sentinel) => {
+    await waitForCompleteReview(page);
+    const normalSensitiveState = await page.evaluate((sentinel) => {
       const trace = window.__SERVICE_AGENT__.getRunTrace();
       const exported = window.__SERVICE_AGENT__.getExportPayload();
       return {
-        dom: document.body.innerHTML.includes(sentinel),
+        domText: document.body.textContent.includes(sentinel),
+        domMarkup: document.body.innerHTML.includes(sentinel),
         input: document.getElementById('chat-input').value.includes(sentinel),
         trace: JSON.stringify(trace).includes(sentinel),
         export: JSON.stringify(exported).includes(sentinel),
       };
     }, sensitiveSentinel);
-    assert.deepEqual(leakedSensitiveState, { dom: false, input: false, trace: false, export: false });
+    assert.deepEqual(normalSensitiveState, {
+      domText: false,
+      domMarkup: false,
+      input: false,
+      trace: false,
+      export: false,
+    });
+    const [normalDownload] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('#export-run-btn').click(),
+    ]);
+    const normalDownloadPath = await normalDownload.path();
+    assert.doesNotMatch(fs.readFileSync(normalDownloadPath, 'utf8'), new RegExp(sensitiveSentinel));
+
+    await page.locator('#restart-demo-btn').click();
+    await page.locator('#chat-input').fill('我要投诉，问题很严重 '+sensitiveSentinel);
+    await page.locator('#send-btn').click();
+    await page.locator('#hitl-card').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('#export-run-btn').isDisabled(), false);
+    const hitlSensitiveState = await page.evaluate((sentinel) => {
+      const trace = window.__SERVICE_AGENT__.getRunTrace();
+      const exported = window.__SERVICE_AGENT__.getExportPayload();
+      return {
+        domText: document.body.textContent.includes(sentinel),
+        domMarkup: document.body.innerHTML.includes(sentinel),
+        trace: JSON.stringify(trace).includes(sentinel),
+        export: JSON.stringify(exported).includes(sentinel),
+      };
+    }, sensitiveSentinel);
+    assert.deepEqual(hitlSensitiveState, { domText: false, domMarkup: false, trace: false, export: false });
+    await page.locator('[data-hitl-action="approve"]').focus();
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.hitlAction), 'approve');
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.hitlAction), 'reject');
+    await page.keyboard.press('Shift+Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.hitlAction), 'approve');
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#run-review').getAttribute('data-final-status'), 'resolving-human');
+    assert.equal(await page.locator('#export-run-btn').isDisabled(), true);
+    await waitForCompleteReview(page);
+    const completedSensitiveState = await page.evaluate((sentinel) => {
+      const trace = window.__SERVICE_AGENT__.getRunTrace();
+      const exported = window.__SERVICE_AGENT__.getExportPayload();
+      return {
+        domText: document.body.textContent.includes(sentinel),
+        domMarkup: document.body.innerHTML.includes(sentinel),
+        trace: JSON.stringify(trace).includes(sentinel),
+        export: JSON.stringify(exported).includes(sentinel),
+      };
+    }, sensitiveSentinel);
+    assert.deepEqual(completedSensitiveState, { domText: false, domMarkup: false, trace: false, export: false });
+    const [hitlDownload] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('#export-run-btn').click(),
+    ]);
+    const hitlDownloadPath = await hitlDownload.path();
+    assert.doesNotMatch(fs.readFileSync(hitlDownloadPath, 'utf8'), new RegExp(sensitiveSentinel));
+
+    await page.locator('#restart-demo-btn').click();
     await page.locator('.scn-card[data-scn="ecom"]').click();
     await page.locator('#fault-select').waitFor();
     await page.locator('.quick-btn').first().click();
@@ -188,13 +259,23 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     await page.locator('#hitl-card').waitFor({ state: 'visible' });
     assert.equal(await page.locator('#run-review').getAttribute('data-state'), 'pending-human');
     assert.equal(await page.locator('#flow-node-hitl').getAttribute('data-state'), 'waiting');
+    assert.equal(await page.locator('#hitl-card').getAttribute('role'), 'dialog');
+    assert.equal(await page.locator('#hitl-card').getAttribute('aria-labelledby'), 'hitl-title');
+    assert.equal(await page.locator('#hitl-card').getAttribute('aria-describedby'), 'hitl-description');
+    assert.equal(await page.locator('[data-review-status]').getAttribute('role'), 'status');
+    assert.equal(await page.locator('[data-review-status]').getAttribute('aria-live'), 'polite');
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.hitlAction), 'approve');
     await page.locator('[data-hitl-action="approve"]').click();
+    assert.equal(await page.locator('#run-review').getAttribute('data-final-status'), 'resolving-human');
+    assert.equal(await page.locator('#export-run-btn').isDisabled(), true);
     await waitForCompleteReview(page);
     const trace = await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace());
     assert.equal(trace.finalStatus, 'completed');
     assert.ok(trace.visitedNodes.includes('hitl'));
+    assert.ok(trace.visitedNodes.includes('reply'));
     assert.equal(trace.hitlActions.at(-1).action, 'approve');
     assert.equal(await page.locator('#hitl-card').getAttribute('data-hitl-state'), 'resolved');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'run-fault-btn');
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -228,7 +309,10 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
       const handoffTrace = await page.evaluate(() => window.__SERVICE_AGENT__.getRunTrace());
       assert.equal(handoffTrace.finalStatus, 'pending-human');
       assert.ok(handoffTrace.pendingHumanItems.length > 0);
+      assert.ok(handoffTrace.visitedNodes.includes('reply'));
+      if (action === 'delegate') assert.ok(handoffTrace.visitedNodes.includes('handoff-ack'));
       assert.notEqual(await page.locator('#hitl-card').getAttribute('data-hitl-state'), 'resolved');
+      assert.equal(await page.locator('#export-run-btn').isDisabled(), false);
       const handoffExport = await page.evaluate(() => window.__SERVICE_AGENT__.getExportPayload());
       assert.equal(handoffExport.runTrace.finalStatus, 'pending-human');
       assert.ok(handoffExport.runTrace.pendingHumanItems.length > 0);
@@ -250,6 +334,22 @@ test('service-agent depth supports scenario switching, four fault drills, HITL, 
     assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
     assert.equal(await mobile.locator('#demo-trust-boundary').isVisible(), true);
     assert.equal(await mobile.locator('#fault-select').isVisible(), true);
+    await mobile.locator('.dcard-head').first().focus();
+    await mobile.keyboard.press('Space');
+    assert.equal(await mobile.locator('.dcard-head').first().getAttribute('aria-expanded'), 'true');
+    assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
+    await mobile.locator('#fault-select').selectOption('ecom:low-confidence-intent');
+    await mobile.locator('#run-fault-btn').click();
+    await mobile.locator('#hitl-card').waitFor({ state: 'visible' });
+    assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
+    assert.equal(await mobile.evaluate(() => document.activeElement.dataset.hitlAction), 'approve');
+    await mobile.keyboard.press('Tab');
+    assert.equal(await mobile.evaluate(() => document.activeElement.dataset.hitlAction), 'reject');
+    await mobile.keyboard.press('Space');
+    await mobile.locator('#hitl-card[data-hitl-state="handed-off"]').waitFor({ state: 'visible' });
+    assert.equal(await mobile.locator('#run-review').getAttribute('data-final-status'), 'pending-human');
+    assert.equal(await mobile.locator('#export-run-btn').isDisabled(), false);
+    assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
     await mobileContext.close();
   } finally {
     if (browser) await browser.close();
