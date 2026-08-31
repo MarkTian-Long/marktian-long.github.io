@@ -1082,7 +1082,7 @@
     .process-step[data-state="done"] { color: var(--green); }
     .process-step[data-state="done"] .process-step-marker { border-color: var(--green); background: var(--green-soft); color: var(--green); }
     .collapsible { background: var(--card); border-color: var(--border); box-shadow: none; }
-    .collapsible-header { min-height: 44px; padding: 10px 14px; }
+    .collapsible-header { width: 100%; min-height: 44px; padding: 10px 14px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; }
     .collapsible-header-left { color: var(--text-sec); font-size: 13px; letter-spacing: 0; text-transform: none; }
     .section-icon { background: var(--accent); }
     .collapsible-body-inner { border-top-color: var(--border); }
@@ -1126,6 +1126,8 @@
     .legacy-notice p { color: var(--text-sec); font-size: 12px; line-height: 1.5; margin: 4px 0 8px; }
     .legacy-actions { display: flex; flex-wrap: wrap; gap: 7px; }
     .legacy-actions .btn { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+    .storage-notice { display: flex; align-items: flex-start; gap: 7px; padding: 10px 12px; border: 1px solid var(--border-hover); border-radius: var(--radius-sm); background: var(--accent-faint); color: var(--text-sec); font-size: 12px; line-height: 1.5; }
+    .storage-notice > span:first-child { color: var(--accent); font-weight: 700; }
     .synonym-row { margin-bottom: 8px; padding: 9px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
     .synonym-standard { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 5px; }
     .synonym-variants { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -1206,6 +1208,7 @@
     .error-display p { color: var(--text-sec); font-size: 13px; line-height: 1.6; margin: 8px 0 0; }
     .error-action { color: var(--text-muted); font-size: 12px; margin-top: 8px; }
     .modal-overlay { background: var(--overlay-modal); }
+    .modal-overlay.hidden { display: none; }
     .modal-card { width: min(560px, 95vw); max-height: 92vh; overflow-y: auto; padding: 22px; background: var(--card); border-color: var(--border-hover); box-shadow: var(--shadow-modal); }
     .modal-title { font-size: 18px; }
     .modal-subtitle { font-family: var(--font-mono); font-size: 11px; overflow-wrap: anywhere; }
@@ -1294,18 +1297,21 @@
         <button type="button" class="btn btn-ghost" onclick="clearLegacyStorage()">清除旧 key</button>
       </div>
     </div>
+    <div class="storage-notice hidden" id="storageNotice" role="status" aria-live="polite">
+      <span aria-hidden="true">ⓘ</span> <span id="storageNoticeText">浏览器存储当前不可用；仍可继续使用，本次模式偏好不会保存。</span>
+    </div>
 
     <!-- API Key Section -->
     <div class="collapsible" id="keySection">
-      <div class="collapsible-header" onclick="toggleCollapsible('keySection')">
+      <button type="button" class="collapsible-header" aria-expanded="false" aria-controls="keySectionBody" onclick="toggleCollapsible('keySection')">
         <div class="collapsible-header-left">
           <div class="section-icon"></div>
           模型配置
           <span id="keySavedBadge" class="key-saved-badge hidden">✓ 本次会话已设置</span>
         </div>
         <span class="collapsible-arrow">▼</span>
-      </div>
-      <div class="collapsible-body">
+      </button>
+      <div class="collapsible-body" id="keySectionBody" hidden>
         <div class="collapsible-body-inner">
           <!-- Mode toggle -->
           <div class="api-mode-toggle">
@@ -1362,10 +1368,10 @@
               <div class="api-target-origin" id="apiOriginLabel">https://api.deepseek.com</div>
               <label class="origin-confirm">
                 <input type="checkbox" id="apiOriginConfirm" onchange="onOriginConfirmationChange()" />
-                <span>我确认把本次自由文本发送到上方 origin。Key、输入和结果不会写入 localStorage 或 sessionStorage。</span>
+                <span>我确认把本次自由文本和 Bearer Key 发送到上方 origin。Key、Endpoint、输入和结果不会写入 localStorage 或 sessionStorage。</span>
               </label>
             </div>
-            <div class="key-hint key-hint-tight">仅允许 HTTPS；本机调试可使用 localhost、127.0.0.1 或 ::1。不会加载 config.local.js。</div>
+            <div class="key-hint key-hint-tight">仅允许 HTTPS；本机调试可使用 localhost、127.0.0.1 或 ::1。不会加载 config.local.js。CORS 预检需允许当前页面 origin、POST、Content-Type、Authorization。</div>
           </div>
         </div>
       </div>
@@ -1404,7 +1410,12 @@
         <div
           id="pdfDropZone"
           class="pdf-drop-zone"
+          role="button"
+          tabindex="0"
+          aria-controls="pdfFileInput"
+          aria-label="选择或拖拽 PDF 文件"
           onclick="document.getElementById('pdfFileInput').click()"
+          onkeydown="onPdfDropZoneKeydown(event)"
           ondragover="onDragOver(event)"
           ondragleave="onDragLeave(event)"
           ondrop="onDrop(event)"
@@ -1450,14 +1461,14 @@
 
     <!-- Synonym Map Section -->
     <div class="collapsible" id="synonymSection">
-      <div class="collapsible-header" onclick="toggleCollapsible('synonymSection')">
+      <button type="button" class="collapsible-header" aria-expanded="false" aria-controls="synonymSectionBody" onclick="toggleCollapsible('synonymSection')">
         <div class="collapsible-header-left">
           <div class="section-icon"></div>
           金融术语同义词映射表
         </div>
         <span class="collapsible-arrow">▼</span>
-      </div>
-      <div class="collapsible-body">
+      </button>
+      <div class="collapsible-body" id="synonymSectionBody" hidden>
         <div class="collapsible-body-inner" style="padding-top:12px;">
           <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px;">
             系统级配置，供所有模块 Prompt 复用。提取时自动识别以下术语变体。
@@ -1469,14 +1480,14 @@
 
     <!-- Prompt Preview Section -->
     <div class="collapsible" id="promptSection">
-      <div class="collapsible-header" onclick="toggleCollapsible('promptSection')">
+      <button type="button" class="collapsible-header" aria-expanded="false" aria-controls="promptSectionBody" onclick="toggleCollapsible('promptSection')">
         <div class="collapsible-header-left">
           <div class="section-icon"></div>
           Prompt 结构预览
         </div>
         <span class="collapsible-arrow">▼</span>
-      </div>
-      <div class="collapsible-body">
+      </button>
+      <div class="collapsible-body" id="promptSectionBody" hidden>
         <div class="collapsible-body-inner">
           <div class="prompt-block">
             <div class="prompt-block-title">System Prompt</div>
@@ -1568,20 +1579,20 @@
       </div>
 
       <!-- Tabs -->
-      <div class="tabs">
-        <button class="tab-btn active" id="tab-basic" onclick="switchTab('basic')">
+      <div class="tabs" role="tablist" aria-label="结果分组">
+        <button type="button" role="tab" aria-selected="true" aria-controls="tabContent" tabindex="0" class="tab-btn active" id="tab-basic" onclick="switchTab('basic')" onkeydown="onTabKeydown(event, 'basic')">
           基本信息 <span class="tab-warn-dot hidden" id="dot-basic">●</span>
         </button>
-        <button class="tab-btn" id="tab-plan" onclick="switchTab('plan')">
+        <button type="button" role="tab" aria-selected="false" aria-controls="tabContent" tabindex="-1" class="tab-btn" id="tab-plan" onclick="switchTab('plan')" onkeydown="onTabKeydown(event, 'plan')">
           激励计划 <span class="tab-warn-dot hidden" id="dot-plan">●</span>
         </button>
-        <button class="tab-btn" id="tab-grantees" onclick="switchTab('grantees')">
+        <button type="button" role="tab" aria-selected="false" aria-controls="tabContent" tabindex="-1" class="tab-btn" id="tab-grantees" onclick="switchTab('grantees')" onkeydown="onTabKeydown(event, 'grantees')">
           授予信息 <span class="tab-warn-dot hidden" id="dot-grantees">●</span>
         </button>
       </div>
 
       <!-- Tab Panels -->
-      <div id="tabContent"></div>
+      <div id="tabContent" role="tabpanel" tabindex="0" aria-live="polite"></div>
 
     </div><!-- /output-content -->
 
@@ -1591,8 +1602,8 @@
 
 
 <!-- ===== Edit Modal ===== -->
-<div class="modal-overlay hidden" id="editModal">
-  <div class="modal-card">
+<div class="modal-overlay hidden" id="editModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalSubtitle" aria-hidden="true">
+  <div class="modal-card" tabindex="-1">
     <div class="modal-title" id="modalTitle">复核字段</div>
     <div class="modal-subtitle" id="modalSubtitle">字段路径</div>
 
@@ -1680,8 +1691,8 @@
     <textarea class="modal-note-input" id="modalNoteInput" rows="2" placeholder="描述错误原因，方便后续分析…"></textarea>
 
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
-      <button class="btn btn-primary modal-save-btn" onclick="saveReview()">
+      <button type="button" class="btn btn-ghost" onclick="closeEditModal()">取消</button>
+      <button type="button" class="btn btn-primary modal-save-btn" onclick="saveReview()">
         保存复核
       </button>
     </div>
@@ -1690,7 +1701,5 @@
 
 
 <script src="./app.js"></script>
-
-<script src="/assets/js/analytics.js" defer></script>
 </body>
 </html>

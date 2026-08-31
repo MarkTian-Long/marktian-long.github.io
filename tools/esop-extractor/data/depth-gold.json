@@ -1,0 +1,666 @@
+{
+  "artifactVersion": "esop-depth-artifacts-v1",
+  "kind": "gold",
+  "fixtures": [
+    {
+      "id": "standard",
+      "result": {
+        "companyBasic": {
+          "tickerCode": {
+            "value": "01234",
+            "confidence": "high",
+            "source": "股票代码：01234"
+          },
+          "industryCat": {
+            "value": "信息技术",
+            "confidence": "high",
+            "source": "属于信息技术行业"
+          },
+          "registeredLocation": {
+            "value": "开曼群岛",
+            "confidence": "high",
+            "source": "于开曼群岛注册成立"
+          },
+          "listingBoard": {
+            "value": "香港联交所主板",
+            "confidence": "high",
+            "source": "香港联交所主板上市"
+          },
+          "securityType": {
+            "value": "普通股（H股）",
+            "confidence": "high",
+            "source": "证券类型为普通股（H股）"
+          },
+          "founders": {
+            "value": "陈志远、王晓燕",
+            "confidence": "medium",
+            "source": "创始人为陈志远先生及王晓燕女士"
+          },
+          "listingDate": {
+            "value": "2024-03-28",
+            "confidence": "high",
+            "source": "二零二四年三月二十八日起在联交所主板正式买卖"
+          },
+          "ipoPrice": {
+            "value": "港币18.88元/股",
+            "confidence": "high",
+            "source": "发行价定为每股H股港币18.88元"
+          },
+          "totalSharesAfter": {
+            "value": "1,000,000,000股",
+            "confidence": "high",
+            "source": "发售后为1,000,000,000股"
+          },
+          "totalSharesBefore": {
+            "value": "800,000,000股",
+            "confidence": "high",
+            "source": "发售前已发行股份总数为800,000,000股"
+          },
+          "ipoMarketCap": {
+            "value": "约人民币173亿元",
+            "confidence": "medium",
+            "source": "首次公开发售时市值约为人民币173亿元"
+          }
+        },
+        "esopPlan": {
+          "adoptionDate": {
+            "value": "2022-01-10",
+            "confidence": "high",
+            "source": "二零二二年一月十日采纳一项购股权计划"
+          },
+          "planName": {
+            "value": "购股权计划",
+            "confidence": "high",
+            "source": "采纳一项购股权计划"
+          },
+          "reservedShares": {
+            "value": "80,000,000股",
+            "confidence": "high",
+            "source": "预留股份数目为80,000,000股"
+          },
+          "reservedShareRatio": {
+            "value": "10%",
+            "confidence": "high",
+            "source": "占发行前已发行股份总数的10%"
+          },
+          "shareType": {
+            "value": "普通股",
+            "confidence": "high",
+            "source": "股份标的类型为普通股"
+          },
+          "incentiveTool": {
+            "value": "购股权（股份期权）",
+            "confidence": "high",
+            "source": "激励工具为购股权（股份期权）"
+          },
+          "grantedShares": {
+            "value": "60,000,000份",
+            "confidence": "high",
+            "source": "已授出购股权合计为60,000,000份"
+          },
+          "grantedShareRatio": {
+            "value": "7.5%",
+            "confidence": "high",
+            "source": "占发行前总股本的7.5%"
+          },
+          "exercisePrice": {
+            "value": "港币15.50元/股",
+            "confidence": "high",
+            "source": "行使价为每股港币15.50元"
+          },
+          "grantDateFMV": {
+            "value": "港币13.20元/股",
+            "confidence": "medium",
+            "source": "公平市值为港币13.20元"
+          }
+        },
+        "grantees": [
+          {
+            "name": {
+              "value": "张伟",
+              "confidence": "high",
+              "source": "张伟先生（首席执行官CEO）"
+            },
+            "position": {
+              "value": "首席执行官（CEO）",
+              "confidence": "high",
+              "source": "首席执行官CEO"
+            },
+            "hireDate": {
+              "value": "2018-05-16",
+              "confidence": "high",
+              "source": "入职日期为二零一八年五月十六日"
+            },
+            "grantDate": {
+              "value": "2023-06-01",
+              "confidence": "high",
+              "source": "购股权授出日期为二零二三年六月一日"
+            },
+            "incentiveTool": {
+              "value": "购股权",
+              "confidence": "high",
+              "source": "激励工具为购股权"
+            },
+            "grantedShares": {
+              "value": "20,000,000份",
+              "confidence": "high",
+              "source": "已授出20,000,000份"
+            },
+            "grantedShareRatio": {
+              "value": "2.5%",
+              "confidence": "high",
+              "source": "发行前总股本2.5%"
+            },
+            "vestingSchedule": {
+              "value": "1年cliff后25%归属，其后每季度6.25%归属",
+              "confidence": "medium",
+              "source": "第一年届满后25%归属，其后每季度额外6.25%归属"
+            },
+            "holdingPlatform": {
+              "value": "不适用（直接持有）",
+              "confidence": "low",
+              "source": "持股平台不适用（直接持有）"
+            },
+            "cashComp": {
+              "value": "港币3,200,000元/年",
+              "confidence": "high",
+              "source": "年度现金薪酬港币3,200,000元"
+            }
+          },
+          {
+            "name": {
+              "value": "李明",
+              "confidence": "high",
+              "source": "李明先生（首席技术官CTO）"
+            },
+            "position": {
+              "value": "首席技术官（CTO）",
+              "confidence": "high",
+              "source": "首席技术官CTO"
+            },
+            "hireDate": {
+              "value": "2019-11-03",
+              "confidence": "high",
+              "source": "入职日期为二零一九年十一月零三日"
+            },
+            "grantDate": {
+              "value": "2023-06-01",
+              "confidence": "high",
+              "source": "购股权授出日期为二零二三年六月一日"
+            },
+            "incentiveTool": {
+              "value": "购股权",
+              "confidence": "high",
+              "source": "激励工具为购股权"
+            },
+            "grantedShares": {
+              "value": "15,000,000份",
+              "confidence": "high",
+              "source": "已授出15,000,000份"
+            },
+            "grantedShareRatio": {
+              "value": "1.875%",
+              "confidence": "medium",
+              "source": "发行前总股本1.875%"
+            },
+            "vestingSchedule": {
+              "value": "1年cliff后25%归属，其后每季度6.25%归属",
+              "confidence": "medium",
+              "source": "第一年届满后25%的购股权归属"
+            },
+            "holdingPlatform": {
+              "value": "不适用（直接持有）",
+              "confidence": "low",
+              "source": "持股平台不适用（直接持有）"
+            },
+            "cashComp": {
+              "value": "港币2,600,000元/年",
+              "confidence": "low",
+              "source": "年度现金薪酬港币2,600,000元"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-ambiguous",
+      "result": {
+        "companyBasic": {
+          "tickerCode": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "industryCat": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "registeredLocation": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "listingBoard": {
+            "value": "香港联交所主板",
+            "confidence": "high",
+            "source": "联交所主板上市"
+          },
+          "securityType": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "founders": {
+            "value": "陈志远、王晓燕",
+            "confidence": "medium",
+            "source": "创始人陈志远及王晓燕合计控制约52.3%"
+          },
+          "listingDate": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "ipoPrice": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "totalSharesAfter": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "totalSharesBefore": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "ipoMarketCap": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          }
+        },
+        "esopPlan": {
+          "adoptionDate": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "planName": {
+            "value": "购股权计划",
+            "confidence": "medium",
+            "source": "董事会采纳购股权计划"
+          },
+          "reservedShares": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "reservedShareRatio": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "shareType": {
+            "value": "普通股",
+            "confidence": "high",
+            "source": "股份标的类型为普通股"
+          },
+          "incentiveTool": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "grantedShares": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "grantedShareRatio": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "exercisePrice": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "grantDateFMV": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          }
+        },
+        "grantees": [
+          {
+            "name": {
+              "value": "张伟",
+              "confidence": "high",
+              "source": "张伟先生为首席执行官"
+            },
+            "position": {
+              "value": "首席执行官（CEO）",
+              "confidence": "high",
+              "source": "张伟先生为首席执行官"
+            },
+            "hireDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "incentiveTool": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShares": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShareRatio": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "vestingSchedule": {
+              "value": "大致一年后分期归属",
+              "confidence": "medium",
+              "source": "购股权大致于一年后分期归属"
+            },
+            "holdingPlatform": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "cashComp": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            }
+          },
+          {
+            "name": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "position": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "hireDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "incentiveTool": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShares": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShareRatio": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "vestingSchedule": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "holdingPlatform": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "cashComp": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "logical-conflict",
+      "result": {
+        "companyBasic": {
+          "tickerCode": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "industryCat": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "registeredLocation": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "listingBoard": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "securityType": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "founders": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "listingDate": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "ipoPrice": {
+            "value": "港币18.88元/股",
+            "confidence": "high",
+            "source": "发行价为每股港币18.88元"
+          },
+          "totalSharesAfter": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "totalSharesBefore": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "ipoMarketCap": {
+            "value": "约人民币170亿元",
+            "confidence": "high",
+            "source": "首次公开发售时市值约为人民币170亿元"
+          }
+        },
+        "esopPlan": {
+          "adoptionDate": {
+            "value": "2024-01-10",
+            "confidence": "high",
+            "source": "二零二四年一月十日采纳购股权计划"
+          },
+          "planName": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "reservedShares": {
+            "value": "40,000,000股",
+            "confidence": "high",
+            "source": "预留股份40,000,000股"
+          },
+          "reservedShareRatio": {
+            "value": "5%",
+            "confidence": "high",
+            "source": "占发行前总股本5%"
+          },
+          "shareType": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "incentiveTool": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "grantedShares": {
+            "value": "60,000,000份",
+            "confidence": "high",
+            "source": "已授购股权合计60,000,000份"
+          },
+          "grantedShareRatio": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          },
+          "exercisePrice": {
+            "value": "港币1.50元/股",
+            "confidence": "high",
+            "source": "行使价为每股港币1.50元"
+          },
+          "grantDateFMV": {
+            "value": null,
+            "confidence": "low",
+            "source": "未在提供的文本中找到相关内容"
+          }
+        },
+        "grantees": [
+          {
+            "name": {
+              "value": "张伟",
+              "confidence": "high",
+              "source": "张伟先生的购股权授出日期"
+            },
+            "position": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "hireDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantDate": {
+              "value": "2023-06-01",
+              "confidence": "high",
+              "source": "购股权授出日期为二零二三年六月一日"
+            },
+            "incentiveTool": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShares": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShareRatio": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "vestingSchedule": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "holdingPlatform": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "cashComp": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            }
+          },
+          {
+            "name": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "position": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "hireDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantDate": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "incentiveTool": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShares": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "grantedShareRatio": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "vestingSchedule": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "holdingPlatform": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            },
+            "cashComp": {
+              "value": null,
+              "confidence": "low",
+              "source": "未在提供的文本中找到相关内容"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

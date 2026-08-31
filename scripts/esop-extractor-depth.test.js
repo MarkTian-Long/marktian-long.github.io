@@ -1,4 +1,7 @@
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
 
 global.document = {
@@ -32,6 +35,11 @@ const {
   storageKeys,
   collectBadCases,
   runValidation,
+  createLatestRunGuard,
+  readResponseBodyLimited,
+  safeStorageGet,
+  safeStorageSet,
+  safeStorageRemove,
 } = app;
 
 const BASIC_KEYS = [
@@ -119,6 +127,25 @@ test('evidence matching distinguishes exact, partial, and missing source claims'
   assert.equal(evidenceMatch('未在提供的文本中找到相关内容', '有输入'), 'missing');
 });
 
+test('evidence partial requires explainable anchors instead of arbitrary short overlap', () => {
+  assert.equal(evidenceMatch('港币18.88元/股', '本次全球发售发行价定为每股港币18.88元。'), 'partial');
+  assert.equal(evidenceMatch('市场情况', '市场风险与竞争格局'), 'missing');
+  assert.equal(evidenceMatch('董事会于2024年采纳计划', '董事会于2024年讨论市场'), 'missing');
+});
+
+test('standard fixture paraphrases remain locatable without weakening short-overlap rejection', () => {
+  const standard = FIXTURE_SCENARIOS.find((scenario) => scenario.id === 'standard');
+  const missing = app.getFieldEntries(standard.result)
+    .filter((entry) => entry.field.value !== null && evidenceMatch(entry.field.source, standard.inputText) === 'missing')
+    .map((entry) => entry.path);
+  assert.deepEqual(missing, []);
+});
+
+test('sensitive ESOP page does not load remote analytics code', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'tools', 'esop-extractor', 'index.html'), 'utf8');
+  assert.doesNotMatch(html, /analytics\.js|googletagmanager|Google Tag Manager/i);
+});
+
 test('PDF metadata never invents a page count and keeps only file identity and size', () => {
   assertFunction(getPdfMeta, 'getPdfMeta');
   const meta = getPdfMeta({ name: 'plan.pdf', size: 123456, type: 'application/pdf' });
@@ -160,7 +187,7 @@ test('synthetic evaluation reports sample range, version, date, exact match, com
   assert.match(evaluation.measuredOn, /^2026-08-30$/);
   assert.equal(evaluation.sampleExactMatch.value, '67%');
   assert.equal(evaluation.fieldCompleteness.value, '100%');
-  assert.equal(evaluation.fieldExactMatch.value, '98%');
+  assert.equal(evaluation.fieldExactMatch.value, '99%');
   assert.ok(evaluation.sampleExactMatch.denominator > 0);
   assert.ok(evaluation.fieldCompleteness.denominator > 0);
   assert.ok(evaluation.locatableEvidenceCoverage.denominator > 0);
@@ -236,6 +263,16 @@ test('custom API authorization is sent only after the user confirms the exact or
     apiCompletionUrl('https://api.example.com/v1/chat/completions?api-version=2026-01'),
     'https://api.example.com/v1/chat/completions?api-version=2026-01',
   );
+  assert.throws(
+    () => buildApiRequest({
+      endpoint: 'https://api.example.com/changed',
+      apiKey: 'secret-key',
+      model: 'model-a',
+      userPrompt: 'private input',
+      confirmedOrigin: 'https://old.example.com',
+    }),
+    /origin|确认/i,
+  );
 });
 
 test('API errors are actionable but do not echo keys, endpoints, input, or model output', () => {
@@ -266,6 +303,20 @@ test('custom model output with missing schema fields produces a specific validat
   const oversizedValidation = validateExtractionSchema(malformedGrantee);
   assert.equal(oversizedValidation.ok, false);
   assert.ok(oversizedValidation.errors.some((error) => error.includes('最多允许')));
+
+  const nestedValue = minimalResult();
+  nestedValue.companyBasic.tickerCode.value = { injected: 'instruction' };
+  const nestedValidation = validateExtractionSchema(nestedValue);
+  assert.equal(nestedValidation.ok, false);
+  assert.ok(nestedValidation.errors.some((error) => error.includes('tickerCode.value')));
+
+  const longValue = minimalResult();
+  longValue.companyBasic.tickerCode.value = 'x'.repeat(501);
+  assert.equal(validateExtractionSchema(longValue).ok, false);
+
+  const largeArray = minimalResult();
+  largeArray.companyBasic.founders.value = Array.from({ length: 51 }, () => 'x');
+  assert.equal(validateExtractionSchema(largeArray).ok, false);
 });
 
 test('custom model parser accepts direct and fenced OpenAI-style JSON, with a sanitized schema error', () => {
@@ -338,6 +389,125 @@ test('synthetic evaluation uses an independent gold object when a result is muta
   const evaluation = evaluateFixtureSet(scenarios);
   assert.equal(evaluation.sampleExactMatch.value, '33%');
   assert.equal(FIXTURE_SCENARIOS[0].gold.companyBasic.tickerCode.value, '01234');
+});
+
+test('offline field evaluation includes gold-null fields and penalizes injected values', () => {
+  const gold = minimalResult();
+  const correct = minimalResult();
+  const injected = minimalResult();
+  injected.companyBasic.tickerCode = field('hallucinated', 'high', '虚构来源');
+  const correctEvaluation = evaluateFixtureSet([{ id: 'null-case', inputText: '', gold, result: correct }]);
+  const injectedEvaluation = evaluateFixtureSet([{ id: 'null-case', inputText: '', gold, result: injected }]);
+  assert.ok(correctEvaluation.fieldExactMatch.denominator > 0);
+  assert.equal(correctEvaluation.fieldExactMatch.numerator, correctEvaluation.fieldExactMatch.denominator);
+  assert.ok(injectedEvaluation.fieldExactMatch.numerator < correctEvaluation.fieldExactMatch.numerator);
+  assert.ok(injectedEvaluation.fieldExactMatch.denominator === correctEvaluation.fieldExactMatch.denominator);
+});
+
+test('request generation aborts and invalidates stale runs', () => {
+  assertFunction(createLatestRunGuard, 'createLatestRunGuard');
+  const guard = createLatestRunGuard();
+  const first = guard.begin();
+  const second = guard.begin();
+  assert.equal(first.signal.aborted, true);
+  assert.equal(guard.isCurrent(first.token), false);
+  assert.equal(guard.isCurrent(second.token), true);
+  guard.invalidate();
+  assert.equal(second.signal.aborted, true);
+  assert.equal(guard.isCurrent(second.token), false);
+});
+
+test('limited response reader cancels a stream before retaining an oversized body', async () => {
+  assertFunction(readResponseBodyLimited, 'readResponseBodyLimited');
+  const encoder = new TextEncoder();
+  const chunks = [encoder.encode('1234'), encoder.encode('5678')];
+  let cancelled = false;
+  let index = 0;
+  const response = {
+    body: {
+      getReader() {
+        return {
+          async read() {
+            if (index >= chunks.length) return { done: true, value: undefined };
+            return { done: false, value: chunks[index++] };
+          },
+          async cancel() { cancelled = true; },
+          releaseLock() {},
+        };
+      },
+    },
+  };
+  await assert.rejects(readResponseBodyLimited(response, 6), (error) => error.code === 'RESPONSE_TOO_LARGE');
+  assert.equal(cancelled, true);
+});
+
+test('storage wrappers absorb SecurityError without blocking the page', () => {
+  assertFunction(safeStorageGet, 'safeStorageGet');
+  assertFunction(safeStorageSet, 'safeStorageSet');
+  assertFunction(safeStorageRemove, 'safeStorageRemove');
+  const blocked = {
+    getItem() { throw Object.assign(new Error('blocked'), { name: 'SecurityError' }); },
+    setItem() { throw Object.assign(new Error('blocked'), { name: 'SecurityError' }); },
+    removeItem() { throw Object.assign(new Error('blocked'), { name: 'SecurityError' }); },
+  };
+  assert.equal(safeStorageGet(blocked, 'key'), null);
+  assert.equal(safeStorageSet(blocked, 'key', 'value'), false);
+  assert.equal(safeStorageRemove(blocked, 'key'), false);
+});
+
+test('depth evaluation artifacts are independent versioned JSON with review and fixture metadata', () => {
+  const dataDir = path.join(__dirname, '..', 'tools', 'esop-extractor', 'data');
+  const inputs = JSON.parse(fs.readFileSync(path.join(dataDir, 'depth-inputs.json'), 'utf8'));
+  const gold = JSON.parse(fs.readFileSync(path.join(dataDir, 'depth-gold.json'), 'utf8'));
+  const candidates = JSON.parse(fs.readFileSync(path.join(dataDir, 'depth-candidate-predictions.json'), 'utf8'));
+  const metadata = JSON.parse(fs.readFileSync(path.join(dataDir, 'depth-evaluation-meta.json'), 'utf8'));
+  assert.equal(inputs.artifactVersion, app.ARTIFACT_VERSION);
+  assert.equal(gold.artifactVersion, app.ARTIFACT_VERSION);
+  assert.equal(candidates.artifactVersion, app.ARTIFACT_VERSION);
+  assert.equal(metadata.reviewer, 'qiuzhi-esop-depth-review');
+  assert.equal(metadata.evaluationScriptVersion, app.EVALUATION_SCRIPT_VERSION);
+  assert.match(metadata.measuredOn, /^2026-08-30$/);
+  assert.deepEqual(metadata.fixtureIds, ['standard', 'missing-ambiguous', 'logical-conflict']);
+  for (const entry of metadata.fixtures) {
+    assert.match(entry.inputSha256, /^[a-f0-9]{64}$/);
+    assert.match(entry.goldSha256, /^[a-f0-9]{64}$/);
+    assert.match(entry.candidateSha256, /^[a-f0-9]{64}$/);
+  }
+  assert.deepEqual(inputs.fixtures.map((item) => item.id), metadata.fixtureIds);
+  assert.deepEqual(gold.fixtures.map((item) => item.id), metadata.fixtureIds);
+  assert.deepEqual(candidates.fixtures.map((item) => item.id), metadata.fixtureIds);
+  const hash = (value) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+  for (let index = 0; index < metadata.fixtureIds.length; index += 1) {
+    assert.equal(metadata.fixtures[index].inputSha256, hash(inputs.fixtures[index]));
+    assert.equal(metadata.fixtures[index].goldSha256, hash(gold.fixtures[index]));
+    assert.equal(metadata.fixtures[index].candidateSha256, hash(candidates.fixtures[index]));
+  }
+  gold.fixtures[0].result.companyBasic.tickerCode.value = 'mutated-in-test';
+  assert.equal(FIXTURE_SCENARIOS[0].gold.companyBasic.tickerCode.value, '01234');
+});
+
+test('API error sanitization retains actionable categories and is idempotent', () => {
+  const categories = [
+    [Object.assign(new Error('Failed to fetch'), { name: 'TypeError' }), /网络|CORS/],
+    [Object.assign(new Error('unauthorized'), { status: 401 }), /401|身份|Key/],
+    [Object.assign(new Error('too many'), { status: 429 }), /429|频繁|额度/],
+    [Object.assign(new Error('server'), { status: 503 }), /503|服务/],
+    [Object.assign(new Error('timeout'), { name: 'AbortError' }), /超时/],
+  ];
+  for (const [error, expected] of categories) assert.match(sanitizeApiError(error), expected);
+  const safe = sanitizeApiError(Object.assign(new Error('response schema invalid'), { code: 'SCHEMA_INVALID' }));
+  assert.equal(sanitizeApiError(Object.assign(new Error(safe), { isSanitized: true })), safe);
+});
+
+test('ESOP page exposes keyboard and dialog semantics in its source markup', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'tools', 'esop-extractor', 'index.html'), 'utf8');
+  assert.match(html, /id="pdfDropZone"[^>]*(?:tabindex="0"|type="button")/s);
+  assert.match(html, /role="tablist"/);
+  assert.match(html, /role="tab"[^>]*aria-selected=/s);
+  assert.match(html, /role="dialog"[^>]*aria-modal="true"/s);
+  assert.match(html, /aria-labelledby="modalTitle"/);
+  assert.match(html, /aria-expanded="false"/);
+  assert.match(html, /Bearer Key.*origin|origin.*Bearer Key/i);
 });
 
 test('date rule points to the grantee that actually violates the plan date', () => {

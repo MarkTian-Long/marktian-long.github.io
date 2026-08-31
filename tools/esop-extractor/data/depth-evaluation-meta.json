@@ -1,0 +1,32 @@
+{
+  "artifactVersion": "esop-depth-artifacts-v1",
+  "reviewer": "qiuzhi-esop-depth-review",
+  "evaluationScriptVersion": "esop-eval-v2",
+  "measuredOn": "2026-08-30",
+  "hashAlgorithm": "SHA-256 over each fixture JSON object with stable insertion order",
+  "fixtureIds": [
+    "standard",
+    "missing-ambiguous",
+    "logical-conflict"
+  ],
+  "fixtures": [
+    {
+      "id": "standard",
+      "inputSha256": "885ceb375473134d79f34428123d53201800296f493a86035519d9170409c018",
+      "goldSha256": "a269fced7d9f809f6447212127bf07f894d73e2b4aebe652a14d20cea1f274d0",
+      "candidateSha256": "7743b45bacc3c03ff9eb0f4fabe69d9b29fe55c94ae48652b9314aee14b6d0d8"
+    },
+    {
+      "id": "missing-ambiguous",
+      "inputSha256": "14820c02771d1e390e3d557346abee209e987833f63d3a49922d31c357458197",
+      "goldSha256": "8e863f02628cbbd258a9942e7889a91ce7318524cb5eab2369b41965c1ceebd3",
+      "candidateSha256": "c2ff0d07487afc33f3f4dbfcc6db8bd1a2cac17f034dfeb48f9aadfd76e42b90"
+    },
+    {
+      "id": "logical-conflict",
+      "inputSha256": "7fea665f09a1923a3da01b8c46a22dbc7052cf1cb54a31497b972a11c2a20037",
+      "goldSha256": "a64212c1ca95514664edf06b7ac8e7f3199c57c8956666ceedad2b2abcc88cac",
+      "candidateSha256": "99e29cbfcaeb9567f84823541888b2d5d6b9e60ef338f3a4e3c2ee0c03a1073b"
+    }
+  ]
+}

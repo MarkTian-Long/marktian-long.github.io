@@ -8,7 +8,7 @@
 ## 核心设计亮点
 - **三个版本化夹具**：`standard`、`missing-ambiguous`、`logical-conflict`，分别覆盖正常、缺失/歧义和跨字段冲突。
 - **指标语义分离**：模型自报高置信占比明确标为 `proxy`；“准确率目标 ≥95%”只有在离线标注评估后才可称为测量值。
-- **证据三态匹配**：每个 source 都显示 `exact`、`partial` 或 `missing`，不再用不可核查的虚构页码代替来源。
+- **证据三态匹配**：每个 source 都显示 `exact`、`partial` 或 `missing`，不再用不可核查的虚构页码代替来源；`partial` 至少需要足够长的连续片段，并满足数字/币种/单位或多个语义锚点，不能靠任意短重合。
 - **独立复核记录**：人工修正只生成 effective value，不覆盖原始 value 或 confidence；复核包含状态、根因、修复对象和回归结果。
 - **跨字段规则校验**：展示授予超池、行权价异常、日期倒置和来源无法定位等提示，只提示矛盾，不静默改值。
 - **Bad Case 回归导出**：导出原始/有效值、原始 confidence、证据、版本号、根因和 regression 状态，便于后续迭代。
@@ -30,7 +30,23 @@
 | 自定义 API | 当前页面输入 Key / Endpoint / 模型名，兼容 OpenAI Chat 格式接口；只允许 HTTPS，HTTP 仅限明确 loopback |
 
 ### 自定义 API 使用边界
-自定义 API Key、Endpoint、模型、输入和结果只保存在当前页面内存，关闭页面后即清除；不会写入 localStorage/sessionStorage。请求前页面显示目标 origin，并要求确认完全一致的 origin，且不会跟随重定向。接口需要返回完整的 `companyBasic`、`esopPlan`、`grantees` 字段形状，每个字段包含 `value`、`confidence`、`source`。自由文本最多 200,000 字，授予对象最多 100 条，响应最多 1,000,000 字符，超限会停在脱敏错误态。公开页面不会加载 `config.local.js`，也不会内置或部署注入真实 Key。API 错误只显示脱敏后的可操作提示。
+自定义 API 的自由文本和 Bearer Key 只会发送到用户确认的准确 origin；Key、Endpoint、模型、输入和结果只保存在当前页面内存，关闭页面后即清除，不会写入 localStorage/sessionStorage。Endpoint 变化会清除 origin 确认；请求不会跟随重定向。接口需要返回完整的 `companyBasic`、`esopPlan`、`grantees` 字段形状，每个字段包含 `value`、`confidence`、`source`。自由文本最多 200,000 字，授予对象最多 100 条；`value` 只接受有限长度的字符串、数字、布尔值、null 或最多 50 项的一层标量数组，source 最多 500 字符；响应体流式读取最多 1,000,000 字符，达到上限会取消读取并进入脱敏错误态。公开页面不会加载 `config.local.js`，也不会内置或部署注入真实 Key。API 错误只显示一次脱敏后的可操作类别。
+
+浏览器跨域请求会触发 CORS 预检；自定义接口必须允许当前页面 `origin`、`POST`、`Content-Type` 和 `Authorization`，否则页面会显示网络 / CORS 类提示。若浏览器禁止 localStorage，页面仍可继续运行，并只提示模式偏好无法保存。
+
+### 离线评估工件
+
+离线评估不再依赖 `app.js` 中相邻 builder 的深拷贝。三类输入分别存放在独立、版本化 JSON 中：
+
+```
+tools/esop-extractor/data/
+├── depth-inputs.json                 # input 文本
+├── depth-gold.json                   # gold 标注
+├── depth-candidate-predictions.json  # candidate prediction
+└── depth-evaluation-meta.json        # reviewer、fixture hash、评估脚本版本、日期
+```
+
+当前工件版本为 `esop-depth-artifacts-v1`，评估脚本版本为 `esop-eval-v2`。字段值 exact match 的分母覆盖全集字段，gold 为 null 的正确空值也计入；注入值会被扣分。页面中的 `offline-measured` 仍只代表这 3 个合成夹具，不代表真实招股书准确率。
 
 ## 文件结构
 ```
@@ -38,6 +54,7 @@ tools/esop-extractor/
 ├── README.md           # 本文件
 ├── index.html          # 页面结构与样式
 ├── app.js              # 交互、Prompt 与演示数据
+├── data/               # 独立版本化 input / gold / candidate 评估工件
 └── config.example.js   # 历史配置示例（运行时不会加载）
 ```
 

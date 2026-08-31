@@ -4,6 +4,9 @@
 const PROMPT_VERSION = 'esop-prompt-v2';
 const SCHEMA_VERSION = 'esop-schema-v2';
 const EVALUATION_VERSION = 'esop-synthetic-v1';
+const ARTIFACT_VERSION = 'esop-depth-artifacts-v1';
+const EVALUATION_SCRIPT_VERSION = 'esop-eval-v2';
+const ARTIFACT_REVIEWER = 'qiuzhi-esop-depth-review';
 const EVALUATION_DATE = '2026-08-30';
 const STORAGE_KEY_MODE = 'qiuzhi_esop_apimode';
 const STORAGE_KEY_APIKEY = 'qiuzhi_esop_apikey';
@@ -11,7 +14,7 @@ const LEGACY_RESULT_KEYS = ['qiuzhi_esop_last_result'];
 const LEGACY_SENSITIVE_KEYS = [STORAGE_KEY_APIKEY, 'qiuzhi_esop_endpoint', 'qiuzhi_esop_model'];
 const MISSING_SOURCE = '未在提供的文本中找到相关内容';
 const ACCURACY_TARGET = '≥95%';
-const PARTIAL_EVIDENCE_MIN_CHARS = 4;
+const PARTIAL_EVIDENCE_MIN_CHARS = 6;
 const PARTIAL_EVIDENCE_RATIO = 0.45;
 const CONFIDENCES = ['high', 'medium', 'low'];
 const REVIEW_STATUSES = ['accepted', 'corrected', 'unresolved'];
@@ -23,6 +26,10 @@ const MAX_INPUT_CHARS = 200000;
 const MAX_GRANTEES = 100;
 const MAX_SCHEMA_ERRORS = 100;
 const MAX_API_RESPONSE_CHARS = 1000000;
+const MAX_VALUE_STRING_CHARS = 500;
+const MAX_VALUE_ARRAY_ITEMS = 50;
+const MAX_VALUE_DEPTH = 1;
+const MAX_SOURCE_CHARS = 500;
 
 const OUTPUT_SCHEMA = `{
   "companyBasic": {
@@ -273,9 +280,68 @@ const FIXTURE_SCENARIOS = [
   { id: 'logical-conflict', label: '逻辑冲突', description: '展示超池、低行权价、日期倒置和一个错误数值的联动复核。', inputText: CONFLICT_TEXT, result: buildConflictResult(), gold: buildGoldResult('logical-conflict') },
 ].map((scenario) => ({ ...scenario, result: clone(scenario.result), gold: clone(scenario.gold) }));
 
-function normalizeEvidenceText(value) { return String(value || '').replace(/[“”‘’]/g, '').replace(/\s+/g, '').replace(/[|｜]/g, '').trim(); }
+function normalizeEvidenceText(value) { return String(value || '').replace(/[“”‘’]/g, '').replace(/\s+/g, '').replace(/[|｜]/g, '').toLowerCase().trim(); }
 function evidenceClaim(source) { const value = String(source || '').split(/[|｜]/).pop().trim(); return value === MISSING_SOURCE ? '' : value; }
-function evidenceMatch(source, inputText) { const claim = normalizeEvidenceText(evidenceClaim(source)); const input = normalizeEvidenceText(inputText); if (!claim || !input) return 'missing'; if (input.includes(claim)) return 'exact'; const minimum = Math.min(PARTIAL_EVIDENCE_MIN_CHARS, Math.max(1, Math.ceil(claim.length * PARTIAL_EVIDENCE_RATIO))); const grams = new Set(); for (let index = 0; index <= claim.length - minimum; index += 1) grams.add(claim.slice(index, index + minimum)); for (let index = 0; index <= input.length - minimum; index += 1) if (grams.has(input.slice(index, index + minimum))) return 'partial'; return 'missing'; }
+function evidenceAnchors(value) {
+  const text = normalizeEvidenceText(value);
+  const numbers = text.match(/\d[\d,]*(?:\.\d+)?%?/g) || [];
+  const words = text.match(/[a-z]{2,}/g) || [];
+  const cjk = text.match(/[\u4e00-\u9fff]{2,}/g) || [];
+  const cjkBigrams = [];
+  for (const run of cjk) for (let index = 0; index < run.length - 1; index += 1) cjkBigrams.push(run.slice(index, index + 2));
+  const units = text.match(/港币|人民币|美元|欧元|元|股|份|%|年|月|日|亿元|万元/g) || [];
+  const numberUnits = [];
+  const numberUnitPattern = /(\d[\d,]*(?:\.\d+)?%?)\s*(港币|人民币|美元|欧元|亿元|万元|元|股|份|年|月|日|%)/g;
+  let match;
+  while ((match = numberUnitPattern.exec(text))) numberUnits.push(`${match[1]}${match[2]}`);
+  return { text, numbers: [...new Set(numbers)], words: [...new Set(words)], cjk: [...new Set(cjk)], cjkBigrams: [...new Set(cjkBigrams)], units: [...new Set(units)], numberUnits: [...new Set(numberUnits)] };
+}
+function hasSharedAnchor(left, right, anchors) { return anchors.some((anchor) => anchor.length >= 2 && right.includes(anchor) && left.includes(anchor)); }
+function longestSharedChunk(claim, input, minimum = PARTIAL_EVIDENCE_MIN_CHARS) {
+  if (claim.length < minimum || input.length < minimum) return '';
+  const inputChunks = new Set();
+  for (let index = 0; index <= input.length - minimum; index += 1) inputChunks.add(input.slice(index, index + minimum));
+  let longest = '';
+  for (let index = 0; index <= claim.length - minimum; index += 1) {
+    const seed = claim.slice(index, index + minimum);
+    if (!inputChunks.has(seed)) continue;
+    let position = input.indexOf(seed);
+    while (position !== -1) {
+      let length = minimum;
+      while (index + length < claim.length && position + length < input.length && claim[index + length] === input[position + length]) length += 1;
+      if (length > longest.length) longest = claim.slice(index, index + length);
+      position = input.indexOf(seed, position + 1);
+    }
+  }
+  return longest;
+}
+function hasDateContextMatch(claim, input, number) {
+  const numberIndex = claim.indexOf(number);
+  if (numberIndex < 0 || !/(?:\d{4}(?:年|[-/.])|\d{4}年)/.test(claim.slice(numberIndex))) return true;
+  const before = claim.slice(0, numberIndex).match(/[\u4e00-\u9fff]{2,}/g) || [];
+  const after = claim.slice(numberIndex + number.length).match(/[\u4e00-\u9fff]{2,}/g) || [];
+  return hasSharedAnchor(claim, input, before) && hasSharedAnchor(claim, input, after);
+}
+function evidenceMatch(source, inputText) {
+  const claim = evidenceAnchors(evidenceClaim(source));
+  const input = normalizeEvidenceText(inputText);
+  if (!claim.text || !input) return 'missing';
+  if (input.includes(claim.text)) return 'exact';
+  const chunk = longestSharedChunk(claim.text, input);
+  const sharedNumber = claim.numbers.find((number) => input.includes(number));
+  const sharedWords = claim.words.filter((word) => input.includes(word));
+  const sharedCjk = claim.cjkBigrams.filter((token) => input.includes(token));
+  const sharedSemantic = sharedWords.length + sharedCjk.length;
+  if (sharedNumber) {
+    if (!hasDateContextMatch(claim.text, input, sharedNumber)) return 'missing';
+    const sharedNumberUnit = claim.numberUnits.find((pair) => input.includes(pair));
+    if (sharedNumberUnit && sharedSemantic > 0) return 'partial';
+  }
+  const hasLongEnoughChunk = chunk.length >= PARTIAL_EVIDENCE_MIN_CHARS
+    && chunk.length / claim.text.length >= PARTIAL_EVIDENCE_RATIO;
+  if (sharedSemantic >= 2 && ((hasLongEnoughChunk && chunk.length / claim.text.length >= 0.5) || sharedCjk.length >= 3)) return 'partial';
+  return 'missing';
+}
 
 function getFieldEntries(result) {
   const entries = [];
@@ -308,7 +374,7 @@ function calculateMetrics(result, inputText = '') {
   const entries = getFieldEntries(result); const total = entries.length; const nonEmpty = entries.filter(({ field }) => field.value !== null && field.value !== undefined && field.value !== '').length; const withSource = entries.filter(({ field }) => Boolean(evidenceClaim(field.source))).length; const locatable = entries.filter(({ field }) => ['exact', 'partial'].includes(evidenceMatch(field.source, inputText))).length; const models = entries.filter(({ field }) => field.value !== null && field.value !== undefined); const high = models.filter(({ field }) => field.confidence === 'high').length; const reviewed = entries.filter(({ path }) => getReview(result, path)).length;
   return { fieldCoverage: ratio(nonEmpty, total), modelHighConfidenceShare: { ...ratio(high, models.length), kind: 'proxy', label: '模型自报高置信占比（proxy）' }, sourceDeclarationCoverage: ratio(withSource, total), locatableEvidenceCoverage: ratio(locatable, total), reviewProgress: { ...ratio(reviewed, total), reviewed, total }, ruleAnomalyCount: Object.keys(runValidation(result, inputText)).length, accuracyTarget: { value: ACCURACY_TARGET, kind: 'target', status: 'not-measured', label: '准确率目标（未测量）' } };
 }
-function pathsEqualValue(actual, expected) { return JSON.stringify(actual?.value ?? null) === JSON.stringify(expected?.value ?? expected ?? null); }
+function pathsEqualValue(actual, expected) { const actualValue = actual && typeof actual === 'object' && 'value' in actual ? actual.value : actual ?? null; const expectedValue = expected && typeof expected === 'object' && 'value' in expected ? expected.value : expected ?? null; return JSON.stringify(actualValue) === JSON.stringify(expectedValue); }
 
 function evaluateFixtureSet(scenarios = FIXTURE_SCENARIOS) {
   let completenessNumerator = 0; let exactFieldNumerator = 0; let fieldDenominator = 0; let evidenceNumerator = 0; let evidenceDenominator = 0; let exactNumerator = 0;
@@ -319,45 +385,124 @@ function evaluateFixtureSet(scenarios = FIXTURE_SCENARIOS) {
       const actual = getValueAtPath(scenario.result, entry.path);
       const expectedPresent = expected.value !== null && expected.value !== undefined;
       const actualPresent = actual?.value !== null && actual?.value !== undefined;
-      if (expectedPresent) { fieldDenominator += 1; if (actualPresent) completenessNumerator += 1; if (actualPresent && pathsEqualValue(actual, expected)) exactFieldNumerator += 1; }
+      fieldDenominator += 1;
+      if (expectedPresent === actualPresent) completenessNumerator += 1;
+      if (pathsEqualValue(actual, expected)) exactFieldNumerator += 1;
       if (expectedPresent) { evidenceDenominator += 1; if (evidenceMatch(actual?.source, scenario.inputText) !== 'missing') evidenceNumerator += 1; }
       if (expectedPresent !== actualPresent || (expectedPresent && !pathsEqualValue(actual, expected))) scenarioExact = false;
     }
     if (scenarioExact) exactNumerator += 1;
   }
-  return { kind: 'offline-measured', version: EVALUATION_VERSION, measuredOn: EVALUATION_DATE, sampleRange: `${scenarios.length} 个合成夹具`, sampleCount: scenarios.length, sampleExactMatch: ratio(exactNumerator, scenarios.length), fieldCompleteness: ratio(completenessNumerator, fieldDenominator), fieldExactMatch: ratio(exactFieldNumerator, fieldDenominator), locatableEvidenceCoverage: ratio(evidenceNumerator, evidenceDenominator) };
+  return { kind: 'offline-measured', version: EVALUATION_VERSION, artifactVersion: ARTIFACT_VERSION, evaluationScriptVersion: EVALUATION_SCRIPT_VERSION, reviewer: ARTIFACT_REVIEWER, measuredOn: EVALUATION_DATE, sampleRange: `${scenarios.length} 个合成夹具`, sampleCount: scenarios.length, sampleExactMatch: ratio(exactNumerator, scenarios.length), fieldCompleteness: ratio(completenessNumerator, fieldDenominator), fieldExactMatch: ratio(exactFieldNumerator, fieldDenominator), locatableEvidenceCoverage: ratio(evidenceNumerator, evidenceDenominator) };
 }
 
 function createRunMeta({ runId, mode = 'demo', scenarioId = null, startedAt, completedAt } = {}) { const start = startedAt || new Date().toISOString(); return { runId: runId || `esop-${Date.now().toString(36)}`, mode, scenarioId, promptVersion: PROMPT_VERSION, schemaVersion: SCHEMA_VERSION, startedAt: start, completedAt: completedAt || start }; }
 function createDemoResult(scenarioId = 'standard', overrides = {}) { const scenario = FIXTURE_SCENARIOS.find((item) => item.id === scenarioId) || FIXTURE_SCENARIOS[0]; const result = clone(scenario.result); result.runMeta = createRunMeta({ ...overrides, mode: 'demo', scenarioId: scenario.id }); result.inputMeta = { kind: 'synthetic-fixture', fixtureId: scenario.id, textLength: scenario.inputText.length, contentStored: false }; result.reviews = {}; result.metrics = calculateMetrics(result, scenario.inputText); result.evaluation = evaluateFixtureSet(); return result; }
 
-function storageKeys(storage) { if (!storage || typeof storage.length !== 'number' || typeof storage.key !== 'function') return []; const keys = []; for (let index = 0; index < storage.length; index += 1) { const key = storage.key(index); if (key !== null) keys.push(key); } return keys; }
+function safeStorageGet(storage, key) { try { return storage && typeof storage.getItem === 'function' ? storage.getItem(key) : null; } catch { return null; } }
+function safeStorageSet(storage, key, value) { try { if (!storage || typeof storage.setItem !== 'function') return false; storage.setItem(key, value); return true; } catch { return false; } }
+function safeStorageRemove(storage, key) { try { if (!storage || typeof storage.removeItem !== 'function') return false; storage.removeItem(key); return true; } catch { return false; } }
+function getBrowserStorage(kind = 'local') { if (typeof window === 'undefined') return null; try { return kind === 'session' ? window.sessionStorage : window.localStorage; } catch { return null; } }
+function storageKeys(storage) { if (!storage || typeof storage.key !== 'function') return []; let length = 0; try { length = Number(storage.length) || 0; } catch { return []; } const keys = []; for (let index = 0; index < length; index += 1) { try { const key = storage.key(index); if (key !== null) keys.push(key); } catch { break; } } return keys; }
 function inspectLegacyStorage(storage) { const keys = storageKeys(storage); return { resultKeys: LEGACY_RESULT_KEYS.filter((key) => keys.includes(key)), sensitiveKeys: LEGACY_SENSITIVE_KEYS.filter((key) => keys.includes(key)) }; }
 function isLoopbackHost(hostname) { const host = String(hostname || '').toLowerCase().replace(/^\[|\]$/g, ''); return host === 'localhost' || host === '127.0.0.1' || host === '::1'; }
 function validateCustomEndpoint(rawEndpoint) { const raw = String(rawEndpoint || '').trim(); if (!raw) return { ok: false, message: '请输入 Endpoint。' }; let url; try { url = new URL(raw); } catch { return { ok: false, message: 'Endpoint 不是合法 URL。' }; } if (url.username || url.password) return { ok: false, message: 'Endpoint 不得包含用户名或密码。' }; if (!(url.protocol === 'https:' || (url.protocol === 'http:' && isLoopbackHost(url.hostname)))) return { ok: false, message: '仅允许 HTTPS；HTTP 仅限 localhost、127.0.0.1 或 ::1。' }; return { ok: true, url, origin: url.origin, normalized: url.toString().replace(/\/$/, '') }; }
 function apiCompletionUrl(endpoint) { const checked = validateCustomEndpoint(endpoint); if (!checked.ok) throw new Error(checked.message); const path = checked.url.pathname.replace(/\/+$/, ''); const suffix = /\/v1\/chat\/completions$/i.test(path) ? '' : /\/v1$/i.test(path) ? '/chat/completions' : '/v1/chat/completions'; return `${checked.url.origin}${path}${suffix}${checked.url.search}`; }
 function buildApiRequest({ endpoint, apiKey, model, userPrompt, confirmedOrigin } = {}) { const checked = validateCustomEndpoint(endpoint); if (!checked.ok) throw new Error(checked.message); if (!confirmedOrigin || confirmedOrigin !== checked.origin) throw new Error('请先确认本次请求的准确 origin。'); if (!String(apiKey || '').trim()) throw new Error('请先在当前页面设置 API Key。'); if (!String(model || '').trim()) throw new Error('请填写模型名称。'); return { url: apiCompletionUrl(endpoint), options: { method: 'POST', redirect: 'error', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ model: String(model).trim(), messages: [{ role: 'system', content: DEPTH_SYSTEM_PROMPT }, { role: 'user', content: userPrompt }] }) } }; }
-function sanitizeApiError(error) { const status = Number(error?.status || error?.response?.status || 0); if (error?.code === 'SCHEMA_INVALID' || /schema/i.test(String(error?.message || ''))) return 'API 返回结构不符合 schema：请让模型返回完整字段 JSON。'; if (status === 401 || status === 403) return 'API 身份验证失败：请检查当前会话中的 Key 与目标 origin。'; if (status === 429) return 'API 请求过于频繁：请稍后重试或检查额度。'; if (status >= 500) return 'API 服务暂时不可用：请稍后重试。'; if (error?.name === 'AbortError') return '请求超时：请检查网络或稍后重试。'; if (/JSON|parse/i.test(String(error?.message || ''))) return 'API 返回不是合法 JSON：请检查模型响应格式。'; return 'API 请求未完成：请检查网络、Endpoint、模型名称和 origin 确认。'; }
+function sanitizeApiError(error) {
+  if (error?.isSanitized === true) return String(error.message || 'API 请求未完成，请稍后重试。');
+  const status = Number(error?.status || error?.response?.status || 0);
+  const message = String(error?.message || '');
+  if (error?.code === 'SCHEMA_INVALID' || /schema/i.test(message)) return 'API 返回结构不符合 schema：请让模型返回完整字段 JSON。';
+  if (error?.code === 'RESPONSE_TOO_LARGE') return 'API 响应超过 1,000,000 字符上限：请缩小请求或修正服务端响应。';
+  if (status === 401 || status === 403) return `API 身份验证失败（HTTP ${status}）：请检查当前会话中的 Key 与目标 origin。`;
+  if (status === 429) return 'API 请求过于频繁（HTTP 429）：请稍后重试或检查额度。';
+  if (status >= 500 && status <= 599) return `API 服务暂时不可用（HTTP ${status}）：请稍后重试。`;
+  if (error?.name === 'AbortError' || error?.code === 'TIMEOUT') return '请求超时：请检查网络或稍后重试。';
+  if (error?.code === 'PARSE_INVALID' || /JSON|parse/i.test(message)) return 'API 返回不是合法 JSON：请检查模型响应格式。';
+  if (error?.code === 'NETWORK_CORS' || error?.name === 'TypeError' || /failed to fetch|networkerror|cors|网络/i.test(message)) return '网络或 CORS 请求失败：请确认接口允许当前页面 origin 和所需请求头。';
+  return 'API 请求未完成：请检查网络、Endpoint、模型名称和 origin 确认。';
+}
+function toSanitizedError(error) { const safe = sanitizeApiError(error); const sanitized = new Error(safe); sanitized.isSanitized = true; sanitized.code = error?.code || 'API_REQUEST_FAILED'; return sanitized; }
 
+function isAllowedFieldValue(value, depth = 0) {
+  if (value === null) return true;
+  if (typeof value === 'string') return value.length <= MAX_VALUE_STRING_CHARS;
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value === 'boolean') return true;
+  if (!Array.isArray(value) || depth >= MAX_VALUE_DEPTH || value.length > MAX_VALUE_ARRAY_ITEMS) return false;
+  return value.every((item) => item === null || typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')
+    && value.every((item) => typeof item !== 'string' || item.length <= MAX_VALUE_STRING_CHARS)
+    && value.every((item) => typeof item !== 'number' || Number.isFinite(item));
+}
+function sanitizeFieldValue(value) {
+  if (!isAllowedFieldValue(value)) return null;
+  return Array.isArray(value) ? value.slice() : value;
+}
+function validateField(field, prefix, addError) {
+  if (!field || typeof field !== 'object' || Array.isArray(field)) { addError(`${prefix} 缺失`); return; }
+  for (const property of ['value', 'confidence', 'source']) if (!(property in field)) addError(`${prefix}.${property} 缺失`);
+  if ('value' in field && !isAllowedFieldValue(field.value)) addError(`${prefix}.value 必须是受限标量或数组`);
+  if (field.confidence !== undefined && !CONFIDENCES.includes(field.confidence)) addError(`${prefix}.confidence 无效`);
+  if (field.source !== undefined && typeof field.source !== 'string') addError(`${prefix}.source 必须是字符串`);
+  if (typeof field.source === 'string' && field.source.length > MAX_SOURCE_CHARS) addError(`${prefix}.source 超过 ${MAX_SOURCE_CHARS} 字符限制`);
+}
 function validateExtractionSchema(value) {
   const errors = [];
   const addError = (message) => { if (errors.length < MAX_SCHEMA_ERRORS) errors.push(message); };
-  for (const section of ['companyBasic', 'esopPlan']) for (const key of section === 'companyBasic' ? Object.keys(FIELD_LABELS.companyBasic) : Object.keys(FIELD_LABELS.esopPlan)) { const field = value?.[section]?.[key]; const prefix = `${section}.${key}`; if (!field || typeof field !== 'object') { addError(`${prefix} 缺失`); continue; } for (const property of ['value', 'confidence', 'source']) if (!(property in field)) addError(`${prefix}.${property} 缺失`); if (field.confidence !== undefined && !CONFIDENCES.includes(field.confidence)) addError(`${prefix}.confidence 无效`); if (field.source !== undefined && typeof field.source !== 'string') addError(`${prefix}.source 必须是字符串`); }
+  for (const section of ['companyBasic', 'esopPlan']) for (const key of Object.keys(FIELD_LABELS[section])) validateField(value?.[section]?.[key], `${section}.${key}`, addError);
   if (!Array.isArray(value?.grantees)) addError('grantees 必须是数组');
   if (Array.isArray(value?.grantees) && value.grantees.length > MAX_GRANTEES) addError(`grantees 最多允许 ${MAX_GRANTEES} 条`);
-  (Array.isArray(value?.grantees) ? value.grantees.slice(0, MAX_GRANTEES) : []).forEach((grantee, index) => { for (const key of Object.keys(FIELD_LABELS.grantees)) { const field = grantee?.[key]; const prefix = `grantees[${index}].${key}`; if (!field || typeof field !== 'object') { addError(`${prefix} 缺失`); continue; } for (const property of ['value', 'confidence', 'source']) if (!(property in field)) addError(`${prefix}.${property} 缺失`); if (field.confidence !== undefined && !CONFIDENCES.includes(field.confidence)) addError(`${prefix}.confidence 无效`); if (field.source !== undefined && typeof field.source !== 'string') addError(`${prefix}.source 必须是字符串`); } });
+  (Array.isArray(value?.grantees) ? value.grantees.slice(0, MAX_GRANTEES) : []).forEach((grantee, index) => { for (const key of Object.keys(FIELD_LABELS.grantees)) validateField(grantee?.[key], `grantees[${index}].${key}`, addError); });
   return { ok: errors.length === 0, errors };
 }
-function sanitizeExtractionResult(value) { const result = { companyBasic: {}, esopPlan: {}, grantees: [] }; for (const section of ['companyBasic', 'esopPlan']) for (const key of Object.keys(FIELD_LABELS[section])) { const field = value?.[section]?.[key] || {}; result[section][key] = depthField(field.value ?? null, CONFIDENCES.includes(field.confidence) ? field.confidence : 'low', typeof field.source === 'string' ? field.source.slice(0, 500) : MISSING_SOURCE); } result.grantees = (Array.isArray(value?.grantees) ? value.grantees : []).slice(0, 100).map((grantee) => Object.fromEntries(Object.keys(FIELD_LABELS.grantees).map((key) => { const field = grantee?.[key] || {}; return [key, depthField(field.value ?? null, CONFIDENCES.includes(field.confidence) ? field.confidence : 'low', typeof field.source === 'string' ? field.source.slice(0, 500) : MISSING_SOURCE)]; }))); return result; }
-function parseJsonContent(raw) { const text = String(raw || '').trim(); const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i); return JSON.parse(fenced ? fenced[1] : text); }
+function sanitizeExtractionResult(value) { const result = { companyBasic: {}, esopPlan: {}, grantees: [] }; for (const section of ['companyBasic', 'esopPlan']) for (const key of Object.keys(FIELD_LABELS[section])) { const field = value?.[section]?.[key] || {}; result[section][key] = depthField(sanitizeFieldValue(field.value ?? null), CONFIDENCES.includes(field.confidence) ? field.confidence : 'low', typeof field.source === 'string' ? field.source.slice(0, MAX_SOURCE_CHARS) : MISSING_SOURCE); } result.grantees = (Array.isArray(value?.grantees) ? value.grantees : []).slice(0, MAX_GRANTEES).map((grantee) => Object.fromEntries(Object.keys(FIELD_LABELS.grantees).map((key) => { const field = grantee?.[key] || {}; return [key, depthField(sanitizeFieldValue(field.value ?? null), CONFIDENCES.includes(field.confidence) ? field.confidence : 'low', typeof field.source === 'string' ? field.source.slice(0, MAX_SOURCE_CHARS) : MISSING_SOURCE)]; }))); return result; }
+function parseJsonContent(raw) { const text = String(raw || '').trim(); const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i); try { return JSON.parse(fenced ? fenced[1] : text); } catch (error) { error.code = 'PARSE_INVALID'; throw error; } }
 function parseAIResponse(payload) { let value = payload; if (typeof value === 'string') value = parseJsonContent(value); if (value?.choices?.[0]?.message?.content) value = value.choices[0].message.content; if (typeof value === 'string') value = parseJsonContent(value); const validation = validateExtractionSchema(value); if (!validation.ok) { const error = new Error('模型返回结构不符合 schema。'); error.code = 'SCHEMA_INVALID'; error.details = validation.errors; throw error; } return sanitizeExtractionResult(value); }
+async function readResponseBodyLimited(response, maxChars = MAX_API_RESPONSE_CHARS) {
+  if (!response?.body || typeof response.body.getReader !== 'function') {
+    const text = await response.text();
+    if (String(text).length > maxChars) { const error = new Error('API response too large'); error.code = 'RESPONSE_TOO_LARGE'; throw error; }
+    return String(text);
+  }
+  const reader = response.body.getReader();
+  const decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder() : { decode: (value) => String(value || '') };
+  let text = '';
+  try {
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) {
+        const tail = decoder.decode();
+        if (text.length + tail.length > maxChars) { await reader.cancel('response too large').catch(() => {}); const error = new Error('API response too large'); error.code = 'RESPONSE_TOO_LARGE'; throw error; }
+        return text + tail;
+      }
+      const decoded = decoder.decode(chunk.value, { stream: true });
+      if (text.length + decoded.length > maxChars) { await reader.cancel('response too large').catch(() => {}); const error = new Error('API response too large'); error.code = 'RESPONSE_TOO_LARGE'; throw error; }
+      text += decoded;
+    }
+  } finally {
+    if (typeof reader.releaseLock === 'function') reader.releaseLock();
+  }
+}
 function getPdfMeta(file) { return { name: String(file?.name || ''), size: Number(file?.size || 0), type: String(file?.type || '') }; }
 function collectBadCases(result) { return getFieldEntries(result).map((entry) => { const review = getReview(result, entry.path); if (!review || review.status === 'accepted') return null; const original = entry.field; const effective = getEffectiveField(result, entry.path); return { path: entry.path, section: entry.section, field: entry.key, originalValue: original.value, effectiveValue: effective.value, originalConfidence: original.confidence, source: original.source, status: review.status, errorTypes: review.errorTypes, rootCause: review.rootCause, repairTarget: review.repairTarget, regression: review.regression, promptVersion: review.promptVersion, schemaVersion: review.schemaVersion, note: review.note, markedAt: review.markedAt }; }).filter(Boolean); }
 
-const state = { apiMode: 'default', inputMode: 'text', selectedScenarioId: 'standard', currentInputText: '', apiKey: '', endpoint: 'https://api.deepseek.com', model: 'deepseek-chat', originConfirmed: false, pdfMeta: null, result: null, activeTab: 'basic', editingPath: null, extractionBusy: false, extractionToken: 0 };
+function createLatestRunGuard() {
+  let nextToken = 0;
+  let active = null;
+  const abortActive = () => { if (active?.controller && !active.controller.signal.aborted) active.controller.abort(); };
+  return {
+    begin() { abortActive(); const controller = typeof AbortController !== 'undefined' ? new AbortController() : null; const run = { token: ++nextToken, controller, signal: controller?.signal }; active = run; return run; },
+    invalidate() { abortActive(); active = null; nextToken += 1; },
+    isCurrent(token) { return Boolean(active && active.token === token); },
+  };
+}
+
+const extractionGuard = createLatestRunGuard();
+const state = { apiMode: 'default', inputMode: 'text', selectedScenarioId: 'standard', currentInputText: '', apiKey: '', endpoint: 'https://api.deepseek.com', model: 'deepseek-chat', confirmedOrigin: '', confirmedEndpoint: '', pdfMeta: null, result: null, activeTab: 'basic', editingPath: null, extractionBusy: false, modalPreviousFocus: null, storageNoticeShown: false };
 function byId(id) { return typeof document === 'undefined' ? null : document.getElementById(id); }
 function setText(id, value) { const element = byId(id); if (element) element.textContent = value ?? ''; }
-function toggleHidden(id, hidden) { const element = byId(id); if (element) element.classList.toggle('hidden', hidden); }
+function toggleHidden(id, hidden) { const element = byId(id); if (!element) return; element.classList.toggle('hidden', hidden); element.hidden = Boolean(hidden); }
 function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
 function valueText(value) { return value === null || value === undefined || value === '' ? '未提取' : typeof value === 'string' ? value : JSON.stringify(value); }
 function formatBytes(bytes) { return `${(Number(bytes || 0) / 1024 / 1024).toFixed(2)} MB`; }
@@ -366,12 +511,17 @@ function setProcessState(active) { const stages = ['input', 'extract', 'structur
 function renderSynonymMap() { const container = byId('synonymMapGrid'); if (container) container.innerHTML = SYNONYM_MAP.map(([standard, variants]) => `<div class="synonym-row"><div class="synonym-standard">${escapeHTML(standard)}</div><div class="synonym-variants">${variants.map((item) => `<span>${escapeHTML(item)}</span>`).join('')}</div></div>`).join(''); }
 function renderScenarioPicker() { const container = byId('scenarioPicker'); if (!container) return; container.innerHTML = FIXTURE_SCENARIOS.map((scenario) => `<button type="button" class="scenario-card${scenario.id === state.selectedScenarioId ? ' active' : ''}" data-scenario-id="${scenario.id}" onclick="selectScenario('${scenario.id}')"><span class="scenario-card-title">${escapeHTML(scenario.label)}</span><span class="scenario-card-desc">${escapeHTML(scenario.description)}</span></button>`).join(''); const selected = FIXTURE_SCENARIOS.find((item) => item.id === state.selectedScenarioId) || FIXTURE_SCENARIOS[0]; setText('scenarioHint', `${selected.label}：${selected.description}`); }
 function renderPromptPreview() { setText('previewSystem', DEPTH_SYSTEM_PROMPT); setText('previewUser', DEPTH_USER_PROMPT_TEMPLATE); }
-function updateTrustBoundary() { const custom = state.apiMode === 'custom'; setText('modeBoundaryLabel', custom ? '自定义 API · 需确认外发' : 'Demo 夹具'); setText('modeBoundaryText', custom ? '自由文本只在你确认准确 origin 后发送到自定义 Endpoint；Key、Endpoint、模型、输入和结果仅留在当前页面会话。' : '只运行三个版本化合成夹具，不读取真实 PDF 内容，也不把结果自动写入浏览器存储。'); toggleHidden('defaultModeHint', custom); toggleHidden('customModeHint', !custom); toggleHidden('scenarioHeading', custom); toggleHidden('scenarioPicker', custom); toggleHidden('scenarioHint', custom); const textInput = byId('textInput'); if (textInput) { textInput.readOnly = !custom; textInput.classList.toggle('readonly-input', !custom); } const pdfButton = byId('modePdf'); if (pdfButton) pdfButton.disabled = custom; if (custom && state.inputMode === 'pdf') setInputMode('text'); setText('scenarioHeading', custom ? '自定义文本' : 'Demo 场景'); }
-function setApiMode(mode, silent = false) { const previousMode = state.apiMode; state.apiMode = mode === 'custom' ? 'custom' : 'default'; if (!silent && typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY_MODE, state.apiMode); byId('modeDefault')?.classList.toggle('active', state.apiMode === 'default'); byId('modeCustom')?.classList.toggle('active', state.apiMode === 'custom'); const area = byId('customKeyArea'); if (area) area.style.display = state.apiMode === 'custom' ? 'block' : 'none'; if (state.apiMode === 'custom' && previousMode !== 'custom') { state.currentInputText = ''; if (byId('textInput')) byId('textInput').value = ''; } if (state.apiMode === 'default') { state.originConfirmed = false; const scenario = FIXTURE_SCENARIOS.find((item) => item.id === state.selectedScenarioId) || FIXTURE_SCENARIOS[0]; state.currentInputText = scenario.inputText; if (byId('textInput')) byId('textInput').value = scenario.inputText; } updateTrustBoundary(); updateInputModeUI(); updateCharCount(); }
+function showStorageNotice(message = '浏览器存储当前不可用；仍可继续使用，本次模式偏好不会保存。') { state.storageNoticeShown = true; setText('storageNoticeText', message); toggleHidden('storageNotice', false); }
+function invalidateExtraction() { extractionGuard.invalidate(); setExtractionBusy(false); toggleHidden('loadingOverlay', true); }
+function resetOutputView() { state.result = null; state.activeTab = 'basic'; toggleHidden('outputContent', true); toggleHidden('outputPlaceholder', false); toggleHidden('errorDisplay', true); setProcessState('input'); }
+function clearOriginConfirmation() { state.confirmedOrigin = ''; state.confirmedEndpoint = ''; const checkbox = byId('apiOriginConfirm'); if (checkbox) checkbox.checked = false; }
+function currentEndpointValue() { return String(byId('endpointInput')?.value ?? state.endpoint ?? '').trim(); }
+function updateTrustBoundary() { const custom = state.apiMode === 'custom'; setText('modeBoundaryLabel', custom ? '自定义 API · 需确认外发' : 'Demo 夹具'); setText('modeBoundaryText', custom ? '自由文本和 Bearer Key 只在你确认准确 origin 后发送到自定义 Endpoint；Endpoint、模型、输入和结果仅留在当前页面会话。' : '只运行三个版本化合成夹具，不读取真实 PDF 内容，也不把结果自动写入浏览器存储。'); toggleHidden('defaultModeHint', custom); toggleHidden('customModeHint', !custom); toggleHidden('scenarioHeading', custom); toggleHidden('scenarioPicker', custom); toggleHidden('scenarioHint', custom); const textInput = byId('textInput'); if (textInput) { textInput.readOnly = !custom; textInput.classList.toggle('readonly-input', !custom); } const pdfButton = byId('modePdf'); if (pdfButton) pdfButton.disabled = custom; if (custom && state.inputMode === 'pdf') setInputMode('text'); setText('scenarioHeading', custom ? '自定义文本' : 'Demo 场景'); }
+function setApiMode(mode, silent = false) { const previousMode = state.apiMode; invalidateExtraction(); resetOutputView(); state.apiMode = mode === 'custom' ? 'custom' : 'default'; if (!silent && !safeStorageSet(getBrowserStorage('local'), STORAGE_KEY_MODE, state.apiMode)) showStorageNotice(); clearOriginConfirmation(); byId('modeDefault')?.classList.toggle('active', state.apiMode === 'default'); byId('modeCustom')?.classList.toggle('active', state.apiMode === 'custom'); const area = byId('customKeyArea'); if (area) area.style.display = state.apiMode === 'custom' ? 'block' : 'none'; if (state.apiMode === 'custom' && previousMode !== 'custom') { state.currentInputText = ''; if (byId('textInput')) byId('textInput').value = ''; } if (state.apiMode === 'default') { const scenario = FIXTURE_SCENARIOS.find((item) => item.id === state.selectedScenarioId) || FIXTURE_SCENARIOS[0]; state.currentInputText = scenario.inputText; if (byId('textInput')) byId('textInput').value = scenario.inputText; } updateTrustBoundary(); updateInputModeUI(); updateCharCount(); }
 function onKeyInput() { const val = byId('keyInput')?.value || ''; state.apiKey = val; toggleHidden('keySavedBadge', !state.apiKey); toggleHidden('keyErrorTip', true); }
-function onEndpointInput() { state.endpoint = byId('endpointInput')?.value || ''; state.originConfirmed = false; const checked = validateCustomEndpoint(state.endpoint); setText('apiOriginLabel', checked.ok ? checked.origin : '等待合法 Endpoint'); setText('endpointErrorTip', checked.ok ? '' : checked.message); toggleHidden('endpointErrorTip', checked.ok); const checkbox = byId('apiOriginConfirm'); if (checkbox) checkbox.checked = false; }
-function onOriginConfirmationChange() { state.originConfirmed = Boolean(byId('apiOriginConfirm')?.checked); }
-function saveApiKey() { const key = byId('keyInput')?.value?.trim() || ''; const checked = validateCustomEndpoint(byId('endpointInput')?.value || state.endpoint); if (!key) { toggleHidden('keyErrorTip', false); setText('keyErrorTip', '请输入 API Key 后再保存（仅保留在当前页面会话）。'); return false; } if (!checked.ok) { onEndpointInput(); return false; } state.apiKey = key; state.endpoint = checked.normalized; toggleHidden('keyErrorTip', true); toggleHidden('keySavedBadge', false); return true; }
+function onEndpointInput() { state.endpoint = byId('endpointInput')?.value || ''; clearOriginConfirmation(); const checked = validateCustomEndpoint(state.endpoint); setText('apiOriginLabel', checked.ok ? checked.origin : '等待合法 Endpoint'); setText('endpointErrorTip', checked.ok ? '' : checked.message); toggleHidden('endpointErrorTip', checked.ok); }
+function onOriginConfirmationChange() { const checkbox = byId('apiOriginConfirm'); const endpoint = currentEndpointValue(); const checked = validateCustomEndpoint(endpoint); if (!checkbox?.checked || !checked.ok) { clearOriginConfirmation(); if (!checked.ok) { setText('apiOriginLabel', '等待合法 Endpoint'); toggleHidden('endpointErrorTip', false); setText('endpointErrorTip', checked.message); } return; } state.confirmedOrigin = checked.origin; state.confirmedEndpoint = endpoint; setText('apiOriginLabel', checked.origin); }
+function saveApiKey() { const key = byId('keyInput')?.value?.trim() || ''; const endpoint = currentEndpointValue(); const checked = validateCustomEndpoint(endpoint); if (!key) { toggleHidden('keyErrorTip', false); setText('keyErrorTip', '请输入 API Key 后再保存（仅保留在当前页面会话）。'); return false; } if (!checked.ok) { onEndpointInput(); return false; } if (state.confirmedEndpoint && state.confirmedEndpoint !== endpoint) clearOriginConfirmation(); state.apiKey = key; state.endpoint = checked.normalized; toggleHidden('keyErrorTip', true); toggleHidden('keySavedBadge', false); return true; }
 function updateCharCount() { const value = byId('textInput')?.value || ''; setText('charCount', `${value.length} 字`); }
 function onTextInput() { state.currentInputText = byId('textInput')?.value || ''; updateCharCount(); toggleHidden('textErrorTip', true); }
 function updateInputModeUI() { const text = state.inputMode === 'text'; byId('modeText')?.classList.toggle('active', text); byId('modePdf')?.classList.toggle('active', !text); toggleHidden('textInputArea', !text); toggleHidden('pdfInputArea', text); toggleHidden('sampleBtnWrap', !text || state.apiMode === 'custom'); }
@@ -381,17 +531,18 @@ function fillSampleText() { setApiMode('default'); selectScenario('standard'); }
 function getCurrentInputText() { if (state.apiMode === 'default') return (FIXTURE_SCENARIOS.find((item) => item.id === state.selectedScenarioId) || FIXTURE_SCENARIOS[0]).inputText; return byId('textInput')?.value || ''; }
 function handlePdfFile(file) { if (!file) return; if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') { clearPdf(); setText('pdfErrorTip', '请选择 PDF 文件。'); toggleHidden('pdfErrorTip', false); return; } if (file.size > 50 * 1024 * 1024) { clearPdf(); setText('pdfErrorTip', '文件超过 50MB 限制。'); toggleHidden('pdfErrorTip', false); return; } state.pdfMeta = getPdfMeta(file); setText('pdfFileName', state.pdfMeta.name); setText('pdfFileMeta', `${formatBytes(state.pdfMeta.size)} · 内容未读取，不推断页数`); toggleHidden('pdfInfoCard', false); toggleHidden('pdfErrorTip', true); }
 function onPdfFileSelect(event) { handlePdfFile(event?.target?.files?.[0]); }
+function onPdfDropZoneKeydown(event) { if (event?.key === 'Enter' || event?.key === ' ') { event.preventDefault(); byId('pdfFileInput')?.click(); } }
 function onDragOver(event) { event.preventDefault(); byId('pdfDropZone')?.classList.add('drag-over'); }
 function onDragLeave(event) { event.preventDefault(); byId('pdfDropZone')?.classList.remove('drag-over'); }
 function onDrop(event) { event.preventDefault(); byId('pdfDropZone')?.classList.remove('drag-over'); handlePdfFile(event?.dataTransfer?.files?.[0]); }
 function clearPdf() { state.pdfMeta = null; if (byId('pdfFileInput')) byId('pdfFileInput').value = ''; toggleHidden('pdfInfoCard', true); }
 
 function setExtractionBusy(busy) { state.extractionBusy = busy; const button = byId('extractBtn'); if (button) { button.disabled = busy; button.setAttribute('aria-busy', String(busy)); } }
-function showError(title, message, action = '') { state.extractionToken += 1; setExtractionBusy(false); toggleHidden('loadingOverlay', true); toggleHidden('outputContent', true); toggleHidden('outputPlaceholder', true); toggleHidden('errorDisplay', false); setText('errorTitle', title); setText('errorMessage', message); setText('errorAction', action); }
+function showError(title, message, action = '') { invalidateExtraction(); setExtractionBusy(false); toggleHidden('outputContent', true); toggleHidden('outputPlaceholder', true); toggleHidden('errorDisplay', false); setText('errorTitle', title); setText('errorMessage', message); setText('errorAction', action); }
 function clearError() { toggleHidden('errorDisplay', true); }
-async function callCustomAPI(inputText) { const checked = validateCustomEndpoint(state.endpoint); const request = buildApiRequest({ endpoint: state.endpoint, apiKey: state.apiKey, model: state.model, userPrompt: DEPTH_USER_PROMPT_TEMPLATE.replace('{{TEXT}}', inputText), confirmedOrigin: state.originConfirmed && checked.ok ? checked.origin : '' }); const controller = typeof AbortController !== 'undefined' ? new AbortController() : null; const timer = controller ? setTimeout(() => controller.abort(), 30000) : null; try { const response = await fetch(request.url, { ...request.options, signal: controller?.signal }); if (!response.ok) { const error = new Error('API response error'); error.status = response.status; throw error; } const payload = await response.text(); if (payload.length > MAX_API_RESPONSE_CHARS) throw new Error('API response too large'); return parseAIResponse(payload); } catch (error) { throw new Error(sanitizeApiError(error)); } finally { if (timer) clearTimeout(timer); } }
+async function callCustomAPI(inputText, run) { const checked = validateCustomEndpoint(state.endpoint); const request = buildApiRequest({ endpoint: state.endpoint, apiKey: state.apiKey, model: state.model, userPrompt: DEPTH_USER_PROMPT_TEMPLATE.replace('{{TEXT}}', inputText), confirmedOrigin: state.confirmedOrigin }); const controller = run?.controller || (typeof AbortController !== 'undefined' ? new AbortController() : null); const timer = controller ? setTimeout(() => controller.abort(), 30000) : null; try { const response = await fetch(request.url, { ...request.options, signal: run?.signal || controller?.signal }); if (!response.ok) { const error = new Error('API response error'); error.status = response.status; throw error; } const payload = await readResponseBodyLimited(response); return parseAIResponse(payload); } catch (error) { throw toSanitizedError(error); } finally { if (timer) clearTimeout(timer); } }
 function finishResult(result, inputText, mode) { state.result = result; state.currentInputText = inputText; state.activeTab = 'basic'; result.metrics = calculateMetrics(result, inputText); result.warnings = runValidation(result, inputText); setProcessState('review'); renderOutput(mode); toggleHidden('loadingOverlay', true); setExtractionBusy(false); }
-function startExtraction() { if (state.extractionBusy) return; clearError(); const inputText = getCurrentInputText(); if (state.inputMode === 'pdf' && !state.pdfMeta) { setText('pdfErrorTip', '请上传 PDF 文件后再开始处理。'); toggleHidden('pdfErrorTip', false); return; } if (state.apiMode === 'custom') { if (!inputText.trim()) { setText('textErrorTip', '请输入招股书原文后再开始处理。'); toggleHidden('textErrorTip', false); return; } if (inputText.length > MAX_INPUT_CHARS) { showError('输入过长', `当前输入超过 ${MAX_INPUT_CHARS.toLocaleString()} 字限制。`, '仅处理与 ESOP 相关的章节，可分段后再次尝试。'); return; } state.endpoint = byId('endpointInput')?.value || state.endpoint; state.model = byId('modelInput')?.value || state.model; state.apiKey = byId('keyInput')?.value || state.apiKey; try { const checked = validateCustomEndpoint(state.endpoint); if (!checked.ok) throw new Error(checked.message); if (!state.originConfirmed) throw new Error('请勾选并确认准确的目标 origin。'); if (!state.apiKey.trim()) throw new Error('请先在当前页面设置 API Key。'); if (!String(state.model || '').trim()) throw new Error('请填写模型名称。'); } catch (error) { showError('请求未发送', error.message, 'Key、Endpoint、模型和输入不会被保存；修正配置后可再次尝试。'); return; } const token = ++state.extractionToken; setExtractionBusy(true); toggleHidden('outputPlaceholder', true); toggleHidden('outputContent', true); toggleHidden('loadingOverlay', false); setProcessState('extract'); callCustomAPI(inputText).then((data) => { if (token !== state.extractionToken) return; const result = { ...data, runMeta: createRunMeta({ mode: 'custom' }), inputMeta: { kind: 'custom-text', textLength: inputText.length, contentStored: false }, reviews: {}, evaluation: null }; finishResult(result, inputText, 'custom'); }).catch((error) => { if (token === state.extractionToken) showError('自定义 API 未完成', sanitizeApiError(error), '请检查网络、Endpoint、模型名称与 origin 确认。'); }); return; } const token = ++state.extractionToken; setExtractionBusy(true); toggleHidden('outputPlaceholder', true); toggleHidden('outputContent', true); setProcessState('extract'); setTimeout(() => { if (token !== state.extractionToken) return; finishResult(createDemoResult(state.selectedScenarioId, { runId: `demo-${Date.now().toString(36)}` }), inputText, 'demo'); }, 420); }
+function startExtraction() { if (state.extractionBusy) return; clearError(); const inputText = getCurrentInputText(); if (state.inputMode === 'pdf' && !state.pdfMeta) { setText('pdfErrorTip', '请上传 PDF 文件后再开始处理。'); toggleHidden('pdfErrorTip', false); return; } if (state.apiMode === 'custom') { if (!inputText.trim()) { setText('textErrorTip', '请输入招股书原文后再开始处理。'); toggleHidden('textErrorTip', false); return; } if (inputText.length > MAX_INPUT_CHARS) { showError('输入过长', `当前输入超过 ${MAX_INPUT_CHARS.toLocaleString()} 字限制。`, '仅处理与 ESOP 相关的章节，可分段后再次尝试。'); return; } state.endpoint = byId('endpointInput')?.value ?? state.endpoint; state.model = byId('modelInput')?.value ?? state.model; state.apiKey = byId('keyInput')?.value ?? state.apiKey; const endpoint = currentEndpointValue(); try { const checked = validateCustomEndpoint(endpoint); if (!checked.ok) throw new Error(checked.message); const checkbox = byId('apiOriginConfirm'); if (!checkbox?.checked || state.confirmedEndpoint !== endpoint || state.confirmedOrigin !== checked.origin) { clearOriginConfirmation(); throw new Error('请重新勾选并确认准确的目标 origin（自由文本和 Bearer Key 都会发送到该 origin）。'); } if (!state.apiKey.trim()) throw new Error('请先在当前页面设置 API Key。'); if (!String(state.model || '').trim()) throw new Error('请填写模型名称。'); } catch (error) { showError('请求未发送', error.message, 'Key、Endpoint、模型和输入不会被保存；修正配置后可再次尝试。'); return; } const run = extractionGuard.begin(); setExtractionBusy(true); toggleHidden('outputPlaceholder', true); toggleHidden('outputContent', true); toggleHidden('loadingOverlay', false); setProcessState('extract'); callCustomAPI(inputText, run).then((data) => { if (!extractionGuard.isCurrent(run.token) || state.apiMode !== 'custom') return; const result = { ...data, runMeta: createRunMeta({ mode: 'custom' }), inputMeta: { kind: 'custom-text', textLength: inputText.length, contentStored: false }, reviews: {}, evaluation: null }; finishResult(result, inputText, 'custom'); }).catch((error) => { if (extractionGuard.isCurrent(run.token) && state.apiMode === 'custom') showError('自定义 API 未完成', sanitizeApiError(error), '请检查网络、Endpoint、模型名称与 origin 确认。'); }); return; } const run = extractionGuard.begin(); setExtractionBusy(true); toggleHidden('outputPlaceholder', true); toggleHidden('outputContent', true); setProcessState('extract'); setTimeout(() => { if (!extractionGuard.isCurrent(run.token) || state.apiMode !== 'default') return; finishResult(createDemoResult(state.selectedScenarioId, { runId: `demo-${Date.now().toString(36)}` }), inputText, 'demo'); }, 420); }
 
 function confidenceBadge(confidence) { const label = confidence === 'high' ? '高 · 自报' : confidence === 'medium' ? '中 · 自报' : '低 · 需核查'; return `<span class="conf-badge conf-${confidence || 'low'}">${label}</span>`; }
 function evidenceBadge(status) { const label = status === 'exact' ? 'exact · 可定位' : status === 'partial' ? 'partial · 部分匹配' : 'missing · 未定位'; return `<span class="evidence-badge evidence-${status}">${label}</span>`; }
@@ -407,20 +558,23 @@ function renderMetrics() { const metrics = state.result.metrics || calculateMetr
 function renderEvaluation() { const evaluation = state.result.evaluation; toggleHidden('evaluationPanel', !evaluation); if (!evaluation) return; setText('evaluationExact', evaluation.sampleExactMatch.value); setText('evaluationCompleteness', evaluation.fieldExactMatch.value); setText('evaluationEvidence', evaluation.locatableEvidenceCoverage.value); setText('evaluationMeta', `${evaluation.version} · ${evaluation.measuredOn} · ${evaluation.sampleRange}；字段存在完整率 ${evaluation.fieldCompleteness.value}，不代表真实招股书准确率。`); }
 function renderBadCaseAction() { const count = state.result ? collectBadCases(state.result).length : 0; setText('badCaseCount', count); toggleHidden('exportBadBtn', count === 0); }
 function renderOutput(mode = state.result?.runMeta?.mode || 'demo') { if (!state.result) return; toggleHidden('outputPlaceholder', true); toggleHidden('errorDisplay', true); toggleHidden('outputContent', false); const scenario = FIXTURE_SCENARIOS.find((item) => item.id === state.result.runMeta?.scenarioId); setText('resultModeHint', mode === 'custom' ? '自定义 API · 当前会话' : `Demo · ${scenario?.label || '夹具'}`); setText('resultRunId', state.result.runMeta?.runId || '—'); setText('resultSchema', state.result.runMeta?.schemaVersion || SCHEMA_VERSION); setText('resultTime', state.result.runMeta?.completedAt || '—'); renderBadCaseAction(); renderMetrics(); renderEvaluation(); renderReviewQueue(); renderAnomalies(); updateTabDots(); renderTab(); }
-function switchTab(tabName) { if (!['basic', 'plan', 'grantees'].includes(tabName)) return; state.activeTab = tabName; for (const name of ['basic', 'plan', 'grantees']) byId(`tab-${name}`)?.classList.toggle('active', name === tabName); renderTab(); }
+function switchTab(tabName) { if (!['basic', 'plan', 'grantees'].includes(tabName)) return; state.activeTab = tabName; for (const name of ['basic', 'plan', 'grantees']) { const tab = byId(`tab-${name}`); tab?.classList.toggle('active', name === tabName); tab?.setAttribute('aria-selected', String(name === tabName)); tab?.setAttribute('tabindex', name === tabName ? '0' : '-1'); } renderTab(); }
+function onTabKeydown(event, tabName) { if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event?.key)) return; event.preventDefault(); const tabs = ['basic', 'plan', 'grantees']; const index = tabs.indexOf(tabName); const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length; switchTab(tabs[next]); byId(`tab-${tabs[next]}`)?.focus(); }
 
-function openEditModal(path) { if (!state.result) return; const field = getValueAtPath(state.result, path); if (!field) return; state.editingPath = path; const review = getReview(state.result, path); const key = path.startsWith('grantees') ? path.split('].')[1] : path.split('.')[1]; const section = path.startsWith('grantees') ? 'grantees' : path.split('.')[0]; setText('modalTitle', `复核：${FIELD_LABELS[section][key] || path}`); setText('modalSubtitle', path); setText('modalSource', field.source || MISSING_SOURCE); setText('modalOriginalValue', valueText(field.value)); setText('modalOriginalConfidence', field.confidence || 'low'); if (byId('reviewStatusInput')) byId('reviewStatusInput').value = review?.status || 'unresolved'; if (byId('modalValueInput')) byId('modalValueInput').value = review?.correctedValue ?? ''; if (byId('rootCauseInput')) byId('rootCauseInput').value = review?.rootCause || 'value_wrong'; if (byId('repairTargetInput')) byId('repairTargetInput').value = review?.repairTarget || 'human_review'; if (byId('regressionInput')) byId('regressionInput').value = review?.regression || 'not-run'; if (byId('modalNoteInput')) byId('modalNoteInput').value = review?.note || ''; document.querySelectorAll?.('input[name="errorType"]').forEach((checkbox) => { checkbox.checked = Boolean(review?.errorTypes?.includes(checkbox.value)); }); toggleHidden('modalErrorTypeTip', true); toggleHidden('editModal', false); byId('reviewStatusInput')?.focus(); }
-function closeEditModal() { toggleHidden('editModal', true); state.editingPath = null; }
+function modalFocusableElements() { const modal = byId('editModal'); if (!modal) return []; return [...modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter((element) => !element.disabled && !element.hidden && element.offsetParent !== null); }
+function handleModalKeydown(event) { if (event.key === 'Escape') { event.preventDefault(); closeEditModal(); return; } if (event.key !== 'Tab') return; const focusable = modalFocusableElements(); if (!focusable.length) { event.preventDefault(); return; } const first = focusable[0]; const last = focusable[focusable.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } }
+function openEditModal(path) { if (!state.result) return; const field = getValueAtPath(state.result, path); if (!field) return; state.modalPreviousFocus = document.activeElement; state.editingPath = path; const review = getReview(state.result, path); const key = path.startsWith('grantees') ? path.split('].')[1] : path.split('.')[1]; const section = path.startsWith('grantees') ? 'grantees' : path.split('.')[0]; setText('modalTitle', `复核：${FIELD_LABELS[section][key] || path}`); setText('modalSubtitle', path); setText('modalSource', field.source || MISSING_SOURCE); setText('modalOriginalValue', valueText(field.value)); setText('modalOriginalConfidence', field.confidence || 'low'); if (byId('reviewStatusInput')) byId('reviewStatusInput').value = review?.status || 'unresolved'; if (byId('modalValueInput')) byId('modalValueInput').value = review?.correctedValue ?? ''; if (byId('rootCauseInput')) byId('rootCauseInput').value = review?.rootCause || 'value_wrong'; if (byId('repairTargetInput')) byId('repairTargetInput').value = review?.repairTarget || 'human_review'; if (byId('regressionInput')) byId('regressionInput').value = review?.regression || 'not-run'; if (byId('modalNoteInput')) byId('modalNoteInput').value = review?.note || ''; document.querySelectorAll?.('input[name="errorType"]').forEach((checkbox) => { checkbox.checked = Boolean(review?.errorTypes?.includes(checkbox.value)); }); toggleHidden('modalErrorTypeTip', true); toggleHidden('editModal', false); byId('editModal')?.setAttribute('aria-hidden', 'false'); document.addEventListener?.('keydown', handleModalKeydown); byId('reviewStatusInput')?.focus(); }
+function closeEditModal() { toggleHidden('editModal', true); byId('editModal')?.setAttribute('aria-hidden', 'true'); document.removeEventListener?.('keydown', handleModalKeydown); const previous = state.modalPreviousFocus; state.modalPreviousFocus = null; state.editingPath = null; if (previous && typeof previous.focus === 'function' && document.contains?.(previous)) previous.focus(); }
 function saveReview() { if (!state.result || !state.editingPath) return; const status = byId('reviewStatusInput')?.value || 'unresolved'; const errorTypes = [...(document.querySelectorAll?.('input[name="errorType"]') || [])].filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value); if (!errorTypes.length && status !== 'accepted') { toggleHidden('modalErrorTypeTip', false); return; } recordReview(state.result, state.editingPath, { status, correctedValue: byId('modalValueInput')?.value || null, errorTypes, rootCause: byId('rootCauseInput')?.value, repairTarget: byId('repairTargetInput')?.value, regression: byId('regressionInput')?.value, note: byId('modalNoteInput')?.value }); state.result.metrics = calculateMetrics(state.result, state.currentInputText); state.result.warnings = runValidation(state.result, state.currentInputText); closeEditModal(); renderOutput(state.result.runMeta.mode); }
 
 function downloadJSON(filename, data) { const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; link.click(); setTimeout(() => URL.revokeObjectURL(link.href), 0); }
 function exportBadCases() { if (state.result) downloadJSON(`esop-bad-cases-${state.result.runMeta?.runId || 'run'}.json`, { promptVersion: PROMPT_VERSION, schemaVersion: SCHEMA_VERSION, cases: collectBadCases(state.result) }); }
 function exportJSON() { if (state.result) downloadJSON(`esop-result-${state.result.runMeta?.runId || 'run'}.json`, state.result); }
-function loadLegacyResult() { if (typeof localStorage === 'undefined') return; const legacyKey = LEGACY_RESULT_KEYS.find((key) => localStorage.getItem(key)); if (!legacyKey) return; const raw = localStorage.getItem(legacyKey); try { const data = sanitizeExtractionResult(JSON.parse(raw)); const result = { ...data, runMeta: createRunMeta({ mode: 'legacy-import' }), inputMeta: { kind: 'legacy-import', contentStored: false }, reviews: {}, evaluation: null }; finishResult(result, '', 'legacy'); } catch { showError('旧结果无法加载', '旧版结果结构不可识别；原始内容没有被改写或另存。', '可继续使用三个 Demo 夹具或切换到自定义 API。'); } }
-function clearLegacyStorage() { if (typeof localStorage === 'undefined') return; localStorage.removeItem(STORAGE_KEY_APIKEY); [...LEGACY_RESULT_KEYS, ...LEGACY_SENSITIVE_KEYS.filter((key) => key !== STORAGE_KEY_APIKEY)].forEach((key) => localStorage.removeItem(key)); inspectAndRenderLegacyStorage(); }
-function inspectAndRenderLegacyStorage() { const inspection = inspectLegacyStorage(typeof localStorage !== 'undefined' ? localStorage : null); const found = [...inspection.resultKeys, ...inspection.sensitiveKeys]; toggleHidden('legacyNotice', !found.length); if (found.length) setText('legacyNoticeText', `检测到 ${found.length} 个旧 key。系统不会自动读取、删除或上传；只有你点击按钮才会在当前会话加载或清除。`); }
-function toggleCollapsible(id) { byId(id)?.classList.toggle('open'); }
-function init() { const savedMode = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY_MODE) : null; state.apiMode = savedMode === 'custom' ? 'custom' : 'default'; state.selectedScenarioId = 'standard'; state.inputMode = 'text'; state.currentInputText = STANDARD_TEXT; if (byId('endpointInput')) state.endpoint = byId('endpointInput').value || state.endpoint; if (byId('modelInput')) state.model = byId('modelInput').value || state.model; setApiMode(state.apiMode, true); renderSynonymMap(); renderPromptPreview(); renderScenarioPicker(); inspectAndRenderLegacyStorage(); updateInputModeUI(); updateCharCount(); setProcessState('input'); }
+function loadLegacyResult() { const storage = getBrowserStorage('local'); if (!storage) { showStorageNotice(); return; } const legacyKey = LEGACY_RESULT_KEYS.find((key) => safeStorageGet(storage, key)); if (!legacyKey) return; const raw = safeStorageGet(storage, legacyKey); try { const data = sanitizeExtractionResult(JSON.parse(raw)); const result = { ...data, runMeta: createRunMeta({ mode: 'legacy-import' }), inputMeta: { kind: 'legacy-import', contentStored: false }, reviews: {}, evaluation: null }; finishResult(result, '', 'legacy'); } catch { showError('旧结果无法加载', '旧版结果结构不可识别；原始内容没有被改写或另存。', '可继续使用三个 Demo 夹具或切换到自定义 API。'); } }
+function clearLegacyStorage() { const storage = getBrowserStorage('local'); if (!storage) { showStorageNotice(); return; } [STORAGE_KEY_APIKEY, ...LEGACY_RESULT_KEYS, ...LEGACY_SENSITIVE_KEYS.filter((key) => key !== STORAGE_KEY_APIKEY)].forEach((key) => safeStorageRemove(storage, key)); inspectAndRenderLegacyStorage(); }
+function inspectAndRenderLegacyStorage() { const storage = getBrowserStorage('local'); const inspection = inspectLegacyStorage(storage); const found = [...inspection.resultKeys, ...inspection.sensitiveKeys]; toggleHidden('legacyNotice', !found.length); if (found.length) setText('legacyNoticeText', `检测到 ${found.length} 个旧 key。系统不会自动读取、删除或上传；只有你点击按钮才会在当前会话加载或清除。`); if (!storage) showStorageNotice(); }
+function toggleCollapsible(id) { const panel = byId(id); if (!panel) return; const body = panel.querySelector?.('.collapsible-body'); const trigger = panel.querySelector?.('.collapsible-header'); const open = !panel.classList.contains('open'); panel.classList.toggle('open', open); if (trigger) trigger.setAttribute('aria-expanded', String(open)); if (body) { body.hidden = !open; body.classList.toggle('hidden', !open); } }
+function init() { const storage = getBrowserStorage('local'); const savedMode = safeStorageGet(storage, STORAGE_KEY_MODE); if (!storage) showStorageNotice(); state.apiMode = savedMode === 'custom' ? 'custom' : 'default'; state.selectedScenarioId = 'standard'; state.inputMode = 'text'; state.currentInputText = STANDARD_TEXT; if (byId('endpointInput')) state.endpoint = byId('endpointInput').value || state.endpoint; if (byId('modelInput')) state.model = byId('modelInput').value || state.model; setApiMode(state.apiMode, true); renderSynonymMap(); renderPromptPreview(); renderScenarioPicker(); inspectAndRenderLegacyStorage(); updateInputModeUI(); updateCharCount(); setProcessState('input'); }
 if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('DOMContentLoaded', init);
 
-if (typeof module !== 'undefined' && module.exports) module.exports = { PROMPT_VERSION, SCHEMA_VERSION, EVALUATION_VERSION, FIXTURE_SCENARIOS, calculateMetrics, createRunMeta, createDemoResult, evaluateFixtureSet, evidenceMatch, getPdfMeta, getEffectiveField, recordReview, validateCustomEndpoint, apiCompletionUrl, buildApiRequest, sanitizeApiError, validateExtractionSchema, sanitizeExtractionResult, parseAIResponse, inspectLegacyStorage, storageKeys, collectBadCases, runValidation, getFieldEntries, getValueAtPath, getReview };
+if (typeof module !== 'undefined' && module.exports) module.exports = { PROMPT_VERSION, SCHEMA_VERSION, EVALUATION_VERSION, ARTIFACT_VERSION, EVALUATION_SCRIPT_VERSION, FIXTURE_SCENARIOS, calculateMetrics, createRunMeta, createDemoResult, evaluateFixtureSet, evidenceMatch, getPdfMeta, getEffectiveField, recordReview, validateCustomEndpoint, apiCompletionUrl, buildApiRequest, sanitizeApiError, validateExtractionSchema, sanitizeExtractionResult, parseAIResponse, readResponseBodyLimited, inspectLegacyStorage, storageKeys, safeStorageGet, safeStorageSet, safeStorageRemove, collectBadCases, runValidation, getFieldEntries, getValueAtPath, getReview, createLatestRunGuard };
