@@ -552,6 +552,7 @@ const STATIC_RUNTIME_MODE = 'mock';
   <span>代理顺序：<code>corsproxy.io</code> → <code>allorigins.win</code> → <code>codetabs.com</code></span>
   <span>发送字段：<code>symbol</code> / <code>range</code> / <code>interval</code></span>
   <span>风险：公开第三方代理存在响应完整性、可用性与隐私风险；请勿输入额外敏感信息。</span>
+  <span>私有资料流程：仅本页内存，不发起第三方请求</span>
 </div>
 
 <nav class="tab-nav">
@@ -757,7 +758,7 @@ const STATIC_RUNTIME_MODE = 'mock';
         <div class="compliance-card">
           <div class="cc-icon">🔒</div>
           <div class="cc-title">数据安全</div>
-          <div class="cc-body">本静态页面不保存密钥、不接入模型服务；默认不发起行情数据请求，联网行情只在用户主动选择并提交后尝试公开代理，失败会原样停留。站点统计脚本可能按全站设置联网。<code>proxy.py</code> 是未参与公开页面的历史本地工具，本页不调用它。</div>
+          <div class="cc-body">本静态页面不保存密钥、不接入模型服务；默认不发起行情数据请求，联网行情只在用户主动选择并提交后尝试公开代理，失败会原样停留。Stock 页不加载第三方统计脚本；私有资料仅在本页内存处理，不发起第三方请求。<code>proxy.py</code> 是未参与公开页面的历史本地工具，本页不调用它。</div>
         </div>
       </div>
     </div>
@@ -807,7 +808,7 @@ const STATIC_RUNTIME_MODE = 'mock';
             <tr><td>演示快照</td><td>固定本地行情样本</td><td>marketAsOf / fetchedAt</td><td>默认查询、诊断、Agent get_price</td></tr>
             <tr><td>联网成功</td><td>用户主动触发的 Yahoo 响应</td><td>source / transport / 时间</td><td>显式网络查询</td></tr>
             <tr><td>未核验演示夹具</td><td>本地新闻主题、基本面和情绪结构样本</td><td>sourceId / evidenceLevel / asOf</td><td>RAG、诊断、Agent</td></tr>
-            <tr><td>站点统计</td><td>共享统计脚本可能按全站设置联网</td><td>由共享 analytics 管理</td><td>不属于行情数据源</td></tr>
+            <tr><td>私有资料</td><td>仅在当前页面内存处理，不发起第三方请求</td><td>本页生命周期</td><td>私有知识库</td></tr>
             <tr><td colspan="4">本页只展示来源覆盖、证据完整度和待核查项，不把它们称作预测置信度或效果指标。</td></tr>
           </tbody>
         </table>
@@ -826,6 +827,5 @@ const STATIC_RUNTIME_MODE = 'mock';
     <span class="tag-ai">本地规则 / 不构成建议</span>
   </span>
 </div>
-<script src="/assets/js/analytics.js" defer></script>
 </body>
 </html>

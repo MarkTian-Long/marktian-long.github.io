@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const fsSync = require('node:fs');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const test = require('node:test');
@@ -28,9 +29,36 @@ function stopServer(server) {
   return new Promise((resolve) => server.close(resolve));
 }
 
-async function blockAnalytics(page) {
-  await page.route('https://www.googletagmanager.com/**', (route) => route.abort());
-  await page.route('https://www.google-analytics.com/**', (route) => route.abort());
+function edgeExecutableCandidates() {
+  if (process.platform === 'win32') {
+    return [
+      process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+      process.env.ProgramFiles && path.join(process.env.ProgramFiles, 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+      process.env['ProgramFiles(x86)'] && path.join(process.env['ProgramFiles(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    ].filter(Boolean);
+  }
+  return [
+    '/usr/bin/microsoft-edge',
+    '/usr/bin/microsoft-edge-stable',
+    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+  ];
+}
+
+function isSpawnEperm(error) {
+  return /spawn\s+EPERM|EPERM/i.test(String(error && error.message || error));
+}
+
+async function launchBrowser(options = {}) {
+  const configuredPath = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
+  if (configuredPath) return chromium.launch({ ...options, executablePath: configuredPath });
+  try {
+    return await chromium.launch(options);
+  } catch (error) {
+    if (!isSpawnEperm(error)) throw error;
+    const edgePath = edgeExecutableCandidates().find((candidate) => fsSync.existsSync(candidate));
+    if (!edgePath) throw error;
+    return chromium.launch({ ...options, executablePath: edgePath });
+  }
 }
 
 function chartFixture(closes = [123.45, 124.56]) {
@@ -64,13 +92,21 @@ async function lastAiText(page) {
   return last.textContent();
 }
 
+async function waitForNewSelector(page, selector, previousCount) {
+  await page.waitForFunction(({ target, count }) => document.querySelectorAll(target).length > count, {
+    target: selector,
+    count: previousCount,
+  });
+}
+
 test('stock browser controls disclose data risks and keep explicit market success/failure/timeout visible', { timeout: 30000 }, async () => {
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser({ headless: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    await blockAnalytics(page);
+    const pageErrors = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     let proxyRequests = 0;
     page.on('request', (request) => {
       if (proxyPattern.test(request.url())) proxyRequests += 1;
@@ -83,6 +119,7 @@ test('stock browser controls disclose data risks and keep explicit market succes
     assert.match(await page.locator('#networkDisclosure').textContent(), /symbol.*range.*interval/);
     assert.match(await page.locator('#networkDisclosure').textContent(), /完整性.*隐私风险/);
     assert.match(await page.locator('#dataModeStatus').textContent(), /默认不发起行情数据请求/);
+    assert.equal(await page.locator('.tab-btn').count(), 6);
 
     await page.locator('#inputBox').fill('<img src=x onerror=alert(1)>');
     await page.locator('#sendBtn').click();
@@ -90,6 +127,7 @@ test('stock browser controls disclose data risks and keep explicit market succes
     await maliciousUserMessage.waitFor();
     await page.locator('#messages .market-error-state').last().waitFor();
     assert.doesNotMatch(await maliciousUserMessage.innerHTML(), /<img\b/);
+    assert.doesNotMatch(await page.locator('#messages .market-error-state').last().innerHTML(), /<img\b|onerror/i);
     assert.equal(proxyRequests, 0, 'demo and unresolved flows must not request market proxies');
 
     await page.locator('#dataModeMarket').click();
@@ -102,23 +140,76 @@ test('stock browser controls disclose data risks and keep explicit market succes
       contentType: 'application/json',
       body: JSON.stringify(successFixture),
     }));
+    const firstProvenanceCount = await page.locator('#messages .market-provenance').count();
     await page.locator('#inputBox').fill('茅台近5日行情');
     await page.locator('#sendBtn').click();
-    await page.locator('#messages .market-provenance').last().waitFor();
+    await waitForNewSelector(page, '#messages .market-provenance', firstProvenanceCount);
+    await page.locator('#messages .msg.ai').last().locator('.market-provenance').waitFor();
     const successText = await lastAiText(page);
     assert.match(successText, /Yahoo Finance via corsproxy\.io/);
     assert.match(successText, /市场时间/);
     await page.unroute(proxyPattern);
 
-    await page.route(proxyPattern, async (route) => route.abort());
+    const httpAttemptNames = [];
+    await page.route(proxyPattern, async (route) => {
+      httpAttemptNames.push(new URL(route.request().url()).hostname);
+      if (httpAttemptNames.length === 1) {
+        await route.fulfill({ status: 503, contentType: 'text/plain', body: 'fixture HTTP failure' });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(successFixture),
+      });
+    });
+    const httpProvenanceCount = await page.locator('#messages .market-provenance').count();
     await page.locator('#inputBox').fill('茅台近5日行情');
     await page.locator('#sendBtn').click();
-    await page.locator('#messages .msg.user').nth(2).waitFor();
-    await page.locator('#messages .market-error-state').nth(1).waitFor();
-    const failureText = await page.locator('#messages .market-error-state').nth(1).textContent();
+    await waitForNewSelector(page, '#messages .market-provenance', httpProvenanceCount);
+    await page.locator('#messages .msg.ai').last().locator('.market-provenance').waitFor();
+    const httpText = await lastAiText(page);
+    assert.match(httpText, /Yahoo Finance via allorigins\.win/);
+    assert.match(httpText, /已尝试[：:].*corsproxy\.io.*allorigins\.win/);
+    assert.deepEqual(httpAttemptNames, ['corsproxy.io', 'api.allorigins.win']);
+    await page.unroute(proxyPattern);
+
+    const invalidJsonAttemptNames = [];
+    await page.route(proxyPattern, async (route) => {
+      invalidJsonAttemptNames.push(new URL(route.request().url()).hostname);
+      if (invalidJsonAttemptNames.length === 1) {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: '{"chart":' });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(successFixture),
+      });
+    });
+    const invalidJsonProvenanceCount = await page.locator('#messages .market-provenance').count();
+    await page.locator('#inputBox').fill('茅台近5日行情');
+    await page.locator('#sendBtn').click();
+    await waitForNewSelector(page, '#messages .market-provenance', invalidJsonProvenanceCount);
+    await page.locator('#messages .msg.ai').last().locator('.market-provenance').waitFor();
+    const invalidJsonText = await lastAiText(page);
+    assert.match(invalidJsonText, /Yahoo Finance via allorigins\.win/);
+    assert.match(invalidJsonText, /已尝试[：:].*corsproxy\.io.*allorigins\.win/);
+    assert.deepEqual(invalidJsonAttemptNames, ['corsproxy.io', 'api.allorigins.win']);
+    await page.unroute(proxyPattern);
+
+    await page.route(proxyPattern, async (route) => route.abort());
+    const failureCount = await page.locator('#messages .market-error-state').count();
+    await page.locator('#inputBox').fill('茅台近5日行情');
+    await page.locator('#sendBtn').click();
+    await page.locator('#messages .msg.user').last().waitFor();
+    await waitForNewSelector(page, '#messages .market-error-state', failureCount);
+    const failureText = await page.locator('#messages .market-error-state').last().textContent();
     assert.match(failureText, /数据请求失败/);
     assert.match(failureText, /Yahoo Finance via/);
     assert.match(failureText, /失败结果不会静默替换/);
+    assert.match(failureText, /已尝试[：:].*corsproxy\.io.*allorigins\.win.*codetabs\.com/);
+    assert.match(failureText, /候选顺序[：:].*corsproxy\.io.*allorigins\.win.*codetabs\.com/);
     assert.match(failureText, /重试/);
     await page.unroute(proxyPattern);
 
@@ -130,12 +221,17 @@ test('stock browser controls disclose data risks and keep explicit market succes
         // The page's real AbortController timeout should close this route first.
       }
     });
+    const timeoutCount = await page.locator('#messages .market-error-state').count();
     await page.locator('#inputBox').fill('茅台近5日行情');
     await page.locator('#sendBtn').click();
-    await page.locator('#messages .msg.user').nth(3).waitFor();
-    await page.locator('#messages .market-error-state').nth(2).waitFor({ timeout: 12000 });
-    const timeoutText = await page.locator('#messages .market-error-state').nth(2).textContent();
+    await page.locator('#messages .msg.user').last().waitFor();
+    await waitForNewSelector(page, '#messages .market-error-state', timeoutCount);
+    await page.locator('#messages .market-error-state').last().waitFor({ timeout: 12000 });
+    const timeoutText = await page.locator('#messages .market-error-state').last().textContent();
     assert.match(timeoutText, /请求超时|数据请求失败/);
+    const timeoutNotes = await page.locator('#messages .market-error-state').last().locator('.state-note').allTextContents();
+    assert.equal(timeoutNotes[0], '已尝试：Yahoo Finance via corsproxy.io');
+    assert.match(timeoutNotes[1], /候选顺序[：:].*corsproxy\.io.*allorigins\.win.*codetabs\.com/);
     assert.doesNotMatch(timeoutText, /本地规则摘要/);
     await page.unroute(proxyPattern);
 
@@ -144,6 +240,7 @@ test('stock browser controls disclose data risks and keep explicit market succes
     const secondSessionId = await secondPage.evaluate(() => window.StockResearch.getResearchSession().sessionId);
     assert.notEqual(sessionId, secondSessionId, 'each page must have its own research session');
     await secondPage.close();
+    assert.deepEqual(pageErrors, []);
   } finally {
     if (browser) await browser.close();
     await stopServer(server);
@@ -154,10 +251,27 @@ test('mobile browser keeps RAG/Agent last-write-wins, reloads private KB, escape
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser({ headless: true });
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
-    await blockAnalytics(page);
+    const pageErrors = [];
+    const thirdPartyRequests = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    page.on('request', (request) => {
+      const requestUrl = new URL(request.url());
+      if ((requestUrl.protocol === 'http:' || requestUrl.protocol === 'https:') && requestUrl.hostname !== '127.0.0.1') {
+        thirdPartyRequests.push(request.url());
+      }
+    });
     await page.goto(`${url}/tools/stock/index.html`, { waitUntil: 'domcontentloaded' });
+
+    assert.equal(await page.locator('#networkDisclosure').isVisible(), true);
+    assert.match(await page.locator('#networkDisclosure').textContent(), /私有资料流程.*不发起第三方请求/);
+    assert.equal(await page.locator('.disclaimer-bar').isVisible(), true);
+    const tabNavMetrics = await page.locator('.tab-nav').evaluate((element) => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    }));
+    assert.ok(tabNavMetrics.scrollWidth >= tabNavMetrics.clientWidth, 'six tabs must remain reachable on 390px');
 
     await page.locator('[data-tab=report]').click();
     await page.locator('#kbTabPrivate').click();
@@ -168,6 +282,7 @@ test('mobile browser keeps RAG/Agent last-write-wins, reloads private KB, escape
     await page.locator('[data-tab=report]').click();
     await page.locator('#kbTabPrivate').click();
     assert.doesNotMatch(await page.locator('#privateKbList').textContent(), /secret-private-note/);
+    assert.deepEqual(thirdPartyRequests, [], 'private material flow must not request third parties');
 
     await page.locator('#kbTabMarket').click();
     await page.locator('#ragInput').fill('茅台');
@@ -187,6 +302,21 @@ test('mobile browser keeps RAG/Agent last-write-wins, reloads private KB, escape
     assert.equal(await page.locator('.feedback-bar').count(), 1);
 
     await page.locator('.fb-adopt').click();
+    const unrelatedRunId = await page.evaluate(() => window.StockResearch.recordResearchRun({
+      scenario: 'unrelated-after-feedback',
+      dataMode: 'demo',
+      sourceIds: ['demo-price-600519.SS'],
+    }).runId);
+    await page.evaluate(() => {
+      window.__stockCreateObjectURL = URL.createObjectURL;
+      URL.createObjectURL = () => { throw new Error('fixture export failure'); };
+    });
+    await page.locator('.fb-export').click();
+    assert.match(await page.locator('.fb-export').textContent(), /导出失败/);
+    await page.evaluate(() => {
+      URL.createObjectURL = window.__stockCreateObjectURL;
+      delete window.__stockCreateObjectURL;
+    });
     const downloadPromise = page.waitForEvent('download');
     await page.locator('.fb-export').click();
     const download = await downloadPromise;
@@ -195,6 +325,9 @@ test('mobile browser keeps RAG/Agent last-write-wins, reloads private KB, escape
     assert.deepEqual(Object.keys(exported), ['version', 'session', 'runs', 'feedback']);
     assert.match(exported.session.sessionId, /^session-local-/);
     assert.ok(exported.runs.every((run) => Object.keys(run).sort().join(',') === 'dataMode,runId,scenario,sourceIds,status'));
+    assert.equal(exported.runs.length, 1);
+    assert.doesNotMatch(downloadText, new RegExp(unrelatedRunId));
+    assert.doesNotMatch(downloadText, /demo-price-600519\.SS/);
     assert.equal(exported.feedback.length, 1);
     assert.doesNotMatch(downloadText, /secret-private-note|宁德时代|茅台/);
 
@@ -238,6 +371,7 @@ test('mobile browser keeps RAG/Agent last-write-wins, reloads private KB, escape
     assert.match(await page.locator('#agentProcess').textContent(), /Yahoo Finance via|partial|部分完成/);
     await page.unroute(proxyPattern);
     await page.locator('#dataModeDemo').click();
+    assert.deepEqual(pageErrors, []);
   } finally {
     if (browser) await browser.close();
     await stopServer(server);
@@ -248,9 +382,10 @@ test('diagnosis controls enforce last-write-wins and abort the stale market requ
   const { server, url } = await startServer();
   let browser;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser({ headless: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    await blockAnalytics(page);
+    const pageErrors = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.goto(`${url}/tools/stock/index.html`, { waitUntil: 'domcontentloaded' });
     await page.locator('[data-tab=diagnosis]').click();
     await page.locator('#dataModeMarket').click();
@@ -285,6 +420,91 @@ test('diagnosis controls enforce last-write-wins and abort the stale market requ
     assert.equal(runs.length, 1);
     assert.equal(runs[0].status, 'success');
     await page.unroute(proxyPattern);
+    assert.deepEqual(pageErrors, []);
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
+
+test('diagnosis failure retry reruns the current diagnosis input instead of the chat query', { timeout: 30000 }, async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await launchBrowser({ headless: true });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const pageErrors = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    await page.goto(`${url}/tools/stock/index.html`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-tab=diagnosis]').click();
+    await page.locator('#dataModeMarket').click();
+    await page.route(proxyPattern, async (route) => route.abort());
+    await page.locator('#diagInput').fill('茅台');
+    await page.locator('#runDiagnosisButton').click();
+    await page.locator('#diagContent .diag-error').waitFor();
+    const failureText = await page.locator('#diagContent .diag-error').textContent();
+    assert.match(failureText, /数据请求失败/);
+    await page.unroute(proxyPattern);
+    await page.route(proxyPattern, async (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(chartFixture()),
+    }));
+    await page.locator('#diagContent .inline-action').first().click();
+    await page.locator('#diagContent .diag-card').waitFor();
+    const successText = await page.locator('#diagContent').textContent();
+    assert.match(successText, /茅台/);
+    assert.match(successText, /Yahoo Finance via corsproxy\.io/);
+    assert.equal(await page.locator('#messages .msg').count(), 0, 'diagnosis retry must not create a chat message');
+    const runs = await page.evaluate(() => window.StockResearch.getResearchSession().runs.filter((run) => run.scenario === 'evidence-check'));
+    assert.equal(runs.length, 2);
+    assert.equal(runs[0].status, 'failed');
+    assert.equal(runs[1].status, 'success');
+    await page.locator('#dataModeDemo').click();
+    await page.locator('#diagInput').fill('上证指数');
+    await page.locator('#runDiagnosisButton').click();
+    await page.locator('#diagContent .diag-card').waitFor();
+    const partialRuns = await page.evaluate(() => window.StockResearch.getResearchSession().runs.filter((run) => run.scenario === 'evidence-check'));
+    assert.equal(partialRuns.length, 3);
+    assert.equal(partialRuns[2].status, 'partial');
+    assert.deepEqual(partialRuns[2].sourceIds, ['demo-price-000001.SS']);
+    assert.doesNotMatch(await page.locator('#diagContent').textContent(), /fundamental-demo-|sentiment-demo-/);
+    assert.deepEqual(pageErrors, []);
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
+
+test('switching to demo cancels an active chat market generation without stale DOM or run writes', { timeout: 30000 }, async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await launchBrowser({ headless: true });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const pageErrors = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    await page.goto(`${url}/tools/stock/index.html`, { waitUntil: 'domcontentloaded' });
+    await page.locator('#dataModeMarket').click();
+    await page.route(proxyPattern, async (route) => {
+      await delay(1000);
+      try {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(chartFixture([777.71, 778.82])) });
+      } catch (_) {}
+    });
+    const requestPromise = page.waitForRequest((request) => proxyPattern.test(request.url()));
+    await page.locator('#inputBox').fill('茅台近5日行情');
+    await page.locator('#sendBtn').click();
+    await requestPromise;
+    await page.locator('#dataModeDemo').click();
+    assert.match(await page.locator('#dataModeStatus').textContent(), /默认不发起行情数据请求/);
+    assert.equal(await page.locator('#sendBtn').isDisabled(), false);
+    await page.waitForTimeout(1200);
+    const messagesText = await page.locator('#messages').textContent();
+    assert.doesNotMatch(messagesText, /777\.71|778\.82|Yahoo Finance via|市场时间/);
+    const runs = await page.evaluate(() => window.StockResearch.getResearchSession().runs.filter((run) => run.scenario === 'market-query'));
+    assert.equal(runs.length, 0, 'cancelled chat generation must not record a run');
+    assert.deepEqual(pageErrors, []);
   } finally {
     if (browser) await browser.close();
     await stopServer(server);

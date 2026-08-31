@@ -40,7 +40,11 @@ globalThis.__stockWorkflow = {
   submitFeedback: typeof submitFeedback === 'function' ? submitFeedback : null,
   exportFeedback: typeof exportFeedback === 'function' ? exportFeedback : null,
   selectAgentTools: typeof selectAgentTools === 'function' ? selectAgentTools : null,
-  searchNews: typeof searchNews === 'function' ? searchNews : null
+  searchNews: typeof searchNews === 'function' ? searchNews : null,
+  getFundamentalEvidence: typeof getFundamentalEvidence === 'function' ? getFundamentalEvidence : null,
+  getSentimentEvidence: typeof getSentimentEvidence === 'function' ? getSentimentEvidence : null,
+  getSourceRegistry: typeof getSourceRegistry === 'function' ? getSourceRegistry : null,
+  resolveAllowedSymbol: typeof resolveAllowedSymbol === 'function' ? resolveAllowedSymbol : null
 };`,
     context,
   );
@@ -85,7 +89,7 @@ test('market data uses one source contract and keeps close as a number', async (
   });
 
   assert.deepEqual(Object.keys(snapshot).sort(), [
-    'fetchedAt', 'kind', 'marketAsOf', 'rows', 'source', 'transport',
+    'attemptedTransports', 'candidateTransports', 'fetchedAt', 'kind', 'marketAsOf', 'rows', 'source', 'transport',
   ]);
   assert.equal(snapshot.kind, 'market-snapshot');
   assert.equal(snapshot.source, 'Yahoo Finance');
@@ -94,6 +98,48 @@ test('market data uses one source contract and keeps close as a number', async (
   assert.equal(snapshot.marketAsOf, '2026-08-29T11:00:00.000Z');
   assert.equal(typeof snapshot.rows[0].close, 'number');
   assert.equal(snapshot.rows[0].close, 123.45);
+  assert.deepEqual(Array.from(snapshot.attemptedTransports), ['corsproxy.io']);
+  assert.deepEqual(Array.from(snapshot.candidateTransports), ['corsproxy.io', 'allorigins.win', 'codetabs.com']);
+});
+
+test('market responses record actual proxy attempts and stop after a proxy timeout', async () => {
+  const urls = [];
+  const api = loadStockApi({ fetchImpl: async (url) => {
+    urls.push(url);
+    if (urls.length === 1) return responseFromJson({}, 503);
+    return responseFromJson(chartFixture());
+  } });
+
+  const snapshot = await api.fetchMarketData('600519.SS', '5d', '1d', { mode: 'market', timeoutMs: 20 });
+
+  assert.equal(snapshot.transport, 'allorigins.win');
+  assert.deepEqual(Array.from(snapshot.attemptedTransports), ['corsproxy.io', 'allorigins.win']);
+  assert.deepEqual(Array.from(snapshot.candidateTransports), ['corsproxy.io', 'allorigins.win', 'codetabs.com']);
+  assert.match(urls[0], /corsproxy\.io/);
+  assert.match(urls[1], /allorigins\.win/);
+
+  let attempts = 0;
+  const timeoutApi = loadStockApi({ fetchImpl: async (_url, options) => {
+    attempts += 1;
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(resolve, 100);
+      options.signal.addEventListener('abort', () => {
+        clearTimeout(timer);
+        reject(new Error('fixture aborted'));
+      }, { once: true });
+    });
+    return responseFromJson(chartFixture());
+  } });
+  await assert.rejects(
+    timeoutApi.fetchMarketData('600519.SS', '5d', '1d', { mode: 'market', timeoutMs: 5 }),
+    (error) => {
+      assert.match(error.message, /请求超时/);
+      assert.deepEqual(Array.from(error.attemptedTransports), ['corsproxy.io']);
+      assert.deepEqual(Array.from(error.candidateTransports), ['corsproxy.io', 'allorigins.win', 'codetabs.com']);
+      return true;
+    },
+  );
+  assert.equal(attempts, 1);
 });
 
 test('default market mode is a deterministic demo snapshot, not a hidden network call', async () => {
@@ -123,6 +169,51 @@ test('an unresolved stock stays unresolved instead of falling back to Moutai', a
   assert.equal(intent.symbol, null);
   assert.equal(intent.unresolved, true);
   assert.notEqual(intent.symbol, '600519.SS');
+});
+
+test('arbitrary six-digit codes stay unresolved instead of inferring an exchange from the first digit', async () => {
+  const api = loadStockApi();
+  assert.equal(typeof api.resolveAllowedSymbol, 'function');
+  assert.equal(api.resolveAllowedSymbol('123456'), null);
+
+  const intent = await api.parseIntent('查询 123456 近5日行情');
+
+  assert.equal(intent.symbol, null);
+  assert.equal(intent.unresolved, true);
+});
+
+test('missing fundamental and sentiment fixtures are structured partial evidence with no invented sources', () => {
+  const api = loadStockApi();
+  assert.equal(typeof api.getFundamentalEvidence, 'function');
+  assert.equal(typeof api.getSentimentEvidence, 'function');
+
+  const fundamental = api.getFundamentalEvidence('000001.SS');
+  const sentiment = api.getSentimentEvidence('000001.SS');
+
+  assert.equal(fundamental.kind, 'missing-evidence');
+  assert.equal(fundamental.status, 'missing');
+  assert.deepEqual(Array.from(fundamental.sourceIds), []);
+  assert.equal(fundamental.data, null);
+  assert.equal(sentiment.kind, 'missing-evidence');
+  assert.equal(sentiment.status, 'missing');
+  assert.deepEqual(Array.from(sentiment.sourceIds), []);
+  assert.equal(sentiment.data, null);
+});
+
+test('every recorded source id resolves through the source registry', () => {
+  const api = loadStockApi();
+  assert.equal(typeof api.getSourceRegistry, 'function');
+  const registry = api.getSourceRegistry();
+  assert.ok(registry['fundamental-demo-600519.SS']);
+  assert.ok(registry['sentiment-demo-600519.SS']);
+  assert.ok(registry['market-news-01']);
+
+  const run = api.recordResearchRun({
+    scenario: 'source-registry-check',
+    dataMode: 'demo',
+    sourceIds: ['fundamental-demo-600519.SS', 'sentiment-demo-600519.SS', 'market-news-01'],
+  });
+  assert.ok(run.sourceIds.every((sourceId) => registry[sourceId]), 'run source ids must be registered');
 });
 
 test('explicit network failure rejects and never silently replaces the result with demo data', async () => {
@@ -219,6 +310,11 @@ test('feedback is one final decision per real run and export contains only minim
     dataMode: 'demo',
     sourceIds: ['market-news-01'],
   });
+  const unrelated = api.recordResearchRun({
+    scenario: 'unrelated-market-query',
+    dataMode: 'demo',
+    sourceIds: ['demo-price-600519.SS'],
+  });
   const first = api.submitFeedback({
     runId: run.runId,
     decision: 'revise',
@@ -239,7 +335,10 @@ test('feedback is one final decision per real run and export contains only minim
   assert.deepEqual(Object.keys(exported), ['version', 'session', 'runs', 'feedback']);
   assert.deepEqual(Object.keys(exported.session).sort(), ['sessionId', 'version']);
   assert.deepEqual(Object.keys(exported.runs[0]).sort(), ['dataMode', 'runId', 'scenario', 'sourceIds', 'status']);
+  assert.equal(exported.runs.length, 1);
   assert.equal(exported.runs[0].runId, run.runId);
+  assert.doesNotMatch(JSON.stringify(exported), new RegExp(unrelated.runId));
+  assert.doesNotMatch(JSON.stringify(exported), /demo-price-600519\.SS/);
   assert.equal(exported.feedback[0].runId, run.runId);
   assert.doesNotMatch(JSON.stringify(exported), /茅台|私有资料|secret/i);
 });
@@ -269,9 +368,16 @@ test('claim and governance source files do not advertise unimplemented capabilit
   assert.match(contents, /corsproxy\.io[\s\S]*allorigins\.win[\s\S]*codetabs\.com/);
   assert.match(contents, /symbol[\s\S]*range[\s\S]*interval/);
   assert.match(contents, /完整性[\s\S]*隐私风险/);
-  assert.match(contents, /站点统计[\s\S]*可能[\s\S]*联网/);
+  assert.match(contents, /私有资料流程[：:][\s\S]*不发起第三方请求/);
+  assert.doesNotMatch(contents, /站点统计[\s\S]*可能[\s\S]*联网/);
   assert.match(contents, /Yahoo Finance via/);
   const page = fs.readFileSync(path.join(repoRoot, 'tools/stock/index.html'), 'utf8');
   assert.match(page, /proxy\.py.*未参与公开页面的历史本地工具/);
   assert.doesNotMatch(page, /text2vec-base-chinese|异常值过滤/);
+});
+
+test('stock page keeps private material flow free of page analytics and third-party requests', () => {
+  const page = fs.readFileSync(path.join(repoRoot, 'tools/stock/index.html'), 'utf8');
+  assert.doesNotMatch(page, /<script[^>]+(?:src=["'][^"']*analytics\.js|analytics\.js[^>]*src=)/i);
+  assert.match(page, /私有资料流程[：:]?[^<]*(?:不发起|不加载)第三方请求/);
 });
