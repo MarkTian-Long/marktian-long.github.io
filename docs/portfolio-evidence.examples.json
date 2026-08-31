@@ -8,14 +8,14 @@
       "type": "interactive-demo",
       "status": "published",
       "myRole": "定义字段口径、证据定位、异常处理和人工复核闭环。",
-      "realParts": ["浏览器内文档工作台", "字段与证据逐项核验", "Bad Case 复盘和离线评估说明"],
+      "realParts": ["浏览器内文档工作台", "字段与证据逐项核验", "版本化合成评估工件与 Bad Case 回归"],
       "mockParts": ["内置样例文档", "默认抽取结果", "离线评估样本"],
-      "mockBoundary": "默认流程使用固定演示数据；可选自定义接口仅由用户在当前会话配置，站点不托管模型、密钥或生产结果。",
+      "mockBoundary": "默认流程使用固定演示数据；可选自定义接口仅在用户确认精确 origin 后由当前会话调用，站点不托管模型、密钥或生产结果。",
       "metrics": [{ "kind": "target", "definition": "高风险和低置信字段必须进入人工复核，不能用未经验证的准确率代替评估。", "source": "字段核验与异常处理规则", "asOf": "2026-08-30" }],
       "evidence": [{ "kind": "artifact", "description": "包含证据核验、复核队列和评估边界的交互原型。", "source": "tools/esop-extractor/", "asOf": "2026-08-30" }],
-      "limitations": ["没有生产招股书语料、真实标签集或线上准确率；自定义接口质量取决于用户提供的服务。"],
+      "limitations": ["只有 3 个合成夹具，不读取真实 PDF 内容，也没有生产标签集或线上准确率；自定义接口质量取决于用户提供的服务。"],
       "links": { "demo": "tools/esop-extractor/index.html", "case": null, "code": "tools/esop-extractor/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "financial-rag",
@@ -26,12 +26,12 @@
       "myRole": "设计研究任务、检索与重排、引用审查、工具轨迹和合规边界。",
       "realParts": ["六类研究工作区", "证据来源和引用状态展示", "工具执行轨迹与合规提示"],
       "mockParts": ["证券行情", "研报内容", "分析结论和 Agent 执行结果"],
-      "mockBoundary": "页面用于说明金融研究的证据链设计；行情、研究材料和结论均为 Mock，不构成实时信息或投资建议。",
+      "mockBoundary": "默认页面使用确定性演示快照；用户主动切换到代理模式时才尝试外部行情代理。研究材料和结论均为 Mock，不构成实时信息或投资建议。",
       "metrics": [{ "kind": "proxy", "definition": "回答中的主张可关联到证据来源，并暴露缺证、冲突和过期状态。", "source": "页面引用审查状态", "asOf": "2026-08-30" }],
       "evidence": [{ "kind": "artifact", "description": "展示检索、引用审查和工具轨迹的金融研究原型。", "source": "tools/stock/", "asOf": "2026-08-30" }],
-      "limitations": ["未接入交易所行情、持牌数据、生产知识库或真实投资结果。"],
+      "limitations": ["未接入交易所行情、持牌数据、生产知识库或真实投资结果；外部代理可用性与返回质量不受页面保证。"],
       "links": { "demo": "tools/stock/index.html", "case": null, "code": "tools/stock/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "service-agent",
@@ -47,7 +47,7 @@
       "evidence": [{ "kind": "artifact", "description": "多场景客服决策、故障和复盘沙盘。", "source": "tools/service-agent/", "asOf": "2026-08-30" }],
       "limitations": ["没有连接真实订单、知识库、工单系统或在线模型。"],
       "links": { "demo": "tools/service-agent/index.html", "case": "tools/blog/posts/llm-customer-service-tech-guide.html", "code": "tools/service-agent/", "article": "tools/blog/posts/llm-customer-service-tech-guide.html" },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "asci-research-system",
@@ -63,7 +63,7 @@
       "evidence": [{ "kind": "artifact", "description": "含研究协议、运行轨迹和恢复路径的科研 Agent 原型。", "source": "tools/asci/", "asOf": "2026-08-30" }],
       "limitations": ["未连接真实论文库、实验设备、计算集群或执行队列。"],
       "links": { "demo": "tools/asci/index.html", "case": null, "code": "tools/asci/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "ai-insights",
@@ -79,7 +79,7 @@
       "evidence": [{ "kind": "artifact", "description": "可筛选、可深链且明确事实复核状态的产品档案和证据账本。", "source": "tools/ai-insights/", "asOf": "2026-08-30" }],
       "limitations": ["外部产品信息会随版本和商业策略变化；当前档案不能当作已完成逐条事实核验的最新资料。"],
       "links": { "demo": "tools/ai-insights/index.html", "case": null, "code": "tools/ai-insights/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "radar",
@@ -95,7 +95,7 @@
       "evidence": [{ "kind": "artifact", "description": "包含研究意图、信源路由和覆盖说明的导航工具。", "source": "tools/radar/", "asOf": "2026-08-30" }],
       "limitations": ["来源状态和内容质量需要用户在访问时复核；不替代系统化文献检索。"],
       "links": { "demo": "tools/radar/index.html", "case": null, "code": "tools/radar/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "trends",
@@ -111,7 +111,7 @@
       "evidence": [{ "kind": "artifact", "description": "明确历史与结构复核边界、可按时效和行动筛选的跨平台信号快照。", "source": "tools/trends/", "asOf": "2026-08-30" }],
       "limitations": ["历史事实未在本轮重验；平台排序和外链内容可能在快照观察后变化。"],
       "links": { "demo": "tools/trends/index.html", "case": null, "code": "tools/trends/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "agent-hub",
@@ -127,7 +127,7 @@
       "evidence": [{ "kind": "artifact", "description": "从业务约束到 Agent 方案边界的交互判断工具。", "source": "tools/agent-hub/", "asOf": "2026-08-30" }],
       "limitations": ["示例参数不能替代组织流程梳理、安全评审或真实成本测算。"],
       "links": { "demo": "tools/agent-hub/index.html", "case": null, "code": "tools/agent-hub/", "article": null },
-      "lastVerified": "2026-08-30"
+      "lastVerified": "2026-08-31"
     },
     {
       "id": "aml-due-diligence",

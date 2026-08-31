@@ -68,7 +68,8 @@ test('custom API keys stay in memory and untrusted multiline output is escaped',
   const stock = toolSource(root, 'stock');
 
   assert.doesNotMatch(esop, /localStorage\.(getItem|setItem)\(STORAGE_KEY_APIKEY/);
-  assert.match(esop, /localStorage\.removeItem\(STORAGE_KEY_APIKEY\)/);
+  assert.match(esop, /function safeStorageRemove\(storage, key\)/);
+  assert.match(esop, /safeStorageRemove\(storage, key\)/);
   assert.match(esop, /state\.apiKey\s*=\s*val/);
   assert.match(stock, /function escapeMultiline\(text\)\s*{\s*return escHtml\(text\)\.replace\(\/\\n\/g,'<br\/>'\);/);
   assert.doesNotMatch(stock, /(?:report|conclusion|brief|content)\.replace\(\/\\n\/g,'<br\/>'\)/);
