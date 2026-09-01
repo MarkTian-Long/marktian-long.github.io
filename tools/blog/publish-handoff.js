@@ -9,26 +9,73 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function parsePublishHandoff(markdown, sourcePath = '<inline Markdown>') {
   const lines = String(markdown).replace(/\r/g, '').split('\n');
-  let fenceChar = null;
-  const starts = [];
+  let fence = null;
+  const rawStarts = [];
+  const fencedBlocks = [];
 
   for (let index = 0; index < lines.length; index++) {
-    const fence = lines[index].match(/^\s*(`{3,}|~{3,})/);
-    const outsideFence = fenceChar === null;
-    if (outsideFence && /^publish_handoff:\s*$/.test(lines[index])) starts.push(index);
-    if (!fence) continue;
-    const nextFenceChar = fence[1][0];
-    if (fenceChar === null) fenceChar = nextFenceChar;
-    else if (fenceChar === nextFenceChar) fenceChar = null;
-  }
-  if (fenceChar !== null) throw new Error(`Markdown source has an unclosed code fence: ${sourcePath}`);
-  if (!starts.length) return { handoff: null, markdown: String(markdown).replace(/\r/g, '') };
-  if (starts.length !== 1) throw new Error(`Publish handoff must appear at most once: ${sourcePath}`);
+    if (fence) {
+      if (isFenceClose(lines[index], fence)) {
+        fencedBlocks.push({ ...fence, end: index, lines: lines.slice(fence.start + 1, index) });
+        fence = null;
+      }
+      continue;
+    }
 
-  const start = starts[0];
+    const opening = parseFenceStart(lines[index]);
+    if (opening) {
+      fence = { ...opening, start: index };
+      continue;
+    }
+    if (/^publish_handoff:\s*$/.test(lines[index])) rawStarts.push(index);
+  }
+  if (fence) throw new Error(`Markdown source has an unclosed code fence: ${sourcePath}`);
+
+  const candidates = [];
+  for (const start of rawStarts) {
+    candidates.push({ start, handoff: parseTransportBlock(lines.slice(start), sourcePath) });
+  }
+  for (const block of fencedBlocks) {
+    if (!/^(?:yaml|yml)$/.test(block.info)) continue;
+    const firstContent = block.lines.find(line => line.trim());
+    if (!/^publish_handoff:\s*$/.test(firstContent || '')) continue;
+    try {
+      candidates.push({ start: block.start, end: block.end, handoff: parseTransportBlock(block.lines, sourcePath) });
+    } catch (error) {
+      if (!lines.slice(block.end + 1).some(line => line.trim())) throw error;
+      // A non-transport YAML example must not block a valid handoff elsewhere.
+    }
+  }
+
+  if (!candidates.length) return { handoff: null, markdown: String(markdown).replace(/\r/g, '') };
+  if (candidates.length !== 1) throw new Error(`Publish handoff must appear at most once: ${sourcePath}`);
+
+  const candidate = candidates[0];
+  if (candidate.end !== undefined && lines.slice(candidate.end + 1).some(line => line.trim())) {
+    throw new Error(`Publish handoff must be the final transport block: ${sourcePath}`);
+  }
+  return {
+    handoff: candidate.handoff,
+    markdown: lines.slice(0, candidate.start).join('\n').replace(/\n+$/, '\n')
+  };
+}
+
+function parseFenceStart(line) {
+  const match = /^\s*(`{3,}|~{3,})([^\r\n]*)$/.exec(line);
+  if (!match) return null;
+  return { char: match[1][0], length: match[1].length, info: match[2].trim() };
+}
+
+function isFenceClose(line, fence) {
+  const match = /^\s*(`{3,}|~{3,})\s*$/.exec(line);
+  return Boolean(match && match[1][0] === fence.char && match[1].length >= fence.length);
+}
+
+function parseTransportBlock(blockLines, sourcePath) {
+  const lines = blockLines;
   const handoff = { relations: undefined, bodyLinkOnly: undefined };
   const seenFields = new Set();
-  let index = start + 1;
+  let index = 0;
 
   function consumeBlankLines() {
     while (index < lines.length && !lines[index].trim()) index++;
@@ -38,6 +85,11 @@ function parsePublishHandoff(markdown, sourcePath = '<inline Markdown>') {
     return value;
   }
 
+  consumeBlankLines();
+  if (index >= lines.length || !/^publish_handoff:\s*$/.test(lines[index])) {
+    throw new Error(`Publish handoff must start with publish_handoff: ${sourcePath}`);
+  }
+  index++;
   consumeBlankLines();
   while (index < lines.length) {
     const field = /^  (relations|body_link_only):(\s*\[\])?\s*$/.exec(lines[index]);
@@ -78,10 +130,7 @@ function parsePublishHandoff(markdown, sourcePath = '<inline Markdown>') {
   }
 
   if (!seenFields.size) throw new Error(`Publish handoff cannot be empty: ${sourcePath}`);
-  return {
-    handoff,
-    markdown: lines.slice(0, start).join('\n').replace(/\n+$/, '\n')
-  };
+  return handoff;
 }
 
 function validateHandoff(handoff, slug, posts) {

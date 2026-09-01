@@ -19,8 +19,8 @@ function makeFixture(markdown) {
     image_contract: { version: 1, legacy_without_visuals: ['current', 'alignment-under-change', 'harness-engineering'] },
     posts: [
       { slug: 'current', date: '2026.08', title: 'Current', summary: 'Summary', share_quote: 'Quote.', url: 'posts/current.html', tags: ['技术判断'], topics: ['Agent'], category: '技术', concepts: ['a', 'b', 'c', 'd'], relations: [{ slug: 'harness-engineering', type: 'builds_on' }] },
-      { slug: 'alignment-under-change', date: '2026.07', title: 'Alignment', summary: 'Summary', share_quote: 'Quote.', url: 'posts/alignment-under-change.html', tags: ['技术判断'], topics: ['Agent'], category: '技术', concepts: ['e', 'f', 'g', 'h'] },
-      { slug: 'harness-engineering', date: '2026.06', title: 'Harness', summary: 'Summary', share_quote: 'Quote.', url: 'posts/harness-engineering.html', tags: ['技术判断'], topics: ['Agent'], category: '技术', concepts: ['i', 'j', 'k', 'l'] }
+      { slug: 'alignment-under-change', date: '2026.07', title: 'Alignment', summary: 'Summary', share_quote: 'Quote.', url: 'posts/alignment-under-change.html', tags: ['技术判断'], topics: ['Agent'], category: '技术', concepts: ['e', 'f', 'g', 'h'], relations: [{ slug: 'harness-engineering', type: 'companion' }] },
+      { slug: 'harness-engineering', date: '2026.06', title: 'Harness', summary: 'Summary', share_quote: 'Quote.', url: 'posts/harness-engineering.html', tags: ['技术判断'], topics: ['Agent'], category: '技术', concepts: ['i', 'j', 'k', 'l'], relations: [{ slug: 'alignment-under-change', type: 'builds_on' }] }
     ]
   }, null, 2) + '\n', 'utf8');
   return { rootDir, sourcePath, metadataPath };
@@ -41,6 +41,26 @@ const handoff = [
   '      type: builds_on',
   '  body_link_only:',
   '    - harness-engineering',
+  ''
+].join('\n');
+
+const fencedHandoff = [
+  '# Current',
+  '',
+  '> Summary',
+  '',
+  '---',
+  '',
+  '正文保留 [Harness](https://example.test/tools/blog/posts/harness-engineering.html) 链接。',
+  '',
+  '```yaml',
+  'publish_handoff:',
+  '  relations:',
+  '    - slug: alignment-under-change',
+  '      type: builds_on',
+  '  body_link_only:',
+  '    - harness-engineering',
+  '```',
   ''
 ].join('\n');
 
@@ -68,6 +88,90 @@ test('publish handoff replaces only the declared strong relations and never writ
   assert.match(source, /harness-engineering\.html/);
 });
 
+test('publish handoff accepts fenced YAML, strips both fences, and preserves body links', () => {
+  const fixture = makeFixture(fencedHandoff);
+  const result = applyPublishHandoff({ sourcePath: fixture.sourcePath, rootDir: fixture.rootDir });
+  const metadata = JSON.parse(fs.readFileSync(fixture.metadataPath, 'utf8'));
+  const current = metadata.posts.find((post) => post.slug === 'current');
+  const source = fs.readFileSync(fixture.sourcePath, 'utf8');
+
+  assert.deepEqual(result.relations, [{ slug: 'alignment-under-change', type: 'builds_on' }]);
+  assert.deepEqual(result.bodyLinkOnly, ['harness-engineering']);
+  assert.deepEqual(current.relations, [{ slug: 'alignment-under-change', type: 'builds_on' }]);
+  assert.equal(Object.hasOwn(current, 'body_link_only'), false);
+  assert.doesNotMatch(source, /publish_handoff|body_link_only|```yaml|```/);
+  assert.match(source, /harness-engineering\.html/);
+});
+
+test('ordinary fenced YAML examples are not treated as a publish handoff or written to metadata', () => {
+  const example = [
+    '# Current',
+    '',
+    '```yaml',
+    'publish_handoff:',
+    '  example: true',
+    '```',
+    '',
+    '正文仍然在 code fence 后。',
+    ''
+  ].join('\n');
+  const fixture = makeFixture(example);
+  const beforeMetadata = fs.readFileSync(fixture.metadataPath, 'utf8');
+  const beforeSource = fs.readFileSync(fixture.sourcePath, 'utf8');
+
+  assert.equal(parsePublishHandoff(example, 'current.md').handoff, null);
+  assert.throws(
+    () => applyPublishHandoff({ sourcePath: fixture.sourcePath, rootDir: fixture.rootDir }),
+    /No publish handoff found/
+  );
+  assert.equal(fs.readFileSync(fixture.metadataPath, 'utf8'), beforeMetadata);
+  assert.equal(fs.readFileSync(fixture.sourcePath, 'utf8'), beforeSource);
+});
+
+test('malformed final fenced handoff is rejected explicitly without writes', () => {
+  const malformed = [
+    '# Current',
+    '',
+    '```yaml',
+    'publish_handoff:',
+    '  example: true',
+    '```',
+    ''
+  ].join('\n');
+  const fixture = makeFixture(malformed);
+  const beforeMetadata = fs.readFileSync(fixture.metadataPath, 'utf8');
+  const beforeSource = fs.readFileSync(fixture.sourcePath, 'utf8');
+
+  assert.throws(
+    () => parsePublishHandoff(malformed, 'current.md'),
+    /Publish handoff must be the final transport block/
+  );
+  assert.throws(
+    () => applyPublishHandoff({ sourcePath: fixture.sourcePath, rootDir: fixture.rootDir }),
+    /Publish handoff must be the final transport block/
+  );
+  assert.equal(fs.readFileSync(fixture.metadataPath, 'utf8'), beforeMetadata);
+  assert.equal(fs.readFileSync(fixture.sourcePath, 'utf8'), beforeSource);
+});
+
+test('publish handoff updates only the current post and preserves target metadata', () => {
+  const fixture = makeFixture(handoff);
+  const before = JSON.parse(fs.readFileSync(fixture.metadataPath, 'utf8'));
+  applyPublishHandoff({ sourcePath: fixture.sourcePath, rootDir: fixture.rootDir });
+  const after = JSON.parse(fs.readFileSync(fixture.metadataPath, 'utf8'));
+
+  for (const slug of ['alignment-under-change', 'harness-engineering']) {
+    assert.deepEqual(
+      after.posts.find((post) => post.slug === slug),
+      before.posts.find((post) => post.slug === slug),
+      `${slug} metadata must remain unchanged`
+    );
+  }
+  assert.deepEqual(after.posts.find((post) => post.slug === 'current').relations, [
+    { slug: 'alignment-under-change', type: 'builds_on' }
+  ]);
+});
+
 test('publish handoff rejects invalid relation targets, relation types, self-references, and duplicates', () => {
   for (const [label, replacement] of [
     ['missing target', 'slug: missing'],
@@ -78,6 +182,20 @@ test('publish handoff rejects invalid relation targets, relation types, self-ref
     const fixture = makeFixture(handoff.replace('slug: alignment-under-change\n      type: builds_on', replacement));
     assert.throws(() => applyPublishHandoff({ sourcePath: fixture.sourcePath, rootDir: fixture.rootDir }), /publish handoff|Post relation/i, label);
   }
+});
+
+test('publish handoff rejects multiple handoffs and content after the final handoff', () => {
+  const multiple = makeFixture(handoff + '\npublish_handoff:\n  relations: []\n');
+  assert.throws(
+    () => applyPublishHandoff({ sourcePath: multiple.sourcePath, rootDir: multiple.rootDir }),
+    /Publish handoff must appear at most once|final transport block/
+  );
+
+  const trailing = makeFixture(handoff + '\n正文尾巴\n');
+  assert.throws(
+    () => applyPublishHandoff({ sourcePath: trailing.sourcePath, rootDir: trailing.rootDir }),
+    /final transport block/
+  );
 });
 
 test('generator rejects a pending publish handoff so it cannot appear in HTML', () => {

@@ -660,7 +660,7 @@ relations 是上游编辑评审已经确认的结果。GitHub / Codex 不根据 
 
 ### publish_handoff 发布交接接口
 
-网页版在最终内容评审完成后，可在 Markdown 正文与参考资料**之后**附上唯一一个末尾 YAML transport block：
+发布工具同时接受最终 Markdown 末尾的裸 `publish_handoff` block 和独立 fenced YAML `publish_handoff` block；两者只是 transport 表达差异，语义相同，发布后都会被完整剥离。网页版在最终内容评审完成后，可在 Markdown 正文与参考资料**之后**附上唯一一个末尾 YAML transport block：
 
 ```yaml
 publish_handoff:
@@ -671,7 +671,7 @@ publish_handoff:
     - harness-engineering
 ```
 
-- `relations` 是已确认的强关系。运行 `node tools/blog/publish-handoff.js --write <source.md>` 后，发布侧只校验 target slug 存在、非 self-reference、无重复，以及 type 为 `builds_on` / `revises` / `companion`；再以该终稿结果覆盖该文章 metadata 的 `relations`。`relations: []` 明确表示没有强关系，不得为了凑「继续阅读」另建关系。
+- `relations` 是已确认的强关系。运行 `node tools/blog/publish-handoff.js --write <source.md>` 后，发布侧只校验 target slug 存在、非 self-reference、无重复，以及 type 为 `builds_on` / `revises` / `companion`；再以该终稿结果覆盖当前源稿 slug 对应文章的 metadata `relations`。target 历史文章的 metadata 不因此回写，反向「后续延展 / 后续修正」继续由前端动态计算。`relations: []` 明确表示没有强关系，不得为了凑「继续阅读」另建关系。
 - `body_link_only` 只记录已评审为正文背景、定义复用或普通历史引用的站内文章。发布侧校验 slug 存在、非 self-reference、无重复，但不写入 `posts-meta.json`、不新增 metadata schema、不显示在页面，也不改变继续阅读算法；它不能因正文链接而升级为 relation。普通外链和全部参考资料无需列入。
 - 该命令读取、验证并执行交接后，会从 `docs/blog/<slug>.md` 剥离整个 block；生成器会拒绝尚含 `publish_handoff` 的源稿。因此交接数据不会进入正式 Markdown、HTML、RSS、Search、SEO 或分享卡片。不要手工把 `publish_handoff` 保存进 metadata，也不要让生成器或发布阶段重判关系语义。
 
