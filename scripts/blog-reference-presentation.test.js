@@ -4,6 +4,32 @@ const fs = require('node:fs');
 const path = require('node:path');
 const runtime = require('../tools/blog/article-runtime.js');
 
+test('reading metadata counts Chinese characters and English word groups', () => {
+  assert.equal(runtime.readingUnitsFromText('你好，AI 与 GPT-5.6 协作。 123'), 8);
+  assert.equal(runtime.readingUnitsFromText('  ，。  '), 0);
+});
+
+test('reading metadata rounds display count and calculates a 400-unit reading time', () => {
+  assert.equal(runtime.formatReadingMeta(7785), '约 7,800 字 · 20 分钟阅读');
+  assert.equal(runtime.formatReadingMeta(1), '约 100 字 · 1 分钟阅读');
+});
+
+test('reading metadata keeps only body content before an exact reference section', () => {
+  assert.equal(runtime.readingTextFromNodes([
+    { tagName: 'H2', text: '核心判断' },
+    { tagName: 'P', text: '这是正文。' },
+    { tagName: 'PRE', text: 'const ignored = true;' },
+    { tagName: 'FIGURE', text: '这是一张不计入的图注。' },
+    { tagName: 'H2', text: '参考资料' },
+    { tagName: 'UL', text: '不计入的来源文字。' },
+    { tagName: 'P', text: '不计入的补充说明。' }
+  ]), '核心判断 这是正文。');
+});
+
+test('article runtime exposes one DOM renderer for reading metadata', () => {
+  assert.equal(typeof runtime.renderReadingMeta, 'function');
+});
+
 test('reference section detection accepts only an exact reference heading', () => {
   assert.equal(runtime.isReferenceHeading('  参考资料  '), true);
   assert.equal(runtime.isReferenceHeading('\n参考资料\t'), true);

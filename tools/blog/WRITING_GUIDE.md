@@ -516,6 +516,7 @@ GitHub Pages 部署后无此问题。
 - 自动同步列表页的 `blog_theme` 设置；无独立切换按钮
 - 未设置时跟随 `prefers-color-scheme`；旧 `blog-theme` 值会在首次访问时迁移到 `blog_theme`
 - `posts-meta.json` 请求失败时只显示“文章索引暂时不可用，正文仍可正常阅读。”提示，正文保持可读
+- 日期行的“约 X 字 · Y 分钟阅读”由运行时读取最终 HTML 正文计算；不依赖 Markdown，所有历史文章与新文章统一按每分钟 400 个阅读单位估算。统计不包含摘要、参考资料、代码块、图片或图注，不能手填或写入 `posts-meta.json`。
 
 ---
 

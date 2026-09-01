@@ -10,7 +10,7 @@ tools/blog/
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
 ├── VISUAL_GUIDE.md         新文章视觉系统（封面/正文图/提示词/资产检查）
 ├── article-links.css       文章页共享链接语义与键盘焦点样式
-├── article-runtime.js      文章页共享主题、元数据降级、参考资料呈现、继续阅读与时间导航
+├── article-runtime.js      文章页共享主题、阅读预期、元数据降级、参考资料呈现、继续阅读与时间导航
 ├── share-card.*            本地 Canvas 分享海报页（固定 1080 × 1920 PNG）
 ├── vendor/qrcode-generator.js  受同步脚本校验的本地二维码资产
 ├── article-template.html   新文章生成的独立模板来源
@@ -63,6 +63,7 @@ tools/blog/
 - **分享海报**：文章页的「生成分享图」统一进入 `share-card.html?slug=<slug>`；预览页的「打开原文」、二维码区和底部域名均直达 canonical 原文，导出的 PNG 是普通图片，仅通过二维码跳转。海报页加载与首页相同的 Libre Baskerville / Source Sans 3 字重组合。二维码资产更新后运行 `node scripts/sync-share-card-vendor.js --check`，不使用第三方二维码服务。
 - **继续阅读**：新文只单向声明已确认的 `builds_on` / `revises` / `companion`；旧文的后续延展/修正由 metadata 自动反向更新，正文不回写。
 - **参考资料**：仅写语义化标题、分组、列表和可选可信度说明；历史 `.refs` 与新文章的 Markdown 结构均由 `article-runtime.js` 统一为默认收起、可键盘展开的紧凑辅助信息层。目录或 URL 锚点直达会自动展开，不批量改写 HTML 正文。
+- **阅读预期**：文章页由 `article-runtime.js` 从最终 HTML 正文在本地计算“约 X 字 · Y 分钟阅读”；排除摘要、参考资料、代码块和图片说明，按每分钟 400 个阅读单位估算。不得在 Markdown 或 `posts-meta.json` 手填该数值。
 - **发布检查**：提交前依次运行 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/search-foundation.test.js scripts/blog-relationships.test.js scripts/blog-reference-presentation.test.js`、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`。新公开图片还必须进入 metadata 声明的 public-dist 白名单，运行 `npm run build:public` 与 `npm run check:public-dist`，并按 `CONVENTIONS.md` 完成文章页桌面/移动、浅色/深色和图片失败状态的视觉检查
 - **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
 - **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库

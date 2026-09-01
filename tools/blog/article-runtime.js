@@ -26,6 +26,18 @@
     return 'companion';
   }
   function normalizedText(value) { return String(value || '').replace(/\s+/g, ' ').trim(); }
+  function readingUnitsFromText(value) {
+    var text = String(value || '');
+    var chineseCharacters = (text.match(/[\u3400-\u9fff]/g) || []).length;
+    var latinWordGroups = (text.match(/[A-Za-z0-9]+(?:[.'/-][A-Za-z0-9]+)*/g) || []).length;
+    return chineseCharacters + latinWordGroups;
+  }
+  function formatReadingMeta(units) {
+    var readingUnits = Math.max(0, Math.floor(Number(units) || 0));
+    var roundedUnits = Math.max(100, Math.round(readingUnits / 100) * 100);
+    var minutes = Math.max(1, Math.ceil(readingUnits / 400));
+    return '约 ' + roundedUnits.toLocaleString('en-US') + ' 字 · ' + minutes + ' 分钟阅读';
+  }
   function isReferenceHeading(value) { return normalizedText(value) === REFERENCE_HEADING; }
   function isReferenceNote(value) { return /^来源可信度(?:说明)?[：:]/.test(normalizedText(value)); }
   function referenceDisclosureCopy(sourceCount, expanded) {
@@ -42,6 +54,46 @@
     var id = String((node && node.id) || '');
     var className = String((node && node.className) || '');
     return id === 'continueReading' || id === 'postNav' || /(^|\s)(continue-reading|post-nav|footer-nav)(\s|$)/.test(className);
+  }
+  function hasClass(node, className) { return new RegExp('(^|\\s)' + className + '(\\s|$)').test(String((node && node.className) || '')); }
+  function isReadingReferenceHeading(node) {
+    return String((node && node.tagName) || '').toUpperCase() === 'H2'
+      && (isReferenceHeading(node.text) || hasClass(node, 'reference-section'));
+  }
+  function isReadingExcludedNode(node) {
+    var tagName = String((node && node.tagName) || '').toUpperCase();
+    return tagName === 'PRE' || tagName === 'FIGURE' || tagName === 'SCRIPT' || tagName === 'STYLE' || hasClass(node, 'refs');
+  }
+  function readingTextFromNodes(nodes) {
+    var referencesStarted = false;
+    return (nodes || []).reduce(function (parts, node) {
+      if (referencesStarted || isReferenceTerminator(node)) return parts;
+      if (isReadingReferenceHeading(node)) { referencesStarted = true; return parts; }
+      if (!isReadingExcludedNode(node) && normalizedText(node.text)) parts.push(normalizedText(node.text));
+      return parts;
+    }, []).join(' ');
+  }
+  function readingTextFromArticleBody(body) {
+    if (!body || !body.cloneNode) return '';
+    var clone = body.cloneNode(true);
+    clone.querySelectorAll('pre,figure,script,style,.refs').forEach(function (element) { element.remove(); });
+    return readingTextFromNodes(Array.prototype.slice.call(clone.children).map(referenceDescriptor));
+  }
+  function renderReadingMeta() {
+    var metadata = document.querySelector('.post-meta');
+    var date = metadata && metadata.querySelector('.post-date');
+    var body = document.querySelector('.post-body');
+    if (!metadata || !date || !body) return null;
+    var readingText = readingTextFromArticleBody(body);
+    if (!readingText) return null;
+    var target = metadata.querySelector('.post-reading-meta');
+    if (!target) {
+      target = document.createElement('span'); target.className = 'post-reading-meta';
+      date.parentNode.insertBefore(target, date.nextSibling);
+    }
+    var copy = formatReadingMeta(readingUnitsFromText(readingText));
+    target.textContent = copy; target.setAttribute('aria-label', '文章阅读信息：' + copy);
+    return target;
   }
   function referencePresentationRoles(nodes) {
     var active = false;
@@ -236,7 +288,7 @@
   function installStyles() {
     if (document.getElementById('continueReadingStyles')) return;
     var style = document.createElement('style'); style.id = 'continueReadingStyles';
-    style.textContent = '.top-bar{top:0;display:flex;align-items:center;gap:.75rem}.share-card-link{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;padding:.32rem .62rem;border:1px solid var(--border);border-radius:999px;background:var(--bg-subtle);color:var(--text-2);font-size:.75rem;line-height:1.2;text-decoration:none}.share-card-link:hover{border-color:var(--clay);color:var(--clay)}.share-card-link:focus-visible{outline:2px solid var(--clay);outline-offset:3px}.continue-reading{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}.continue-reading-heading{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:0 0 1rem}.continue-reading-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.4rem .75rem;align-items:baseline;padding:.55rem 0;text-decoration:none}.continue-reading-label{font-size:.72rem;color:var(--clay);white-space:nowrap}.continue-reading-title{font-size:.9rem;color:var(--text-1)}.continue-reading-date{font-size:.75rem;color:var(--text-2);white-space:nowrap}.continue-reading-item:hover .continue-reading-title,.continue-reading-item:focus-visible .continue-reading-title{color:var(--clay)}.continue-reading-item:focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:3px}@media(max-width:600px){.share-card-link{font-size:.6875rem}.continue-reading-item{grid-template-columns:1fr auto;gap:.25rem .55rem}.continue-reading-label{grid-column:1/-1}.continue-reading-title{min-width:0}}'; document.head.appendChild(style);
+    style.textContent = '.top-bar{top:0;display:flex;align-items:center;gap:.75rem}.share-card-link{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;padding:.32rem .62rem;border:1px solid var(--border);border-radius:999px;background:var(--bg-subtle);color:var(--text-2);font-size:.75rem;line-height:1.2;text-decoration:none}.share-card-link:hover{border-color:var(--clay);color:var(--clay)}.share-card-link:focus-visible{outline:2px solid var(--clay);outline-offset:3px}.post-reading-meta{color:var(--text-3);font-size:13px;white-space:nowrap}.post-reading-meta:before{content:"·";margin-right:10px}.continue-reading{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}.continue-reading-heading{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:0 0 1rem}.continue-reading-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.4rem .75rem;align-items:baseline;padding:.55rem 0;text-decoration:none}.continue-reading-label{font-size:.72rem;color:var(--clay);white-space:nowrap}.continue-reading-title{font-size:.9rem;color:var(--text-1)}.continue-reading-date{font-size:.75rem;color:var(--text-2);white-space:nowrap}.continue-reading-item:hover .continue-reading-title,.continue-reading-item:focus-visible .continue-reading-title{color:var(--clay)}.continue-reading-item:focus-visible{outline:2px solid var(--clay);outline-offset:3px;border-radius:3px}@media(max-width:600px){.share-card-link{font-size:.6875rem}.continue-reading-item{grid-template-columns:1fr auto;gap:.25rem .55rem}.continue-reading-label{grid-column:1/-1}.continue-reading-title{min-width:0}}'; document.head.appendChild(style);
   }
   function initializeNavigation() {
     var slug = currentSlug(); if (!slug || !window.fetch) return;
@@ -245,6 +297,6 @@
       renderTags(current); renderShareCardLink(current); renderContinueReading(selectContinueReading(posts, slug, bodyLinkedSlugs(posts))); renderPostNav(posts, slug);
     }).catch(showMetadataFallback);
   }
-  function boot() { loadArticleLinkStyles(); applyTheme(); installStyles(); installReferencePresentationStyles(); document.addEventListener('DOMContentLoaded', function () { window.setTimeout(function () { applyTheme(); applyReferencePresentation(); initializeNavigation(); }, 0); }); }
-  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, shareCardHref: shareCardHref, isReferenceHeading: isReferenceHeading, referencePresentationRoles: referencePresentationRoles, referenceDisclosureCopy: referenceDisclosureCopy, shouldExpandReferenceForHash: shouldExpandReferenceForHash, boot: boot };
+  function boot() { loadArticleLinkStyles(); applyTheme(); installStyles(); installReferencePresentationStyles(); document.addEventListener('DOMContentLoaded', function () { window.setTimeout(function () { applyTheme(); applyReferencePresentation(); renderReadingMeta(); initializeNavigation(); }, 0); }); }
+  return { RELATION_LABELS: RELATION_LABELS, explicitCandidates: explicitCandidates, selectContinueReading: selectContinueReading, relationLabel: relationLabel, adjacentPosts: adjacentPosts, shareCardHref: shareCardHref, readingUnitsFromText: readingUnitsFromText, formatReadingMeta: formatReadingMeta, readingTextFromNodes: readingTextFromNodes, renderReadingMeta: renderReadingMeta, isReferenceHeading: isReferenceHeading, referencePresentationRoles: referencePresentationRoles, referenceDisclosureCopy: referenceDisclosureCopy, shouldExpandReferenceForHash: shouldExpandReferenceForHash, boot: boot };
 });
