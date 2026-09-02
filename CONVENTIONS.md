@@ -324,14 +324,14 @@ git status --short
 | category | string | 正式大分类：技术 / 产品 / 商业 / 行业；生活仅为历史兼容值，不作为当前维护中的正式分类 |
 | url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
 | relations | object[]（可选） | 新文章单向指向较早文章的强关系；仅 `builds_on` / `revises` / `companion`，target 必须存在且不能自引或重复 |
-| visuals | object | 非历史豁免文章必需；`inline` 声明 0–2 张正文图，`cover` 只在有独立文章级解释价值时声明 |
+| visuals | object（可选） | 有图片时声明；`inline` 声明 0–2 张正文图，`cover` 按需要声明 |
 
 `concepts` 只用于历史语义召回，不能推导显式关系或前端推荐。文章页「继续阅读」从中央 metadata 动态计算：强关系优先，旧文自动反向显示后续延展/修正；未来关系不得回写历史正文。
 
 ### 博客图片契约
 
-- 根级 `image_contract.version` 为 `1`；`legacy_without_visuals` 只能列出已有历史文章，新文章不得借此跳过全部视觉声明。历史豁免文章保持无单篇图片现状，不批量补图或改正文。
-- 新文章只在封面能提供不同于正文图的独立文章级解释价值时声明 `assets/images/blog/<slug>/cover.jpg`；规格为 JPEG 1200 × 630、不超过 350 KB。无封面时必须保留至少一张确有解释价值的正文图，OG/Twitter/JSON-LD 回退到全站默认图。正文图使用 0–2 张 WebP，规格为 1280 × 720、单张不超过 250 KB。
+- 根级 `image_contract.version` 为 `1`；`legacy_without_visuals` 仅保留历史记录，不再限制新文章是否可无图。文章可完全不声明 `visuals`，并使用全站默认分享图。
+- 封面和正文图都按内容需要选择：封面路径为 `assets/images/blog/<slug>/cover.jpg`，规格为 JPEG 1200 × 630、不超过 350 KB；正文图使用 0–2 张 WebP，规格为 1280 × 720、单张不超过 250 KB。无图文章无需补图，OG/Twitter/JSON-LD 回退到全站默认图。
 - 图片成品必须用 `scripts/prepare-blog-image.js` 生成，并通过 `node scripts/check-blog-images.js`。Markdown 正文图必须独立成行，其路径、alt 和 caption 与 `visuals.inline` 完全一致。
 - 完整视觉语言、生成模式、决策门和 alt/caption 规则见 `tools/blog/VISUAL_GUIDE.md`。
 
@@ -342,8 +342,8 @@ git status --short
 - 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称，以及仅为增加内链的需求均不足以构成引用理由。
 
 ### 搜索元数据与发现资产
-- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 和 `visuals` 的单一来源；canonical、标准 description、JSON-LD、OG/Twitter、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 与 JSON-LD；无封面或历史豁免文章回退到全站 `assets/images/og-cover.png`。
-- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts` 与 `visuals`）→仅在有独立解释价值时生成单篇封面，并生成按需的 0–2 张正文图；无封面时至少有 1 张正文图→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js` →构建/检查 public dist 与文章页视觉复核。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在不一致时直接失败。
+- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 和（如有）`visuals` 的单一来源；canonical、标准 description、JSON-LD、OG/Twitter、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 与 JSON-LD；无图文章回退到全站 `assets/images/og-cover.png`。
+- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts`，以及按需的 `visuals`）→可按内容需要生成封面或 0–2 张正文图，也可不使用图片→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js` →构建/检查 public dist，并在有图时做文章页视觉复核。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在声明的图片不一致时直接失败。
 - 发布检查至少包含 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`npm run build:public` 和 `npm run check:public-dist`。有图文章页必须在桌面/移动、浅色/深色及图片加载失败状态下做真实截图审查。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。

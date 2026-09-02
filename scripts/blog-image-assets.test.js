@@ -200,6 +200,16 @@ test('asset validation accepts one declared, correctly prepared cover', async ()
   assert.deepEqual(result, { declared: 1, checked: 1 });
 });
 
+test('asset validation accepts a current article with no images', async () => {
+  const rootDir = fixtureRoot();
+  const slug = 'text-only-post';
+  const visuals = { inline: [] };
+  await writeMetadata(rootDir, metadata(slug));
+  writePostHtml(rootDir, slug, visuals, { includeCover: false, includeInline: false });
+
+  assert.deepEqual(await validateBlogImages({ rootDir }), { declared: 0, checked: 0 });
+});
+
 test('asset validation fully decodes declared images instead of trusting headers', async () => {
   const rootDir = fixtureRoot();
   const slug = 'sample-post';

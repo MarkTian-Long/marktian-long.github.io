@@ -35,7 +35,7 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 
 ### `posts-meta.json` v4 视觉契约
 
-`tools/blog/data/posts-meta.json` 必须使用根级 `version: 4`。根级 `image_contract.legacy_without_visuals` 只记录暂时没有单篇图片的历史文章；新文章不得加入该列表，必须声明 `visuals`：
+`tools/blog/data/posts-meta.json` 必须使用根级 `version: 4`。根级 `image_contract.legacy_without_visuals` 仅保留历史兼容记录；新文章可以省略 `visuals`，纯文字文章会使用全站默认分享图。只有选择使用图片时才声明 `visuals`：
 
 ```json
 {
@@ -59,8 +59,8 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 }
 ```
 
-- 新文章每篇必须有一张 `cover.jpg`；正文图只在能解释文字难以快速说清的关系、顺序、边界、分层或反馈回路时使用，数量为 0–2 张。
-- 已在 `legacy_without_visuals` 中的历史文章保持现状，不批量补图、不改正文；它们的分享卡片继续使用全站图片回退。
+- 封面和正文图都完全可选；正文图只在能解释文字难以快速说清的关系、顺序、边界、分层或反馈回路时使用，数量为 0–2 张。
+- 无图文章和已在 `legacy_without_visuals` 中的历史文章都使用全站图片回退；不必补图或改正文。
 - 主页与 Blog 列表继续保持纯文字，`visuals` 只服务文章页、OG/Twitter 分享预览、JSON-LD 和 public dist 白名单。
 - 尺寸、大小、alt/caption、生成提示词与 0–2 张决策门详见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)。
 
@@ -399,7 +399,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ### Markdown 正文图片语法
 
-有独立文章级解释价值时，封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。无封面时，页面直接从 header 进入正文，且必须保留至少一张按决策门确认的正文图。正文图必须在 Markdown 中独立成行：
+有独立文章级解释价值时，封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。无图文章直接从 header 进入正文。正文图必须在 Markdown 中独立成行：
 
 ```markdown
 ![与论点相关的对象和关系](../../assets/images/blog/your-slug/context-feedback-loop.webp "这个回路会把本次任务的结果变成下次任务可复用的上下文。")
@@ -421,7 +421,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 
 ## 新增文章操作流程
 
-1. 用户交付最终 Markdown 后，由 Codex 按上方「share_quote 选择规则」从最终正文确定 `share_quote`；Markdown 本身不需要携带该字段。再在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目。新条目不得加入 `legacy_without_visuals`：
+1. 用户交付最终 Markdown 后，由 Codex 按上方「share_quote 选择规则」从最终正文确定 `share_quote`；Markdown 本身不需要携带该字段。再在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目；新条目可省略 `visuals`：
    ```json
    {
      "slug": "your-slug",
@@ -433,25 +433,16 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
      "topics": ["话题1"],
      "concepts": ["关键对象", "核心机制", "具体场景", "判断边界"],
      "category": "技术",
-     "url": "posts/your-slug.html",
-     "visuals": {
-       "cover": {
-         "src": "assets/images/blog/your-slug/cover.jpg",
-         "alt": "与文章核心机制相关的图像描述",
-         "width": 1200,
-         "height": 630
-       },
-       "inline": []
-     }
+     "url": "posts/your-slug.html"
    }
    ```
-2. 按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 完成封面和 0–2 张正文图的决策。选中的候选图先放在 `build/blog-image-work/<slug>/`，再用确定性脚本生成最终资产：
+2. 图片完全可选。需要使用封面或正文图时，按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 维护 `visuals`；选中的候选图先放在 `build/blog-image-work/<slug>/`，再用确定性脚本生成最终资产：
    ```powershell
    node scripts/prepare-blog-image.js --slug your-slug --role cover --input build/blog-image-work/your-slug/candidate.png
    node scripts/prepare-blog-image.js --slug your-slug --role inline --name context-feedback-loop --input build/blog-image-work/your-slug/inline-candidate.png
    node scripts/check-blog-images.js
    ```
-   第二条命令仅在正文图通过决策门时运行；然后将它写入 `visuals.inline` 和 Markdown，没有正文图时保持 `inline: []`。
+   只运行实际需要的命令；正文图写入 `visuals.inline` 和 Markdown，只有封面时使用 `inline: []`。图片可包含服务文章表达的文字或标识，但不得使用误导性水印或未经授权的第三方素材。
 3. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
    ```powershell
    node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
@@ -462,7 +453,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
    node scripts/check-search-foundation.js
    ```
 5. 主页、列表页、canonical、description、JSON-LD、OG/Twitter 元数据、RSS 和 sitemap 都从 JSON/脚本生成，**不要在生成的 head 或搜索资产中手工复制域名，也不要维护重复文章数组**。主页与 Blog 列表不渲染封面或缩略图。
-6. 在 `scripts/` 目录运行 `npm run build:public` 和 `npm run check:public-dist`，确认只有 `visuals` 声明的图片进入 Pages 产物；再按 `CONVENTIONS.md` 完成文章页桌面/移动、浅色/深色和图片加载失败状态的视觉检查。
+6. 在 `scripts/` 目录运行 `npm run build:public` 和 `npm run check:public-dist`；如使用图片，确认只有 `visuals` 声明的图片进入 Pages 产物，并按 `CONVENTIONS.md` 完成图片加载失败状态的视觉检查。
 7. `git add docs/blog/xxx.md tools/blog/posts/xxx.html tools/blog/data/posts-meta.json assets/images/blog/xxx/ robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
@@ -476,7 +467,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 - 检查词库同步：每个 `tags/topics` 值都必须在本指南词库表中有完全一致的条目；新增词或定义调整必须在同一次变更更新词库并完成历史回溯，不能把近期文章当作历史例外。
 - 检查 `topics` 数量：一个核心领域即可；第二个 `topic` 必须同样通过主次判定，不能作为凑数标签。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
-- 检查视觉契约：新文章有且仅有一张合规封面，正文图为 0–2 张且每张都通过解释价值决策门；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
+- 检查视觉契约：图片完全可选；如使用图片，正文图为 0–2 张，Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
@@ -711,7 +702,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 <meta name="twitter:image:alt"   content="与文章核心机制相关的图像描述" />
 ```
 
-> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 和 JSON-LD；无封面或 `legacy_without_visuals` 中的历史文章回退到全站 `assets/images/og-cover.png`，不因本契约批量补图。
+> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 和 JSON-LD；无图文章回退到全站 `assets/images/og-cover.png`，不因本契约批量补图。
 
 ### 搜索发现维护
 

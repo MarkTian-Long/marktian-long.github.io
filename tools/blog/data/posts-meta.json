@@ -45,6 +45,35 @@
   },
   "posts": [
     {
+      "slug": "enterprise-ai-wiki",
+      "date": "2026.09",
+      "title": "已经有知识库了，企业 AI 为什么又开始做 Wiki？",
+      "summary": "Wiki 并不是知识库或 RAG 的替代品。更值得关注的变化是：当 AI 开始长期参与工作，知识产品除了让模型“找到资料”，还开始尝试管理已经形成的知识怎样被确认、更新和继续复用，而今天不同产品口中的 Wiki，远不是同一种东西。",
+      "share_quote": "但 Wiki 最古老的那个问题反而没有消失：下一次有人，或者 Agent，再来使用这份知识的时候，它是否仍然代表我们现在值得相信的东西。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "concepts": [
+        "企业 Wiki",
+        "知识生命周期",
+        "知识有效性",
+        "LLM Wiki",
+        "WikiSkill",
+        "AI 维护型知识产品"
+      ],
+      "category": "产品",
+      "url": "posts/enterprise-ai-wiki.html",
+      "relations": [
+        {
+          "slug": "rag-evolution",
+          "type": "builds_on"
+        }
+      ]
+    },
+    {
       "slug": "personal-harness",
       "date": "2026.08",
       "title": "我为什么开始给自己搭 Harness？",

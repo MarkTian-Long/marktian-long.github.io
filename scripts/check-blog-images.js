@@ -40,7 +40,7 @@ function validateRenderedPostImages(rootDir, metadata) {
     const coverMarker = '<figure class="post-cover">';
     const coverCount = occurrenceCount(html, coverMarker);
     if (!post.visuals) {
-      if (coverCount !== 0) throw new Error(`Legacy post ${post.slug} must not render a post-cover`);
+      if (coverCount !== 0) throw new Error(`Post ${post.slug} without visuals must not render a post-cover`);
       continue;
     }
 

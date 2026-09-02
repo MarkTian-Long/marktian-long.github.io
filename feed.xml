@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>已经有知识库了，企业 AI 为什么又开始做 Wiki？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-wiki.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-wiki.html</guid>
+      <description>Wiki 并不是知识库或 RAG 的替代品。更值得关注的变化是：当 AI 开始长期参与工作，知识产品除了让模型“找到资料”，还开始尝试管理已经形成的知识怎样被确认、更新和继续复用，而今天不同产品口中的 Wiki，远不是同一种东西。</description>
+    </item>
+    <item>
       <title>我为什么开始给自己搭 Harness？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/personal-harness.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</guid>
       <description>华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在任务覆盖范围和硬件灵活性两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。</description>
-    </item>
-    <item>
-      <title>模型跑出了测量边界，评测体系跟不上了</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ai-benchmark-failure.html</guid>
-      <description>静态 benchmark 被能力增长打穿，agent 时代的动态评测基础设施还没建立——在这个真空期里，大厂凭借能力集中转向自建评测，独立第三方的生存空间正在被结构性压缩。</description>
     </item>
   </channel>
 </rss>

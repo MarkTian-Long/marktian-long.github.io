@@ -291,6 +291,10 @@ initial migration.
   tool-specific browser tests for deeper interactions, failures, focus, export,
   and last-write-wins behavior; the smoke gate does not replace them.
 
+### Blog publishing (2026-09-02, Codex)
+
+- Blog images are optional for every article. New metadata may omit `visuals`; if images are used, retain the local-asset, size, declaration and rendered-markup checks. Text, numbers and article-relevant marks are allowed in images; avoid unreadable artifacts, misleading watermarks and unauthorized third-party assets. Affected files: `CONVENTIONS.md`, `tools/blog/*GUIDE.md`, blog image contract and `publish-blog` skill. This rule is already in `CONVENTIONS.md`.
+
 ## Update protocol
 
 ### Candidate architecture (2026-08-24, Codex)

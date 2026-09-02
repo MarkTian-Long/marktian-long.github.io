@@ -48,11 +48,10 @@ function metadata(posts, exemptions = []) {
   };
 }
 
-test('posts outside the explicit legacy exemption require visuals', () => {
+test('posts may omit visuals regardless of legacy history', () => {
   const posts = [post('new-post'), post('legacy-boundary')];
-  assert.throws(
+  assert.doesNotThrow(
     () => validateImageContract(metadata(posts, ['legacy-boundary'])),
-    /new-post.*visuals/i,
   );
 });
 
@@ -68,9 +67,9 @@ test('posts may register explanatory inline images without a cover', () => {
   assert.doesNotThrow(() => validateImageContract(metadata([current])));
 });
 
-test('posts without a cover must retain one explanatory inline image', () => {
+test('posts may explicitly declare no images', () => {
   const current = post('empty-visual-post', { inline: [] });
-  assert.throws(() => validateImageContract(metadata([current])), /empty-visual-post.*without a cover.*inline/i);
+  assert.doesNotThrow(() => validateImageContract(metadata([current])));
 });
 
 test('the image contract and legacy exemption list are explicit and exact', () => {

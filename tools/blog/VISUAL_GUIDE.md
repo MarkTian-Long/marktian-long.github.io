@@ -1,6 +1,6 @@
 # Blog 视觉发布规范
 
-`Leo Editorial v1` 是思考碎片博客的新文章视觉系统。它服务于理解、识别和分享，不把文章变成插画画廊。主页与 Blog 列表继续保持纯文字；图片只出现在文章页、OG/Twitter 分享预览和结构化数据中。
+`Leo Editorial v1` 是思考碎片博客的可选视觉指南。文章可以完全以文字、表格和引用完成表达；只有图片确实能帮助理解、识别或分享时才使用。主页与 Blog 列表继续保持纯文字；如有图片，只出现在文章页、OG/Twitter 分享预览和结构化数据中。
 
 ## 1. 视觉语言：Leo Editorial v1
 
@@ -22,9 +22,9 @@
 - 每张图只表达一个核心机制，使用 1–3 个主要形体；必要的模块关系应一眼可读。
 - 封面采用宽幅 `1.91:1` 构图，关键主体和连接保留在中央 75% 安全区，允许稳定裁切为 1200 × 630。
 - 使用足够留白和清晰层级；不以大量小图标复述文章目录。
-- 图像不能包含正文标题、标签、字母、数字、Logo、商标、水印或 UI 截图。
+- 文字、数字、Logo、商标或 UI 截图可按文章表达需要使用；仅避免无法辨识的乱码、未经授权的第三方素材和会误导读者的水印。
 
-### 禁止母题
+### 可避免的母题
 
 除非文章本身在批判这些视觉陈词，否则避免：发光大脑、人形机器人头、霓虹赛博朋克、装饰性电路板、握手商务照、火箭起飞、无意义数据流、密集微型模块和图库照片感。
 
@@ -32,8 +32,8 @@
 
 | 类型 | 必需性 | 最终路径 | 输出格式 | 尺寸 | 大小上限 | 加载策略 |
 |------|--------|----------|----------|------|----------|----------|
-| 文章封面 | 仅当能提供不同于正文图的独立文章级解释价值时添加 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
-| 正文图 | 按解释价值选择 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
+| 文章封面 | 可选 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
+| 正文图 | 可选，0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
 
 - 最终文件只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
 - 正文图文件名必须用能说明机制的 kebab-case，例如 `context-feedback-loop.webp`；禁止 `image.webp`、`figure-1.webp` 等通用名。
@@ -41,13 +41,13 @@
 
 ## 3. 正文是否配图：0–2 张决策门
 
-正文图默认不是必需品。逐张回答以下问题：
+正文图默认不是必需品。决定是否使用时，可参考：
 
 1. 这张图是否能解释文字难以快速说明的关系、顺序、边界、分层或反馈回路？
 2. 删除它后，读者是否需要明显更多认知成本才能理解对应段落？
 3. 它是否提供了与封面不同的信息，而不是装饰或重复标题？
 
-只有三项均为“是”时才保留。通常：
+不需要为满足配图要求而保留图片。通常：
 
 - 0 张：文章以判断、论证或案例为主，文字和表格已足够。
 - 1 张：存在一个关键系统、流程或机制需要建立共同心智模型。
@@ -69,7 +69,7 @@
 
 ## 5. 元数据契约
 
-`tools/blog/data/posts-meta.json` 使用版本 4。根级 `image_contract.legacy_without_visuals` 只列出允许没有 `visuals` 的历史文章；新文章不得加入该列表。非历史文章的 `visuals` 必须有 `inline`；`cover` 可省略，但省略时至少保留一张有解释价值的正文图，并让 OG 回退全站默认图。新文章示例：
+`tools/blog/data/posts-meta.json` 使用版本 4。根级 `image_contract.legacy_without_visuals` 仅保留历史兼容记录；任何文章都可以省略 `visuals`，并让 OG/Twitter/JSON-LD 回退全站默认图。文章选择使用图片时，再声明 `visuals`（其中 `inline` 为数组，`cover` 可选）。例如：
 
 ```json
 {
@@ -86,13 +86,13 @@
 }
 ```
 
-同一封面会被文章页、Open Graph、Twitter large image card 和 JSON-LD 共用。旧文章在没有单篇视觉资产时继续使用全站 `assets/images/og-cover.png` 作为分享回退，不补封面、不改正文。
+同一封面会被文章页、Open Graph、Twitter large image card 和 JSON-LD 共用。没有单篇视觉资产的文章统一使用全站 `assets/images/og-cover.png` 作为分享回退，无需补图或改正文。
 
 ## 6. 生成与选择
 
 默认使用 Codex 内置 `imagegen`，该模式不需要也不得向用户索取 API Key。只有用户明确选择 CLI/API 方案后，才允许使用外部回退；不得因内置生成失败而静默切换模式。
 
-每篇文章先生成一个候选，检查核心隐喻、中央安全区、几何完整性、意外文字/符号、水印和双主题适配。若只存在一个明确问题，允许一次只针对该问题的定向修订；不要开放式批量生成。内置生成仍失败时，新文章发布被阻断，并如实报告原因。
+只有决定使用生成图片时才生成候选。检查重点是图像是否服务文章、主体是否完整、文字是否可读，以及是否有误导性水印或明显瑕疵；若只存在一个明确问题，允许一次只针对该问题的定向修订。图片生成失败不阻断纯文字文章发布。
 
 统一提示词骨架：
 
@@ -106,7 +106,8 @@ Style/medium: sophisticated editorial illustration, paper-cut relief and matte 3
 Composition/framing: wide 1.91:1 composition; important subject inside the central safe area
 Lighting/mood: calm, analytical, quietly confident
 Color palette: deep navy, clay orange, warm off-white, minimal supporting blue
-Constraints: no text; no letters; no numbers; no logos; no trademarks; no watermark
+Text or logo treatment: optional when it improves the article's communication; text must be readable and relevant
+Avoid: unreadable gibberish, misleading watermarks, and unauthorized third-party brand assets
 Avoid: glowing brain, humanoid robot head, neon cyberpunk, decorative circuit board, tiny clutter
 ```
 
@@ -121,4 +122,4 @@ node scripts/generate-search-assets.js --write
 node scripts/check-search-foundation.js
 ```
 
-发布前还必须构建并检查 public dist，并在桌面/移动、浅色/深色状态下截图复核文章页；同时确认图片加载失败时 alt 可读、布局不坍塌。交付报告应列出最终资产路径、最终提示词、生成模式、正文图选择结论和线上封面 URL。
+发布前还必须构建并检查 public dist。使用图片时，在桌面/移动、浅色/深色状态下截图复核文章页，并确认图片加载失败时 alt 可读、布局不坍塌；纯文字文章不需要图片专项复核。交付报告仅在实际使用图片时列出最终资产路径、最终提示词和生成模式。

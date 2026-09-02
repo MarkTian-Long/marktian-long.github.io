@@ -125,7 +125,6 @@ function validateImageContract(metadata) {
   for (const post of metadata.posts) {
     const exempt = exemptionSet.has(post.slug);
     if (post.visuals === undefined) {
-      if (!exempt) throw new Error(`Post ${post.slug} requires visuals`);
       continue;
     }
     if (exempt) throw new Error(`Post ${post.slug} is still legacy-exempt but already has visuals`);
@@ -138,9 +137,6 @@ function validateImageContract(metadata) {
       throw new Error(`Post ${post.slug} must have 0 to ${MAX_INLINE_IMAGES} inline images`);
     }
     if (post.visuals.cover !== undefined) validateCover(post, paths);
-    if (post.visuals.cover === undefined && post.visuals.inline.length === 0) {
-      throw new Error(`Post ${post.slug} without a cover must declare at least one inline image`);
-    }
     for (const image of post.visuals.inline) validateInlineImage(post, image, paths);
   }
   return true;
