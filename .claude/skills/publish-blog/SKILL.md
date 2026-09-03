@@ -18,6 +18,7 @@ type: workflow
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章后直接进入“推送 HITL”，不要重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
+6. 若源稿末尾含 `publish_handoff`，先确保该 slug 已存在于 `posts-meta.json`，再运行 `node tools/blog/publish-handoff.js --write <source.md>`；不要先运行交接脚本再补元数据。
 
 ## 2. 生成发布资产
 
@@ -49,12 +50,12 @@ type: workflow
    node scripts/generate-search-assets.js --write
    ```
 
-6. 不批量用旧 Markdown 覆盖历史文章 HTML，也不为 legacy 清单中的文章补图。生成器触碰但 `git diff --name-only` 不显示的文件属于换行符状态，不纳入提交。
+6. 不批量用旧 Markdown 覆盖历史文章 HTML，也不为 legacy 清单中的文章补图。交接脚本若改写了无关 metadata 的格式，先恢复这些无关差异，再继续生成；只保留本文章条目、关系和交接块剥离的真实变化。生成器触碰但 `git diff --name-only` 不显示的文件属于换行符状态，不纳入提交。
 7. 生成器模板或搜索资产逻辑变更时，先运行对应 `--check` 与 contract fixture；除本次文章明确产物外，不得以写入模式批量重生历史 HTML。写入前先核对目标文件和既有公开页面 diff。
 
 ## 3. 验证与提交
 
-依次运行：
+所有写入操作完成后，只运行一次最终验证批次：
 
 ```powershell
 node scripts/check-blog-images.js
@@ -63,18 +64,18 @@ node scripts/check-search-foundation.js
 node --test scripts/search-foundation.test.js scripts/blog-image-contract.test.js scripts/blog-image-assets.test.js scripts/blog-image-rendering.test.js scripts/public-dist.test.js
 node scripts/check-blog-body-integrity.js
 node scripts/check-repository-policy.js
-node scripts/build-public-dist.js --out build/public-dist-blog-images
-node scripts/check-public-dist.js --out build/public-dist-blog-images
+node scripts/build-public-dist.js --out build/public-dist-<slug>
+node scripts/check-public-dist.js --out build/public-dist-<slug>
 ```
 
 然后：
 
 1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据与完整正文；声明图片时再核对封面和正文图，无图文章不得渲染页首封面并使用全站默认 OG 图。
 2. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
-3. 通过本地 HTTP 服务打开真实文章；如使用图片，在桌面/移动端和明/暗主题下使用视觉模型检查图片加载状态，并模拟一次图片加载失败，确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
-4. 执行项目要求的 review。
+3. 通过本地 HTTP 服务打开真实文章；在受影响的桌面/移动视口完成一次页面复核。如使用图片，再在明/暗主题下检查图片加载状态，并模拟一次图片加载失败，确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
+4. 执行项目要求的 review。若本次 diff 只有内容、metadata 和生成资产，没有运行时、模板、CSS、JS、生成器、部署或安全边界改动，则完成主窗口 staged diff 审查和确定性检查，不让 delegated adversarial Agent 阻塞发布；其他情况执行完整 review。若 delegated review 被启用，等待上限为 60 秒，超时记录为“未完成”并继续，不重复轮询。
 5. 只暂存 Markdown、文章 HTML、元数据、最终图片、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复；不得暂存候选图或临时 public-dist。
-6. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。
+6. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。若检查后只发生格式修正，先重新确认 staged diff，再只重跑受影响的检查，不重复整套无关 QA。
 
 ## 4. 推送 HITL
 
