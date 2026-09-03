@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>多模态到底统一了什么？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/multimodal-unification.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/multimodal-unification.html</guid>
+      <description>多模态不是一种固定架构，也不意味着文字、图片、声音和视频最终都要塞进一个万能模型。更有用的理解方式，是分别看模型能理解哪些模态、能生成哪些模态，不同信息怎样逐渐进入同一个理解过程，以及最终的能力由一个模型还是整个系统完成。</description>
+    </item>
+    <item>
       <title>已经有知识库了，企业 AI 为什么又开始做 Wiki？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-wiki.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-ai-wiki.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</guid>
       <description>训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。</description>
-    </item>
-    <item>
-      <title>芯片战争背后，藏着一张分工地图</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ai-chips-explainer.html</guid>
-      <description>华为昇腾冲击英伟达、谷歌TPU颠覆GPU——这类新闻反复出现，但它们描述的并不是同一赛道上的竞争。把所有芯片放在任务覆盖范围和硬件灵活性两个维度上，就能看清楚：这是一张分工地图，不是一条赛跑的跑道。</description>
     </item>
   </channel>
 </rss>
