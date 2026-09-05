@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>视频模型到底在进化什么？为什么“画面惊艳”已经不够了</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html</guid>
+      <description>三年前，视频模型连人物的手和一盘意大利面都很难保持正确；今天，“画面像真的”反而越来越不够用了。真正拉开差距的，正在变成模型能否持续保持状态、可靠兑现创作意图，并在出错后保留已经正确的部分——最终让一个可用结果越来越少依赖运气。</description>
+    </item>
+    <item>
       <title>多模态到底统一了什么？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/multimodal-unification.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/multimodal-unification.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</guid>
       <description>技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。这篇从一套反复救火的数据管道出发，回答边界由什么决定、为什么移动速度因场景而异，以及产品层面需要显式设计哪两个维度。</description>
-    </item>
-    <item>
-      <title>训练和推理，是两件不同的事</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/training-vs-inference.html</guid>
-      <description>训练和推理对芯片的需求侧重不同，这个差异在推理规模爆发之后开始变得重要——并以一种意想不到的方式，传导到了内存价格上。</description>
     </item>
   </channel>
 </rss>

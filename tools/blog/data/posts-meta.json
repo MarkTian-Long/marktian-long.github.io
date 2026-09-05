@@ -45,6 +45,36 @@
   },
   "posts": [
     {
+      "slug": "video-model-evolution",
+      "date": "2026.09",
+      "title": "视频模型到底在进化什么？为什么“画面惊艳”已经不够了",
+      "summary": "三年前，视频模型连人物的手和一盘意大利面都很难保持正确；今天，“画面像真的”反而越来越不够用了。真正拉开差距的，正在变成模型能否持续保持状态、可靠兑现创作意图，并在出错后保留已经正确的部分——最终让一个可用结果越来越少依赖运气。",
+      "share_quote": "得到一个自己真正想要的结果，开始越来越少依赖运气。",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "模型能力"
+      ],
+      "concepts": [
+        "视频生成",
+        "状态一致性",
+        "视频编辑",
+        "参考与镜头控制",
+        "视频物理正确性",
+        "创作智能体",
+        "生产可靠性"
+      ],
+      "category": "技术",
+      "url": "posts/video-model-evolution.html",
+      "relations": [
+        {
+          "slug": "multimodal-unification",
+          "type": "builds_on"
+        }
+      ]
+    },
+    {
       "slug": "multimodal-unification",
       "date": "2026.09",
       "title": "多模态到底统一了什么？",
