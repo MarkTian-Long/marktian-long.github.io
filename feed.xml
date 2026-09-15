@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>当 AI 让拍电影变快、变便宜，电影工业会先改变什么？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-film-industry.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-film-industry.html</guid>
+      <description>AI 对影视产业更深的改变，可能不是先用“AI 电影”替代“真人电影”，而是同时压低成本、周期和协调摩擦，把过去因为物理生产而捆在一起的演员、角色、场景、判断和制作能力逐渐拆开。真正的产业变化发生在后面：谁重新组合这些能力，哪些资产还能独立创造价值，又有哪些看似低效的真实过程，其实一直在为创作提供新的信息。</description>
+    </item>
+    <item>
       <title>视频模型到底在进化什么？为什么“画面惊艳”已经不够了</title>
       <link>https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</guid>
       <description>它在正确的时间解决了真实的问题，技术路径也没走错。但独立 AI 搜索这个品类本身，正在被一股更大的力量压缩——这篇拆解它的产品决策逻辑，以及结构性困境从哪里来。</description>
-    </item>
-    <item>
-      <title>从模糊到确定：人机边界是怎么移动的</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/human-ai-boundary-shift.html</guid>
-      <description>技术能力划定了人机边界能移到哪里的上限，但边界实际移动的速度，由真实场景里的验证-反馈循环决定。这篇从一套反复救火的数据管道出发，回答边界由什么决定、为什么移动速度因场景而异，以及产品层面需要显式设计哪两个维度。</description>
     </item>
   </channel>
 </rss>
