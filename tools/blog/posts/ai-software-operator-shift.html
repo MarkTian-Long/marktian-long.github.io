@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--
+date:    2026.09
+title:   AI 正在把“使用软件”和“操作软件”拆开
+tags:    [决策框架]
+slug:    ai-software-operator-shift
+summary: 在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。
+category: 产品
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 正在把“使用软件”和“操作软件”拆开 — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="AI 正在把“使用软件”和“操作软件”拆开" />
+<meta property="og:description" content="在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI · Product · Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI 正在把“使用软件”和“操作软件”拆开" />
+<meta name="twitter:description" content="在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI · Product · Builder" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI 正在把“使用软件”和“操作软件”拆开","description":"在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。","url":"https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、人不再亲自操作软件，不等于软件已经消失</a></li><li><a href="#section-2">二、AI 原生，不是给旧软件加一个聊天框</a></li><li><a href="#section-3">三、当 Agent 变成主要操作者，产品底座也要重做</a></li><li><a href="#section-4">四、人工操作退出、第一入口迁移、软件退出任务链，不是一回事</a></li><li><a href="#section-5">五、不要把今天的实现形式，当成长久价值</a></li><li><a href="#section-6">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.09</span><span id="post-tags"></span></div><h1 class="post-title">AI 正在把“使用软件”和“操作软件”拆开</h1><p class="post-summary">在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><p>今年四月，Claude Design 刚发布时给我的震撼很大。那时我已经越来越习惯一种新的工作方式：和 Claude Code 讨论自己想做什么，方向确定以后，把不少中间执行交给它，最后再检查结果。我不需要知道每一个文件怎么改、每一条命令怎么敲。Claude Design 又把这种感觉带到了设计，我在之前的<a href="https://marktian-long.github.io/tools/blog/posts/claude-design-blog.html" target="_blank" rel="noopener noreferrer">《Claude Design：设计工具的 iPhone 时刻，还是一场更大的吞并？》</a>里甚至写过一句很强的判断：“Figma：死得慢，但方向是确定的。”</p>
+<p>现在看，我错的不是注意到软件操作方式正在变化，而是太早把这种变化推成了 Figma 的终局。当时这个判断隐含了两个前提：Figma 的核心角色仍然是一套让人操作图形界面的设计软件；一旦用户可以直接向 Claude 表达意图，再把结果交给 Claude Code 实现，Figma 所在的中间环节就会越来越容易被绕过。</p>
+<p>几个月以后，第一个前提已经明显松动。Figma 在 3 月<a href="https://www.figma.com/blog/the-figma-canvas-is-now-open-to-agents/" target="_blank" rel="noopener noreferrer">把画布开放给外部 Agent</a>，让它们可以直接创建和修改设计；5 月又<a href="https://www.figma.com/blog/the-figma-agent-is-here/" target="_blank" rel="noopener noreferrer">把自己的 Design Agent 放进画布</a>；随后又继续补充 <a href="https://www.figma.com/blog/code-on-the-figma-canvas/" target="_blank" rel="noopener noreferrer">Code Layers</a>、Skills 和更多 Agent 上下文。Figma 正在尝试把自己从“人操作的设计编辑器”，变成“人和 Agent 都能使用的设计环境”。另一边，<a href="https://claude.com/blog/claude-design-stays-on-brand-for-daily-work" target="_blank" rel="noopener noreferrer">Claude Design 自己也没有走成“只剩一个聊天框”</a>：Anthropic 继续加强设计系统导入、和 Claude Code 的衔接，也保留画布上的直接编辑。</p>
+<p>所以我现在不会反过来说 Figma 已经安全。真正需要收回的是“方向已经确定”：<strong>如果 Figma 最后只剩让人拖图层，它确实危险；但如果设计对象、组件关系和团队状态变成 Agent 也要依赖的工作环境，那么人不再亲自操作 Figma，并不能直接推出 Figma 不再被使用。</strong></p>
+<p>这篇文章讨论的也不是所有软件。社交、游戏、内容消费的价值逻辑不同；我更关心创作和专业工作软件，因为 Agent 已经开始真实进入这些任务链。</p>
+<h2 id="section-1">一、人不再亲自操作软件，不等于软件已经消失</h2>
+<p>最近一位同时覆盖设计和前端的使用者 Kosta Z. 分享了一个很有代表性的实践。他把 Figma MCP 接进 Claude 后，技术上很快就跑通了：可以生成真实画框，图层命名和设计 token 也基本正常。但用了几周以后，他还是把 Figma 从自己的常用流程里删掉了，因为设计和代码已经在同一个 Claude 会话里完成。他直接改组件、看运行中的产品、继续调整，额外生成的 Figma 文件只是另一份很快会过时的快照。<a href="https://www.linkedin.com/posts/kostazanin_i-wired-a-figma-mcp-into-my-claude-session-activity-7495857967162966018-TazQ" target="_blank" rel="noopener noreferrer">这份个人实践自述</a>不能代表整个设计行业，但它提供了一个很干净的反例：删除 Figma 后，没有必要工作重新落到他身上，也没有任何下游角色在等那份设计文件。</p>
+<p>Coinbase Design System 团队提供了相反的例子。他们使用 Figma Code Connect，把设计系统里的组件映射到生产代码中的真实组件，再把这些关系提供给 Coding Agent。Figma 公布的<a href="https://www.figma.com/blog/how-coinbase-used-code-connect-to-shrink-token-costs/" target="_blank" rel="noopener noreferrer">客户案例</a>称，在团队自己的小规模对照测试里，相同设计、提示词和模型条件下，加入这些映射后 Token（词元）成本平均下降了 22.5%。这个数字不能外推成行业平均效果；更值得看的是，模型没有变化，Agent 少猜了一层“这个设计对象在真实代码里到底对应什么”。</p>
+<p>同样是 Figma，一个人可以完全绕过，另一个团队却可能继续依赖。区别不在谁“更 AI Native”，而在后续任务到底消费什么：对 Kosta 来说，运行中的代码已经是事实来源；对 Coinbase 来说，设计组件及其与生产代码的映射仍然会被工程师和 Agent 继续使用。</p>
+<p>这种区别并不限于设计。假设财富管理机构的客户经理刚和客户做完一次电话、企业微信或视频沟通，客户提到收入增加、准备买房、几年后孩子准备留学。过去，这些信息从“客户说过”变成“公司的正式业务状态”，往往还要经过会议记录、客户匹配、CRM 或财富管理系统更新等步骤。</p>
+<p>美国的 Jump 可以理解成面向财务顾问的 AI 会议与工作助手，<a href="https://help.jumpapp.com/en/articles/11824817-how-to-use-ai-associate" target="_blank" rel="noopener noreferrer">它会结合会议、CRM、财务规划软件、邮件和任务等数据辅助顾问工作</a>；RightCapital 则是一套专业财务规划系统。两者连接以后，<a href="https://help.jumpapp.com/en/articles/11408193-rightcapital-integration" target="_blank" rel="noopener noreferrer">Jump 会读取会议记录，与 RightCapital 已有客户数据比较，再提出收入、支出、目标和家庭信息的更新建议</a>。今天的产品仍要求顾问逐项接受、修改或忽略，再把批准的变化同步进去。</p>
+<p>这并不说明“最后必须由人确认”是长期结构。模型更可靠以后，客户匹配、事实提取、低风险字段更新，甚至一部分正式写入都可能继续自动化。更耐久的问题是：系统必须知道当前有效状态是什么，一次变化什么时候已经生效，以及谁或什么机制有权限改变它。昨天客户收入是 50 万，今天客户说已经涨到 60 万；未来完全可能由 Agent 自动验证并更新，但后续财务规划不能长期不知道究竟应该按哪个数字继续工作。</p>
+<p>我最近设计审核产品时也碰到类似问题。客户未来完全可以直接聊天、上传制度材料，让 AI 形成审核规则，不再手工填写大量配置。但“草案”和“正式生效规则”的区别、当前使用哪一版、它适用于什么范围、哪些审核任务正在引用它，并不会因为交互变成聊天而自然消失。谁来触发生效动作可以变化，人甚至可以越来越少介入；业务世界仍然需要一个明确的“现在是什么”。</p>
+<p><strong>所以，Agent 最容易拿走的是为了让人完成任务而存在的操作步骤；软件是否继续有必要，更应该看它是否仍承载后续任务需要使用的业务对象、状态、关系和专业能力。</strong></p>
+<h2 id="section-2">二、AI 原生，不是给旧软件加一个聊天框</h2>
+<p>这个判断落到 AI 产品经理的工作上，比“图形界面会不会被语言界面替代”更具体。现在传统软件最容易想到的 AI 改造，是在原来的客户、产品、交易、规则、报表旁边再加一个“AI 助手”。这种方式可以很快上线，但经常把最重要的问题留到了后面：这个 AI 到底在操作当前对象，还是在组织一项跨模块任务？它给出的结果只是聊天内容，还是已经改变了正式业务状态？任务中断以后又从哪里继续？</p>
+<p>我更倾向先按<strong>任务作用范围</strong>决定 AI 的位置，而不是先讨论聊天框放左边还是右边：</p>
+<div class="blog-table"><table><thead><tr><th><strong>任务作用范围</strong></th><th><strong>更自然的产品位置</strong></th><th><strong>例子</strong></th></tr></thead><tbody><tr><td>局部修改</td><td>字段、表格、画布内的局部 AI</td><td>“只改这一段 / 这个字段”</td></tr><tr><td>单一业务对象</td><td>客户、规则、设计稿等对象旁</td><td>“根据刚才会议更新这个客户”</td></tr><tr><td>跨模块目标</td><td>全局 AI 入口</td><td>“分析这批客户并生成跟进任务”</td></tr><tr><td>长时间跨系统任务</td><td>独立任务工作区</td><td>调研、批处理、跨系统写回</td></tr></tbody></table></div>
+<p><em>这是本文为了讨论产品位置做的任务范围归纳，不是行业固定分类。一个产品也可能同时支持多个范围。</em></p>
+<p>这张表只回答“意图从哪里进入”。任务一旦开始，正式业务对象和 Agent 自己的运行状态还要分别处理。用户说“把客户风险等级改成稳健型”，AI 回复“已经处理”，可能代表三种完全不同的事情：它只是理解了要求；它生成了一份待生效修改；或者 CRM 的正式字段已经真的变化。如果产品不把这些状态区分开，聊天记录很快会变成第二套模糊的业务系统。</p>
+<p>因此，<strong>Chat 更适合承担意图表达、解释和协作，正式结果最终应该落回明确的业务对象。</strong> 客户变化进入客户档案，规则变化进入规则包，订单形成订单记录，设计结果成为真正的设计对象或代码。长任务则需要自己的执行状态，让系统知道做到哪里、哪些动作已经生效、哪里失败、能否回退，以及什么时候需要人重新介入。</p>
+<p>这也意味着，“AI 助手”不应该天然成为和“客户”“交易”“规则”并列的一级业务模块。AI 往往更像一种跨对象的操作方式；只有当它产生了长期任务、历史、产物和可恢复状态时，才需要独立的任务工作区。入口、对象和任务不是三套平行框架，而是同一项工作从表达意图到改变现实状态的几个环节。</p>
+<h2 id="section-3">三、当 Agent 变成主要操作者，产品底座也要重做</h2>
+<p>过去设计业务软件，很容易从页面和功能开始：有哪些一级菜单、一个页面放哪些字段、用户要按什么顺序点击。当 Agent 开始承担更多执行以后，AI 产品经理（AI PM）需要先问另一组问题：如果用户根本不亲自操作，这些页面背后的哪些东西仍然必须存在？如果把页面先拿掉，产品底座至少还要回答三类问题。</p>
+<p><strong>第一，业务对象与状态。</strong> 设计软件里有画框、组件和设计系统，CRM 里有客户和商机，审核产品里有规则包和审核任务。它们不是因为 GUI 需要一个页面才存在，而是任务本身在操作这些对象；同样，草案还是生效、订单有没有提交、任务是否完成，也必须有明确状态。人可以少看页面，系统却不能不知道“现在是什么”。</p>
+<p><strong>第二，权限与状态迁移。</strong> 今天很多 AI 产品采用“AI 草拟 → 人确认 → 生效”，但人工确认不应该被当作永久结构。更合理的设计，是根据风险、置信度和授权范围决定哪些动作可以自动提交，哪些动作需要升级给人。Jump 当前对 CRM 和财务规划数据的写入仍要求用户批准，这证明的是今天的产品和合规机制，而不是未来所有修改都必须点一次确认。<a href="https://help.jumpapp.com/en/articles/11526343-compliance-settings" target="_blank" rel="noopener noreferrer">Jump 当前的 Compliance settings</a>就体现了这种当下边界。</p>
+<p><strong>第三，可观察与可恢复。</strong> Agent 已经执行二十步以后，人真正需要看到的通常不是重新操作二十个按钮，而是目标、关键变化、异常、依据以及少数需要本人决定的问题。失败以后，产品还要知道能否重试、从哪一步恢复、哪些已经生效的动作需要撤销。GUI 因此不会简单消失，但它的重心可能从“教人怎样一步步操作系统”，转向观察、比较、异常处理和精确干预；大量执行则可以通过 API、MCP 或计算机操作（Computer Use）完成。</p>
+<p><strong>AI 原生产品真正重组的是“意图入口 → Agent 任务 → 业务对象与状态 → 必要的人类介入”，而不只是把原来的 GUI 换成一个聊天框。</strong> 这也是为什么 Figma 与 Claude Design 最后都没有走成纯聊天产品：两家公司虽然竞争，却都在尝试把自然语言、专业工作对象和直接编辑放进同一套工作环境。</p>
+<h2 id="section-4">四、人工操作退出、第一入口迁移、软件退出任务链，不是一回事</h2>
+<p>我在<a href="https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html" target="_blank" rel="noopener noreferrer">《半年之后，AI 办公从产品赛马走向体系竞争》</a>里已经讨论过一个前提：Agent 会压缩一部分人工操作软件的价值，而事实记录、规则、权限和责任这些底层职责可能变得更重要。这篇继续往下追的是，即使专业软件仍承载这些东西，它的产品位置和商业位置也未必不变。很多“AI 替代软件”的讨论，把三种程度完全不同的变化混在了一起：</p>
+<div class="blog-table"><table><thead><tr><th><strong>变化</strong></th><th><strong>同一个 Figma 中可能出现的任务链</strong></th><th><strong>产品层发生什么</strong></th><th><strong>商业层可能发生什么</strong></th></tr></thead><tbody><tr><td><strong>人工操作退出</strong></td><td>用户 → Figma → Agent → 设计</td><td>人少做操作，Figma 仍是明确工作环境</td><td>席位、学习成本等锁定因素减弱，但软件仍可收费</td></tr><tr><td><strong>第一入口迁移</strong></td><td>用户 → Claude Code / Codex → Figma MCP → 设计</td><td>用户不再从 Figma 开始任务，Figma 退到后台</td><td>客户关系、默认选择权和议价权可能向上层 Agent 迁移</td></tr><tr><td><strong>软件退出任务链</strong></td><td>用户 → Claude / Codex → Code → Browser</td><td>Figma 对这类任务不再承担必要职责</td><td>独立付费理由在这类任务中被吸收</td></tr></tbody></table></div>
+<p><em>这是本文为了区分产品替代程度做的归纳，不是行业标准。三个状态描述的是具体任务链，不等于对 Figma 整家公司下结论；同一产品也可能在不同用户、不同任务里同时处于不同状态。</em></p>
+<p><strong>前两种变化有一个共同点：Figma 仍然留在任务链里。</strong> 用户如果仍从 Figma 开始，只是让 Agent 完成越来越多画布操作，变化主要发生在“谁来操作”；如果用户从 Claude Code 或 Codex 开始，再通过 <a href="https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/" target="_blank" rel="noopener noreferrer">Figma MCP 的 Write to canvas</a> 调用 Figma，那么人的直接操作和第一入口都发生了迁移，但 Figma 仍然承担设计环境的职责。两者都会改变产品形态和商业位置，却还不能说 Figma 已经被这项任务淘汰。</p>
+<p>第三种才发生了更根本的变化。前面的 Kosta 案例里，如果代码和运行页面已经承担全部后续工作，没有任何人或 Agent 继续消费 Figma 对象，那么 Figma 就可以从这条任务链中被完整删除。这仍然只是任务级的软件退出，不代表 Figma 公司或设计软件品类整体消失。</p>
+<p>这个区分也解释了为什么“用户不打开软件”是一个不够好的替代指标。对产品团队而言，人工操作退出首先改变交互和 Agent 接口设计；第一入口迁移进一步改变产品如何被发现、调用和组合；软件退出任务链才意味着独立产品的存在理由在这项任务里真的被吸收。对商业团队而言，第一入口迁移往往比单纯的人工操作退出更值得警惕：专业软件依然不可或缺，却可能从用户主动选择的品牌，变成上层 Agent 可以路由、替换和议价的供应商。</p>
+<p>但 AI 并不只会让旧软件退到后台。演语科技（Evoken）的创意产品提供了一个反方向例子。公开资料能看到它围绕模型与创作生态、设计 Agent、视频创作环境形成多条产品线；这里真正值得关注的不是到底有“三个还是五个产品”，而是同一种应用层思路：模型和工具越多，用户越可能不想自己理解每个模型、参数和工作流，而希望有人把它们重新组织成完整任务。<a href="https://www.36kr.com/p/3868439589491969" target="_blank" rel="noopener noreferrer">36氪对演语科技的报道</a>也把这种跨产品组合和应用层压力放在一起讨论。</p>
+<p>其中，<a href="https://www.lovart.ai/docs/getting-started/how-lovart-works" target="_blank" rel="noopener noreferrer">Lovart 的官方产品说明</a>把任务直接组织成“从 Brief 到可编辑设计结果”的完整链路；<a href="https://www.liblib.tv/wappro?sourceid=040004" target="_blank" rel="noopener noreferrer">LibTV</a>则把剧本、角色、分镜、模型选择和视频生成继续组合成视频生产环境。LibTV 还<a href="https://github.com/libtv-labs/libtv-skills" target="_blank" rel="noopener noreferrer">公开了面向外部 Agent 的 Skill</a>，让上层 Agent 只需要传递原始创作意图，再由专业环境拆解分镜、编排工作流和选择模型。</p>
+<p>这类产品会同时面对通用 Agent 的竞争与合作：通用 Agent 的软件操控能力越强，越可能直接绕过垂直产品；但如果 Lovart、LibTV 能持续把角色资产、多镜头状态、模型选择、专业编辑和生产流程组织得更好，它们也可能反过来成为通用 Agent 调用的专业环境。<strong>模型越来越强，并不只会让应用变薄；它也会把原来分散在多个软件里的能力重新组合，让过去成本太高、难以形成产品的完整任务第一次值得产品化。</strong></p>
+<h2 id="section-5">五、不要把今天的实现形式，当成长久价值</h2>
+<p>这个判断不只适用于软件。早几年使用大模型时，提示词（Prompt）的存在感很强：怎样写角色、少样本示例（Few-shot）、思维链（Chain-of-Thought），怎样要求格式，都可能明显影响结果。今天 Prompt 没有消失，系统指令仍然重要，但很多过去需要用户显式完成的提示词工程已经退到后台，被更强模型、结构化输出、工具调用和 Agent 运行时接走。</p>
+<p>之后大量企业 AI 又采用工作流（Workflow）：把模型放进提前定义好的流程里，由人规定每一步怎样走。技能（Skill）再往前一步。Anthropic 把 <a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" target="_blank" rel="noopener noreferrer">Agent Skills</a> 定义成可以被 Agent 动态发现和加载的 instructions、scripts 和 resources，用来把程序性知识和组织上下文打包给通用 Agent；Anthropic 甚至明确提出，未来 Agent 可以自己创建、编辑和评估 Skills。</p>
+<p>如果把这些放在一起，我更愿意把它理解成<strong>显式编排重心的迁移</strong>，而不是一条后一阶段淘汰前一阶段的严格时间线：</p>
+<div class="blog-table"><table><thead><tr><th><strong>阶段性重心</strong></th><th><strong>人主要显式编码什么</strong></th><th><strong>Agent 自己决定什么</strong></th></tr></thead><tbody><tr><td>Prompt 为中心</td><td>单次指令</td><td>很少</td></tr><tr><td>Workflow 为中心</td><td>步骤与分支</td><td>局部判断</td></tr><tr><td>Skill 为中心</td><td>方法、资源和工具</td><td>执行路径</td></tr><tr><td>真实环境为中心</td><td>目标、对象、规则和权限</td><td>规划与执行</td></tr></tbody></table></div>
+<p><em>这是本文为了理解产品设计重心变化做的趋势图，不是行业四阶段定律。四种方式今天可以同时存在，同一个系统也可能混合使用。</em></p>
+<p>最后一行和智能体支撑层（Harness）很接近，但不是同一个概念。这里说的“真实环境”是任务客观依赖的客户、订单、设计对象、规则、权限、当前状态和反馈；Harness 更像让 Agent 能可靠读取、操作和维护这些环境的执行支撑层，包括上下文（Context）、工具、状态管理、权限、恢复和评测。我之前在<a href="https://marktian-long.github.io/tools/blog/posts/harness-engineering.html" target="_blank" rel="noopener noreferrer">《工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里》</a>里更多讨论的是后者，这篇关注的是产品需要把什么真实环境交给越来越自主的 Agent。</p>
+<p>这也让我想给以前的<a href="https://marktian-long.github.io/tools/blog/posts/tech-obsolescence.html" target="_blank" rel="noopener noreferrer">《技术消亡度框架：判断哪些 AI 技术值得长期投入》</a>再加一层限定。<strong>过去我更关注一项技术是在补救模型缺陷，还是在编码领域知识；现在我认为，即使领域知识本身长期存在，今天承载它的形态仍然可以不断折旧。</strong>一家公司当前有效的合规规则不会因为下一代模型更强而消失，但它可以从 Prompt 进入 Workflow，再进入 Skill、策略（Policy）、业务对象，或者由 Agent 根据当前环境动态加载。</p>
+<p>因此，现在评估一个 AI 产品时，我越来越喜欢做一个简单的“删除测试”：假设模型已经足够强，也获得合理的数据、工具和权限，把这个产品整个删掉，为了完成同一个任务，还必须重新建设什么？如果答案只是换一个 Prompt、聊天框或者几步 Agent 已经能自己完成的操作，这个产品的位置很危险；如果必须重新建立业务对象、权威状态、对象关系、专业知识、权限、工具和长期维护机制，它仍然在承担真实产品职责。再往后，才需要继续判断这些资产究竟属于供应商还是客户，竞争者复制起来有多难，以及这份产品价值最终能不能转化成商业价值。</p>
+<p>我可能真的会越来越少学习每套软件怎么点、怎么拖、怎么配置，但这不一定意味着我使用的软件越来越少。有些软件会从“我亲自操作的工具”，变成“我的 AI 替我调用的专业环境”；有些新的 Lovart、LibTV 之类产品，会把越来越复杂的 AI 能力重新组织成完整任务；还有一些软件，会因为删掉以后什么都不用重新补，真正离开任务链。</p>
+<p><strong>AI 改变的不只是软件界面，而是在重新决定：哪些过程还需要被显式编码，哪些现实对象、状态、规则和责任无论谁来操作都必须继续存在。</strong></p>
+<h2 id="section-6">参考资料</h2>
+<h3 id="section-7">一手文件 / 官方产品资料</h3>
+<ul><li><a href="https://www.figma.com/blog/the-figma-canvas-is-now-open-to-agents/" target="_blank" rel="noopener noreferrer">Figma：Agents, meet the Figma canvas</a></li><li><a href="https://www.figma.com/blog/the-figma-agent-is-here/" target="_blank" rel="noopener noreferrer">Figma：The Figma design agent is here</a></li><li><a href="https://www.figma.com/blog/code-on-the-figma-canvas/" target="_blank" rel="noopener noreferrer">Figma：Code on the Figma canvas</a></li><li><a href="https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/" target="_blank" rel="noopener noreferrer">Figma：Write to canvas</a></li><li><a href="https://claude.com/blog/claude-design-stays-on-brand-for-daily-work" target="_blank" rel="noopener noreferrer">Anthropic：Claude Design now stays on brand for daily work</a></li><li><a href="https://help.jumpapp.com/en/articles/11824817-how-to-use-ai-associate" target="_blank" rel="noopener noreferrer">Jump：How to use AI Associate</a></li><li><a href="https://help.jumpapp.com/en/articles/11408193-rightcapital-integration" target="_blank" rel="noopener noreferrer">Jump：RightCapital Integration</a></li><li><a href="https://help.jumpapp.com/en/articles/11526343-compliance-settings" target="_blank" rel="noopener noreferrer">Jump：Compliance settings</a></li><li><a href="https://www.lovart.ai/docs/getting-started/how-lovart-works" target="_blank" rel="noopener noreferrer">Lovart：How Lovart Works</a></li><li><a href="https://www.liblib.tv/wappro?sourceid=040004" target="_blank" rel="noopener noreferrer">LibTV：专业视频创作工具</a></li><li><a href="https://github.com/libtv-labs/libtv-skills" target="_blank" rel="noopener noreferrer">LibTV Skills：GitHub</a></li><li><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" target="_blank" rel="noopener noreferrer">Anthropic：Equipping agents for the real world with Agent Skills</a></li></ul>
+<h3 id="section-8">主流媒体 / 公司动态</h3>
+<ul><li><a href="https://www.36kr.com/p/3868439589491969" target="_blank" rel="noopener noreferrer">36氪：单月收入暴涨 3000% 之后，演语科技的三重隐忧</a></li></ul>
+<h3 id="section-9">企业实践（厂商发布）</h3>
+<ul><li><a href="https://www.figma.com/blog/how-coinbase-used-code-connect-to-shrink-token-costs/" target="_blank" rel="noopener noreferrer">Figma：How Coinbase used Code Connect to guide agents and shrink token costs</a> — Coinbase Design System 团队案例，其中 22.5% 为该团队的小规模对照测试结果，不代表行业平均效果。</li></ul>
+<h3 id="section-10">从业者实践</h3>
+<ul><li><a href="https://www.linkedin.com/posts/kostazanin_i-wired-a-figma-mcp-into-my-claude-session-activity-7495857967162966018-TazQ" target="_blank" rel="noopener noreferrer">Kosta Z.：Claude MCP Figma Integration Fails to Add Value</a> — 个人设计与前端一体化场景的实践自述，用于提供反例，不代表设计行业整体趋势。</li></ul>
+<h3 id="section-11">历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/claude-design-blog.html" target="_blank" rel="noopener noreferrer">Claude Design：设计工具的 iPhone 时刻，还是一场更大的吞并？</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html" target="_blank" rel="noopener noreferrer">半年之后，AI 办公从产品赛马走向体系竞争</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/harness-engineering.html" target="_blank" rel="noopener noreferrer">工程演进三段论：从 Prompt 到 Harness，竞争重心在哪里</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/tech-obsolescence.html" target="_blank" rel="noopener noreferrer">技术消亡度框架：判断哪些 AI 技术值得长期投入</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

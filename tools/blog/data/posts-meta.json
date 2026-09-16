@@ -45,6 +45,36 @@
   },
   "posts": [
     {
+      "slug": "ai-software-operator-shift",
+      "date": "2026.09",
+      "title": "AI 正在把“使用软件”和“操作软件”拆开",
+      "summary": "在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。",
+      "share_quote": "AI 改变的不只是软件界面，而是在重新决定：哪些过程还需要被显式编码，哪些现实对象、状态、规则和责任无论谁来操作都必须继续存在。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "Agent",
+        "产品设计"
+      ],
+      "concepts": [
+        "软件操作权迁移",
+        "删除测试",
+        "业务对象与状态",
+        "第一入口迁移",
+        "真实环境",
+        "专业工作软件"
+      ],
+      "category": "产品",
+      "url": "posts/ai-software-operator-shift.html",
+      "relations": [
+        {
+          "slug": "claude-design-blog",
+          "type": "revises"
+        }
+      ]
+    },
+    {
       "slug": "ai-film-industry",
       "date": "2026.09",
       "title": "当 AI 让拍电影变快、变便宜，电影工业会先改变什么？",

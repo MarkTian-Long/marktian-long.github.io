@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业与行业演进的长期思考。</description>
     <item>
+      <title>AI 正在把“使用软件”和“操作软件”拆开</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html</guid>
+      <description>在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。</description>
+    </item>
+    <item>
       <title>当 AI 让拍电影变快、变便宜，电影工业会先改变什么？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-film-industry.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-film-industry.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</guid>
       <description>LLM 让自研成本暴跌，动摇了“买不如建”的传统假设；但这个冲击是分化的——功能薄、行业知识浅的 B 端 SaaS 面临被替代压力，而深度沉淀了行业流程知识的产品，护城河在重构而非消失。</description>
-    </item>
-    <item>
-      <title>Perplexity：做对了产品，但站错了位置</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/perplexity-analysis.html</guid>
-      <description>它在正确的时间解决了真实的问题，技术路径也没走错。但独立 AI 搜索这个品类本身，正在被一股更大的力量压缩——这篇拆解它的产品决策逻辑，以及结构性困境从哪里来。</description>
     </item>
   </channel>
 </rss>
