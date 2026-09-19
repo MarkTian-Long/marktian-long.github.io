@@ -147,7 +147,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 
 **维护规则：**
 - skill 文件必须以 `.agents/skills/<name>/SKILL.md` 为源（不能是根目录裸 `.md` 文件）
-- 修改项目 skill 后运行 `scripts/sync-agent-context.ps1 -Write` 同步 `.claude/skills/`，再运行只读同步检查和 `node scripts/check-repository-policy.js`
+- 修改项目 skill 后只从 `.agents/skills/` 单向运行 `scripts/sync-agent-context.ps1 -Write` 更新 `.claude/skills/`，再运行 `node scripts/check-project-skill-compatibility.js`、只读同步检查和 `node scripts/check-repository-policy.js`；兼容副本不得反向同步或独立演化。`blog-human-writing` 的长期权威目录是 `.agents/skills/blog-human-writing/`。
 - 每个 SKILL.md 必须有 `---` frontmatter，包含 `name`/`description`/`type` 字段
 - Windows 环境下路径限制：skill 内的 shell 命令禁止使用 `/tmp`，统一用项目内路径（如 `tools/.design-tmp/`）
 - 系统级 skill（pbakaus/impeccable 的 17 个设计 skill）由 `skills-lock.json` 哈希锁管理，更新用：`npx skills-manager@latest update`（或重新 install）；不要手动编辑兼容目录副本

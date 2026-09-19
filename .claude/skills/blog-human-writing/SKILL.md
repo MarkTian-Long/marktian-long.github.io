@@ -1,21 +1,21 @@
 ---
 name: blog-human-writing
-description: GitHub-readable fallback for the blog material-capacity check and human-writing review when the installed ChatGPT Skill is unavailable. Use only for Chinese nonfiction blog work; it does not draft articles or replace the blog SOP, review checklist, or chart specification.
+description: GitHub project authority for the blog material-capacity check and human-writing review. Runtime entries and compatibility copies may invoke it, but must not evolve independently. Use only for Chinese nonfiction blog work; it does not draft articles or replace the blog SOP, review checklist, or chart specification.
 type: workflow
 ---
 
-# 博客材料与活人感审校（GitHub 镜像）
+# 博客材料与活人感审校
 
-这是已安装 `$blog-human-writing` 的 GitHub 可读取镜像，用于普通 Chat 未暴露该 Skill 时的兜底，不是新的自动调用入口。
+`.agents/skills/blog-human-writing/` 是本 Skill 唯一的长期规则真源。每次真正执行材料承载力检查或活人感审校，都先读取当前 `SKILL.md`，再读取该阶段相应的 references：材料检查读 [材料承载力检查](references/material-check.md)，活人感审校读 [自然中文与段落推进](references/prose-review.md)。读取失败时如实说明，不假称已经执行。
 
-先读取当前用户指令和项目级约束，再根据阶段选择“材料检查”或“活人感审校”。此镜像只适用于中文非虚构博客；不用于小说、邮件、工作消息、PR 稿、规范文档或代码。它不负责正式写稿，也不替代 `blog-sop`、`blog-review-checklist` 或 `blog-charts-spec`。
+已安装的 ChatGPT Skill 与 `.claude/skills/blog-human-writing/` 只提供运行入口或兼容副本，不能独立演化；若与本目录冲突，以本目录为准。规则确需变更时只修改本目录，再用项目的单向同步和一致性检查更新兼容副本。
 
-如在普通 Chat 中使用，先完整读取本文件；材料检查再读取 [材料承载力检查](references/material-check.md)，活人感审校再读取 [自然中文与段落推进](references/prose-review.md)。读取失败时如实说明，不假称已经执行。
+先读取当前用户指令和项目级约束，再根据阶段选择“材料检查”或“活人感审校”。本 Skill 只适用于中文非虚构博客；不用于小说、邮件、工作消息、PR 稿、规范文档或代码。它不负责正式写稿，也不替代 `blog-sop`、`blog-review-checklist` 或 `blog-charts-spec`。
 
 ## 共通约束
 
-1. 当前用户明确指令优先于项目级硬约束、当前阶段专项规范和本镜像的风格建议。
-2. 不因读取本镜像自动修改项目规范；只有跨文章反复验证的新规则，才建议归入相应规范。
+1. 当前用户明确指令优先于项目级硬约束、当前阶段专项规范和本 Skill 的风格建议。
+2. 每篇正式 Blog 完成后的统一规范沉淀复盘，都评估是否出现跨文章稳定的新规则；只有确有变化时才更新本 GitHub 权威目录，不维护双真源。
 3. 直接修改当前稿；除非用户明确要求导出或保留版本，不创建 `v2`、`v3` 副本。
 
 ## 材料检查
@@ -36,7 +36,7 @@ type: workflow
 3. 直接修复能够确定的句法、节奏和空泛表达问题；涉及作者经历、观点强度或事实取舍时集中询问。
 4. 保留准确的事实、数字、引语、术语、链接和不确定性表达；不得为口语化牺牲精度或补充新材料。
 5. 修改后重新核对事实、数字、术语、判断强度、链接，以及表格和图中的对应标签。
-6. 再执行完整 `blog-review-checklist`；本镜像不能替代事实、逻辑、格式、图表和发布终审。
+6. 再执行完整 `blog-review-checklist`；本 Skill 不能替代事实、逻辑、格式、图表和发布终审。
 
 ## 语义判断原则
 

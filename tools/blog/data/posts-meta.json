@@ -430,7 +430,7 @@
         "现场复杂性",
         "可复用产品能力"
       ],
-      "category": "行业",
+      "category": "商业",
       "url": "posts/enterprise-agent-fde.html",
       "relations": [
         { "slug": "fde-blog-v3", "type": "builds_on" }

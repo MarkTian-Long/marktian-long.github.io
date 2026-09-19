@@ -176,10 +176,13 @@ initial migration.
   static-related-post field.
 - 2026-08-16 Codex: `concepts` remains historical semantic recall only. Confirmed strong article relationships live in optional `relations`, declared once by the newer article; the shared article runtime derives an older article's follow-up or revision navigation without changing historical body text.
 - 2026-08-16 Codex: Reference sections are a shared compact auxiliary-information layer owned by `tools/blog/article-runtime.js`: exact `参考资料` headings work for both legacy `.refs` pages and Markdown-generated sibling structures. Keep every source semantic and preserved, but default the section to a keyboard-accessible “展开 N 条来源” control so `继续阅读` remains visible; direct reference anchors auto-expand. Do not copy per-post typography overrides.
-- A new or redefined blog tag/topic is a single atomic change: obtain approval,
-  update the WRITING_GUIDE vocabulary and posts-meta.json together, then audit
-  all existing articles. The historical Markdown-source exception never
-  exempts metadata vocabulary synchronization.
+- A new, redefined, narrowed/widened, renamed, merged, or deprecated taxonomy
+  entry is a single atomic change: obtain approval, update the taxonomy and
+  run deterministic validation first, then prepare a metadata candidate pool
+  for a human semantic impact review. Read real candidate bodies in the order
+  online page → repository HTML → Markdown; never auto-write historical
+  metadata, infer a bulk migration from a definition change, or balance counts.
+  The historical Markdown-source exception never exempts vocabulary validation.
 - Blog publishing follows: Markdown, generation script, metadata JSON update,
   product maturity check when applicable, then delivery.
 - Blog callouts should be the last element inside `post-body` and use

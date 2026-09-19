@@ -269,7 +269,7 @@ refactor: 迁移文件到 assets/ 目录结构
 
 - 决定线上结果、可复现开发、测试验证、项目规范和共享上下文的文件必须提交。
 - 密钥、个人隐私、本机路径、本机权限、IDE 状态、依赖缓存、临时预览、备份、Worktree 和 stash 只留本地。
-- `.agents/skills/` 是项目自定义 Skill 唯一编辑源，已在 AGENTS.md 登记的项目 Skill 必须提交；第三方设计 Skill 由 `skills-lock.json` 管理，其本机安装产物不提交。`.claude/skills/` 中的项目自定义兼容副本必须同步提交且内容一致。
+- `.agents/skills/` 是项目自定义 Skill 唯一编辑源，已在 AGENTS.md 登记的项目 Skill 必须提交；第三方设计 Skill 由 `skills-lock.json` 管理，其本机安装产物不提交。`.claude/skills/` 中的项目自定义兼容副本必须同步提交且内容一致，方向只允许 `.agents` → 兼容副本；运行 `node scripts/check-project-skill-compatibility.js` 检查整目录（含 references）漂移。`blog-human-writing` 的唯一长期规则源为 `.agents/skills/blog-human-writing/`。
 - `*.local.js`、`.env*`、`.claude/settings.local.json` 和 `docs/personal/` 永远不得提交；只提交脱敏的示例配置。
 - 线上直接读取的生成物（博客 HTML、`robots.txt`、`sitemap.xml`、`feed.xml`）必须提交，不能仅保留生成脚本。
 - 无法归类的文件默认不提交；确需新增例外时，先同步修改 `docs/repository-policy.md`、`.gitignore` 和自动检查。

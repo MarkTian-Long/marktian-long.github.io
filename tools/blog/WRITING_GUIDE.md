@@ -117,11 +117,11 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 > **发布操作规范：** 每次新增文章时，若现有标签库在 `tags` 或 `topics` 维度无法准确描述文章性质，**不要强行套用近义标签**，应先提出修改方案（新增标签或调整定义）并等待用户确认后再写入。
 >
-> **taxonomy 变更（发布阻断）：** 新增词、调整定义或扩展适用范围时，先提出变更并获得用户确认；然后在同一次变更中更新 `blog-taxonomy.json`、执行历史 audit、再让当前文章使用新值。不得先使用未定义值；不因 taxonomy 变化自动批量重分类历史文章。
+> **taxonomy 变更（发布阻断）：** 新增、定义调整、适用范围扩大/缩小、rename、merge 或 deprecate 时，先提出变更并获得用户确认；然后在同一次变更中更新 `blog-taxonomy.json`、执行历史 impact audit、再让当前文章使用新值。不得先使用未定义值；不因 taxonomy 变化自动批量重分类历史文章。
 >
-> **标签库变更时的回溯规范：** 每次新增标签、调整标签定义、或扩展现有标签适用范围后，需完成以下两项检查，不得分批遗漏：
+> **taxonomy 变更时的回溯规范：** 每次触发变更时，需完成以下两项检查，不得分批遗漏：
 > 1. **taxonomy 一致性检查**：确认新标签与现有 taxonomy 中各标签的定义边界无语义重叠或歧义；
-> 2. **历史文章回溯检查**：对 `posts-meta.json` 中所有存量文章做一次回溯，判断是否有文章需要补打新标签或修正旧标签。`tags`、`topics`、`category` 三个字段均适用此规范。
+> 2. **历史语义影响审查**：先运行 `node tools/blog/check-blog-taxonomy.js`，再让 `audit-taxonomy-impact.js` 从完整 `posts-meta.json` 的 title / summary / concepts / tags / topics / category 准备可能受影响的候选池。候选池没有固定数量；定义或范围调整默认让全部历史 metadata 进入人工筛查，避免只凭新词字面漏掉跨分类边界文章，`--categories` 仅用于标出优先读的范围。Codex 只对真正相关的候选按“线上正式页 → 仓库发布 HTML → Markdown”读取正文，并逐篇输出“保持现状 / 建议人工复核 / 有充分理由建议迁移”。脚本不自动修改历史 metadata，不为数量均衡迁移，也不能把 taxonomy 定义变化本身当作批量重分类理由；没有历史语义影响时输出“历史 audit 完成，无需迁移。”
 
 **`tags` 标签库（视角类型）**
 
@@ -404,7 +404,11 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 
 ## 新增文章操作流程
 
-1. 写作阶段交付带严格 frontmatter 的最终 Markdown。运行同步命令；它从文件名派生 slug、从 H1/blockquote 派生 title/summary，并为新文章写入实际发布月份（已有文章保留原 date）：
+新文章固定路径为：**网页版写作 → 最终 Markdown frontmatter → Codex 读取当前 taxonomy 并校验 → sync posts-meta → generate HTML → search/RSS/sitemap → QA → 发布**。`publish_handoff` 和 `body_link_only` 不属于这条路径，只保留给历史文件兼容。
+
+材料检查或活人感审校真正执行时，读取 `.agents/skills/blog-human-writing/SKILL.md` 和当前阶段对应的 `references/`；这是唯一长期规则真源。已安装 Skill 或 `.claude/skills/` 目录只是运行入口/兼容副本，冲突时以 `.agents` 为准。每篇正式文章完成后的统一规范沉淀复盘，评估是否出现应写回该权威源的跨文章稳定规则。
+
+1. 写作阶段交付带严格 frontmatter 的最终 Markdown；Codex 读取最新 `data/blog-taxonomy.json` 后仅校验，不选择或生成 `category`、`tags`、`topics`、`concepts`、`share_quote` 或 relations。运行同步命令；它从文件名派生 slug、从 H1/blockquote 派生 title/summary，并为新文章写入实际发布月份（已有文章保留原 date）：
    ```powershell
    node tools/blog/sync-post-metadata.js --write docs/blog/your-slug.md
    ```

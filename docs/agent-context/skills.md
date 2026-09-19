@@ -23,14 +23,19 @@ skills/                        # local legacy compatibility copy, do not edit
   excluded by `.gitignore`.
 - Keep `.claude/skills/` as a tracked compatibility layer. Project-owned skill
   file names and contents must match `.agents/skills/`; agent-specific behavior
-  belongs in `AGENTS.md` or `CLAUDE.md`, not in divergent copies.
+  belongs in `AGENTS.md` or `CLAUDE.md`, not in divergent copies. In particular,
+  `.agents/skills/blog-human-writing/` is the only long-term rule source; its
+  `.claude` directory and installed runtime entries cannot evolve independently.
 - Vendor-managed design skills are governed by `skills-lock.json`. Their
   `.agents/skills/` installation output stays local and is updated by the skill
   manager, not by hand.
 - After changing a project-owned skill, run
   `powershell -ExecutionPolicy Bypass -File scripts/sync-agent-context.ps1 -Write`
-  to update the Claude compatibility copy, then run the same script without
-  `-Write` plus `node scripts/check-repository-policy.js`.
+  to update the Claude compatibility copy, then run
+  `node scripts/check-project-skill-compatibility.js`（它同时拒绝缺失、内容不同或兼容目录独有文件），the same sync script
+  without `-Write`, and `node scripts/check-repository-policy.js`. The direction
+  is only `.agents` → runtime/compatibility copies; never synchronize a
+  compatibility edit back into the canonical source.
 - Do not create a new `.codex/skills` or `.Codex/skills` source tree for this
   project unless the user explicitly requests a tool-private experiment.
 - Root `skills/` is treated as legacy compatibility. Do not use it as the first

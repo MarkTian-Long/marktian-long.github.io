@@ -44,6 +44,7 @@ function checkJson() {
 function main() {
   const checks = [
     ['Node tests', node, ['--test'], scriptsDir],
+    ['Project skill compatibility', node, ['check-project-skill-compatibility.js'], scriptsDir],
     ['Repository policy', node, ['check-repository-policy.js'], scriptsDir],
     ['Search foundation', node, ['check-search-foundation.js'], scriptsDir],
     ['Blog image assets', node, ['check-blog-images.js'], scriptsDir],

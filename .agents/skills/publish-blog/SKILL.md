@@ -18,7 +18,8 @@ type: workflow
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章后直接进入“推送 HITL”，不要重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 新文章必须有严格 frontmatter；运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`。
+6. 新文章必须有严格 frontmatter；运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
+7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。每篇正式文章完成后，在统一规范沉淀复盘中评估是否有跨文章稳定规则需要更新这一权威源。
 
 ## 2. 生成发布资产
 
@@ -59,6 +60,7 @@ type: workflow
 
 ```powershell
 node tools/blog/check-blog-taxonomy.js
+node tools/blog/audit-taxonomy-impact.js --base-ref <taxonomy-change-base-ref>
 node scripts/check-blog-images.js
 node scripts/generate-search-assets.js --check
 node scripts/check-search-foundation.js
