@@ -119,9 +119,9 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 >
 > **taxonomy 变更（发布阻断）：** 新增、定义调整、适用范围扩大/缩小、rename、merge 或 deprecate 时，先提出变更并获得用户确认；然后在同一次变更中更新 `blog-taxonomy.json`、执行历史 impact audit、再让当前文章使用新值。不得先使用未定义值；不因 taxonomy 变化自动批量重分类历史文章。
 >
-> **taxonomy 变更时的回溯规范：** 每次触发变更时，需完成以下两项检查，不得分批遗漏：
+> **taxonomy 变更时的回溯规范：** 每篇发布始终先运行 `node tools/blog/check-blog-taxonomy.js`。只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才以真实的变更前 Git ref 运行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>`；普通文章发布不要求 taxonomy base ref，也不得执行带 placeholder 的 audit 命令。触发变更时，需完成以下两项检查，不得分批遗漏：
 > 1. **taxonomy 一致性检查**：确认新标签与现有 taxonomy 中各标签的定义边界无语义重叠或歧义；
-> 2. **历史语义影响审查**：先运行 `node tools/blog/check-blog-taxonomy.js`，再让 `audit-taxonomy-impact.js` 从完整 `posts-meta.json` 的 title / summary / concepts / tags / topics / category 准备可能受影响的候选池。候选池没有固定数量；定义或范围调整默认让全部历史 metadata 进入人工筛查，避免只凭新词字面漏掉跨分类边界文章，`--categories` 仅用于标出优先读的范围。Codex 只对真正相关的候选按“线上正式页 → 仓库发布 HTML → Markdown”读取正文，并逐篇输出“保持现状 / 建议人工复核 / 有充分理由建议迁移”。脚本不自动修改历史 metadata，不为数量均衡迁移，也不能把 taxonomy 定义变化本身当作批量重分类理由；没有历史语义影响时输出“历史 audit 完成，无需迁移。”
+> 2. **历史语义影响审查**：category 的 `core_question`、`definition`、`status`，tag/topic 的 `definition`、`distinguish_from`、`notes`、`status`，以及范围、rename、merge、deprecate、remove 和新增 category/tag/topic 都是语义变化。它们全部让完整 `posts-meta.json` 进入第一轮 metadata 筛查，不能只按新 vocabulary 名字字面命中；新增词尤其不能假定历史文章会预先带有它。`--categories` 仅用于标出优先读的范围。已落地定义的专项复核若要覆盖跨产品/行业等边界，必须显式运行 `--focus category:<名称> --full-screen`；只有 `--focus` 不代表已完成全量筛查。Codex 再按 title / summary / concepts / tags / topics / category 缩小真正相关候选，并对这些候选按“线上正式页 → 仓库发布 HTML → Markdown”读取正文，逐篇输出“保持现状 / 建议人工复核 / 有充分理由建议迁移”。脚本不自动修改历史 metadata，不为数量均衡迁移，也不能把 taxonomy 定义变化本身当作批量重分类理由；没有历史语义影响时输出“历史 audit 完成，无需迁移。”
 
 **`tags` 标签库（视角类型）**
 

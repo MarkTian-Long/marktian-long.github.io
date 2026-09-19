@@ -12,6 +12,18 @@ const ENTITY_COLLECTIONS = [
   ['tag', taxonomy => taxonomy.tags || []],
   ['topic', taxonomy => taxonomy.topics || []],
 ];
+const SEMANTIC_FIELDS = {
+  category: ['core_question', 'definition', 'status', 'scope', 'renamed_to', 'merged_into'],
+  tag: ['definition', 'distinguish_from', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
+  topic: ['definition', 'distinguish_from', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
+};
+
+function changeKind(field, nextEntry) {
+  if (field === 'status') return nextEntry.status === 'deprecated' ? 'deprecated' : 'status_changed';
+  if (field === 'renamed_to') return 'renamed';
+  if (field === 'merged_into') return 'merged';
+  return `${field}_changed`;
+}
 
 function entriesByName(entries) {
   return new Map(entries.map(entry => [entry.name, entry]));
@@ -35,9 +47,10 @@ function diffTaxonomySemantics(before, after) {
         changes.push({ kind: 'removed', entity, name });
         continue;
       }
-      if (oldEntry.definition !== newEntry.definition) changes.push({ kind: 'definition_changed', entity, name });
-      if (oldEntry.status !== newEntry.status) {
-        changes.push({ kind: newEntry.status === 'deprecated' ? 'deprecated' : 'status_changed', entity, name });
+      for (const field of SEMANTIC_FIELDS[entity]) {
+        if (oldEntry[field] !== newEntry[field]) {
+          changes.push({ kind: changeKind(field, newEntry), entity, name });
+        }
       }
     }
   }
@@ -49,16 +62,32 @@ function textMatchesChange(post, change) {
     ['title', post.title],
     ['summary', post.summary],
     ['concepts', (post.concepts || []).join(' ')],
+    ['tags', (post.tags || []).join(' ')],
+    ['topics', (post.topics || []).join(' ')],
+    ['category', post.category],
   ];
   return fields.filter(([, value]) => String(value || '').includes(change.name)).map(([field]) => `metadata ${field} mentions: ${change.name}`);
 }
 
-function prepareImpactReview({ changes, posts, reviewCategories = [] }) {
+function fullScreenReason(change) {
+  if (change.kind === 'added') return `added ${change.entity}: full metadata screen`;
+  if (change.kind === 'removed') return `removed ${change.entity}: full metadata screen`;
+  if (change.kind === 'deprecated') return `deprecated ${change.entity}: full metadata screen`;
+  if (change.kind === 'renamed') return `renamed ${change.entity}: full metadata screen`;
+  if (change.kind === 'merged') return `merged ${change.entity}: full metadata screen`;
+  return `${change.kind.replace(/_changed$/, '')} change: full metadata screen`;
+}
+
+function prepareImpactReview({ changes, posts, reviewCategories = [], forceFullScreen = false }) {
   const candidates = [];
-  const requiresFullMetadataScreen = changes.some(change => change.kind === 'definition_changed');
+  const taxonomyChanges = changes.filter(change => change.kind !== 'manual_scope');
+  const fullScreenReasons = [
+    ...(forceFullScreen ? ['explicit full-screen'] : []),
+    ...taxonomyChanges.map(fullScreenReason),
+  ];
   for (const post of posts) {
     const reasons = [];
-    if (requiresFullMetadataScreen) reasons.push('definition change: full metadata screen');
+    reasons.push(...fullScreenReasons);
     if (reviewCategories.includes(post.category)) reasons.push(`review category: ${post.category}`);
     for (const change of changes) {
       if (change.entity === 'category' && post.category === change.name) reasons.push(`changed category: ${change.name}`);
@@ -79,6 +108,7 @@ function prepareImpactReview({ changes, posts, reviewCategories = [] }) {
   return {
     changes,
     candidates,
+    fullMetadataScreen: fullScreenReasons.length > 0,
     mutationCount: 0,
     message: changes.length ? '候选池已准备；请依次阅读线上正式页、仓库发布 HTML、Markdown 后作人工结论。' : '历史 audit 完成，无需迁移。',
   };
@@ -94,7 +124,7 @@ function taxonomyFromGitRef(rootDir, ref) {
 }
 
 function parseArgs(argv) {
-  const options = { categories: [], json: false };
+  const options = { categories: [], json: false, fullScreen: false };
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (argument === '--before' || argument === '--base-ref' || argument === '--categories' || argument === '--focus') {
@@ -114,13 +144,20 @@ function parseArgs(argv) {
       options.json = true;
       continue;
     }
+    if (argument === '--full-screen') {
+      options.fullScreen = true;
+      continue;
+    }
     throw new Error(`Unknown option: ${argument}`);
   }
   if (options.before && options.baseRef) throw new Error('Use either --before or --base-ref, not both');
+  if (options.fullScreen && !options.before && !options.baseRef && !options.focus) {
+    throw new Error('--full-screen requires --focus or a taxonomy comparison');
+  }
   return options;
 }
 
-function auditTaxonomyImpact({ rootDir = path.resolve(__dirname, '..', '..'), before, baseRef, categories = [], focus, checkTaxonomy = checkBlogTaxonomy } = {}) {
+function auditTaxonomyImpact({ rootDir = path.resolve(__dirname, '..', '..'), before, baseRef, categories = [], focus, fullScreen = false, checkTaxonomy = checkBlogTaxonomy } = {}) {
   const taxonomyCheck = checkTaxonomy(rootDir);
   if (taxonomyCheck.errors.length) {
     throw new Error(`Taxonomy validation failed:\n${taxonomyCheck.errors.join('\n')}`);
@@ -130,7 +167,7 @@ function auditTaxonomyImpact({ rootDir = path.resolve(__dirname, '..', '..'), be
   validateBlogMetadata(metadata);
   const baseline = before ? readJson(path.resolve(rootDir, before)) : baseRef ? taxonomyFromGitRef(rootDir, baseRef) : null;
   const changes = baseline ? diffTaxonomySemantics(baseline, current) : focus ? [focus] : [];
-  return prepareImpactReview({ changes, posts: metadata.posts, reviewCategories: categories });
+  return prepareImpactReview({ changes, posts: metadata.posts, reviewCategories: categories, forceFullScreen: fullScreen });
 }
 
 function main(argv = process.argv.slice(2)) {

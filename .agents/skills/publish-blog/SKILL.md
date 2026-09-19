@@ -56,11 +56,10 @@ type: workflow
 
 ## 3. 验证与提交
 
-所有写入操作完成后，只运行一次最终验证批次：
+所有写入操作完成后，只运行一次最终验证批次。每篇文章始终运行：
 
 ```powershell
 node tools/blog/check-blog-taxonomy.js
-node tools/blog/audit-taxonomy-impact.js --base-ref <taxonomy-change-base-ref>
 node scripts/check-blog-images.js
 node scripts/generate-search-assets.js --check
 node scripts/check-search-foundation.js
@@ -70,6 +69,14 @@ node scripts/check-repository-policy.js
 node scripts/build-public-dist.js --out build/public-dist-<slug>
 node scripts/check-public-dist.js --out build/public-dist-<slug>
 ```
+
+只有本次发布/维护实际修改了 `tools/blog/data/blog-taxonomy.json`，才运行：
+
+```powershell
+node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>
+```
+
+普通文章发布不得要求 taxonomy base ref，也不得运行带 placeholder 的 audit 命令。taxonomy 语义变更的审计必须给出真实、可由 Git 解析的变更前 ref；在检查和候选准备完成前，不得自动修改任何历史 metadata。
 
 然后：
 

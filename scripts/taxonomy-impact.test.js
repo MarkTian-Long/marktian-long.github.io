@@ -7,6 +7,7 @@ const path = require('node:path');
 const {
   auditTaxonomyImpact,
   diffTaxonomySemantics,
+  parseArgs,
   prepareImpactReview,
 } = require('../tools/blog/audit-taxonomy-impact.js');
 
@@ -42,7 +43,7 @@ test('taxonomy impact audit detects semantic definition changes and prepares a n
   assert.equal(result.mutationCount, 0);
 });
 
-test('taxonomy impact audit detects additions and deprecation without declaring a migration', () => {
+test('taxonomy impact audit screens all history for additions and deprecation without declaring a migration', () => {
   const before = taxonomy();
   const after = taxonomy();
   after.tags.push({ name: '工程演进', definition: '工程', status: 'deprecated' });
@@ -52,8 +53,67 @@ test('taxonomy impact audit detects additions and deprecation without declaring 
     { kind: 'deprecated', entity: 'tag', name: '工程演进' },
   ]);
   const result = prepareImpactReview({ changes, posts });
-  assert.equal(result.candidates.length, 0);
+  assert.deepEqual(result.candidates.map((candidate) => candidate.slug), ['business', 'product', 'industry']);
+  assert.ok(result.candidates.every((candidate) => candidate.reasons.includes('added tag: full metadata screen')));
   assert.equal(result.mutationCount, 0);
+});
+
+test('taxonomy impact audit detects a category core_question change and screens all historical metadata', () => {
+  const before = taxonomy();
+  const after = taxonomy();
+  after.categories.active.find((entry) => entry.name === '商业').core_question = '企业为何能持续获利';
+
+  const changes = diffTaxonomySemantics(before, after);
+  assert.deepEqual(changes, [{ kind: 'core_question_changed', entity: 'category', name: '商业' }]);
+
+  const result = prepareImpactReview({ changes, posts });
+  assert.deepEqual(result.candidates.map((candidate) => candidate.slug), ['business', 'product', 'industry']);
+  assert.ok(result.candidates.every((candidate) => candidate.reasons.includes('core_question change: full metadata screen')));
+});
+
+test('taxonomy impact audit detects a tag distinguish_from change and screens all historical metadata', () => {
+  const before = taxonomy();
+  const after = taxonomy();
+  after.tags[0].distinguish_from = '更新后的标签边界';
+
+  const changes = diffTaxonomySemantics(before, after);
+  assert.deepEqual(changes, [{ kind: 'distinguish_from_changed', entity: 'tag', name: '竞争判断' }]);
+
+  const result = prepareImpactReview({ changes, posts });
+  assert.deepEqual(result.candidates.map((candidate) => candidate.slug), ['business', 'product', 'industry']);
+  assert.ok(result.candidates.every((candidate) => candidate.reasons.includes('distinguish_from change: full metadata screen')));
+});
+
+test('taxonomy impact audit screens all history for an added topic even when no post mentions its new vocabulary', () => {
+  const before = taxonomy();
+  const after = taxonomy();
+  after.topics.push({ name: '新专题', definition: '新增主题定义' });
+
+  const changes = diffTaxonomySemantics(before, after);
+  assert.deepEqual(changes, [{ kind: 'added', entity: 'topic', name: '新专题' }]);
+  assert.ok(posts.every((post) => ![post.title, post.summary, ...post.concepts].join(' ').includes('新专题')));
+
+  const result = prepareImpactReview({ changes, posts });
+  assert.deepEqual(result.candidates.map((candidate) => candidate.slug), ['business', 'product', 'industry']);
+  assert.ok(result.candidates.every((candidate) => candidate.reasons.includes('added topic: full metadata screen')));
+});
+
+test('taxonomy impact audit makes full-screen focus explicit', () => {
+  const focus = [{ kind: 'manual_scope', entity: 'category', name: '商业' }];
+  const focusedOnly = prepareImpactReview({ changes: focus, posts });
+  assert.deepEqual(focusedOnly.candidates.map((candidate) => candidate.slug), ['business']);
+
+  const fullScreen = prepareImpactReview({ changes: focus, posts, forceFullScreen: true });
+  assert.deepEqual(fullScreen.candidates.map((candidate) => candidate.slug), ['business', 'product', 'industry']);
+  assert.ok(fullScreen.candidates.every((candidate) => candidate.reasons.includes('explicit full-screen')));
+});
+
+test('taxonomy impact audit accepts explicit full-screen only with a scope or comparison', () => {
+  assert.deepEqual(
+    parseArgs(['--focus', 'category:商业', '--full-screen']),
+    { categories: [], json: false, fullScreen: true, focus: { kind: 'manual_scope', entity: 'category', name: '商业' } },
+  );
+  assert.throws(() => parseArgs(['--full-screen']), /requires --focus or a taxonomy comparison/);
 });
 
 test('taxonomy impact audit reports no migration when no semantic change is present', () => {
