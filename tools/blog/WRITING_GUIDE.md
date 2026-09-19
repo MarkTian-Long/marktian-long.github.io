@@ -6,31 +6,38 @@
 
 ## 文章元数据规范
 
-每篇文章的 `<head>` 注释中必须包含以下元数据：
+最终 Markdown 是新文章内容语义的唯一来源；发布端只做严格校验、同步、生成和测试。文章最顶部必须使用受限 frontmatter：
 
 ```
-date:     YYYY.MM（年月，精确到月即可）
-title:    简洁动词短语或判断句；优先在列表页完整显示核心判断，不以固定字数为硬性门槛
-tags:     从固定标签库选择（见下方）
-slug:     kebab-case，对应 posts/xxx.html 文件名
-summary:  标题下唯一 blockquote 的原文，发布阶段原样同步到 posts-meta.json
-share_quote: 发布阶段从最终正文选取的完整原句，用于生成文章分享海报；Markdown 无需携带此字段
-category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类导航；「生活」仅为历史兼容值，当前不维护、不使用）
+---
+category: 商业
+tags: ["市场格局"]
+topics: ["企业AI"]
+concepts: ["软件采购经济性", "Build vs Buy", "软件价值捕获", "软件价值链"]
+share_quote: "这里必须是最终正文中真实存在的一句完整原句。"
+relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
+---
+
+# 文章标题
+
+> 正式 summary。
+
+---
+
+正文……
 
 > **summary 与正文导语：** 最终 Markdown 标题下、正文分隔线之前的唯一连续 blockquote 就是正式 `summary`。发布阶段只做结构解析、去掉每行 `>` 并规范空白，然后原样同步到 `posts-meta.json`；不得重新创作、改写、扩写或缩写。真正的正文导语是 `---` 之后的正文开头，它可以与 `summary` 不同。
 
-> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。`summary` 不由 Codex 重新创作；用户交付最终 Markdown 后，由 Codex 提取并校验标题下 blockquote，再从正文选择 `share_quote` 并写入 `posts-meta.json`；Markdown 本身无需携带发布 metadata。
+> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。两者均由写作阶段定稿：`summary` 是 H1 下唯一 blockquote，`share_quote` 是 frontmatter 中且在最终正文真实出现的完整原句。Codex 不重新创作、选择或替换它们。
 >
 > **share_quote 选择规则：** `share_quote` 必须是最终正文中真实存在、可独立阅读的完整句子，不得为 metadata 另造一句。
-> 1. **结尾收束句优先：** 先检查最后一节和最后若干段，选择能收束全文、对应最终主结论、单独成立且不严重依赖上一句的原句；不要机械地把最后一句当作 `share_quote`。
-> 2. **正文核心判断其次：** 结尾没有合适句子时，再选择正文核心判断、已加粗的推理落点、关键 callout，或最能概括文章核心机制或边界的原句。
-> 3. **无合适原句时确认：** 不自行创造新文案写进 metadata；发布时应明确指出缺少合适 `share_quote`，给出 1—3 个正文原句候选并等待用户选择，或经用户同意后调整正文，再使用正文中的最终句子。
+> 写作/审校阶段选择并固定该原句；若没有合适原句，应先修改最终 Markdown，而不是让发布端另造文案。
 >
 > `share_quote` 只服务分享海报，不服务 SEO / RSS / continue-reading，也不替代 `summary`；不用标题、摘要或夸张口号替代。
 
 > **标题质量规则：** 标题应先说清对象与核心判断，再追求修辞；发布前在列表页的桌面和移动宽度检查，不应因 CSS 裁切而丢失关键语义。标题可以超过 20 字，但若删去修饰语后不损失判断，应优先精简；不要为了凑字数批量改写已发布文章。
 
-> **摘要质量规则：** 标题下 blockquote 应是可自然阅读的文章摘要，不是关键词列表或 SEO 文案，尽量交代文章讨论的对象或问题、核心判断/冲突，以及决定性机制、关系或边界。Markdown 不需要 YAML frontmatter，也不携带 `tags`、`topics`、`concepts`、`share_quote` 等发布 metadata；`posts-meta.json` 继续是网站 metadata 的单一生效来源。
+> **摘要质量规则：** 标题下 blockquote 应是可自然阅读的文章摘要，不是关键词列表或 SEO 文案，尽量交代文章讨论的对象或问题、核心判断/冲突，以及决定性机制、关系或边界。`posts-meta.json` 是网站运行索引/派生 metadata，不能替代最终 Markdown 的内容语义判断。
 ```
 
 ### `posts-meta.json` v4 视觉契约
@@ -75,9 +82,11 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 
 两个字段同时显示在列表页标签徽章上，也显示在文章页 header。`tags` 帮读者判断文章的思维方式，`topics` 帮读者按领域找文章。两者描述不同维度，不应出现相同的词。
 
+正式可用值、完整定义、区分说明和 deprecated 状态只维护在 [`data/blog-taxonomy.json`](data/blog-taxonomy.json)。本指南不复制完整词典；发布脚本和校验器都读取该文件。
+
 ### `concepts`：AI 历史检索概念
 
-`concepts` 只写入 `posts-meta.json`，不在前台显示，也不参与 SEO、RSS、继续阅读或静态文章关系。它的职责是补足标题和摘要没有完整覆盖、但将来值得被语义召回的关键对象、机制、产品/公司、技术或层级。
+`concepts` 写在最终 Markdown frontmatter，并由同步流程写入 `posts-meta.json`；不在前台显示，也不参与 SEO、RSS、继续阅读或静态文章关系。它的职责是补足标题和摘要没有完整覆盖、但将来值得被语义召回的关键对象、机制、产品/公司、技术或层级。
 
 - 每篇 4-7 个，均为去重、命名稳定的短语；优先选择作者以后会自然搜索的表达。
 - 不写 `AI`、`产品`、`技术`、`行业` 等几乎没有区分度的泛词；不要因正文偶然提到品牌或术语就升级为 concept。
@@ -104,35 +113,23 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 
 > **显式关系是评审结果：** `builds_on`、`revises`、`companion` 只在独立性和增量判断完成后写入；不得为了获得「承接前文」「后续延展」「修正前文」或「并列阅读」而反向调整文章主线。
 
-> **标签单一来源：** 文章页的标签由 JS 从 `posts-meta.json` 动态渲染（`#post-tags` 容器），HTML 文件里不写静态 `<span class="tag">`。**只需维护 posts-meta.json**，不需要同步修改文章 HTML。
+> **标签渲染：** 文章页的标签由 JS 从 `posts-meta.json` 动态渲染（`#post-tags` 容器），HTML 文件里不写静态 `<span class="tag">`。新文章先维护最终 Markdown，再由同步命令更新该运行索引；不需要手工修改文章 HTML。
 
 > **发布操作规范：** 每次新增文章时，若现有标签库在 `tags` 或 `topics` 维度无法准确描述文章性质，**不要强行套用近义标签**，应先提出修改方案（新增标签或调整定义）并等待用户确认后再写入。
 >
-> **词库与元数据同步（发布阻断）：** `posts-meta.json` 中每一个 `tags/topics` 值都必须在本指南词库表中有完全一致的名称和定义。若需新增词、调整定义或扩展适用范围，先取得确认，再在**同一次变更**中更新词库表、文章元数据并完成历史文章回溯；不得先发布 JSON 词值、后补词库说明。历史文章例外只适用于正文源稿，不适用于标签词库。
+> **taxonomy 变更（发布阻断）：** 新增词、调整定义或扩展适用范围时，先提出变更并获得用户确认；然后在同一次变更中更新 `blog-taxonomy.json`、执行历史 audit、再让当前文章使用新值。不得先使用未定义值；不因 taxonomy 变化自动批量重分类历史文章。
 >
 > **标签库变更时的回溯规范：** 每次新增标签、调整标签定义、或扩展现有标签适用范围后，需完成以下两项检查，不得分批遗漏：
-> 1. **标签库一致性检查**：确认新标签与现有标签库中各标签的定义边界无语义重叠或歧义；
+> 1. **taxonomy 一致性检查**：确认新标签与现有 taxonomy 中各标签的定义边界无语义重叠或歧义；
 > 2. **历史文章回溯检查**：对 `posts-meta.json` 中所有存量文章做一次回溯，判断是否有文章需要补打新标签或修正旧标签。`tags`、`topics`、`category` 三个字段均适用此规范。
 
 **`tags` 标签库（视角类型）**
 
 标签描述文章的**核心动作**，而非内容领域。标签库随内容主题扩展，**新增前先确认无近义标签**。
 
-| 标签 | 文章在做什么 | 区分说明 |
-|------|------------|---------|
-| 竞争判断 | 分析单一产品/事件背后的竞争信号 | 核心词是「竞争」——文章的落点必须是某产品或事件对竞争格局的含义；不涉及竞争的风险评估、行业趋势不属于此标签 |
-| 市场格局 | 判断行业整体趋势、竞争重心迁移、多方势力博弈 | 视角跨越多家公司或整个行业；单一产品用「竞争判断」，行业趋势用「市场格局」 |
-| 技术判断 | 判断某项技术或技术风险的生命周期、价值与边界 | 结论是「这个技术/这个风险值不值得关注、还有多久消亡、边界在哪」；包含风险评估类文章 |
-| 工程演进 | 技术栈/工程范式的整体演进趋势 | 结论是「工程重心在往哪个方向移动」 |
-| 决策框架 | 提供任何领域可复用的判断结构 | 核心产出是一个可套用的框架，不限受众是 PM 还是通用 |
-| 独立开发 | 独立产品从 0 到 1、工程实践 | — |
-| 冷启动 | 产品早期增长、首批用户获取 | — |
-| 出海 | 海外市场、本地化、跨境产品 | — |
-| 职业判断 | 职业选择、机会评估、个人策略 | — |
-
 > **打标规范：** 新文章打标前，先看同标签下已有文章列表，确认放进去语义一致再写入。孤立判断容易漂移——「这篇感觉是竞争相关」不够，要问「这篇和 Manus 分析、Claude Design 分析放在一起，读者会觉得是同类文章吗」。
 >
-> **强制检查：** 写入 `tags` 前必须逐项对照上方标签库，确认标签名称完全一致；`tags` 和 `topics` 不得出现相同的词。不在标签库中的词禁止直接写入，必须先提出新增方案并等待确认。
+> **强制检查：** 写入 `tags` 前必须逐项对照 `blog-taxonomy.json`，确认标签名称完全一致；`tags` 和 `topics` 不得出现相同的词。不在 taxonomy 中的词禁止直接写入，必须先提出新增方案并等待确认。
 
 **`topics` 标签库（话题领域）**
 
@@ -146,30 +143,16 @@ category: 技术 | 产品 | 商业 | 行业（大分类，用于列表页分类�
 
 标签必须通过前两项，且不属于第三项的排除情形。技术在文中多次出现，并不自动使它成为 `topic`。
 
-| 标签 | 适用方向 | 区分说明 |
-|------|----------|---------|
-| `Agent` | Agent 设计、工作流编排、多 Agent 协作 | 核心讨论 Agent 机制才打，泛提及不打 |
-| `RAG` | 检索增强生成、知识库架构 | — |
-| `Fine-tuning` | 微调策略、数据工程、模型定制 | — |
-| `提示工程` | Prompt 设计、上下文工程、提示生命周期 | — |
-| `企业AI` | 企业 AI 落地、采购决策、组织推进 | 侧重落地场景和决策，非技术机制本身 |
-| `金融科技` | 金融机构或金融 B 端 AI 的合规、采购/POC、产品决策与落地 | 仅当金融业务语境实质改变文章的判断边界时使用；通用企业 AI 落地仍归 `企业AI` |
-| `智能客服` | 客服智能体、服务流程、工单升级与客服系统架构 | 讨论客服场景本身才使用；若核心是检索技术，可与 `RAG` 并列 |
-| `业务语义` | 本体、语义层、术语/实体/关系、指标口径与业务规则的显式建模、复用和治理 | 讨论企业系统如何统一定义和消费业务含义；区别于 `RAG`（检索与知识库架构）和 `企业AI`（泛化的落地场景与组织推进） |
-| `产品设计` | 产品方法论、竞品分析、功能设计、用户体验；也包括具体 AI 产品/工具的拆解与竞争判断 | 落点是产品决策或竞争信号，而非工具使用实践 |
-| `模型能力` | 大模型的能力边界、软性质量、适用场景分析 | 侧重对模型本身能力的判断；区别于 `产品设计`（具体产品拆解）和 `前沿研究`（实验阶段系统） |
-| `评测体系` | benchmark 设计、评测方法论、第三方评测生态 | 文章核心必须是评测机制本身，而非具体模型的能力表现 |
-| `前沿研究` | 以具体研究成果或实验系统为切口的分析 | 起点必须是研究/实验阶段的系统或论文（非生产工具）；区别于 `产品设计`（已上线产品）和 `技术判断` tag（成熟技术的选型判断） |
-| `算力基础设施` | 计算硬件架构、芯片类型分工（CPU/GPU/ASIC等）、数据中心算力生态 | 不限于 AI 专用场景，重点在底层硬件层的结构性分析；区别于 `模型能力`（软件层的模型能力判断） |
-
 ### 文章分类
 
-| 分类 | 适用方向 |
+| 分类 | 核心问题 |
 |------|----------|
-| 技术 | 回答「为什么能工作」：架构设计、工程实现、技术选型、模型机制、训练/推理/评测机制与工程范式演进。正文主要研究技术本身时归此类。 |
-| 产品 | 回答「产品应该怎么做」：PM 决策框架、产品分析、场景判断、边界划分、功能设计，以及具体 AI 产品/工具拆解。跨公司举例但服务于具体产品决策或场景选择时仍归此类。 |
-| 商业 | 回答「谁付钱、怎么赚钱、值多少钱、买还是建」：商业模式、定价、收入、成本、TCO、采购经济性、估值/TAM、单位经济、Build vs Buy、商业护城河与价值分配。 |
-| 行业 | 回答「这个领域正在怎么变」：产业/职业结构变化、市场演进、跨公司厂商路线、生态与标准、组织形态变化，以及行业级竞争重心迁移。 |
+| 技术 | 能力为什么成立 |
+| 产品 | 产品应该怎么做 |
+| 商业 | 企业如何创造并捕获价值 |
+| 行业 | 整个领域正在怎么变 |
+
+正式名称、完整定义和 legacy 分类以 [`data/blog-taxonomy.json`](data/blog-taxonomy.json) 为准；`生活`只为历史兼容保留，不能写入新 Markdown。
 
 > **分类判断原则：看核心内容，不看叙事视角。** 「行业」不是「提到多家公司」的同义词：具体产品判断仍归「产品」；以竞争叙事讲技术机制或工程演进仍归「技术」；以收入、成本、采购、估值或护城河为核心仍归「商业」。**叙事角度 ≠ 分类依据。**
 
@@ -388,7 +371,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 - 新文章必须同时提交 Markdown 源稿和生成后的 HTML；不要只提交 `tools/blog/posts/*.html`。
 - 新源稿优先命名为 `docs/blog/<slug>.md`，其中 `<slug>` 与 `posts-meta.json` 的 `slug` 完全一致。历史文件存在 `-v3`、`-final`、下划线等旧命名，保留但不作为新文章模板。
-- `tools/blog/data/posts-meta.json` 仍是标题、摘要、标签、检索概念、分类和 URL 的单一来源；Markdown 是编辑源，HTML 是部署产物。编辑/生成遵循 `docs/blog/<slug>.md` → `tools/blog/posts/<slug>.html`；历史观点检索遵循“线上正式页 → 仓库 HTML → Markdown”，不需要为此批量补写 Markdown。
+- 新文章的内容语义真源是 `docs/blog/<slug>.md` 的 frontmatter、H1 和 summary blockquote；`tools/blog/data/posts-meta.json` 是由 `sync-post-metadata.js` 产生并被前台消费的运行索引。HTML 是部署产物。历史观点检索仍遵循“线上正式页 → 仓库 HTML → Markdown”，不需要为此批量补写 Markdown。
 - 如果发布后必须手工改 HTML 的正文、目录、表格、callout 或参考资料，必须把同等内容回写到对应 Markdown，或在提交说明中明确这是 HTML-only 例外。不要让 HTML 成为唯一保存正文改动的地方。
 
 ### 历史文章例外
@@ -421,21 +404,11 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 
 ## 新增文章操作流程
 
-1. 用户交付最终 Markdown 后，由 Codex 按上方「share_quote 选择规则」从最终正文确定 `share_quote`；Markdown 本身不需要携带该字段。再在 `tools/blog/data/posts-meta.json` 的 `posts` 数组**头部**追加新条目；新条目可省略 `visuals`：
-   ```json
-   {
-     "slug": "your-slug",
-     "date": "YYYY.MM",
-     "title": "...",
-     "summary": "...",
-     "share_quote": "...",
-     "tags": ["标签1"],
-     "topics": ["话题1"],
-     "concepts": ["关键对象", "核心机制", "具体场景", "判断边界"],
-     "category": "技术",
-     "url": "posts/your-slug.html"
-   }
+1. 写作阶段交付带严格 frontmatter 的最终 Markdown。运行同步命令；它从文件名派生 slug、从 H1/blockquote 派生 title/summary，并为新文章写入实际发布月份（已有文章保留原 date）：
+   ```powershell
+   node tools/blog/sync-post-metadata.js --write docs/blog/your-slug.md
    ```
+   不手工创建或补写语义 metadata；需要明确回填新文章月份时使用 `--date YYYY.MM`。同步不会删除或覆盖已有 `visuals` 等发布资产字段。
 2. 图片完全可选。需要使用封面或正文图时，按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 维护 `visuals`；选中的候选图先放在 `build/blog-image-work/<slug>/`，再用确定性脚本生成最终资产：
    ```powershell
    node scripts/prepare-blog-image.js --slug your-slug --role cover --input build/blog-image-work/your-slug/candidate.png
@@ -443,7 +416,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
    node scripts/check-blog-images.js
    ```
    只运行实际需要的命令；正文图写入 `visuals.inline` 和 Markdown，只有封面时使用 `inline: []`。图片可包含服务文章表达的文字或标识，但不得使用误导性水印或未经授权的第三方素材。
-3. 在 `docs/blog/` 下维护 Markdown 源稿，文件名优先使用 `docs/blog/your-slug.md`，再用生成脚本输出文章 HTML。生成器会先按 slug 读取上一步的元数据，因此顺序不能颠倒：
+3. 用生成脚本输出文章 HTML；生成器验证运行索引与最终 Markdown 一致，因此顺序不能颠倒：
    ```powershell
    node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
    ```
@@ -464,7 +437,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 - 检查 `tags` 与 `topics`：逐一按「双维度标签体系」中的主次判定核对标题、摘要和结论；不因技术名词频繁出现、作为案例或应用路径而打标签。
 - 检查 `concepts`：逐一核对其是否是支撑文章核心论点的具体对象或机制；保持 4-7 个，避免泛词、偶然提及和与 `tags/topics` 的精确重复。
 - 写作或引用旧文前按「历史博客滚动检索与复用」处理：完整 metadata 粗召回可随论点变化重跑，正文按发布事实优先级确认；不要因为同关键词或同分类强行添加内链。
-- 检查词库同步：每个 `tags/topics` 值都必须在本指南词库表中有完全一致的条目；新增词或定义调整必须在同一次变更更新词库并完成历史回溯，不能把近期文章当作历史例外。
+- 检查 taxonomy 同步：每个 `tags/topics` 值都必须在 `blog-taxonomy.json` 中有完全一致的条目；新增词或定义调整必须在同一次变更更新 taxonomy 并完成历史 audit，不能把近期文章当作历史例外。
 - 检查 `topics` 数量：一个核心领域即可；第二个 `topic` 必须同样通过主次判定，不能作为凑数标签。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
 - 检查视觉契约：图片完全可选；如使用图片，正文图为 0–2 张，Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
@@ -639,19 +612,19 @@ GitHub Pages 部署后无此问题。
 
 ### 显式 relations
 
-新文章可选在 `posts-meta.json` 中声明较新文章指向较早文章的强关系：
+新文章只在最终 Markdown frontmatter 中声明较新文章指向较早文章的强关系：
 
-```json
-"relations": [{ "slug": "older-article", "type": "builds_on" }]
+```yaml
+relations: [{"slug":"older-article","type":"builds_on"}]
 ```
 
 只允许 `builds_on`、`revises`、`companion`；target 必须存在、不得自引用或重复。正向依次显示「承接前文 / 修正前文 / 并列阅读」，旧文由中央 metadata 自动反向显示「后续延展 / 后续修正 / 并列阅读」。正文内链不自动构成 relation；只有核心前提、实质修正或直接互补已经由内容评审确认时才写入。历史正文不因未来关系回写。
 
 relations 是上游编辑评审已经确认的结果。GitHub / Codex 不根据 topics、tags、正文链接、参考资料或相似度自动增加、删除、修改或降级 relations；发布层只验证 target/type、计算正反向展示和排序。
 
-### publish_handoff 发布交接接口
+### legacy `publish_handoff` 发布交接接口
 
-发布工具同时接受最终 Markdown 末尾的裸 `publish_handoff` block 和独立 fenced YAML `publish_handoff` block；两者只是 transport 表达差异，语义相同，发布后都会被完整剥离。网页版在最终内容评审完成后，可在 Markdown 正文与参考资料**之后**附上唯一一个末尾 YAML transport block：
+发布工具仍兼容历史 Markdown 末尾的裸 `publish_handoff` block 和独立 fenced YAML block；两者都会被完整剥离。新 Markdown 禁止依赖此 transport block：relations 已由 frontmatter 持久保存，且不需要 `body_link_only`。
 
 ```yaml
 publish_handoff:
@@ -662,9 +635,9 @@ publish_handoff:
     - harness-engineering
 ```
 
-- `relations` 是已确认的强关系。运行 `node tools/blog/publish-handoff.js --write <source.md>` 后，发布侧只校验 target slug 存在、非 self-reference、无重复，以及 type 为 `builds_on` / `revises` / `companion`；再以该终稿结果覆盖当前源稿 slug 对应文章的 metadata `relations`。target 历史文章的 metadata 不因此回写，反向「后续延展 / 后续修正」继续由前端动态计算。`relations: []` 明确表示没有强关系，不得为了凑「继续阅读」另建关系。
-- `body_link_only` 只记录已评审为正文背景、定义复用或普通历史引用的站内文章。发布侧校验 slug 存在、非 self-reference、无重复，但不写入 `posts-meta.json`、不新增 metadata schema、不显示在页面，也不改变继续阅读算法；它不能因正文链接而升级为 relation。普通外链和全部参考资料无需列入。
-- 该命令读取、验证并执行交接后，会从 `docs/blog/<slug>.md` 剥离整个 block；生成器会拒绝尚含 `publish_handoff` 的源稿。因此交接数据不会进入正式 Markdown、HTML、RSS、Search、SEO 或分享卡片。不要手工把 `publish_handoff` 保存进 metadata，也不要让生成器或发布阶段重判关系语义。
+- 历史 `relations` handoff 仍按原有 target/type 校验并同步；目标文章不会被回写。`relations: []` 明确表示没有强关系，不得为了凑「继续阅读」另建关系。
+- `body_link_only` 仅为旧交接的校验兼容：它从不写入 `posts-meta.json`、不显示在页面、不改变继续阅读算法。新文章用正文内链表达普通引用，不能把它升级为 relation。
+- 该命令会从历史源稿剥离交接块；生成器会拒绝尚含 handoff 的源稿。不要让生成器或发布阶段重判关系语义。
 
 ### 自动同主题与正文去重
 

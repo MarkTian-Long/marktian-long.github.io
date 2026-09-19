@@ -346,11 +346,11 @@ test('validateBlogMetadata requires compact, specific retrieval concepts', () =>
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], tags: [] }] }),
-    /tags.*non-empty array/
+    /tags must be a non-empty trimmed string array/
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], category: '其他' }] }),
-    /category is invalid/
+    /Category is not defined by blog taxonomy/
   );
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], concepts: undefined }] }),

@@ -251,23 +251,35 @@ function generatePost({ mode, sourcePath, outputPath }) {
   if (parsePublishHandoff(markdown, sourcePath).handoff) {
     throw new Error(`Publish handoff must be applied before generating HTML: ${sourcePath}`);
   }
+  const parsedSource = parseSourceMarkdown(markdown, sourcePath);
   const metadata = JSON.parse(fs.readFileSync('tools/blog/data/posts-meta.json', 'utf8')).posts
     .find(post => post.slug === slug);
-  if (!metadata) throw new Error('No metadata found for slug: ' + slug);
+  if (!metadata) {
+    if (!parsedSource.frontmatter) throw new Error(`New Markdown sources require strict frontmatter: ${sourcePath}`);
+    throw new Error(`No metadata found for slug: ${slug}; run sync-post-metadata before generating HTML`);
+  }
   if (typeof metadata.share_quote !== 'string' || !metadata.share_quote.trim()) {
     throw new Error('No share_quote found for slug: ' + slug);
   }
 
-  const { sourceTitle, sourceSummary } = parseSourceMarkdown(markdown, sourcePath);
+  const { sourceTitle, sourceSummary } = parsedSource;
   if (metadata.title !== sourceTitle) {
     throw new Error(`Metadata title does not match final Markdown H1: ${slug}`);
   }
   if (metadata.summary !== sourceSummary) {
     throw new Error(`Metadata summary does not match final Markdown blockquote: ${slug}`);
   }
+  if (parsedSource.frontmatter) {
+    for (const field of ['category', 'tags', 'topics', 'concepts', 'share_quote', 'relations']) {
+      const metadataValue = field === 'relations' ? (metadata.relations || []) : metadata[field];
+      if (JSON.stringify(metadataValue) !== JSON.stringify(parsedSource.frontmatter[field])) {
+        throw new Error(`Metadata ${field} does not match final Markdown frontmatter: ${slug}`);
+      }
+    }
+  }
 
   const template = fs.readFileSync('tools/blog/article-template.html', 'utf8');
-  const page = buildPage(template, markdown, metadata, sourceRepoPath);
+  const page = buildPage(template, parsedSource.frontmatter ? parsedSource.bodyMarkdown : markdown, metadata, sourceRepoPath);
   const current = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, 'utf8') : '';
   if (mode === 'check') {
     if (current !== page) process.exitCode = 1;

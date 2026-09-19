@@ -1,11 +1,45 @@
 'use strict';
 
+const { validateSemanticMetadata } = require('./blog-taxonomy.js');
+
+const REQUIRED_FRONTMATTER_FIELDS = new Set(['category', 'tags', 'topics', 'concepts', 'share_quote', 'relations']);
+
 function normalizedLines(markdown) {
-  return String(markdown).replace(/\r/g, '').split('\n');
+  return String(markdown).replace(/^\uFEFF/, '').replace(/\r/g, '').split('\n');
+}
+
+function parseFrontmatter(lines, sourcePath) {
+  if (lines[0] !== '---') return { frontmatter: null, contentStartIndex: 0 };
+  const closingIndex = lines.findIndex((line, index) => index > 0 && line === '---');
+  if (closingIndex === -1) throw new Error(`Markdown frontmatter is not closed: ${sourcePath}`);
+
+  const frontmatter = {};
+  for (const line of lines.slice(1, closingIndex)) {
+    const match = /^([a-z_]+):\s*(.*)$/.exec(line);
+    if (!match) throw new Error(`Markdown frontmatter must use one field per line: ${sourcePath}`);
+    const [, field, rawValue] = match;
+    if (!REQUIRED_FRONTMATTER_FIELDS.has(field)) throw new Error(`Markdown frontmatter contains an unknown field: ${field} (${sourcePath})`);
+    if (Object.hasOwn(frontmatter, field)) throw new Error(`Markdown frontmatter field is duplicated: ${field} (${sourcePath})`);
+    if (field === 'category') {
+      if (!rawValue || rawValue !== rawValue.trim() || rawValue.startsWith('"')) throw new Error(`Markdown frontmatter category must be an unquoted value: ${sourcePath}`);
+      frontmatter[field] = rawValue;
+      continue;
+    }
+    try {
+      frontmatter[field] = JSON.parse(rawValue);
+    } catch {
+      throw new Error(`Markdown frontmatter ${field} must use a JSON-compatible inline value: ${sourcePath}`);
+    }
+  }
+  for (const field of REQUIRED_FRONTMATTER_FIELDS) {
+    if (!Object.hasOwn(frontmatter, field)) throw new Error(`Markdown frontmatter is missing required field: ${field} (${sourcePath})`);
+  }
+  return { frontmatter, contentStartIndex: closingIndex + 1 };
 }
 
 function parseSourceMarkdown(markdown, sourcePath = '<inline Markdown>') {
   const lines = normalizedLines(markdown);
+  const { frontmatter, contentStartIndex } = parseFrontmatter(lines, sourcePath);
   const outsideFence = [];
   let fenceChar = null;
 
@@ -21,7 +55,7 @@ function parseSourceMarkdown(markdown, sourcePath = '<inline Markdown>') {
 
   const headings = lines
     .map((line, index) => ({ line, index }))
-    .filter(({ line, index }) => outsideFence[index] && /^#\s+/.test(line));
+    .filter(({ line, index }) => index >= contentStartIndex && outsideFence[index] && /^#\s+/.test(line));
   if (headings.length !== 1) {
     throw new Error(`Markdown source must contain exactly one H1: ${sourcePath}`);
   }
@@ -61,7 +95,18 @@ function parseSourceMarkdown(markdown, sourcePath = '<inline Markdown>') {
   const sourceSummary = summaryBlockquote.join(' ').replace(/\s+/g, ' ').trim();
   if (!sourceSummary) throw new Error(`Markdown source summary is empty: ${sourcePath}`);
 
-  return { sourceTitle, sourceSummary, summaryBlockquote, separatorIndex };
+  const bodyMarkdown = lines.slice(separatorIndex + 1).join('\n');
+  if (frontmatter) {
+    validateSemanticMetadata({ ...frontmatter, slug: sourcePath === '<inline Markdown>' ? '<inline>' : sourcePath.split(/[\\/]/).pop().replace(/\.md$/, '') }, {
+      knownSlugs: frontmatter.relations.map((relation) => relation && relation.slug).filter(Boolean),
+      source: sourcePath,
+    });
+    if (!bodyMarkdown.includes(frontmatter.share_quote)) {
+      throw new Error(`Markdown frontmatter share_quote must exist in the final body: ${sourcePath}`);
+    }
+  }
+
+  return { frontmatter, sourceTitle, sourceSummary, summaryBlockquote, separatorIndex, bodyMarkdown, contentStartIndex };
 }
 
 function extractSummaryBlockquote(markdown, sourcePath) {

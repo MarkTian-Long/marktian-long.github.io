@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "updated_at": "2026-09-19",
+  "categories": {
+    "active": [
+      {
+        "name": "技术",
+        "core_question": "能力为什么成立",
+        "definition": "架构设计、工程实现、技术选型、模型机制、训练/推理/评测机制与工程范式演进；正文核心研究对象是技术本身时归此类。"
+      },
+      {
+        "name": "产品",
+        "core_question": "产品应该怎么做",
+        "definition": "PM 决策框架、产品分析、场景判断、边界划分、功能设计，以及具体 AI 产品/工具拆解；跨公司举例但最终服务于产品决策或场景选择时仍归产品。"
+      },
+      {
+        "name": "商业",
+        "core_question": "企业如何创造并捕获价值",
+        "definition": "回答企业如何创造、捕获和分配价值。包括谁付钱/为什么付钱、商业模式、定价、收入、成本、TCO、采购经济性、Build vs Buy、单位经济、GTM、商业护城河、价值链、利润池、公司战略、TAM、估值和价值分配。重点不是狭义财务分析，而是公司怎样把能力变成持续商业价值，以及为什么某家公司或某类公司能获得这部分价值。"
+      },
+      {
+        "name": "行业",
+        "core_question": "整个领域正在怎么变",
+        "definition": "产业/职业结构变化、市场演进、跨公司厂商路线、生态与标准、组织形态变化，以及行业级竞争重心迁移。"
+      }
+    ],
+    "legacy": [
+      {
+        "name": "生活",
+        "definition": "仅为已发布历史文章兼容保留；新 Markdown 禁止使用，且本任务不自动重分类历史文章。"
+      }
+    ]
+  },
+  "tags": [
+    { "name": "竞争判断", "definition": "分析单一产品/事件背后的竞争信号", "distinguish_from": "核心词是竞争；文章落点必须是某产品或事件对竞争格局的含义。不涉及竞争的风险评估、行业趋势不属于此标签。" },
+    { "name": "架构设计", "definition": "系统架构、技术选型", "status": "deprecated", "notes": "仅兼容已发布的 llm-customer-service-tech-guide；不作为新文章的推荐标签。" },
+    { "name": "市场格局", "definition": "判断行业整体趋势、竞争重心迁移、多方势力博弈", "distinguish_from": "视角跨越多家公司或整个行业；单一产品用竞争判断，行业趋势用市场格局。" },
+    { "name": "技术判断", "definition": "判断某项技术或技术风险的生命周期、价值与边界", "distinguish_from": "结论是这个技术/这个风险值不值得关注、还有多久消亡、边界在哪；包含风险评估类文章。" },
+    { "name": "工程演进", "definition": "技术栈/工程范式的整体演进趋势", "distinguish_from": "结论是工程重心在往哪个方向移动。" },
+    { "name": "决策框架", "definition": "提供任何领域可复用的判断结构", "distinguish_from": "核心产出是一个可套用的框架，不限受众是 PM 还是通用。" },
+    { "name": "独立开发", "definition": "独立产品从 0 到 1、工程实践" },
+    { "name": "冷启动", "definition": "产品早期增长、首批用户获取" },
+    { "name": "出海", "definition": "海外市场、本地化、跨境产品" },
+    { "name": "职业判断", "definition": "职业选择、机会评估、个人策略" }
+  ],
+  "topics": [
+    { "name": "Agent", "definition": "Agent 设计、工作流编排、多 Agent 协作", "distinguish_from": "核心讨论 Agent 机制才打，泛提及不打。" },
+    { "name": "RAG", "definition": "检索增强生成、知识库架构" },
+    { "name": "Fine-tuning", "definition": "微调策略、数据工程、模型定制" },
+    { "name": "提示工程", "definition": "Prompt 设计、上下文工程、提示生命周期" },
+    { "name": "企业AI", "definition": "企业 AI 落地、采购决策、组织推进", "distinguish_from": "侧重落地场景和决策，非技术机制本身。" },
+    { "name": "金融科技", "definition": "金融机构或金融 B 端 AI 的合规、采购/POC、产品决策与落地", "distinguish_from": "仅当金融业务语境实质改变文章的判断边界时使用；通用企业 AI 落地仍归企业AI。" },
+    { "name": "智能客服", "definition": "客服智能体、服务流程、工单升级与客服系统架构", "distinguish_from": "讨论客服场景本身才使用；若核心是检索技术，可与 RAG 并列。" },
+    { "name": "业务语义", "definition": "本体、语义层、术语/实体/关系、指标口径与业务规则的显式建模、复用和治理", "distinguish_from": "讨论企业系统如何统一定义和消费业务含义；区别于 RAG（检索与知识库架构）和企业AI（泛化的落地场景与组织推进）。" },
+    { "name": "产品设计", "definition": "产品方法论、竞品分析、功能设计、用户体验；也包括具体 AI 产品/工具的拆解与竞争判断", "distinguish_from": "落点是产品决策或竞争信号，而非工具使用实践。" },
+    { "name": "模型能力", "definition": "大模型的能力边界、软性质量、适用场景分析", "distinguish_from": "侧重对模型本身能力的判断；区别于产品设计（具体产品拆解）和前沿研究（实验阶段系统）。" },
+    { "name": "评测体系", "definition": "benchmark 设计、评测方法论、第三方评测生态", "distinguish_from": "文章核心必须是评测机制本身，而非具体模型的能力表现。" },
+    { "name": "前沿研究", "definition": "以具体研究成果或实验系统为切口的分析", "distinguish_from": "起点必须是研究/实验阶段的系统或论文（非生产工具）；区别于产品设计（已上线产品）和技术判断 tag（成熟技术的选型判断）。" },
+    { "name": "算力基础设施", "definition": "计算硬件架构、芯片类型分工（CPU/GPU/ASIC等）、数据中心算力生态", "distinguish_from": "不限于 AI 专用场景，重点在底层硬件层的结构性分析；区别于模型能力（软件层的模型能力判断）。" }
+  ],
+  "concepts": {
+    "min_items": 4,
+    "max_items": 7,
+    "generic_terms": ["AI", "产品", "技术", "行业"],
+    "disallow_exact_tag_topic_duplicates": true,
+    "naming_rule": "使用去重、命名稳定的具体短语；同一概念尽量全站同名。"
+  },
+  "relation_types": ["builds_on", "revises", "companion"]
+}

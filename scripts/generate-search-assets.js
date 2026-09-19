@@ -3,6 +3,7 @@ const path = require('path');
 
 const config = require('./site-config');
 const { validateImageContract } = require('./blog-image-contract');
+const { validateSemanticMetadata } = require('../tools/blog/blog-taxonomy.js');
 const {
   articleUrl,
   buildRobots,
@@ -13,9 +14,6 @@ const {
 } = require('./search-foundation');
 
 const BLOG_SCHEMA_VERSION = 4;
-const ALLOWED_CATEGORIES = new Set(['技术', '产品', '商业', '行业', '生活']);
-const GENERIC_CONCEPTS = new Set(['AI', '产品', '技术', '行业']);
-const ALLOWED_RELATION_TYPES = new Set(['builds_on', 'revises', 'companion']);
 
 function loadPosts(rootDir) {
   const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
@@ -61,20 +59,6 @@ function validatePosts(posts) {
   }
 }
 
-function validateStringArray(post, field) {
-  if (!Array.isArray(post[field]) || !post[field].length) {
-    throw new Error(`Post ${field} must be a non-empty array: ${post.slug}`);
-  }
-  for (const value of post[field]) {
-    if (typeof value !== 'string' || !value.trim() || value !== value.trim()) {
-      throw new Error(`Post ${field} entries must be trimmed non-empty strings: ${post.slug}`);
-    }
-  }
-  if (new Set(post[field]).size !== post[field].length) {
-    throw new Error(`Post ${field} entries must be unique: ${post.slug}`);
-  }
-}
-
 function validateBlogMetadata(metadata) {
   if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
     throw new Error('posts-meta.json must contain an object');
@@ -91,43 +75,12 @@ function validateBlogMetadata(metadata) {
     if (typeof post.date !== 'string' || !/^\d{4}\.\d{2}$/.test(post.date)) {
       throw new Error(`Post date must use YYYY.MM: ${post.slug}`);
     }
-    if (typeof post.share_quote !== 'string' || !post.share_quote.trim() || post.share_quote !== post.share_quote.trim()) {
-      throw new Error(`Post share_quote must be a trimmed non-empty string: ${post.slug}`);
-    }
-    validateStringArray(post, 'tags');
-    validateStringArray(post, 'topics');
-    if (typeof post.category !== 'string' || !ALLOWED_CATEGORIES.has(post.category)) {
-      throw new Error(`Post category is invalid: ${post.slug}`);
-    }
-    if (!Array.isArray(post.concepts)) {
-      throw new Error(`Post concepts must be an array: ${post.slug}`);
-    }
-    if (post.concepts.length < 4 || post.concepts.length > 7) {
-      throw new Error(`Post concepts must contain 4 to 7 entries: ${post.slug}`);
-    }
-    validateStringArray(post, 'concepts');
-    if (post.concepts.some(concept => GENERIC_CONCEPTS.has(concept))) {
-      throw new Error(`Post concepts cannot use generic terms: ${post.slug}`);
-    }
-    const labels = new Set([...post.tags, ...post.topics]);
-    if (post.concepts.some(concept => labels.has(concept))) {
-      throw new Error(`Post concepts cannot duplicate tag or topic: ${post.slug}`);
-    }
-    if (post.relations !== undefined && !Array.isArray(post.relations)) {
-      throw new Error(`Post relations must be an array when present: ${post.slug}`);
-    }
-    const targets = new Set();
+    validateSemanticMetadata({ ...post, relations: post.relations || [] }, {
+      allowLegacyCategory: true,
+      knownSlugs: postSlugs,
+      source: post.slug,
+    });
     for (const relation of post.relations || []) {
-      if (!relation || typeof relation !== 'object' || Array.isArray(relation)) {
-        throw new Error(`Post relation must be an object: ${post.slug}`);
-      }
-      if (typeof relation.slug !== 'string' || !relation.slug.trim() || !postSlugs.has(relation.slug)) {
-        throw new Error(`Post relation target must exist: ${post.slug}`);
-      }
-      if (relation.slug === post.slug) throw new Error(`Post relation cannot reference itself: ${post.slug}`);
-      if (!ALLOWED_RELATION_TYPES.has(relation.type)) throw new Error(`Post relation type is invalid: ${post.slug}`);
-      if (targets.has(relation.slug)) throw new Error(`Post relation target is duplicated: ${post.slug}`);
-      targets.add(relation.slug);
       explicitRelationTargets.get(post.slug).add(relation.slug);
       explicitRelationTargets.get(relation.slug).add(post.slug);
     }

@@ -18,12 +18,12 @@ type: workflow
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章后直接进入“推送 HITL”，不要重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 若源稿末尾含 `publish_handoff`，先确保该 slug 已存在于 `posts-meta.json`，再运行 `node tools/blog/publish-handoff.js --write <source.md>`；不要先运行交接脚本再补元数据。
+6. 新文章必须有严格 frontmatter；运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`。
 
 ## 2. 生成发布资产
 
-1. 发布阶段由 Codex 按 `tools/blog/WRITING_GUIDE.md` 从最终 Markdown 正文选择 `share_quote` 并写入 `posts-meta.json`；Markdown 不需要携带该字段。确认元数据包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。
-2. 审核 `summary` 是否自然说明对象/问题、核心判断及关键机制或边界；审核 `concepts` 是否为 4-7 个具体、去重、非泛词的语义锚点，且不与 `tags/topics` 精确重复。若分类、标签、摘要或 concepts 存在实质歧义时向用户确认。
+1. 读取最终 Markdown 的 frontmatter、H1、summary blockquote 和正文。Codex 只验证：category/tags/topics/concepts/share_quote/relations 均符合 `blog-taxonomy.json`，share_quote 在正文存在，H1/blockquote 与同步结果一致，slug/url 派生正确。不得改 category、创造或替换 tag/topic、追加 concepts、另造 share_quote，或从相似度/正文链接/推荐位推断 relations；冲突必须 fail。
+2. 确认 metadata 包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。已有文章保留 date 和 visuals；新文章由同步命令赋予实际 YYYY.MM。不要人工编辑这些语义字段。
 3. 在最终内容与元数据评审完成后、生成 HTML 前执行视觉阶段：
    - 图片完全可选。先判断封面、正文图或纯文字哪种形式最适合文章；纯文字文章可省略 `visuals` 并让 OG/Twitter/JSON-LD 回退到全站默认图。若使用图片，再按 `tools/blog/VISUAL_GUIDE.md` 声明 `visuals`、处理资产和复核显示效果。
    - 默认使用 Codex 内置 `imagegen`，此模式不索取、读取或配置 API key。只有用户明确选择时才使用 CLI/API 回退。
@@ -58,6 +58,7 @@ type: workflow
 所有写入操作完成后，只运行一次最终验证批次：
 
 ```powershell
+node tools/blog/check-blog-taxonomy.js
 node scripts/check-blog-images.js
 node scripts/generate-search-assets.js --check
 node scripts/check-search-foundation.js
