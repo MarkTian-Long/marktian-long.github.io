@@ -31,7 +31,7 @@ GitHub 用于保存可公开部署、可复现开发、可审查维护的项目�
 | 部署定义 | `.github/workflows/` | 可复现部署流程；修改前仍需用户确认 |
 | 项目级待办 | `TODO.md` | 只记录项目工作，不写个人隐私或账号信息 |
 
-博客新文章必须同时提交 Markdown 源稿、发布 HTML、`posts-meta.json` 更新和重新生成的搜索发现资产。历史文章的 Markdown 与 HTML 如有差异，按文章逐篇核对，不能批量覆盖。
+博客未发布完整稿可以维护在 `drafts/blog/<slug>.md`，它是 GitHub 中的单一当前工作稿，但不进入网站发布链。用户确认发布后，将当前稿迁移为 `docs/blog/<slug>.md`，再同步 `posts-meta.json`、生成发布 HTML 与搜索发现资产，并删除对应 draft，避免双版本。历史文章的 Markdown 与 HTML 如有差异，按文章逐篇核对，不能批量覆盖。
 
 ## 必须只保留本地
 
