@@ -11,14 +11,14 @@ type: workflow
 ## 1. 预检
 
 1. 按 `AGENTS.md` 顺序读取共享上下文、`tools/blog/README.md`、`tools/blog/WRITING_GUIDE.md` 和 `docs/repository-policy.md`。
-2. 确认源稿位于 `docs/blog/<slug>.md`，从文件名取得 kebab-case `slug`。
+2. 确认当前文章只有一个 GitHub 工作稿。未发布文章可以位于 `drafts/blog/<slug>.md`；用户已经明确确认发布时，将它迁移为 `docs/blog/<slug>.md` 后再继续发布流程，并在同一发布变更中删除对应 draft，避免双版本。从最终 `docs/blog/<slug>.md` 文件名取得 kebab-case `slug`。
 3. 运行 `git status --short --branch`、`git diff --name-only` 和 `git diff --cached --name-only`。保留用户已有改动，只处理本次文章相关文件。
 4. 读取 `tools/blog/data/posts-meta.json`。使用 JSON 解析处理元数据，不做字符串拼接。
 5. 判断恢复点：
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章后直接进入“推送 HITL”，不要重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 新文章必须有严格 frontmatter；运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
+6. 新文章必须有严格 frontmatter；若从 `drafts/blog/` 迁移，先确认内容与最终 `docs/blog/<slug>.md` 完全一致且 draft 已纳入本次删除。再运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
 7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。每篇正式文章完成后，在统一规范沉淀复盘中评估是否有跨文章稳定规则需要更新这一权威源。
 
 ## 2. 生成发布资产
