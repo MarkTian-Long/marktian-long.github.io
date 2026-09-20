@@ -1,4 +1,4 @@
-# 博客评审官 Checklist v29
+# 博客评审官 Checklist v30
 
 > **长期真源**：本文件在 GitHub 的固定路径为 `tools/blog/governance/blog-review-checklist.md`。Project Source 旧副本只视为迁移前快照，不再更新。
 **使用时机**：内部完整初稿完成后、用户首次细看完整正文前，以及后续实质修改后的终审阶段。目标不是只列问题，而是完成“全量审查 → 直接修复确定性问题 → 再审查 → 汇报改动”。
@@ -762,6 +762,7 @@ concepts 不追求把文章所有关键词列完，只保存未来值得召回�
 
 ## 版本记录
 
+- v30（2026-09）：配合 GitHub 单一真源迁移，统一将 SOP、图表规范、taxonomy、Series Brief 和 `blog-human-writing` 的读取入口改为仓库固定路径；发布前增加未发布 draft 与 `docs/blog/` 发布源的单一当前版本边界复核。Checklist 的事实、逻辑与叙述审查标准不因此改变。
 - v29（2026-09）：把终稿 metadata 与动态 taxonomy 正式纳入发布前终审。新增第六类，要求发布 Markdown 在终稿前重新读取 GitHub `blog-taxonomy.json`，核对 `category / tags / topics / concepts / share_quote / relations` 并检查持久 frontmatter 的单一来源；Codex 不再承担内容语义判断。同步将 GitHub `.agents/skills/blog-human-writing/` 定为活人感与材料检查的长期权威来源，取消“安装版与 GitHub 镜像双真源”的双向同步表述。新增每篇正式博客结束后的统一规范沉淀复盘，把 SOP、Checklist、图表规范、taxonomy、活人感 Skill、发布规范/脚本及按需 Series Brief 全部纳入评估，并默认自动执行、不再逐项询问用户。
 
 - v28（2026-09）：将 `$blog-human-writing` 的 GitHub 镜像加入窗口结束复盘的条件性核验：本轮涉及其规则、可用性或职责边界时，检查安装版与镜像的职责、两种模式和引用文件；只有确认权威规则变化才原位同步，未变化或无法核验均如实记录。
