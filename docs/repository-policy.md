@@ -21,7 +21,7 @@ GitHub 用于保存可公开部署、可复现开发、可审查维护的项目�
 |---|---|---|
 | 线上站点 | `index.html`、`assets/`、`tools/` | GitHub Pages 的实际运行内容 |
 | 公开生成物 | `robots.txt`、`sitemap.xml`、`feed.xml`、博客文章 HTML | 线上直接读取，必须和源码同版本 |
-| 内容源与数据 | `docs/blog/*.md`、`content/`、`tools/**/data/*.json` | 文章源稿、可公开项目资料和数据源 |
+| 内容源与数据 | `drafts/blog/*.md`、`docs/blog/*.md`、`content/`、`tools/**/data/*.json` | 博客未发布当前稿、发布源稿、可公开项目资料和数据源 |
 | 生成与验证代码 | `scripts/`、`tools/blog/generate-post.js`、测试文件 | 保证别人和未来 Agent 能复现结果 |
 | 脱敏配置模板 | `config.example.js`、不含密钥的公共配置 | 说明配置结构，不携带真实凭据 |
 | 项目规范 | `README.md`、`CONVENTIONS.md`、`AGENTS.md`、`CLAUDE.md` | 所有维护者共同遵守 |
