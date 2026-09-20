@@ -1,4 +1,4 @@
-# 产品分析博客生成 SOP v32
+# 产品分析博客生成 SOP v33
 
 ---
 
@@ -784,6 +784,7 @@ frontmatter 规则：
 
 ## 版本记录
 
+- v33（2026-09）：完成 Blog 项目 GitHub 单一真源迁移。长期规范统一从 `tools/blog/governance/`、`tools/blog/data/`、`.agents/skills/blog-human-writing/` 与 `tools/blog/series/` 读取，Project Source 仅保留为迁移前快照；未发布完整稿统一维护在 `drafts/blog/<slug>.md`，确认发布后再迁移到 `docs/blog/<slug>.md`。同时明确写入后回读验证与草稿/发布源的单一当前版本边界。
 - v32（2026-09）：重构网页版写作与发布端的 metadata 职责。GitHub `blog-taxonomy.json` 成为 category/tags/topics/concepts 规则的唯一长期真源；新文章启动与终稿冻结前分别读取最新 taxonomy，taxonomy 缺口走显式 change + 历史 audit。最终 Markdown 改为持久 frontmatter，网页版冻结 `category / tags / topics / concepts / share_quote / relations`，Codex 只校验和发布；新文章不再依赖 transport-only `publish_handoff/body_link_only`。同时将 GitHub `.agents/skills/blog-human-writing/` 升级为活人感与材料检查的长期权威来源，安装 Skill 只作运行入口；每篇正式博客结束后默认执行统一规范沉淀复盘，将 SOP、Checklist、图表规范、taxonomy、活人感 Skill、发布规范/脚本及按需 Series Brief 全部纳入评估范围，不再额外询问是否需要复盘。
 
 - v31（2026-09）：把 GitHub 镜像纳入窗口结束复盘的条件性核验。只有本轮涉及 `$blog-human-writing` 的规则、可用性或边界时，才比较已安装 Skill 与镜像的职责、两种模式和引用文件；规则未变时记录“无需同步”，任一侧不可读取时记录“未能核验”，不把镜像当作自动安装入口，也不因一次普通写作无依据改写镜像。
