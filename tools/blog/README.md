@@ -54,10 +54,10 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **新增文章**：遵循 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md`。最终 Markdown 顶部的严格 frontmatter 固定 category、tags、topics、concepts、share_quote 和 relations；标题下唯一 blockquote 是正式 `summary`。Codex 只校验并同步到 `data/posts-meta.json`，不重新判断内容语义。封面、正文图和纯文字文章都可按内容需要选择；无图文章的分享元数据回退站点默认图
-- **文章清单**：以 `data/posts-meta.json` v4 为单一来源；单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方目录只保留近期与代表性文章，避免手工清单漂移
+- **新增文章**：研究/写作先从 `governance/README.md` 进入，按需读取 `governance/blog-sop.md`、`governance/blog-review-checklist.md`、`governance/blog-charts-spec.md` 与对应 `series/*.md`；网站发布契约仍以 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md` 为准。未发布完整稿维护在 `../../drafts/blog/<slug>.md`，最终 Markdown 顶部的严格 frontmatter 固定 category、tags、topics、concepts、share_quote 和 relations；标题下唯一 blockquote 是正式 `summary`
+- **文章清单**：`data/posts-meta.json` v4 是网站运行索引；文章内容语义以最终 Markdown 为源。单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表即可。第一项是首页精选，Blog 最多展示前三项；最多 3 项，空数组关闭精选。不要把精选字段写入文章 metadata。
-- **正文源稿**：新文章必须在 `docs/blog/<slug>.md` 保留 Markdown 编辑源，并与 `tools/blog/posts/<slug>.html` 发布物一起提交；历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
+- **正文源稿**：未发布完整稿在 `drafts/blog/<slug>.md` 原位维护；用户确认发布后迁移为 `docs/blog/<slug>.md`，同步 metadata、生成 `tools/blog/posts/<slug>.html` 后删除对应 draft。历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
 - **发布生成**：新文章固定经过「网页版写作 → 最终 Markdown frontmatter → Codex 读取当前 taxonomy 后校验 → sync posts-meta → generate HTML → search/RSS/sitemap → QA → 发布」。Codex 不选择或生成 `category`、`tags`、`topics`、`concepts`、`share_quote` 或 relations；它只校验最终 frontmatter。随后运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它读取 frontmatter 和 H1/blockquote，同步运行索引并保留已有 `visuals` 等资产字段。图片完全可选；如使用图片，再用 `scripts/prepare-blog-image.js` 处理成品并维护 `visuals` 和 Markdown 独立图片语法，随后运行 `node tools/blog/generate-post.js --write <source.md> <output.html>`。`publish_handoff` 仅可兼容历史文件，`body_link_only` 仅是其历史 transport 字段，二者均不属于新文章路径；最后运行 `node scripts/generate-search-assets.js --write`
 - **材料与活人感审校**：`.agents/skills/blog-human-writing/` 是唯一长期规则真源。每次真正执行材料检查或活人感审校，读取其当前 `SKILL.md` 和对应 `references/`；已安装 Skill 与 `.claude/skills/` 仅为运行入口/兼容副本，不能独立演化。每篇正式 Blog 完成后的统一规范沉淀复盘，评估是否存在应写回权威源的跨文章稳定规则。
