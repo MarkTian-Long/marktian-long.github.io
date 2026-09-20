@@ -9,6 +9,8 @@ tools/blog/
 ├── README.md               本文件
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
 ├── VISUAL_GUIDE.md         新文章视觉系统（封面/正文图/提示词/资产检查）
+├── governance/             写作流程、终审与图表规范的长期真源
+├── series/                 当前进行中系列的共享 Brief
 ├── article-links.css       文章页共享链接语义与键盘焦点样式
 ├── article-runtime.js      文章页共享主题、阅读预期、元数据降级、参考资料呈现、继续阅读与时间导航
 ├── share-card.*            本地 Canvas 分享海报页（固定 1080 × 1920 PNG）
