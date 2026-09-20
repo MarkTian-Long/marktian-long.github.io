@@ -19,7 +19,7 @@ relations: [{"slug":"market-landscape-2026","type":"revises"}]
 
 我自己也踩过类似的坑。今年 4 月，我在[《2026 年 AI Agent 市场格局》](https://marktian-long.github.io/tools/blog/posts/market-landscape-2026.html)里写过一句很满的话：“框架大战已经基本结束，赢家已经确定。”当时看到的局部收敛是真的，但现在再看，把某一类 Agent 开发框架的收敛放大成整个 Agent 生态的阶段判断，这个判断推得太远。曾鸣是在重新校准整个产业的历史坐标，我的问题则是把一个子层的成熟度放大成了整个市场的成熟度，但两件事都指向同一个提醒：**历史坐标和阶段判断有用，前提是先选对比较的对象和粒度。**
 
-差不多就在这段时间，我又连续看到两条收购新闻。8 月，[Stripe 宣布收购 OpenRouter](https://stripe.com/newsroom/news/stripe-agrees-to-acquire-openrouter)，后者已经覆盖 400 多个模型和 80 多家模型供应商；9 月，[NVIDIA 宣布以约 129.3 亿美元收购 Hugging Face](https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/)，后者已经聚集超过 1800 万开发者和 300 多万个模型。我最初对这两条新闻感兴趣，并不是因为它们“像历史上的谁”，而是另一个问题：**为什么模型能力还在快速进步的时候，负责发现、选择、调用和路由这些能力的中间层，也开始变得越来越重要？** 再回头看 Yahoo、浏览器和 Google，这个问题比寻找某个精确历史年份更值得追下去。
+差不多就在这段时间，我又连续看到两条收购新闻。8 月，[Stripe 宣布已达成收购 OpenRouter 的协议](https://stripe.com/newsroom/news/stripe-agrees-to-acquire-openrouter)，后者已经覆盖 400 多个模型和 80 多家模型供应商；9 月，[NVIDIA 宣布已达成以约 129.3 亿美元收购 Hugging Face 的协议](https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/)，后者已经聚集超过 1800 万开发者和 300 多万个模型。我最初对这两条新闻感兴趣，并不是因为它们“像历史上的谁”，而是另一个问题：**为什么模型能力还在快速进步的时候，负责发现、选择、调用和路由这些能力的中间层，也开始变得越来越重要？** 再回头看 Yahoo、浏览器和 Google，这个问题比寻找某个精确历史年份更值得追下去。
 
 ## 一、从“Yahoo 时刻”往回看，真正重复的是什么？
 
@@ -29,7 +29,7 @@ relations: [{"slug":"market-landscape-2026","type":"revises"}]
 
 这时再看 OpenRouter 和 Hugging Face，就比寻找“谁是 AI Yahoo”有意思得多。Hugging Face 更靠近模型、数据集和应用的发现、协作与分发。[2026 年夏季报告](https://huggingface.co/blog/state-of-open-models-summer-2026)显示，Hub 上公开模型仓库从年初的 243 万增长到 296 万，数据集从 71.1 万增长到约 100 万，Spaces 从 100 万增长到 144 万；但 85.6% 的模型终身下载不足 200 次，而 1.5% 的仓库拿走了 99.2% 的下载量。供给越来越多，本身并不能解决“什么值得用”。
 
-OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行时还要决定调用哪个模型、使用哪家供应商，以及怎样在成本、性能和可靠性之间路由。Stripe 收购它时强调的，也正是 400 多个模型、80 多家供应商之上的 Token（词元）路由和优化。
+OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行时还要决定调用哪个模型、使用哪家供应商，以及怎样在成本、性能和可靠性之间路由。Stripe 的收购公告强调的，也正是 400 多个模型、80 多家供应商之上的 Token（词元）路由和优化。
 
 所以 Hugging Face、OpenRouter 和 Yahoo 并不是三个可以逐项对应的产品，但它们背后共享一个更稳定的机制：**当一种技术把供给做得足够丰富以后，稀缺性往往会从“有没有供给”，迁向“怎样发现、评价、选择和协调供给”。**
 
@@ -111,7 +111,7 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 
 到这里，我们回答的还是技术会把经济活动带到哪里。但还有另一个问题：如果能力越来越强、经济活动越来越多，“做得更多”本身就是最终目标吗？
 
-王坚今年在外滩大会提出的一个问题给了我另一种观察角度。他问，[未来城市有没有可能只用今天大约 10% 的资源，仍然让人生活得很好](https://news.caijingmobile.com/article/detail/581243?source_id=40)；谈到 AI 自身耗电时，他还提出过“[AI 投入一度电，世界也许能在别处少用十度电](https://news.10jqka.com.cn/20260911/c679836136.shtml)”的设想。这里的 10% 和“一度换十度”，我更愿意把它们理解成一个价值目标，而不是已经验证的效率数据。
+据媒体报道，王坚今年在外滩大会提出的一个问题给了我另一种观察角度。他问，[未来城市有没有可能只用今天大约 10% 的资源，仍然让人生活得很好](https://news.caijingmobile.com/article/detail/581243?source_id=40)；谈到 AI 自身耗电时，他还提出过“[AI 投入一度电，世界也许能在别处少用十度电](https://news.10jqka.com.cn/20260911/c679836136.shtml)”的设想。这里的 10% 和“一度换十度”，我更愿意把它们理解成一个价值目标，而不是已经验证的效率数据。
 
 这个问题把技术价值从另一个方向打开了。技术进步当然可以意味着“同样的资源做更多事情”，但也可以反过来问：“得到同样甚至更好的结果，能不能少用很多资源？”奇绩材料里的“Token Max → Token 效益”，是在更窄的产业尺度上问类似的问题：探索能力边界时，使用更多 Token 有价值；进入真实业务以后，单位 Token 到底换来多少真实结果，会越来越重要。
 
@@ -154,6 +154,7 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 - [张小珺 × 曾鸣：《和曾鸣聊产业史观：我的非共识判断》](https://mp.weixin.qq.com/s/KiN29IcdzkNY_Yo4GJus0w)
 - [《财经》：外滩大会｜王坚抛出未来城市之问：可否仅用 10% 资源实现美好生活？](https://news.caijingmobile.com/article/detail/581243?source_id=40)
 - [同花顺财经：王坚谈 AI 用电与资源节约](https://news.10jqka.com.cn/20260911/c679836136.shtml)
+- [奇绩：《前沿创业机会｜奇绩在找这样的 AI 创业者 #2》](https://mp.weixin.qq.com/s/mi9atrSEpyQuM7RiBweRPA)
 
 ### 学术研究 / 历史材料
 
@@ -164,7 +165,7 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 - [Bresnahan, Greenstein & Yin：New Economic Forces Behind the Value Distribution of Innovation](https://www.nber.org/papers/w34090)
 - [Chicago Fed：Information Technology and the U.S. Productivity Acceleration](https://www.chicagofed.org/publications/chicago-fed-letter/2003/september-193)
 
-### 当前产业状态 / 一手资料
+### 当前产业状态 / 官方与研究机构资料
 
 - [Stripe：Stripe agrees to acquire OpenRouter](https://stripe.com/newsroom/news/stripe-agrees-to-acquire-openrouter)
 - [NVIDIA：NVIDIA to Acquire Hugging Face](https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/)
@@ -176,7 +177,6 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 - [Linux Foundation：Agent Name Service](https://www.linuxfoundation.org/press/linux-foundation-announces-intent-to-launch-agent-name-service-to-establish-trusted-identity-infrastructure-for-ai-agents)
 - [IEA：Key Questions on Energy and AI — Executive summary](https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary)
 - [IEA：Energy and AI — Executive summary](https://www.iea.org/reports/energy-and-ai/executive-summary)
-- [奇绩：《前沿创业机会｜奇绩在找这样的 AI 创业者 #2》](https://mp.weixin.qq.com/s/mi9atrSEpyQuM7RiBweRPA)
 
 ### 历史博客
 
