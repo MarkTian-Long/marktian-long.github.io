@@ -75,7 +75,8 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 产品案例：`assets/js/main.js` → `casesData` 数组
 - AI 产品数据：`tools/ai-insights/data/products.json`
 - AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
-- 博客文章元数据：`tools/blog/data/posts-meta.json`（单一来源，主页和列表页都 fetch 读取）
+- 博客写作治理真源：`tools/blog/governance/README.md`；写作前按需读取 `blog-sop.md`、`blog-review-checklist.md`、`blog-charts-spec.md` 与对应 `tools/blog/series/*.md`
+- 博客工作稿：未发布完整稿维护在 `drafts/blog/<slug>.md`；确认发布后迁移为 `docs/blog/<slug>.md`，再同步 `tools/blog/data/posts-meta.json`。最终 Markdown 是内容语义真源，`posts-meta.json` 是网站运行索引
 - GitHub / 本地文件归属：`docs/repository-policy.md`；提交前运行 `node scripts/check-repository-policy.js`
 
 ## 给 Claude 的工作指令
