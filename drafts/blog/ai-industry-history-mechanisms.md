@@ -157,4 +157,30 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 
 ### 学术研究 / 历史材料
 
-- [Brin & Page：The Anatomy of a Large-Scale Hypertextual Web Search Engine](https://research.google/pubs/the-
+- [Brin & Page：The Anatomy of a Large-Scale Hypertextual Web Search Engine](https://research.google/pubs/the-anatomy-of-a-large-scale-hypertextual-web-search-engine/)
+- [Bresnahan & Trajtenberg：General Purpose Technologies “Engines of Growth?”](https://www.nber.org/papers/w4148)
+- [Helpman & Trajtenberg：A Time to Sow and a Time to Reap](https://www.nber.org/papers/w4854)
+- [Acemoglu & Restrepo：Automation and New Tasks](https://www.nber.org/papers/w25684)
+- [Bresnahan, Greenstein & Yin：New Economic Forces Behind the Value Distribution of Innovation](https://www.nber.org/papers/w34090)
+- [Chicago Fed：Information Technology and the U.S. Productivity Acceleration](https://www.chicagofed.org/publications/chicago-fed-letter/2003/september-193)
+
+### 当前产业状态 / 一手资料
+
+- [Stripe：Stripe agrees to acquire OpenRouter](https://stripe.com/newsroom/news/stripe-agrees-to-acquire-openrouter)
+- [NVIDIA：NVIDIA to Acquire Hugging Face](https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/)
+- [Hugging Face：State of Open Models: Summer 2026](https://huggingface.co/blog/state-of-open-models-summer-2026)
+- [Stanford HAI：2026 AI Index — Economy](https://hai.stanford.edu/ai-index/2026-ai-index-report/economy)
+- [Stanford HAI：2026 AI Index — Technical Performance](https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance)
+- [Linux Foundation：A2A Protocol Surpasses 150 Organizations](https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year)
+- [Linux Foundation：DNS-AID](https://www.linuxfoundation.org/press/linux-foundation-announces-dns-aid-project-to-advance-decentralized-ai-agent-discovery)
+- [Linux Foundation：Agent Name Service](https://www.linuxfoundation.org/press/linux-foundation-announces-intent-to-launch-agent-name-service-to-establish-trusted-identity-infrastructure-for-ai-agents)
+- [IEA：Key Questions on Energy and AI — Executive summary](https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary)
+- [IEA：Energy and AI — Executive summary](https://www.iea.org/reports/energy-and-ai/executive-summary)
+- [奇绩：《前沿创业机会｜奇绩在找这样的 AI 创业者 #2》](https://mp.weixin.qq.com/s/mi9atrSEpyQuM7RiBweRPA)
+
+### 历史博客
+
+- [《2026 年 AI Agent 市场格局：开放 vs 封闭的博弈》](https://marktian-long.github.io/tools/blog/posts/market-landscape-2026.html)
+- [《Skill 系统的本质：不是 Prompt 工程化，是 Harness 的支撑》](https://marktian-long.github.io/tools/blog/posts/skill-system-and-harness.html)
+- [《当 AI 开始主动找你：下一个软件入口，会是用来排序 AI 请求的那一层》](https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html)
+- [《AI 正在把“使用软件”和“操作软件”拆开》](https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html)
