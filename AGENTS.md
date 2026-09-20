@@ -144,7 +144,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 | `sync-docs` | 代码变更后同步 README/Codex/CONVENTIONS（含博客文档） | 2026-04 |
 | `update-trends` | 候选发现 → 人工事实复核 → 显式写入 trends.json | 2026-08 |
 | `monthly-review` | 月度维护：记忆清理 + 规范文档同步 + 季度架构快照 | 2026-05-13 |
-| `publish-blog` | 博客生成、检查、提交、推送回退与线上验证 | 2026-07-29 |
+| `publish-blog` | 博客生成、检查、提交、推送回退与线上验证 | 2026-09-20 |
 
 **维护规则：**
 - skill 文件必须以 `.agents/skills/<name>/SKILL.md` 为源（不能是根目录裸 `.md` 文件）
