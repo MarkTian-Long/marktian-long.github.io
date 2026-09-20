@@ -18,6 +18,8 @@ qiuzhi/
 │   └── <tool-name>/
 │       └── index.html
 ├── content/                # Markdown 内容资料
+├── drafts/
+│   └── blog/               # 未发布博客的单一当前工作稿（不进入 Pages 发布链）
 └── docs/                   # 文档目录（分两类）
     ├── plans/              # 设计文档、复盘（纳入版本控制）
     │   └── archive/        # 已完结的计划文档归档
@@ -32,6 +34,7 @@ qiuzhi/
 4. **每个工具必须有 `README.md`**，说明功能、数据来源和维护方式
 5. **内容资料放 `content/`**，与代码分离，方便独立编辑和管理
 6. **设计文档放 `docs/plans/`**，纳入版本控制；**个人文件放 `docs/personal/`**，已在 `.gitignore` 中排除
+7. **博客未发布完整稿放 `drafts/blog/`**；确认发布后迁移到 `docs/blog/` 并删除对应 draft。博客写作治理从 `tools/blog/governance/README.md` 进入，不再以 Project Source 作为长期真源
 
 ---
 
