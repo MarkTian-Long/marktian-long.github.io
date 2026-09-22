@@ -175,6 +175,27 @@ h1{margin:8px 0 10px;font-size:clamp(30px,4vw,50px);line-height:1.15}
   .daily-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+
+.ticket-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.ticket-kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.ticket-kpi b{display:block;font-size:20px;margin-top:2px}
+.ticket-table-wrap{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.ticket-table{width:100%;border-collapse:collapse;min-width:980px}
+.ticket-table th,.ticket-table td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.ticket-table th{background:var(--soft-head);font-size:12px;color:var(--muted);white-space:nowrap}
+.ticket-table tr:last-child td{border-bottom:0}
+.ticket-table td:nth-child(1){font-weight:800;white-space:nowrap}
+.ticket-price{font-weight:800;color:var(--ink)}
+.booking-badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.booking-badge.none{background:var(--green2);color:var(--green)}
+.booking-badge.low{background:var(--blue2);color:var(--blue)}
+.booking-badge.mid{background:var(--amber2);color:var(--amber)}
+.booking-badge.high{background:var(--danger-soft);color:var(--danger)}
+.ticket-source{font-size:11px;color:var(--muted);margin-top:4px}
+.ticket-source a{color:var(--muted)}
+.ticket-note{margin-top:12px;padding:14px 16px;border-radius:14px;background:var(--soft);border:1px solid var(--soft-line);font-size:13px}
+@media(max-width:850px){.ticket-summary{grid-template-columns:1fr}}
+
 .source-list{font-size:13px;color:var(--muted)}
 .source-list li{margin:7px 0}
 footer{margin-top:28px;color:var(--muted);font-size:12px}
@@ -208,6 +229,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     <button data-jump="#map">路线地图</button>
     <button data-jump="#comparison">总对比</button>
     <button data-jump="#spots">景点取舍</button>
+    <button data-jump="#tickets">门票 / 预约</button>
     <button data-jump="#reviews">近期玩友反馈</button>
   </div>
 
@@ -489,6 +511,111 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
       <div class="spot"><div><b>九峰山</b><br><span class="pill skip">本轮删除</span></div><div class="muted">人工游乐和亲子项目占比更高，不如金祖峰贴合这趟旅行主题。</div><div class="score">不优先</div></div>
     </div>
   </section>
+
+
+  <section id="tickets" class="section">
+    <h2>门票、预约与“要不要抢”</h2>
+    <p class="sub">按 2026 年国庆前可查到的官方定价与当前售票页面整理。这里把“必须提前买”和“只是提前买更省事”分开，避免把普通景区门票理解成热门演唱会式抢票。</p>
+
+    <div class="ticket-summary">
+      <div class="ticket-kpi"><span class="muted">核心线路成人票参考</span><b>约 ¥325 / 人</b><span class="muted">乌带 0 + 五营 78 + 新青 40 + 汤旺河 115 + 鹿苑 52 + 金祖峰 40</span></div>
+      <div class="ticket-kpi"><span class="muted">若加茅兰沟</span><b>再加约 ¥85</b><span class="muted">门票 65 + 观光车往返 20；线上套票有时更低</span></div>
+      <div class="ticket-kpi"><span class="muted">真正建议提前锁票</span><b>五营 / 汤旺河</b><span class="muted">不是“秒杀”，主要防国庆限流、排队和临时无合适时段</span></div>
+    </div>
+
+    <div class="ticket-table-wrap">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>景点</th>
+            <th>2026 国庆价格参考</th>
+            <th>观光车 / 额外费用</th>
+            <th>预约建议</th>
+            <th>购票方式 / 备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>乌带公路</td>
+            <td><span class="ticket-price">免费</span></td>
+            <td>无景区门票</td>
+            <td><span class="booking-badge none">无需预约</span></td>
+            <td>它本质是自驾景观公路。国庆更需要关注停车点、交通和天气，不是门票。</td>
+          </tr>
+          <tr>
+            <td>五营红松林海</td>
+            <td><span class="ticket-price">线上门票+环保观光车约 ¥78 起</span><div class="ticket-source">当前 OTA 套票；官方景区网站也提供在线购票入口</div></td>
+            <td>套票已含环保观光车；入口到核心区距离较远，建议含车</td>
+            <td><span class="booking-badge high">建议提前 1–3 天</span><div class="ticket-source">2025 国庆单日最高客流超 1.3 万，景区实行票务预约、分流与峰值限流</div></td>
+            <td>不是典型“抢票”，但你计划在假期尾段去，最好别等到景区门口再决定。<div class="ticket-source"><a href="https://www.wyhslhjq.com/h-col-103.html" target="_blank" rel="noopener">官方购票页</a> · <a href="https://touch.piao.qunar.com/touch/detail.htm?id=6816" target="_blank" rel="noopener">当前票价页</a></div></td>
+          </tr>
+          <tr>
+            <td>新青国家湿地公园</td>
+            <td><span class="ticket-price">¥40</span></td>
+            <td>官方定价文件未列强制观光车</td>
+            <td><span class="booking-badge low">通常不用抢</span></td>
+            <td>08:00–17:00，16:00 停止售票。更值得提前确认的是当天开放、天气和白头鹤相关活动，而不是抢票。<div class="ticket-source"><a href="https://yc.gov.cn/ycsrmzf/c102042/202511/414207.shtml" target="_blank" rel="noopener">官方定价</a></div></td>
+          </tr>
+          <tr>
+            <td>汤旺河林海奇石</td>
+            <td><span class="ticket-price">¥90</span></td>
+            <td>观光车往返 <b>¥25</b>，自愿购买；按我们的路线建议坐车，合计约 <b>¥115</b></td>
+            <td><span class="booking-badge high">建议提前 1–3 天</span></td>
+            <td>伊春官方小程序体系可查实时客流和预订门票；景区 2026 年已升级自助取票。国庆前后客流大，提前买主要是减少排队与限流风险。<div class="ticket-source"><a href="https://yc.gov.cn/ycsrmzf/c102114/202602/421815.shtml" target="_blank" rel="noopener">官方定价</a></div></td>
+          </tr>
+          <tr>
+            <td>金山鹿苑</td>
+            <td><span class="ticket-price">线上约 ¥52 起</span><div class="ticket-source">平台展示门市参考约 ¥60，实时成交价会浮动</div></td>
+            <td>鹿粮等互动项目另付</td>
+            <td><span class="booking-badge low">不需要抢</span></td>
+            <td>当前平台可当天订，但部分产品购票后约 1 小时生效。因为我们更推荐早晨入园，最省心是前一晚买好。<div class="ticket-source"><a href="https://you.ctrip.com/sight/yichun498/45844.html" target="_blank" rel="noopener">当前开放 / 票务信息</a></div></td>
+          </tr>
+          <tr>
+            <td>金祖峰</td>
+            <td><span class="ticket-price">官方旺季 ¥40</span><div class="ticket-source">OTA 当前约 ¥38 起</div></td>
+            <td>无强制观光车信息</td>
+            <td><span class="booking-badge low">普通白天无需抢</span></td>
+            <td>若计划夜爬 / 日出，不是门票难买的问题，而是要前一晚确认天气、凌晨开放和现场安全规则。<div class="ticket-source"><a href="https://www.yc.gov.cn/ycsrmzf/c102114/202505/401269.shtml" target="_blank" rel="noopener">官方定价</a></div></td>
+          </tr>
+          <tr>
+            <td>上甘岭溪水</td>
+            <td><span class="ticket-price">窗口 ¥60</span></td>
+            <td>观光车 <b>¥10</b>，合计约 <b>¥70</b></td>
+            <td><span class="booking-badge none">无需抢票</span></td>
+            <td>官方明确支持窗口、自动售票、公众号和抖音购票。因为它是机动项，完全可以临近当天再决定。<div class="ticket-source"><a href="https://yc.gov.cn/12345/knowledgeExternal/toViewElastic.do?id=71ab1e93-56cf-4e46-a1ae-0e7b8154f29e" target="_blank" rel="noopener">2026 官方票务通知</a></div></td>
+          </tr>
+          <tr>
+            <td>兴安国家森林公园</td>
+            <td><span class="ticket-price">门票公开口径不一致</span></td>
+            <td>官方目前明确：观光车往返 <b>¥15</b></td>
+            <td><span class="booking-badge none">无需提前锁票</span></td>
+            <td>它本来就是市区近郊机动景点。官方最新文件只明确观光车价，没有查到同等权威的现行大门票定价；不建议提前在第三方买高价套票。<div class="ticket-source"><a href="https://www.yc.gov.cn/ycsrmzf/c102042/202508/407410.shtml" target="_blank" rel="noopener">官方观光车定价</a></div></td>
+          </tr>
+          <tr>
+            <td>茅兰沟</td>
+            <td><span class="ticket-price">官方旺季 ¥65</span></td>
+            <td>观光车单程 ¥10 / 往返 <b>¥20</b>；现场合计约 <b>¥85</b></td>
+            <td><span class="booking-badge mid">确定去就提前 ≥1 天</span></td>
+            <td>平台问答当前显示线上套票约 ¥80，但通常当日不能下单；窗口当天可买约 ¥85。不是必须抢，但提前一天既省钱又少排队。<div class="ticket-source"><a href="https://www.yc.gov.cn/ycsrmzf/c102114/202508/407837.shtml" target="_blank" rel="noopener">官方定价</a></div></td>
+          </tr>
+          <tr>
+            <td>嘉荫恐龙国家地质公园 <span class="muted">（可选）</span></td>
+            <td><span class="ticket-price">官方旺季 ¥60</span><div class="ticket-source">OTA 当前约 ¥55 起</div></td>
+            <td>观光车单程 ¥10 / 往返 ¥20</td>
+            <td><span class="booking-badge none">一般无需抢</span></td>
+            <td>如果只是顺路去嘉荫，可以临近再买；它不是我们当前自然景观优先线路里的核心。<div class="ticket-source"><a href="https://www.yc.gov.cn/ycsrmzf/c102042/202508/407835.shtml" target="_blank" rel="noopener">官方定价</a></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ticket-note">
+      <b>统一优惠规则：</b>政府定价的汤旺河、新青、金祖峰、茅兰沟、恐龙地质公园等，普遍执行 6 周岁及以下 / 1.2m 及以下儿童、65 周岁及以上老人等大门票免费，60–64 周岁老人、6–18 周岁未成年人、全日制本科及以下学生等大门票半价。<b>观光车通常不随门票减免</b>，带好身份证、学生证等原件。
+      <br><br>
+      <b>对我们这趟最实用的购票策略：</b>五营和汤旺河在出发前 1–3 天买；茅兰沟如果确定加入，至少前一天买；鹿苑前一晚买；其余景点等天气和体力确定后再买，没必要把整趟门票一次性锁死。
+    </div>
+  </section>
+
 
   <section id="reviews" class="section">
     <h2>近期玩友反馈，怎么影响行程</h2>
