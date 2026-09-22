@@ -17,7 +17,7 @@ relations: [{"slug":"market-landscape-2026","type":"revises"}]
 
 曾鸣自己的历史坐标也变过。他在这次访谈里回顾，前两年还做过“让我们拥抱 Yahoo 吧”的演讲，当时觉得 Yahoo 很快就会出现；到了 2026 年，他反而把位置往前调，认为产业化可能连“浏览器阶段”都还没有真正走到。同一套产业史视角，两年以后，对历史坐标的判断反而前移了。
 
-这种错位感，资本市场也会放大。[Anthropic 2021 年成立](https://www.reuters.com/technology/anthropic-plans-raise-10-billion-350-billion-valuation-wsj-reports-2026-01-07/)，到 2026 年 5 月私募估值已经达到[约 9650 亿美元](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)。只看今天，这种速度很容易制造一种“以前从来没有过”的感觉。但互联网早期也出现过类似的资本重估：Yahoo 1994 年成立，到 2000 年互联网泡沫高点时，[市场价值一度超过 1000 亿美元](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)。这两个数字不能直接等同：按美国 CPI 粗略折算，2000 年的 1000 亿美元到今天大约是 2000 亿美元量级，并不接近 1 万亿美元；[BLS 的 CPI 数据](https://www.bls.gov/news.release/cpi.t01.htm)显示，2000 年全年平均指数约为 172.2，而 2026 年 8 月已到约 335。真正值得比较的不是绝对金额，而是**一个新技术周期可以在很早的时候，就让一家成立只有几年的公司获得极高定价；资本给出的阶段性价格，与产业最终会把最大的价值留在哪一层，是两件不同的事。**
+这种错位感，资本市场也会放大。[Anthropic 2021 年成立](https://www.reuters.com/technology/anthropic-plans-raise-10-billion-350-billion-valuation-wsj-reports-2026-01-07/)，到 2026 年 5 月私募估值已经达到[约 9650 亿美元](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)。只看今天，这种速度很容易制造一种“以前从来没有过”的感觉。但互联网早期也出现过类似的资本重估：[Yahoo 1994 年成立](https://www.yahooinc.com/our-story)，到 2000 年互联网泡沫高点时，[市场价值一度超过 1000 亿美元](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)。这两个数字不能直接等同：按美国 CPI 粗略折算，2000 年的 1000 亿美元到今天大约是 2000 亿美元量级，并不接近 1 万亿美元；[BLS 的 CPI 数据](https://www.bls.gov/news.release/cpi.t01.htm)显示，2000 年全年平均指数约为 172.2，而 2026 年 8 月已到约 335。真正值得比较的不是绝对金额，而是**一个新技术周期可以在很早的时候，就让一家成立只有几年的公司获得极高定价；资本给出的阶段性价格，与产业最终会把最大的价值留在哪一层，是两件不同的事。**
 
 我自己也踩过类似的坑。今年 4 月，我在[《2026 年 AI Agent 市场格局》](https://marktian-long.github.io/tools/blog/posts/market-landscape-2026.html)里写过一句很满的话：“框架大战已经基本结束，赢家已经确定。”当时看到的局部收敛是真的，但现在再看，把某一类 Agent 开发框架的收敛放大成整个 Agent 生态的阶段判断，这个判断推得太远。曾鸣是在重新校准整个产业的历史坐标，我的问题则是把一个子层的成熟度放大成了整个市场的成熟度，但两件事都指向同一个提醒：**历史坐标和阶段判断有用，前提是先选对比较的对象和粒度。**
 
@@ -157,8 +157,12 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 - [《财经》：外滩大会｜王坚抛出未来城市之问：可否仅用 10% 资源实现美好生活？](https://news.caijingmobile.com/article/detail/581243?source_id=40)
 - [同花顺财经：王坚谈 AI 用电与资源节约](https://news.10jqka.com.cn/20260911/c679836136.shtml)
 - [奇绩：《前沿创业机会｜奇绩在找这样的 AI 创业者 #2》](https://mp.weixin.qq.com/s/mi9atrSEpyQuM7RiBweRPA)
+
+### 资本市场与历史对照
+
 - [Reuters：Anthropic plans new fundraise at $350 billion valuation](https://www.reuters.com/technology/anthropic-plans-raise-10-billion-350-billion-valuation-wsj-reports-2026-01-07/)
 - [Reuters：Anthropic's valuation surges to $965 billion](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)
+- [Yahoo：Our Story](https://www.yahooinc.com/our-story)
 - [Knowledge at Wharton：Can Verizon Unlock Yahoo’s ‘Hidden Value’?](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)
 - [U.S. Bureau of Labor Statistics：CPI-U, August 2026](https://www.bls.gov/news.release/cpi.t01.htm)
 
