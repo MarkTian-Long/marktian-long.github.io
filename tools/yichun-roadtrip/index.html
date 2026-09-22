@@ -214,81 +214,115 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
 
   <section id="map" class="section">
     <h2>整体路线地图</h2>
-    <p class="sub">这张图先解决“往哪里开”的问题：哈尔滨只负责城市停留，取车后经乌带公路进入伊春；之后以伊春市区为大本营，分别向北、向南做放射式自驾。</p>
+    <p class="sub">这一版按公开经纬度的相对位置绘制：不是导航底图，但方位关系基本真实。可以直接看出哈尔滨在西南，乌带公路 / 大箐山是进入伊春前的南侧走廊；伊春之后，五营、新青、汤旺河都在东北方向，金山鹿苑 / 金祖峰在东南方向。</p>
     <div class="grid map-overview">
       <div class="card map-card">
-        <svg class="map-svg" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="哈尔滨到伊春及伊春北线南线自驾路线示意">
+        <svg class="map-svg" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="按经纬度相对位置绘制的哈尔滨伊春自驾路线图">
           <rect class="map-frame" x="24" y="24" width="852" height="572" rx="22"/>
-          <text class="map-title" x="56" y="68">哈尔滨 → 伊春 → 北线 / 南线</text>
-          <text class="map-sub" x="56" y="95">示意图用于理解整体走向，不替代实时导航</text>
+          <text class="map-title" x="56" y="66">真实方位版｜哈尔滨 → 伊春 → 北线 / 南线</text>
+          <text class="map-sub" x="56" y="92">点位按公开经纬度相对投影；道路曲线为路线逻辑示意，不代表实际道路形状</text>
 
-          <path class="main-road" d="M118 430 C 205 375, 270 318, 352 276 S 500 224, 574 208"/>
-          <path class="north-road" d="M574 208 C 630 181, 680 158, 731 141"/>
-          <path class="north-road-alt" d="M731 141 C 768 125, 800 111, 829 96"/>
-          <path class="north-road" d="M574 208 C 644 218, 716 250, 792 294"/>
-          <path class="south-road" d="M574 208 C 618 254, 642 294, 658 342"/>
-          <path class="flex-road" d="M574 208 C 582 269, 574 335, 552 402"/>
+          <!-- 省略行政边界，只保留方位网格 -->
+          <g opacity=".48" stroke="var(--line)" stroke-width="1">
+            <line x1="70" y1="160" x2="830" y2="160"/>
+            <line x1="70" y1="255" x2="830" y2="255"/>
+            <line x1="70" y1="350" x2="830" y2="350"/>
+            <line x1="70" y1="445" x2="830" y2="445"/>
+            <line x1="230" y1="110" x2="230" y2="540"/>
+            <line x1="390" y1="110" x2="390" y2="540"/>
+            <line x1="550" y1="110" x2="550" y2="540"/>
+            <line x1="710" y1="110" x2="710" y2="540"/>
+          </g>
 
-          <circle class="node-blue" cx="118" cy="430" r="17"/>
-          <circle class="node-blue" cx="352" cy="276" r="13"/>
-          <circle class="node-green" cx="574" cy="208" r="19"/>
-          <circle class="node-green" cx="731" cy="141" r="14"/>
-          <circle class="node-green" cx="829" cy="96" r="12"/>
-          <circle class="node-green" cx="792" cy="294" r="14"/>
-          <circle class="node-amber" cx="658" cy="342" r="14"/>
-          <circle class="node-muted" cx="552" cy="402" r="12"/>
+          <!-- 主进线：哈尔滨 -> 大箐山/带岭 -> 伊春 -->
+          <path class="main-road" d="M90 524 C 250 500, 470 425, 681 338 C 674 300, 660 260, 638 231"/>
+          <!-- 北线：伊春 -> 溪水 -> 五营 -> 新青 / 汤旺河 -->
+          <path class="north-road" d="M638 231 C 654 222, 666 211, 677 203 C 694 185, 711 166, 727 151"/>
+          <path class="north-road-alt" d="M727 151 C 760 145, 790 141, 814 140"/>
+          <path class="north-road" d="M727 151 C 746 138, 765 127, 782 121"/>
+          <!-- 南线 -->
+          <path class="south-road" d="M638 231 C 675 246, 725 264, 776 279"/>
+          <!-- 机场短支线 -->
+          <path class="flex-road" d="M638 231 C 654 230, 668 229, 680 227"/>
 
-          <text class="map-label" x="78" y="466">哈尔滨</text>
-          <text class="map-note" x="76" y="488">城市停留，不必租车</text>
-          <text class="map-label" x="304" y="259">乌带公路</text>
-          <text class="map-note" x="300" y="280">进伊春的主风景线</text>
-          <text class="map-label" x="542" y="176">伊春市区</text>
-          <text class="map-note" x="530" y="196">连续住宿主基地</text>
-          <text class="map-label" x="703" y="128">五营</text>
-          <text class="map-note" x="704" y="149">红松林</text>
-          <text class="map-label" x="784" y="82">新青</text>
-          <text class="map-note" x="780" y="103">湿地</text>
-          <text class="map-label" x="748" y="328">汤旺河</text>
-          <text class="map-note" x="744" y="348">石林 + 森林</text>
-          <text class="map-label" x="610" y="374">鹿苑 / 金祖峰</text>
-          <text class="map-note" x="610" y="395">南线同日组合</text>
-          <text class="map-label" x="516" y="435">溪水</text>
-          <text class="map-note" x="504" y="455">近郊机动项</text>
+          <circle class="node-blue" cx="90" cy="524" r="17"/>
+          <circle class="node-blue" cx="681" cy="338" r="13"/>
+          <circle class="node-green" cx="638" cy="231" r="19"/>
+          <circle class="node-green" cx="677" cy="203" r="11"/>
+          <circle class="node-green" cx="727" cy="151" r="14"/>
+          <circle class="node-green" cx="814" cy="140" r="12"/>
+          <circle class="node-green" cx="782" cy="121" r="13"/>
+          <circle class="node-amber" cx="792" cy="280" r="13"/>
+          <circle class="node-amber" cx="776" cy="279" r="10"/>
+          <circle class="node-muted" cx="680" cy="227" r="9"/>
 
-          <rect class="map-box-blue" x="54" y="522" width="236" height="46" rx="12"/>
-          <text class="map-box-text-blue" x="69" y="550">哈尔滨 → 伊春：370–420 km / 6–7 h</text>
-          <rect class="map-box-green" x="310" y="522" width="250" height="46" rx="12"/>
-          <text class="map-box-text-green" x="326" y="550">北线：五营 / 新青 / 汤旺河</text>
-          <rect class="map-box-amber" x="580" y="522" width="246" height="46" rx="12"/>
-          <text class="map-box-text-amber" x="596" y="550">南线：鹿苑 / 金祖峰｜近郊：溪水</text>
+          <!-- 标签 -->
+          <text class="map-label" x="66" y="505">哈尔滨</text>
+          <text class="map-note" x="66" y="548">西南起点｜市区不租车</text>
+
+          <text class="map-label" x="620" y="365">大箐山 / 带岭</text>
+          <text class="map-note" x="616" y="385">乌带公路走廊</text>
+
+          <text class="map-label" x="598" y="207">伊春市区</text>
+          <text class="map-note" x="594" y="252">主住宿基地</text>
+
+          <text class="map-label" x="641" y="184">溪水</text>
+          <text class="map-note" x="637" y="198">近郊机动</text>
+
+          <text class="map-label" x="692" y="134">五营</text>
+          <text class="map-note" x="690" y="154">红松林</text>
+
+          <text class="map-label" x="794" y="164">新青</text>
+          <text class="map-note" x="792" y="183">湿地</text>
+
+          <text class="map-label" x="736" y="106">汤旺河</text>
+          <text class="map-note" x="735" y="126">石林 + 森林</text>
+
+          <text class="map-label" x="708" y="308">金祖峰</text>
+          <text class="map-note" x="708" y="327">与鹿苑同日</text>
+          <text class="map-label" x="786" y="261">鹿苑</text>
+
+          <text class="map-label" x="685" y="220">✈</text>
+          <text class="map-note" x="686" y="241">林都机场</text>
+
+          <rect class="map-box-blue" x="54" y="566" width="244" height="34" rx="10"/>
+          <text class="map-box-text-blue" x="70" y="588">跨城主线：哈尔滨 → 乌带公路 → 伊春</text>
+          <rect class="map-box-green" x="318" y="566" width="242" height="34" rx="10"/>
+          <text class="map-box-text-green" x="334" y="588">北线：溪水 / 五营 / 新青 / 汤旺河</text>
+          <rect class="map-box-amber" x="580" y="566" width="246" height="34" rx="10"/>
+          <text class="map-box-text-amber" x="596" y="588">南线：鹿苑 / 金祖峰</text>
         </svg>
+
         <div class="map-legend">
-          <span><i class="map-dot blue"></i>进伊春主线</span>
-          <span><i class="map-dot green"></i>北线核心自然景观</span>
-          <span><i class="map-dot amber"></i>南线 / 机动补充</span>
+          <span><i class="map-dot blue"></i>跨城主进线</span>
+          <span><i class="map-dot green"></i>伊春北线</span>
+          <span><i class="map-dot amber"></i>伊春南线</span>
         </div>
       </div>
+
       <div class="card">
-        <h3>按地图理解每天怎么走</h3>
+        <h3>这张图会改变哪些直觉</h3>
         <div class="map-side">
-          <div class="map-side-item"><b>① 哈尔滨阶段</b><span class="muted">方案 A 停 1 个完整日；方案 B 停 2 个完整日。市区公共交通更省事。</span></div>
-          <div class="map-side-item"><b>② 进入伊春</b><span class="muted">只有一次跨城长途：哈尔滨 → 乌带公路 → 伊春。当天把公路本身当景点。</span></div>
-          <div class="map-side-item"><b>③ 北线分两天</b><span class="muted">五营 + 新青是一组；汤旺河单独一天。这样不需要每天换住宿。</span></div>
-          <div class="map-side-item"><b>④ 南线一天</b><span class="muted">金山鹿苑与金祖峰距离近，适合捆绑；回伊春后即可考虑还车。</span></div>
-          <div class="map-side-item"><b>⑤ 机动日</b><span class="muted">溪水离伊春近，仅在天气、体力和租车成本都合适时补，不作为硬任务。</span></div>
+          <div class="map-side-item"><b>① 五营、新青、汤旺河确实是一条东北向线路</b><span class="muted">所以它们属于同一大方向；你不住汤旺河，代价只是每天从伊春往返，而不是方向错乱。</span></div>
+          <div class="map-side-item"><b>② 新青和汤旺河并不是“同一点”</b><span class="muted">新青更偏东，汤旺河更偏北。五营 + 新青放一天、汤旺河单独一天，比三个景点硬塞在一起合理。</span></div>
+          <div class="map-side-item"><b>③ 鹿苑 / 金祖峰是另一条东南支线</b><span class="muted">它们和北线完全相反，因此单独安排一天最自然；两者彼此很近，可连续游玩。</span></div>
+          <div class="map-side-item"><b>④ 溪水其实就在伊春北侧近郊</b><span class="muted">它离市区比五营和汤旺河近得多，所以更适合临时补，不值得为了它提前锁一整天租车。</span></div>
+          <div class="map-side-item"><b>⑤ 林都机场在伊春市区附近偏东</b><span class="muted">从伊春直接返程不会破坏路线结构，这也是“哈尔滨进、伊春出”成立的关键。</span></div>
         </div>
       </div>
     </div>
+
     <div class="daily-flow">
       <div class="flow-step"><b>城市</b>A 10.3–10.4<br>B 10.3–10.5</div>
-      <div class="flow-step"><b>主进线</b>A 10.5<br>B 10.6</div>
-      <div class="flow-step"><b>北线 1</b>A 10.6<br>B 10.7</div>
-      <div class="flow-step"><b>北线 2</b>A 10.7<br>B 10.8</div>
-      <div class="flow-step"><b>南线</b>A 10.8<br>B 10.9</div>
-      <div class="flow-step"><b>机动 / 还车</b>A 10.9<br>B 10.10</div>
+      <div class="flow-step"><b>西南 → 东北</b>哈尔滨 → 乌带公路 → 伊春</div>
+      <div class="flow-step"><b>北线 1</b>伊春 → 五营 → 新青 → 伊春</div>
+      <div class="flow-step"><b>北线 2</b>伊春 ↔ 汤旺河</div>
+      <div class="flow-step"><b>南线</b>伊春 → 鹿苑 → 金祖峰 → 伊春</div>
+      <div class="flow-step"><b>返程</b>伊春市区 → 林都机场</div>
     </div>
-  </section>
 
+    <p class="muted" style="font-size:12px;margin-top:10px">位置校准使用公开地图 / 机场坐标：哈尔滨、伊春、五营红松林海、新青湿地、汤旺河林海奇石、金山鹿苑、金祖峰、溪水和林都机场。图中不显示精确道路边界，因此仍以出发当天导航为准。</p>
+  </section>
 
   <section class="section">
     <div class="grid three">
