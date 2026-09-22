@@ -129,6 +129,52 @@ h1{margin:8px 0 10px;font-size:clamp(30px,4vw,50px);line-height:1.15}
   border-left:4px solid var(--green);background:var(--green2);padding:14px 16px;border-radius:12px;
   color:var(--green)
 }
+
+.map-overview{display:grid;grid-template-columns:1.35fr .9fr;gap:16px;align-items:stretch}
+.map-card{overflow:hidden}
+.map-svg{width:100%;height:auto;display:block;border-radius:18px;background:var(--soft);border:1px solid var(--soft-line)}
+.map-svg .map-frame{fill:var(--panel);stroke:var(--soft-line)}
+.map-svg .main-road{fill:none;stroke:var(--blue);stroke-width:10;stroke-linecap:round}
+.map-svg .north-road{fill:none;stroke:var(--green);stroke-width:8;stroke-linecap:round}
+.map-svg .north-road-alt{fill:none;stroke:var(--green);stroke-width:7;stroke-linecap:round;stroke-dasharray:4 13}
+.map-svg .south-road{fill:none;stroke:var(--amber);stroke-width:8;stroke-linecap:round}
+.map-svg .flex-road{fill:none;stroke:var(--muted);stroke-width:6;stroke-linecap:round;stroke-dasharray:8 11}
+.map-svg .node-blue{fill:var(--blue)}
+.map-svg .node-green{fill:var(--green)}
+.map-svg .node-amber{fill:var(--amber)}
+.map-svg .node-muted{fill:var(--muted)}
+.map-svg .map-title{fill:var(--ink);font-size:28px;font-weight:800}
+.map-svg .map-sub{fill:var(--muted);font-size:15px}
+.map-svg .map-label{fill:var(--ink);font-size:17px;font-weight:800}
+.map-svg .map-note{fill:var(--muted);font-size:13px}
+.map-svg .map-box-blue{fill:var(--blue2);stroke:var(--blue)}
+.map-svg .map-box-green{fill:var(--green2);stroke:var(--green)}
+.map-svg .map-box-amber{fill:var(--amber2);stroke:var(--amber)}
+.map-svg .map-box-text-blue{fill:var(--blue);font-size:14px;font-weight:700}
+.map-svg .map-box-text-green{fill:var(--green);font-size:14px;font-weight:700}
+.map-svg .map-box-text-amber{fill:var(--amber);font-size:14px;font-weight:700}
+.map-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.map-legend span{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:var(--soft);font-size:12px;color:var(--muted)}
+.map-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.map-dot.blue{background:var(--blue)}.map-dot.green{background:var(--green)}.map-dot.amber{background:var(--amber)}
+.map-side{display:grid;gap:10px}
+.map-side-item{padding:13px 14px;border-radius:14px;background:var(--soft);border:1px solid var(--soft-line)}
+.map-side-item b{display:block;margin-bottom:3px}
+.route-tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:800;margin:0 8px 5px 0;vertical-align:middle}
+.route-tag.city{background:var(--blue2);color:var(--blue)}
+.route-tag.main{background:var(--amber2);color:var(--amber)}
+.route-tag.north{background:var(--green2);color:var(--green)}
+.route-tag.south{background:var(--amber2);color:var(--amber)}
+.route-tag.flex{background:var(--soft-head);color:var(--muted)}
+.route-tag.flight{background:var(--danger-soft);color:var(--danger)}
+.daily-flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:14px}
+.flow-step{padding:10px 9px;border-radius:12px;background:var(--soft);border:1px solid var(--soft-line);font-size:12px}
+.flow-step b{display:block;font-size:13px;color:var(--ink);margin-bottom:2px}
+@media(max-width:850px){
+  .map-overview{grid-template-columns:1fr}
+  .daily-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 .source-list{font-size:13px;color:var(--muted)}
 .source-list li{margin:7px 0}
 footer{margin-top:28px;color:var(--muted);font-size:12px}
@@ -159,10 +205,90 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
   <div class="nav">
     <button class="active" data-plan="a">方案 A｜10.10 返程</button>
     <button data-plan="b">方案 B｜10.11 返程</button>
+    <button data-jump="#map">路线地图</button>
     <button data-jump="#comparison">总对比</button>
     <button data-jump="#spots">景点取舍</button>
     <button data-jump="#reviews">近期玩友反馈</button>
   </div>
+
+
+  <section id="map" class="section">
+    <h2>整体路线地图</h2>
+    <p class="sub">这张图先解决“往哪里开”的问题：哈尔滨只负责城市停留，取车后经乌带公路进入伊春；之后以伊春市区为大本营，分别向北、向南做放射式自驾。</p>
+    <div class="grid map-overview">
+      <div class="card map-card">
+        <svg class="map-svg" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="哈尔滨到伊春及伊春北线南线自驾路线示意">
+          <rect class="map-frame" x="24" y="24" width="852" height="572" rx="22"/>
+          <text class="map-title" x="56" y="68">哈尔滨 → 伊春 → 北线 / 南线</text>
+          <text class="map-sub" x="56" y="95">示意图用于理解整体走向，不替代实时导航</text>
+
+          <path class="main-road" d="M118 430 C 205 375, 270 318, 352 276 S 500 224, 574 208"/>
+          <path class="north-road" d="M574 208 C 630 181, 680 158, 731 141"/>
+          <path class="north-road-alt" d="M731 141 C 768 125, 800 111, 829 96"/>
+          <path class="north-road" d="M574 208 C 644 218, 716 250, 792 294"/>
+          <path class="south-road" d="M574 208 C 618 254, 642 294, 658 342"/>
+          <path class="flex-road" d="M574 208 C 582 269, 574 335, 552 402"/>
+
+          <circle class="node-blue" cx="118" cy="430" r="17"/>
+          <circle class="node-blue" cx="352" cy="276" r="13"/>
+          <circle class="node-green" cx="574" cy="208" r="19"/>
+          <circle class="node-green" cx="731" cy="141" r="14"/>
+          <circle class="node-green" cx="829" cy="96" r="12"/>
+          <circle class="node-green" cx="792" cy="294" r="14"/>
+          <circle class="node-amber" cx="658" cy="342" r="14"/>
+          <circle class="node-muted" cx="552" cy="402" r="12"/>
+
+          <text class="map-label" x="78" y="466">哈尔滨</text>
+          <text class="map-note" x="76" y="488">城市停留，不必租车</text>
+          <text class="map-label" x="304" y="259">乌带公路</text>
+          <text class="map-note" x="300" y="280">进伊春的主风景线</text>
+          <text class="map-label" x="542" y="176">伊春市区</text>
+          <text class="map-note" x="530" y="196">连续住宿主基地</text>
+          <text class="map-label" x="703" y="128">五营</text>
+          <text class="map-note" x="704" y="149">红松林</text>
+          <text class="map-label" x="784" y="82">新青</text>
+          <text class="map-note" x="780" y="103">湿地</text>
+          <text class="map-label" x="748" y="328">汤旺河</text>
+          <text class="map-note" x="744" y="348">石林 + 森林</text>
+          <text class="map-label" x="610" y="374">鹿苑 / 金祖峰</text>
+          <text class="map-note" x="610" y="395">南线同日组合</text>
+          <text class="map-label" x="516" y="435">溪水</text>
+          <text class="map-note" x="504" y="455">近郊机动项</text>
+
+          <rect class="map-box-blue" x="54" y="522" width="236" height="46" rx="12"/>
+          <text class="map-box-text-blue" x="69" y="550">哈尔滨 → 伊春：370–420 km / 6–7 h</text>
+          <rect class="map-box-green" x="310" y="522" width="250" height="46" rx="12"/>
+          <text class="map-box-text-green" x="326" y="550">北线：五营 / 新青 / 汤旺河</text>
+          <rect class="map-box-amber" x="580" y="522" width="246" height="46" rx="12"/>
+          <text class="map-box-text-amber" x="596" y="550">南线：鹿苑 / 金祖峰｜近郊：溪水</text>
+        </svg>
+        <div class="map-legend">
+          <span><i class="map-dot blue"></i>进伊春主线</span>
+          <span><i class="map-dot green"></i>北线核心自然景观</span>
+          <span><i class="map-dot amber"></i>南线 / 机动补充</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>按地图理解每天怎么走</h3>
+        <div class="map-side">
+          <div class="map-side-item"><b>① 哈尔滨阶段</b><span class="muted">方案 A 停 1 个完整日；方案 B 停 2 个完整日。市区公共交通更省事。</span></div>
+          <div class="map-side-item"><b>② 进入伊春</b><span class="muted">只有一次跨城长途：哈尔滨 → 乌带公路 → 伊春。当天把公路本身当景点。</span></div>
+          <div class="map-side-item"><b>③ 北线分两天</b><span class="muted">五营 + 新青是一组；汤旺河单独一天。这样不需要每天换住宿。</span></div>
+          <div class="map-side-item"><b>④ 南线一天</b><span class="muted">金山鹿苑与金祖峰距离近，适合捆绑；回伊春后即可考虑还车。</span></div>
+          <div class="map-side-item"><b>⑤ 机动日</b><span class="muted">溪水离伊春近，仅在天气、体力和租车成本都合适时补，不作为硬任务。</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="daily-flow">
+      <div class="flow-step"><b>城市</b>A 10.3–10.4<br>B 10.3–10.5</div>
+      <div class="flow-step"><b>主进线</b>A 10.5<br>B 10.6</div>
+      <div class="flow-step"><b>北线 1</b>A 10.6<br>B 10.7</div>
+      <div class="flow-step"><b>北线 2</b>A 10.7<br>B 10.8</div>
+      <div class="flow-step"><b>南线</b>A 10.8<br>B 10.9</div>
+      <div class="flow-step"><b>机动 / 还车</b>A 10.9<br>B 10.10</div>
+    </div>
+  </section>
+
 
   <section class="section">
     <div class="grid three">
@@ -183,50 +309,50 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     <div class="timeline">
       <div class="day">
         <div class="date">10.3<small>抵达日</small></div>
-        <div><h4>到哈尔滨，入住后轻松逛</h4><p>中央大街附近吃饭、松花江沿线散步即可，不安排正式景区。</p></div>
+        <div><span class="route-tag city">城市</span><h4>到哈尔滨，入住后轻松逛</h4><p>中央大街附近吃饭、松花江沿线散步即可，不安排正式景区。</p></div>
         <div class="drive"><strong>市内交通</strong>机场 / 高铁站 → 酒店<br><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.4<small>哈尔滨完整日</small></div>
-        <div><h4>索菲亚 → 中央大街 → 松花江 / 太阳岛</h4><p>哈尔滨核心内容先看完。地铁 + 打车比租车省事，停车反而是负担。</p></div>
+        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江 / 太阳岛</h4><p>哈尔滨核心内容先看完。地铁 + 打车比租车省事，停车反而是负担。</p></div>
         <div class="drive"><strong>0 km 长途自驾</strong>市区公共交通<br><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.5<small>公路主角日</small></div>
-        <div><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>当天不要再塞正式景区。乌带公路就是游玩内容，允许停车、拍照、慢开。</p>
+        <div><span class="route-tag main">主进线</span><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>当天不要再塞正式景区。乌带公路就是游玩内容，允许停车、拍照、慢开。</p>
           <div class="route">哈尔滨 → 大箐山 / 带岭方向：约 250–280 km，3.5–4.5 h<br>乌带公路景观段 → 伊春：约 120–140 km，2.5–3 h<br><b>全天约 370–420 km，纯驾驶约 6–7 h</b></div>
         </div>
         <div class="drive"><strong>长距离自驾</strong>建议 07:30 左右取车<br><span class="car yes">租车 Day 1</span></div>
       </div>
       <div class="day">
         <div class="date">10.6<small>红松 + 湿地</small></div>
-        <div><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>五营给 3–4 h；新青控制 1–1.5 h，主要用来打破连续森林审美。</p>
+        <div><span class="route-tag north">北线 1</span><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>五营给 3–4 h；新青控制 1–1.5 h，主要用来打破连续森林审美。</p>
           <div class="route">伊春 → 五营：约 65–75 km，1–1.3 h<br>五营 → 新青：约 35–45 km，40–60 min<br>新青 → 伊春：约 95–105 km，1.5–2 h<br><b>全天约 200–220 km</b></div>
         </div>
         <div class="drive"><strong>北线一日往返</strong>景点较分散<br><span class="car yes">租车 Day 2</span></div>
       </div>
       <div class="day">
         <div class="date">10.7<small>奇石林海</small></div>
-        <div><h4>伊春 ↔ 汤旺河林海奇石</h4><p>单独给它 4–5 h，不和五营挤在同一天。石林 + 红松的辨识度最高。</p>
+        <div><span class="route-tag north">北线 2</span><h4>伊春 ↔ 汤旺河林海奇石</h4><p>单独给它 4–5 h，不和五营挤在同一天。石林 + 红松的辨识度最高。</p>
           <div class="route">伊春 → 汤旺河：约 110–120 km，1.7–2 h<br>汤旺河 → 伊春：约 110–120 km，1.7–2 h<br><b>全天约 220–240 km</b></div>
         </div>
         <div class="drive"><strong>北线深度日</strong>步行较多<br><span class="car yes">租车 Day 3</span></div>
       </div>
       <div class="day">
         <div class="date">10.8<small>鹿苑 + 登高</small></div>
-        <div><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>用金祖峰替代九峰山，减少人工游乐项目，更贴近“自然 + 自驾”。鹿苑尽量上午去。</p>
+        <div><span class="route-tag south">南线</span><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>用金祖峰替代九峰山，减少人工游乐项目，更贴近“自然 + 自驾”。鹿苑尽量上午去。</p>
           <div class="route">伊春 → 金山鹿苑：约 65–75 km，1–1.3 h<br>鹿苑 → 金祖峰：约 6–8 km，10–15 min<br>金祖峰 → 伊春：约 70–75 km，1–1.3 h<br><b>全天约 145–160 km</b></div>
         </div>
         <div class="drive"><strong>南线一日往返</strong>晚间可还车<br><span class="car yes">租车 Day 4</span></div>
       </div>
       <div class="day">
         <div class="date">10.9<small>机动 / 省租车费</small></div>
-        <div><h4>优先休息；想补景点再去溪水</h4><p>如果前几天全部顺利，10.8 晚还车。溪水距伊春约 28–40 km，可提前约出租车往返；若前几天有雨雾，再把车续租 1 天补核心景点。</p></div>
+        <div><span class="route-tag flex">机动</span><h4>优先休息；想补景点再去溪水</h4><p>如果前几天全部顺利，10.8 晚还车。溪水距伊春约 28–40 km，可提前约出租车往返；若前几天有雨雾，再把车续租 1 天补核心景点。</p></div>
         <div class="drive"><strong>可 0 km 自驾</strong>溪水单程约 40–60 min<br><span class="car no">默认不租</span></div>
       </div>
       <div class="day">
         <div class="date">10.10<small>返程</small></div>
-        <div><h4>伊春市区 → 林都机场</h4><p>按航班时间出发；如果 10.9 已还车，直接打车去机场。</p></div>
+        <div><span class="route-tag flight">返程</span><h4>伊春市区 → 林都机场</h4><p>按航班时间出发；如果 10.9 已还车，直接打车去机场。</p></div>
         <div class="drive"><strong>短途</strong>不再承担长途返程<br><span class="car no">不租车</span></div>
       </div>
     </div>
@@ -243,51 +369,51 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     <div class="timeline">
       <div class="day">
         <div class="date">10.3<small>抵达日</small></div>
-        <div><h4>到哈尔滨，轻松入住</h4><p>晚餐 + 中央大街附近散步。</p></div>
+        <div><span class="route-tag city">城市</span><h4>到哈尔滨，轻松入住</h4><p>晚餐 + 中央大街附近散步。</p></div>
         <div class="drive"><strong>市内交通</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.4<small>哈尔滨 Day 1</small></div>
-        <div><h4>索菲亚 → 中央大街 → 松花江</h4><p>偏城市建筑、街区和夜景，不开车。</p></div>
+        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江</h4><p>偏城市建筑、街区和夜景，不开车。</p></div>
         <div class="drive"><strong>0 km 长途自驾</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.5<small>哈尔滨 Day 2</small></div>
-        <div><h4>太阳岛 → 老道外 / 中华巴洛克</h4><p>把城市与江岛自然景观补完整，也避免 10.5 就进入伊春国庆客流高峰。</p></div>
+        <div><span class="route-tag city">城市</span><h4>太阳岛 → 老道外 / 中华巴洛克</h4><p>把城市与江岛自然景观补完整，也避免 10.5 就进入伊春国庆客流高峰。</p></div>
         <div class="drive"><strong>0 km 长途自驾</strong>地铁 + 打车即可<br><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.6<small>公路主角日</small></div>
-        <div><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>和方案 A 相同，只是后移 1 天；当天不加正式景区。</p>
+        <div><span class="route-tag main">主进线</span><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>和方案 A 相同，只是后移 1 天；当天不加正式景区。</p>
           <div class="route">哈尔滨 → 大箐山 / 带岭方向：约 250–280 km，3.5–4.5 h<br>乌带公路景观段 → 伊春：约 120–140 km，2.5–3 h<br><b>全天约 370–420 km，纯驾驶约 6–7 h</b></div>
         </div>
         <div class="drive"><strong>长距离自驾</strong><span class="car yes">租车 Day 1</span></div>
       </div>
       <div class="day">
         <div class="date">10.7<small>红松 + 湿地</small></div>
-        <div><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>约 200–220 km；五营为主，新青为景观类型补充。</p></div>
+        <div><span class="route-tag north">北线 1</span><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>约 200–220 km；五营为主，新青为景观类型补充。</p></div>
         <div class="drive"><strong>北线一日往返</strong><span class="car yes">租车 Day 2</span></div>
       </div>
       <div class="day">
         <div class="date">10.8<small>假期后错峰</small></div>
-        <div><h4>伊春 ↔ 汤旺河林海奇石</h4><p>把最热门、步行量最大的核心景区放到国庆假期后，是这个版本最实用的收益之一。</p>
+        <div><span class="route-tag north">北线 2</span><h4>伊春 ↔ 汤旺河林海奇石</h4><p>把最热门、步行量最大的核心景区放到国庆假期后，是这个版本最实用的收益之一。</p>
           <div class="route">往返约 220–240 km，纯驾驶约 3.5–4 h；景区 4–5 h。</div>
         </div>
         <div class="drive"><strong>北线深度日</strong><span class="car yes">租车 Day 3</span></div>
       </div>
       <div class="day">
         <div class="date">10.9<small>鹿苑 + 登高</small></div>
-        <div><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>约 145–160 km。建议早上鹿苑、下午金祖峰；回来后可直接还车。</p></div>
+        <div><span class="route-tag south">南线</span><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>约 145–160 km。建议早上鹿苑、下午金祖峰；回来后可直接还车。</p></div>
         <div class="drive"><strong>南线一日往返</strong><span class="car yes">租车 Day 4</span></div>
       </div>
       <div class="day">
         <div class="date">10.10<small>天气保险日</small></div>
-        <div><h4>不强行找第五个森林景点</h4><p>前几天顺利：不租车，休息 / 市区 / 约车去溪水。前几天有大雾或降雨：临时续租，把汤旺河、金祖峰等核心项顺延到今天。</p></div>
+        <div><span class="route-tag flex">机动</span><h4>不强行找第五个森林景点</h4><p>前几天顺利：不租车，休息 / 市区 / 约车去溪水。前几天有大雾或降雨：临时续租，把汤旺河、金祖峰等核心项顺延到今天。</p></div>
         <div class="drive"><strong>默认 0 km 自驾</strong><span class="car no">默认不租</span></div>
       </div>
       <div class="day">
         <div class="date">10.11<small>返程</small></div>
-        <div><h4>伊春林都机场返程</h4><p>没有伊春→哈尔滨的长途回撤。</p></div>
+        <div><span class="route-tag flight">返程</span><h4>伊春林都机场返程</h4><p>没有伊春→哈尔滨的长途回撤。</p></div>
         <div class="drive"><strong>短途</strong><span class="car no">不租车</span></div>
       </div>
     </div>
