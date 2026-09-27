@@ -66,6 +66,32 @@ h1{margin:8px 0 10px;font-size:clamp(30px,4vw,50px);line-height:1.15}
   cursor:pointer;font-weight:700;font-size:14px
 }
 .nav button.active{background:var(--ink);color:var(--white)}
+
+.site-tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+.site-tabs::-webkit-scrollbar{display:none}
+.site-tab{white-space:nowrap}
+.site-panel{display:none}
+.site-panel.active{display:block}
+.plan-switch{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
+.plan-switch button{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:9px 13px;border-radius:12px;cursor:pointer;font-weight:800}
+.plan-switch button.active{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.why-important{background:var(--blue2);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px;color:var(--blue)}
+.essential-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.essential-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.essential-card h3{font-size:16px;margin:0 0 6px}
+.essential-card p{margin:0;color:var(--muted);font-size:13px}
+.essential-card .action{display:block;margin-top:8px;color:var(--ink);font-size:13px;font-weight:800}
+.checklist{display:grid;gap:8px;margin-top:14px}
+.checkitem{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:11px 13px;border-radius:12px;background:var(--soft);border:1px solid var(--soft-line);font-size:13px}
+.checkitem b{color:var(--ink)}
+.compact-details{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 14px}
+.compact-details summary{cursor:pointer;padding:13px 0;font-weight:800;color:var(--ink)}
+.compact-details .details-body{padding:0 0 14px;color:var(--muted);font-size:13px}
+@media(max-width:850px){
+  .essential-grid{grid-template-columns:1fr}
+  .checkitem{grid-template-columns:1fr;gap:2px}
+}
+
 .section{margin-top:24px}
 .section h2{font-size:24px;margin:0 0 12px}
 .section .sub{color:var(--muted);margin:0 0 16px}
@@ -223,18 +249,16 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
   </section>
 
-  <div class="nav">
-    <button class="active" data-plan="a">方案 A｜10.10 返程</button>
-    <button data-plan="b">方案 B｜10.11 返程</button>
-    <button data-jump="#map">路线地图</button>
-    <button data-jump="#comparison">总对比</button>
-    <button data-jump="#spots">景点取舍</button>
-    <button data-jump="#tickets">门票 / 预约</button>
-    <button data-jump="#reviews">近期玩友反馈</button>
+  <div class="nav site-tabs" role="tablist" aria-label="行程信息导航">
+    <button class="site-tab active" data-site-tab="overview">总览</button>
+    <button class="site-tab" data-site-tab="itinerary">每日行程</button>
+    <button class="site-tab" data-site-tab="map">路线地图</button>
+    <button class="site-tab" data-site-tab="tickets">门票 / 预约</button>
+    <button class="site-tab" data-site-tab="prep">出行须知</button>
+    <button class="site-tab" data-site-tab="spots">景点取舍</button>
   </div>
 
-
-  <section id="map" class="section">
+  <section id="map" class="section site-panel" data-site-panel="map">
     <h2>整体路线地图</h2>
     <p class="sub">这一版按公开经纬度的相对位置绘制：不是导航底图，但方位关系基本真实。可以直接看出哈尔滨在西南，乌带公路 / 大箐山是进入伊春前的南侧走廊；伊春之后，五营、新青、汤旺河都在东北方向，金山鹿苑 / 金祖峰在东南方向。</p>
     <div class="grid map-overview">
@@ -346,7 +370,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     <p class="muted" style="font-size:12px;margin-top:10px">位置校准使用公开地图 / 机场坐标：哈尔滨、伊春、五营红松林海、新青湿地、汤旺河林海奇石、金山鹿苑、金祖峰、溪水和林都机场。图中不显示精确道路边界，因此仍以出发当天导航为准。</p>
   </section>
 
-  <section class="section">
+  <section id="summary" class="section site-panel active" data-site-panel="overview">
     <div class="grid three">
       <div class="card"><div class="muted">共同核心</div><div class="kpi">4 个自然日</div><div class="muted">乌带公路 / 五营+新青 / 汤旺河 / 鹿苑+金祖峰</div></div>
       <div class="card"><div class="muted">建议核心租车</div><div class="kpi">4 天</div><div class="muted">A：10.5–10.8；B：10.6–10.9。机动日再按天气决定是否续租。</div></div>
@@ -354,6 +378,11 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
   </section>
 
+  <div id="itinerary" class="site-panel" data-site-panel="itinerary">
+    <div class="plan-switch" aria-label="行程版本切换">
+      <button class="active" data-plan="a">方案 A｜10.10 返程</button>
+      <button data-plan="b">方案 B｜10.11 返程</button>
+    </div>
   <section id="plan-a" class="plan active section">
     <div class="planhead">
       <div>
@@ -418,9 +447,9 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     <div class="planhead">
       <div>
         <h2 class="plan-title">方案 B｜10.3–10.11 · 9 天 8 晚</h2>
-        <div class="muted">把新增 1 天给哈尔滨，而不是继续给伊春堆森林公园；同时让汤旺河落在国庆假期后。</div>
+        <div class="muted">核心景点不后移：把五营、汤旺河尽量放在 10 月上旬更靠前的位置；多出的时间主要作为天气缓冲和低强度休整，不再硬塞同质化森林公园。</div>
       </div>
-      <span class="reco b">更松弛 / 内容层次更好</span>
+      <span class="reco b">叶况优先 / 容错更高</span>
     </div>
     <div class="timeline">
       <div class="day">
@@ -429,76 +458,75 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
         <div class="drive"><strong>市内交通</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
-        <div class="date">10.4<small>哈尔滨 Day 1</small></div>
-        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江</h4><p>偏城市建筑、街区和夜景，不开车。</p></div>
+        <div class="date">10.4<small>哈尔滨完整日</small></div>
+        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江 / 太阳岛</h4><p>哈尔滨核心内容一天完成；不为了“多一天”把北线秋景继续往后拖。</p></div>
         <div class="drive"><strong>0 km 长途自驾</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
-        <div class="date">10.5<small>哈尔滨 Day 2</small></div>
-        <div><span class="route-tag city">城市</span><h4>太阳岛 → 老道外 / 中华巴洛克</h4><p>把城市与江岛自然景观补完整，也避免 10.5 就进入伊春国庆客流高峰。</p></div>
-        <div class="drive"><strong>0 km 长途自驾</strong>地铁 + 打车即可<br><span class="car no">不租车</span></div>
-      </div>
-      <div class="day">
-        <div class="date">10.6<small>公路主角日</small></div>
-        <div><span class="route-tag main">主进线</span><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>和方案 A 相同，只是后移 1 天；当天不加正式景区。</p>
+        <div class="date">10.5<small>公路主角日</small></div>
+        <div><span class="route-tag main">主进线</span><h4>哈尔滨取车 → 乌带公路 → 伊春</h4><p>当天把公路本身当景点，不再塞正式景区。</p>
           <div class="route">哈尔滨 → 大箐山 / 带岭方向：约 250–280 km，3.5–4.5 h<br>乌带公路景观段 → 伊春：约 120–140 km，2.5–3 h<br><b>全天约 370–420 km，纯驾驶约 6–7 h</b></div>
         </div>
         <div class="drive"><strong>长距离自驾</strong><span class="car yes">租车 Day 1</span></div>
       </div>
       <div class="day">
-        <div class="date">10.7<small>红松 + 湿地</small></div>
-        <div><span class="route-tag north">北线 1</span><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>约 200–220 km；五营为主，新青为景观类型补充。</p></div>
-        <div class="drive"><strong>北线一日往返</strong><span class="car yes">租车 Day 2</span></div>
+        <div class="date">10.6<small>红松 + 湿地</small></div>
+        <div><span class="route-tag north">北线 1</span><h4>伊春 → 五营 → 新青湿地 → 伊春</h4><p>五营 3–4 h，新青 1–1.5 h；优先把更靠北、对落叶更敏感的景点放前。</p></div>
+        <div class="drive"><strong>约 200–220 km</strong><span class="car yes">租车 Day 2</span></div>
       </div>
       <div class="day">
-        <div class="date">10.8<small>假期后错峰</small></div>
-        <div><span class="route-tag north">北线 2</span><h4>伊春 ↔ 汤旺河林海奇石</h4><p>把最热门、步行量最大的核心景区放到国庆假期后，是这个版本最实用的收益之一。</p>
-          <div class="route">往返约 220–240 km，纯驾驶约 3.5–4 h；景区 4–5 h。</div>
+        <div class="date">10.7<small>北线核心</small></div>
+        <div><span class="route-tag north">北线 2</span><h4>伊春 ↔ 汤旺河林海奇石</h4><p>单独给 4–5 h；如果当天雨雾明显，可和后面的机动日互换。</p>
+          <div class="route">往返约 220–240 km，纯驾驶约 3.5–4 h。</div>
         </div>
         <div class="drive"><strong>北线深度日</strong><span class="car yes">租车 Day 3</span></div>
       </div>
       <div class="day">
-        <div class="date">10.9<small>鹿苑 + 登高</small></div>
-        <div><span class="route-tag south">南线</span><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>约 145–160 km。建议早上鹿苑、下午金祖峰；回来后可直接还车。</p></div>
-        <div class="drive"><strong>南线一日往返</strong><span class="car yes">租车 Day 4</span></div>
+        <div class="date">10.8<small>鹿苑 + 登高</small></div>
+        <div><span class="route-tag south">南线</span><h4>伊春 → 金山鹿苑 → 金祖峰 → 伊春</h4><p>建议上午鹿苑、下午金祖峰；正常完成后晚上即可考虑还车。</p></div>
+        <div class="drive"><strong>约 145–160 km</strong><span class="car yes">租车 Day 4</span></div>
+      </div>
+      <div class="day">
+        <div class="date">10.9<small>低强度日</small></div>
+        <div><span class="route-tag flex">机动</span><h4>兴安森林公园 / 市区 / 休息</h4><p>住宿已定后，不为了茅兰沟等远线硬做高强度当天往返。若核心景点都完成，这一天可以明显降强度。</p></div>
+        <div class="drive"><strong>默认不租</strong><span class="car no">打车 / 市区</span></div>
       </div>
       <div class="day">
         <div class="date">10.10<small>天气保险日</small></div>
-        <div><span class="route-tag flex">机动</span><h4>不强行找第五个森林景点</h4><p>前几天顺利：不租车，休息 / 市区 / 约车去溪水。前几天有大雾或降雨：临时续租，把汤旺河、金祖峰等核心项顺延到今天。</p></div>
-        <div class="drive"><strong>默认 0 km 自驾</strong><span class="car no">默认不租</span></div>
+        <div><span class="route-tag flex">机动</span><h4>给天气留完整兜底</h4><p>如果 10.6–10.8 有大雾、降雨或道路状态不佳，临时续租补五营 / 汤旺河 / 金祖峰；若前面都顺利，可约车去溪水或彻底休息。</p></div>
+        <div class="drive"><strong>按需续租</strong><span class="car no">默认不租</span></div>
       </div>
       <div class="day">
         <div class="date">10.11<small>返程</small></div>
-        <div><span class="route-tag flight">返程</span><h4>伊春林都机场返程</h4><p>没有伊春→哈尔滨的长途回撤。</p></div>
+        <div><span class="route-tag flight">返程</span><h4>伊春林都机场返程</h4><p>不再承担伊春 → 哈尔滨的长途回撤。</p></div>
         <div class="drive"><strong>短途</strong><span class="car no">不租车</span></div>
       </div>
     </div>
   </section>
+  </div>
 
-  <section id="comparison" class="section">
+  <section id="comparison" class="section site-panel active" data-site-panel="overview">
     <h2>两个方案怎么选</h2>
-    <p class="sub">不是“哪个景点更多”，而是哪种节奏更适合这趟秋季自驾。</p>
+    <p class="sub">现在不再用“多一天就多塞一个景点”的逻辑，而是看多一天能不能提高叶况命中率和天气容错。</p>
     <div style="overflow:auto">
     <table class="compare">
       <thead><tr><th>维度</th><th>方案 A｜10.10 返程</th><th>方案 B｜10.11 返程</th></tr></thead>
       <tbody>
-        <tr><td>哈尔滨</td><td>1 个完整日</td><td class="good">2 个完整日，城市内容更完整</td></tr>
-        <tr><td>伊春核心自然景观</td><td class="good">完整覆盖</td><td class="good">完整覆盖</td></tr>
-        <tr><td>核心租车</td><td class="good">10.5–10.8，4 天</td><td class="good">10.6–10.9，4 天</td></tr>
-        <tr><td>汤旺河日期</td><td>10.7，仍处假期尾段</td><td class="good">10.8，国庆后更利于错峰</td></tr>
-        <tr><td>内容重复</td><td>低；10.9 不强制溪水</td><td class="good">更低；新增日给哈尔滨而非第五个森林公园</td></tr>
-        <tr><td>天气容错</td><td>10.9 有 1 个机动日</td><td class="good">10.10 有 1 个完整机动日，且整体更松</td></tr>
-        <tr><td>住宿搬动</td><td>哈尔滨 → 伊春，仅换一次</td><td>哈尔滨 → 伊春，仅换一次</td></tr>
-        <tr><td>成本</td><td class="good">少 1 晚住宿 / 少 1 天日常开销</td><td>多 1 晚，但核心租车仍可控制 4 天</td></tr>
+        <tr><td>哈尔滨</td><td>1 个完整日</td><td>同样 1 个完整日</td></tr>
+        <tr><td>北线秋景</td><td class="good">10.6 五营 / 10.7 汤旺河</td><td class="good">同样优先放 10.6–10.7，不为了错峰继续后移</td></tr>
+        <tr><td>核心租车</td><td class="good">10.5–10.8，4 天</td><td class="good">10.5–10.8，核心仍只锁 4 天</td></tr>
+        <tr><td>天气容错</td><td>10.9 有 1 个机动日</td><td class="good">10.9 低强度 + 10.10 完整天气保险日</td></tr>
+        <tr><td>内容重复</td><td>低；溪水不强制</td><td class="good">不新增第五个同类森林景点</td></tr>
+        <tr><td>住宿</td><td>按已订住宿执行</td><td>按已订住宿执行，不为远线频繁搬酒店</td></tr>
+        <tr><td>成本</td><td class="good">少 1 晚 / 少 1 天日常开销</td><td>多 1 晚，但不必多锁 1 天租车</td></tr>
       </tbody>
     </table>
     </div>
     <div class="note" style="margin-top:14px">
-      当前逻辑：如果 10.11 的机票价格和班次合适，方案 B 的新增一天主要价值在“哈尔滨 + 错峰 + 天气保险”，而不是再去一个类似森林公园。
+      当前核心判断：如果能 10.10 回且天气稳定，方案 A 已经完整；如果 10.11 航班更合适，方案 B 的价值主要是“天气保险”，不是“多玩一个森林公园”。
     </div>
   </section>
-
-  <section id="spots" class="section">
+  <section id="spots" class="section site-panel" data-site-panel="spots">
     <h2>景点取舍：按“自驾 + 自然景色”排序</h2>
     <div class="card">
       <div class="spot"><div><b>乌带公路</b><br><span class="pill keep">必留</span></div><div class="muted">这趟自驾主题本身。不要按普通交通日压时间，停车、观景和慢开就是体验。</div><div class="score">公路景观</div></div>
@@ -508,12 +536,73 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
       <div class="spot"><div><b>金山鹿苑</b><br><span class="pill keep">保留</span></div><div class="muted">草甸、溪流和鹿群让视觉类型改变；尽量早去，鹿群状态通常比中午更好。</div><div class="score">草甸 + 鹿</div></div>
       <div class="spot"><div><b>金祖峰</b><br><span class="pill keep">保留</span></div><div class="muted">比九峰山更匹配自然取向：登高、红松林、俯瞰林海；和鹿苑距离近，组合效率高。</div><div class="score">登高俯瞰</div></div>
       <div class="spot"><div><b>溪水</b><br><span class="pill opt">机动项</span></div><div class="muted">离伊春近、步道舒适，但“溪流 + 森林”与五营存在明显重合。适合无车日约车补充，不值得为了它固定多租一天。</div><div class="score">近郊森林</div></div>
+      <div class="spot"><div><b>兴安国家森林公园</b><br><span class="pill opt">市区机动</span></div><div class="muted">价值在“近 + 俯瞰伊春森林城市”，不值得单独占一天；适合 10.9 低强度日，打车即可。</div><div class="score">城市俯瞰</div></div>
+      <div class="spot"><div><b>茅兰沟</b><br><span class="pill opt">高价值候选</span></div><div class="muted">峡谷、溪瀑和彩林，和五营重复度低；但住宿已定后，不建议从伊春做 450–500 km 级当天往返。除非愿意调整住宿，否则只保留候选。</div><div class="score">峡谷 + 彩林</div></div>
       <div class="spot"><div><b>九峰山</b><br><span class="pill skip">本轮删除</span></div><div class="muted">人工游乐和亲子项目占比更高，不如金祖峰贴合这趟旅行主题。</div><div class="score">不优先</div></div>
     </div>
   </section>
 
 
-  <section id="tickets" class="section">
+  <section id="essentials" class="section site-panel" data-site-panel="prep">
+    <h2>真正重要的出行信息</h2>
+    <div class="why-important"><b>筛选标准：</b>只保留四类信息——会改变当天路线、影响安全、影响明显花费、或必须在出发前完成动作。普通旅行常识和“带了也行”的东西不放在主页面。</div>
+
+    <div class="essential-grid">
+      <div class="essential-card">
+        <h3>1. 秋景顺序：北线尽量放前</h3>
+        <p>2026 年黑龙江官方预测显示，伊春在 9 月下旬进入最佳五花山阶段，秋色继续由北向南推进。你这趟不需要因为低温恐慌，但越靠北越不适合继续往后拖。</p>
+        <span class="action">执行：10.6 五营 / 新青，10.7 汤旺河优先；南线可稍后。</span>
+        <div class="ticket-source"><a href="https://www.hlj.gov.cn/hlj/c107856/202609/c00_31978223.shtml" target="_blank" rel="noopener">黑龙江省政府｜2026 五花山预测</a></div>
+      </div>
+
+      <div class="essential-card">
+        <h3>2. 自驾安全：轿车够，车况比 SUV 更重要</h3>
+        <p>当前核心线路普通铺装路为主，小轿车可走。黑龙江文旅厅真正强调的是轮胎、刹车、灯光、防冻液，以及背阴路段 / 桥梁可能出现隐形结冰。</p>
+        <span class="action">执行：优先车况好的 2.0L 轿车或紧凑 SUV；避免夜间赶林区路。</span>
+        <div class="ticket-source"><a href="https://wlt.hlj.gov.cn/wlt/c114145/202609/c00_31974523.shtml" target="_blank" rel="noopener">黑龙江文旅厅｜国庆安全提示</a></div>
+      </div>
+
+      <div class="essential-card">
+        <h3>3. 每天下午 4 点后开始收尾</h3>
+        <p>真正麻烦的是低温、晨雾、湿落叶和天黑后的林区驾驶，不是底盘通过性。核心景区宁可早出发，也不要用夜路换“多玩半小时”。</p>
+        <span class="action">执行：长途日 07:30–08:00 左右出发；16:00 后不再新增远距离景点。</span>
+      </div>
+
+      <div class="essential-card">
+        <h3>4. 穿衣：分层，不是堆厚衣服</h3>
+        <p>按 8–9 天准备：4 件上身打底、2 件中层、2 条长裤、1 件轻羽绒、1 件防风防水外壳；6–7 套贴身衣物和袜子；1 双防滑防水鞋 + 1 双休闲鞋。</p>
+        <span class="action">执行：鞋的防滑 / 防水优先级高于再多带一件厚外套。</span>
+      </div>
+
+      <div class="essential-card">
+        <h3>5. 防火是硬规则，不是建议</h3>
+        <p>伊春 2026 年秋季森林防火期为 9.15–11.15，其中 9.25–10.25 是高火险期，正好覆盖整趟行程。</p>
+        <span class="action">执行：不带卡式炉 / 野炊火源，不在林区吸烟，服从检查站和景区火源管理。</span>
+        <div class="ticket-source"><a href="https://www.yc.gov.cn/ycsrmzf/c102110/202603/423232.shtml" target="_blank" rel="noopener">伊春市政府｜2026 森林防火命令</a></div>
+      </div>
+
+      <div class="essential-card">
+        <h3>6. 导航、油量和票务保持弹性</h3>
+        <p>偏远山区提前下载离线地图；长线日油量低于一半就补。门票不要一次性全锁死，只提前锁五营、汤旺河等高客流景区。</p>
+        <span class="action">执行：五营 / 汤旺河提前 1–3 天；其余等天气和体力确定后再买。</span>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="checkitem"><b>出发前 72h</b><span>看哈尔滨、伊春、汤旺河天气；重点看降雨、大风、最低温和道路结冰风险。</span></div>
+      <div class="checkitem"><b>出发前 48h</b><span>确认五营 / 汤旺河开放与限流，决定是否提前购票；看最新五花山实拍 / 叶况。</span></div>
+      <div class="checkitem"><b>提车时</b><span>检查轮胎纹路、胎压、刹车、灯光、雨刮、防冻液；手机支架和车充一起确认。</span></div>
+      <div class="checkitem"><b>每天早上</b><span>按天气在“五营 / 汤旺河 / 鹿苑金祖峰 / 机动日”之间换序，不死守原计划。</span></div>
+      <div class="checkitem"><b>每天回程</b><span>不要把“最后一个景点”变成夜间林区长途；安全余量比多打一个卡更重要。</span></div>
+    </div>
+
+    <details class="compact-details">
+      <summary>可以不用过度准备的东西</summary>
+      <div class="details-body">不需要因为路况专门租大 SUV；不需要一次性买完所有门票；不需要 8–9 天每天一整套衣服；也不需要把溪水、兴安、九峰山全部塞进日程。它们的价值低于天气缓冲和核心景点体验。</div>
+    </details>
+  </section>
+
+  <section id="tickets" class="section site-panel" data-site-panel="tickets">
     <h2>门票、预约与“要不要抢”</h2>
     <p class="sub">按 2026 年国庆前可查到的官方定价与当前售票页面整理。这里把“必须提前买”和“只是提前买更省事”分开，避免把普通景区门票理解成热门演唱会式抢票。</p>
 
@@ -617,7 +706,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
   </section>
 
 
-  <section id="reviews" class="section">
+  <section id="reviews" class="section site-panel" data-site-panel="spots">
     <h2>近期玩友反馈，怎么影响行程</h2>
     <p class="sub">以下只提会改变安排的反馈，不把平台宣传文案当作结论。</p>
     <div class="grid two">
@@ -640,7 +729,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
   </section>
 
-  <section class="section">
+  <section id="rental" class="section site-panel" data-site-panel="prep">
     <h2>租车最省的执行方式</h2>
     <div class="grid two">
       <div class="card">
@@ -650,13 +739,13 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
       </div>
       <div class="card">
         <h3>方案 B</h3>
-        <div class="kpi">10.6 → 10.9</div>
-        <p class="muted">同样只锁 4 天。10.10 是天气保险日，正常情况下不租车；若要去溪水，优先提前约出租车往返。</p>
+        <div class="kpi">10.5 → 10.8</div>
+        <p class="muted">核心同样只锁 4 天。10.9 默认不租；10.10 只有核心景点被天气打乱时才临时续租。</p>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section id="sources" class="section site-panel" data-site-panel="prep">
     <h2>来源与使用说明</h2>
     <div class="card source-list">
       <ul>
@@ -670,10 +759,24 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
   </section>
 
-  <footer>版本：2026-09-22 · 目标偏好：自驾 + 自然景色优先；减少搬住宿；控制租车成本。</footer>
+  <footer>版本：2026-09-27 · 目标偏好：自驾 + 自然景色优先；减少搬住宿；控制租车成本。</footer>
 </div>
 
 <script>
+const siteTabs=[...document.querySelectorAll('[data-site-tab]')];
+const sitePanels=[...document.querySelectorAll('[data-site-panel]')];
+function activateSiteTab(name){
+  siteTabs.forEach(btn=>btn.classList.toggle('active',btn.dataset.siteTab===name));
+  sitePanels.forEach(panel=>panel.classList.toggle('active',panel.dataset.sitePanel===name));
+  history.replaceState(null,'','#'+name);
+}
+siteTabs.forEach(btn=>btn.addEventListener('click',()=>{
+  activateSiteTab(btn.dataset.siteTab);
+  window.scrollTo({top:document.querySelector('.site-tabs').offsetTop-12,behavior:'smooth'});
+}));
+const initialTab=(location.hash||'#overview').slice(1);
+if(siteTabs.some(btn=>btn.dataset.siteTab===initialTab)) activateSiteTab(initialTab);
+
 const buttons=[...document.querySelectorAll('[data-plan]')];
 const plans={a:document.getElementById('plan-a'),b:document.getElementById('plan-b')};
 buttons.forEach(btn=>btn.addEventListener('click',()=>{
@@ -682,9 +785,6 @@ buttons.forEach(btn=>btn.addEventListener('click',()=>{
   Object.values(plans).forEach(x=>x.classList.remove('active'));
   plans[btn.dataset.plan].classList.add('active');
   window.scrollTo({top:document.querySelector('.nav').offsetTop-12,behavior:'smooth'});
-}));
-document.querySelectorAll('[data-jump]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector(btn.dataset.jump).scrollIntoView({behavior:'smooth',block:'start'});
 }));
 </script>
 </body>
