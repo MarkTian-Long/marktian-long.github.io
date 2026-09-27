@@ -17,7 +17,7 @@ relations: [{"slug":"market-landscape-2026","type":"revises"}]
 
 曾鸣自己的历史坐标也变过。他在这次访谈里回顾，前两年还做过“让我们拥抱 Yahoo 吧”的演讲，当时觉得 Yahoo 很快就会出现；到了 2026 年，他反而把位置往前调，认为产业化可能连“浏览器阶段”都还没有真正走到。同一套产业史视角，两年以后，对历史坐标的判断反而前移了。
 
-这种错位感，资本市场也会放大。[Anthropic 2021 年成立](https://www.reuters.com/technology/anthropic-plans-raise-10-billion-350-billion-valuation-wsj-reports-2026-01-07/)，到 2026 年 5 月私募估值已经达到[约 9650 亿美元](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)。只看今天，这种速度很容易制造一种“以前从来没有过”的感觉。但互联网早期也出现过类似的资本重估：[Yahoo 1994 年成立](https://www.yahooinc.com/our-story)，到 2000 年互联网泡沫高点时，[市场价值一度超过 1000 亿美元](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)。这两个数字不能直接等同：按美国 CPI 粗略折算，2000 年的 1000 亿美元到今天大约是 2000 亿美元量级，并不接近 1 万亿美元；[BLS 的 CPI 数据](https://www.bls.gov/news.release/cpi.t01.htm)显示，2000 年全年平均指数约为 172.2，而 2026 年 8 月已到约 335。真正值得比较的不是绝对金额，而是**一个新技术周期可以在很早的时候，就让一家成立只有几年的公司获得极高定价；资本给出的阶段性价格，与产业最终会把最大的价值留在哪一层，是两件不同的事。**
+这种错位感，资本市场也会放大。[Anthropic 2021 年成立](https://www.reuters.com/technology/anthropic-plans-raise-10-billion-350-billion-valuation-wsj-reports-2026-01-07/)，到 2026 年 5 月私募估值已经达到[约 9650 亿美元](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)。只看今天，这种速度很容易制造一种“以前从来没有过”的感觉。但曾鸣在访谈里也举了 Yahoo 的例子：[Yahoo 1994 年成立](https://www.yahooinc.com/our-story)，到 2000 年互联网泡沫高点时，[市场价值一度超过 1000 亿美元](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)。如果不是按消费物价去换算购买力，而是放到长期资本回报和当时资本市场的尺度里理解，这已经可以和今天的万亿美元级公司放在同一个量级讨论。这个类比不是说 Anthropic 会重复 Yahoo 的命运，而是在提醒我：**足够大的技术浪潮，可能很早就把第一批成功公司推到当时难以想象的估值；极高的阶段性定价，并不能提前告诉我们，产业最终会把最大的价值留在哪一层。**
 
 我自己也踩过类似的坑。今年 4 月，我在[《2026 年 AI Agent 市场格局》](https://marktian-long.github.io/tools/blog/posts/market-landscape-2026.html)里写过一句很满的话：“框架大战已经基本结束，赢家已经确定。”当时看到的局部收敛是真的，但现在再看，把某一类 Agent 开发框架的收敛放大成整个 Agent 生态的阶段判断，这个判断推得太远。曾鸣是在重新校准整个产业的历史坐标，我的问题则是把一个子层的成熟度放大成了整个市场的成熟度，但两件事都指向同一个提醒：**历史坐标和阶段判断有用，前提是先选对比较的对象和粒度。**
 
@@ -79,7 +79,7 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 
 电气化的历史很适合说明这种机制。早期工厂引入电动机时，很多企业只是把原来的大型蒸汽动力换成大型电机，仍然通过中央动力轴组织生产，收益并不大。后来，小型电机可以分散安装到不同机器上，工程师才开始围绕工作流，而不是动力轴的位置重新设计工厂。[Chicago Fed 对这段历史的梳理](https://www.chicagofed.org/publications/chicago-fed-letter/2003/september-193)显示，电气化的大部分收益并不是来自“换了一个动力源”，而是来自之后的生产组织重构和共同创新。
 
-所以电力带来的变化，不只是“谁来提供动力”，还包括**什么样的工厂开始值得被设计出来**。AI 也可能有类似的一面：奇绩这次列出的真实反馈数据飞轮、Agent 运行环境、FDE、大规模定制和科学智能系统，未来未必都会成为大公司，但它们至少展示了另一种创业逻辑——不只是去旧流程里找一步人工操作换成 AI，而是利用更便宜的认知能力，尝试过去成本太高、很难持续运行的新系统。
+这个过程对今天企业引入 AI 也提供了一个有用的类比。给员工配上 AI 工具、在旧软件里增加 Copilot，更多像是先把动力源换掉；如果任务拆分、信息流、权限、验收和人机分工仍然保持原样，得到的往往只是局部效率提升。更大的增量，通常要等团队开始围绕 AI 能力重新设计工作流和组织方式以后才会出现。**通用技术真正改变的，不只是旧任务由谁完成，还包括原来的流程是否还应该以同样的方式存在。** 奇绩这次列出的真实反馈数据飞轮、Agent 运行环境、FDE、大规模定制和科学智能系统，未来未必都会成为大公司，但它们至少展示了同一方向：不只是去旧流程里找一步人工操作换成 AI，而是利用更便宜的认知能力，尝试过去成本太高、很难持续运行的新系统。
 
 不过，AI 像电力的地方到这里也差不多了。电力最终提供的是相对标准、同质的能源输入；AI 提供的是持续变化、概率化而且高度异质的认知和行动能力。AI 可以参与决策、调用工具，甚至参与下一代 AI 的研发；软件能力的分发速度也和铺设电网、改造工厂完全不同。因此，电气化能支持的是一个机制判断：**通用技术要创造大规模价值，往往需要大量互补创新和系统重构。** 它不能继续推出 AI 会复制电气化的时间节奏、产业结构或者应用形态。
 
@@ -113,9 +113,7 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 
 到这里，我们回答的还是技术会把经济活动带到哪里。但还有另一个问题：如果能力越来越强、经济活动越来越多，“做得更多”本身就是最终目标吗？
 
-据媒体报道，王坚今年在外滩大会提出的一个问题给了我另一种观察角度。他问，[未来城市有没有可能只用今天大约 10% 的资源，仍然让人生活得很好](https://news.caijingmobile.com/article/detail/581243?source_id=40)；谈到 AI 自身耗电时，他还提出过“[AI 投入一度电，世界也许能在别处少用十度电](https://news.10jqka.com.cn/20260911/c679836136.shtml)”的设想。这里的 10% 和“一度换十度”，我更愿意把它们理解成一个价值目标，而不是已经验证的效率数据。
-
-这个问题把技术价值从另一个方向打开了。技术进步当然可以意味着“同样的资源做更多事情”，但也可以反过来问：“得到同样甚至更好的结果，能不能少用很多资源？”奇绩材料里的“Token Max → Token 效益”，是在更窄的产业尺度上问类似的问题：探索能力边界时，使用更多 Token 有价值；进入真实业务以后，单位 Token 到底换来多少真实结果，会越来越重要。
+据媒体报道，王坚今年在外滩大会问，[未来城市有没有可能只用今天大约 10% 的资源，仍然让人生活得很好](https://news.caijingmobile.com/article/detail/581243?source_id=40)；谈到 AI 自身耗电时，他还提出过“[AI 投入一度电，世界也许能在别处少用十度电](https://news.10jqka.com.cn/20260911/c679836136.shtml)”的设想。这里真正启发我的不是 10% 或“一度换十度”这两个数字本身，而是它们背后的目标函数：**技术进步除了让同样的资源做更多事情，也可以反过来追问，能不能用更少资源得到同等甚至更好的结果。** 奇绩材料里的“Token Max → Token 效益”，其实是在更窄的产业尺度上问类似的问题：探索能力边界时，使用更多 Token 有价值；进入真实业务以后，更重要的是单位 Token 最终换来了多少真实结果。
 
 一旦把视角从 Token 扩大到能源和现实资源，就不能只看单次效率。[IEA 2026](https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary)预计，全球数据中心用电会从 2025 年约 485 TWh 增长到 2030 年约 950 TWh；与此同时，IEA 也观察到单个 AI 任务的能源效率近年来快速提升。两件事完全可以同时成立：单次任务越来越省，但更复杂的推理、视频和 Agent 工作负载不断出现，调用规模也在扩大。
 
@@ -164,7 +162,6 @@ OpenRouter 处理的是另一个环节。模型已经存在以后，实际运行
 - [Reuters：Anthropic's valuation surges to $965 billion](https://www.reuters.com/business/anthropic-raises-65-billion-now-valued-965-billion-2026-05-28/)
 - [Yahoo：Our Story](https://www.yahooinc.com/our-story)
 - [Knowledge at Wharton：Can Verizon Unlock Yahoo’s ‘Hidden Value’?](https://knowledge.wharton.upenn.edu/article/can-verizon-unlock-yahoos-hidden-value/)
-- [U.S. Bureau of Labor Statistics：CPI-U, August 2026](https://www.bls.gov/news.release/cpi.t01.htm)
 
 ### 学术研究 / 历史材料
 
