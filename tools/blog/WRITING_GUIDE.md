@@ -688,7 +688,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 
 ### 搜索发现维护
 
-- `tools/blog/data/posts-meta.json` 仍是 `title`、`summary`、`share_quote`、`url` 和 `visuals` 的单一来源；`share-card-config.json` 由生成脚本从全站配置输出，不手工维护。
+- 最终 Markdown 是 `title`、`summary`、`share_quote` 等内容语义的权威来源；`tools/blog/data/posts-meta.json` 是发布后供首页、列表、分享与搜索资产读取的统一派生索引，其中 `url` 与 `visuals` 属于发布运行数据。`share-card-config.json` 由生成脚本从全站配置输出，不手工维护。
 - 新文章发布后运行 `node scripts/generate-search-assets.js --write`，同步入口页与文章 head，并更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
 - 发布前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 一致。
 - 现有元数据只有月份，不要伪造精确 `pubDate`、`datePublished` 或 `dateModified`；未来有可靠日期字段后再补。
