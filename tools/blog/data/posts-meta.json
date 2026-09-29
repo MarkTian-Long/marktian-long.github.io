@@ -72,6 +72,14 @@
         {
           "slug": "market-landscape-2026",
           "type": "revises"
+        },
+        {
+          "slug": "ai-arbitration-layer",
+          "type": "builds_on"
+        },
+        {
+          "slug": "ai-software-operator-shift",
+          "type": "companion"
         }
       ]
     },
