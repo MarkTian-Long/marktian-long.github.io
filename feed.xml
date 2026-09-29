@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>看 AI，不要只问它像历史上的哪一年</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html</guid>
+      <description>面对 AI，历史最有价值的不是告诉我们“今天对应过去哪一年”，而是帮助我们辨认哪些产业机制会重复、这些机制成立需要什么条件，以及这一次有哪些条件已经变了。我们仍然需要位置感，但这个位置应该足够粗，不应该假装整个 AI 产业在同一时刻、以同一速度前进。</description>
+    </item>
+    <item>
       <title>AI 正在把“使用软件”和“操作软件”拆开</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</guid>
       <description>SpaceX 招股书把 AI 写成了估值核心—26.5万亿的TAM里AI占92.9%。但拆开其中最可验证的一角（AI基础设施，2.4万亿），会发现这个标签下装着两种验证节奏完全不同的东西：一层已签合同、有审计数字，另一层招股书自己写着「技术未经证实」。两层被压进同一个数字，这个数字描述的就不再是现在，而是一种把未来提前折算进当下的计价方式。</description>
-    </item>
-    <item>
-      <title>AI coding 之后，哪些 B 端 SaaS 会死，哪些会活</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html</guid>
-      <description>LLM 让自研成本暴跌，动摇了“买不如建”的传统假设；但这个冲击是分化的——功能薄、行业知识浅的 B 端 SaaS 面临被替代压力，而深度沉淀了行业流程知识的产品，护城河在重构而非消失。</description>
     </item>
   </channel>
 </rss>

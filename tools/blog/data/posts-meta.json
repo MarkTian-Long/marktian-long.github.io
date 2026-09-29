@@ -45,6 +45,37 @@
   },
   "posts": [
     {
+      "slug": "ai-industry-history-mechanisms",
+      "date": "2026.09",
+      "title": "看 AI，不要只问它像历史上的哪一年",
+      "summary": "面对 AI，历史最有价值的不是告诉我们“今天对应过去哪一年”，而是帮助我们辨认哪些产业机制会重复、这些机制成立需要什么条件，以及这一次有哪些条件已经变了。我们仍然需要位置感，但这个位置应该足够粗，不应该假装整个 AI 产业在同一时刻、以同一速度前进。",
+      "share_quote": "产业史更像一组压力测试：哪些机制重新出现了，哪些成立条件已经变化，以及今天真正值得盯住的变量是什么。",
+      "tags": [
+        "决策框架",
+        "市场格局"
+      ],
+      "topics": [
+        "产业史"
+      ],
+      "concepts": [
+        "历史类比",
+        "产业阶段",
+        "瓶颈迁移",
+        "通用目的技术",
+        "互补创新",
+        "人类参与边界",
+        "资源生产率"
+      ],
+      "category": "行业",
+      "url": "posts/ai-industry-history-mechanisms.html",
+      "relations": [
+        {
+          "slug": "market-landscape-2026",
+          "type": "revises"
+        }
+      ]
+    },
+    {
       "slug": "ai-software-operator-shift",
       "date": "2026.09",
       "title": "AI 正在把“使用软件”和“操作软件”拆开",
@@ -221,7 +252,10 @@
         "inline": []
       },
       "relations": [
-        { "slug": "alignment-under-change", "type": "builds_on" }
+        {
+          "slug": "alignment-under-change",
+          "type": "builds_on"
+        }
       ]
     },
     {
@@ -260,9 +294,18 @@
         ]
       },
       "relations": [
-        { "slug": "memory-system", "type": "builds_on" },
-        { "slug": "llm-soft-quality", "type": "builds_on" },
-        { "slug": "human-ai-boundary-shift", "type": "builds_on" }
+        {
+          "slug": "memory-system",
+          "type": "builds_on"
+        },
+        {
+          "slug": "llm-soft-quality",
+          "type": "builds_on"
+        },
+        {
+          "slug": "human-ai-boundary-shift",
+          "type": "builds_on"
+        }
       ]
     },
     {
@@ -271,14 +314,32 @@
       "title": "AI 研发已经开始自我加速，但这还不是 RSI",
       "summary": "AI 已经进入代码、实验、训练和评估等下一代 AI 的研发循环，并出现了研发自我加速的早期正反馈；但研究方向、结果解释和评价标准等关键判断权仍未形成自主闭环，因此这还不是递归式自我改进。",
       "share_quote": "真正接近 RSI 的标志，不会是 AI 第一次帮自己写代码，而是它在具备完整研发执行能力之后，开始可靠地决定：下一步，自己应该变成什么。",
-      "tags": ["技术判断"],
-      "topics": ["模型能力", "前沿研究"],
-      "concepts": ["Recursive Self-Improvement", "AI 研发自我加速", "Research Taste", "自动实验闭环", "研发判断权", "AI Self-Improvement Threshold"],
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "模型能力",
+        "前沿研究"
+      ],
+      "concepts": [
+        "Recursive Self-Improvement",
+        "AI 研发自我加速",
+        "Research Taste",
+        "自动实验闭环",
+        "研发判断权",
+        "AI Self-Improvement Threshold"
+      ],
       "category": "技术",
       "url": "posts/ai-rd-self-acceleration-rsi.html",
       "relations": [
-        { "slug": "ai-coding-hardware", "type": "builds_on" },
-        { "slug": "automated-research", "type": "builds_on" }
+        {
+          "slug": "ai-coding-hardware",
+          "type": "builds_on"
+        },
+        {
+          "slug": "automated-research",
+          "type": "builds_on"
+        }
       ]
     },
     {
@@ -306,8 +367,14 @@
       "category": "行业",
       "url": "posts/enterprise-agent-governance.html",
       "relations": [
-        { "slug": "agent-boundary", "type": "builds_on" },
-        { "slug": "enterprise-agent-fde", "type": "builds_on" }
+        {
+          "slug": "agent-boundary",
+          "type": "builds_on"
+        },
+        {
+          "slug": "enterprise-agent-fde",
+          "type": "builds_on"
+        }
       ]
     },
     {
@@ -432,7 +499,10 @@
       "category": "商业",
       "url": "posts/enterprise-agent-fde.html",
       "relations": [
-        { "slug": "fde-blog-v3", "type": "builds_on" }
+        {
+          "slug": "fde-blog-v3",
+          "type": "builds_on"
+        }
       ]
     },
     {
@@ -622,7 +692,10 @@
       "category": "实践",
       "url": "posts/human-ai-boundary-shift.html",
       "relations": [
-        { "slug": "agent-vs-workflow", "type": "builds_on" }
+        {
+          "slug": "agent-vs-workflow",
+          "type": "builds_on"
+        }
       ]
     },
     {
