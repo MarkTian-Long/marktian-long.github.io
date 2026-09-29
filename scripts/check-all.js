@@ -48,6 +48,7 @@ function main() {
     ['Repository policy', node, ['check-repository-policy.js'], scriptsDir],
     ['Search foundation', node, ['check-search-foundation.js'], scriptsDir],
     ['Blog image assets', node, ['check-blog-images.js'], scriptsDir],
+    ['Featured blog posts', node, ['check-featured-posts.js'], scriptsDir],
     ['Static client safety report', node, ['check-static-client-secrets.js'], scriptsDir],
     ['Portfolio evidence', node, ['check-portfolio-evidence.js'], scriptsDir],
     ['Generator contracts report', node, ['check-generator-contracts.js'], scriptsDir],
