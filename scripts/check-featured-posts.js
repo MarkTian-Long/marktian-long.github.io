@@ -2,8 +2,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const rootDir = path.resolve(__dirname, '..');
+const FEATURED_CATEGORIES = ['技术', '产品', '商业', '行业', '实践'];
 
-function validateFeaturedConfig(config, postSlugs) {
+function validateFeaturedConfig(config, posts) {
   const errors = [];
   if (!config || typeof config !== 'object' || Array.isArray(config)) {
     return ['Featured config must be a JSON object.'];
@@ -13,18 +14,40 @@ function validateFeaturedConfig(config, postSlugs) {
     errors.push('Featured config featured must be an array.');
     return errors;
   }
-  if (config.featured.length > 3) errors.push('Featured config supports at most 3 slugs.');
+  if (config.featured.length !== FEATURED_CATEGORIES.length) {
+    errors.push(`Featured config must contain exactly ${FEATURED_CATEGORIES.length} slugs, one per active category.`);
+  }
 
-  const seen = new Set();
+  const postBySlug = new Map((Array.isArray(posts) ? posts : []).map((post) => [post.slug, post]));
+  const seenSlugs = new Set();
+  const seenCategories = new Set();
+
   config.featured.forEach((slug, index) => {
     if (typeof slug !== 'string' || !slug.trim()) {
       errors.push(`Featured slug at index ${index} must be a non-empty string.`);
       return;
     }
-    if (seen.has(slug)) errors.push(`Featured slug is duplicated: ${slug}`);
-    seen.add(slug);
-    if (!postSlugs.has(slug)) errors.push(`Featured slug does not exist in posts-meta.json: ${slug}`);
+    if (seenSlugs.has(slug)) errors.push(`Featured slug is duplicated: ${slug}`);
+    seenSlugs.add(slug);
+
+    const post = postBySlug.get(slug);
+    if (!post) {
+      errors.push(`Featured slug does not exist in posts-meta.json: ${slug}`);
+      return;
+    }
+    if (!FEATURED_CATEGORIES.includes(post.category)) {
+      errors.push(`Featured post uses unsupported category: ${slug} -> ${post.category}`);
+      return;
+    }
+    if (seenCategories.has(post.category)) {
+      errors.push(`Featured category is duplicated: ${post.category}`);
+    }
+    seenCategories.add(post.category);
   });
+
+  for (const category of FEATURED_CATEGORIES) {
+    if (!seenCategories.has(category)) errors.push(`Featured category is missing: ${category}`);
+  }
   return errors;
 }
 
@@ -49,16 +72,15 @@ function main() {
     return;
   }
 
-  const postSlugs = new Set(Array.isArray(metadata.posts) ? metadata.posts.map((post) => post.slug) : []);
-  const errors = validateFeaturedConfig(featured, postSlugs);
+  const errors = validateFeaturedConfig(featured, metadata.posts);
   if (errors.length) {
     errors.forEach((error) => console.error(`[ERROR] ${error}`));
     process.exitCode = 1;
     return;
   }
-  console.log(`PASS featured posts: ${featured.featured.length} configured slug(s) validated.`);
+  console.log('PASS featured posts: 5 configured slugs cover 技术 / 产品 / 商业 / 行业 / 实践 exactly once.');
 }
 
 if (require.main === module) main();
 
-module.exports = { validateFeaturedConfig };
+module.exports = { FEATURED_CATEGORIES, validateFeaturedConfig };
