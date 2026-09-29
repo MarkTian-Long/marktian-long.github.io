@@ -4,7 +4,7 @@ tags: ["决策框架", "市场格局"]
 topics: ["产业史"]
 concepts: ["历史类比", "产业阶段", "瓶颈迁移", "通用目的技术", "互补创新", "人类参与边界", "资源生产率"]
 share_quote: "产业史更像一组压力测试：哪些机制重新出现了，哪些成立条件已经变化，以及今天真正值得盯住的变量是什么。"
-relations: [{"slug":"market-landscape-2026","type":"revises"}]
+relations: [{"slug":"market-landscape-2026","type":"revises"},{"slug":"ai-arbitration-layer","type":"builds_on"},{"slug":"ai-software-operator-shift","type":"companion"}]
 ---
 
 # 看 AI，不要只问它像历史上的哪一年
