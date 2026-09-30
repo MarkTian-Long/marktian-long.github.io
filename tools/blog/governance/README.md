@@ -11,6 +11,10 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
 
+## 研究待办
+
+[研究待办与聚合候选](../research_backlog.md) 保存跨会话分支、待补证问题和可能共同支撑文章的事项。记录、召回、聚合和结项规则由 `blog-sop.md` 的“研究待办记录与跨事项聚合”维护；待办记录不等于正式立项，也不进入网站文章索引。
+
 ## Series Brief
 
 进行中的系列统一维护在 `tools/blog/series/`。当前包括：

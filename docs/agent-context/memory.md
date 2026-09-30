@@ -124,6 +124,11 @@ initial migration.
 
 ### Blog system
 
+- 2026-09-30 ChatGPT: Cross-session Blog research items and potential groupings
+  live in `tools/blog/research_backlog.md`. Read/write and promotion rules are
+  owned by `tools/blog/governance/blog-sop.md`; the governance and Blog README
+  files provide entry links. This is a research record, not a published-post
+  index or a second Series Brief. No repository-wide development rule changes.
 - 2026-07-24 Codex: Search discovery has one public configuration source at
   `scripts/site-config.js`. After changing the domain or article metadata, run
   `node scripts/generate-search-assets.js --write` and then
