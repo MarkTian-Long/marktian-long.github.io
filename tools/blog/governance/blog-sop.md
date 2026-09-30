@@ -1,4 +1,4 @@
-# 产品分析博客生成 SOP v34
+# 产品分析博客生成 SOP v35
 
 ---
 
@@ -592,6 +592,8 @@ Prompt、Ontology、组织所有权等次级概念若不是主线起点，不应
 5. 修改后重新执行必要的全文回归检查；
 6. 将通过上述步骤的版本作为**审校后首版**交给用户细看。
 
+**审校后首版形成后，统一进入单一 Markdown 工作稿阶段。** 未发布完整稿写入或覆盖 `drafts/blog/<slug>.md`，该文件作为后续迭代的唯一当前正文；用户反馈默认直接 patch 这份草稿，不在聊天、本地下载文件或其他 GitHub 路径并行维护第二份完整正文。每次同步当前稿时，除更新 GitHub 草稿外，还应在当前会话中以文件附件形式呈现同一份 Markdown，供用户直接打开或下载；该会话附件只是当前草稿的同步呈现，不构成新的内容版本。只有用户明确要求导出、终稿或发布时，才进入 metadata 冻结和正式源迁移。
+
 这样做的目的，是让用户把注意力放在更难由规则替代的判断上，例如核心观点是否值得写、解释是否真的看懂、案例是否击中真实困惑、作者立场和第一手经验是否准确，而不是让用户重复承担术语一致性、引用边界、结论承载力、段落节奏、图表语义等基础 QA。
 
 以下情况不受“首个完整正文先审校”限制：
@@ -802,6 +804,7 @@ frontmatter 规则：
 
 ## 版本记录
 
+- v35（2026-09-30）：补回 v33 迁移时遗漏在正文执行规则中的草稿交付契约：审校后首版形成后，未发布完整稿统一维护在 `drafts/blog/<slug>.md`；后续反馈直接 patch 同一 Markdown 工作稿。每次同步当前稿时，同时在当前会话中以文件附件形式呈现同一份 Markdown；该附件只是当前稿的同步副本，不形成第二内容版本。只有明确导出、终稿或发布时才进入 metadata 冻结与正式源迁移。
 - v34（2026-09-30）：新增跨会话研究待办的唯一记录 `tools/blog/research_backlog.md`，接入独立起点后的召回、研究分支回写与文章收束。以未解决问题为单位更新事件和证据，允许多个事项按共同问题、互补机制或反证形成聚合候选；区分事实、假设、状态与成文门槛，不因记录、数量或同一品牌自动立项，不复制 Series Brief 或发布 metadata。
 - v33（2026-09）：完成 Blog 项目 GitHub 单一真源迁移。长期规范统一从 `tools/blog/governance/`、`tools/blog/data/`、`.agents/skills/blog-human-writing/` 与 `tools/blog/series/` 读取，Project Source 仅保留为迁移前快照；未发布完整稿统一维护在 `drafts/blog/<slug>.md`，确认发布后再迁移到 `docs/blog/<slug>.md`。同时明确写入后回读验证与草稿/发布源的单一当前版本边界。
 - v32（2026-09）：重构网页版写作与发布端的 metadata 职责。GitHub `blog-taxonomy.json` 成为 category/tags/topics/concepts 规则的唯一长期真源；新文章启动与终稿冻结前分别读取最新 taxonomy，taxonomy 缺口走显式 change + 历史 audit。最终 Markdown 改为持久 frontmatter，网页版冻结 `category / tags / topics / concepts / share_quote / relations`，Codex 只校验和发布；新文章不再依赖 transport-only `publish_handoff/body_link_only`。同时将 GitHub `.agents/skills/blog-human-writing/` 升级为活人感与材料检查的长期权威来源，安装 Skill 只作运行入口；每篇正式博客结束后默认执行统一规范沉淀复盘，将 SOP、Checklist、图表规范、taxonomy、活人感 Skill、发布规范/脚本及按需 Series Brief 全部纳入评估范围，不再额外询问是否需要复盘。
