@@ -55,6 +55,7 @@ const PUBLIC_FILES = [
   'tools/trends/contract.js',
   'tools/trends/data/trends.json',
   'tools/yichun-roadtrip/index.html',
+  'tools/hangzhou-family-trip/index.html',
 ];
 
 function toPosix(filePath) {
