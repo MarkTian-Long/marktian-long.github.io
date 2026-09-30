@@ -131,7 +131,7 @@
   function setTheme(){document.documentElement.dataset.theme=state.theme;const b=document.getElementById('themeToggle');b.textContent=state.theme==='light'?'深色':'浅色';b.setAttribute('aria-label',state.theme==='light'?'切换深色模式':'切换浅色模式');save();}
   document.getElementById('themeToggle').addEventListener('click',()=>{state.theme=state.theme==='light'?'dark':'light';setTheme()});
   document.getElementById('printPage').addEventListener('click',()=>window.print());
-  function progress(){const checks=all('[data-check]');const count=checks.filter(b=>b.checked).length;const out=document.getElementById('checkProgress');if(out)out.textContent=\`\${count} / \${checks.length} 项已自行核对\`;}
+  function progress(){const checks=all('[data-check]');const count=checks.filter(b=>b.checked).length;const out=document.getElementById('checkProgress');if(out)out.textContent=count+' / '+checks.length+' 项已自行核对';}
   all('[data-check]').forEach(b=>{b.checked=state.checks[b.dataset.check]===true;b.addEventListener('change',()=>{state.checks[b.dataset.check]=b.checked;save();progress()})});
   const freshness=document.getElementById('freshnessBadge');if(freshness&&Date.now()>=Date.parse('2026-10-02T00:00:00+08:00')){freshness.textContent='历史快照 · 请看当天信息';freshness.className='tag pending';}
   activateTab(location.hash.slice(1)||'overview',false);setTheme();progress();
