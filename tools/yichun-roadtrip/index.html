@@ -87,6 +87,14 @@ h1{margin:8px 0 10px;font-size:clamp(30px,4vw,50px);line-height:1.15}
 .compact-details{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0 14px}
 .compact-details summary{cursor:pointer;padding:13px 0;font-weight:800;color:var(--ink)}
 .compact-details .details-body{padding:0 0 14px;color:var(--muted);font-size:13px}
+
+.harbin-flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}
+.harbin-step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.harbin-step b{display:block;margin-bottom:4px;font-size:13px}
+.harbin-step span{font-size:12px;color:var(--muted)}
+.harbin-food{margin-top:12px;padding:13px 14px;border-radius:14px;background:var(--amber2);border:1px solid var(--line);font-size:13px;color:var(--amber)}
+@media(max-width:850px){.harbin-flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 @media(max-width:850px){
   .essential-grid{grid-template-columns:1fr}
   .checkitem{grid-template-columns:1fr;gap:2px}
@@ -239,7 +247,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
   <section class="hero">
     <div class="eyebrow">2026 · 国庆后半程 · 秋季自驾</div>
     <h1>哈尔滨 × 伊春｜双方案对比</h1>
-    <p>按“自驾本身 + 自然景色”为核心，优先减少无意义换酒店和同质化森林景点。两个方案都采用哈尔滨进、伊春出；哈尔滨市区不租车，真正进入小兴安岭再取车。</p>
+    <p>按“自驾本身 + 自然景色”为核心，优先减少无意义换酒店和同质化森林景点。哈尔滨只留一个高辨识度城市日：大剧院、老道外、本地菜、索菲亚、中央大街与东北洗浴；10.5 再取车进入小兴安岭。</p>
     <div class="badges">
       <span class="badge">哈尔滨进 / 伊春出</span>
       <span class="badge">核心租车 4 天</span>
@@ -375,6 +383,8 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
       <div class="card"><div class="muted">共同核心</div><div class="kpi">4 个自然日</div><div class="muted">乌带公路 / 五营+新青 / 汤旺河 / 鹿苑+金祖峰</div></div>
       <div class="card"><div class="muted">建议核心租车</div><div class="kpi">4 天</div><div class="muted">A：10.5–10.8；B：10.6–10.9。机动日再按天气决定是否续租。</div></div>
       <div class="card"><div class="muted">伊春住宿策略</div><div class="kpi">不追着景点搬</div><div class="muted">五营、汤旺都做伊春往返，用一些回头路换住宿稳定。</div></div>
+    </div><div class="note" style="margin-top:14px">
+      <b>哈尔滨已经收敛：</b>10.3 晚到后不安排景点；10.4 只保留“大剧院 → 张包铺 / 中华巴洛克 → 索菲亚 → 中央大街 → 振江饺子 → 澜亭水汇”。太阳岛、红专街早市、师大夜市、铁锅炖本轮删除，避免城市日过载。10.5 早上直接取车进入乌带公路。
     </div>
   </section>
 
@@ -398,9 +408,22 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
         <div class="drive"><strong>市内交通</strong>机场 / 高铁站 → 酒店<br><span class="car no">不租车</span></div>
       </div>
       <div class="day">
-        <div class="date">10.4<small>哈尔滨完整日</small></div>
-        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江 / 太阳岛</h4><p>哈尔滨核心内容先看完。地铁 + 打车比租车省事，停车反而是负担。</p></div>
-        <div class="drive"><strong>0 km 长途自驾</strong>市区公共交通<br><span class="car no">不租车</span></div>
+        <div class="date">10.4<small>哈尔滨精简日</small></div>
+        <div>
+          <span class="route-tag city">城市</span>
+          <h4>大剧院 → 张包铺 / 中华巴洛克 → 索菲亚 → 中央大街 → 振江饺子 → 澜亭水汇</h4>
+          <p>删掉太阳岛、红专街早市和师大夜市，不追网红烧烤。用一天覆盖“现代建筑 + 老道外 + 哈尔滨老城 + 本地饭 + 东北洗浴”五种最有辨识度的体验。</p>
+          <div class="harbin-flow">
+            <div class="harbin-step"><b>09:15</b><span>世茂大道附近酒店出发</span></div>
+            <div class="harbin-step"><b>09:40–10:40</b><span>哈尔滨大剧院：先拍外观，10:00 后简单入内参观</span></div>
+            <div class="harbin-step"><b>11:20–12:40</b><span>张包铺午饭：排骨包 + 锅包肉；饭后逛中华巴洛克</span></div>
+            <div class="harbin-step"><b>14:00–18:00</b><span>索菲亚 → 中央大街 → 防洪纪念塔 / 松花江边</span></div>
+            <div class="harbin-step"><b>18:00–19:00</b><span>振江饺子晚饭：作为同事推荐的本地手工饺子</span></div>
+            <div class="harbin-step"><b>19:30 后</b><span>澜亭水汇：洗浴、汗蒸、休息；体力不足可直接回酒店</span></div>
+          </div>
+          <div class="harbin-food"><b>10.3 晚上约 20–21 点才到酒店：</b>不安排正式景点。饿的话就在世茂大道附近找近期本地评价稳定的烧烤，不为了“网红烧烤”跨城。</div>
+        </div>
+        <div class="drive"><strong>地铁 + 打车</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.5<small>公路主角日</small></div>
@@ -453,14 +476,26 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
     <div class="timeline">
       <div class="day">
-        <div class="date">10.3<small>抵达日</small></div>
-        <div><span class="route-tag city">城市</span><h4>到哈尔滨，轻松入住</h4><p>晚餐 + 中央大街附近散步。</p></div>
+        <div class="date">10.3<small>抵达日</small></div><div><span class="route-tag city">城市</span><h4>20–21 点左右到世茂大道附近酒店，直接入住</h4><p>不再跨江安排景点；饿的话就在酒店附近吃烧烤或简餐，早点休息。</p></div>
         <div class="drive"><strong>市内交通</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
-        <div class="date">10.4<small>哈尔滨完整日</small></div>
-        <div><span class="route-tag city">城市</span><h4>索菲亚 → 中央大街 → 松花江 / 太阳岛</h4><p>哈尔滨核心内容一天完成；不为了“多一天”把北线秋景继续往后拖。</p></div>
-        <div class="drive"><strong>0 km 长途自驾</strong><span class="car no">不租车</span></div>
+        <div class="date">10.4<small>哈尔滨精简日</small></div>
+        <div>
+          <span class="route-tag city">城市</span>
+          <h4>大剧院 → 张包铺 / 中华巴洛克 → 索菲亚 → 中央大街 → 振江饺子 → 澜亭水汇</h4>
+          <p>删掉太阳岛、红专街早市和师大夜市，不追网红烧烤。用一天覆盖“现代建筑 + 老道外 + 哈尔滨老城 + 本地饭 + 东北洗浴”五种最有辨识度的体验。</p>
+          <div class="harbin-flow">
+            <div class="harbin-step"><b>09:15</b><span>世茂大道附近酒店出发</span></div>
+            <div class="harbin-step"><b>09:40–10:40</b><span>哈尔滨大剧院：先拍外观，10:00 后简单入内参观</span></div>
+            <div class="harbin-step"><b>11:20–12:40</b><span>张包铺午饭：排骨包 + 锅包肉；饭后逛中华巴洛克</span></div>
+            <div class="harbin-step"><b>14:00–18:00</b><span>索菲亚 → 中央大街 → 防洪纪念塔 / 松花江边</span></div>
+            <div class="harbin-step"><b>18:00–19:00</b><span>振江饺子晚饭：作为同事推荐的本地手工饺子</span></div>
+            <div class="harbin-step"><b>19:30 后</b><span>澜亭水汇：洗浴、汗蒸、休息；体力不足可直接回酒店</span></div>
+          </div>
+          <div class="harbin-food"><b>10.3 晚上约 20–21 点才到酒店：</b>不安排正式景点。饿的话就在世茂大道附近找近期本地评价稳定的烧烤，不为了“网红烧烤”跨城。</div>
+        </div>
+        <div class="drive"><strong>地铁 + 打车</strong><span class="car no">不租车</span></div>
       </div>
       <div class="day">
         <div class="date">10.5<small>公路主角日</small></div>
@@ -759,7 +794,7 @@ footer{margin-top:28px;color:var(--muted);font-size:12px}
     </div>
   </section>
 
-  <footer>版本：2026-09-27 · 目标偏好：自驾 + 自然景色优先；减少搬住宿；控制租车成本。</footer>
+  <footer>版本：2026-10-01 · 目标偏好：自驾 + 自然景色优先；减少搬住宿；控制租车成本。</footer>
 </div>
 
 <script>
