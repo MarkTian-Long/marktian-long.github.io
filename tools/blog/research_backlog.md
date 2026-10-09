@@ -152,7 +152,7 @@
 
 **缺口与下一步。** 比较最佳现有工具/确定性自动化、逐次指挥 Agent 和持续委托，覆盖自然事务周期，记录收益与人的全部投入；分开核验订阅、广告、商家获客、佣金、按次与捆绑模式的收入归属和完整成本。
 
-**关联与去向。** 当前 Personal Agent 研究的价值检验线，也为 [工作单位新题](#br-20261009-01)提供长期场景边界。当前拟将 Instinct 提升为消费端核心机制对照，Dots/Muse 负责持续环境和行动边界，OpenClaw 负责热潮反证；不因为 Instinct 热度改写成单产品研究。不把创业、消费渠道和并购讨论塞成同一篇正文。消费入口见 [05](#br-20260930-05)。
+**关联与去向。** 当前 Personal Agent 研究的价值检验线，也为 [工作单位新题](#br-20261009-01)提供长期场景边界。用户 10 月 9 日确定正式大纲需包含三家大厂产品（Dots、Muse、消费级 Gemini Spark）及两家创业产品（Manus Cue、Instinct）的**简短同维度对照**，比较委托入口、持续环境、身份/行动边界与产品取舍，而不是五份参数横评。后文重点用 Dots/Muse/Spark 说明持续运行的不同承载，Cue 说明专用身份与有限多代理协作，Instinct 说明低交互负担、主动服务和商业利益冲突；OpenClaw 只作热潮后持续采用的反证。保持本篇“长期个人委托如何成立”的已锁定主线；创业、消费渠道和并购问题另入分支。消费入口见 [05](#br-20260930-05)。
 
 <details>
 <summary>展开：需求、持续运行机制与真实使用反证</summary>
@@ -160,6 +160,8 @@
 **9 月 30 日既有材料。** [Daminger 2019 研究](https://journals.sagepub.com/doi/10.1177/0003122419859007)区分预见需求、寻找选项、决策与跟进，支持执行外还有认知劳动，不证明 AI 能减负。[Apple WWDC19 Shortcuts](https://developer.apple.com/videos/play/wwdc2019/213/)已有事件触发、跨 App 串联与预定义追问，不能把它们当成大模型独有。[WIRED 的 Instinct 亲历](https://www.wired.com/story/i-finally-found-an-ai-agent-worth-the-risk/)同时记录有用代办与违反限制的错误；单人体验不代表总体成功率，不把不同任务金额相减当净收益。
 
 **10 月 9 日既有机制材料。** [Dots 发布](https://openai.com/index/introducing-dots/)（9/29）与[帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)记录跨对话推进、活动状态、暂停和行动控制；背景主动研究仅只读，首发不能给个人 dot 单独邮箱或主动向用户发起电话。[工作区管理](https://help.openai.com/en/articles/20001554-manage-dots-in-chatgpt-workspaces)与发布页区分 primary dot 与组织 specialist dots，后者为企业试点。[Muse 发布](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（页面标注9/8发布、9/30更新）描述关闭 App 后任务继续、需批准时返回、App/WhatsApp入口与审计撤权；不采纳“世界首个”的优先权断言。[Google Gemini at Work](https://cloud.google.com/blog/products/ai-machine-learning/welcome-to-gemini-at-work-2026)（10/8）将持续执行、共同记忆与角色型 Agent 放在一起，同时保留 Gmail/Docs/Sheets 原位入口；这是10/5日报之后的材料，不回填为此前已知事实。
+
+**2026-10-09 五款产品案例角色补证。** [OpenAI Dots 官宣](https://openai.com/index/introducing-dots/)包含个人 dot 的独立云电脑、跨插件连接和明确授权，组织 specialist dots 仍为企业试点；[Meta Muse 官宣](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)强调消费者 App/WhatsApp 入口、独立 Secure VM 与授权判断；[Google 个人 Spark 官方介绍](https://blog.google/intl/zh-tw/products/devices-services/gemini-spark-ai/)确认在部分地区面向 Google AI Pro/Ultra 的 Gemini 个人代理与云端后台工作，须与 [Google Cloud 的企业 Gemini Agent](https://cloud.google.com/blog/products/ai-machine-learning/welcome-to-gemini-at-work-2026)区分；[Manus 2.0 / Cue 官宣](https://manus.im/en/blog/introducing-manus-2-0)明确 Cue 是在同一基础设施上构建的独立、早期邀请制应用，并提供每 Agent 邮箱、电话、钱包、电脑和团队分工，而非 Manus 2.0 的改名；[Manus 9/1 官方声明](https://manus.im/blog/manus-resumes-independent-operations)确认已恢复独立运营。Instinct 的创始人访谈与独立用户反馈另见下方专段。共同信号只支持产品架构收敛，不足以证明使用、长期留存和商业化结果。正文按三家大厂加两家创业公司介绍异同，不依据是否有独立 VM/邮箱/多个 Agent 就判定更成熟。
 
 **机制校准。** [Anthropic 长任务工程复盘](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)（2025-11-26）通过进度文件、版本历史与验证接续会话，并记录过早宣告完成等失败；[Horvitz 混合主动交互论文](https://www.microsoft.com/en-us/research/publication/principles-mixed-initiative-user-interfaces/)（1999）早已讨论代理与直接操作结合。持续性不要求永久在线的同一模型进程或拟人身份；有记忆、定时按钮、独立邮箱也不自动代表承接持续职责。
 
