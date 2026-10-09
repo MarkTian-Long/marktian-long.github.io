@@ -5,6 +5,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 ## 长期规范
 
 - `tools/blog/governance/blog-sop.md`：探讨、收敛、大纲确认、正式写稿与流程路由。
+- `tools/blog/governance/blog-research-backlog-spec.md`：研究待办的记录结构、编号与日期、原位更新和整理验收；补充 SOP，不重定义研究流程或立项规则。
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
 - `tools/blog/governance/blog-charts-spec.md`：表格、流程图和其他可视化规范。
 - `tools/blog/WRITING_GUIDE.md`：最终 Markdown、metadata 和发布契约。
@@ -13,7 +14,9 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 ## 研究待办
 
-[研究待办与聚合候选](../research_backlog.md) 保存跨会话分支、待补证问题和可能共同支撑文章的事项。记录、召回、聚合和结项规则由 `blog-sop.md` 的“研究待办记录与跨事项聚合”维护；待办记录不等于正式立项，也不进入网站文章索引。
+[研究待办与聚合候选](../research_backlog.md) 是唯一当前记录，保存研究总览、当前研究卡、跨事项聚合关系和关键决策/结项；它不等于正式立项，也不进入网站文章索引。
+
+研究决策仍由 [Blog SOP](blog-sop.md) 的“研究待办记录与跨事项聚合”负责：何时收录、如何召回与聚合、采用什么状态、何时有资格进入正式写作。维护记录时另读 [待办维护规范](blog-research-backlog-spec.md)：创建、内容更新、证据核验与事件日期分开；同一问题原位合并，独立新问题才建新 ID；当前判断默认展开，长材料折叠。不要在记录文件复制规范，也不要把 SOP 与维护细则各写成一套相同流程。
 
 ## Series Brief
 
