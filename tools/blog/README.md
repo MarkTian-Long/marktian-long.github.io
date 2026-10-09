@@ -9,7 +9,7 @@ tools/blog/
 ├── README.md               本文件
 ├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
 ├── VISUAL_GUIDE.md         新文章视觉系统（封面/正文图/提示词/资产检查）
-├── governance/             写作流程、终审与图表规范的长期真源
+├── governance/             写作流程、待办维护、终审与图表规范的长期真源
 ├── series/                 当前进行中系列的共享 Brief
 ├── research_backlog.md     跨会话研究待办与聚合候选
 ├── article-links.css       文章页共享链接语义与键盘焦点样式
@@ -57,7 +57,7 @@ tools/blog/
 ## 快速使用
 
 - **浏览文章**：直接打开 `index.html` 或从主页「写作」区块进入
-- **研究待办**：[research_backlog.md](research_backlog.md) 记录尚未解决的问题、后续事件与证据缺口，并保留跨事项的聚合候选；操作规则只在 `governance/blog-sop.md` 维护。
+- **研究待办**：[research_backlog.md](research_backlog.md) 是研究问题与聚合候选的唯一当前记录。收录、召回、聚合、状态和立项由 `governance/blog-sop.md` 管；整理记录时另读 [待办维护规范](governance/blog-research-backlog-spec.md)，统一编号、创建/更新/核验日期、当前卡片、来源折叠与安全回写，不连续追加多份旧判断。
 - **新增文章**：研究/写作先从 `governance/README.md` 进入，按需读取 `governance/blog-sop.md`、`governance/blog-review-checklist.md`、`governance/blog-charts-spec.md` 与对应 `series/*.md`；网站发布契约仍以 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md` 为准。未发布完整稿维护在 `../../drafts/blog/<slug>.md`，最终 Markdown 顶部的严格 frontmatter 固定 category、tags、topics、concepts、share_quote 和 relations；标题下唯一 blockquote 是正式 `summary`
 - **文章清单**：`data/posts-meta.json` v4 是网站运行索引；文章内容语义以最终 Markdown 为源。单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方目录只保留近期与代表性文章，避免手工清单漂移
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表。当前固定 5 篇，分别覆盖 技术 / 产品 / 商业 / 行业 / 实践五个一级分类且每类恰好 1 篇；第一项仍承担首页唯一「推荐阅读」，Blog 默认页展示全部 5 篇精选。精选只改变发现入口，不写入文章 metadata，也不影响 relations / Continue Reading。
