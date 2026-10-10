@@ -119,6 +119,23 @@ test('new frontmatter relations must target an existing post and empty relations
   assert.deepEqual(synced.post.relations, []);
 });
 
+test('new articles appear first in archive and RSS order; existing order stays stable', () => {
+  const rootDir = makeSyncFixture([
+    basePost('older-post', { date: '2026.08' }),
+    basePost('same-month-a', { date: '2026.09' }),
+    basePost('same-month-b', { date: '2026.09' }),
+  ]);
+  const sourcePath = writeSource(rootDir, 'new-post');
+  syncPostMetadata({ rootDir, sourcePath, date: '2026.10' });
+  const slugs = () => JSON.parse(fs.readFileSync(
+    path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'
+  )).posts.map((post) => post.slug);
+  const expected = ['new-post', 'same-month-a', 'same-month-b', 'older-post'];
+  assert.deepEqual(slugs(), expected);
+  syncPostMetadata({ rootDir, sourcePath, date: '2026.11' });
+  assert.deepEqual(slugs(), expected);
+});
+
 test('legacy Markdown is retained only for an existing metadata record', () => {
   const rootDir = makeSyncFixture([basePost('legacy-post')]);
   const legacy = '# Existing title\n\n> Existing summary\n\n---\n\nExisting body。\n';
