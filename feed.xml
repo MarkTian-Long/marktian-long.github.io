@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>视频已经能“生成未来”，为什么还不等于会预测世界？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/video-world-model.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/video-world-model.html</guid>
+      <description>视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。</description>
+    </item>
+    <item>
       <title>看 AI，不要只问它像历史上的哪一年</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</guid>
       <description>AI对软件的改变不会停在AI能自己搞定一切的阶段。它会停在一个更现实的位置——AI主动发现问题、把决策权递到你面前，你来拍板。但这个变化本身会催生一种新的软件形态：专门负责排序和过滤这些AI主动请求的层，它可能比下一代agent的能力本身更值得关注。</description>
-    </item>
-    <item>
-      <title>一份招股书里，两种不同节奏的“AI”</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/spacex-ai-infrastructure-valuation.html</guid>
-      <description>SpaceX 招股书把 AI 写成了估值核心—26.5万亿的TAM里AI占92.9%。但拆开其中最可验证的一角（AI基础设施，2.4万亿），会发现这个标签下装着两种验证节奏完全不同的东西：一层已签合同、有审计数字，另一层招股书自己写着「技术未经证实」。两层被压进同一个数字，这个数字描述的就不再是现在，而是一种把未来提前折算进当下的计价方式。</description>
     </item>
   </channel>
 </rss>
