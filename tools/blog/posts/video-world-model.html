@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!--
+date:    2026.10
+title:   视频已经能“生成未来”，为什么还不等于会预测世界？
+tags:    [技术判断]
+slug:    video-world-model
+summary: 视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>视频已经能“生成未来”，为什么还不等于会预测世界？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/video-world-model.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="视频已经能“生成未来”，为什么还不等于会预测世界？" />
+<meta property="og:description" content="视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/video-world-model.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI · Product · Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="视频已经能“生成未来”，为什么还不等于会预测世界？" />
+<meta name="twitter:description" content="视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI · Product · Builder" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"视频已经能“生成未来”，为什么还不等于会预测世界？","description":"视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。","url":"https://marktian-long.github.io/tools/blog/posts/video-world-model.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/video-world-model.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、当所有人都在说世界模型，它们其实不一定在做同一件事</a></li><li><a href="#section-2">二、生成一个合理的未来，和预测真实世界，不是一种考试</a></li><li><a href="#section-3">三、真正需要预测的，未必是未来的每一个像素</a></li><li><a href="#section-4">四、给模型一个动作输入，仍然不代表它知道这个动作会造成什么</a></li><li><a href="#section-5">五、世界模型真的有用时，它未必需要一直待在机器人脑子里</a></li><li><a href="#section-6">六、所以，把视频模型一直做大，会自然长出世界模型吗？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.10</span><span id="post-tags"></span></div><h1 class="post-title">视频已经能“生成未来”，为什么还不等于会预测世界？</h1><p class="post-summary">视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><p>9 月 28 日，AMD 宣布与李飞飞创立的 World Labs 签署最终收购协议，交易价值约 <strong>82 亿美元</strong>。这笔交易仍需监管审批，预计在 2026 年底前完成；如果顺利交割，李飞飞将加入 AMD，担任执行副总裁兼首席科学家。<a href="https://ir.amd.com/news-events/press-releases/detail/1299/amd-to-acquire-world-labs-to-advance-the-future-of-ai-compute" target="_blank" rel="noopener noreferrer">AMD 的官方公告</a>把这笔交易与下一代 AI 计算直接联系在一起：未来的模型不只处理语言和代码，也会更多进入三维空间、仿真、机器人和真实世界。</p>
+<p>这个时间点很有意思。不到一个月前，World Labs 刚发布 Atlas，希望把文字、图片、视频和三维信息放进同一个空间上下文，让模型不仅能生成一个场景，还能从不同角度继续观察和推演这个世界。<a href="https://www.worldlabs.ai/blog/atlas" target="_blank" rel="noopener noreferrer">World Labs 对 Atlas 的介绍</a>把它定位成面向空间智能的世界模型。</p>
+<p>但这笔 82 亿美元的交易，当然不能证明 World Labs 选择的技术路线就是答案。它更像一个现实信号：<strong>“世界模型”已经从论文里的概念，进入了大公司的技术路线和资本配置。</strong></p>
+<p>问题也因此变得更值得追究。过去两年，一段可以连续生成的视频，可以被叫作世界模型；一个可以用键盘实时探索的虚拟环境，也被叫作世界模型；有些模型根本不生成视频，只在内部预测状态变化，同样叫世界模型；机器人系统里负责预测动作后果的模块，也在使用这个名字。它们显然不是同一种东西。</p>
+<p><strong>那么，一个模型从“会生成未来”，走到“会预测世界”，到底发生了什么变化？</strong></p>
+<h2 id="section-1">一、当所有人都在说世界模型，它们其实不一定在做同一件事</h2>
+<p>World Labs 自己也承认，World Model（世界模型）已经是一个使用范围非常宽的词。目前几条代表性路线，其实不是在同一条分类轴上讨论这个概念：有的按“模型承担什么功能”来分，有的描述能力如何逐步扩展，还有的展示具体训练过程怎样从视频预测走向动作预测。</p>
+<div class="blog-table"><table><thead><tr><th>研究路线</th><th>划分依据</th><th>有无先后顺序</th><th>应如何理解</th></tr></thead><tbody><tr><td>World Labs</td><td>渲染 / 模拟 / 规划</td><td>无，功能可并存</td><td>职责不同</td></tr><tr><td>朱军团队</td><td>L1—L5 能力路线</td><td>有，研究设想</td><td>并非行业共识</td></tr><tr><td>Meta V-JEPA 2</td><td>视频学习 → 动作适配</td><td>有，训练顺序</td><td>单个模型路径</td></tr></tbody></table></div>
+<p>World Labs 的<a href="https://www.worldlabs.ai/blog/taxonomy-of-world-models" target="_blank" rel="noopener noreferrer">原始分类</a>把世界模型分成渲染器、模拟器和规划器，强调三者是不同功能，并不是严格的“低级—中级—高级”关系。朱军团队在<a href="https://www.motubrain.com/zh/blog/general-world-models-first-principles-and-a-development-roadmap/" target="_blank" rel="noopener noreferrer">《通用世界模型：第一性原理与发展路线》</a>中，则把理解、想象和行动放进同一套框架，并进一步讨论从世界生成、实时交互到机器人行动的能力演进；<a href="https://mp.weixin.qq.com/s/6ii-ejTaK72OBdwcVTwTaw" target="_blank" rel="noopener noreferrer">机器之心对这套框架的梳理</a>可以作为入口，但这套五级路线是团队自己的研究框架，不是行业统一标准。Meta 的 <a href="https://ai.meta.com/research/vjepa/" target="_blank" rel="noopener noreferrer">V-JEPA 2</a> 又是另一回事：它先从大量视频中学习世界怎样变化，之后再加入机器人动作数据，让预测能力进一步服务规划。</p>
+<p>所以这三种视角<strong>不是一个统一的时间轴</strong>。World Labs 在讲功能分工，朱军团队在讲一套能力演进设想，V-JEPA 2 展示的是具体训练路径；把它们强行排成“第一阶段—第二阶段—第三阶段”，反而会制造一个行业并不存在的统一路线。</p>
+<p>我之前在<a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" target="_blank" rel="noopener noreferrer">《物理世界会有自己的 LLM 时刻吗？》</a>里，为了把世界模型与数字孪生、具身智能区分开，把它压缩成了一个比较直接的问题：“如果我做这个动作，接下来会发生什么？”继续研究以后，这个定义需要再收窄一点：它更准确地描述的是<strong>面向规划和控制的世界模型</strong>，并不能覆盖今天所有使用 World Model 这个名字的系统。</p>
+<p>这篇文章因此不准备裁判谁“有资格”叫世界模型，而只关注其中面向预测和行动的一部分：如果一个模型最终要帮助 AI 在世界里做判断，我们应该怎样检查它到底学会了什么？</p>
+<p>后文的四道检验并不是某篇论文提出的标准分类，而是我把几组证据按“验收问题”重新整理后的本文归纳：内容生成先问未来是否合理；物理与状态预测研究继续追问关键状态是否可信；加入动作以后，再检查不同动作是否真的改变预测结果；真正进入机器人系统时，最后还要看这种预测有没有改善规划、训练或验证。</p>
+<div class="blog-table"><table><thead><tr><th>检验</th><th>真正要问的问题</th><th>典型失败</th></tr></thead><tbody><tr><td>合理性</td><td>这个未来看起来可能发生吗？</td><td>画面和时间不连贯</td></tr><tr><td>状态忠实</td><td>关键状态真的按世界规律变化吗？</td><td>看着合理，但物体状态错了</td></tr><tr><td>干预忠实</td><td>换一个动作，后果会正确变化吗？</td><td>输入换了，世界却没按动作变化</td></tr><tr><td>行为价值</td><td>这种预测能让后续行动做得更好吗？</td><td>会预测，却没提高任务成功率</td></tr></tbody></table></div>
+<p>这四道检验不是“模型必须逐级升级”的四个阶段，而是同一个预测系统面对的要求越来越严格：从“看起来像真的”，一路走到“真的能帮助行动”。后面的几章就按这四个问题往下拆。</p>
+<h2 id="section-2">二、生成一个合理的未来，和预测真实世界，不是一种考试</h2>
+<p>在上一篇<a href="https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html" target="_blank" rel="noopener noreferrer">《视频模型到底在进化什么？为什么“画面惊艳”已经不够了》</a>里，我讨论的主要还是内容生产：人物能不能保持一致，镜头能不能按照要求变化，错误能不能局部修改，最后得到一个可用结果还需要多少随机试错。那篇文章最后留下了一个边界：<strong>视频生成越来越强，不意味着它会自然变成世界模型。</strong></p>
+<p>原因首先在于，两种任务对“正确”的要求不一样。假设我要生成一段雨夜街头的电影镜头，模型可以把路灯放在左边，也可以放在右边；行人可以撑黑伞，也可以撑透明伞。只要整体符合创作要求，很多不同结果都可以成立。</p>
+<p>但如果我站在真实街口，问导航系统“半小时后这条路会不会堵”“这个入口现在能不能走”，问题就不一样了。一篇关于高德空间智能的报道里有一个很好的对照：生成式模型面对一个没有被拍到的空间，可以给出多个合理答案；地图和导航面对的，却是一个已经存在、正在不断变化的现实世界，需要尽量逼近它此刻真实的状态。<a href="https://mp.weixin.qq.com/s/9tTlbZx6QUqKrqLxLhmEwA" target="_blank" rel="noopener noreferrer">原文</a>讨论的虽然是地图与空间智能，但这个差别也适用于世界模型。</p>
+<p>真实世界的未来当然也不是唯一确定的。天气、人、其他车辆和很多随机因素都会制造不同分支。但预测系统不能只生成一个“看起来可能”的分支就算完成任务，它至少要保证那些与任务有关的状态，以及不同条件对这些状态的影响，与现实足够一致。</p>
+<p>高德这个例子说明的是“任务对正确答案的约束不同”。回到视频模型本身，还要再问一个更直接的问题：<strong>画面越来越逼真，是否已经代表模型对物理变化也判断得更准？</strong> Physics-IQ（视频物理理解评测）正是专门检验这件事的研究。研究者测试了一系列视频生成模型后发现，视觉真实度提高，并没有自然对应更好的物理规律理解；模型可以生成一段非常可信的运动画面，却仍然在流体、力学、光学、磁力等问题上做出错误变化。<a href="https://openaccess.thecvf.com/content/WACV2026/html/Motamed_Do_Generative_Video_Models_Understand_Physical_Principles_WACV_2026_paper.html" target="_blank" rel="noopener noreferrer">Physics-IQ，WACV 2026</a></p>
+<p>所以从内容生成走向世界预测，第一道沟不是“画面还不够好”。<strong>生成模型首先需要让结果合理；预测模型还要让结果忠于那个它正在描述的世界。</strong></p>
+<h2 id="section-3">三、真正需要预测的，未必是未来的每一个像素</h2>
+<p>如果把世界预测继续理解成“生成一段未来视频”，很容易产生另一个误区：未来视频越完整，模型对世界的理解就越完整。机器人抓杯子的例子很适合说明为什么未必如此。</p>
+<p>为了抓住一个杯子，机器人真正关心的是杯子在哪里、朝什么方向运动、机械手有没有接触到它、抓取以后它会不会滑落。杯子背后的墙是什么颜色，阳光怎样在桌面上反射，背景里一把椅子的纹理有没有变化，往往并不影响这次抓取。<strong>一个用于行动的模型，没有必要把未来世界的每一个视觉细节都重建出来。</strong></p>
+<p>DINO-WM 是一个很直接的例子。它甚至不尝试重建未来的完整画面，而是在模型内部的抽象表示中预测“当前状态经过某个动作后会怎样变化”，然后利用这些预测寻找合适的动作。研究者在六类环境中展示了这种方法可以用于没有针对任务提前训练的规划。<a href="https://proceedings.mlr.press/v267/zhou25t.html" target="_blank" rel="noopener noreferrer">DINO-WM，ICML 2025</a></p>
+<p>V-JEPA 2 的思路也类似。它先通过大量视频学习物体、运动和事件之间的变化规律，并不要求把每一个未来像素重新生成出来；之后再把机器人动作加入预测过程，才进一步用于真实机械臂的规划。<a href="https://ai.meta.com/research/publications/v-jepa-2-self-supervised-video-models-enable-understanding-prediction-and-planning/" target="_blank" rel="noopener noreferrer">V-JEPA 2 论文页</a></p>
+<p>另一条来自产业团队的路线更工程化。光象科技公开介绍 Phi-WM 时认为，机器人如果每执行一步都先生成完整未来视频，不仅可能继续受到生成错误影响，也会增加实时控制成本；他们更希望只保留与任务直接相关的状态，比如位置、速度、力和姿态，再让模型学习这些状态怎样变化。<a href="https://mp.weixin.qq.com/s/2DEpiexjwh5O6bBJDXk3LA" target="_blank" rel="noopener noreferrer">腾讯科技的访谈</a>首先只能证明这家公司选择了这样的技术路线，还不能独立证明它优于像素级预测。</p>
+<p>这些路线虽然实现不同，却共同指向一个更稳定的判断：<strong>世界模型真正需要保留的，不是“世界的一切细节”，而是足以支持当前任务的世界状态和变化规律。</strong> 这也解释了为什么未来最好的世界模型，不一定同时是最好看的视频生成模型。</p>
+<h2 id="section-4">四、给模型一个动作输入，仍然不代表它知道这个动作会造成什么</h2>
+<p>做到状态预测以后，下一个很自然的想法是：那就在输入里加上动作。没有动作，模型只能预测“世界接下来通常怎样”；有了动作，模型就可以进一步回答“如果我这么做，世界会怎样”。</p>
+<p>V-JEPA 2 的训练方式体现了这一步。第一阶段只学习自然视频，模型能够预测世界可能怎样发展，但这种预测并不对应某个具体机器人动作；第二阶段加入机器人视频以及当时执行的控制动作以后，模型才开始根据“这次具体做了什么”来预测后续状态，并用于规划。<a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/" target="_blank" rel="noopener noreferrer">Meta 的技术说明</a></p>
+<p>问题是，<strong>“输入里有动作”与“模型真的按照这个动作模拟了世界”，不是同一件事。</strong> 2026 年 8 月出现的 WorldSimProbe，就是专门针对这个问题设计的评测。研究者不再只问“生成结果看起来真不真”，而是直接检查：给定的动作有没有真的变成对应的机器人运动；机器人运动以后，环境中的物体有没有产生与这个动作一致的变化。</p>
+<p>他们在六个开源动作条件世界模型、超过 1.8 万个测试样本上发现了系统性问题：模型有时会忽略输入动作，回到训练数据里更常见的行为；有时机器人动了，但错误的物体跟着发生变化；还有些情况下，画面出现了并不存在的接触和互动。<a href="https://arxiv.org/abs/2608.09298" target="_blank" rel="noopener noreferrer">WorldSimProbe 预印本</a> 这说明加入动作输入并不等于模拟已经忠实；比观看演示更有用的，是直接检查动作与环境变化能否对得上。</p>
+<p>Genie 3 也能帮助理解这个问题。它已经可以接受用户输入，实时生成一个持续变化的可交互环境，比一次性生成视频往前走了明显一步。但 Google DeepMind 自己仍然明确列出了限制：用户或智能体可以直接执行的动作范围有限，多主体互动仍然困难，对真实地点也不能做到完全准确，而且连续交互目前主要维持在几分钟量级。<a href="https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/" target="_blank" rel="noopener noreferrer">Google DeepMind 对 Genie 3 的介绍</a> 所以“可交互”非常重要，却仍然不能证明模型已经可靠掌握了动作后果。</p>
+<p>更进一步，还需要模型看到“同样一个状态，如果动作换了，世界会怎样不同”。Phi-WM 团队把这类数据称作“反事实数据”：成功示范只能告诉模型“某个人这样做以后成功了”；如果同一个初始状态下还能尝试多个不同动作，再看到哪些成功、哪些失败，模型才更有机会区分动作本身对结果造成的影响。<a href="https://mp.weixin.qq.com/s/2DEpiexjwh5O6bBJDXk3LA" target="_blank" rel="noopener noreferrer">腾讯科技的访谈</a></p>
+<p>这还不能直接写成“模型理解了因果”。看到不同动作对应不同结果，并不等于模型已经建立了完整的因果模型。更稳妥的说法是：<strong>它开始学习一组可以被真实行动检验的“动作—状态变化”关系。</strong></p>
+<h2 id="section-5">五、世界模型真的有用时，它未必需要一直待在机器人脑子里</h2>
+<p>即使一个模型能够预测动作后果，还有最后一个问题：这种预测到底有没有用？如果模型可以非常漂亮地模拟未来，却没有让机器人更少失败、让策略训练更快，或者让系统更早发现错误，那它作为行动系统的一部分，价值仍然有限。</p>
+<p>现在恰好已经出现两条很不一样的路线。Motus2 选择把世界模型直接放进机器人的决策循环：先提出几个可以执行的动作，再预测这些动作分别会造成什么结果，最后比较哪种结果更接近目标。换句话说，机器人可以在真正动手之前，先在模型内部“试几遍”。<a href="https://motus-robotics.github.io/motus2/" target="_blank" rel="noopener noreferrer">Motus2 项目页</a>和<a href="https://arxiv.org/abs/2608.30237" target="_blank" rel="noopener noreferrer">论文</a>都采用了这种“策略—模拟—评估”的闭环。</p>
+<p>Phi-WM 团队公开描述的是另一条路线。按照他们自己的介绍，世界模型主要在训练阶段帮助策略学习：它预测不同动作可能造成的结果，再把这种关于世界变化的知识转移到最终的策略模型里。机器人真正部署以后，不一定需要每一步都重新模拟未来。<a href="https://mp.weixin.qq.com/s/2DEpiexjwh5O6bBJDXk3LA" target="_blank" rel="noopener noreferrer">腾讯科技的访谈</a></p>
+<p>这两条路线目前都还远没有足够证据证明谁会成为最终主流，而且 Phi-WM 的效果判断主要来自厂商自己的公开解释，更适合当作路线信号，而不是独立效果结论。但它们已经足以打破一个简单想象：机器人不一定按照“先运行世界模型，再运行规划器，最后执行动作”的固定结构工作。世界模型可以在运行时直接帮助机器人做选择，也可以只在训练阶段帮助它学会更好的策略；未来还可能承担失败案例生成、系统评估或安全验证等其他工作。</p>
+<p>因此，比“机器人里有没有一个叫 World Model 的模块”更值得看的是：<strong>关于世界怎样变化的预测，最终有没有让行动变得更好。</strong> 如果没有，这个模型无论生成的未来多逼真，都还没有兑现它在行动系统中的价值。</p>
+<h2 id="section-6">六、所以，把视频模型一直做大，会自然长出世界模型吗？</h2>
+<p>回到最初的问题，这里有一个值得借鉴的历史类比：<strong>互联网积累的海量文本之于 GPT，可能类似于互联网积累的海量视频之于世界模型。</strong> 互联网并没有直接造出 GPT，而是先提供了丰富、规模巨大的学习材料；模型架构、训练方法和算力的进步，才逐渐把这些材料转化成能力。2019 年，OpenAI 的 <a href="https://openai.com/index/better-language-models/" target="_blank" rel="noopener noreferrer">GPT-2 研究</a>就展示过：只从互联网文本中学习预测下一个词，模型也能获得初步的问答、翻译和摘要能力。</p>
+<p>视频可能正在为理解真实世界提供类似的材料。互联网视频记录了物体怎样移动、人怎样使用工具、杯子掉落后通常会发生什么，也记录了大量场景随时间变化的过程。OpenAI 在 2024 年的 <a href="https://openai.com/index/video-generation-models-as-world-simulators/" target="_blank" rel="noopener noreferrer">Sora 技术报告</a>中，明确借鉴大语言模型从互联网规模数据中学习的思路，观察到视频模型在规模扩大后出现一定的三维一致性、物体持续性和简单互动能力。不过，同一份报告也承认，模型仍会犯基本物理错误。</p>
+<p>但这个类比不能被偷换成“只要把视频生成模型一直做大，就必然得到可靠的世界模型”。<strong>与互联网文本对应的首先是大规模视频数据，不是视频生成产品本身。</strong> Meta 的 <a href="https://ai.meta.com/research/vjepa/" target="_blank" rel="noopener noreferrer">V-JEPA 2</a>就是例子：它先从海量视频中学习世界怎样变化，并不需要先把未来生成成一段可观看的视频；随后才利用相对少量的机器人动作数据，让预测服务于规划。视频提供的是广泛的世界知识，具体怎么学习、怎么使用这些知识，并没有唯一道路。</p>
+<p>两者的差别也在这里逐渐出现。文本里本来就有很多人类写好的解释、问答和代码，而普通视频通常只记录现实已经发生的一条过程。它可能让模型推测“这个人做了什么”，却很少明确记录施加了多大的力，更少展示“回到同一初始状态，换一个动作会发生什么”。所以从“这个场景下一秒通常长什么样”，走到“如果我把力向左增加一点，物体会怎样”，仍然需要更明确的动作数据、不同尝试的结果和真实反馈。</p>
+<p>还有一种正在出现的可能：视频模型不仅从现有视频学习，还可以反过来生成用于训练和测试的新场景。英伟达的 <a href="https://developer.nvidia.com/blog/scale-synthetic-data-and-physical-ai-reasoning-with-nvidia-cosmos-world-foundation-models/" target="_blank" rel="noopener noreferrer">Cosmos 技术介绍</a>就展示了如何利用仿真中的结构信息，生成不同环境、光照和场景变化的视频，补充机器人和自动驾驶训练数据。但生成内容不能自己证明自己符合真实物理规律；训练数据是否可信，最终仍需要外部约束和现实检验。</p>
+<p>因此，这个类比解释的是<strong>视频为什么可能孕育下一次能力跃迁，而不是跃迁为什么必然发生</strong>。规模化视频学习可能让模型形成越来越广泛的世界知识；真正要把这些知识用于改变世界，还需要知道不同动作会造成什么结果，并用现实反馈检验预测。这一步以后，长期误差、安全限制和失败恢复仍是新难题。我在<a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" target="_blank" rel="noopener noreferrer">《物理世界会有自己的 LLM 时刻吗？》</a>里已经讨论过更大的行动闭环，这里不再展开。</p>
+<p>9 月的最后几天，AMD 准备用 82 亿美元的股票收购 World Labs。这笔交易最后会不会成为一笔好生意，现在没人知道；World Labs 押注的空间智能路线，也远没有被证明是通往通用智能的唯一道路。但它至少让“世界模型”这个原本很容易停留在论文和 Demo 里的词，突然变得非常现实。</p>
+<p>视频模型已经让机器第一次可以大规模生成一个“可能的未来”。接下来更难的问题，不是把这个未来画得再漂亮一点。</p>
+<p><strong>如果 AI 最终要在世界里行动，它面对的是另一张试卷：当它真的改变世界时，世界会不会按照它预想的方式改变。</strong></p>
+<h2 id="section-7">参考资料</h2>
+<h3 id="section-8">一手文件 / 官方发布</h3>
+<ul><li><a href="https://ir.amd.com/news-events/press-releases/detail/1299/amd-to-acquire-world-labs-to-advance-the-future-of-ai-compute" target="_blank" rel="noopener noreferrer">AMD：拟收购 World Labs，以推进下一代 AI 计算</a></li><li><a href="https://openai.com/index/better-language-models/" target="_blank" rel="noopener noreferrer">OpenAI：Better language models and their implications（GPT-2）</a></li><li><a href="https://openai.com/index/video-generation-models-as-world-simulators/" target="_blank" rel="noopener noreferrer">OpenAI：Video generation models as world simulators（Sora 技术报告）</a></li><li><a href="https://developer.nvidia.com/blog/scale-synthetic-data-and-physical-ai-reasoning-with-nvidia-cosmos-world-foundation-models/" target="_blank" rel="noopener noreferrer">NVIDIA：Scale Synthetic Data and Physical AI Reasoning with Cosmos</a></li><li><a href="https://www.worldlabs.ai/blog/atlas" target="_blank" rel="noopener noreferrer">World Labs：Atlas 空间智能世界模型</a></li><li><a href="https://www.worldlabs.ai/blog/taxonomy-of-world-models" target="_blank" rel="noopener noreferrer">World Labs：世界模型的功能分类</a></li><li><a href="https://www.motubrain.com/zh/blog/general-world-models-first-principles-and-a-development-roadmap/" target="_blank" rel="noopener noreferrer">朱军团队：通用世界模型——第一性原理与发展路线（研究团队文章）</a></li><li><a href="https://ai.meta.com/research/vjepa/" target="_blank" rel="noopener noreferrer">Meta：V-JEPA 2 研究页</a></li><li><a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/" target="_blank" rel="noopener noreferrer">Meta：V-JEPA 2 技术说明</a></li><li><a href="https://ai.meta.com/research/publications/v-jepa-2-self-supervised-video-models-enable-understanding-prediction-and-planning/" target="_blank" rel="noopener noreferrer">Meta：V-JEPA 2 论文介绍</a></li><li><a href="https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/" target="_blank" rel="noopener noreferrer">Google DeepMind：Genie 3</a></li><li><a href="https://motus-robotics.github.io/motus2/" target="_blank" rel="noopener noreferrer">Motus2 项目页</a></li></ul>
+<h3 id="section-9">同行评审研究</h3>
+<ul><li><a href="https://proceedings.mlr.press/v267/zhou25t.html" target="_blank" rel="noopener noreferrer">DINO-WM：不重建视频画面也能进行规划（ICML 2025）</a></li><li><a href="https://openaccess.thecvf.com/content/WACV2026/html/Motamed_Do_Generative_Video_Models_Understand_Physical_Principles_WACV_2026_paper.html" target="_blank" rel="noopener noreferrer">视频生成模型理解物理规律吗？Physics-IQ（WACV 2026）</a></li></ul>
+<h3 id="section-10">近期预印本 / 尚未完成同行评审</h3>
+<ul><li><a href="https://arxiv.org/abs/2608.09298" target="_blank" rel="noopener noreferrer">WorldSimProbe：检验动作条件世界模型的模拟忠实度</a></li><li><a href="https://arxiv.org/abs/2608.30237" target="_blank" rel="noopener noreferrer">Motus2</a></li></ul>
+<h3 id="section-11">中文材料 / 厂商与行业采访</h3>
+<ul><li><a href="https://mp.weixin.qq.com/s/6ii-ejTaK72OBdwcVTwTaw" target="_blank" rel="noopener noreferrer">机器之心：世界模型到底是什么？李飞飞、朱军等如何解读？</a></li><li><a href="https://mp.weixin.qq.com/s/2DEpiexjwh5O6bBJDXk3LA" target="_blank" rel="noopener noreferrer">腾讯科技：具身智能走到世界模型这一步，“问题”反而更多了</a></li><li><a href="https://mp.weixin.qq.com/s/9tTlbZx6QUqKrqLxLhmEwA" target="_blank" rel="noopener noreferrer">高德，做真实世界里的下一代 AI</a></li></ul>
+<h3 id="section-12">我的相关文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/video-model-evolution.html" target="_blank" rel="noopener noreferrer">视频模型到底在进化什么？为什么“画面惊艳”已经不够了</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" target="_blank" rel="noopener noreferrer">物理世界会有自己的 LLM 时刻吗？</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>
