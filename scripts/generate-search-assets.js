@@ -85,6 +85,15 @@ function validateBlogMetadata(metadata) {
       explicitRelationTargets.get(relation.slug).add(post.slug);
     }
   }
+  // Date is stored as YYYY.MM only. Within one month editorial insertion order is stable,
+  // but across months all downstream consumers require newest-first chronology.
+  for (let i = 1; i < metadata.posts.length; i++) {
+    const earlier = metadata.posts[i - 1];
+    const later = metadata.posts[i];
+    if (earlier.date < later.date) {
+      throw new Error(`Blog post index must be newest-first: ${later.slug} (${later.date}) appears after ${earlier.slug} (${earlier.date})`);
+    }
+  }
   for (const [slug, targets] of explicitRelationTargets) {
     if (targets.size > 4) throw new Error(`Post has more than 4 explicit relations; review relation scope: ${slug}`);
   }
