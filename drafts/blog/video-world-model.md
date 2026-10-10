@@ -101,15 +101,17 @@ Phi-WM 团队公开描述的是另一条路线。按照他们自己的介绍，�
 
 ## 六、所以，把视频模型一直做大，会自然长出世界模型吗？
 
-回到最初的问题，答案其实比“会”或“不会”都复杂一点。互联网视频里有海量关于世界的信息：物体通常怎样移动，人怎样使用工具，一个杯子从桌上掉下以后通常发生什么，汽车怎样转弯，门怎样打开。模型从这些视频里可以学到非常宽的世界先验。
+回到最初的问题，这里有一个值得借鉴的历史类比：**互联网积累的海量文本之于 GPT，可能类似于互联网积累的海量视频之于世界模型。** 互联网并没有直接造出 GPT，而是先提供了丰富、规模巨大的学习材料；模型架构、训练方法和算力的进步，才逐渐把这些材料转化成能力。2019 年，OpenAI 的 [GPT-2 研究](https://openai.com/index/better-language-models/)就展示过：只从互联网文本中学习预测下一个词，模型也能获得初步的问答、翻译和摘要能力。
 
-V-JEPA 2 本身就是这条路线的一个例子：先从大量没有机器人动作标注的视频中学习世界怎样变化，然后只用相对少量的机器人交互数据，把这种广泛的世界知识接到具体动作上。[Meta 的 V-JEPA 2 研究页](https://ai.meta.com/research/vjepa/) World Labs 也相信，生成世界、模拟世界和在世界里行动，背后可能共享大量关于几何、物理和动态的知识；他们认为现实困难之一，恰恰是数据分布不均——互联网视频极其丰富，而高质量三维资产和机器人行动数据要稀缺得多。[World Labs 的世界模型分类文章](https://www.worldlabs.ai/blog/taxonomy-of-world-models)
+视频可能正在为理解真实世界提供类似的材料。互联网视频记录了物体怎样移动、人怎样使用工具、杯子掉落后通常会发生什么，也记录了大量场景随时间变化的过程。OpenAI 在 2024 年的 [Sora 技术报告](https://openai.com/index/video-generation-models-as-world-simulators/)中，明确借鉴大语言模型从互联网规模数据中学习的思路，观察到视频模型在规模扩大后出现一定的三维一致性、物体持续性和简单互动能力。不过，同一份报告也承认，模型仍会犯基本物理错误。
 
-所以视频生成和世界模型之间不是两条毫无关系的技术路线，但普通视频天然缺少另一类信息。我们通常看到的是“现实中发生了什么”，却很少拥有同一个初始状态下，动作 A、动作 B、动作 C 分别发生后的完整记录；视频也很少同步记录精确的力量、机器人控制量和失败过程。
+但这个类比不能被偷换成“只要把视频生成模型一直做大，就必然得到可靠的世界模型”。**与互联网文本对应的首先是大规模视频数据，不是视频生成产品本身。** Meta 的 [V-JEPA 2](https://ai.meta.com/research/vjepa/)就是例子：它先从海量视频中学习世界怎样变化，并不需要先把未来生成成一段可观看的视频；随后才利用相对少量的机器人动作数据，让预测服务于规划。视频提供的是广泛的世界知识，具体怎么学习、怎么使用这些知识，并没有唯一道路。
 
-一旦问题从“这个场景下一秒通常长什么样？”变成“如果我现在把力向左增加一点，这个物体接下来会怎样？”，训练信号就已经发生变化了。**大规模视频可能是学习世界知识非常重要的起点，但从观察世界怎样变化，走到可靠预测“我怎样改变世界”，还需要动作、失败、不同尝试的结果和真实反馈。**
+两者的差别也在这里逐渐出现。文本里本来就有很多人类写好的解释、问答和代码，而普通视频通常只记录现实已经发生的一条过程。它可能让模型推测“这个人做了什么”，却很少明确记录施加了多大的力，更少展示“回到同一初始状态，换一个动作会发生什么”。所以从“这个场景下一秒通常长什么样”，走到“如果我把力向左增加一点，物体会怎样”，仍然需要更明确的动作数据、不同尝试的结果和真实反馈。
 
-这一步以后，问题仍然没有结束。长期预测会不断累积误差，真实机器还要面对传感器噪声、现场变化、安全限制和失败后的恢复。我在[《物理世界会有自己的 LLM 时刻吗？》](https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html)里已经完整讨论过这条更大的闭环，这里不再重新展开；这一篇只想把其中“预测”这一格拆开。
+还有一种正在出现的可能：视频模型不仅从现有视频学习，还可以反过来生成用于训练和测试的新场景。英伟达的 [Cosmos 技术介绍](https://developer.nvidia.com/blog/scale-synthetic-data-and-physical-ai-reasoning-with-nvidia-cosmos-world-foundation-models/)就展示了如何利用仿真中的结构信息，生成不同环境、光照和场景变化的视频，补充机器人和自动驾驶训练数据。但生成内容不能自己证明自己符合真实物理规律；训练数据是否可信，最终仍需要外部约束和现实检验。
+
+因此，这个类比解释的是**视频为什么可能孕育下一次能力跃迁，而不是跃迁为什么必然发生**。规模化视频学习可能让模型形成越来越广泛的世界知识；真正要把这些知识用于改变世界，还需要知道不同动作会造成什么结果，并用现实反馈检验预测。这一步以后，长期误差、安全限制和失败恢复仍是新难题。我在[《物理世界会有自己的 LLM 时刻吗？》](https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html)里已经讨论过更大的行动闭环，这里不再展开。
 
 ---
 
@@ -124,6 +126,9 @@ V-JEPA 2 本身就是这条路线的一个例子：先从大量没有机器人�
 ### 一手文件 / 官方发布
 
 - [AMD：AMD to Acquire World Labs to Advance the Future of AI Compute](https://ir.amd.com/news-events/press-releases/detail/1299/amd-to-acquire-world-labs-to-advance-the-future-of-ai-compute)
+- [OpenAI：Better language models and their implications（GPT-2）](https://openai.com/index/better-language-models/)
+- [OpenAI：Video generation models as world simulators（Sora 技术报告）](https://openai.com/index/video-generation-models-as-world-simulators/)
+- [NVIDIA：Scale Synthetic Data and Physical AI Reasoning with Cosmos](https://developer.nvidia.com/blog/scale-synthetic-data-and-physical-ai-reasoning-with-nvidia-cosmos-world-foundation-models/)
 - [World Labs：Atlas: A World Model for Spatial Intelligence](https://www.worldlabs.ai/blog/atlas)
 - [World Labs：A Functional Taxonomy of World Models](https://www.worldlabs.ai/blog/taxonomy-of-world-models)
 - [Meta：V-JEPA 2 研究页](https://ai.meta.com/research/vjepa/)
