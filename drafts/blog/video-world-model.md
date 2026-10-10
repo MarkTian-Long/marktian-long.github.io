@@ -1,3 +1,12 @@
+---
+category: 技术
+tags: ["技术判断"]
+topics: ["模型能力"]
+concepts: ["世界模型", "视频生成", "世界状态预测", "动作条件预测", "视频物理正确性", "仿真忠实度", "互联网视频预训练"]
+share_quote: "生成模型首先需要让结果合理；预测模型还要让结果忠于那个它正在描述的世界。"
+relations: [{"slug":"video-model-evolution","type":"builds_on"}]
+---
+
 # 视频已经能“生成未来”，为什么还不等于会预测世界？
 
 > 视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。
@@ -18,13 +27,13 @@
 
 World Labs 自己也承认，World Model（世界模型）已经是一个使用范围非常宽的词。目前几条代表性路线，其实不是在同一条分类轴上讨论这个概念：有的按“模型承担什么功能”来分，有的描述能力如何逐步扩展，还有的展示具体训练过程怎样从视频预测走向动作预测。
 
-| 路线 | 核心切法 | 是不是时间递进 | 对本文的启发 |
+| 研究路线 | 划分依据 | 有无先后顺序 | 应如何理解 |
 |---|---|---|---|
-| World Labs | 渲染 / 模拟 / 规划 | 否，功能可并存 | 生成与规划是不同职责 |
-| 朱军团队 | 理解 / 想象 / 行动，L1—L5 | 是，但仅属该团队路线图 | 有路线把生成到行动视为连续扩展 |
-| Meta V-JEPA 2 | 视频预训练 → 动作后训练 | 是训练顺序，不是行业阶段 | 无动作预测也可被称为世界模型 |
+| World Labs | 渲染 / 模拟 / 规划 | 无，功能可并存 | 职责不同 |
+| 朱军团队 | L1—L5 能力路线 | 有，研究设想 | 并非行业共识 |
+| Meta V-JEPA 2 | 视频学习 → 动作适配 | 有，训练顺序 | 单个模型路径 |
 
-World Labs 的[原始分类](https://www.worldlabs.ai/blog/taxonomy-of-world-models)把世界模型分成渲染器、模拟器和规划器，强调三者是不同功能，并不是严格的“低级—中级—高级”关系。朱军团队在《General World Models from First-Principles》中则把理解、想象和行动放进同一套框架，并进一步讨论从世界生成、实时交互到机器人行动的能力演进；[机器之心对这套框架的梳理](https://mp.weixin.qq.com/s/6ii-ejTaK72OBdwcVTwTaw)可以作为入口，但这套五级路线是团队自己的研究框架，不是行业统一标准。Meta 的 [V-JEPA 2](https://ai.meta.com/research/vjepa/) 又是另一回事：它先从大量视频中学习世界怎样变化，之后再加入机器人动作数据，让预测能力进一步服务规划。
+World Labs 的[原始分类](https://www.worldlabs.ai/blog/taxonomy-of-world-models)把世界模型分成渲染器、模拟器和规划器，强调三者是不同功能，并不是严格的“低级—中级—高级”关系。朱军团队在[《通用世界模型：第一性原理与发展路线》](https://www.motubrain.com/zh/blog/general-world-models-first-principles-and-a-development-roadmap/)中，则把理解、想象和行动放进同一套框架，并进一步讨论从世界生成、实时交互到机器人行动的能力演进；[机器之心对这套框架的梳理](https://mp.weixin.qq.com/s/6ii-ejTaK72OBdwcVTwTaw)可以作为入口，但这套五级路线是团队自己的研究框架，不是行业统一标准。Meta 的 [V-JEPA 2](https://ai.meta.com/research/vjepa/) 又是另一回事：它先从大量视频中学习世界怎样变化，之后再加入机器人动作数据，让预测能力进一步服务规划。
 
 所以这三种视角**不是一个统一的时间轴**。World Labs 在讲功能分工，朱军团队在讲一套能力演进设想，V-JEPA 2 展示的是具体训练路径；把它们强行排成“第一阶段—第二阶段—第三阶段”，反而会制造一个行业并不存在的统一路线。
 
@@ -79,7 +88,7 @@ V-JEPA 2 的训练方式体现了这一步。第一阶段只学习自然视频�
 
 问题是，**“输入里有动作”与“模型真的按照这个动作模拟了世界”，不是同一件事。** 2026 年 8 月出现的 WorldSimProbe，就是专门针对这个问题设计的评测。研究者不再只问“生成结果看起来真不真”，而是直接检查：给定的动作有没有真的变成对应的机器人运动；机器人运动以后，环境中的物体有没有产生与这个动作一致的变化。
 
-他们在六个开源动作条件世界模型、超过 1.8 万个测试样本上发现了系统性问题：模型有时会忽略输入动作，回到训练数据里更常见的行为；有时机器人动了，但错误的物体跟着发生变化；还有些情况下，画面出现了并不存在的接触和互动。[WorldSimProbe 预印本](https://arxiv.org/abs/2608.09298) 这几乎就是“看起来合理”和“真的模拟动作后果”之间最直接的一条分界。
+他们在六个开源动作条件世界模型、超过 1.8 万个测试样本上发现了系统性问题：模型有时会忽略输入动作，回到训练数据里更常见的行为；有时机器人动了，但错误的物体跟着发生变化；还有些情况下，画面出现了并不存在的接触和互动。[WorldSimProbe 预印本](https://arxiv.org/abs/2608.09298) 这说明加入动作输入并不等于模拟已经忠实；比观看演示更有用的，是直接检查动作与环境变化能否对得上。
 
 Genie 3 也能帮助理解这个问题。它已经可以接受用户输入，实时生成一个持续变化的可交互环境，比一次性生成视频往前走了明显一步。但 Google DeepMind 自己仍然明确列出了限制：用户或智能体可以直接执行的动作范围有限，多主体互动仍然困难，对真实地点也不能做到完全准确，而且连续交互目前主要维持在几分钟量级。[Google DeepMind 对 Genie 3 的介绍](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/) 所以“可交互”非常重要，却仍然不能证明模型已经可靠掌握了动作后果。
 
@@ -125,25 +134,27 @@ Phi-WM 团队公开描述的是另一条路线。按照他们自己的介绍，�
 
 ### 一手文件 / 官方发布
 
-- [AMD：AMD to Acquire World Labs to Advance the Future of AI Compute](https://ir.amd.com/news-events/press-releases/detail/1299/amd-to-acquire-world-labs-to-advance-the-future-of-ai-compute)
+- [AMD：拟收购 World Labs，以推进下一代 AI 计算](https://ir.amd.com/news-events/press-releases/detail/1299/amd-to-acquire-world-labs-to-advance-the-future-of-ai-compute)
 - [OpenAI：Better language models and their implications（GPT-2）](https://openai.com/index/better-language-models/)
 - [OpenAI：Video generation models as world simulators（Sora 技术报告）](https://openai.com/index/video-generation-models-as-world-simulators/)
 - [NVIDIA：Scale Synthetic Data and Physical AI Reasoning with Cosmos](https://developer.nvidia.com/blog/scale-synthetic-data-and-physical-ai-reasoning-with-nvidia-cosmos-world-foundation-models/)
-- [World Labs：Atlas: A World Model for Spatial Intelligence](https://www.worldlabs.ai/blog/atlas)
-- [World Labs：A Functional Taxonomy of World Models](https://www.worldlabs.ai/blog/taxonomy-of-world-models)
+- [World Labs：Atlas 空间智能世界模型](https://www.worldlabs.ai/blog/atlas)
+- [World Labs：世界模型的功能分类](https://www.worldlabs.ai/blog/taxonomy-of-world-models)
+- [朱军团队：通用世界模型——第一性原理与发展路线（研究团队文章）](https://www.motubrain.com/zh/blog/general-world-models-first-principles-and-a-development-roadmap/)
 - [Meta：V-JEPA 2 研究页](https://ai.meta.com/research/vjepa/)
 - [Meta：V-JEPA 2 技术说明](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/)
+- [Meta：V-JEPA 2 论文介绍](https://ai.meta.com/research/publications/v-jepa-2-self-supervised-video-models-enable-understanding-prediction-and-planning/)
 - [Google DeepMind：Genie 3](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)
 - [Motus2 项目页](https://motus-robotics.github.io/motus2/)
 
 ### 同行评审研究
 
-- [DINO-WM: World Models on Pre-trained Visual Features Enable Zero-shot Planning，ICML 2025](https://proceedings.mlr.press/v267/zhou25t.html)
-- [Do Generative Video Models Understand Physical Principles?，WACV 2026](https://openaccess.thecvf.com/content/WACV2026/html/Motamed_Do_Generative_Video_Models_Understand_Physical_Principles_WACV_2026_paper.html)
+- [DINO-WM：不重建视频画面也能进行规划（ICML 2025）](https://proceedings.mlr.press/v267/zhou25t.html)
+- [视频生成模型理解物理规律吗？Physics-IQ（WACV 2026）](https://openaccess.thecvf.com/content/WACV2026/html/Motamed_Do_Generative_Video_Models_Understand_Physical_Principles_WACV_2026_paper.html)
 
 ### 近期预印本 / 尚未完成同行评审
 
-- [WorldSimProbe: Benchmarking Action-Conditioned World Models](https://arxiv.org/abs/2608.09298)
+- [WorldSimProbe：检验动作条件世界模型的模拟忠实度](https://arxiv.org/abs/2608.09298)
 - [Motus2](https://arxiv.org/abs/2608.30237)
 
 ### 中文材料 / 厂商与行业采访
