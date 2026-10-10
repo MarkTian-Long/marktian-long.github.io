@@ -52,8 +52,11 @@ function syncPostMetadata({ sourcePath, rootDir = process.cwd(), date } = {}) {
   };
   validateDate(synced.date);
   const next = { ...metadata, posts: [...metadata.posts] };
-  if (existingIndex === -1) next.posts.push(synced);
+  if (existingIndex === -1) next.posts.unshift(synced);
   else next.posts[existingIndex] = synced;
+  // The blog archive and RSS depend on newest-first metadata order.
+  // Stable sorting preserves existing editorial order within the same month.
+  next.posts.sort((a, b) => b.date.localeCompare(a.date));
   validateBlogMetadata(next);
 
   const serialized = JSON.stringify(next, null, 2) + '\n';
