@@ -1,12 +1,12 @@
 # Personal Agent：当 AI 开始长期接手你的事
 
-> Personal Agent 正在从会完成单次任务的助手，走向能够持续承接个人事务的产品。判断这种形态是否值得留下，关键不是它有几台云电脑、多少个子 Agent，而是它能否在条件变化后继续把事情办好，同时减少用户的管理负担，并始终守住委托边界。
+> Personal Agent 并非新发明；2026 年的一批产品正在尝试让 AI 在一次次任务之外，持续承接用户委托。它是否值得长期保留，不取决于云电脑或子 Agent 数量，而在于情况变化后能否继续办事、减少用户的管理负担，并始终守住委托边界。
 
 ---
 
-2026 年 5 月，Google 在 Gemini App 中推出 [Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)，尝试让 AI 在用户离开后仍能处理事务。9 月，Meta 发布 [Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)，Manus 推出独立个人代理应用 [Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)，OpenAI 又发布了 [Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/)；创业公司 Instinct 则凭借短信、邮件和电话里的 AI 助理，成为 [The Verge 等媒体关注的消费产品](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)。
+2026 年 5 月，Google 在 Gemini App 中推出 [Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)，尝试让 AI 在用户离开后继续办事。8 月 11 日，xAI 发布 [Grok Bot](https://x.ai/news/introducing-grok-bot)，主打持续工作的 AI 同事与多 Bot 协作。9 月，Meta 发布 [Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)，Manus 推出独立个人代理应用 [Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)，OpenAI 又发布了 [Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/)；创业公司 Instinct 则凭借短信、邮件和电话里的 AI 助理，成为 [The Verge 等媒体关注的消费产品](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)。
 
-如果只看产品发布介绍，它们都在做类似的事：帮用户找资料、发消息、订餐厅、安排旅行，甚至主动处理后续工作。但单次完成任务早已不是新概念。云电脑、记忆、定时运行、多个 Agent，也各有更早的实践。值得讨论的是，这些能力为何开始被重新组合成一种更长期的用户关系。
+这些产品服务的人并不完全相同：有的偏日常生活，有的偏个人工作或组织岗位，但都希望用户能够把事情交出去，而不是每一步都重新下达指令。云电脑、记忆、定时运行和多个 Agent 也不是最近才出现的技术。值得讨论的是，这些能力为什么开始被重新组合成面向不同用户的长期服务，以及产品实际上愿意承担多大的持续责任。
 
 之前写[《我为什么开始给自己搭 Harness？》](https://marktian-long.github.io/tools/blog/posts/personal-harness.html)时，我更关心怎样让 AI 持续理解自己的工作环境、少重复解释。这次的问题向外走了一步：**如果不是每次由我发起任务，而是让 AI 在一段时间内替我记挂和推进事情，它究竟需要承担什么责任？**
 
@@ -20,17 +20,20 @@
 
 这也限定了它的适用范围。有些事可以用固定规则稳定处理，没有理由换成一个更昂贵、更难监督的生成式系统。有些活动的价值恰恰在亲自参与：挑衣服、逛社区、探索目的地、与朋友讨论，本就不全是等待消除的摩擦。一个好的个人代理，应该帮用户处理他们想卸下的负担，而不是以“效率”为名接走所有过程。
 
-## 二、五款产品，都在尝试不同的委托关系
+## 二、六款产品，都在尝试不同的委托关系
 
-这里将 Personal Agent 暂且理解为：**在约定范围内，跨多次交互持续管理和推进某类个人事务，并能在环境变化时调整行动的 Agent。** 这是本文用于分析产品职责的工作定义，不是一个有统一技术标准的新品类。一次任务跑了几天、系统记住了用户偏好，或拥有独立邮箱，都不能单独说明它已经承担了持续职责。
+个人代理并不是 2026 年才提出的想法。MIT 在[1995 年介绍软件代理研究](https://news.mit.edu/1995/agents-0816)时，就区分了了解特定用户兴趣、习惯并代表其行动的 user bot，与执行一般任务的 task bot。今天常见的聊天式 Assistant 和任务型 Agent 也不是 Personal Agent 的两个必经历史阶段：前者可以长期了解用户，后者的一次任务也可能跨越数天。
 
-五款近期产品采用了不同的入口和经营路径。表中的商业模式只区分实际提供与公开计划，不以价格或融资规模代替经营成效。
+本文把 Personal Agent 理解为一种产品职责：**在约定范围内，跨多次交互持续管理和推进某类个人事务，在条件变化时接续工作，并在必要时将决定交还用户。** 这是本文归纳的工作定义，不是统一行业标准。记住偏好、拥有独立邮箱，或完成一个很长的任务，都不能单独证明它已经承担了持续职责。
+
+六款近期产品采用了不同的入口和经营路径。表中的商业模式只区分实际提供与公开计划，不以价格或融资规模代替经营成效。
 
 | 产品 | 主要服务关系 | 关键产品选择 | 谁付费、为何付费 |
 |---|---|---|---|
 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 个人生活／工作；组织试点 | 长期工作、审批 | 个人／企业套餐；专职试点 |
 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 个人生活、小生意 | 独立云端、主动代办 | 个人／小商户进阶订阅 |
 | [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | Google 个人生态 | 原有账号与应用连接 | 个人 AI 会员捆绑 |
+| [Grok Bot](https://x.ai/news/introducing-grok-bot) | 个人、团队、企业 | 多 Bot 分工、持续工作 | 个人／团队套餐；企业采购 |
 | [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 个人代理与团队 | 专属身份、Agent 协作 | 早期免费；模式未定 |
 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 日常事务与社交 | 短信电话、低切换 | 当前免费；计划商家分成 |
 
@@ -38,9 +41,11 @@
 
 Dots 的个人主代理可以跨会话推进工作，使用自己的云电脑和用户连接的应用；OpenAI 同时在企业试点中探索承担采购、发票、客服等职责的 specialist dots。后者由组织配置身份、访问权限和审批规则，并不是个人版换一种收费名称。Muse 则把个人生活事务作为起点，之后加入面向小商户的[连接和技能](https://about.fb.com/news/2026/09/introducing-muse-small-business/)；Google 的路线更像让代理从 Gmail、日历、文档和浏览器这些原有服务中生长出来，其 [Spark 的套餐扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)与企业 Gemini agent 也要分别看。
 
+Grok Bot 把长期代理包装成能分派工作、彼此协调的“AI 同事”：8 月先向个人及团队订阅用户开放，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)进入企业产品，[9 月 28 日](https://x.ai/news/team-bots)推出供团队共用的 Team Bots。这不仅是给个人助理增加几个子 Agent，而是试着让一个 Bot 的工作方法和背景能够被同事复用。其个人套餐和企业采购两条路线也说明，**个人代理的使用方式与最终的付费方并不必然绑定。**
+
 两家创业公司的选择尤其值得比较。Cue 为不同 Agent 配置邮箱、电话号码、钱包和电脑，让它们可以围绕目标分工；这是 Manus 2.0 发布时推出的独立应用，不能把 Manus 主产品的商业化直接算到 Cue 头上。Instinct 反过来极力减少界面的存在：用户不必进入新 App，只要像联系一个助理那样发消息或打电话。创始人 [Noah Shinn 的访谈](https://colossus.com/episode/instinct-the-personal-agent/)甚至强调，回复前两行是否清楚、什么场合适合打扰用户，可能比再增加一个功能更重要。
 
-这五种定位也对应不同的付款逻辑。个人套餐要证明这项服务值得用户持续订阅，企业方案要证明它能交付工作能力；Instinct 则希望让消费者免费使用、由获得订单的商家承担费用。**消费者在使用，不代表最终一定由消费者付费**，更不意味着成交金额就是代理服务收入。大厂与创业公司共享长期委托的方向，却仍在验证什么样的用户关系和收入机制能够持续成立。
+这六种定位也对应不同的付款逻辑。个人或团队套餐要证明这项服务值得持续订阅，企业方案要证明它能交付工作能力；Instinct 则希望让消费者免费使用、由获得订单的商家承担费用。**消费者在使用，不代表最终一定由消费者付费**，更不意味着成交金额就是代理服务收入。大厂与创业公司共享长期委托的方向，却仍在验证什么样的用户关系和收入机制能够持续成立。
 
 ## 三、用户离开后，一件事怎样继续存在？
 
@@ -48,7 +53,7 @@ Dots 的个人主代理可以跨会话推进工作，使用自己的云电脑和
 
 要接住这种变化，系统需要的不只是聊天历史。它至少得区分三种信息：用户真正想达到的结果与限制；外部世界当前可靠的事实以及哪些动作已经生效；下一步尚未完成、正在等待什么条件。将这三种信息混成一段不断增长的“记忆”，很容易让代理把过期偏好当成现行指令，或把计划完成误认成事情已经完成。
 
-这解释了为什么多家公司都在提供独立运行环境。根据[官方帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)，Dots 有自己的云电脑、任务状态及暂停机制；[Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)强调独立虚拟机，以及应用关闭后继续工作；[Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)依托云端任务和已连接的 Google 应用；[Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)则尝试为每个代理提供专用电脑。它们在解决同一个实际问题：用户不必一直开着聊天窗口，也可以把未完事项交给系统接续。
+这解释了为什么多家公司都在提供独立运行环境。根据[官方帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)，Dots 有自己的云电脑、任务状态及暂停机制；[Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)强调独立虚拟机，以及应用关闭后继续工作；[Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)依托云端任务和已连接的 Google 应用；[Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)尝试为每个代理提供专用电脑。而 [Grok Bot 的官方文档](https://docs.x.ai/grok-bot/computer-and-apps)明确说明，同一用户创建的多个 Bot 共用一台持续存在的云电脑，连文件和登录状态也会共享。这方便接续彼此的工作，但不同 Bot 的名字不等于独立的权限边界。几种实现都试图解决一个问题：用户不必一直开着聊天窗口，未完事项也能被接续。
 
 但**长期委托不等于同一个模型进程、同一台云电脑必须永远在线**。一个任务可以暂停，在外部事件到来时再运行；换一个执行模型，原委托也应该能够恢复。真正重要的是状态能否被接续、结果能否核实、变化会不会被漏掉。对于只需按固定条件提醒的工作，传统自动化依然可能是更可靠的选择；当外部信息含糊、需要重新规划时，生成式 AI 的灵活性才更有价值。
 
@@ -63,6 +68,8 @@ Dots 的个人主代理可以跨会话推进工作，使用自己的云电脑和
 各家正在把这些边界做成实际产品。Dots 提供审批和用户可修改的行动规则；Muse 官方描述了敏感操作确认、审计记录和断开应用访问的能力。这些是厂商说明的控制设计，不是系统不会误操作的保证。Cue 的独立邮箱和钱包、Instinct 在[创始人访谈](https://colossus.com/episode/instinct-the-personal-agent/)中描述的联系人访问范围，则使一件事更加具体：一个代理如果能对外联系、花钱和交换信息，用户就必须知道它此时在代表谁。
 
 当委托涉及多个人，问题更复杂。Google Labs 在 9 月扩展为家庭协作的[CC](https://blog.google/innovation-and-ai/models-and-research/google-labs/cc-expanding-to-groups/)允许成员分别共享信息；Instinct 近期的[群聊代理](https://www.businessinsider.com/instincts-ai-agents-are-coming-to-your-group-chat-2026-10)也需要额外授权才能把个人代理连接进群体任务。家庭、朋友群和企业都可能想让 Agent 协调安排，但“我们有一个共同目标”，不意味着每个人的私人日历、邮件、支付账户就自动向其他人开放。
+
+共享环境的风险已经在实际使用中出现。Business Insider 在[10 月 9 日刊登的受访者自述](https://www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10)中记录，XMTP Labs CEO Shane Mac 用 Grok Bot 处理个人财务月报，却因聊天群名称相近，将个人银行信息发到了公司的高管 Slack 群。他称事后撤销了相关账户连接，并提到产品团队增加了跨频道发送权限检查。这是当事人的一次事故记录，不代表产品整体失误率，但说明**共享工作环境、共享访问能力与获准向谁发送信息，是三个需要分别控制的问题。**
 
 长期代理不应只有“自动执行”和“每一步都来问我”两个极端。低风险、可逆、边界清楚的动作可以预先约定；涉及钱、对外承诺、敏感信息或条件突然变化时，应把决定交回用户。产品的关键不是让人永远不介入，而是把人的介入留在真正有意义的时刻。
 
@@ -86,6 +93,11 @@ Instinct 则提供了另一面。The Verge 记者在[10 月初的实际试用](h
 
 **一手文件／官方发布**
 
+- [xAI：Introducing Grok Bot（2026-08-11）](https://x.ai/news/introducing-grok-bot)
+- [xAI：Grok Bot for Enterprise（2026-09-03）](https://x.ai/news/grok-bot-for-enterprise)
+- [xAI：Team Bots（2026-09-28）](https://x.ai/news/team-bots)
+- [xAI：Grok Bot 的云电脑与应用权限](https://docs.x.ai/grok-bot/computer-and-apps)
+- [MIT News：Software agents can smooth users' interactions with computers（1995）](https://news.mit.edu/1995/agents-0816)
 - [OpenAI：dot 正式登场](https://openai.com/zh-Hans-CN/index/introducing-dots/)
 - [OpenAI：Getting started with your dot](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)
 - [Meta：Introducing Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)
@@ -104,6 +116,7 @@ Instinct 则提供了另一面。The Verge 记者在[10 月初的实际试用](h
 
 **独立媒体与真实使用反馈**
 
+- [Business Insider：Grok Bot 个人财务资料误发工作群（2026-10-09）](https://www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10)
 - [The Verge：Instinct hands-on（2026-10-09）](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)
 - [Business Insider：Instinct unsolicited shopping recommendations（2026-10-05）](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)
 - [Business Insider：Instinct group chat agents（2026-10）](https://www.businessinsider.com/instincts-ai-agents-are-coming-to-your-group-chat-2026-10)
