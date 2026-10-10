@@ -34,8 +34,8 @@ jobs:
           test ! -e docs/blog/video-world-model.md
           mkdir -p docs/blog
           mv drafts/blog/video-world-model.md docs/blog/video-world-model.md
-          node tools/blog/check-blog-taxonomy.js
           node tools/blog/sync-post-metadata.js --write docs/blog/video-world-model.md --date 2026.10
+          node tools/blog/check-blog-taxonomy.js
           node tools/blog/generate-post.js --write docs/blog/video-world-model.md tools/blog/posts/video-world-model.html
           node scripts/generate-search-assets.js --write
           node scripts/check-search-foundation.js
