@@ -451,7 +451,10 @@
     async function load() {
         try {
             const data = await fetch('data/posts-meta.json', { cache: 'no-store' }).then(r => r.json());
-            posts = data.posts;
+            // Sort before pagination; otherwise newly appended posts may be hidden on the last page.
+            posts = data.posts.slice().sort(function (a, b) {
+                return b.date.localeCompare(a.date);
+            });
             const requestedCategory = new URLSearchParams(window.location.search).get('category');
             if (requestedCategory !== null) {
                 cat = posts.some(function (post) { return post.category === requestedCategory; }) ? requestedCategory : 'all';
