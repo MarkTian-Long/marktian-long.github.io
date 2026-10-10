@@ -439,6 +439,15 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 7. `git add docs/blog/xxx.md tools/blog/posts/xxx.html tools/blog/data/posts-meta.json assets/images/blog/xxx/ robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
+### 文章目录、订阅源与新文可发现性契约
+
+`posts-meta.json` 的 `posts` 数组不仅是文章索引，也决定归档分页与 RSS 的读取顺序。正式发布时必须保持**发布日期（`YYYY.MM`）从新到旧**，同月文章保持编辑顺序（新文章优先、旧文章同步不得无故打乱），不可假设“有 date 字段，前台自然会按时间排序”。
+
+- `sync-post-metadata.js` 负责维护新稿进入索引后的顺序；发布端的 `validateBlogMetadata` 必须拒绝月份倒序的索引，目录页则在分页前按月份排序，三者形成写入、检查和展示的独立保护。
+- RSS 固定选取索引前 20 篇；文章在索引中位置错误，即使 RSS 和索引文件内容一致也属于发布缺陷，不能以“生成器检查通过”替代可发现性校验。
+- 发布新增且属于当前最新月份的文章后，应核对它能从目录首页进入：普通文章出现在首屏归档列表；如果该文已被单独配置为精选，则从精选区进入（不要求重复显示）。核对相应分类、月份、标题、链接；如文章落在 RSS 最新 20 篇范围，还应确认订阅源有其链接。补发旧文章按实际月份验证应在的位置，不强制挪到首页。
+- 文章独立 URL 200、GitHub Actions 全绿，只证明页面和构建通过；**新文章能否从目录被读者找到**是另一项必须确认的发布结果。不能验证时应说明未验证，不把“已生成文件”说成“目录已正常展示”。
+
 ### Markdown 转 HTML 发布 QA
 
 从 `docs/blog/*.md` 转成 `tools/blog/posts/*.html` 时，发布前必须做以下检查：
