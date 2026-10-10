@@ -7,10 +7,12 @@ function post(slug, date, topics, extra = {}) {
   return { slug, date, title: slug, summary: slug, share_quote: `${slug} quote`, url: `posts/${slug}.html`, tags: ['技术判断'], topics, category: '技术', concepts: [`${slug}-a`, `${slug}-b`, `${slug}-c`, `${slug}-d`], ...extra };
 }
 function metadata(posts) {
+  // Relationship tests use independent ordering; canonical metadata is newest-first.
+  const ordered = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
   return {
     version: 4,
-    image_contract: { version: 1, legacy_without_visuals: posts.map((entry) => entry.slug) },
-    posts,
+    image_contract: { version: 1, legacy_without_visuals: ordered.map((entry) => entry.slug) },
+    posts: ordered,
   };
 }
 function slugs(items) { return items.map((item) => item.post.slug); }
