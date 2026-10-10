@@ -152,6 +152,10 @@
 
 **缺口与下一步。** 比较最佳现有工具/确定性自动化、逐次指挥 Agent 和持续委托，覆盖自然事务周期，记录收益与人的全部投入；分开核验订阅、广告、商家获客、佣金、按次与捆绑模式的收入归属和完整成本。
 
+**2026-10-10 对照表和商业模式口径复核。** 五款正式比较对象 Dots、Muse、Gemini Spark、Manus Cue、Instinct，在同一张表中仅比较主要代理关系、入口/独特产品选择、当前付费状态；正文没有必要单列逐家公司商业史。Dots 不只是个人版：官方 [介绍](https://openai.com/zh-Hans-CN/index/introducing-dots/)和 [帮助中心](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)明确个人 primary dot 向 Pro/Business Premium 渐进开放、首个 dot 随套餐提供；Enterprise 管理员可开启 Beta；组织 specialist dots（采购、发票、客服等）仍是独立身份/权限的**企业试点**，不能写成组织专职 Agent 全面开放或已公布标准专职 dot 定价。Gemini Spark 作为 Google AI Pro/Ultra 的套餐能力，来源 [Google 9/9 套餐更新](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)；Muse [官方发布](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)写明大部分基础服务免费、高额度等采用订阅，不得将 Meta One 的其他商品会员定价未经核实套给 Muse；Cue [官方 9/28 发布](https://manus.im/en/blog/introducing-manus-2-0)为邀请码早期免费，不应把 Manus 2.0 的商业套餐当作 Cue 已实现收入；Instinct 当前邀请用户免费，创始人 [播客访谈](https://colossus.com/episode/instinct-the-personal-agent/)提出向商家按交易分成而不是向用户收费，但比例和财务表现仍未证实。收入必须分为现行收费、已公开未来计划和推断；平台交易额、融资、用户数与利润不能混用。**本篇商业讨论压缩在第五节**：付款方是谁、为什么愿意付、全服务成本如何覆盖，以及商家付费对“不买/退款”等用户最优结果会形成什么激励；不单独新增商业模式章节。对 B/C 边界用 Dots specialist 和 Muse Small Business 即可，Google CC 家庭群体与 Grok Bot 仅在授权主体明显改变结论时补一句，不再增加第六/第七款完整横评。
+
+
+
 **关联与去向。** 当前 Personal Agent 研究的价值检验线，也为 [工作单位新题](#br-20261009-01)提供长期场景边界。用户 10 月 9 日确定正式大纲需包含三家大厂产品（Dots、Muse、消费级 Gemini Spark）及两家创业产品（Manus Cue、Instinct）的**简短同维度对照**，比较委托入口、持续环境、身份/行动边界与产品取舍，而不是五份参数横评。后文重点用 Dots/Muse/Spark 说明持续运行的不同承载，Cue 说明专用身份与有限多代理协作，Instinct 说明低交互负担、主动服务和商业利益冲突；OpenClaw 只作热潮后持续采用的反证。保持本篇“长期个人委托如何成立”的已锁定主线；创业、消费渠道和并购问题另入分支。消费入口见 [05](#br-20260930-05)。
 
 <details>
