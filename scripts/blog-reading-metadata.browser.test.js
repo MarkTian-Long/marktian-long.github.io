@@ -58,3 +58,31 @@ test('reading metadata renders from final HTML on recent and legacy articles', {
     await stopServer(server);
   }
 });
+
+test('archive displays newest ordinary article first even if fetched JSON is reversed', { timeout: 30000 }, async () => {
+  const metadata = require('../tools/blog/data/posts-meta.json');
+  const featured = new Set(require('../tools/blog/data/featured-posts.json').featured);
+  const expected = metadata.posts.find((post) => !featured.has(post.slug));
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } : {}),
+    });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+    await page.route('**/tools/blog/data/posts-meta.json', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ...metadata, posts: metadata.posts.slice().reverse() }),
+    }));
+    await page.goto(`${url}/tools/blog/index.html`, { waitUntil: 'domcontentloaded' });
+    const firstArchiveLink = page.locator('#archiveRoot .post-title').first();
+    await firstArchiveLink.waitFor({ state: 'visible' });
+    assert.equal(await firstArchiveLink.getAttribute('href'), expected.url);
+    await page.close();
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
