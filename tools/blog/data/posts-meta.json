@@ -45,6 +45,36 @@
   },
   "posts": [
     {
+      "slug": "video-world-model",
+      "date": "2026.10",
+      "title": "视频已经能“生成未来”，为什么还不等于会预测世界？",
+      "summary": "视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。",
+      "category": "技术",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "模型能力"
+      ],
+      "concepts": [
+        "世界模型",
+        "视频生成",
+        "世界状态预测",
+        "动作条件预测",
+        "视频物理正确性",
+        "仿真忠实度",
+        "互联网视频预训练"
+      ],
+      "share_quote": "生成模型首先需要让结果合理；预测模型还要让结果忠于那个它正在描述的世界。",
+      "relations": [
+        {
+          "slug": "video-model-evolution",
+          "type": "builds_on"
+        }
+      ],
+      "url": "posts/video-world-model.html"
+    },
+    {
       "slug": "ai-industry-history-mechanisms",
       "date": "2026.09",
       "title": "看 AI，不要只问它像历史上的哪一年",
@@ -1242,36 +1272,6 @@
       ],
       "category": "技术",
       "url": "posts/prompt-engineering-lifecycle.html"
-    },
-    {
-      "slug": "video-world-model",
-      "date": "2026.10",
-      "title": "视频已经能“生成未来”，为什么还不等于会预测世界？",
-      "summary": "视频生成最擅长的是造出一个合理的未来；面向预测和行动的世界模型更难的，是根据当前状态和不同动作，判断世界接下来会怎样变化，并让这种预测真的帮助后续行动。两者共享很多能力，但不是同一场考试。",
-      "category": "技术",
-      "tags": [
-        "技术判断"
-      ],
-      "topics": [
-        "模型能力"
-      ],
-      "concepts": [
-        "世界模型",
-        "视频生成",
-        "世界状态预测",
-        "动作条件预测",
-        "视频物理正确性",
-        "仿真忠实度",
-        "互联网视频预训练"
-      ],
-      "share_quote": "生成模型首先需要让结果合理；预测模型还要让结果忠于那个它正在描述的世界。",
-      "relations": [
-        {
-          "slug": "video-model-evolution",
-          "type": "builds_on"
-        }
-      ],
-      "url": "posts/video-world-model.html"
     }
   ]
 }
