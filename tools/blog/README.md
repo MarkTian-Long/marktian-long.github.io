@@ -73,7 +73,7 @@ tools/blog/
 - **发布检查**：提交前始终运行 `node tools/blog/check-blog-taxonomy.js`；只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才以真实变更前 Git ref 运行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>` 并完成正文审查。普通文章发布不要求 taxonomy base ref。之后再运行 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、相关 Node 测试、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`。新公开图片还必须进入 metadata 声明的 public-dist 白名单，运行 `npm run build:public` 与 `npm run check:public-dist`，并按 `CONVENTIONS.md` 完成文章页桌面/移动、浅色/深色和图片失败状态的视觉检查
 - **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
 - **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库
-- **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200，且页面包含文章唯一标题。仅生成 HTML 或仅完成 commit 都不算发布完成
+- **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200 且包含唯一标题，并按 `WRITING_GUIDE.md` 的可发现性契约核对博客目录（必要时包括 RSS）。仅生成 HTML、完成 commit 或只有 GitHub Actions 绿色状态都不能代替实际读者入口验收；执行细节由 `.agents/skills/publish-blog/SKILL.md` 维护
 - **域名维护**：搜索资产与自动生成的页面 head 域名维护在 `scripts/site-config.js`；正文显式链接按内容语义单独核对。Search Console/Bing 验证属于后续账号操作，不写入文章或本目录配置
 
 ## 嵌入方式
