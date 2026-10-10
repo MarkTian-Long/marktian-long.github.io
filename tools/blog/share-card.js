@@ -75,43 +75,52 @@
     }
     return { data: data, width: width, height: width };
   }
+  // Canvas does not apply the browser's Chinese line-breaking rules for fillText.
+  // Keep closing punctuation with preceding text and opening brackets with following text.
+  var NO_LINE_START = /^[，。、；：？！,.!?;:）)\]｝}］】〕〉》」』”’％%…]/u;
+  var NO_LINE_END = /[（(\[｛{［【〔〈《「『“‘]$/u;
+
   function textTokens(text) {
-    return String(text).match(/“[^”]*”|‘[^’]*’|[A-Za-z0-9][A-Za-z0-9+._#\/'’-]*|[\s\S]/g) || [];
-  }
-  function splitTokenForWidth(ctx, token, maxWidth) {
-    var pieces = []; var piece = '';
-    Array.from(token).forEach(function (character) {
-      var candidate = piece + character;
-      if (piece && ctx.measureText(candidate).width > maxWidth) { pieces.push(piece); piece = character; }
-      else piece = candidate;
-    });
-    if (piece) pieces.push(piece);
-    return pieces;
+    return String(text).match(/“[^”]*”|‘[^’]*’|[A-Za-z0-9][A-Za-z0-9+._#\/'’-]*|\.{3}|……|——|[\s\S]/gu) || [];
   }
   function linesForWidth(ctx, text, maxWidth) {
-    var lines = []; var line = '';
+    var tokens = [];
     textTokens(text).forEach(function (token) {
-      if (!line) {
-        var initial = token.replace(/^\s+/, '');
-        if (!initial) return;
-        if (ctx.measureText(initial).width > maxWidth) {
-          var initialPieces = splitTokenForWidth(ctx, initial, maxWidth);
-          lines = lines.concat(initialPieces.slice(0, -1)); line = initialPieces[initialPieces.length - 1] || '';
-        } else line = initial;
-        return;
-      }
-      if (ctx.measureText(line + token).width <= maxWidth) { line += token; return; }
-      var completed = line.replace(/\s+$/, '');
-      if (completed) lines.push(completed);
-      var next = token.replace(/^\s+/, '');
-      if (!next) { line = ''; return; }
-      if (ctx.measureText(next).width > maxWidth) {
-        var pieces = splitTokenForWidth(ctx, next, maxWidth);
-        lines = lines.concat(pieces.slice(0, -1)); line = pieces[pieces.length - 1] || '';
-      } else line = next;
+      // Only split a quoted span or identifier when the token itself is too wide.
+      // Paired ellipses/dashes and Unicode code points must survive this fallback.
+      var pieces = ctx.measureText(token).width > maxWidth
+        ? token.match(/\.{3}|……|——|[\s\S]/gu) : [token];
+      tokens = tokens.concat(pieces || []);
     });
-    var finalLine = line.replace(/\s+$/, '');
-    if (finalLine) lines.push(finalLine);
+    function canBreakAt(end) {
+      var previous = end - 1;
+      var next = end;
+      while (previous >= 0 && !tokens[previous].trim()) previous--;
+      while (next < tokens.length && !tokens[next].trim()) next++;
+      if (next === tokens.length || previous < 0) return true;
+      return !NO_LINE_END.test(tokens[previous].trimEnd()) && !NO_LINE_START.test(tokens[next].trimStart());
+    }
+    var lines = [];
+    var start = 0;
+    while (start < tokens.length) {
+      while (start < tokens.length && !tokens[start].trim()) start++;
+      if (start === tokens.length) break;
+      var line = '';
+      var breakAt = start;
+      for (var end = start; end < tokens.length; end++) {
+        line += tokens[end];
+        var fits = ctx.measureText(line.trimEnd()).width <= maxWidth;
+        if (!fits && breakAt > start) break;
+        if (canBreakAt(end + 1)) {
+          breakAt = end + 1;
+          // An indivisible text+punctuation cluster may be too wide at this size.
+          // fitText checks width too, then shrinks the font or reports an error.
+          if (!fits) break;
+        }
+      }
+      lines.push(tokens.slice(start, breakAt).join('').trim());
+      start = breakAt;
+    }
     return lines;
   }
   function fitText(ctx, options) {
@@ -120,7 +129,8 @@
       var lines = linesForWidth(ctx, options.text, options.maxWidth);
       var lineHeight = Math.round(size * options.leading);
       var height = lines.length * lineHeight;
-      if (lines.length <= options.maxLines && (!options.maxHeight || height <= options.maxHeight)) return { size: size, lines: lines, lineHeight: lineHeight, height: height };
+      var fitsWidth = lines.every(function (line) { return ctx.measureText(line).width <= options.maxWidth; });
+      if (fitsWidth && lines.length <= options.maxLines && (!options.maxHeight || height <= options.maxHeight)) return { size: size, lines: lines, lineHeight: lineHeight, height: height };
     }
     throw new Error(options.label + '过长，无法在海报中完整排版。');
   }
