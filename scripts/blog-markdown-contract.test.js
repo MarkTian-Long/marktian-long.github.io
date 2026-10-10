@@ -136,6 +136,22 @@ test('new articles appear first in archive and RSS order; existing order stays s
   assert.deepEqual(slugs(), expected);
 });
 
+test('publication validation rejects a newer post hidden after an older post', () => {
+  const rootDir = makeSyncFixture([
+    basePost('older-post', { date: '2026.09' }),
+    basePost('newer-post', { date: '2026.10' }),
+  ]);
+  const metadata = JSON.parse(fs.readFileSync(
+    path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'
+  ));
+  assert.throws(
+    () => validateBlogMetadata(metadata),
+    /Blog post index must be newest-first/
+  );
+  metadata.posts.reverse();
+  assert.doesNotThrow(() => validateBlogMetadata(metadata));
+});
+
 test('legacy Markdown is retained only for an existing metadata record', () => {
   const rootDir = makeSyncFixture([basePost('legacy-post')]);
   const legacy = '# Existing title\n\n> Existing summary\n\n---\n\nExisting body。\n';
