@@ -121,6 +121,7 @@ test('new frontmatter relations must target an existing post and empty relations
 
 test('new articles appear first in archive and RSS order; existing order stays stable', () => {
   const rootDir = makeSyncFixture([
+    basePost('same-current-month', { date: '2026.10' }),
     basePost('older-post', { date: '2026.08' }),
     basePost('same-month-a', { date: '2026.09' }),
     basePost('same-month-b', { date: '2026.09' }),
@@ -130,7 +131,7 @@ test('new articles appear first in archive and RSS order; existing order stays s
   const slugs = () => JSON.parse(fs.readFileSync(
     path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'
   )).posts.map((post) => post.slug);
-  const expected = ['new-post', 'same-month-a', 'same-month-b', 'older-post'];
+  const expected = ['new-post', 'same-current-month', 'same-month-a', 'same-month-b', 'older-post'];
   assert.deepEqual(slugs(), expected);
   syncPostMetadata({ rootDir, sourcePath, date: '2026.11' });
   assert.deepEqual(slugs(), expected);
