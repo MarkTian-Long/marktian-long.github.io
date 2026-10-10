@@ -20,10 +20,10 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 ## Series Brief
 
-进行中的系列统一维护在 `tools/blog/series/`。当前包括：
+系列规划和归档统一保留在 `tools/blog/series/`，以文件内标记的状态为准，不只靠文件目录区分。
 
-- `multimodal-video-ai-series-brief.md`
-- `ai-industry-history-strategy-series-brief.md`
+- `ai-industry-history-strategy-series-brief.md`：进行中
+- `multimodal-video-ai-series-brief.md`：**2026-10-10 已结项，原路径只读归档**；技术主线已发布，后续相关新问题另列研究待办
 
 Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态，不复制长期 SOP / Checklist / 图表规范。
 
