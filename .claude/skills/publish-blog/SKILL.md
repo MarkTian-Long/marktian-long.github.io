@@ -81,11 +81,12 @@ node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更�
 然后：
 
 1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据与完整正文；声明图片时再核对封面和正文图，无图文章不得渲染页首封面并使用全站默认 OG 图。
-2. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
-3. 通过本地 HTTP 服务打开真实文章；在受影响的桌面/移动视口完成一次页面复核。如使用图片，再在明/暗主题下检查图片加载状态，并模拟一次图片加载失败，确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
-4. 执行项目要求的 review。若本次 diff 只有内容、metadata 和生成资产，没有运行时、模板、CSS、JS、生成器、部署或安全边界改动，则完成主窗口 staged diff 审查和确定性检查，不让 delegated adversarial Agent 阻塞发布；其他情况执行完整 review。若 delegated review 被启用，等待上限为 60 秒，超时记录为“未完成”并继续，不重复轮询。
-5. 只暂存 Markdown、文章 HTML、元数据、最终图片、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复；不得暂存候选图或临时 public-dist。
-6. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。若检查后只发生格式修正，先重新确认 staged diff，再只重跑受影响的检查，不重复整套无关 QA。
+2. 对新增文章检查发现入口：`posts-meta.json` 的月份必须从新到旧；最新月份的新文应在博客目录首页的普通归档区或精选区被找到（不强制重复显示）；相应分类、标题与链接必须正确。若它位于 RSS 最新 20 篇范围，还应检查 `feed.xml` 包含该文且顺序正确。只检查 Markdown/HTML 文件存在、搜索资产和元数据彼此一致，不足以证明读者能找到新文章。此项排序与发现契约以 `tools/blog/WRITING_GUIDE.md` 为准。
+3. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
+4. 通过本地 HTTP 服务打开真实文章；在受影响的桌面/移动视口完成一次页面复核。如使用图片，再在明/暗主题下检查图片加载状态，并模拟一次图片加载失败，确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
+5. 执行项目要求的 review。若本次 diff 只有内容、metadata 和生成资产，没有运行时、模板、CSS、JS、生成器、部署或安全边界改动，则完成主窗口 staged diff 审查和确定性检查，不让 delegated adversarial Agent 阻塞发布；其他情况执行完整 review。若 delegated review 被启用，等待上限为 60 秒，超时记录为“未完成”并继续，不重复轮询。
+6. 只暂存 Markdown、文章 HTML、元数据、最终图片、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复；不得暂存候选图或临时 public-dist。
+7. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。若检查后只发生格式修正，先重新确认 staged diff，再只重跑受影响的检查，不重复整套无关 QA。
 
 ## 4. 推送 HITL
 
@@ -118,8 +119,9 @@ git push origin <branch>
 3. 用 `git ls-remote origin refs/heads/<branch>` 确认远端 SHA 等于本地 HEAD。
 4. 从 `scripts/site-config.js` 和元数据 URL 组合线上地址。
 5. 等待 GitHub Pages 刷新并请求文章 URL，确认 HTTP 200 且响应包含文章唯一标题。代理环境下可为 Node 临时设置 `NODE_USE_ENV_PROXY=1` 与 `HTTPS_PROXY=http://127.0.0.1:7897`；不得写入项目配置。
-6. 页面尚未刷新时最多重试 3 次，每次间隔约 20 秒，并向用户报告进度。
+6. 打开线上博客目录并核验该文实际可被找到：普通归档首页或按规则配置的精选区、对应日期与分类、点进文章的链接；同时验证该文应进入的 RSS 条目。前端分页和订阅源顺序均须以当前线上结果为准，不能只凭文章直链 200 或仓库中 JSON 已更新宣称可发现性通过。因浏览器、网络或缓存限制无法验证时如实标记待验。
+7. 页面尚未刷新时最多重试 3 次，每次间隔约 20 秒，并向用户报告进度。
 
 ## 6. 完成报告
 
-报告提交 SHA、远端同步状态、线上文章链接和验证结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”。
+报告提交 SHA、远端同步状态、线上文章链接、目录可发现性和 RSS 核验结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”；目录未核验时不得声称“已在首页正常展示”。
