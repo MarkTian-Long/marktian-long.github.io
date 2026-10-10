@@ -148,7 +148,7 @@
 
 **当前判断。** 候选价值是少记挂、少协调和少跟进；是否实现必须看完整事务结果和人的总投入。Instinct 的入口与主动服务设计提供了消费产品层面的重要对照，但融资和创始人增长叙事不证明长期采用。个人生活、个人工作与组织岗位分别判断，个人付费、AI Native、独立入口和独立公司不能相互代证。
 
-**关键证据与反证。** 有厂商持续任务与控制机制、Instinct 创始人的增长/交易自述、付费自述和家庭服务实践，也有独立实测中的任务遗漏、未经请求的购物推荐、授权收缩、错误与安装后无事可做的反证；尚无足以支撑大众长期采用或健康单位经济的可比数据。未检索到不等于数据不存在。
+**关键证据与反证。** 有厂商持续任务与控制机制、Instinct 群聊代理的分层授权设计、创始人的增长/交易自述、付费自述和家庭服务实践，也有独立实测中的任务遗漏、未经请求的购物推荐、授权收缩、错误与安装后无事可做的反证；尚无足以支撑大众长期采用或健康单位经济的可比数据。未检索到不等于数据不存在。
 
 **缺口与下一步。** 比较最佳现有工具/确定性自动化、逐次指挥 Agent 和持续委托，覆盖自然事务周期，记录收益与人的全部投入；分开核验订阅、广告、商家获客、佣金、按次与捆绑模式的收入归属和完整成本。
 
@@ -169,7 +169,7 @@
 
 **使用反证（10 月 9 日补录，报道10/6）。** [Business Insider 早期用户采访](https://www.businessinsider.com/early-users-delete-personal-ai-agents-privacy-scares-blunders-2026-10)记录四名用户因隐私或错误顾虑删除或限制接入；Meta 回应用户可管理与撤回权限。它证明实际授权阻力，不证明总体留存下降，也不裁定争议性越权指控。
 
-**Instinct 访谈与新实测（2026-10-09 核验）。** 用户上传 Founder Park 对 [Noah Shinn 原始播客访谈（9/28）](https://colossus.com/episode/instinct-the-personal-agent/)的 22 页中文编译：创始人强调不要求用户打开新 App，以短信、电话和邮箱作为熟悉入口，重视消息前两行的可理解性与对人际打扰的分寸；Trusted Person Network 让不同人的代理在差异化授权下约时间与协调活动；探索从单次任务转向长期目标。这些属于产品目标与厂商自述，协作故事尚不能等同普遍效果。[公司 9/28 融资公告](https://finance.yahoo.com/technology/ai/articles/instinct-raises-1-billion-series-120300548.html)宣布募资 10 亿美元、估值 100 亿美元，属于融资事实；创始人自述每日增长约 10%、年化平台交易额约 10 亿美元（约一半来自旅行）、三周后约 40% 用户提供信用卡、提供过敏感信息者留存约 80%，缺少总样本/统计周期或外部审计；[TechCrunch](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)特别指出年化计算口径未公开。平台交易额不等于 Agent 收入、抽佣或利润；创始人提出对商家交易抽佣、个人服务尽可能免费，目前仍是计划。[The Verge 10/9 实际试用](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)既记录模糊需求理解、邮件跟进等帮助，也发现游泳报名漏掉前置课程；[Business Insider 10/5](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)采访收到未经主动请求购物建议的用户，但无证据证明商业推广或平台从这些建议获利。**本篇可用的新冲突是：主动贴心服务何时越界为打扰，未来按交易抽佣如何确保同等重视“不买、退货、取消订阅”；不是指控当前产品已经诱导消费。**
+**Instinct 访谈与新实测（2026-10-09 核验）。** 用户上传 Founder Park 对 [Noah Shinn 原始播客访谈（9/28）](https://colossus.com/episode/instinct-the-personal-agent/)的 22 页中文编译：创始人强调不要求用户打开新 App，以短信、电话和邮箱作为熟悉入口，重视消息前两行的可理解性与对人际打扰的分寸；Trusted Person Network 让不同人的代理在差异化授权下约时间与协调活动；探索从单次任务转向长期目标。[Business Insider 10/6 实际报道](https://www.businessinsider.com/instincts-ai-agents-are-coming-to-your-group-chat-2026-10)记录 Instinct 新增群聊专属代理：群内其他成员无需各自有 Instinct 账号，个人代理连接群代理需另行批准，群代理不直接访问个人账号，新成员进入群聊时也需重新确认共享。这说明“多人委托”不仅是多个 Agent 协作，更涉及不同个人的信息边界与同意；属于厂商声称的控制机制，尚非独立安全审计。这些属于产品目标与厂商自述，协作故事尚不能等同普遍效果。[公司 9/28 融资公告](https://finance.yahoo.com/technology/ai/articles/instinct-raises-1-billion-series-120300548.html)宣布募资 10 亿美元、估值 100 亿美元，属于融资事实；创始人自述每日增长约 10%、年化平台交易额约 10 亿美元（约一半来自旅行）、三周后约 40% 用户提供信用卡、提供过敏感信息者留存约 80%，缺少总样本/统计周期或外部审计；[TechCrunch](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)特别指出年化计算口径未公开。平台交易额不等于 Agent 收入、抽佣或利润；创始人提出对商家交易抽佣、个人服务尽可能免费，目前仍是计划。[The Verge 10/9 实际试用](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)既记录模糊需求理解、邮件跟进等帮助，也发现游泳报名漏掉前置课程；[Business Insider 10/5](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)采访收到未经主动请求购物建议的用户，但无证据证明商业推广或平台从这些建议获利。**本篇可用的新冲突是：主动贴心服务何时越界为打扰，未来按交易抽佣如何确保同等重视“不买、退货、取消订阅”；不是指控当前产品已经诱导消费。**
 
 </details>
 
