@@ -28,7 +28,7 @@
 
 六款近期产品采用了不同的入口和经营路径。表中的商业模式只区分实际提供与公开计划，不以价格或融资规模代替经营成效。
 
-| 产品 | 主要服务关系 | 关键产品选择 | 谁付费、为何付费 |
+| 产品 | 主要服务关系 | 关键产品选择 | 付费方与方式 |
 |---|---|---|---|
 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 个人生活／工作；组织试点 | 长期工作、审批 | 个人／企业套餐；专职试点 |
 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 个人生活、小生意 | 独立云端、主动代办 | 个人／小商户进阶订阅 |
