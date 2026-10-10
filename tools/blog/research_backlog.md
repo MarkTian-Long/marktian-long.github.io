@@ -8,6 +8,7 @@
 
 | 研究问题 | 创建日期 | 状态 | 下一步 / 等待条件 |
 |---|---|---|---|
+| [Agent 产品该用什么指标衡量真实业务价值？](#br-20261010-01) | 2026-10-10 | 待补证 | 定义“任务成功”与全成本口径；用真实业务流比较 Token/Benchmark 与成功任务经济性 |
 | [为什么都重视招聘，有些公司却能形成持续的人才优势？](#br-20261009-02) | 2026-10-09 | 待研究 | 核实高管转一线案例；比较招聘、授权、配置与业务结果的关系 |
 | [本轮焦点：Agent 而不是文件成为工作单位，软件怎样设计？](#br-20261009-01) | 2026-10-09 | 待补证 | 补 Yuchen 原话；比较 Agent、任务、成果三种组织方式 |
 | [软件市场带来什么采购增量？](#br-20260930-01) | 2026-09-30 | 待补证 | 等待真实采购、伙伴交付与结算实践 |
@@ -17,6 +18,36 @@
 | [消费入口与中介价值怎样迁移？](#br-20260930-05) | 2026-09-30 | 待补证 | 补真实用户迁移、商家渠道与内容收入实践 |
 
 ## 二、当前研究卡
+
+<a id="br-20261010-01"></a>
+
+### BR-20261010-01｜Agent 产品该用什么指标衡量真实业务价值？
+
+**创建：2026-10-10｜内容更新：2026-10-10｜状态：待补证。** 触发于 10 月 10 日 Follow Builders 日报对 Google AI 基础设施负责人 Amin Vahdat 的 Training Data 访谈：Google 在超大规模计算中不只看 FLOPS，而强调真实故障条件下最终交付多少有用工作（goodput）。用户认可把这个视角迁移到 Agent 产品，进一步追问：企业究竟应该用什么经营指标衡量 Agent，而不是继续只看 Token 单价、调用次数或模型分数。本轮已定向核验相关事件与公开实验；**Goodput 是基础设施概念，不能直接冒充已经存在的 Agent 业务标准。**
+
+**核心问题与用户重点。** 当 Agent 从 Demo 进入长期生产，产品团队应该把什么作为“真实业务价值”的测量单位？研究重点不是再做一个模型排行榜，而是把度量单位从“模型一次调用”上移到“一个业务任务最终被可靠完成”：怎样定义成功任务，怎样计入失败重试、工具调用、人工复核/返工、异常恢复与时延；`Cost per Successful Task`（每个成功任务成本）能否成为关键单位经济指标，以及它为什么仍不能单独作为 North Star（北极星指标）。
+
+**当前判断（待验证假设）。** Google 的 Goodput 提供的是一个**经营视角类比**：理论能力、调用量和消耗不是最终产出，真正应问“真实约束下交付了多少有效结果”。对 Agent 更可操作的候选单位是**被业务接受的成功任务**，但不宜压缩成单一数字。当前更合理的是一组相互约束的经营指标：①在明确业务标准、风险边界与 SLA 下的任务成功/验收率；②包含失败尝试、重试、工具/基础设施和评测调用的 `Cost per Successful Task`；③从发起到验收的 `Time to Successful Completion`；④人工介入、返工与升级的比例和分钟数；⑤可稳定覆盖的任务范围与任务难度分布；⑥严重错误、权限/合规违规和不可恢复失败等 Guardrail 指标。**成本/成功任务是单位经济指标，不是价值本身；最低成本如果伴随低覆盖率、高风险或大量人工接管，不能判为更好的产品。**
+
+**关键证据与反证。** 2026-10-06 的 Training Data 访谈中，Amin Vahdat 解释 Google 在约十万级加速器环境里频繁面对真实故障，因此看重工作负载实际交付的 goodput，而不是理论 FLOPS；这证明“有效产出”视角在 AI 基础设施经营中已经成立，但不能直接证明业务 Agent 应采用同一公式。7 月 Arize AI × Fireworks 对 40 个 Terminal-Bench 任务、10 个模型、每格 6 次、合计 2,400 次 Agent run 的实验直接比较 `cost per successful task`：其结果显示 Token/单次调用价格与完成任务的经济性可以明显错位；同时最便宜的成功任务模型只稳定覆盖少量任务，文章自己明确区分 **cost per success 与 coverage**，这恰好反证“一个成本指标包打天下”。Every 9 月建立个人工作 Benchmark，把员工日常纠错转为 checks，用真实任务决定模型选择；Madhu Guru 10 月提出“evals are your product spec”，Aaron Levie 同期指出企业 Agent 部署卡在真实文件、CRM、邮件等环境中的测试/调优，并预测企业会专门建设 Eval 与模拟环境。10 月 5 日的一篇 arXiv 预印本进一步提出在 Agent 长轨迹中同时观察 goodput、SLO 与 cost per successful episode，但尚未同行评审，只能作为正在形成的研究方向。
+
+**缺口与下一步。** 最大缺口不是公式，而是“成功”的业务定义。下一步应选至少两类真实任务：一类结果较可确定（如规则/文档审核或结构化处理），一类需要专业判断（如研究/分析型交付），固定任务集与验收标准后，记录同一模型/不同 Harness 或不同模型的：首次成功率、最终验收率、重试/升级次数、端到端时长、API/工具成本、人工分钟、严重错误与覆盖范围。重点做一个**排名翻转测试**：按 Token 单价、单次成本、公开 Benchmark、成功任务成本、含人工的 fully-loaded cost（全成本）分别排序，看产品选择是否发生变化。还需明确哪些 Human-in-the-loop 是设计要求而不是失败，避免把“人工介入越少越好”写成普遍目标；对高风险金融/审核场景，错误严重度和证据完整性应作为硬门槛，不与成本简单加权。
+
+**关联与去向。** 这是一个可以独立回答的“Agent 经营指标”问题，不并入现有宽泛产品设计卡。[《模型跑出了测量边界，评测体系跟不上了》](posts/ai-benchmark-failure.html)讨论的是评测范式与第三方评测生态；[《Agent 现在面临的三大工程问题》](posts/agent-three-problems.html)讨论可靠性、成本和可控性的工程问题；[《AI POC 到底在验证什么？》](posts/ai-poc-financial-b2b-guide.html)聚焦正式投入前如何定义可信验证。新题的增量应放在**上线后怎样把 Eval、成本、人工和失败统一变成经营决策**，如果后续只能重复“要做 Eval / 要看可靠性”，则不应独立成文。当前不锁定分类、标题和排期。
+
+<details>
+<summary>展开：2026-10-10 已核验来源、指标草案与研究边界</summary>
+
+- **Goodput 触发源**：[Training Data / Amin Vahdat](https://podcasts.apple.com/ch/podcast/googles-ai-infrastructure-chief-amin-vahdat-on-the/id1750736528?i=1000793415693)（2026-10-06）。节目摘要明确：十万级加速器环境里可能每小时发生多次故障，Google 更关心真实故障后的有效工作交付，而非峰值 FLOPS。这里借的是“有效产出而非理论能力”的经营视角，不把基础设施 goodput 直接改名成新的 Agent 行业术语。
+- **Cost per Successful Task 实验**：[Arize AI × Fireworks](https://arize.com/blog/cost-per-successful-task-ai-model-benchmark/)与[公开 Benchmark Repo](https://github.com/Arize-ai/fireworks-cost-benchmark)（2026-07）。40 个 Terminal-Bench 任务 × 10 模型 × 6 trials = 2,400 runs；定义为所有尝试（含失败、重试、超时）的模型支出 / 成功运行数。结果中 `gpt-oss-120b` 的成功任务成本最低但总通过率仅 33%，可靠覆盖 8/40；GPT-5.5 通过率 67%、可靠覆盖 25/40，成功任务成本更高。**这组数据最重要的用途不是选赢家，而是证明单位成本与任务覆盖是两个问题。** 实验使用薄 Harness、确定性测试和特定 Terminal-Bench 子集，价格与模型版本也有时点限制，不外推成企业 Agent 通用排名；其成本口径主要是模型/API，不等于含人工的完整业务成本。
+- **真实工作 Eval**：[Every《Evals for Everyone》](https://every.to/context-window/evals-for-everyone)（2026-09-10，后续更新）。Every 为员工建立 5–10 个高频真实任务的个人 Benchmark，把人工纠错转成 checks；程序化检查与主观 AI Judge 并存，并用它决定不同任务该用哪个模型。它证明真实任务评测可进入日常工作，但属于 Every 自己的实践，不证明所有组织都应按个人 Benchmark 组织 Eval。
+- **Eval 从 QA 前移**：[Madhu Guru X](https://x.com/realmadhuguru/status/2107292113214091355)（2026-10-06）提出“Your evals are your product spec”；[Aaron Levie X](https://x.com/levie/status/2107283615247999257)同期指出企业需要在真实文件、CRM、邮件环境测试、调优并在模型/Workflow 变化后回归，第三方报道也记录他预测企业会维护 Eval 与模拟环境。两者是从业者观点/早期实践信号，不自动证明企业已普遍建立成熟 Eval 运营体系。
+- **近期研究信号**：[arXiv:2610.07094](https://arxiv.org/abs/2610.07094)（v1：2026-10-05）提出企业 Agent 推理评估应跨 silicon / serving / agent episode / enterprise 多层观察，并使用 agentic SLO 下的 goodput 与 cost per successful episode。它是近期预印本、尚未同行评审；可用于发现指标维度，不作为行业标准或已验证结论。
+- **指标草案（待实测，不是标准）**：`成功任务`必须先写出业务验收条件与风险硬门槛；`成功任务成本`至少区分 provider/API cost 与 fully-loaded cost，后者再加工具、基础设施、Judge/Eval、人工复核/返工；同时单列时延、覆盖范围、首次成功率、升级/人工率与严重错误。不要把这些强行加权成一个漂亮总分，先看 Pareto trade-off（多目标取舍）是否更适合产品决策。
+- **Goodhart / 反证边界**：一旦“成功率”成为唯一目标，Agent 可能学会满足测量而不是业务目标；一旦“人工率越低越好”，又可能错误惩罚本来就应该由人确认的高风险节点；任务集难度变化也会让成本/成功任务看起来改善或恶化。正式研究必须固定任务 mix、版本、验收规则和价格日期，并把静默错误与高严重度错误单独计数。
+- **与历史文章的独立性检查起点**：旧评测文章已写“动态评测基础设施缺口”，旧 Agent 工程文已写“可靠性、成本、可控性”，POC 文已写“什么算有效”。本题只有在能回答“**企业上线后如何用一套业务指标持续决定模型/Harness/自动化范围是否值得**”时才有独立成文价值；否则应回并到旧文复盘或产品运营专题。
+
+</details>
 
 <a id="br-20261009-02"></a>
 
@@ -256,6 +287,7 @@
 | 2026-10-09 | 分离维护规范与研究记录 | 新维护规范只管格式、日期与安全更新，SOP继续管研究/写作流程；不建立第二份选题库、平行Skill或文章索引。 |
 
 | 2026-10-09 | 人才与组织竞争优势讨论独立建项 BR-20261009-02 | 保存本会话的跨公司比较和待核实案例；与系列组织篇只建立关联，不改 Series Brief、文章排期或元数据。 |
+| 2026-10-10 | Goodput / Cost per Successful Task 独立建项 BR-20261010-01 | 从 Google 基础设施的有效产出视角延伸到 Agent 上线后的经营指标；与旧评测文章、Agent 工程问题和 POC 验证边界区分。已核验 Arize/Fireworks、Every、近期从业者观点与预印本；目前状态为待补证，不锁定标题、分类或排期。 |
 | 2026-10-10 | Personal Agent 持续委托稿已入库，BR-20260930-04 标记已转入 | 用户已批准五节大纲和“产品”分类；唯一当前工作稿位于 [drafts/blog/personal-agent.md](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)，未发布。旅行 OTA／商家佣金／即刻社区留在 [05](#br-20260930-05)；创业退出仍留在 04 的研究资料，尚不独立立项；企业软件采购／Plugins 继续在 01、02，Agent 作为工作单位在 BR-20261009-01。无需新建重复待办。 |
 
 BR-20260930-04 已转入未发布的[个人代理工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)。其余研究卡暂未转入正式文章，也没有合并关闭或结项。本轮未修改 `posts-meta.json`、已发布文章关系或 Series Brief；不将未发布草稿记为上线。
