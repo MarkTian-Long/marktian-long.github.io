@@ -1,0 +1,83 @@
+name: Publish world model article (one-time)
+
+on:
+  push:
+    paths:
+      - '.github/publish-world-model.trigger'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Promote the single approved draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f drafts/blog/video-world-model.md
+          test ! -e docs/blog/video-world-model.md
+          mkdir -p docs/blog
+          mv drafts/blog/video-world-model.md docs/blog/video-world-model.md
+          node tools/blog/check-blog-taxonomy.js
+          node tools/blog/sync-post-metadata.js --write docs/blog/video-world-model.md --date 2026.10
+          node tools/blog/generate-post.js --write docs/blog/video-world-model.md tools/blog/posts/video-world-model.html
+          node scripts/generate-search-assets.js --write
+          node scripts/check-search-foundation.js
+          git add -A
+
+      - name: Install verification dependencies
+        working-directory: scripts
+        run: npm ci
+
+      - name: Install Chromium for browser checks
+        working-directory: scripts
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify site
+        working-directory: scripts
+        run: npm run check
+
+      - name: Build public artifact
+        run: node scripts/build-public-dist.js
+
+      - name: Smoke public artifact
+        run: node scripts/check-public-dist.js
+
+      - name: Commit generated publication files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git diff --cached --stat
+          git diff --cached --quiet && { echo "No changes to commit"; exit 1; }
+          git commit -m "blog: publish video world model with generated assets"
+          git push origin HEAD:main
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
