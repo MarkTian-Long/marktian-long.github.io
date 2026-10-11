@@ -46,6 +46,14 @@
   --font: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Libre Baskerville', Georgia, serif;  /* 衬线字体：标题使用 */
 
+  /* ── 首页同级条目：文章、资源、原型与案例 ── */
+  --home-item-title-size: 1.125rem;
+  --home-item-body-size: 1rem;
+  --home-item-meta-size: 0.8125rem;
+  --home-item-title-leading: 1.4;
+  --home-item-body-leading: 1.6;
+  --home-item-meta-leading: 1.5;
+
   /* ── GitHub 工具与工作流 ── */
   --resource-space-xs: 4px;
   --resource-space-sm: 8px;
@@ -57,9 +65,6 @@
   --resource-rule-width: 1px;
   --resource-focus-width: 2px;
   --resource-anchor-offset: 96px;
-  --resource-title-size: 1.25rem;
-  --resource-body-size: 1rem;
-  --resource-meta-size: 0.8125rem;
   --resource-action-size: 0.875rem;
   --resource-intro-measure: 28ch;
   --resource-accent: #9a482f;
@@ -832,7 +837,8 @@ button {
 }
 
 .case-row-tag {
-  font-size: 0.72rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   font-weight: 600;
   color: var(--accent-clay);
   letter-spacing: 0.04em;
@@ -840,22 +846,23 @@ button {
 }
 
 .case-row-title {
-  font-size: 0.95rem;
+  font-size: var(--home-item-title-size);
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: var(--home-item-title-leading);
   margin: 0;
 }
 
 .case-row-desc {
-  font-size: 0.83rem;
+  font-size: var(--home-item-body-size);
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: var(--home-item-body-leading);
   margin-top: 2px;
 }
 
 .case-row-metrics {
-  font-size: 0.75rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -2234,7 +2241,8 @@ button {
 }
 
 .toolbox-group-label {
-  font-size: 0.75rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2242,7 +2250,8 @@ button {
 }
 
 .toolbox-group-desc {
-  font-size: 0.85rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   color: var(--text-muted);
 }
 
@@ -2425,21 +2434,21 @@ button {
 .resource-meta {
   margin-bottom: var(--resource-space-sm);
   color: var(--text-secondary);
-  font-size: var(--resource-meta-size);
-  line-height: 1.5;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
 }
 
 .resource-title {
   margin-bottom: var(--resource-space-sm);
-  font-size: var(--resource-title-size);
+  font-size: var(--home-item-title-size);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--home-item-title-leading);
 }
 
 .resource-desc {
   color: var(--text-secondary);
-  font-size: var(--resource-body-size);
-  line-height: 1.75;
+  font-size: var(--home-item-body-size);
+  line-height: var(--home-item-body-leading);
 }
 
 .resource-link {
@@ -2508,7 +2517,8 @@ button {
 
 .writing-list-label {
   margin: 0 0 8px 16px;
-  font-size: 0.75rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--accent-clay);
@@ -2526,7 +2536,7 @@ button {
 
 .writing-post-row {
   display: grid;
-  grid-template-columns: 72px 1fr auto;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
   padding: 18px 16px;
@@ -2544,7 +2554,8 @@ button {
 .writing-post-date {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 0.75rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   color: var(--accent-clay);
   white-space: nowrap;
   opacity: 0.85;
@@ -2554,13 +2565,14 @@ button {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-width: 0;
 }
 
 .writing-post-title {
-  font-size: 15px;
+  font-size: var(--home-item-title-size);
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: var(--home-item-title-leading);
   transition: color 0.15s;
 }
 
@@ -2569,9 +2581,9 @@ button {
 }
 
 .writing-post-summary {
-  font-size: 13px;
+  font-size: var(--home-item-body-size);
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: var(--home-item-body-leading);
 }
 
 .writing-post-tags {
@@ -2582,14 +2594,16 @@ button {
 }
 
 .writing-post-cue {
-  font-size: 0.75rem;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   color: var(--accent-blue);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .writing-tag {
-  font-size: 11px;
+  font-size: var(--home-item-meta-size);
+  line-height: var(--home-item-meta-leading);
   padding: 2px 8px;
   border-radius: 20px;
   background: var(--accent-clay-10);
@@ -2836,18 +2850,20 @@ button {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-width: 0;
 }
 
 .works-title {
-  font-size: 0.95rem;
+  font-size: var(--home-item-title-size);
+  line-height: var(--home-item-title-leading);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .works-desc {
-  font-size: 0.83rem;
+  font-size: var(--home-item-body-size);
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: var(--home-item-body-leading);
 }
 
 .works-arrow {
