@@ -278,15 +278,15 @@
 
 ### BR-20260930-05｜消费入口迁移与信息中介的价值
 
-**创建：2026-09-30｜内容更新：2026-10-10｜状态：待补证。** 9/30 原材料保留原核验口径；下述旅行 OTA 案例于 10/10 新增定向核验，不将旧材料统一更新为今日已核验。
+**创建：2026-09-30｜内容更新：2026-10-11｜状态：待补证。** 9/30 原材料保留原核验口径；旅行 OTA 案例于 10/10、Bites / DoorDash 外卖对照于 10/11 定向补证，未把旧材料统一当作今日已核验。
 
 **核心问题与用户重点。** 当用户把任务交给 Agent，消费中哪些环节迁移、收入和议价权归谁？用户特别强调逛购、审美、惊喜、自我表达与社区互动本身可能是价值，不能一律当作应消除的操作。
 
-**当前判断。** 按一次活动的目的和环节划分，比按 App 行业划分更准确。发现、比较和执行可被代理，亲历体验未必可代劳；少打开 App 不等于不再使用其内容与服务，供给仍被需要也不保证原厂商保住收入。旅行 OTA 的当前证据尤其支持区分“个人 Agent 抢走发现/操作入口”和“旅行平台丧失供给、支付、履约与售后价值”；两者可能分工、合作，也可能就客户关系和渠道费用发生竞争。不能把 Instinct 旅行订单自述变成“携程将被取代”的事实或预测。
+**当前判断。** 按一次活动的目的和环节划分，比按 App 行业划分更准确。发现、比较和执行可被代理，亲历体验未必可代劳；少打开 App 不等于不再使用其内容与服务，供给仍被需要也不保证原厂商保住收入。旅行 OTA 的当前证据尤其支持区分“个人 Agent 抢走发现/操作入口”和“旅行平台丧失供给、支付、履约与售后价值”；两者可能分工、合作，也可能就客户关系和渠道费用发生竞争。不能把 Instinct 旅行订单自述变成“携程将被取代”的事实或预测。新增 Bites / DoorDash 对照：旅行 Agent 可能让 OTA 退到交易与服务后台；餐饮交易连接商则可能绕过原外卖平台、对接餐厅自有系统。二者都只说明**获客入口、订单路由与服务交付可能拆分**，不能从新入口出现直接推出旧平台收入或利润已被替代。
 
-**关键证据与反证。** 商家自有结账、原生平台 AI 发现、第三方代理阻断与兴趣推荐并存；携程、Expedia 的公开材料显示 OTA 也可成为 Agent 背后的可订库存、支付、服务供应商，并原生开发 AI。即刻说明“得到摘要”不同于亲自互动和被认识。不能从这些设计推断真实迁移规模、平台利润或性别决定偏好。
+**关键证据与反证。** 商家自有结账、原生平台 AI 发现、第三方代理阻断与兴趣推荐并存；携程、Expedia 的公开材料显示 OTA 也可成为 Agent 背后的可订库存、支付、服务供应商，并原生开发 AI。Bites 自述餐厅保留订单和顾客关系，媒体报道其通过 AI 入口促成餐厅直连订单；但 DoorDash 也已推出原生 AI 订餐和 ChatGPT 接入，不能将老牌平台描述为被动退出。即刻说明“得到摘要”不同于亲自互动和被认识。不能从这些设计推断真实迁移规模、平台利润或性别决定偏好。
 
-**缺口与下一步。** 等待从发现到售后的同类任务数据、商家结算、渠道转化和发布者流量/授权收入，区分交易额、佣金与利润。分别验证技术能做、用户愿意交付、服务方允许进入。
+**缺口与下一步。** 等待从发现到售后的同类任务数据、商家结算、渠道转化和发布者流量/授权收入，区分交易额、佣金与利润。两组对照重点补：①真实用户需求和订单是否迁移；②传统平台仍负责哪些库存、支付、配送、售后及订单分账；③商家全链路获客、支付、履约、退款和客服成本与旧渠道相比是否净下降。分别验证技术能做、用户愿意交付、服务方允许进入。
 
 **关联与去向。** 商业类候选，与 [04](#br-20260930-04)互补；为[工作单位新题](#br-20261009-01)提供参与边界，不自动与企业采购或产品设计合并。
 
@@ -298,6 +298,7 @@
 - **过程与结果可以同时有价值**：[Babin等1994购物价值研究摘要](https://aquila.usm.edu/fac_pubs/7202/)区分功用与享乐；[Amazon Interests](https://www.aboutamazon.com/news/retail/artificial-intelligence-amazon-features-interest)保存偏好并持续推荐，保留用户浏览选择。喜欢逛不等于每一步都想参与，想省事也不等于交出全部判断；不按性别推断代办偏好。
 - **即刻**：[官方 App Store](https://apps.apple.com/cn/app/即刻app/id966129812)、[会员权益](https://h5.ruguoapp.com/member?disablePanBack=true&displayFooter=false&displayHeader=false)在旧记录中为月20元/年128元、提供信息管理表达与身份展示；价格不是利润证据。[隐私政策](https://post.okjike.com/jike-privacy/)涉及广告/分析合作，不证明收入占比。[品玩2019创始人采访](https://www.pingwest.com/a/182079)记录2015上线、科技圈传播与2018社区转型，不代表当前年龄、职业或留存结构。Agent 可以发现、筛选与准备交流，但摘要不等于关系与社区体验。
 - **2026-10-10 旅行 OTA 压力测试（本轮核验）**：[Instinct 创始人播客](https://colossus.com/episode/instinct-the-personal-agent/)提出旅行约占平台交易额的一半、年化交易额接近十亿美元，并强调与既有旅游服务商合作的可能性；[TechCrunch 9/29](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)明确指出年化额的计算方式未披露，不能推为已收取佣金。携程董事长在[携程**2025Q4/全年财报电话会**（实际日期2026-02-25，逐字稿第11-12页）](https://investors.trip.com/static-files/931f23d1-d597-4a28-9391-479a54b6107d)回答摩根大通关于 AI Agent 冲击 OTA 的提问，将原 OTA 价值拆为 inspiration / transaction / service，表态推动与外部 Agent 的直接交易对接及自有 TripGenie 等产品；其供应链、实时库存、支付和售后重要性为管理层立场，并非独立验证其壁垒不可替代。[Trip.com 自有披露](https://www.trip.com/newsroom/)称 TripGenie 辅助订单同比增长约400%，但未披露绝对规模，不能证明全体用户渗透。[Expedia B2B 5/20公告](https://ir.expediagroup.com/news-and-events/news/news-details/2026/Expedia-Group-B2B-Introduces-AI-Toolkit-and-Platform-for-the-Future-of-Travel-Distribution/default.aspx)展示向其他品牌提供可订商品、支付、客服与 AI toolkit 的供给平台路线；[Expedia/YouGov 三国外部受托调查](https://ir.expediagroup.com/news-and-events/news/news-details/2026/Expedia-Group-Reveals-The-AI-Trust-Gap-Travelers-Embrace-AI-for-Planning-but-Rely-on-Trusted-Brands-to-Book/default.aspx)2026年3月访问美英印5700余名成年人，68%偏好通过熟悉的旅行品牌订票，反映当时意向而非真实交易或中国市场；[Skift 9/30行业高管复盘](https://skift.com/2026/09/30/the-travel-distribution-funnel-is-coming-apart/)转述Booking CEO称大模型推荐流量贡献间夜不足1%，这是特定平台公司自述。**本轮结果**：比“Instinct取代携程”更可论证的是入口/获客价值先迁移、供给与售后可继续依赖 OTA，后续是否影响 OTA 利润需按实际分账与客户关系判断；不把这条后续商业研究树升级为当前产品文章新章节。
+- **2026-10-11 外卖交易压力测试（本轮补证）**：[The Verge 2026-10-07 对 Bites / DoorDash 的报道](https://www.theverge.com/ai-artificial-intelligence/1005726/doordash-ai-agentic-food-delivery-bites)将小团队 Bites 作为借助 AI 订餐入口、低收费和餐厅直连挑战传统外卖分发模式的早期案例，文中还涉及 DoorDash 对商家上架授权的质疑，属争议双方不同主张，不据此推断反竞争行为；[Bites 官网](https://withbites.com/)主张无传统佣金、餐厅保留订单和顾客关系并接入 POS，属于厂商自述，不证明商家完整成本已下降或平台已盈利。[DoorDash 官方 Ask DoorDash](https://about.doordash.com/en-us/news/ask-doordash)与[ChatGPT 杂货订购接入](https://about.doordash.com/en-us/news/openai)构成反证：大型平台可自行 AI 化或作为外部 AI 入口背后的交易／履约供应商。**机制对照**：Instinct 可能保留携程等 OTA 的后台供给服务；Bites 则尝试让餐厅接单绕过 DoorDash 的传统交易入口，同时仍需要实体配送，且 Bites 也有自有 App，不能说它只存在于后台。**研究问题**：谁拥有顾客关系和复购入口；订单实际由谁承接；商家承担的总渠道与履约成本、平台佣金和利润池是否真实迁移；AI 入口提供方是否成为新的强势中介。尚无可比、可审计的留存、利润、长期成交与分账数据。此案例进入 BR-20260930-05，不新增独立待办，不改当前 Personal Agent 工作稿。
 - **仍需检验**：公开信息搬运、原始数据、版权、供给、信用、售后、履约分别有什么约束；新中介是否创造新增价值；一次购物助手是否已足够，还是必须长期个人背景。旅行分支还需核对真实订单/供应商直签、增量转化、预订后问题责任归属、Agent 与 OTA 的分账及渠道议价变化。当前 Personal Agent 主体只保留**Instinct 旅行的短例子，解释持续委托和谁获得交易收入**，不新增“取代携程”或 OTA 产业史章节。
 
 </details>
@@ -325,5 +326,6 @@
 | 2026-10-09 | 人才与组织竞争优势讨论独立建项 BR-20261009-02 | 保存本会话的跨公司比较和待核实案例；与系列组织篇只建立关联，不改 Series Brief、文章排期或元数据。 |
 | 2026-10-10 | Goodput / Cost per Successful Task 独立建项 BR-20261010-01 | 从 Google 基础设施的有效产出视角延伸到 Agent 上线后的经营指标；与旧评测文章、Agent 工程问题和 POC 验证边界区分。已核验 Arize/Fireworks、Every、近期从业者观点与预印本；目前状态为待补证，不锁定标题、分类或排期。 |
 | 2026-10-10 | Personal Agent 持续委托稿已入库，BR-20260930-04 标记已转入 | 用户已批准五节大纲和“产品”分类；唯一当前工作稿位于 [drafts/blog/personal-agent.md](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)，未发布。旅行 OTA／商家佣金／即刻社区留在 [05](#br-20260930-05)；创业退出仍留在 04 的研究资料，尚不独立立项；企业软件采购／Plugins 继续在 01、02，Agent 作为工作单位在 BR-20261009-01。无需新建重复待办。 |
+| 2026-10-11 | BR-20260930-05 补入 Bites / DoorDash 对照 | 与 Instinct / 携程并列检验“新 AI 入口下旧平台退至后台”与“旧平台交易入口被绕开”两种路径；保留老平台原生 AI 与履约价值的反证，不据此断言替代已发生；未新建立项、未改 Personal Agent 草稿。 |
 
 BR-20260930-04 已转入未发布的[个人代理工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)。其余研究卡暂未转入正式文章，也没有合并关闭或结项。本轮未修改 `posts-meta.json`、已发布文章关系或 Series Brief；不将未发布草稿记为上线。
