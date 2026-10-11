@@ -210,6 +210,16 @@ initial migration.
 
 ### Content and design
 
+- 2026-10-11 user/Codex: Homepage GitHub curation must combine reader value
+  with author representativeness, grounded in concrete workflows and product
+  choices. Follow `docs/github-resources-guidelines.md`; the current selection
+  and public-source evidence are in
+  `docs/plans/2026-10-11-homepage-project-positioning.md`. Describe the content
+  library as collection and content processing, not automatic bookmark import.
+  Per the user's later 2026-10-11 feedback, homepage labels describe use cases
+  or entry points; OS requirements and trial status remain in usage docs and
+  maintenance records. Distinguish reusable public Harness templates from
+  private configuration. Do not equate local preview with publication.
 - Names should match content type, such as prediction versus opinion.
 - Parallel opinion blocks need consistent internal structure.
 - Do not drop concrete examples while rewriting.

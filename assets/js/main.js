@@ -138,7 +138,6 @@ function renderCases() {
           </div>
         </div>
       </div>
-      <span class="case-row-arrow">↗</span>
     </div>
   `).join('');
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));

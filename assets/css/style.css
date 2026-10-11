@@ -46,6 +46,25 @@
   --font: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Libre Baskerville', Georgia, serif;  /* 衬线字体：标题使用 */
 
+  /* ── GitHub 工具与工作流 ── */
+  --resource-space-xs: 4px;
+  --resource-space-sm: 8px;
+  --resource-space-md: 16px;
+  --resource-space-lg: 24px;
+  --resource-space-xl: 32px;
+  --resource-layout-gap: 64px;
+  --resource-tap-target: 44px;
+  --resource-rule-width: 1px;
+  --resource-focus-width: 2px;
+  --resource-anchor-offset: 96px;
+  --resource-title-size: 1.25rem;
+  --resource-body-size: 1rem;
+  --resource-meta-size: 0.8125rem;
+  --resource-action-size: 0.875rem;
+  --resource-intro-measure: 28ch;
+  --resource-accent: #9a482f;
+  --resource-divider: var(--border-warm);
+
   /* ── Alpha 系列（蓝色，用于行动性元素）── */
   --accent-blue-06: rgba(37, 99, 235, 0.06);
   --accent-blue-08: rgba(37, 99, 235, 0.08);
@@ -839,19 +858,6 @@ button {
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 4px;
-}
-
-.case-row-arrow {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  flex-shrink: 0;
-  padding-top: 4px;
-  transition: color var(--transition), transform var(--transition);
-}
-
-.case-row:hover .case-row-arrow {
-  color: var(--accent-clay);
-  transform: translate(2px, -2px);
 }
 
 /* ── Case Detail Expand ── */
@@ -2370,6 +2376,125 @@ button {
   }
 }
 
+/* ========== Tools & Workflows ========== */
+.legacy-about-anchor {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
+.resources-section {
+  scroll-margin-top: var(--resource-anchor-offset);
+}
+
+.resources-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 2fr);
+  gap: var(--resource-layout-gap);
+  align-items: start;
+}
+
+.resources-intro .section-label {
+  color: var(--resource-accent);
+}
+
+.resources-intro .section-desc {
+  max-width: var(--resource-intro-measure);
+  margin: 0;
+}
+
+.resources-profile {
+  margin-top: var(--resource-space-lg);
+}
+
+.resources-list {
+  list-style: none;
+  min-width: 0;
+  border-top: var(--resource-rule-width) solid var(--resource-divider);
+}
+
+.resource-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--resource-space-lg);
+  align-items: center;
+  padding-block: var(--resource-space-xl);
+  border-bottom: var(--resource-rule-width) solid var(--resource-divider);
+}
+
+.resource-meta {
+  margin-bottom: var(--resource-space-sm);
+  color: var(--text-secondary);
+  font-size: var(--resource-meta-size);
+  line-height: 1.5;
+}
+
+.resource-title {
+  margin-bottom: var(--resource-space-sm);
+  font-size: var(--resource-title-size);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.resource-desc {
+  color: var(--text-secondary);
+  font-size: var(--resource-body-size);
+  line-height: 1.75;
+}
+
+.resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--resource-space-sm);
+  min-height: var(--resource-tap-target);
+  color: var(--text-primary);
+  font-size: var(--resource-action-size);
+  text-decoration: underline;
+  text-decoration-color: var(--resource-accent);
+  text-underline-offset: var(--resource-space-xs);
+  transition: color var(--transition);
+}
+
+.resource-primary {
+  justify-self: start;
+  font-weight: 600;
+}
+
+.resource-link:hover {
+  color: var(--resource-accent);
+  text-decoration: underline;
+}
+
+.resource-link:focus-visible {
+  outline: var(--resource-focus-width) solid var(--accent-blue);
+  outline-offset: var(--resource-space-xs);
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 900px) {
+  .resources-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--resource-space-xl);
+  }
+
+  .resources-intro .section-desc {
+    max-width: none;
+  }
+
+  .resources-profile {
+    margin-top: var(--resource-space-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .resource-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--resource-space-sm);
+    padding-block: var(--resource-space-lg);
+  }
+
+}
+
 /* ========== Writing Section ========== */
 .writing-section {
   background: var(--bg-primary);
@@ -2502,6 +2627,8 @@ button {
    DARK MODE (data-theme="dark")
    ============================================= */
 [data-theme="dark"] {
+  --resource-accent: var(--accent-coral);
+  --resource-divider: var(--border);
   --bg-primary: #080c18;
   --bg-secondary: #0d1224;
   --bg-card: rgba(255, 255, 255, 0.04);

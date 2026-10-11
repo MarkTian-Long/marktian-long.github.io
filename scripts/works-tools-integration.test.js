@@ -24,14 +24,14 @@ function resolveLocalHref(pagePath, href) {
 test('homepage exposes eight trustworthy tool links without unverified outcome claims', () => {
   const $ = cheerio.load(read('index.html'));
   const expected = new Map([
-    ['tools/esop-extractor/index.html', ['esop-extractor', '证据核验']],
-    ['tools/stock/index.html', ['financial-rag', '证据来源']],
-    ['tools/service-agent/index.html', ['service-agent', '故障注入']],
-    ['tools/asci/index.html', ['asci-research-system', '14 节点']],
-    ['tools/ai-insights/index.html', ['ai-insights', '证据账本']],
-    ['tools/radar/index.html', ['radar', '研究意图']],
-    ['tools/trends/index.html', ['trends', '可追溯']],
-    ['tools/agent-hub/index.html', ['agent-hub', '是否需要 Agent']],
+    ['tools/esop-extractor/index.html', ['esop-extractor', /(?:证据|原文)核验/]],
+    ['tools/stock/index.html', ['financial-rag', /(?:证据来源|结论依据)/]],
+    ['tools/service-agent/index.html', ['service-agent', /(?:故障注入|模拟故障)/]],
+    ['tools/asci/index.html', ['asci-research-system', /14\s*个?\s*节点/]],
+    ['tools/ai-insights/index.html', ['ai-insights', /(?:证据账本|参考来源)/]],
+    ['tools/radar/index.html', ['radar', /研究(?:意图|问题)/]],
+    ['tools/trends/index.html', ['trends', /(?:可追溯|核对来源)/]],
+    ['tools/agent-hub/index.html', ['agent-hub', /是否需要 Agent/]],
   ]);
   const items = $('#tools .works-item').toArray();
 
@@ -43,7 +43,7 @@ test('homepage exposes eight trustworthy tool links without unverified outcome c
     assert.equal($(item).attr('data-portfolio-id'), portfolioId, `${href} should map to its evidence record`);
     assert.equal($(item).attr('target'), '_blank', `${href} should open in a new tab`);
     assert.ok(new Set(($(item).attr('rel') || '').split(/\s+/)).has('noopener'), `${href} needs rel=noopener`);
-    assert.match($(item).find('.works-desc').text(), new RegExp(taskPattern), `${href} description should state its task`);
+    assert.match($(item).find('.works-desc').text(), taskPattern, `${href} description should state its task`);
   }
 
   const sectionText = $('#tools').text();

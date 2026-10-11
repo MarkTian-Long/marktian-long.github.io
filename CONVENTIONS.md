@@ -114,8 +114,8 @@ background: rgba(255, 255, 255, 0.04);
 | `.reveal` + `.visible` | 滚动入场动画 |
 | `.grad-text` | 渐变文字 |
 | `.container` | 内容最大宽度容器 |
-| `.prediction-item` + `.expanded` | 观点折叠卡片（见下方） |
-| `.expand-btn-link` | 支撑材料链接/按钮（a 或 button 均可） |
+| `.resources-layout` + `.resource-item` | GitHub 工具与工作流的编辑式项目列表（见下方） |
+| `.resource-link` + `.resource-primary` | 项目的唯一「了解与使用」入口 |
 
 ### 页面视觉复核
 
@@ -124,44 +124,26 @@ background: rgba(255, 255, 255, 0.04);
 - 交付说明必须记录已审查的页面（URL 或本地路径）、视口和状态，以及结论；截图本身无需作为仓库资产提交，除非它是产品内容或测试基线。
 - 纯文案、数据或不可见逻辑改动不强制截图；若页面已无法运行，应明确说明视觉复核未完成及原因。
 
-### 观点折叠组件（`.prediction-item`）
+### GitHub 工具与工作流（`#resources`）
 
-「我的观点」区块使用折叠交互，默认收起只展示标题，点击展开详情。
+首页正文顺序为个人介绍 → 思考碎片 → 工具与工作流 → 原型与研究 → 过往产品案例 → 联系。导航顺序为文章 / 工具 / 作品 / 案例 / 联系；旧 `#about` 锚点保留在个人介绍，避免历史链接失效。
 
-**HTML 结构：**
+- 选品、文案、链接和上下架统一遵循 [`docs/github-resources-guidelines.md`](docs/github-resources-guidelines.md)。默认精选 3 项，通常保持 2–4 项；新增 GitHub 仓库不自动进入首页。
+- GitHub 项目仅在 `index.html` 的 `.resource-item` 中维护公开展示：名称、面向读者的价值介绍、使用条件和唯一行动链接。每项只保留「了解与使用」，模块全局保留「更多 GitHub 项目」。
+- 行动链接直达用途和使用步骤完整的入口；只有确有可用服务时才标注「在线体验」，只有存在发布包时才标注「下载」。
+- 明确区分本地运行的软件和需自行配置平台的 AI 工作流。不统一宣称所有公开仓库均为开源，不将平台受限能力写成无条件可用。
+- 链接用独立 `a` 元素，不嵌套链接；「了解与使用」通过 `aria-label` 带上项目名。新标签页统一带 `rel="noopener"`。
+- 采用文字、分隔线和单一行动入口，使用 `--resource-*` 与已有主题变量；覆盖深浅主题、移动布局、键盘焦点和至少 44px 点击高度。
+- 模块不运行 GitHub API、不抓取仓库统计，也不代访客启用自动化。新增条目时人工核对公开状态、实际文档和能力边界。
+- 博客归档的等价入口是站点导航，不是文章分类；文章正文、元数据及精选仍遵循博客原有单一来源。
+- 旧「我的判断」完整内容保存于 `docs/plans/archive/2026-10-09-homepage-judgment-snapshot.md`，其中时效性结论需在再使用前重新核验。
 
-```html
-<div class="prediction-item" onclick="togglePrediction(this)">
-    <!-- 始终可见的标题行 -->
-    <div class="prediction-header">
-        <span class="prediction-lead">核心判断一句话（≤30字）</span>
-        <div class="prediction-meta">
-            <span class="prediction-date">2026.03</span>
-            <span class="prediction-label">标签名</span>
-            <span class="prediction-toggle">▾</span>
-        </div>
-    </div>
-    <!-- 折叠详情体（默认 max-height:0） -->
-    <div class="prediction-body">
-        <div class="prediction-body-inner">
-            <p class="prediction-text">完整论述...</p>
-            <!-- 可选：支撑材料 -->
-            <div class="prediction-expand">
-                <a class="expand-btn-link" href="..." target="_blank"
-                   onclick="event.stopPropagation()">📝 思考碎片：标题 →</a>
-                <a class="expand-btn-link" href="tools/<tool-name>/index.html" target="_blank"
-                   rel="noopener" onclick="event.stopPropagation()">🛠 工具：名称 →</a>
-            </div>
-        </div>
-    </div>
-</div>
-```
+### 过往产品案例（`#cases`）
 
-**规则：**
-- `togglePrediction(this)` 挂在最外层容器，切换 `.expanded` class
-- 所有内部可点击元素（链接、按钮）必须加 `event.stopPropagation()` 阻止冒泡
-- 支撑材料格式：思考碎片 `📝 思考碎片：标题 →`，工具 `🛠 工具：名称 →`
-- 没有合适资源时无需补支撑材料，留空即可
+- 早期案例按历史项目回顾展示，注明项目阶段与指标对应当时情况；不让读者误以为仍在开展。标题、指标和个人贡献保持可核对。
+- 项目年份或年份区间应来自作者确认或明确资料；Git 提交时间、页面生成时间不作为项目开展时间。年份暂不明确时，先使用「过往」表达，不编造日期。
+- 案例价值落在业务问题、约束、关键取舍、个人角色与实际结果。近期项目以完整复盘补充，GitHub 工具入口与项目复盘各司其职。
+- 详情仍在当前页展开；没有外部链接的案例行不展示跳转角标。
 
 ---
 

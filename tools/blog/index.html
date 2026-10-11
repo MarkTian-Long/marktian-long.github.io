@@ -30,6 +30,12 @@
             --accent:    #2563eb;
             --clay:      #c96442;
             --clay-soft: rgba(201, 100, 66, 0.10);
+            --site-nav-space: 8px;
+            --site-nav-separation: 24px;
+            --site-nav-target: 44px;
+            --site-nav-focus-width: 2px;
+            --site-nav-focus-offset: 4px;
+            --site-nav-font-size: 13px;
         }
         [data-theme="dark"] {
             --bg:        #080c18;
@@ -84,6 +90,30 @@
             transition: color 0.2s;
         }
         .back-link:hover { color: var(--clay); }
+        .blog-site-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--site-nav-space);
+        }
+        .blog-site-nav a {
+            display: inline-flex;
+            align-items: center;
+            min-height: var(--site-nav-target);
+            color: var(--text-2);
+            font-size: var(--site-nav-font-size);
+            text-decoration: none;
+        }
+        .blog-site-nav a:hover {
+            color: var(--text-1);
+            text-decoration: underline;
+            text-underline-offset: var(--site-nav-focus-offset);
+        }
+        .blog-site-nav a:focus-visible {
+            outline: var(--site-nav-focus-width) solid var(--accent);
+            outline-offset: var(--site-nav-focus-offset);
+        }
+        .blog-site-nav-mobile { display: none; }
         .search-box input {
             width: 100%;
             background: var(--bg-card);
@@ -332,6 +362,13 @@
             .blog-layout { grid-template-columns: 1fr; padding: 0 16px; gap: 0; }
             .blog-sidebar { display: none; }
             .blog-main { min-width: 0; padding: 32px 0 60px; }
+            .blog-site-nav-mobile {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                margin-bottom: var(--site-nav-separation);
+            }
             .mobile-controls {
                 display: flex;
                 flex-direction: column;
@@ -375,7 +412,10 @@
 
     <!-- 左栏 -->
     <aside class="blog-sidebar">
-        <a class="back-link" href="../../index.html">← Leo Liu</a>
+        <nav class="blog-site-nav" aria-label="站点导航">
+            <a class="back-link" href="../../index.html">← Leo Liu</a>
+            <a href="../../index.html#resources">工具与工作流 <span aria-hidden="true">↗</span></a>
+        </nav>
         <div class="search-box">
             <input id="searchInput" placeholder="搜索文章…" type="text" autocomplete="off" />
         </div>
@@ -392,6 +432,10 @@
 
     <!-- 右侧主区 -->
     <main class="blog-main">
+        <nav class="blog-site-nav blog-site-nav-mobile" aria-label="站点导航">
+            <a class="back-link" href="../../index.html">← Leo Liu</a>
+            <a href="../../index.html#resources">工具与工作流 <span aria-hidden="true">↗</span></a>
+        </nav>
         <div class="blog-header">
             <header>
                 <span class="blog-label">Writing</span>

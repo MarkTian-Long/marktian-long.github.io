@@ -74,7 +74,7 @@ docs/agent-context/             # Claude/Codex 共享上下文、memory、维护
 - 个人联系方式：`index.html` 搜索 `your@email.com`
 - 产品案例：`assets/js/main.js` → `casesData` 数组
 - AI 产品数据：`tools/ai-insights/data/products.json`
-- AI 落地判断模块：`index.html` 搜索 `view-list`，直接编辑 HTML 内的 `.view-item`（观点条目）、`.landing-body`（行业落地两级结构）、`.gap2-list`（能力短板）
+- GitHub 工具与工作流：先读 `docs/github-resources-guidelines.md`，再在 `index.html` 的 `id="resources"` 中维护精选项目的价值介绍、使用条件和唯一入口；不自动展示所有仓库。博客快捷入口在 `.blog-site-nav`，旧判断快照见 `docs/plans/archive/2026-10-09-homepage-judgment-snapshot.md`。
 - 博客写作治理真源：`tools/blog/governance/README.md`；写作前按需读取 `blog-sop.md`、`blog-review-checklist.md`、`blog-charts-spec.md` 与对应 `tools/blog/series/*.md`
 - 博客工作稿：未发布完整稿维护在 `drafts/blog/<slug>.md`；确认发布后迁移为 `docs/blog/<slug>.md`，再同步 `tools/blog/data/posts-meta.json`。最终 Markdown 是内容语义真源，`posts-meta.json` 是网站运行索引
 - 搜索发现配置与生成：`scripts/site-config.js`、`scripts/generate-search-assets.js`、`scripts/check-search-foundation.js`
