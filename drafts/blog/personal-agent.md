@@ -43,7 +43,7 @@
 
 在工作场景中，Dots 与 Grok Bot 的区别不是谁能处理更多任务。Dots 的个人主代理侧重一个人跨项目持续推进，[帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)也强调任务接续与行动控制；它面向组织的 specialist dots 仍属试点。Grok Bot 强调可分工的 AI 同事，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)推出企业版，[9 月 28 日](https://x.ai/news/team-bots)又推出可由团队共享工作背景与职责的 Team Bots。一个更贴近个人持续协作，另一个更强调共同工作；团队采购与个人会员也不一定对应完全不同的技术能力。
 
-两家创业公司的选择尤其值得比较。Cue 为不同 Agent 配置邮箱、电话号码、钱包和电脑，让它们可以围绕目标分工；这是 Manus 2.0 发布时推出的独立应用，不能把 Manus 主产品的商业化直接算到 Cue 头上。Instinct 反过来极力减少界面的存在：用户不必进入新 App，只要像联系一个助理那样发消息或打电话。创始人 [Noah Shinn 的访谈](https://colossus.com/episode/instinct-the-personal-agent/)甚至强调，回复前两行是否清楚、什么场合适合打扰用户，可能比再增加一个功能更重要。
+需要几个代理分别对外联系、在限定预算内付款时，Cue 的设计值得关注：每个 Agent 有独立邮箱、电话、钱包和电脑，可以围绕一个目标分工。相比之下，[Grok Bot 官方文档](https://docs.x.ai/grok-bot/computer-and-apps)说明，同一用户的多个 Bot 共享一台云电脑以及其中的文件、登录状态；这使共同工作的资料更容易接续，也意味着角色名称本身不能充当权限隔离。Instinct 的另一种取舍则是减少交代事情的负担：创始人 [Noah Shinn 在访谈中](https://colossus.com/episode/instinct-the-personal-agent/)特别强调消息前两行是否清楚、什么时候适合打扰用户。**这几种设计分别优化的是独立对外行动、团队共享协作和日常交流，而不是同一条能力排行榜。**
 
 这六种定位也对应不同的付款逻辑。个人或团队套餐要证明这项服务值得持续订阅，企业方案要证明它能交付工作能力；Instinct 则希望让消费者免费使用、由获得订单的商家承担费用。**消费者在使用，不代表最终一定由消费者付费**，更不意味着成交金额就是代理服务收入。大厂与创业公司共享长期委托的方向，却仍在验证什么样的用户关系和收入机制能够持续成立。
 
