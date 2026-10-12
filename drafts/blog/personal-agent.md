@@ -39,13 +39,13 @@
 
 *“优先了解”按官方产品定位匹配场景，并非同任务实测后的性能排名。几款产品都可能处理表中的其他事情；开放地区、功能、邀请资格和授权范围仍有限制。“计划商家分成”不是已实现收入。*
 
-从生活事务看，Muse 与 Instinct 都想替用户处理预约、旅行和日常安排，但前者以独立代理提供主动服务，后者尽量融入已有的短信、电话与邮件习惯。Google 的 Spark 则更适合先由已经使用 Gmail、日历等服务的人考察：用户背景本来就在原有账号和应用里。[Spark 的会员扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)和 Muse [面向小商户的扩展](https://about.fb.com/news/2026/09/introducing-muse-small-business/)也体现了不同的获客路线。目前没有可靠的同任务对照数据，无法据此断言谁更会订旅行。
+从生活事务看，Muse 与 Instinct 都想替用户处理预约、旅行和日常安排，但前者以独立代理提供主动服务，后者尽量融入已有的短信、电话与邮件习惯。如果已经习惯用 Gmail、日历等服务整理生活，Spark 更值得先了解：它可以利用原有账号和应用中的背景信息。[Spark 的会员扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)和 Muse [面向小商户的扩展](https://about.fb.com/news/2026/09/introducing-muse-small-business/)也体现了不同的获客路线。目前没有可靠的同任务对照数据，无法据此断言谁更会订旅行。
 
-在工作场景中，Dots 与 Grok Bot 的区别不是谁能处理更多任务。Dots 的个人主代理侧重一个人跨项目持续推进，[帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)也强调任务接续与行动控制；它面向组织的 specialist dots 仍属试点。Grok Bot 强调可分工的 AI 同事，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)推出企业版，[9 月 28 日](https://x.ai/news/team-bots)又推出可由团队共享工作背景与职责的 Team Bots。一个更贴近个人持续协作，另一个更强调共同工作；团队采购与个人会员也不一定对应完全不同的技术能力。
+在工作场景中，Dots 与 Grok Bot 的区别不是谁能处理更多任务。Dots 的个人主代理侧重一个人跨项目持续推进，[帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)也强调任务接续与行动控制；它面向组织的 specialist dots 仍属试点。Grok Bot 强调可分工的 AI 同事，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)推出企业版，[9 月 28 日](https://x.ai/news/team-bots)又推出可由团队共享工作背景与职责的 Team Bots。Dots 的主代理更偏个人工作的连续性，Grok Team Bots 更强调团队可复用的工作背景；个人和团队的功能与付费方式也可能交叉。
 
 需要几个代理分别对外联系、在限定预算内付款时，Cue 的设计值得关注：每个 Agent 有独立邮箱、电话、钱包和电脑，可以围绕一个目标分工。相比之下，[Grok Bot 官方文档](https://docs.x.ai/grok-bot/computer-and-apps)说明，同一用户的多个 Bot 共享一台云电脑以及其中的文件、登录状态；这使共同工作的资料更容易接续，也意味着角色名称本身不能充当权限隔离。Instinct 的另一种取舍则是减少交代事情的负担：创始人 [Noah Shinn 在访谈中](https://colossus.com/episode/instinct-the-personal-agent/)特别强调消息前两行是否清楚、什么时候适合打扰用户。**这几种设计分别优化的是独立对外行动、团队共享协作和日常交流，而不是同一条能力排行榜。**
 
-这六种定位也对应不同的付款逻辑。个人或团队套餐要证明这项服务值得持续订阅，企业方案要证明它能交付工作能力；Instinct 则希望让消费者免费使用、由获得订单的商家承担费用。**消费者在使用，不代表最终一定由消费者付费**，更不意味着成交金额就是代理服务收入。这些差异决定了用户应先了解哪款产品，却还没有回答更重要的一件事：如果一周后用户不再反复提醒，委托能不能继续推进？
+这六种定位也对应不同的付款逻辑。个人或团队套餐要证明这项服务值得持续订阅，企业方案要证明它能交付工作能力；Instinct 则希望让消费者免费使用、由获得订单的商家承担费用。**消费者在使用，不代表最终一定由消费者付费**，更不意味着成交金额就是代理服务收入。这些差异帮助用户选择从哪款产品开始了解，却还没有回答更重要的一件事：如果一周后用户不再反复提醒，委托能不能继续推进？
 
 ## 三、用户离开后，一件事怎样继续存在？
 
