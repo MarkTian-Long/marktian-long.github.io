@@ -39,7 +39,7 @@
 
 *“优先了解”按官方产品定位匹配场景，并非同任务实测后的性能排名。几款产品都可能处理表中的其他事情；开放地区、功能、邀请资格和授权范围仍有限制。“计划商家分成”不是已实现收入。*
 
-Dots 的个人主代理可以跨会话推进工作，使用自己的云电脑和用户连接的应用；OpenAI 同时在企业试点中探索承担采购、发票、客服等职责的 specialist dots。后者由组织配置身份、访问权限和审批规则，并不是个人版换一种收费名称。Muse 则把个人生活事务作为起点，之后加入面向小商户的[连接和技能](https://about.fb.com/news/2026/09/introducing-muse-small-business/)；Google 的路线更像让代理从 Gmail、日历、文档和浏览器这些原有服务中生长出来，其 [Spark 的套餐扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)与企业 Gemini agent 也要分别看。
+从生活事务看，Muse 与 Instinct 都想替用户处理预约、旅行和日常安排，但前者以独立代理提供主动服务，后者尽量融入已有的短信、电话与邮件习惯。Google 的 Spark 则更适合先由已经使用 Gmail、日历等服务的人考察：用户背景本来就在原有账号和应用里。[Spark 的会员扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)和 Muse [面向小商户的扩展](https://about.fb.com/news/2026/09/introducing-muse-small-business/)也体现了不同的获客路线。目前没有可靠的同任务对照数据，无法据此断言谁更会订旅行。
 
 Grok Bot 把长期代理包装成能分派工作、彼此协调的“AI 同事”：8 月先向个人及团队订阅用户开放，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)进入企业产品，[9 月 28 日](https://x.ai/news/team-bots)推出供团队共用的 Team Bots。这不仅是给个人助理增加几个子 Agent，而是试着让一个 Bot 的工作方法和背景能够被同事复用。其个人套餐和企业采购两条路线也说明，**个人代理的使用方式与最终的付费方并不必然绑定。**
 
