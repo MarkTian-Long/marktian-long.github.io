@@ -26,18 +26,18 @@
 
 本文把 Personal Agent 理解为一种产品职责：**在约定范围内，跨多次交互持续管理和推进某类个人事务，在条件变化时接续工作，并在必要时将决定交还用户。** 这是本文归纳的工作定义，不是统一行业标准。记住偏好、拥有独立邮箱，或完成一个很长的任务，都不能单独证明它已经承担了持续职责。
 
-六款近期产品采用了不同的入口和经营路径。表中的商业模式只区分实际提供与公开计划，不以价格或融资规模代替经营成效。
+要理解六款产品的差异，可以先问自己：想交出去的是跨周项目、每天的生活琐事，还是需要多人分工的工作？下面按典型委托场景列出值得优先了解的产品。
 
 | 我想交出去的事 | 优先了解 | 主要区别 | 付费方与方式 |
 |---|---|---|---|
- | 个人项目、研究跟进 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 跨任务接续与审批 | 个人／企业会员 | 
- | 预约、旅行等生活杂事 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 主动代办、独立代理 | 个人／小商户订阅 | 
- | Google 邮件和日程 | [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | 原有账号应用连接 | 个人 AI 套餐 | 
- | 团队共用 AI 工作伙伴 | [Grok Bot](https://x.ai/news/introducing-grok-bot) | 共享 Bot 和工作背景 | 个人／团队／企业 | 
- | 多个代理分别对外办事 | [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 独立邮箱、电话、钱包 | 早期免费；模式待定 | 
- | 用短信电话处理生活事 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 消息入口、低切换 | 免费；计划商家分成 | 
+| 个人项目、研究跟进 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 跨任务接续与审批 | 个人／企业会员 | 
+| 预约、旅行等生活杂事 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 主动代办、独立代理 | 个人／小商户订阅 | 
+| Google 邮件和日程 | [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | 原有账号应用连接 | 个人 AI 套餐 | 
+| 团队共用 AI 工作伙伴 | [Grok Bot](https://x.ai/news/introducing-grok-bot) | 共享 Bot 和工作背景 | 个人／团队／企业 | 
+| 多个代理分别对外办事 | [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 独立邮箱、电话、钱包 | 早期免费；模式待定 | 
+| 用短信电话处理生活事 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 消息入口、低切换 | 免费；计划商家分成 | 
 
-*这是本文按产品定位作的比较，不是成熟度排名。开放地区、权限和功能仍有限制；表中“组织试点”“计划商家分成”尤其不能视作已形成稳定收入。*
+*“优先了解”按官方产品定位匹配场景，并非同任务实测后的性能排名。几款产品都可能处理表中的其他事情；开放地区、功能、邀请资格和授权范围仍有限制。“计划商家分成”不是已实现收入。*
 
 Dots 的个人主代理可以跨会话推进工作，使用自己的云电脑和用户连接的应用；OpenAI 同时在企业试点中探索承担采购、发票、客服等职责的 specialist dots。后者由组织配置身份、访问权限和审批规则，并不是个人版换一种收费名称。Muse 则把个人生活事务作为起点，之后加入面向小商户的[连接和技能](https://about.fb.com/news/2026/09/introducing-muse-small-business/)；Google 的路线更像让代理从 Gmail、日历、文档和浏览器这些原有服务中生长出来，其 [Spark 的套餐扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)与企业 Gemini agent 也要分别看。
 
