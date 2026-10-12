@@ -85,9 +85,7 @@ Instinct 则提供了另一面。The Verge 记者在[10 月初的实际试用](h
 
 这里有两道现实约束。第一，用户希望它处理的并不都是交易：跟进邮件、等待回复、撤销订阅和退款，未必产生新的购买佣金。第二，商家希望更多成交，用户最好的决定有时却恰好是“不买”。[Business Insider 10 月的采访](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)记录了用户收到未经请求的商品推荐；报道没有证据证明这些是付费广告或 Instinct 从中获利，但它已经把“主动帮忙”和“主动创造消费机会”的界线变成了真实产品问题。
 
-旅行平台的关系也比“取代携程”复杂。用户以后可能只对 Agent 说一句“帮我订好”，不再打开旅行 App，但实时库存、订单、改签、支付与售后仍需要有人提供。携程管理层在[2026 年 2 月的财报电话会](https://investors.trip.com/static-files/931f23d1-d597-4a28-9391-479a54b6107d)中也谈到与外部 Agent 对接，以及自建 AI 规划和预订能力。个人代理可能改变入口和渠道价值，却不必然取代整个旅行服务体系。这样的产业利润分配值得另写，放在本文只需要说明：一笔交易做成了，距离长期服务真正成立还有相当远的路。
-
-现在几家大厂和创业公司都已把“替人长期处理事务”做成了可辨认的产品方向。还不能确定它会成为每个人独立付费的新入口，还是逐渐融入既有应用与企业服务。对于用户而言，更实际的检验是：**把一件事托付出去以后，AI 有没有持续把它办好，并且在需要你做决定的时候，确实把决定留给你。**
+现在几家大厂和创业公司都已把“替人长期处理事务”做成了可辨认的产品方向。还不能确定它会成为每个人独立付费的新入口，还是逐渐融入既有应用与企业服务。对用户而言，留下这项服务的理由不在于它某一次回答得多好，而在于一段时间后，自己有没有少做那些记挂、联络、协调和补救的工作。**如果这些未完事项仍需要人一件件盯着，Personal Agent 就还没有比一个能执行任务的工具走远多少。**
 
 ## 参考资料
 
@@ -108,7 +106,6 @@ Instinct 则提供了另一面。The Verge 记者在[10 月初的实际试用](h
 - [Manus：Introducing Manus 2.0 and Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)
 - [Instinct 创始人访谈：Invest Like the Best](https://colossus.com/episode/instinct-the-personal-agent/)
 - [Apple WWDC 2019：Shortcuts](https://developer.apple.com/videos/play/wwdc2019/213/)
-- [Trip.com：2025 Q4 and full-year earnings call transcript](https://investors.trip.com/static-files/931f23d1-d597-4a28-9391-479a54b6107d)
 
 **学术研究**
 
