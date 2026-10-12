@@ -58,9 +58,10 @@ test('actual Canvas poster lines keep punctuation, source text and bounds on des
             const model = window.BlogShareCard.createPosterModel(post, config);
             window.BlogShareCard.drawPoster(canvas, model);
             ctx.fillText = fillText;
+            if (drawn.some((row) => /^写于\s*/.test(row.text))) errors.push(`${post.slug}/date: unexpected date on poster`);
             const quote = drawn.filter((row) => row.x === 202);
             const quoteTop = quote[0].y - 126;
-            const main = drawn.filter((row) => row.x === 96 && row.y >= 368 && row.y < quoteTop);
+            const main = drawn.filter((row) => row.x === 96 && row.y >= 320 && row.y < quoteTop);
             const roles = { title: main.filter((row) => /^(?:700|bold) /.test(row.font)), summary: main.filter((row) => !/^(?:700|bold) /.test(row.font)), quote };
             for (const [role, rows] of Object.entries(roles)) {
               if (compact(rows.map((row) => row.text).join('')) !== compact(model[role])) errors.push(`${post.slug}/${role}: source text changed`);

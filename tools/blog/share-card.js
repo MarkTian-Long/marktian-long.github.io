@@ -189,12 +189,11 @@
     ctx.fillStyle = colors.ink; ctx.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
     drawTexture(ctx, model.slug, colors);
     drawMasthead(ctx, model, colors);
-    ctx.fillStyle = colors.muted; ctx.font = '400 30px ' + POSTER_SANS; ctx.fillText('写于 ' + model.date, 96, 218);
     ctx.fillStyle = colors.text;
     var title = fitText(ctx, { text: model.title, maxWidth: 900, maxLines: 3, maxSize: 72, minSize: 42, leading: 1.28, weight: '700', font: POSTER_SERIF, label: '文章标题' });
-    var titleY = 368;
+    var titleY = 320;
     ctx.font = '700 ' + title.size + 'px ' + POSTER_SERIF; drawLines(ctx, title.lines, 96, titleY, title.lineHeight);
-    var titleRuleY = Math.max(552, titleY + (title.lines.length - 1) * title.lineHeight + 74);
+    var titleRuleY = Math.max(504, titleY + (title.lines.length - 1) * title.lineHeight + 74);
     ctx.strokeStyle = colors.footerLine; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(96, titleRuleY); ctx.lineTo(202, titleRuleY); ctx.stroke();
 
     ctx.fillStyle = colors.muted;
@@ -202,7 +201,7 @@
     var summary = fitText(ctx, { text: model.summary, maxWidth: 870, maxLines: 6, maxSize: 34, minSize: 20, leading: 1.58, weight: '400', font: POSTER_SANS, label: '文章摘要' });
     ctx.font = '400 ' + summary.size + 'px ' + POSTER_SANS; drawLines(ctx, summary.lines, 96, summaryY, summary.lineHeight);
 
-    var quoteY = Math.max(1100, summaryY + summary.height + 88);
+    var quoteY = Math.max(1070, summaryY + summary.height + 88);
     var quote = fitText(ctx, { text: model.quote, maxWidth: 700, maxLines: 5, maxSize: 52, minSize: 28, maxHeight: 300, leading: 1.38, weight: '700', font: POSTER_SERIF, label: '分享引语' });
     var quoteBox = { x: 72, y: quoteY, width: 936, height: Math.max(330, quote.height + 144) };
     ctx.fillStyle = colors.quoteBg; roundedRect(ctx, quoteBox.x, quoteBox.y, quoteBox.width, quoteBox.height, 32); ctx.fill();
