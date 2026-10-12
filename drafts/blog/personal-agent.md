@@ -28,14 +28,14 @@
 
 六款近期产品采用了不同的入口和经营路径。表中的商业模式只区分实际提供与公开计划，不以价格或融资规模代替经营成效。
 
-| 产品 | 主要服务关系 | 关键产品选择 | 付费方与方式 |
+| 我想交出去的事 | 优先了解 | 主要区别 | 付费方与方式 |
 |---|---|---|---|
-| [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 个人生活／工作；组织试点 | 长期工作、审批 | 个人／企业套餐；专职试点 |
-| [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 个人生活、小生意 | 独立云端、主动代办 | 个人／小商户进阶订阅 |
-| [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | Google 个人生态 | 原有账号与应用连接 | 个人 AI 会员捆绑 |
-| [Grok Bot](https://x.ai/news/introducing-grok-bot) | 个人、团队、企业 | 多 Bot 分工、持续工作 | 个人／团队套餐；企业采购 |
-| [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 个人代理与团队 | 专属身份、Agent 协作 | 早期免费；模式未定 |
-| [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 日常事务与社交 | 短信电话、低切换 | 当前免费；计划商家分成 |
+ | 个人项目、研究跟进 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 跨任务接续与审批 | 个人／企业会员 | 
+ | 预约、旅行等生活杂事 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 主动代办、独立代理 | 个人／小商户订阅 | 
+ | Google 邮件和日程 | [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | 原有账号应用连接 | 个人 AI 套餐 | 
+ | 团队共用 AI 工作伙伴 | [Grok Bot](https://x.ai/news/introducing-grok-bot) | 共享 Bot 和工作背景 | 个人／团队／企业 | 
+ | 多个代理分别对外办事 | [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 独立邮箱、电话、钱包 | 早期免费；模式待定 | 
+ | 用短信电话处理生活事 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 消息入口、低切换 | 免费；计划商家分成 | 
 
 *这是本文按产品定位作的比较，不是成熟度排名。开放地区、权限和功能仍有限制；表中“组织试点”“计划商家分成”尤其不能视作已形成稳定收入。*
 
