@@ -41,7 +41,7 @@
 
 从生活事务看，Muse 与 Instinct 都想替用户处理预约、旅行和日常安排，但前者以独立代理提供主动服务，后者尽量融入已有的短信、电话与邮件习惯。Google 的 Spark 则更适合先由已经使用 Gmail、日历等服务的人考察：用户背景本来就在原有账号和应用里。[Spark 的会员扩展](https://blog.google/products-and-platforms/products/google-one/fall-2026-ai-plan-updates/)和 Muse [面向小商户的扩展](https://about.fb.com/news/2026/09/introducing-muse-small-business/)也体现了不同的获客路线。目前没有可靠的同任务对照数据，无法据此断言谁更会订旅行。
 
-Grok Bot 把长期代理包装成能分派工作、彼此协调的“AI 同事”：8 月先向个人及团队订阅用户开放，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)进入企业产品，[9 月 28 日](https://x.ai/news/team-bots)推出供团队共用的 Team Bots。这不仅是给个人助理增加几个子 Agent，而是试着让一个 Bot 的工作方法和背景能够被同事复用。其个人套餐和企业采购两条路线也说明，**个人代理的使用方式与最终的付费方并不必然绑定。**
+在工作场景中，Dots 与 Grok Bot 的区别不是谁能处理更多任务。Dots 的个人主代理侧重一个人跨项目持续推进，[帮助文档](https://help.openai.com/en/articles/20001530-getting-started-with-your-dot)也强调任务接续与行动控制；它面向组织的 specialist dots 仍属试点。Grok Bot 强调可分工的 AI 同事，[9 月 3 日](https://x.ai/news/grok-bot-for-enterprise)推出企业版，[9 月 28 日](https://x.ai/news/team-bots)又推出可由团队共享工作背景与职责的 Team Bots。一个更贴近个人持续协作，另一个更强调共同工作；团队采购与个人会员也不一定对应完全不同的技术能力。
 
 两家创业公司的选择尤其值得比较。Cue 为不同 Agent 配置邮箱、电话号码、钱包和电脑，让它们可以围绕目标分工；这是 Manus 2.0 发布时推出的独立应用，不能把 Manus 主产品的商业化直接算到 Cue 头上。Instinct 反过来极力减少界面的存在：用户不必进入新 App，只要像联系一个助理那样发消息或打电话。创始人 [Noah Shinn 的访谈](https://colossus.com/episode/instinct-the-personal-agent/)甚至强调，回复前两行是否清楚、什么场合适合打扰用户，可能比再增加一个功能更重要。
 
