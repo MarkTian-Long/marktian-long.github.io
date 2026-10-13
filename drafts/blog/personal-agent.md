@@ -20,22 +20,32 @@
 
 这也限定了它的适用范围。有些事可以用固定规则稳定处理，没有理由换成一个更昂贵、更难监督的生成式系统。有些活动的价值恰恰在亲自参与：挑衣服、逛社区、探索目的地、与朋友讨论，本就不全是等待消除的摩擦。一个好的个人代理，应该帮用户处理他们想卸下的负担，而不是以“效率”为名接走所有过程。
 
+任务交付以后，最难转交给 AI 的往往是后续的跟进责任。下面的对照区分两种产品目标，而不是为产品能力分级。
+
+![普通任务完成后由用户接回后续跟进，持续委托则让代理保留未完事项、协调各方并跟进结果。](assets/personal-agent/continuing-delegation.svg "普通任务完成后由用户追踪变化；持续委托希望代理接续未完事项和多方协调。")
+
+当用户不再反复提醒时，后续变化由谁持续照看？这是判断 Personal Agent 是否增加了真实价值的起点。
+
 ## 二、六款产品分别适合哪种委托？
 
 个人代理并不是 2026 年才提出的想法。MIT 在[1995 年介绍软件代理研究](https://news.mit.edu/1995/agents-0816)时，就区分了了解特定用户兴趣、习惯并代表其行动的 user bot，与执行一般任务的 task bot。今天常见的聊天式 Assistant 和任务型 Agent 也不是 Personal Agent 的两个必经历史阶段：前者可以长期了解用户，后者的一次任务也可能跨越数天。
 
 本文把 Personal Agent 理解为一种产品职责：**代表一个人，在约定范围内持续跟进某类事务，必要时协调不同应用和相关方，并根据新的情况推进后续工作。** 这是本文归纳的工作定义，不是统一行业标准。记住偏好、拥有独立邮箱，或完成一个很长的任务，都不能单独证明它已经承担了持续职责。
 
-要理解六款产品的差异，可以先问自己：想交出去的是跨周项目、每天的生活琐事，还是需要多人分工的工作？下面按典型委托场景列出值得优先了解的产品。
+要理解六款产品的差异，可以先问自己：想交出去的是生活琐事、持续的个人事务，还是需要多人分工的工作？下面这张导航图按用户委托场景分组，是本文归纳，并非互斥品类。
+
+![按日常生活、个人持续事务和多人协作三个场景分组六款产品，各组展示两种不同的产品选择。](assets/personal-agent/product-scenario-guide.svg "六款产品可先按委托场景分组，再比较入口、身份与付费方式。")
+
+图中每组列出两个值得优先考察的产品。接下来的表格进一步对比具体场景与付费方，方便读者理解产品选择，而非对能力排名。
 
 | 我想交出去的事 | 优先了解 | 主要区别 | 付费方与方式 |
 |---|---|---|---|
-| 个人项目、研究跟进 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 跨任务接续与审批 | 个人／企业会员 | 
 | 预约、旅行等生活杂事 | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) | 主动代办、独立代理 | 个人／小商户订阅 | 
+| 用短信电话处理生活事 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 消息入口、低切换 | 免费；计划商家分成 | 
+| 个人项目、研究跟进 | [OpenAI Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/) | 跨任务接续与审批 | 个人／企业会员 | 
 | Google 邮件和日程 | [Gemini Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/) | 原有账号应用连接 | 个人 AI 套餐 | 
 | 团队共用 AI 工作伙伴 | [Grok Bot](https://x.ai/news/introducing-grok-bot) | 共享 Bot 和工作背景 | 个人／团队／企业 | 
 | 多个代理分别对外办事 | [Manus Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0) | 独立邮箱、电话、钱包 | 早期免费；模式待定 | 
-| 用短信电话处理生活事 | [Instinct](https://colossus.com/episode/instinct-the-personal-agent/) | 消息入口、低切换 | 免费；计划商家分成 | 
 
 *“优先了解”按官方产品定位匹配场景，并非同任务实测后的性能排名。几款产品都可能处理表中的其他事情；开放地区、功能、邀请资格和授权范围仍有限制。“计划商家分成”不是已实现收入。*
 
