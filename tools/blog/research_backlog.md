@@ -135,13 +135,13 @@
 
 ### BR-20261009-01｜当 Agent 而不是文件成为工作单位，软件应该怎么设计？
 
-**创建：2026-10-09｜内容更新：2026-10-09｜状态：待补证。** 触发材料是本对话 10 月 5 日 AIHOT 日报 D3；用户在 10 月 9 日要求研究保存，并进一步明确重点。此前被写进旧 03，现独立建项，创建日不回溯为新闻日期。既有材料记录为 10 月 9 日；Yuchen 原帖仍待核验。
+**创建：2026-10-09｜内容更新：2026-10-14｜状态：待补证。** 触发材料是本对话 10 月 5 日 AIHOT 日报 D3；用户在 10 月 9 日要求研究保存，并进一步明确重点。此前被写进旧 03，现独立建项，创建日不回溯为新闻日期。既有材料记录为 10 月 9 日；Yuchen 原帖仍待核验。
 
 **核心问题与用户重点。** 用户强调两条陈述：“文件 → App → 页面 → 操作”与“目标 → Agent → 长期 Context → 自主执行 → 用户验收”的对照，以及 Yuchen Jin 的“The new primitive is the agent, not the file”。要研究的不只是长期代办，而是当 AI 接手执行，人应围绕什么单位理解、安排和协调工作。
 
 **当前判断。** 候选变化是从直接操作对象，转向设定目标、委派执行者、观察进展与处理例外。但 Agent 成为执行单位，不等于所有首页都应变成 Agent 列表。应比较执行者中心、任务/项目中心、成果/业务对象中心三种设计；半小时内的并行工作也可能体现变化，不以长期常驻为前提。
 
-**关键证据与反证。** Codex app 的多 Agent 工作线程和 Linear 的 Issue 委派提供不同组织方式的产品对照；文件、编辑器和正式业务状态仍被保留。厂商设计只证明功能与路线，不证明用户迁移或可重复收益。Yuchen 引言当前只到二级存档，不能当成行业共识或正式编程语言定义。
+**关键证据与反证。** Codex app 的多 Agent 工作线程和 Linear 的 Issue 委派提供不同组织方式的产品对照；文件、编辑器和正式业务状态仍被保留。2026-10-13 Anthropic 公布的 Scion 则补上基础设施层证据：其内部日均合并变更由 5 月约 2,500 次升至 9 月超过 30,000 次后，用五个月把主 monorepo 从 Git 迁到自研版本控制系统，并同时重建代码审查、搜索和权限体系。它证明极端 Agent 工作负载会冲击按人类规模设计的基础设施假设，但 Anthropic 明确称 Scion 不适合一般仓库，不能据此推出 Git 或传统开发工具将普遍失效。厂商设计只证明功能与路线，不证明用户迁移或可重复收益。Yuchen 引言当前只到二级存档，不能当成行业共识或正式编程语言定义。
 
 **缺口与下一步。** 先取得 Yuchen 原帖上下文；选一个多 Agent 开发任务和一个跨系统业务项目，在相同目标下比较三种界面的协调负担、可见状态、接管与可验收结果；再做历史正文覆盖。不是先证明长期委托成立，才有资格研究工作单位变化。
 
@@ -152,6 +152,7 @@
 
 - **引用线索（既有记录：2026-10-09）**：[Yuchen Jin 公开二级存档](https://superx.so/creators/Yuchenj_UW)。旧记录将语境概括为同时管理许多终端标签页的负担与上下文持续性；原 X 帖全文、时间和完整语境仍需核验。Primitive 暂译为安排和协调工作的“基本单位”，不当作形式化技术定义。
 - **产品对照（既有记录：2026-10-09）**：[Codex app 官方介绍](https://openai.com/index/introducing-the-codex-app/)强调多 Agent 线程、项目和变更审查，也保留差异检查与编辑器；[Linear 事项委派](https://linear.app/docs/assigning-issues)以 Issue 为显式对象，Agent 承担执行，人保留责任。两者用于提出不同设计选择，不据此宣称某一选择普遍更优。
+- **2026-10-14 新证据｜Scion 与 Agent-scale 软件基础设施**：[Anthropic 官方工程复盘](https://www.anthropic.com/engineering/redesigning-source-control)记录其 2026 年 5 月日均约 2,500 次合并、9 月超过 30,000 次，主仓库历史接近 100GB；Anthropic 因此构建 Scion，并采用 always-online、服务端 changeset、稀疏/虚拟 checkout、API 化 source-control 查询等设计。官方还报告相较旧 Git mirroring 基础设施，Scion CPU/内存占用约缩小 200 倍、CI/研究任务 checkout 从分钟级降至秒级、CI 获得约 25% CPU 容量收益；这些均是 Anthropic 内部工作负载数据，不外推为通用基准。**对本题的价值不在“Git 要消失”，而在证明：执行主体数量和频率改变后，原本围绕人类离线客户端、完整仓库复制、传统 merge queue 设计的基础设施假设可能变成成本瓶颈。**
 - **箭头如何使用**：它们是作者的启发性对照，不是严格架构图或普遍历史分期。可改写为“人定位对象、选择工具并逐步操作”与“人提出目标和约束、委派 Agent，由 Agent 组织资料与工具，人在必要时干预和验收”。长期 Context 贯穿过程；验收不是人唯一出现的时点。文件/App 是资源、成果或事实系统，不会因执行者变化自动消失。
 - **最强反驳**：用户可能只关心任务结果而不想管理 Agent；多 Agent 可能增加权限、责任与协调成本。传统工作流也能后台运行，一次性局部编辑仍适合直接操作。长期服务的机制、历史自动化与授权反证统一保存在 [04](#br-20260930-04)，不再复制一份厂商名录。
 - **历史内容增量**：[《AI 正在把“使用软件”和“操作软件”拆开》](posts/ai-software-operator-shift.html)已谈对象、正式状态、权限、任务工作区和恢复；[《我为什么开始给自己搭 Harness？》](posts/personal-harness.html)已谈个人背景、任务接续与判断历史。新题应新增“用户如何理解、委派、协调和验收一组工作”，而非换一组箭头重述旧文。此前只做相关段落初扫，正式立项前仍须全文覆盖与独立性评审。
@@ -227,13 +228,13 @@
 
 ### BR-20260930-04｜持续委托的真实需求、净收益与商业可持续性
 
-**创建：2026-09-30｜内容更新：2026-10-12｜状态：已转入。** 已转入[未发布的 Personal Agent 当前 Markdown 工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)；长期留存与实际收入仍有证据缺口，未标记为已证实。 既有材料记录包括 9 月 30 日与 10 月 9 日两批；本次把旧 03 中的持续委托资料合并到这里，不宣称已重验原站。
+**创建：2026-09-30｜内容更新：2026-10-14｜状态：已转入。** 已转入[未发布的 Personal Agent 当前 Markdown 工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)；长期留存与实际收入仍有证据缺口，未标记为已证实。 既有材料记录包括 9 月 30 日与 10 月 9 日两批；本次把旧 03 中的持续委托资料合并到这里，不宣称已重验原站。
 
 **核心问题与用户重点。** 单次有用的代办，能否变成愿意长期保留的服务？交代、授权、检查、接管和纠错会不会抵消收益？商业可持续不以消费者直接订阅为必要条件；OpenClaw 应作为“热潮后还剩多少真实价值”的反证，而非只作正面先驱。
 
 **当前判断。** Personal Agent 的独特问题不是“人和 Agent 怎样分配决策权”（通用 Agent 也面临授权治理），而是面向一个自然人长期接续未完事务，并在不同应用、服务商、家庭与同事之间持续协调。增量价值是让用户少记挂、少催办、少重新协调；是否实现必须看完整事务结果和人的总投入。Instinct 的入口与主动服务设计提供消费产品层面的重要对照，但融资和创始人增长叙事不证明长期采用。个人生活、个人工作与组织岗位分别判断，个人付费、AI Native、独立入口和独立公司不能相互代证。
 
-**关键证据与反证。** 有厂商持续任务与控制机制、Instinct 群聊代理的分层授权设计、创始人的增长/交易自述、付费自述和家庭服务实践，也有独立实测中的任务遗漏、未经请求的购物推荐、授权收缩、错误与安装后无事可做的反证；尚无足以支撑大众长期采用或健康单位经济的可比数据。未检索到不等于数据不存在。
+**关键证据与反证。** 有厂商持续任务与控制机制、Instinct 群聊代理的分层授权设计、创始人的增长/交易自述、付费自述和家庭服务实践，也有独立实测中的任务遗漏、未经请求的购物推荐、授权收缩、错误与安装后无事可做的反证。2026-10-12 Character.ai 进入 Chapter 11、随后披露的经营数据提供了目前较硬的消费 AI 单位经济反例：高参与度和大用户规模并未自动覆盖持续推理、运营与安全成本；但这是单一公司的经营失败，不能外推为所有 Personal Agent / 消费 AI 必然无法盈利。尚无足以支撑大众长期采用或健康单位经济的同口径可比数据。未检索到不等于数据不存在。
 
 **缺口与下一步。** 比较最佳现有工具/确定性自动化、逐次指挥 Agent 和持续委托，覆盖自然事务周期，记录收益与人的全部投入；分开核验订阅、广告、商家获客、佣金、按次与捆绑模式的收入归属和完整成本。
 
@@ -267,6 +268,8 @@
 
 以下沿用9月30日材料。[Muse 订阅自述](https://github.com/steipete/CodexBar/issues/3797)在9/21称9/20开始订阅、下次续费10/20：这是用户陈述，不是付款凭证或已发生续费。Dots 首个包含在 Pro/Business Premium 的公告，不证明增量付费意愿；[Muse for Small Business](https://about.fb.com/news/2026/09/introducing-muse-small-business/)说明个人入口也混有经营需求，不可当纯消费生活样本。
 
+**2026-10-14 新反例｜Character.ai 的单位经济与退出压力。** [Character.ai 官方公告](https://blog.character.ai/an-update-on-character-ai/)确认 10 月 12 日主动进入 Chapter 11，以法院监督方式出售全部或大部分资产；平台暂时继续运行，若没有可执行买方方案则可能关闭。[Reuters 10/13](https://www.reuters.com/legal/litigation/characterai-files-bankruptcy-agrees-sell-some-assets-disney-20-million-2026-10-13/)报道 Disney 以约 2,000 万美元作为 stalking-horse 方案购买部分资产/取得相关许可，最终仍可出现更高竞价。根据 CEO 向破产法院提交的经营材料、由 [404 Media 10/13](https://www.404media.co/character-ais-bankruptcy-documents-show-the-economics-of-ai-dont-work/)整理：2024 年 AI compute 约 1,380 万美元/月、2025 年约 1,000 万美元/月；订阅收入峰值约 280 万美元/月，含广告的总收入峰值约 530 万美元/月；2026 年 1–8 月 compute 支出 5,610 万美元，8 月仍亏损约 800–900 万美元/月。公司已通过更便宜模型/GPU、裁员、广告和内购改善成本，但仍未扭亏。**可用结论是“高参与度不等于健康单位经济，长时聊天/陪伴型 AI 必须验证付费与广告收入能否覆盖随使用发生的推理和风险成本”；不可写成“Character.ai 破产证明所有消费 Agent 商业模式失败”。**
+
 [2025 Instant Checkout](https://openai.com/index/buy-it-in-chatgpt/)有商家成交收费；[ChatGPT 广告计费](https://openai.com/index/new-ways-to-buy-chatgpt-ads/)（2026-05-05）有 CPC；[Sponsored Agents](https://openai.com/index/reimagining-advertising-with-ai/)（2026-09-16）区分赞助会话与原聊天。这些证明相关产品存在商业化机制，不证明 Dots 已采用相同模式、已经盈利或推荐一定中立；当前具体结账收费调整见 [05](#br-20260930-05)。
 
 需要检验：谁为哪部分价值付钱，收入归谁，是否新增交易或只多收渠道费；收入能否覆盖不产生交易的持续事务、失败、人工与维护成本；用户最优结果是“不买、取消、退款”时是否仍获同等服务。订阅不自动保证目标一致，广告/佣金也不自动证明损害用户。一次追回退款不能外推成每月收益，交易额不等于 Agent 收入或利润。
@@ -298,13 +301,13 @@
 
 ### BR-20260930-05｜消费入口迁移与信息中介的价值
 
-**创建：2026-09-30｜内容更新：2026-10-11｜状态：待补证。** 9/30 原材料保留原核验口径；旅行 OTA 案例于 10/10、Bites / DoorDash 外卖对照于 10/11 定向补证，未把旧材料统一当作今日已核验。
+**创建：2026-09-30｜内容更新：2026-10-14｜状态：待补证。** 9/30 原材料保留原核验口径；旅行 OTA 案例于 10/10、Bites / DoorDash 外卖对照于 10/11 定向补证，未把旧材料统一当作今日已核验。
 
 **核心问题与用户重点。** 当用户把任务交给 Agent，消费中哪些环节迁移、收入和议价权归谁？用户特别强调逛购、审美、惊喜、自我表达与社区互动本身可能是价值，不能一律当作应消除的操作。
 
 **当前判断。** 按一次活动的目的和环节划分，比按 App 行业划分更准确。发现、比较和执行可被代理，亲历体验未必可代劳；少打开 App 不等于不再使用其内容与服务，供给仍被需要也不保证原厂商保住收入。旅行 OTA 的当前证据尤其支持区分“个人 Agent 抢走发现/操作入口”和“旅行平台丧失供给、支付、履约与售后价值”；两者可能分工、合作，也可能就客户关系和渠道费用发生竞争。不能把 Instinct 旅行订单自述变成“携程将被取代”的事实或预测。新增 Bites / DoorDash 对照：旅行 Agent 可能让 OTA 退到交易与服务后台；餐饮交易连接商则可能绕过原外卖平台、对接餐厅自有系统。二者都只说明**获客入口、订单路由与服务交付可能拆分**，不能从新入口出现直接推出旧平台收入或利润已被替代。
 
-**关键证据与反证。** 商家自有结账、原生平台 AI 发现、第三方代理阻断与兴趣推荐并存；携程、Expedia 的公开材料显示 OTA 也可成为 Agent 背后的可订库存、支付、服务供应商，并原生开发 AI。Bites 自述餐厅保留订单和顾客关系，媒体报道其通过 AI 入口促成餐厅直连订单；但 DoorDash 也已推出原生 AI 订餐和 ChatGPT 接入，不能将老牌平台描述为被动退出。即刻说明“得到摘要”不同于亲自互动和被认识。不能从这些设计推断真实迁移规模、平台利润或性别决定偏好。
+**关键证据与反证。** 商家自有结账、原生平台 AI 发现、第三方代理阻断与兴趣推荐并存；携程、Expedia 的公开材料显示 OTA 也可成为 Agent 背后的可订库存、支付、服务供应商，并原生开发 AI。Bites 自述餐厅保留订单和顾客关系，媒体报道其通过 AI 入口促成餐厅直连订单；但 DoorDash 也已推出原生 AI 订餐和 ChatGPT 接入，不能将老牌平台描述为被动退出。2026-10-13 Shopify 又提供了更直接的反例：用户可把 Shop skill 连接到自己的 Personal Agent，前台入口可以迁移给 OpenClaw、Hermes 等 Agent，而商品目录、Shop 账户、结账、支付授权、订单追踪与退货信息仍由 Shopify/商家体系承接。即刻说明“得到摘要”不同于亲自互动和被认识。不能从这些设计推断真实迁移规模、平台利润或性别决定偏好。
 
 **缺口与下一步。** 等待从发现到售后的同类任务数据、商家结算、渠道转化和发布者流量/授权收入，区分交易额、佣金与利润。两组对照重点补：①真实用户需求和订单是否迁移；②传统平台仍负责哪些库存、支付、配送、售后及订单分账；③商家全链路获客、支付、履约、退款和客服成本与旧渠道相比是否净下降。分别验证技术能做、用户愿意交付、服务方允许进入。
 
@@ -318,6 +321,7 @@
 - **过程与结果可以同时有价值**：[Babin等1994购物价值研究摘要](https://aquila.usm.edu/fac_pubs/7202/)区分功用与享乐；[Amazon Interests](https://www.aboutamazon.com/news/retail/artificial-intelligence-amazon-features-interest)保存偏好并持续推荐，保留用户浏览选择。喜欢逛不等于每一步都想参与，想省事也不等于交出全部判断；不按性别推断代办偏好。
 - **即刻**：[官方 App Store](https://apps.apple.com/cn/app/即刻app/id966129812)、[会员权益](https://h5.ruguoapp.com/member?disablePanBack=true&displayFooter=false&displayHeader=false)在旧记录中为月20元/年128元、提供信息管理表达与身份展示；价格不是利润证据。[隐私政策](https://post.okjike.com/jike-privacy/)涉及广告/分析合作，不证明收入占比。[品玩2019创始人采访](https://www.pingwest.com/a/182079)记录2015上线、科技圈传播与2018社区转型，不代表当前年龄、职业或留存结构。Agent 可以发现、筛选与准备交流，但摘要不等于关系与社区体验。
 - **2026-10-10 旅行 OTA 压力测试（本轮核验）**：[Instinct 创始人播客](https://colossus.com/episode/instinct-the-personal-agent/)提出旅行约占平台交易额的一半、年化交易额接近十亿美元，并强调与既有旅游服务商合作的可能性；[TechCrunch 9/29](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)明确指出年化额的计算方式未披露，不能推为已收取佣金。携程董事长在[携程**2025Q4/全年财报电话会**（实际日期2026-02-25，逐字稿第11-12页）](https://investors.trip.com/static-files/931f23d1-d597-4a28-9391-479a54b6107d)回答摩根大通关于 AI Agent 冲击 OTA 的提问，将原 OTA 价值拆为 inspiration / transaction / service，表态推动与外部 Agent 的直接交易对接及自有 TripGenie 等产品；其供应链、实时库存、支付和售后重要性为管理层立场，并非独立验证其壁垒不可替代。[Trip.com 自有披露](https://www.trip.com/newsroom/)称 TripGenie 辅助订单同比增长约400%，但未披露绝对规模，不能证明全体用户渗透。[Expedia B2B 5/20公告](https://ir.expediagroup.com/news-and-events/news/news-details/2026/Expedia-Group-B2B-Introduces-AI-Toolkit-and-Platform-for-the-Future-of-Travel-Distribution/default.aspx)展示向其他品牌提供可订商品、支付、客服与 AI toolkit 的供给平台路线；[Expedia/YouGov 三国外部受托调查](https://ir.expediagroup.com/news-and-events/news/news-details/2026/Expedia-Group-Reveals-The-AI-Trust-Gap-Travelers-Embrace-AI-for-Planning-but-Rely-on-Trusted-Brands-to-Book/default.aspx)2026年3月访问美英印5700余名成年人，68%偏好通过熟悉的旅行品牌订票，反映当时意向而非真实交易或中国市场；[Skift 9/30行业高管复盘](https://skift.com/2026/09/30/the-travel-distribution-funnel-is-coming-apart/)转述Booking CEO称大模型推荐流量贡献间夜不足1%，这是特定平台公司自述。**本轮结果**：比“Instinct取代携程”更可论证的是入口/获客价值先迁移、供给与售后可继续依赖 OTA，后续是否影响 OTA 利润需按实际分账与客户关系判断；不把这条后续商业研究树升级为当前产品文章新章节。
+- **2026-10-14 Shopify 跨 Agent 交易基础设施补证**：[Shop 官方帮助](https://help.shop.app/en/shop/shopping/personal-agents)明确支持把 Shop skill 接入个人 Agent（示例含 OpenClaw、Hermes），也支持连接 Muse 等 Agent 平台；Agent 可搜索商品、准备结账、追踪订单、查询退货政策。默认情况下购买需要用户审核；用户也可主动开启 **Allow agent to pay for me**，设置周/月/总预算后允许 Agent 在预算内自动支付，并可随时撤销。Shop 连接会按需共享姓名、地址、有限支付信息、购买审批详情和订单信息，第三方 Agent 对这些信息的后续使用由其自身条款管理。[The Verge 10/13](https://www.theverge.com/news/1010365/shopify-opens-its-catalog-up-to-more-ai-agents)进一步报道此次开放覆盖 Shopify Catalog 超过 10 亿条 listing，并从此前特定合作伙伴扩展到用户自行配置的 Agent。**这条的研究价值是把“入口迁移 ≠ 交易基础设施失去价值”变成可观察机制：Agent 可以掌握需求理解和比较入口，Shopify 仍掌握结构化商品、账户、支付授权、订单与履约状态。**需要继续追踪的不是“Shopify 会不会消失”，而是流量、顾客关系、支付/交易费、广告和商家议价权最终如何分配；目录规模和连接能力本身不证明真实成交已迁移。
 - **2026-10-11 外卖交易压力测试（本轮补证）**：[The Verge 2026-10-07 对 Bites / DoorDash 的报道](https://www.theverge.com/ai-artificial-intelligence/1005726/doordash-ai-agentic-food-delivery-bites)将小团队 Bites 作为借助 AI 订餐入口、低收费和餐厅直连挑战传统外卖分发模式的早期案例，文中还涉及 DoorDash 对商家上架授权的质疑，属争议双方不同主张，不据此推断反竞争行为；[Bites 官网](https://withbites.com/)主张无传统佣金、餐厅保留订单和顾客关系并接入 POS，属于厂商自述，不证明商家完整成本已下降或平台已盈利。[DoorDash 官方 Ask DoorDash](https://about.doordash.com/en-us/news/ask-doordash)与[ChatGPT 杂货订购接入](https://about.doordash.com/en-us/news/openai)构成反证：大型平台可自行 AI 化或作为外部 AI 入口背后的交易／履约供应商。**机制对照**：Instinct 可能保留携程等 OTA 的后台供给服务；Bites 则尝试让餐厅接单绕过 DoorDash 的传统交易入口，同时仍需要实体配送，且 Bites 也有自有 App，不能说它只存在于后台。**研究问题**：谁拥有顾客关系和复购入口；订单实际由谁承接；商家承担的总渠道与履约成本、平台佣金和利润池是否真实迁移；AI 入口提供方是否成为新的强势中介。尚无可比、可审计的留存、利润、长期成交与分账数据。此案例进入 BR-20260930-05，不新增独立待办，不改当前 Personal Agent 工作稿。
 - **仍需检验**：公开信息搬运、原始数据、版权、供给、信用、售后、履约分别有什么约束；新中介是否创造新增价值；一次购物助手是否已足够，还是必须长期个人背景。旅行分支还需核对真实订单/供应商直签、增量转化、预订后问题责任归属、Agent 与 OTA 的分账及渠道议价变化。当前 Personal Agent 主体只保留**Instinct 旅行的短例子，解释持续委托和谁获得交易收入**，不新增“取代携程”或 OTA 产业史章节。
 
