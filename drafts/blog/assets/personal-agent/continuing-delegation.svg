@@ -1,40 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img">
-<title>一次完成任务，还是长期接住事务？</title>
-<rect x="0" y="0" width="1280" height="720" rx="0" ry="0" fill="#080c18" stroke="none" stroke-width="1"/>
-<text x="57" y="57" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="19" font-weight="400" fill="#d97757">PERSONAL AGENT / 核心机制</text>
-<text x="56" y="126" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="47" font-weight="400" fill="#faf9f5">一次完成任务，还是长期接住事务？</text>
-<text x="57" y="172" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="23" font-weight="400" fill="#9ba7ba">差别不在能执行多少步，而在后续由谁记挂和跟进</text>
-<rect x="48" y="202" width="1184" height="152" rx="25" ry="25" fill="#121a2a" stroke="#394255" stroke-width="2"/>
-<text x="75" y="277" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="30" font-weight="400" fill="#faf9f5">一次任务</text>
-<text x="75" y="316" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#9ba7ba">交付后可结束</text>
-<rect x="310" y="220" width="265" height="116" rx="17" ry="17" fill="#1d2739" stroke="none" stroke-width="1"/>
-<text x="330" y="273" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">用户交代需求</text>
-<text x="330" y="313" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#9ba7ba">限定本次目标</text>
-<rect x="604" y="220" width="265" height="116" rx="17" ry="17" fill="#1d2739" stroke="none" stroke-width="1"/>
-<text x="624" y="273" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">Agent 交付结果</text>
-<text x="624" y="313" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#9ba7ba">完成一段工作</text>
-<rect x="898" y="220" width="265" height="116" rx="17" ry="17" fill="#1d2739" stroke="none" stroke-width="1"/>
-<text x="918" y="273" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">后续变化由人接回</text>
-<text x="918" y="313" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#9ba7ba">重新记挂与追踪</text>
-<line x1="575" y1="278" x2="589" y2="278" stroke="#7e8ca3" stroke-width="4" stroke-linecap="round"/><polygon points="589,270 604,278 589,286" fill="#7e8ca3"/>
-<line x1="869" y1="278" x2="883" y2="278" stroke="#7e8ca3" stroke-width="4" stroke-linecap="round"/><polygon points="883,270 898,278 883,286" fill="#7e8ca3"/>
-<rect x="48" y="382" width="1184" height="162" rx="25" ry="25" fill="#181c2d" stroke="#d97757" stroke-width="3"/>
-<rect x="68" y="411" width="205" height="106" rx="16" ry="16" fill="#3b2731" stroke="none" stroke-width="1"/>
-<text x="83" y="465" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="30" font-weight="400" fill="#ffc3ad">持续委托</text>
-<text x="82" y="503" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#efbaaa">对一类事务负责</text>
-<rect x="310" y="398" width="265" height="131" rx="17" ry="17" fill="#242c40" stroke="none" stroke-width="1"/>
-<text x="329" y="450" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">保留未完事项</text>
-<text x="329" y="497" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#c2c9d3">状态、条件、下一步</text>
-<rect x="604" y="398" width="265" height="131" rx="17" ry="17" fill="#242c40" stroke="none" stroke-width="1"/>
-<text x="623" y="450" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">变化后协调多方</text>
-<text x="623" y="497" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#c2c9d3">跨服务、跨联系人</text>
-<rect x="898" y="398" width="265" height="131" rx="17" ry="17" fill="#242c40" stroke="none" stroke-width="1"/>
-<text x="917" y="450" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="26" font-weight="400" fill="#faf9f5">继续跟进到结果</text>
-<text x="917" y="497" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#c2c9d3">必要时补救与请示</text>
-<line x1="575" y1="463" x2="589" y2="463" stroke="#d97757" stroke-width="4" stroke-linecap="round"/><polygon points="589,455 604,463 589,471" fill="#d97757"/>
-<line x1="869" y1="463" x2="883" y2="463" stroke="#d97757" stroke-width="4" stroke-linecap="round"/><polygon points="883,455 898,463 883,471" fill="#d97757"/>
-<text x="57" y="605" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="23" font-weight="400" fill="#d97757">检验标准</text>
-<text x="216" y="605" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="32" font-weight="400" fill="#faf9f5">人少记挂、少催办、少协调、少补救了吗？</text>
-<line x1="58" y1="630" x2="1222" y2="630" stroke="#3a4456" stroke-width="2"/>
-<text x="58" y="672" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="400" fill="#9ba7ba">本文归纳的产品目标，并非声称某一款产品已完整实现。</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+<title id="title">一次完成任务，还是长期接住事务？</title>
+<desc id="desc">差别不在能执行多少步，而在后续由谁记挂和跟进。本文归纳的产品目标，并非声称某一款产品已完整实现。</desc>
+<metadata id="visual-model">{&quot;source_markdown&quot;:&quot;drafts/blog/personal-agent.md&quot;,&quot;source_blob_sha&quot;:&quot;46440382737ae6e1ddd088c51eadac7a55f2f4a2&quot;,&quot;style&quot;:{&quot;version&quot;:&quot;Leo Editorial v1.1&quot;,&quot;background&quot;:&quot;#faf9f5&quot;,&quot;ink&quot;:&quot;#080c18&quot;,&quot;muted&quot;:&quot;#596474&quot;,&quot;accent&quot;:&quot;#c96442&quot;,&quot;accent_text&quot;:&quot;#96472f&quot;,&quot;accent_surface&quot;:&quot;#fff1e9&quot;,&quot;card&quot;:&quot;#ffffff&quot;,&quot;quiet_surface&quot;:&quot;#f3f1eb&quot;,&quot;line&quot;:&quot;#dedbd2&quot;,&quot;font&quot;:&quot;&#x27;Noto Sans CJK SC&#x27;,&#x27;Microsoft YaHei&#x27;,sans-serif&quot;,&quot;title&quot;:44,&quot;group&quot;:30,&quot;label&quot;:28,&quot;detail&quot;:24,&quot;note&quot;:22,&quot;radius&quot;:20,&quot;margin&quot;:48},&quot;figure&quot;:{&quot;name&quot;:&quot;continuing-delegation&quot;,&quot;kind&quot;:&quot;lanes&quot;,&quot;eyebrow&quot;:&quot;PERSONAL AGENT / 核心机制&quot;,&quot;title&quot;:&quot;一次完成任务，还是长期接住事务？&quot;,&quot;subtitle&quot;:&quot;差别不在能执行多少步，而在后续由谁记挂和跟进&quot;,&quot;groups&quot;:[{&quot;title&quot;:&quot;一次任务&quot;,&quot;sub&quot;:&quot;交付后可结束&quot;,&quot;emphasis&quot;:false,&quot;items&quot;:[[&quot;用户交代需求&quot;,&quot;限定本次目标&quot;],[&quot;Agent 交付结果&quot;,&quot;完成一段工作&quot;],[&quot;后续变化由人接回&quot;,&quot;重新记挂与追踪&quot;]]},{&quot;title&quot;:&quot;持续委托&quot;,&quot;sub&quot;:&quot;对一类事务负责&quot;,&quot;emphasis&quot;:true,&quot;items&quot;:[[&quot;保留未完事项&quot;,&quot;状态、条件、下一步&quot;],[&quot;变化后协调多方&quot;,&quot;跨服务、跨联系人&quot;],[&quot;继续跟进到结果&quot;,&quot;必要时补救与请示&quot;]]}],&quot;takeaway_label&quot;:&quot;检验标准&quot;,&quot;takeaway&quot;:&quot;人少记挂、少催办、少协调、少补救了吗？&quot;,&quot;note&quot;:&quot;本文归纳的产品目标，并非声称某一款产品已完整实现。&quot;},&quot;method&quot;:&quot;editable-svg&quot;,&quot;responsive_preview&quot;:&quot;Mobile reading layout is derived from this metadata; no independent figure content.&quot;}</metadata>
+<g font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif">
+<rect x="0" y="0" width="1280" height="720" rx="0" fill="#faf9f5" stroke="none" stroke-width="1"/>
+<text x="52" y="57" font-size="20" font-weight="500" fill="#96472f" data-role="eyebrow">PERSONAL AGENT / 核心机制</text>
+<text x="48" y="126" font-size="44" font-weight="600" fill="#080c18" data-role="title">一次完成任务，还是长期接住事务？</text>
+<text x="50" y="171" font-size="24" font-weight="400" fill="#596474" data-role="subtitle">差别不在能执行多少步，而在后续由谁记挂和跟进</text>
+<path d="M48 194H1232" stroke="#dedbd2"/>
+<g data-group="0">
+<rect x="48" y="218" width="1184" height="142" rx="20" fill="#ffffff" stroke="#dedbd2" stroke-width="2"/>
+<text x="72" y="280" font-size="30" font-weight="600" fill="#080c18" data-role="group">一次任务</text>
+<text x="72" y="323" font-size="24" font-weight="400" fill="#596474" data-role="detail">交付后可结束</text>
+<g data-node="0-0">
+<rect x="302" y="234" width="268" height="110" rx="16" fill="#f3f1eb" stroke="none" stroke-width="1"/>
+<text x="322" y="279" font-size="28" font-weight="500" fill="#080c18" data-role="label">用户交代需求</text>
+<text x="322" y="316" font-size="24" font-weight="400" fill="#596474" data-role="detail">限定本次目标</text>
+</g>
+<path d="M577 289H589" fill="none" stroke="#7b817f" stroke-width="3" stroke-linecap="round"/><path d="M587 283L597 289L587 295" fill="none" stroke="#7b817f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g data-node="0-1">
+<rect x="604" y="234" width="268" height="110" rx="16" fill="#f3f1eb" stroke="none" stroke-width="1"/>
+<text x="624" y="279" font-size="28" font-weight="500" fill="#080c18" data-role="label">Agent 交付结果</text>
+<text x="624" y="316" font-size="24" font-weight="400" fill="#596474" data-role="detail">完成一段工作</text>
+</g>
+<path d="M879 289H891" fill="none" stroke="#7b817f" stroke-width="3" stroke-linecap="round"/><path d="M889 283L899 289L889 295" fill="none" stroke="#7b817f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g data-node="0-2">
+<rect x="906" y="234" width="268" height="110" rx="16" fill="#f3f1eb" stroke="none" stroke-width="1"/>
+<text x="926" y="279" font-size="28" font-weight="500" fill="#080c18" data-role="label">后续变化由人接回</text>
+<text x="926" y="316" font-size="24" font-weight="400" fill="#596474" data-role="detail">重新记挂与追踪</text>
+</g>
+</g>
+<g data-group="1">
+<rect x="48" y="394" width="1184" height="142" rx="20" fill="#fff1e9" stroke="#c96442" stroke-width="2"/>
+<text x="72" y="456" font-size="30" font-weight="600" fill="#96472f" data-role="group">持续委托</text>
+<text x="72" y="499" font-size="24" font-weight="400" fill="#596474" data-role="detail">对一类事务负责</text>
+<g data-node="1-0">
+<rect x="302" y="410" width="268" height="110" rx="16" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="322" y="455" font-size="28" font-weight="500" fill="#080c18" data-role="label">保留未完事项</text>
+<text x="322" y="492" font-size="24" font-weight="400" fill="#596474" data-role="detail">状态、条件、下一步</text>
+</g>
+<path d="M577 465H589" fill="none" stroke="#c96442" stroke-width="3" stroke-linecap="round"/><path d="M587 459L597 465L587 471" fill="none" stroke="#c96442" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g data-node="1-1">
+<rect x="604" y="410" width="268" height="110" rx="16" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="624" y="455" font-size="28" font-weight="500" fill="#080c18" data-role="label">变化后协调多方</text>
+<text x="624" y="492" font-size="24" font-weight="400" fill="#596474" data-role="detail">跨服务、跨联系人</text>
+</g>
+<path d="M879 465H891" fill="none" stroke="#c96442" stroke-width="3" stroke-linecap="round"/><path d="M889 459L899 465L889 471" fill="none" stroke="#c96442" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g data-node="1-2">
+<rect x="906" y="410" width="268" height="110" rx="16" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="926" y="455" font-size="28" font-weight="500" fill="#080c18" data-role="label">继续跟进到结果</text>
+<text x="926" y="492" font-size="24" font-weight="400" fill="#596474" data-role="detail">必要时补救与请示</text>
+</g>
+</g>
+<rect x="48" y="575" width="1184" height="78" rx="16" fill="#f3f1eb" stroke="none" stroke-width="1"/>
+<text x="72" y="624" font-size="24" font-weight="500" fill="#96472f" data-role="takeaway-label">检验标准</text>
+<text x="211" y="624" font-size="30" font-weight="500" fill="#080c18" data-role="takeaway">人少记挂、少催办、少协调、少补救了吗？</text>
+<text x="50" y="690" font-size="22" font-weight="400" fill="#596474" data-role="note">本文归纳的产品目标，并非声称某一款产品已完整实现。</text>
+</g></svg>
