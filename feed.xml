@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>AI 越来越强，怎样把一件事做出价值？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-work-value-loop.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-work-value-loop.html</guid>
+      <description>AI 让搜集信息、生成方案和完成任务变得更容易，但当产出增长得比验证和吸收能力更快时，判断什么值得做、什么结果有价值，反而可能变得更费力。从最近的工作实践出发，我尝试整理出四个值得反复问自己的问题：要解决什么、什么结果有价值、怎样交付，以及如何让一次成果不再孤立。</description>
+    </item>
+    <item>
       <title>视频已经能“生成未来”，为什么还不等于会预测世界？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/video-world-model.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/video-world-model.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</guid>
       <description>LLM 对软件团队的冲击不是“执行岗消失、协调岗幸存”。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以“让事情发生”为输出的工作，面对的是另一种性质的重构。</description>
-    </item>
-    <item>
-      <title>当AI开始主动找你：下一个软件入口，会是用来排序AI请求的那一层</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ai-arbitration-layer.html</guid>
-      <description>AI对软件的改变不会停在AI能自己搞定一切的阶段。它会停在一个更现实的位置——AI主动发现问题、把决策权递到你面前，你来拍板。但这个变化本身会催生一种新的软件形态：专门负责排序和过滤这些AI主动请求的层，它可能比下一代agent的能力本身更值得关注。</description>
     </item>
   </channel>
 </rss>

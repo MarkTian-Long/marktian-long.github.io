@@ -45,6 +45,46 @@
   },
   "posts": [
     {
+      "slug": "ai-work-value-loop",
+      "date": "2026.10",
+      "title": "AI 越来越强，怎样把一件事做出价值？",
+      "summary": "AI 让搜集信息、生成方案和完成任务变得更容易，但当产出增长得比验证和吸收能力更快时，判断什么值得做、什么结果有价值，反而可能变得更费力。从最近的工作实践出发，我尝试整理出四个值得反复问自己的问题：要解决什么、什么结果有价值、怎样交付，以及如何让一次成果不再孤立。",
+      "share_quote": "AI 降低了生产结果的成本，却不保证判断这些结果的总成本同步下降；有时甚至会提高对判断能力的要求。",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "concepts": [
+        "AI 协作工作方式",
+        "问题定义",
+        "价值判断",
+        "成果交付",
+        "过程记录",
+        "认知积累"
+      ],
+      "category": "实践",
+      "url": "posts/ai-work-value-loop.html",
+      "relations": [
+        {
+          "slug": "personal-harness",
+          "type": "builds_on"
+        }
+      ],
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/ai-work-value-loop/value-feedback-loop.webp",
+            "alt": "任务由主动机会或被动要求进入，经澄清问题、定义价值、实现验证与交付、沉淀修正与连接形成回环；新证据和验证反馈可以触发返回。",
+            "caption": "本文归纳的工作循环：反馈可能让人重新定义问题，经过验证的经验也可能修正旧判断；循环本身并不保证提升。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "video-world-model",
       "date": "2026.10",
       "title": "视频已经能“生成未来”，为什么还不等于会预测世界？",
