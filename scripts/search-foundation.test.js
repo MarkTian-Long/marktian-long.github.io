@@ -344,10 +344,18 @@ test('validateBlogMetadata requires compact, specific retrieval concepts', () =>
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], share_quote: ' ' }] }),
     /share_quote/
   );
-  assert.throws(
-    () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], tags: [] }] }),
-    /tags must be a non-empty trimmed string array/
-  );
+  // Reviewed empty labels are valid; missing or malformed fields are not.
+  for (const field of ['tags', 'topics']) {
+    assert.doesNotThrow(
+      () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], [field]: [] }] })
+    );
+    for (const value of [undefined, null, '', [''], [' Agent']]) {
+      assert.throws(
+        () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], [field]: value }] }),
+        new RegExp(`${field}.*array`)
+      );
+    }
+  }
   assert.throws(
     () => validateBlogMetadata({ ...valid, posts: [{ ...valid.posts[0], category: '其他' }] }),
     /Category is not defined by blog taxonomy/
