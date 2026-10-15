@@ -77,6 +77,17 @@ test('object key order and the bookkeeping revision do not create semantic chang
   assert.deepEqual(diffTaxonomySemantics(before, after), []);
 });
 
+test('new semantic vocabulary supports genuine concept explanations and specialized topics', () => {
+  const taxonomy = loadBlogTaxonomy();
+  assert.ok(taxonomy.tags.some((entry) => entry.name === '概念解析' && entry.examples?.include?.length >= 3));
+  for (const topic of ['影视产业', '技术生命周期']) {
+    assert.ok(taxonomy.topics.some((entry) => entry.name === topic && entry.distinguish_from));
+  }
+  assert.doesNotThrow(() => validateSemanticMetadata(fixture({ tags: ['概念解析'], topics: ['影视产业'] }), { taxonomy }));
+  assert.doesNotThrow(() => validateSemanticMetadata(fixture({ tags: ['决策框架'], topics: ['技术生命周期'] }), { taxonomy }));
+  assert.throws(() => validateSemanticMetadata(fixture({ topics: ['技术生命周期'], concepts: ['技术生命周期', '证据质量', '结果验证', '错误成本'] }), { taxonomy }), /duplicate tag or topic/);
+});
+
 test('every published record satisfies the current semantic contract, including reviewed empties', () => {
   const metadata = JSON.parse(fs.readFileSync(path.join(__dirname, '../tools/blog/data/posts-meta.json'), 'utf8'));
   const knownSlugs = metadata.posts.map(post => post.slug);

@@ -116,3 +116,17 @@ cd scripts && npm run check
 复核重点：48 篇均进入语义变更候选池；各字段的决定对应上表；发布 HTML 与变更前完全一致；仅一个已有严格 frontmatter 的字段发生同步修改；精选不变。
 
 这些是一次编辑治理的判断，不是永久正确的分类。以后发现正文与标签不符，应回到同一份词典与当前正文处理，不通过改变旧文内容维护标签的一致性。
+
+## 补遗：概念解析、影视产业和技术生命周期（2026-10-15）
+
+本次是在前次 48 篇语义治理基础上补齐**当时已提出但尚未落地**的三项候选词；前文记录了前次迁移时点的判断，不能视为此后仍然缺失。GitHub 变更前基线以实际提交的父提交为准。未调整 UI、文章正文、页面 URL、精选、关系、发布日期、搜索排名或推荐代码。
+
+- **新增 tag「概念解析」**：用于概念、系统构成、分工和边界的主要解释性贡献；不等于所有带术语的技术文章。正文复核后，补给 `multimodal-unification`、`training-vs-inference`、`ai-chips-explainer`、`enterprise-ai-wiki`、`agent-vs-workflow` 五篇。后两篇同样以 Wiki / 知识库 / RAG 以及 Agent / 工作流的混淆为论述起点和核心问题，不是为了凑标签数。
+- **新增 topic「影视产业」**：补给 `ai-film-industry`。该文以影视制作拆分、角色/IP 与产业价值链为主；仅评价视频生成质量的技术文章不得归入此词。单篇也可以值得拥有独立准确主题，不按数量决定词库是否成立。
+- **新增 topic「技术生命周期」**：补给 `tech-obsolescence`、`finetuning-evolution`、`prompt-engineering-lifecycle`、`rag-evolution` 四篇；共同研究长期需求、补救性技术的可替代性和何种价值可以持续。RAG 一文区分结构性需求与 naive RAG 方案过时，其生命周期讨论不是单纯版本迭代。
+- **concepts 去重**：`tech-obsolescence` 原有 `技术生命周期` 与新增同名 topic 精确重复，改为 `技术替代判据`，以保留“如何判断模型能力替代技术”的细粒度检索信息。不修改其它 concepts。
+- **反例复核**：`video-world-model` 已由「技术判断」表达能力边界而非纯概念科普；`skill-system-and-harness` 的主要判断是 Skill 长期系统价值，未因出现概念对比就追加「概念解析」；`harness-engineering` 主要讨论工程范式迁移，未笼统贴「技术生命周期」。其余文章经过元数据初筛，无充分正文增量证据者保持原状。
+
+调整 10 篇、未变更 38 篇；11 篇 tags 空值减少为 6 篇，2 篇 topics 空值降为 0。标签总数分布为 **1 个 2 篇、2 个 29 篇、3 个 17 篇，0 或 4 个 0 篇**。数字仅作检验，不是硬性配额；`spacex-ai-infrastructure-valuation` 和 `agent-three-problems` 等只有一个准确话题的文章保持 1 个，不补弱标签。
+
+历史影响筛查覆盖全部 48 篇 metadata，针对潜在新增候选读取 GitHub 已发布 HTML 正文，按各自主要论证决策，非关键词批量迁移。词典保持数据 schema version 1，语义版本升级；SOP 补“误标/漏标并查”，Checklist 补“漏标/词典缺口反查”，定义及正反例仍只由 taxonomy 维护。历史无严格 frontmatter 或无独立 Markdown 的文章，遵循已记录的源稿例外，仅更新运行索引；不会从可能不等价的旧稿重生成 HTML。CI、全量一致性、发布构建与 Pages 部署需由本轮 GitHub Actions 核验，不把源文件改动视为已上线。
