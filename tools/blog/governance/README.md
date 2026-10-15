@@ -12,6 +12,10 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
 
+## 标签定期维护
+
+[标签巡检与历史问题台账](../taxonomy-maintenance.md) 是分类与标签维护的单一运行入口，保存周期检查、提醒去重、当前问题及历史处置。它不复制 taxonomy 定义，不替代 SOP 的变更决策或 Checklist 的终审。定时任务每次读取该文件最新内容；同一问题复发沿用原 ID，不另建重复周报。词义、文章标签、正文和 UI 不因统计信号而自动修改。
+
 ## 研究待办
 
 [研究待办与聚合候选](../research_backlog.md) 是唯一当前记录，保存研究总览、当前研究卡、跨事项聚合关系和关键决策/结项；它不等于正式立项，也不进入网站文章索引。

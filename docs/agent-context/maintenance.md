@@ -52,3 +52,17 @@ extra files.
   not only in private agent memory.
 - Confirm project-owned `.agents/skills/` entries are tracked, their
   `.claude/skills/` compatibility files match, and no local-only file is tracked.
+
+## Blog taxonomy maintenance
+
+For blog classification and label maintenance, read
+[`tools/blog/taxonomy-maintenance.md`](../../tools/blog/taxonomy-maintenance.md).
+It owns the current review checkpoint, recurring-check procedure and historical
+issue ledger; `tools/blog/data/blog-taxonomy.json` remains the only vocabulary
+source. Read this ledger during blog maintenance or the existing monthly review.
+The configured ChatGPT weekly watch reads the latest repository instructions and
+notifies only meaningful changes, overdue issues or execution blockers.
+
+Do not reset the project-wide monthly-review marker after a taxonomy-only check.
+Do not create duplicate review files or alter public labels merely to reduce a
+statistical concentration signal.
