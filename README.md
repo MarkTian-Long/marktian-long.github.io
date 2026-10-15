@@ -1,5 +1,7 @@
 # Leo Liu · 个人网站
 
+[中文](README.md) | [English](README.en.md)
+
 > 以「思考碎片」为核心的个人网站：用文章沉淀判断，用工具记录实验，用脱敏案例保留项目方法。
 
 ## 在线访问
@@ -100,7 +102,9 @@ python -m http.server 8080
 # 打开 http://localhost:8080
 ```
 
-```bash
+以下开发检查命令按 Windows 终端写法给出，先在项目根目录执行：
+
+```powershell
 cd scripts
 cmd /c npm ci
 cmd /c npx playwright install chromium
@@ -112,7 +116,7 @@ cmd /c npm run build:candidate
 cmd /c npm run check:equivalence:candidate
 ```
 
-提交前还应运行：
+提交前回到项目根目录，还应运行：
 
 ```bash
 node scripts/check-repository-policy.js
