@@ -75,16 +75,16 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 ### 双维度标签体系
 
-每篇文章打两个维度的标签，各司其职：
+分类提供编辑栏目；话题聚合主要研究对象；tags 只提供有增量的附加阅读提示，不要求每篇套入一种阅读类型。字段职责、选择边界和数量范围均以 `blog-taxonomy.json` 的 `field_roles / selection_rules / label_rules` 为准：
 
 | 维度 | 字段 | 用途 | 前台展示 | 每篇数量 |
 |------|------|------|----------|----------|
-| 视角类型 | `tags` | 描述文章的核心动作，「这篇在做什么」 | 是 | 1-2 个 |
-| 话题领域 | `topics` | 描述文章讨论的具体领域，「在讨论什么」 | 是 | 1-2 个 |
+| 附加阅读提示 | `tags` | 提供栏目与话题之外的主要分析动作或用途 | 非空时显示 | 依 taxonomy，可为 0 |
+| 核心话题 | `topics` | 描述文章主要讨论的对象或领域 | 非空时显示 | 依 taxonomy，通常 1 个 |
 
-两个字段同时显示在列表页标签徽章上，也显示在文章页 header。`tags` 帮读者判断文章的思维方式，`topics` 帮读者按领域找文章。两者描述不同维度，不应出现相同的词。
+两个字段仍按既有方式显示为关键词徽章，本次不改变界面或筛选交互。`tags` 与 `topics` 字段必须显式存在，但可使用审查后确定的空数组 `[]`；不得使用缺失字段、`null`、空字符串或“其他”兜底。空值表示已审查而无准确标签，不表示未完成审查；话题缺口记录在当次内容审查中。两类字段不得出现相同的词。
 
-正式可用值、完整定义、区分说明和 deprecated 状态只维护在 [`data/blog-taxonomy.json`](data/blog-taxonomy.json)。本指南不复制完整词典；发布脚本和校验器都读取该文件。
+正式可用值、完整定义、正反例、字段职责、数量规则和 deprecated 状态只维护在 [`data/blog-taxonomy.json`](data/blog-taxonomy.json)。本指南不复制完整词典；发布脚本和校验器都读取该文件。
 
 ### `concepts`：AI 历史检索概念
 
@@ -101,7 +101,7 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 历史检索首先服务于查重/碰撞检查、必要前提复用、观点变化发现和独立内容增量判断；它不是选题生成器。检索到旧文不能单独成为扩大题目、新增一级章节、重引旧框架、修改主线或为了站内连续性制造关系的理由。最终仅同主题或实际不相关时，可以不引用、不建立显式关系，也不调整当前文章。
 
-第一次读取历史文章前，先保留简短的独立起点：原始问题、初步判断或待验证假设、写作/研究动因、当前边界，以及不知道历史文章时原本准备研究的方向。这不是新的确认环节；它只用于后续检查新文章是否被旧文反向带偏。
+第一次读取历史文章前，先保留简短的独立起点：原始问题、初步判断或待验证假设、写作/研究动因、当前边界，以及不知道历史文章时原本准备研究的方向。这不是新的确认环节；它只用于后续检查新文章是否被旧文影响。
 
 1. **先完整读元数据，形成候选池。** 每次检索都读取完整 `posts-meta.json`，综合 `title`、`summary`、`concepts`、`topics`、`tags`、`category` 形成候选池；`date` 用于判断观点先后，`slug/url` 用于定位正文。按当前问题区分：高相关（现在应读正文，可能影响判断）、潜在相关（先保留，随讨论再决定）与弱相关（仅关键词、大类、公司或模型名称重合，可丢弃）。不设“最多 5 篇”等固定上限；正文深读按实际相关度控制，不为召回完整而打开大量弱相关正文。
 2. **事件触发地调整候选。** 当核心论点明显改变、出现新的核心机制或概念、覆盖边界或案例角色变化、新增重要章节，或作者/AI 怀疑过去讨论过当前判断时，重新读元数据或调整检索条件。正式大纲确认前，基于相对稳定的主论点、章节问题、关键机制和案例做一次最终历史覆盖扫描：检查应承接的旧文、可能重复的完整论证、本文相对旧文的新增判断，以及与旧文的冲突或修正。
@@ -123,11 +123,11 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 >
 > **taxonomy 变更时的回溯规范：** 每篇发布始终先运行 `node tools/blog/check-blog-taxonomy.js`。只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才以真实的变更前 Git ref 运行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>`；普通文章发布不要求 taxonomy base ref，也不得执行带 placeholder 的 audit 命令。触发变更时，需完成以下两项检查，不得分批遗漏：
 > 1. **taxonomy 一致性检查**：确认新标签与现有 taxonomy 中各标签的定义边界无语义重叠或歧义；
-> 2. **历史语义影响审查**：category 的 `core_question`、`definition`、`status`，tag/topic 的 `definition`、`distinguish_from`、`notes`、`status`，以及范围、rename、merge、deprecate、remove 和新增 category/tag/topic 都是语义变化。它们全部让完整 `posts-meta.json` 进入第一轮 metadata 筛查，不能只按新 vocabulary 名字字面命中；新增词尤其不能假定历史文章会预先带有它。`--categories` 仅用于标出优先读的范围。已落地定义的专项复核若要覆盖跨产品/行业等边界，必须显式运行 `--focus category:<名称> --full-screen`；只有 `--focus` 不代表已完成全量筛查。Codex 再按 title / summary / concepts / tags / topics / category 缩小真正相关候选，并对这些候选按“线上正式页 → 仓库发布 HTML → Markdown”读取正文，逐篇输出“保持现状 / 建议人工复核 / 有充分理由建议迁移”。脚本不自动修改历史 metadata，不为数量均衡迁移，也不能把 taxonomy 定义变化本身当作批量重分类理由；没有历史语义影响时输出“历史 audit 完成，无需迁移。”
+> 2. **历史语义影响审查**：字段职责、数量规则、选择原则及概念规则的变化，category 的 `core_question`、`definition`、`distinguish_from`、`status`，tag/topic 的 `definition`、`distinguish_from`、正反例、`notes`、`status`，以及范围、rename、merge、deprecate、remove 和新增 category/tag/topic 都是语义变化。它们全部让完整 `posts-meta.json` 进入第一轮 metadata 筛查，不能只按新 vocabulary 名字字面命中；新增词尤其不能假定历史文章会预先带有它。`--categories` 仅用于标出优先读的范围。已落地定义的专项复核若要覆盖跨产品/行业等边界，必须显式运行 `--focus category:<名称> --full-screen`；只有 `--focus` 不代表已完成全量筛查。Codex 再按 title / summary / concepts / tags / topics / category 缩小真正相关候选，并对这些候选按“线上正式页 → 仓库发布 HTML → Markdown”读取正文，逐篇输出“保持现状 / 建议人工复核 / 有充分理由建议迁移”。脚本不自动修改历史 metadata，不为数量均衡迁移，也不能把 taxonomy 定义变化本身当作批量重分类理由；没有历史语义影响时输出“历史 audit 完成，无需迁移。”
 
-**`tags` 标签库（视角类型）**
+**`tags` 标签库（可选附加阅读提示）**
 
-标签描述文章的**核心动作**，而非内容领域。标签库随内容主题扩展，**新增前先确认无近义标签**。
+只有正文主要贡献提供额外阅读区分时才标注 tags；并非每篇都需要。具体门槛和正反例由 taxonomy 定义，不因流程图、分点、第一人称或文末建议自动打标。**新增前先确认无近义标签**，不能用新增词代替对现有边界的审查。
 
 > **打标规范：** 新文章打标前，先看同标签下已有文章列表，确认放进去语义一致再写入。孤立判断容易漂移——「这篇感觉是竞争相关」不够，要问「这篇和 Manus 分析、Claude Design 分析放在一起，读者会觉得是同类文章吗」。
 >
@@ -135,7 +135,7 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 **`topics` 标签库（话题领域）**
 
-按文章的核心技术或场景选择；只有一个核心领域时只打一个，**不为凑数量补第二个**。若有两个领域都支撑文章核心论点，才同时打两个。
+按文章的核心对象或领域选择；只有一个核心话题时只打一个，**不为凑数量补第二个**。现有词都不准确时允许审查后暂缺并记录缺口，不把作者职业、材料来源或案例场景当成主话题。
 
 判断某个 `topic` 是否属于核心领域时，依次核对：
 
@@ -384,6 +384,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 - 早期文章不保证都有 Markdown 源稿；部分 HTML 已经在发布后做过正文或结构编辑，可能和现有 Markdown 候选不一致。
 - 禁止对历史文章批量运行 `generate-post.js` 并覆盖 HTML。每次只处理一篇，先比较当前线上 HTML 与重新生成结果的可见正文，再决定是否回写 Markdown 或更新 HTML。
 - 对没有源稿的历史文章，优先从当前 HTML 反向整理 Markdown，再人工复核正文、标题层级、表格和参考资料链接。
+- 经用户授权的 taxonomy 治理只改变语义标注时：已有严格 frontmatter 的源稿先改相应字段，再同步索引；没有 frontmatter 或源稿不完整的历史文章，按发布正文评审后仅修改索引语义字段并记录例外。不得为这次重标批量重建 Markdown、重生 HTML 或改写正文；旧 HTML 顶部注释不是当前分类和标签的真源，前台使用运行索引。
 
 ### Markdown 正文图片语法
 
@@ -456,7 +457,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 - 检查 `concepts`：逐一核对其是否是支撑文章核心论点的具体对象或机制；保持 4-7 个，避免泛词、偶然提及和与 `tags/topics` 的精确重复。
 - 写作或引用旧文前按「历史博客滚动检索与复用」处理：完整 metadata 粗召回可随论点变化重跑，正文按发布事实优先级确认；不要因为同关键词或同分类强行添加内链。
 - 检查 taxonomy 同步：每个 `tags/topics` 值都必须在 `blog-taxonomy.json` 中有完全一致的条目；新增词或定义调整必须在同一次变更更新 taxonomy 并完成历史 audit，不能把近期文章当作历史例外。
-- 检查 `topics` 数量：一个核心领域即可；第二个 `topic` 必须同样通过主次判定，不能作为凑数标签。
+- 检查 `tags/topics` 数量及空值：以 taxonomy 的 `label_rules` 为准；空数组必须来自已完成的内容审查，第二个标签必须具有独立信息价值，不用凑数通过校验。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
 - 检查视觉契约：图片完全可选；如使用图片，正文图为 0–2 张，Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。

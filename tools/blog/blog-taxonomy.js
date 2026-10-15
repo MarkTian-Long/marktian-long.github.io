@@ -17,13 +17,25 @@ function loadBlogTaxonomy(taxonomyPath = TAXONOMY_PATH) {
   if (!Array.isArray(taxonomy.relation_types) || !taxonomy.concepts || !Number.isInteger(taxonomy.concepts.min_items) || !Number.isInteger(taxonomy.concepts.max_items)) {
     throw new Error('blog-taxonomy.json contains an invalid validator contract');
   }
+  if (taxonomy.label_rules !== undefined) {
+    for (const field of ['tags', 'topics']) {
+      const rule = taxonomy.label_rules[field];
+      if (!rule || !Number.isInteger(rule.min_items) || !Number.isInteger(rule.max_items)
+        || rule.min_items < 0 || rule.max_items < rule.min_items) {
+        throw new Error(`Invalid label cardinality: ${field}`);
+      }
+    }
+  }
   return taxonomy;
 }
 
 function names(items) { return new Set(items.map((item) => item.name)); }
-function assertStringArray(value, field, source) {
-  if (!Array.isArray(value) || !value.length || !value.every((item) => typeof item === 'string' && item.trim() === item && item)) {
-    throw new Error(`${field} must be a non-empty trimmed string array: ${source}`);
+function assertStringArray(value, field, source, { minItems = 1, maxItems = Infinity } = {}) {
+  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string' && item.trim() === item && item)) {
+    throw new Error(`${field} must be a trimmed string array: ${source}`);
+  }
+  if (value.length < minItems || value.length > maxItems) {
+    throw new Error(`${field} must contain ${minItems} to ${maxItems} entries: ${source}`);
   }
   if (new Set(value).size !== value.length) throw new Error(`${field} entries must be unique: ${source}`);
 }
@@ -37,11 +49,16 @@ function validateCategory(category, { allowLegacy = false, taxonomy = loadBlogTa
   throw new Error(`Category is not defined by blog taxonomy: ${category} (${source})`);
 }
 
-function validateVocabulary(values, field, taxonomy, source) {
-  assertStringArray(values, field, source);
-  const allowed = names(taxonomy[field]);
+function validateVocabulary(values, field, taxonomy, source, { allowDeprecated = false } = {}) {
+  // Counts belong to the dictionary. The fallback preserves older taxonomy fixtures.
+  const rule = taxonomy.label_rules?.[field] || { min_items: 1, max_items: 2 };
+  assertStringArray(values, field, source, { minItems: rule.min_items, maxItems: rule.max_items });
+  const byName = new Map(taxonomy[field].map((item) => [item.name, item]));
   for (const value of values) {
-    if (!allowed.has(value)) throw new Error(`${field} value is not defined by blog taxonomy: ${value} (${source})`);
+    if (!byName.has(value)) throw new Error(`${field} value is not defined by blog taxonomy: ${value} (${source})`);
+    if (!allowDeprecated && byName.get(value).status === 'deprecated') {
+      throw new Error(`${field} value is deprecated for new Markdown: ${value} (${source})`);
+    }
   }
 }
 
@@ -77,8 +94,12 @@ function validateRelations(relations, { slug, knownSlugs = [], taxonomy = loadBl
 
 function validateSemanticMetadata(metadata, { allowLegacyCategory = false, knownSlugs = [], taxonomy = loadBlogTaxonomy(), source = '<metadata>' } = {}) {
   validateCategory(metadata.category, { allowLegacy: allowLegacyCategory, taxonomy, source });
-  validateVocabulary(metadata.tags, 'tags', taxonomy, source);
-  validateVocabulary(metadata.topics, 'topics', taxonomy, source);
+  const vocabularyOptions = { allowDeprecated: allowLegacyCategory };
+  validateVocabulary(metadata.tags, 'tags', taxonomy, source, vocabularyOptions);
+  validateVocabulary(metadata.topics, 'topics', taxonomy, source, vocabularyOptions);
+  if (metadata.tags.some((tag) => metadata.topics.includes(tag))) {
+    throw new Error(`tags and topics must not overlap: ${source}`);
+  }
   validateConcepts(metadata.concepts, { tags: metadata.tags, topics: metadata.topics, taxonomy, source });
   if (typeof metadata.share_quote !== 'string' || !metadata.share_quote.trim() || metadata.share_quote.trim() !== metadata.share_quote) {
     throw new Error(`share_quote must be a trimmed non-empty string: ${source}`);

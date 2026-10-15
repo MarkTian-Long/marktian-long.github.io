@@ -13,10 +13,20 @@ const ENTITY_COLLECTIONS = [
   ['topic', taxonomy => taxonomy.topics || []],
 ];
 const SEMANTIC_FIELDS = {
-  category: ['core_question', 'definition', 'status', 'scope', 'renamed_to', 'merged_into'],
-  tag: ['definition', 'distinguish_from', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
-  topic: ['definition', 'distinguish_from', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
+  category: ['core_question', 'definition', 'distinguish_from', 'examples', 'status', 'scope', 'renamed_to', 'merged_into'],
+  tag: ['definition', 'distinguish_from', 'examples', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
+  topic: ['definition', 'distinguish_from', 'examples', 'notes', 'status', 'scope', 'renamed_to', 'merged_into'],
 };
+const POLICY_FIELDS = ['field_roles', 'label_rules', 'selection_rules', 'concepts', 'relation_types'];
+
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+  }
+  return value;
+}
+function sameValue(a, b) { return JSON.stringify(canonical(a)) === JSON.stringify(canonical(b)); }
 
 function changeKind(field, nextEntry) {
   if (field === 'status') return nextEntry.status === 'deprecated' ? 'deprecated' : 'status_changed';
@@ -31,6 +41,10 @@ function entriesByName(entries) {
 
 function diffTaxonomySemantics(before, after) {
   const changes = [];
+  // A cardinality or field-purpose change can affect articles that mention no changed word.
+  for (const name of POLICY_FIELDS) {
+    if (!sameValue(before[name], after[name])) changes.push({ kind: 'definition_changed', entity: 'policy', name });
+  }
   for (const [entity, entries] of ENTITY_COLLECTIONS) {
     const previous = entriesByName(entries(before));
     const current = entriesByName(entries(after));
@@ -48,7 +62,7 @@ function diffTaxonomySemantics(before, after) {
         continue;
       }
       for (const field of SEMANTIC_FIELDS[entity]) {
-        if (oldEntry[field] !== newEntry[field]) {
+        if (!sameValue(oldEntry[field], newEntry[field])) {
           changes.push({ kind: changeKind(field, newEntry), entity, name });
         }
       }
