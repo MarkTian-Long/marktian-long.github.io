@@ -12,7 +12,20 @@ const {
 const PROFILE_BY_EXTENSION = Object.freeze({
   '.jpg': Object.freeze({ width: 1200, height: 630, format: 'jpeg', maxBytes: 350 * 1024, label: '350 KB' }),
   '.webp': Object.freeze({ width: 1280, height: 720, format: 'webp', maxBytes: 250 * 1024, label: '250 KB' }),
+  '.svg': Object.freeze({ width: 1280, height: 720, format: 'svg', maxBytes: 250 * 1024, label: '250 KB' }),
 });
+
+// Published SVG diagrams are static and self-contained, including when opened directly.
+function validateStaticSvg(source, imagePath) {
+  if (!/^\s*<svg\b/i.test(source) || !/<\/svg>\s*$/i.test(source)
+    || /<!DOCTYPE|<!ENTITY|<\?(?:xml-stylesheet)/i.test(source)
+    || /<(?:script|foreignObject|iframe|image|use|a|animate\w*|set)\b/i.test(source)
+    || /\son[a-z]+\s*=/i.test(source) || /\b(?:href|src)\s*=/i.test(source)
+    || /@import|@font-face|javascript:|data:|expression\s*\(/i.test(source)
+    || /url\(\s*["']?(?!#)/i.test(source)) {
+    throw new Error(`SVG must be a static, self-contained diagram: ${imagePath}`);
+  }
+}
 
 function posixPath(value) {
   return value.split(path.sep).join('/');
@@ -127,6 +140,7 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..') } = 
     if (fileStat.size > profile.maxBytes) {
       throw new Error(`Blog image must be at most ${profile.label}: ${imagePath} (${fileStat.size} bytes)`);
     }
+    if (extension === '.svg') validateStaticSvg(fs.readFileSync(absolutePath, 'utf8'), imagePath);
     const image = await sharp(absolutePath).metadata();
     if (image.format !== profile.format) {
       throw new Error(`Blog image format must be ${profile.format}: ${imagePath} (found ${image.format})`);
@@ -158,4 +172,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, validateBlogImages, validateRenderedPostImages, main };
+module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };

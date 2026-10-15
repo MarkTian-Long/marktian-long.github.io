@@ -71,9 +71,9 @@ function validateInlineImage(post, image, paths) {
   assertPlainObject(image, label);
   assertExactKeys(image, ['src', 'alt', 'caption', 'width', 'height'], label);
   const escapedSlug = post.slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = new RegExp(`^assets/images/blog/${escapedSlug}/([a-z0-9]+(?:-[a-z0-9]+)*)\\.webp$`).exec(image.src);
+  const match = new RegExp(`^assets/images/blog/${escapedSlug}/([a-z0-9]+(?:-[a-z0-9]+)*)\\.(?:webp|svg)$`).exec(image.src);
   if (!match) {
-    throw new Error(`${label} path must stay under assets/images/blog/${post.slug}/ and use a kebab-case .webp filename`);
+    throw new Error(`${label} path must stay under assets/images/blog/${post.slug}/ and use a kebab-case .webp or .svg filename`);
   }
   if (GENERIC_INLINE_NAMES.test(match[1])) {
     throw new Error(`Post ${post.slug} inline image needs a descriptive filename: ${match[1]}`);

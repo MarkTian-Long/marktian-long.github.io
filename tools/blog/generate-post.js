@@ -70,7 +70,7 @@ function isBlockStart(line, next) {
 }
 
 function articleAssetUrl(src) {
-  if (typeof src !== 'string' || !/^assets\/images\/blog\/[a-z0-9-]+\/[a-z0-9-]+\.(?:jpg|webp)$/.test(src)) {
+  if (typeof src !== 'string' || !/^assets\/images\/blog\/[a-z0-9-]+\/[a-z0-9-]+\.(?:jpg|webp|svg)$/.test(src)) {
     throw new Error('Blog image must be a registered local article asset');
   }
   return '../../../' + src;

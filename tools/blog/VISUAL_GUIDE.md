@@ -1,6 +1,6 @@
 # Blog 视觉发布规范
 
-版本：1.1｜更新：2026-10-14
+版本：1.2｜更新：2026-10-15
 
 `Leo Editorial v1.1` 是思考碎片博客的可选视觉指南。文章可以完全以文字、表格和引用完成表达；只有图片确实能帮助理解、识别或分享时才使用。主页与 Blog 列表继续保持纯文字；如有图片，只出现在文章页、OG/Twitter 分享预览和结构化数据中。
 
@@ -49,12 +49,14 @@
 | 类型 | 必需性 | 最终路径 | 输出格式 | 尺寸 | 大小上限 | 加载策略 |
 |------|--------|----------|----------|------|----------|----------|
 | 文章封面 | 可选 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
-| 正文图 | 可选，0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
+| 正文位图 | 可选，正文共 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
+| 正文精确图形 | 可选，与位图合计 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.svg` | 静态 SVG | 1280 × 720 viewBox | 250 KB | lazy |
 
-- 最终文件只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
+- 栅格成品只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
 - 正文图文件名必须用能说明机制的 kebab-case，例如 `context-feedback-loop.webp`；禁止 `image.webp`、`figure-1.webp` 等通用名。
 - 候选图保存在被 Git 忽略的 `build/blog-image-work/<slug>/`，只有选中的规范化成品进入 `assets/images/blog/<slug>/`。
-- SVG/HTML 是精确图形可以采用的可编辑源或内嵌表示，不等于已经通过本文件的栅格图片发布契约。选择作为正文图片发布时，需由同一图源渲染候选并走上述规范化流程；选择内嵌 HTML/SVG 时按图表规范及生成器实际支持范围交付，不同时插入重复图片。
+- 精确图形可以直接登记为 SVG，沿用相同的 Markdown 独立图片语法、alt/caption 与 metadata 校验，由生成器输出普通 `<img>`，不注入任意 HTML。SVG 必须静态、自包含，不含脚本、事件处理、foreignObject、动画、外部引用或字体资源；由 `check-blog-images.js` 做结构、尺寸和完整解码检查。SVG 封面仍不支持。
+- 同一张图只保留一个生效的发布表示；替换为 SVG 时同步 Markdown、metadata 和 HTML，并移除被替代的未登记位图。需要公众号栅格导出时从同一 SVG 图源渲染，再走位图规范化流程，不另外重画一张近似图。
 
 ## 3. 正文是否配图：0–2 张决策门
 
@@ -78,7 +80,7 @@
 - 受独立 Markdown 图片语法限制，正文图 `alt` 不得包含 `]` 或换行，`caption` 不得包含 ASCII 双引号 `"` 或换行；需要引用时使用中文引号。
 - Markdown 中的 alt、caption 必须与 `posts-meta.json` 完全一致；生成器会拒绝不一致、未登记、远程、跨文章或路径穿越图片。
 
-正文图只接受独立成行的形式：
+正文图只接受独立成行的形式；登记的静态 SVG 使用相同语法并将扩展名替换为 `.svg`：
 
 ```markdown
 ![Context and feedback form a reusable loop](../../assets/images/blog/your-slug/context-feedback-loop.webp "The loop turns each completed task into reusable context for the next one.")
@@ -127,7 +129,7 @@
 Use case: stylized-concept
 Asset type: blog header image
 Primary request: editorial concept illustration for an article about <core judgment>
-Scene/backdrop: deep navy field with restrained matte texture
+Scene/backdrop: deep navy field
 Subject: one visual metaphor representing <mechanism>, using 1-3 large forms
 Style/medium: sophisticated editorial illustration, paper-cut relief and matte 3D finish
 Composition/framing: wide 1.91:1 composition; important subject inside the central safe area
@@ -159,9 +161,12 @@ node scripts/generate-search-assets.js --write
 node scripts/check-search-foundation.js
 ```
 
+上面两条 `prepare-blog-image.js` 命令仅用于实际选择的位图；静态 SVG 直接使用已验收的图源登记为正文资产，仍须运行图片、生成器和发布检查。
+
 发布前还必须构建并检查 public dist。使用图片时，在桌面/移动、浅色/深色状态下截图复核文章页，并确认图片加载失败时 alt 可读、布局不坍塌；纯文字文章不需要图片专项复核。交付报告仅在实际使用图片时列出最终资产路径、实际制作方式及生成图片所用的最终提示词；精确图形则给出可编辑源与渲染路径。
 
 ## 8. 版本记录
 
+- 1.2（2026-10-15）：为正文精确图形增加静态 SVG 发布路径，沿用 metadata、独立图片语法与 public dist 白名单；限定静态、自包含的内容和安全检查，保留原位图规格，避免文字图因有损压缩和缩放失真。图表语义继续由图表规范维护。
 - 1.1（2026-10-14）：保留原调色盘及资产尺寸，区分封面与正文的默认底色，补充同篇视觉约定、字级与实际显示尺寸检查；区分概念生成、精确图形和来源截图的制作方式；明确预览必须由当前正文及同一图源派生。图表语义仍由图表规范维护，不改写作流程或发布脚本。
 - 1.0：Leo Editorial v1 视觉语言、可选 0–2 张正文图、资产规格、alt/caption 与发布契约。
