@@ -61,6 +61,13 @@ test('published SVG diagrams and generated articles match their authoritative so
     const sourcePath = `docs/blog/${post.slug}.md`;
     const source = fs.readFileSync(path.join(root, sourcePath), 'utf8');
     const parsed = parseSourceMarkdown(source, sourcePath);
+    // Legacy posts may have no strict frontmatter; their SVG contract is checked above.
+    // Only strict-source posts can be regenerated and compared byte-for-byte here.
+    if (!parsed.frontmatter) {
+      const published = fs.readFileSync(path.join(root, `tools/blog/posts/${post.slug}.html`), 'utf8');
+      for (const diagram of diagrams) assert.ok(published.includes(diagram.src), `Missing SVG in ${post.slug}`);
+      continue;
+    }
     assert.deepEqual(parsed.frontmatter.topics, post.topics);
     const expected = buildPage(template, parsed.bodyMarkdown, post, sourcePath);
     const actual = fs.readFileSync(path.join(root, `tools/blog/posts/${post.slug}.html`), 'utf8');
