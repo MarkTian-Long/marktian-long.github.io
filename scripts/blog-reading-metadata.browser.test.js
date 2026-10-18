@@ -96,3 +96,66 @@ test('archive preserves newest month when input is reversed and canonical same-m
     await stopServer(server);
   }
 });
+
+
+test('complex inline SVG scroll stays inside the mobile article', { timeout: 60000 }, async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } : {}),
+    });
+    for (const width of [320, 390, 700, 800, 1440]) {
+      const page = await browser.newPage({ viewport: { width, height: 900 }, isMobile: width <= 390 });
+      try {
+        await page.route('https://**/*', route => route.abort());
+        await page.goto(url + '/tools/blog/posts/multimodal-unification.html', { waitUntil: 'domcontentloaded' });
+        await page.locator('#continueReadingStyles').waitFor({ state: 'attached' });
+        const figure = page.locator('.post-body figure.post-figure').first();
+        await figure.locator('img[src$="multimodal-information-flow.svg"]').evaluate(image => image.decode());
+        for (const theme of ['light', 'dark']) {
+          await page.evaluate(value => document.body.dataset.theme = value, theme);
+          const measure = await page.evaluate(() => {
+            const main = document.querySelector('.two-col > main');
+            const fig = document.querySelector('.post-body figure.post-figure');
+            const img = fig.querySelector('img');
+            return {
+              viewport: window.innerWidth,
+              document: document.documentElement.scrollWidth,
+              body: document.body.scrollWidth,
+              mainRight: main.getBoundingClientRect().right,
+              figureRight: fig.getBoundingClientRect().right,
+              figureWidth: fig.clientWidth,
+              figureScroll: fig.scrollWidth,
+              imageWidth: img.getBoundingClientRect().width,
+              naturalWidth: img.naturalWidth,
+            };
+          });
+          const context = width + 'px ' + theme + ': ' + JSON.stringify(measure);
+          assert.ok(measure.document <= measure.viewport + 1, 'Whole document overflows: ' + context);
+          assert.ok(measure.body <= measure.viewport + 1, 'Body overflows: ' + context);
+          assert.ok(measure.mainRight <= measure.viewport + 1, 'Article column overflows: ' + context);
+          assert.ok(measure.figureRight <= measure.viewport + 1, 'Diagram figure overflows: ' + context);
+          assert.equal(measure.naturalWidth, 1280, 'SVG must actually load: ' + context);
+          if (width <= 700) {
+            assert.ok(measure.imageWidth >= 800, 'SVG should retain readable width: ' + context);
+            assert.ok(measure.figureScroll > measure.figureWidth + 100, 'The figure must scroll independently: ' + context);
+            assert.ok(await figure.evaluate(element => {
+              element.scrollLeft = element.scrollWidth;
+              return element.scrollLeft > 100;
+            }), 'Cannot scroll within diagram: ' + context);
+            assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), measure.document);
+          } else {
+            assert.ok(measure.figureScroll <= measure.figureWidth + 1, 'Tablet/desktop SVG should fit: ' + context);
+          }
+        }
+      } finally {
+        await page.close();
+      }
+    }
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
