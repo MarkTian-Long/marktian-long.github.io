@@ -1,6 +1,6 @@
 # Blog 视觉发布规范
 
-版本：1.3｜更新：2026-10-18
+版本：1.4｜更新：2026-10-18
 
 `Leo Editorial v1.1` 是思考碎片博客的可选视觉指南。文章可以完全以文字、表格和引用完成表达；只有图片确实能帮助理解、识别或分享时才使用。主页与 Blog 列表继续保持纯文字；如有图片，只出现在文章页、OG/Twitter 分享预览和结构化数据中。
 
@@ -50,12 +50,13 @@
 |------|--------|----------|----------|------|----------|----------|
 | 文章封面 | 可选 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
 | 正文位图 | 可选，正文共 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
-| 正文精确图形 | 可选，与位图合计 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.svg` | 静态 SVG | 1280 × 720 viewBox | 250 KB | lazy |
+| 正文精确图形 | 可选，与位图合计 0–2 张 | `assets/images/blog/<slug>/<descriptive-name>.svg` | 静态 SVG | 1280 × 720（常规）或 1280 × 1024（复杂分支） | 250 KB | lazy |
 
 - 栅格成品只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
 - 正文图文件名必须用能说明机制的 kebab-case，例如 `context-feedback-loop.webp`；禁止 `image.webp`、`figure-1.webp` 等通用名。
 - 候选图保存在被 Git 忽略的 `build/blog-image-work/<slug>/`，只有选中的规范化成品进入 `assets/images/blog/<slug>/`。
 - 精确图形可以直接登记为 SVG，沿用相同的 Markdown 独立图片语法、alt/caption 与 metadata 校验，由生成器输出普通 `<img>`，不注入任意 HTML。SVG 必须静态、自包含，不含脚本、事件处理、foreignObject、动画、外部引用或字体资源；由 `check-blog-images.js` 做结构、尺寸和完整解码检查。SVG 封面仍不支持。
+- `1280 × 1024` 仅供确有多层决策或分支连线的正文 SVG 使用；位图仍须为 `1280 × 720`，不因图需要更高而拉伸现有内容。画布变更后必须同步 SVG 固有尺寸、`visuals.inline` 的 `width/height` 和发布 HTML，并检查箭头、分支标签与节点的实际间距。
 - 同一张图只保留一个生效的发布表示；替换为 SVG 时同步 Markdown、metadata 和 HTML，并移除被替代的未登记位图。需要公众号栅格导出时从同一 SVG 图源渲染，再走位图规范化流程，不另外重画一张近似图。
 
 ## 3. 正文是否配图：0–2 张决策门
@@ -177,6 +178,8 @@ node scripts/check-search-foundation.js
 发布前还必须构建并检查 public dist。使用图片时，在桌面/移动、浅色/深色状态下截图复核文章页，并确认图片加载失败时 alt 可读、布局不坍塌；纯文字文章不需要图片专项复核。交付报告仅在实际使用图片时列出最终资产路径、实际制作方式及生成图片所用的最终提示词；精确图形则给出可编辑源与渲染路径。
 
 ## 8. 版本记录
+
+- 1.4（2026-10-18）：允许多层流程图采用 1280 × 1024 的静态 SVG 预设，要求画布、元数据、HTML 同步，并针对箭头、节点与分支标签做真实尺寸视觉验收；WebP 位图维持 1280 × 720。
 
 - 1.3（2026-10-18）：从 Personal Agent 的两张精确图中沉淀“内容模型—共享视觉参数—SVG—同源预览”的可选复用方法，强调结构化文案和关系先于排版、图源与元数据同步、以及跨图内容与移动端校验；不新增图表语义规则或复制 SOP。
 - 1.2（2026-10-15）：为正文精确图形增加静态 SVG 发布路径，沿用 metadata、独立图片语法与 public dist 白名单；限定静态、自包含的内容和安全检查，保留原位图规格，避免文字图因有损压缩和缩放失真。图表语义继续由图表规范维护。

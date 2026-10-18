@@ -7,12 +7,13 @@ const sharp = require('sharp');
 const {
   validateImageContract,
   collectPostImagePaths,
+  INLINE_TALL_SVG_HEIGHT,
 } = require('./blog-image-contract');
 
 const PROFILE_BY_EXTENSION = Object.freeze({
   '.jpg': Object.freeze({ width: 1200, height: 630, format: 'jpeg', maxBytes: 350 * 1024, label: '350 KB' }),
   '.webp': Object.freeze({ width: 1280, height: 720, format: 'webp', maxBytes: 250 * 1024, label: '250 KB' }),
-  '.svg': Object.freeze({ width: 1280, height: 720, format: 'svg', maxBytes: 250 * 1024, label: '250 KB' }),
+  '.svg': Object.freeze({ width: 1280, height: 720, extraHeights: Object.freeze([INLINE_TALL_SVG_HEIGHT]), format: 'svg', maxBytes: 250 * 1024, label: '250 KB' }),
 });
 
 // Published SVG diagrams are static and self-contained, including when opened directly.
@@ -145,8 +146,9 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..') } = 
     if (image.format !== profile.format) {
       throw new Error(`Blog image format must be ${profile.format}: ${imagePath} (found ${image.format})`);
     }
-    if (image.width !== profile.width || image.height !== profile.height) {
-      throw new Error(`Blog image dimensions must be ${profile.width} x ${profile.height}: ${imagePath}`);
+    const allowedHeights = [profile.height, ...(profile.extraHeights || [])];
+    if (image.width !== profile.width || !allowedHeights.includes(image.height)) {
+      throw new Error(`Blog image dimensions must be ${profile.width} x ${allowedHeights.join(' or ')}: ${imagePath}`);
     }
     try {
       await sharp(absolutePath, { failOn: 'warning' }).stats();

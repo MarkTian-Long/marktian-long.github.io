@@ -85,7 +85,7 @@ category: 技术
 <h2 id="section-3">三、“统一”不是一个开关，它可以发生在中间</h2>
 <p>对于通用多模态理解模型，一条简化的信息流可以这样表示：</p>
 <figure class="post-figure">
-  <img src="../../../assets/images/blog/multimodal-unification/multimodal-information-flow.svg" alt="文字、图片、音频、视频分别处理后进入共同上下文与推理；不需要非文本媒体时文字回答，需要时进入媒体生成路径，再经模型内生成或调用专业模型和工具输出媒体。" width="1280" height="720" loading="lazy" decoding="async" />
+  <img src="../../../assets/images/blog/multimodal-unification/multimodal-information-flow.svg" alt="文字、图片、音频、视频分别处理后进入共同上下文与推理；不需要非文本媒体时文字回答，需要时进入媒体生成路径，再经模型内生成或调用专业模型和工具输出媒体。" width="1280" height="1024" loading="lazy" decoding="async" />
   <figcaption>先判断是否需要非文本媒体输出；只有需要时，才进一步区分模型内生成与系统调用专业能力。</figcaption>
 </figure>
 <p><em>这是一张帮助理解的认知地图，不是行业统一架构。不同模型具体怎样编码、怎样组合信息，并不一定对应图中几个泾渭分明的模块。Sora、Seedance 这样的专业生成模型也可以直接沿自己的生成链路工作，不要求先经过图中的通用理解路径。</em></p>

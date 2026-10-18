@@ -155,6 +155,22 @@ test('inline images stay local, descriptive, bounded, and fully described', () =
   }
 });
 
+test('extended-height diagrams are allowed only for static SVG, not raster images', () => {
+  const slug = 'tall-flow';
+  const tallSvg = inline(slug, 'decision-flow', {
+    src: `assets/images/blog/${slug}/decision-flow.svg`,
+    height: 1024,
+  });
+  assert.doesNotThrow(() => validateImageContract(metadata([post(slug, { inline: [tallSvg] })])));
+  assert.throws(
+    () => validateImageContract(metadata([post(slug, { inline: [{ ...tallSvg, height: 1200 }] })])),
+    /1280.*720.*1024/,
+  );
+  assert.throws(
+    () => validateImageContract(metadata([post(slug, { inline: [inline(slug, 'context-loop', { height: 1024 })] })])),
+    /1280.*720/,
+  );
+});
 test('image paths cannot be duplicated within or across posts', () => {
   const repeatedInline = inline('new-post');
   const current = post('new-post', {

@@ -5,6 +5,7 @@ const COVER_WIDTH = 1200;
 const COVER_HEIGHT = 630;
 const INLINE_WIDTH = 1280;
 const INLINE_HEIGHT = 720;
+const INLINE_TALL_SVG_HEIGHT = 1024;
 const MAX_INLINE_IMAGES = 2;
 const MAX_TEXT_LENGTH = 160;
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -78,8 +79,13 @@ function validateInlineImage(post, image, paths) {
   if (GENERIC_INLINE_NAMES.test(match[1])) {
     throw new Error(`Post ${post.slug} inline image needs a descriptive filename: ${match[1]}`);
   }
-  if (image.width !== INLINE_WIDTH || image.height !== INLINE_HEIGHT) {
-    throw new Error(`${label} dimensions must be ${INLINE_WIDTH} x ${INLINE_HEIGHT}`);
+  const isSvg = image.src.endsWith('.svg');
+  const validHeights = isSvg ? [INLINE_HEIGHT, INLINE_TALL_SVG_HEIGHT] : [INLINE_HEIGHT];
+  if (image.width !== INLINE_WIDTH || !validHeights.includes(image.height)) {
+    const expected = isSvg
+      ? `${INLINE_WIDTH} x ${INLINE_HEIGHT} or ${INLINE_WIDTH} x ${INLINE_TALL_SVG_HEIGHT}`
+      : `${INLINE_WIDTH} x ${INLINE_HEIGHT}`;
+    throw new Error(`${label} dimensions must be ${expected}`);
   }
   assertText(image.alt, `${label} alt`);
   assertText(image.caption, `${label} caption`);
@@ -171,6 +177,7 @@ module.exports = {
   COVER_HEIGHT,
   INLINE_WIDTH,
   INLINE_HEIGHT,
+  INLINE_TALL_SVG_HEIGHT,
   MAX_INLINE_IMAGES,
   validateImageContract,
   collectPostImagePaths,

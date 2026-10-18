@@ -94,6 +94,21 @@ test('multimodal flow preserves the two-level output decision from its original 
   assert.match(svg, /模型内专业生成/);
   assert.match(svg, /系统调用专业/);
   assert.match(svg, /语音 \/ 图片 \/ 视频/);
+  assert.match(svg, /width="1280" height="1024" viewBox="0 0 1280 1024"/);
+  const nodeBox = (id) => {
+    const match = new RegExp('<g id="node-' + id + '"><rect x="([0-9.]+)" y="([0-9.]+)" width="([0-9.]+)" height="([0-9.]+)"').exec(svg);
+    assert.ok(match, `Missing rectangular bounds for ${id}`);
+    const [, x, y, width, height] = match.map(Number);
+    return { x, y, width, height };
+  };
+  const d = nodeBox('D'), m = nodeBox('M'), tx = nodeBox('TX');
+  const g = nodeBox('G'), p = nodeBox('P'), o = nodeBox('O');
+  assert.ok(m.y - (d.y + d.height) >= 90, 'Output decision needs arrow and branch-label clearance');
+  assert.ok(tx.y - (d.y + d.height) >= 90, 'Text answer needs arrow clearance');
+  assert.ok(g.y - (m.y + m.height) >= 70, 'Media generation options need a distinct tier');
+  assert.ok(p.y - (m.y + m.height) >= 70, 'Tool invocation needs a distinct tier');
+  assert.ok(o.y - (g.y + g.height) >= 55, 'Final media output needs room for the converging arrows');
+  assert.ok(o.y - (p.y + p.height) >= 55, 'Both implementations must converge without overlap');
   const metadata = JSON.parse(fs.readFileSync(path.join(root, 'tools/blog/data/posts-meta.json'), 'utf8'));
   const post = metadata.posts.find((entry) => entry.slug === slug);
   assert.equal(post.visuals.inline[0].src, `assets/images/blog/${slug}/multimodal-information-flow.svg`);
