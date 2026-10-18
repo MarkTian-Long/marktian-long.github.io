@@ -31,6 +31,14 @@ const visualPost = {
   },
 };
 
+test('Mermaid fences fail publication instead of becoming unrendered code', () => {
+  const mermaid = ['# Test', '', '## Diagram', '', '```mermaid', 'flowchart TD', '  A --> B', '```'].join('\n');
+  assert.throws(
+    () => renderMarkdown(mermaid, { slug: 'sample-post' }, 'docs/blog/sample-post.md'),
+    /Mermaid diagrams must be published as registered SVG images/
+  );
+});
+
 test('metadata cover renders once after the header and before the divider', () => {
   const template = '<main><header class="post-header">Header</header>\n<!-- post-cover -->\n<hr class="divider" /></main>';
   const html = injectPostCover(template, visualPost);

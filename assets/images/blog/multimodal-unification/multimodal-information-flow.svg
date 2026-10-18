@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">多模态信息从分别处理到共同理解，再按任务分配输出</title>
+  <desc id="desc">文字、图片、音频和视频分别进入可处理的信息表示，汇入共同上下文并进行共同理解与推理。之后按任务需求选择文字回答、模型内专业生成，或系统调用专业模型与工具；后两种路径可生成语音、图片或视频。这不是行业统一架构。</desc>
+  <defs>
+    <marker id="arrow-clay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#b95e3f"/></marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#8898a2"/></marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#507a9a"/></marker>
+    <style>
+      text{font-family:"Noto Sans CJK SC","Microsoft YaHei","PingFang SC",sans-serif;fill:#17283c}
+      .main-title{font-size:35px;font-weight:700;text-anchor:middle}
+      .subtitle{font-size:21px;fill:#526477;text-anchor:middle}
+      .stage{font-size:20px;font-weight:600;fill:#526477}
+      .input-label{font-size:30px;font-weight:600;text-anchor:middle}
+      .primary-label{font-size:30px;font-weight:650;text-anchor:middle}
+      .output-title{font-size:28px;font-weight:650;text-anchor:middle}
+      .output-note{font-size:21px;fill:#526477;text-anchor:middle}
+      .footnote{font-size:17px;fill:#526477;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1280" height="720" rx="20" fill="#faf9f5"/>
+  <text x="640" y="57" class="main-title">输入可以分工，中间可以汇合，输出仍然分工</text>
+  <text x="640" y="94" class="subtitle">多模态理解与生成的一种简化信息流</text>
+  <text x="58" y="131" class="stage">01 · 输入模态</text>
+  <rect x="53" y="148" width="277" height="70" rx="14" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <text x="191.5" y="194" class="input-label">文字</text>
+  <path d="M191.5 218V242" fill="none" stroke="#8898a2" stroke-width="3"/>
+  <rect x="352" y="148" width="277" height="70" rx="14" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <text x="490.5" y="194" class="input-label">图片</text>
+  <path d="M490.5 218V242" fill="none" stroke="#8898a2" stroke-width="3"/>
+  <rect x="651" y="148" width="277" height="70" rx="14" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <text x="789.5" y="194" class="input-label">音频</text>
+  <path d="M789.5 218V242" fill="none" stroke="#8898a2" stroke-width="3"/>
+  <rect x="950" y="148" width="277" height="70" rx="14" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <text x="1088.5" y="194" class="input-label">视频</text>
+  <path d="M1088.5 218V242" fill="none" stroke="#8898a2" stroke-width="3"/>
+  <path d="M191.5 242H1088.5" fill="none" stroke="#8898a2" stroke-width="3" stroke-linecap="round"/>
+  <path d="M640 242V267" fill="none" stroke="#b95e3f" stroke-width="4" marker-end="url(#arrow-clay)"/>
+  <rect x="378" y="280" width="524" height="68" rx="17" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <text x="640" y="324" class="primary-label">分别转换为可处理的信息</text>
+  <path d="M640 348V374" fill="none" stroke="#b95e3f" stroke-width="4" marker-end="url(#arrow-clay)"/>
+  <text x="58" y="394" class="stage">02 · 信息汇合</text>
+  <rect x="378" y="384" width="524" height="66" rx="17" fill="#f9eee8" stroke="#b95e3f" stroke-width="2.5"/>
+  <text x="640" y="428" class="primary-label">进入共同上下文</text>
+  <path d="M640 450V473" fill="none" stroke="#b95e3f" stroke-width="4" marker-end="url(#arrow-clay)"/>
+  <rect x="378" y="483" width="524" height="68" rx="17" fill="#f9eee8" stroke="#b95e3f" stroke-width="2.5"/>
+  <text x="640" y="526" class="primary-label">共同理解与推理</text>
+  <text x="58" y="561" class="stage">03 · 按任务输出</text>
+  <path d="M640 551V579M227 579H1053" fill="none" stroke="#b95e3f" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M227 579V597" fill="none" stroke="#b95e3f" stroke-width="3.5" marker-end="url(#arrow-clay)"/>
+  <path d="M640 579V597" fill="none" stroke="#b95e3f" stroke-width="3.5" marker-end="url(#arrow-clay)"/>
+  <path d="M1053 579V597" fill="none" stroke="#507a9a" stroke-width="3.5" marker-end="url(#arrow-blue)"/>
+  <rect x="36" y="605" width="382" height="80" rx="16" fill="#ffffff" stroke="#dddcd8" stroke-width="2"/>
+  <rect x="449" y="605" width="382" height="80" rx="16" fill="#f9eee8" stroke="#b95e3f" stroke-width="2"/>
+  <rect x="862" y="605" width="382" height="80" rx="16" fill="#edf4f8" stroke="#507a9a" stroke-width="2"/>
+  <text x="227" y="641" class="output-title">文字回答</text>
+  <text x="227" y="669" class="output-note">无需额外媒体生成</text>
+  <text x="640" y="641" class="output-title">模型内专业生成</text>
+  <text x="640" y="669" class="output-note">语音 · 图片 · 视频</text>
+  <text x="1053" y="641" class="output-title" style="font-size:26px">系统调用专业模型 / 工具</text>
+  <text x="1053" y="669" class="output-note">语音 · 图片 · 视频</text>
+  <text x="640" y="711" class="footnote">示意图，不代表所有模型都采用相同内部架构；专业生成模型也可以独立运行。</text>
+</svg>

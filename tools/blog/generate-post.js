@@ -151,6 +151,9 @@ function renderMarkdown(markdown, metadata, sourceRepoPath) {
     }
     if (/^---+\s*$/.test(line)) { index++; continue; }
     if (/^```/.test(line)) {
+      if (/^```\s*mermaid(?:\s|$)/i.test(line)) {
+        throw new Error("Mermaid diagrams must be published as registered SVG images, not unrendered code blocks.");
+      }
       const rows = [];
       index++;
       while (index < lines.length && !/^```/.test(lines[index])) rows.push(lines[index++]);
