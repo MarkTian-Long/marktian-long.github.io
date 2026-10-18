@@ -32,7 +32,7 @@
 | 区域 | 路径 | 内容 |
 | --- | --- | --- |
 | 思考碎片 | [`tools/blog/`](tools/blog/) | 文章归档、筛选和独立文章页 |
-| 工具与工作流 | [`index.html#resources`](index.html#resources) | 多平台资料库、AI 本地文件助手、AI 工作流工具包（Kit）、Harness · AI 协作框架 |
+| 工具与工作流 | [`index.html#resources`](index.html#resources) | AI 工作流工具包（Kit）、多平台资料库、AI 本地文件助手、Harness · AI 协作框架 |
 | 首页 | [`index.html`](index.html) | 文章、GitHub 项目、站内原型、案例与联系信息的主入口 |
 | 交互原型 | [`tools/`](tools/) | 四个场景化的 AI 产品与系统原型 |
 | 信息工具 | [`tools/`](tools/) | 四个日常信息获取与分析工具 |

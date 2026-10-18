@@ -34,7 +34,7 @@ The homepage organizes content in this order:
 | Area | Path | Contents |
 | --- | --- | --- |
 | Thought Fragments | [`tools/blog/`](tools/blog/) | Article archive, filters, and individual article pages |
-| Tools and workflows | [`index.html#resources`](index.html#resources) | Multi-platform Content Library, Local Folder Bridge, AI Workflow Kit, and Harness · AI collaboration framework |
+| Tools and workflows | [`index.html#resources`](index.html#resources) | AI Workflow Kit, Multi-platform Content Library, Local Folder Bridge, and Harness · AI collaboration framework |
 | Homepage | [`index.html`](index.html) | Main entry for articles, GitHub projects, on-site prototypes, case studies, and contact information |
 | Interactive prototypes | [`tools/`](tools/) | Four AI product and system prototypes for specific scenarios |
 | Information tools | [`tools/`](tools/) | Four tools for everyday information gathering and analysis |
