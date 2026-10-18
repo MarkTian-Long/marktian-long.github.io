@@ -52,6 +52,8 @@ jobs:
           node tools/blog/generate-post.js --write docs/blog/personal-agent.md tools/blog/posts/personal-agent.html
           node scripts/generate-search-assets.js --write
           git rm -- .github/workflows/stage-personal-agent-20261018.yml
+          git add -u
+          git add tools/blog/posts/personal-agent.html
           (cd scripts && npm run check)
           node scripts/build-public-dist.js
           node scripts/check-public-dist.js

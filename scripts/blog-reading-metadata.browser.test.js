@@ -59,7 +59,7 @@ test('reading metadata renders from final HTML on recent and legacy articles', {
   }
 });
 
-test('archive displays newest ordinary article first even if fetched JSON is reversed', { timeout: 30000 }, async () => {
+test('archive preserves newest month when input is reversed and canonical same-month editorial order', { timeout: 30000 }, async () => {
   const metadata = require('../tools/blog/data/posts-meta.json');
   const featured = new Set(require('../tools/blog/data/featured-posts.json').featured);
   const expected = metadata.posts.find((post) => !featured.has(post.slug));
@@ -79,7 +79,17 @@ test('archive displays newest ordinary article first even if fetched JSON is rev
     await page.goto(`${url}/tools/blog/index.html`, { waitUntil: 'domcontentloaded' });
     const firstArchiveLink = page.locator('#archiveRoot .post-title').first();
     await firstArchiveLink.waitFor({ state: 'visible' });
-    assert.equal(await firstArchiveLink.getAttribute('href'), expected.url);
+    // Reversing JSON destroys its editorial tie-break among posts in the same month.
+    // The archive can guarantee the newest month here, but not recover that lost tie order.
+    const hrefFromReversed = await firstArchiveLink.getAttribute('href');
+    const matched = metadata.posts.find((post) => post.url === hrefFromReversed);
+    assert.ok(matched, 'first rendered article must be present in metadata');
+    assert.equal(matched.date, expected.date);
+    await page.unroute('**/tools/blog/data/posts-meta.json');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const firstCanonicalLink = page.locator('#archiveRoot .post-title').first();
+    await firstCanonicalLink.waitFor({ state: 'visible' });
+    assert.equal(await firstCanonicalLink.getAttribute('href'), expected.url);
     await page.close();
   } finally {
     if (browser) await browser.close();
