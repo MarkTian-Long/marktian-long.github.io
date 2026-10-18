@@ -113,6 +113,8 @@ test('complex inline SVG scroll stays inside the mobile article', { timeout: 600
         await page.goto(url + '/tools/blog/posts/multimodal-unification.html', { waitUntil: 'domcontentloaded' });
         await page.locator('#continueReadingStyles').waitFor({ state: 'attached' });
         const figure = page.locator('.post-body figure.post-figure').first();
+        // The diagram is below the fold and lazy-loaded; make it visible before awaiting decode.
+        await figure.scrollIntoViewIfNeeded();
         await figure.locator('img[src$="multimodal-information-flow.svg"]').evaluate(image => image.decode());
         for (const theme of ['light', 'dark']) {
           await page.evaluate(value => document.body.dataset.theme = value, theme);
