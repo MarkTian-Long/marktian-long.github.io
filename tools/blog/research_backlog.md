@@ -1,6 +1,6 @@
 # Blog 研究待办与聚合候选
 
-结构整理：2026-10-09；最后内容更新：2026-10-16。这里保存研究问题，不是已批准的文章排期；分类、标题、大纲和发布仍需走正式流程。维护方式见 [待办维护规范](governance/blog-research-backlog-spec.md)，研究决策见 [Blog SOP](governance/blog-sop.md)，系列规划见 [series/](series/)。
+结构整理：2026-10-09；最后内容更新：2026-10-18。这里保存研究问题，不是已批准的文章排期；分类、标题、大纲和发布仍需走正式流程。维护方式见 [待办维护规范](governance/blog-research-backlog-spec.md)，研究决策见 [Blog SOP](governance/blog-sop.md)，系列规划见 [series/](series/)。
 
 部分早期研究材料仍沿用既有摘录，未逐站重新核验；2026-10-10、2026-10-11、2026-10-14 与 2026-10-16 新核验来源在相应研究卡内另行标明。下文的材料记录日期不等同于新一轮事实核验日期。创建、内容更新与新闻发生时间分别记录。
 
@@ -18,7 +18,7 @@
 | [软件市场带来什么采购增量？](#br-20260930-01) | 2026-09-30 | 待补证 | 等待真实采购、伙伴交付与结算实践 |
 | [第三方能力怎样被持续复用？](#br-20260930-02) | 2026-09-30 | 待补证 | 补跨任务复用与开发者实际收益证据 |
 | [Agent 操作后，哪些产品设计价值会变化？](#br-20260930-03) | 2026-09-30 | 待研究 | 保留宽问题；先区分与新工作单位选题、旧文的增量 |
-| [长期委托能否有用且可持续？](#br-20260930-04) | 2026-09-30 | 已转入 | [Personal Agent 工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)；继续跟踪净收益证据 |
+| [长期委托能否有用且可持续？](#br-20260930-04) | 2026-09-30 | 已转入 | [Personal Agent 已发布文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)；继续补长期净收益和真实收入证据 |
 | [消费入口与中介价值怎样迁移？](#br-20260930-05) | 2026-09-30 | 待补证 | 补真实用户迁移、商家渠道与内容收入实践 |
 
 ## 二、当前研究卡
@@ -259,7 +259,7 @@
 
 ### BR-20260930-04｜持续委托的真实需求、净收益与商业可持续性
 
-**创建：2026-09-30｜内容更新：2026-10-14｜状态：已转入。** 已转入[未发布的 Personal Agent 当前 Markdown 工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)；长期留存与实际收入仍有证据缺口，未标记为已证实。 既有材料记录包括 9 月 30 日与 10 月 9 日两批；本次把旧 03 中的持续委托资料合并到这里，不宣称已重验原站。
+**创建：2026-09-30｜内容更新：2026-10-18｜状态：已转入。** 当前成果为[已正式发布的 Personal Agent 文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)；大众长期留存、服务净收益与实际收入仍有证据缺口，未标记为已证实。 既有材料记录包括 9 月 30 日与 10 月 9 日两批；本次把旧 03 中的持续委托资料合并到这里，不宣称已重验原站。
 
 **核心问题与用户重点。** 单次有用的代办，能否变成愿意长期保留的服务？交代、授权、检查、接管和纠错会不会抵消收益？商业可持续不以消费者直接订阅为必要条件；OpenClaw 应作为“热潮后还剩多少真实价值”的反证，而非只作正面先驱。
 
@@ -273,7 +273,7 @@
 
 
 
-**关联与去向。** 当前 Personal Agent 研究的价值检验线，也为 [工作单位新题](#br-20261009-01)提供长期场景边界。当前 [Personal Agent 唯一工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)对照**六款**产品：Dots、Muse、Gemini Spark、Grok Bot，以及创业公司 Manus Cue、Instinct；Grok Bot 的持续 Bot、团队与企业开放、跨 Bot 共享环境及误发信息个案分别承担产品选择和授权反证。其他案例继续解释不同持续环境、身份/行动边界、低交互负担与商家交易收入；OpenClaw 只作热潮后持续采用的反证。保持本篇“跨时间接续事务 + 跨服务、跨人协调个人委托”的主线；授权边界是必要约束，不是文章核心结论。原稿中突兀的“取代携程”段已从正文删除，OTA 商业与入口之争保留 [05](#br-20260930-05)；创业退出、社区参与和软件市场继续留在其他研究卡或本卡后续材料，不因热点自动新增章节。消费入口见 [05](#br-20260930-05)。
+**关联与去向。** 当前 Personal Agent 研究的价值检验线，也为 [工作单位新题](#br-20261009-01)提供长期场景边界。[Personal Agent 已发布文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)对照**六款**产品：Dots、Muse、Gemini Spark、Grok Bot，以及创业公司 Manus Cue、Instinct；Grok Bot 的持续 Bot、团队与企业开放、跨 Bot 共享环境及误发信息个案分别承担产品选择和授权反证。其他案例继续解释不同持续环境、身份/行动边界、低交互负担与商家交易收入；OpenClaw 只作热潮后持续采用的反证。保持本篇“跨时间接续事务 + 跨服务、跨人协调个人委托”的主线；授权边界是必要约束，不是文章核心结论。原稿中突兀的“取代携程”段已从正文删除，OTA 商业与入口之争保留 [05](#br-20260930-05)；创业退出、社区参与和软件市场继续留在其他研究卡或本卡后续材料，不因热点自动新增章节。消费入口见 [05](#br-20260930-05)。
 
 <details>
 <summary>展开：需求、持续运行机制与真实使用反证</summary>
@@ -324,7 +324,7 @@
 
 拟选情报/内容研究与跨周项目跟进，观察至少一个自然事务周期；记录交代、监控、纠错、接管总投入，漏跟进、有效提醒、可验收结果成本、授权变更后的行为、暂停或更换执行者后的损失。研究尚未执行，不填成功率或 ROI。后台少被打开不等于留存不足；多生成、多下载、多星标、多调用也不等于被持续委托。
 
-事务密集且背景、连接、信任可复用的人群可能先受益，但目前只是定位假设。作者 AIHOT 规则调整是需求锚点，不是可靠性或净收益结果。2026-10-10 用户已确认五节大纲与“产品”分类，当前工作稿已创建并通过活人感与 Checklist 初次审查；尚未正式发布。消费渠道、社区参与和退出不扩成当前主文。
+事务密集且背景、连接、信任可复用的人群可能先受益，但目前只是定位假设。作者 AIHOT 规则调整是需求锚点，不是可靠性或净收益结果。2026-10-10 用户已确认五节大纲与“产品”分类，当时工作稿已创建并通过初次审查；2026-10-18 完成正式发布。消费渠道、社区参与和退出不扩成当前主文。
 
 </details>
 
@@ -369,10 +369,11 @@
 
 ## 四、关键决策与结项
 
-| 2026-10-10 | 多模态—视频—世界模型系列按已发布事实结项；新问题转独立待办 | 核心技术主线 01/02/04 和行业延伸 05 均已发布，03 已独立转出。新建 BR-20261010-02（机器人数据工厂）与 BR-20261010-03（AI 游戏创作），不把两个新研究方向强行当作原系列第 06 篇。详见[系列历史 Brief](series/multimodal-video-ai-series-brief.md)；新方向未获大纲确认。 |
 | 日期 | 决策 / 变化 | 原因与去向 |
-| 2026-10-10 | Personal Agent 草稿对照案例由五款增为六款 | [Grok Bot 8/11 发布](https://x.ai/news/introducing-grok-bot)，具有个人和企业服务两端及持续工作机制，用户明确要求加入开头、表格；同时借 [MIT 1995 材料](https://news.mit.edu/1995/agents-0816)修正“Personal Agent 以前是单次任务助手”的不准确表述。当前工作稿原位更新，不扩主线。 |
 |---|---|---|
+| 2026-10-18 | Personal Agent 正式发布，研究卡保留待验证指标 | [文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)完成“长期个人事务跟进、跨服务协调与真实净收益”的五节论证；正式图源为静态 SVG，草稿已迁移。发布过程在同月新增文章时发现反向排序测试误报，已修复测试并保留月份与正常编辑顺序双验证。视觉规范 v1.4 已记录同组样式、精确 SVG 和同源预览经验；不重复扩写 SOP。 |
+| 2026-10-10 | 多模态—视频—世界模型系列按已发布事实结项；新问题转独立待办 | 核心技术主线 01/02/04 和行业延伸 05 均已发布，03 已独立转出。新建 BR-20261010-02（机器人数据工厂）与 BR-20261010-03（AI 游戏创作），不把两个新研究方向强行当作原系列第 06 篇。详见[系列历史 Brief](series/multimodal-video-ai-series-brief.md)；新方向未获大纲确认。 |
+| 2026-10-10 | Personal Agent 草稿对照案例由五款增为六款 | [Grok Bot 8/11 发布](https://x.ai/news/introducing-grok-bot)，具有个人和企业服务两端及持续工作机制，用户明确要求加入开头、表格；同时借 [MIT 1995 材料](https://news.mit.edu/1995/agents-0816)修正“Personal Agent 以前是单次任务助手”的不准确表述。当前工作稿原位更新，不扩主线。 |
 | 2026-09-30 | 首次建立01–04，随后新增05 | [首次提交19d738c](https://github.com/MarkTian-Long/marktian-long.github.io/commit/19d738c97149261e9bf681453b3e982c19ece615)与[新增05的a91abc4](https://github.com/MarkTian-Long/marktian-long.github.io/commit/a91abc44394e40a83a0785955a9f092633a1d27c)可核查；日期是记录创建，不是所有想法首次产生的日期。 |
 | 2026-10-09 | 先按“持续委托”收录，后转向“Agent作为工作单位” | [8a46261](https://github.com/MarkTian-Long/marktian-long.github.io/commit/8a462619fa7c38b3f3e0aced2e04a720930c6767)与[b71d292](https://github.com/MarkTian-Long/marktian-long.github.io/commit/b71d292256bc376e877d984f2b2bbea9c0e0a670)。用户强调的重点比长期代办更上游；旧追加段落不再与新主线并列生效。 |
 | 2026-10-09 | 新题独立为BR-20261009-01；恢复旧03范围 | 修正此前同主题即并项造成的日期与边界混淆；旧ID保留，新题内容只维护一次，旧03仍是未展开的宽问题。 |
@@ -381,9 +382,9 @@
 
 | 2026-10-09 | 人才与组织竞争优势讨论独立建项 BR-20261009-02 | 保存本会话的跨公司比较和待核实案例；与系列组织篇只建立关联，不改 Series Brief、文章排期或元数据。 |
 | 2026-10-10 | Goodput / Cost per Successful Task 独立建项 BR-20261010-01 | 从 Google 基础设施的有效产出视角延伸到 Agent 上线后的经营指标；与旧评测文章、Agent 工程问题和 POC 验证边界区分。已核验 Arize/Fireworks、Every、近期从业者观点与预印本；目前状态为待补证，不锁定标题、分类或排期。 |
-| 2026-10-10 | Personal Agent 持续委托稿已入库，BR-20260930-04 标记已转入 | 用户已批准五节大纲和“产品”分类；唯一当前工作稿位于 [drafts/blog/personal-agent.md](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)，未发布。旅行 OTA／商家佣金／即刻社区留在 [05](#br-20260930-05)；创业退出仍留在 04 的研究资料，尚不独立立项；企业软件采购／Plugins 继续在 01、02，Agent 作为工作单位在 BR-20261009-01。无需新建重复待办。 |
+| 2026-10-10 | Personal Agent 持续委托稿已入库，BR-20260930-04 标记已转入 | 用户已批准五节大纲和“产品”分类；当时工作稿位于 `drafts/blog/personal-agent.md`，尚未发布；该稿现已迁移为[正式文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)。旅行 OTA／商家佣金／即刻社区留在 [05](#br-20260930-05)；创业退出仍留在 04 的研究资料，尚不独立立项；企业软件采购／Plugins 继续在 01、02，Agent 作为工作单位在 BR-20261009-01。无需新建重复待办。 |
 | 2026-10-11 | BR-20260930-05 补入 Bites / DoorDash 对照 | 与 Instinct / 携程并列检验“新 AI 入口下旧平台退至后台”与“旧平台交易入口被绕开”两种路径；保留老平台原生 AI 与履约价值的反证，不据此断言替代已发生；未新建立项、未改 Personal Agent 草稿。 |
 | 2026-10-16 | SaaS 买/建边界及维护经济学补证入库 BR-20261016-01 | 为另一会话正在进行大纲讨论的 SaaS Blog 保存 Swyx 72 份 AI 复刻、Matt Ghost Pepper 与 Every CRM→Attio 的正反证据；独立成卡以便跨会话召回，但不新增第二篇文章或生成草稿，待获得真实长期部署与 TCO 再提升证据等级。 |
 | 2026-10-11 | 中美 AI 态度与使用扩散独立建项 BR-20261011-01 | 用户追问实际普及率与社会抵触原因；纠正误入 series/ 的单篇候选文件，统一在待办记录。明确态度和使用率是不同指标，跨国采用率需校正统计覆盖；不改 Series Brief、文章或发布元数据。 |
 
-BR-20260930-04 已转入未发布的[个人代理工作稿](https://github.com/MarkTian-Long/marktian-long.github.io/blob/main/drafts/blog/personal-agent.md)。其余研究卡暂未转入正式文章，也没有合并关闭或结项。本轮未修改 `posts-meta.json`、已发布文章关系或 Series Brief；不将未发布草稿记为上线。
+BR-20260930-04 已转入[已发布的个人代理文章](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)；长期使用与商业化证据仍待追踪。其余研究卡保留原研究状态；本轮未更改 Series Brief，也未将相关未验证假设写成已解决。
