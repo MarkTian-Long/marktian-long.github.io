@@ -91,6 +91,8 @@ MIT 在[1995 年介绍软件代理研究](https://news.mit.edu/1995/agents-0816)
 
 跨服务协调不是个人 Agent 独有的技术能力，企业 Agent 也会处理跨系统事务。差别在于服务对象：个人的目标分散在不同公司的服务、账号和人际关系中，没有谁天然掌握全部信息和权限。个人代理也不必自己提供机票、酒店或支付服务，那些商品、库存和履约能力仍可交给专业服务商。它要做的是围绕一个人的目标组织不同服务：例如按原预算完成旅行、让同行人知道变化、避免重复预订，并在某个环节卡住时继续寻找解决办法。如果每遇到一家新服务商，用户都要重新解释全部背景并自己追踪结果，那么代理只接管了分散的操作，没有接管协调负担。
 
+这里还有一项用户自身无法单方面解决的限制：即使个人授权 Agent 代办，服务商也未必允许它访问网站或完成交易。[The Verge 2026 年 10 月的报道](https://www.theverge.com/ai-artificial-intelligence/1013195/ai-agents-blocked-web)记录，达美航空限制外部 Agent 代订机票，部分银行和券商出于安全考虑阻止 Agent 访问账户。这意味着跨服务协调不仅需要 Agent 会操作，还需要服务方认可的接入方式，以及能够真实完成订单和售后的合作关系。
+
 当一件事涉及多个人，“代表谁”就更重要。[Google Labs 的家庭代理 CC](https://blog.google/innovation-and-ai/models-and-research/google-labs/cc-expanding-to-groups/)让家庭成员分别决定共享哪些信息；Instinct 的[群聊代理](https://www.businessinsider.com/instincts-ai-agents-are-coming-to-your-group-chat-2026-10)也要求个人代理另行获得授权，才能进入群体协作。一个家庭或朋友群有共同安排，不代表每个人的私人邮件、日历和支付账户都自动合并。Dots 的组织专职代理、Grok 的团队 Bot 更是另一种关系：它们的部分职责由组织而非单个个人配置。技术上都可以长期工作，但委托方不同，代理需要维护的关系也不同。
 
 这种差异一旦进入真实沟通，就会暴露风险。[Business Insider 10 月 9 日记录的一位使用者自述](https://www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10)中，个人财务月报被 Grok Bot 发到了公司高管 Slack 群；当事人称事后撤销了部分账户连接。这个个案不能说明总体事故率，却提示了一个具体问题：知道一份资料、能使用某个聊天渠道，不等于获准把资料发送给渠道中的所有人。
@@ -138,6 +140,7 @@ Instinct 则提供了另一面。The Verge 记者在[10 月初的实际试用](h
 **独立媒体与真实使用反馈**
 
 - [Business Insider：Grok Bot 个人财务资料误发工作群（2026-10-09）](https://www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10)
+- [The Verge：Websites are closing their doors to AI agents（2026-10-17）](https://www.theverge.com/ai-artificial-intelligence/1013195/ai-agents-blocked-web)
 - [The Verge：Instinct hands-on（2026-10-09）](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)
 - [Business Insider：Instinct unsolicited shopping recommendations（2026-10-05）](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)
 - [Business Insider：Instinct group chat agents（2026-10）](https://www.businessinsider.com/instincts-ai-agents-are-coming-to-your-group-chat-2026-10)
