@@ -32,12 +32,12 @@
 | 区域 | 路径 | 内容 |
 | --- | --- | --- |
 | 思考碎片 | [`tools/blog/`](tools/blog/) | 文章归档、筛选和独立文章页 |
-| 工具与工作流 | [`index.html#resources`](index.html#resources) | 多平台资料库、AI 本地文件助手、Harness · AI 协作框架 |
+| 工具与工作流 | [`index.html#resources`](index.html#resources) | 多平台资料库、AI 本地文件助手、AI 工作流工具包（Kit）、Harness · AI 协作框架 |
 | 首页 | [`index.html`](index.html) | 文章、GitHub 项目、站内原型、案例与联系信息的主入口 |
 | 交互原型 | [`tools/`](tools/) | 四个场景化的 AI 产品与系统原型 |
 | 信息工具 | [`tools/`](tools/) | 四个日常信息获取与分析工具 |
 
-新增 GitHub 项目前，按[首页项目精选规范](docs/github-resources-guidelines.md)同时评估读者价值与作者代表性，再确定介绍与入口。当前选择和依据见[首页表达调整](docs/plans/2026-10-11-homepage-project-positioning.md)。
+新增 GitHub 项目前，按[首页项目精选规范](docs/github-resources-guidelines.md)同时评估读者价值与作者代表性，再确定介绍与入口。当前四项精选及 Kit 入选依据见[2026-10-18 Kit 评估记录](docs/plans/2026-10-18-homepage-kit-selection.md)；[2026-10-11 首页表达调整](docs/plans/2026-10-11-homepage-project-positioning.md)保留此前三项选择的历史记录。
 
 ## 原型与研究
 

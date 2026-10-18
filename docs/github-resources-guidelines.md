@@ -100,4 +100,4 @@
 
 首次精简的选择记录见 [2026-10-09 设计文档](plans/2026-10-09-github-resources-design.md)第 11 节。
 
-当前选择与代表性依据见 [2026-10-11 首页表达调整](plans/2026-10-11-homepage-project-positioning.md)：多平台资料库、AI 本地文件助手、Harness · AI 协作框架。
+2026-10-11 当时的三项选择与代表性依据见 [首页表达调整](plans/2026-10-11-homepage-project-positioning.md)。当前四项为多平台资料库、AI 本地文件助手、AI 工作流工具包（Kit）、Harness · AI 协作框架；新增依据见 [2026-10-18 Kit 评估记录](plans/2026-10-18-homepage-kit-selection.md)。
