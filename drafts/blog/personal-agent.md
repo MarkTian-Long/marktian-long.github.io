@@ -10,7 +10,7 @@
 
 但整趟旅行还不能真正交给它。订票等环节尚未无缝衔接，遇到变化，我仍需要带着新情况回去调整方案。**AI 已经是很好用的规划搭档，却还没有成为持续替我跟进预订和行程变化的经办人。**
 
-这也是为什么最近一批 Personal Agent 产品值得关注。2026 年 5 月，Google 在 Gemini App 中推出 [Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)，尝试让 AI 在用户离开后继续办事。8 月 11 日，xAI 发布 [Grok Bot](https://x.ai/news/introducing-grok-bot)，主打持续工作的 AI 同事与多 Bot 协作。9 月，Meta 发布 [Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)，Manus 推出独立个人代理应用 [Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)，OpenAI 又发布了 [Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/)；创业公司 Instinct 则凭借短信、邮件和电话里的 AI 助理，成为 [The Verge 等媒体关注的消费产品](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)。
+对我来说，这段经历留下的需求，不是再生成一份更漂亮的旅行计划，而是希望有人继续跟进尚未完成的安排。最近一批 Personal Agent 产品，提供了观察 AI 能否承担这类持续事务的不同尝试。2026 年 5 月，Google 在 Gemini App 中推出 [Spark](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)，尝试让 AI 在用户离开后继续办事。8 月 11 日，xAI 发布 [Grok Bot](https://x.ai/news/introducing-grok-bot)，主打持续工作的 AI 同事与多 Bot 协作。9 月，Meta 发布 [Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)，Manus 推出独立个人代理应用 [Cue](https://manus.im/zh-cn/blog/introducing-manus-2-0)，OpenAI 又发布了 [Dots](https://openai.com/zh-Hans-CN/index/introducing-dots/)；创业公司 Instinct 则凭借短信、邮件和电话里的 AI 助理，成为 [The Verge 等媒体关注的消费产品](https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots)。
 
 这些产品并不完全属于同一种市场：有的主要接受个人委托，有的承接组织分配的职责。它们共同尝试的，是让用户不只交出一次规划或某一步操作，而是让服务持续接续未完事项，协调不同应用和相关方。**当用户不再反复提醒时，AI 能不能连后续的记挂、协调、催办和补救一起接住？**
 
