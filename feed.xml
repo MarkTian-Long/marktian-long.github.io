@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>Personal Agent：当 AI 开始长期接手你的事</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/personal-agent.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/personal-agent.html</guid>
+      <description>把一类事务长期交给 AI，用户希望省下的不只是几个操作，还有后续的记挂、协调和催办。Personal Agent 是否值得长期保留，要看它能否在情况变化后继续推进事务，而不是让用户多管理一个工具。</description>
+    </item>
+    <item>
       <title>AI 越来越强，怎样把一件事做出价值？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-work-value-loop.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-work-value-loop.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</guid>
       <description>智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协作分工。</description>
-    </item>
-    <item>
-      <title>LLM 重构职场：不是谁消失，是每个人都在变</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/llm-reshapes-software-roles.html</guid>
-      <description>LLM 对软件团队的冲击不是“执行岗消失、协调岗幸存”。真正的分野在于工作性质：输入越标准化、输出越可验证的工作被压缩得越直接；而以人为输入、以“让事情发生”为输出的工作，面对的是另一种性质的重构。</description>
     </item>
   </channel>
 </rss>
