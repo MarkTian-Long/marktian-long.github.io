@@ -74,3 +74,32 @@ test('published SVG diagrams and generated articles match their authoritative so
     assert.equal(actual, expected, `Rendered article is stale: ${post.slug}`);
   }
 });
+
+test('multimodal flow preserves the two-level output decision from its original Mermaid graph', () => {
+  const slug = 'multimodal-unification';
+  const svg = fs.readFileSync(path.join(root, 'assets/images/blog', slug, 'multimodal-information-flow.svg'), 'utf8');
+  const edges = Array.from(svg.matchAll(/<path\b[^>]*\bdata-from="([^"]+)"\s+data-to="([^"]+)"(?:\s+data-guard="([^"]+)")?/g))
+    .map((match) => [match[1], match[2], match[3] || '']);
+  const expected = [
+    ['T', 'E', ''], ['I', 'E', ''], ['A', 'E', ''], ['V', 'E', ''],
+    ['E', 'C', ''], ['C', 'R', ''], ['R', 'D', ''],
+    ['D', 'TX', '不需要'], ['D', 'M', '需要'],
+    ['M', 'G', ''], ['M', 'P', ''], ['G', 'O', ''], ['P', 'O', ''],
+  ];
+  assert.deepEqual(edges, expected, 'Do not flatten output requirement and generation implementation into three peer choices');
+  for (const node of ['T', 'I', 'A', 'V', 'E', 'C', 'R', 'D', 'TX', 'M', 'G', 'P', 'O']) {
+    assert.ok(svg.includes(`id="node-${node}"`), `Missing flow node: ${node}`);
+  }
+  assert.match(svg, /需要非文本媒体输出吗？/);
+  assert.match(svg, /模型内专业生成/);
+  assert.match(svg, /系统调用专业/);
+  assert.match(svg, /语音 \/ 图片 \/ 视频/);
+  const metadata = JSON.parse(fs.readFileSync(path.join(root, 'tools/blog/data/posts-meta.json'), 'utf8'));
+  const post = metadata.posts.find((entry) => entry.slug === slug);
+  assert.equal(post.visuals.inline[0].src, `assets/images/blog/${slug}/multimodal-information-flow.svg`);
+  const markdown = fs.readFileSync(path.join(root, 'docs/blog', `${slug}.md`), 'utf8');
+  const published = fs.readFileSync(path.join(root, 'tools/blog/posts', `${slug}.html`), 'utf8');
+  assert.ok(markdown.includes('![' + post.visuals.inline[0].alt + ']'));
+  assert.ok(published.includes('alt="' + post.visuals.inline[0].alt + '"'));
+  assert.doesNotMatch(published, /<pre><code>flowchart TD/);
+});
