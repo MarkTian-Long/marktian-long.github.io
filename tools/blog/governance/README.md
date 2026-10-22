@@ -12,7 +12,6 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
 
-
 ## 按阶段读取
 
 下表只负责导航到正确的规范入口，不复制各文件中的详细规则。默认按当前阶段读取相关章节，不把全部规范在每轮重复加载。
