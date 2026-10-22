@@ -12,6 +12,19 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
 
+
+## 按阶段读取
+
+下表只负责导航到正确的规范入口，不复制各文件中的详细规则。默认按当前阶段读取相关章节，不把全部规范在每轮重复加载。
+
+| 阶段 | 默认读取 | 按需读取 |
+|---|---|---|
+| 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；形成独立起点后再读取 research_backlog.md 和 posts-meta.json |
+| 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
+| 正文写作 | 已确认大纲、blog-sop.md 的相关写作章节 | 仅为实际采用的图表读取 blog-charts-spec.md |
+| 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
+| 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
+
 ## 标签定期维护
 
 [标签巡检与历史问题台账](../taxonomy-maintenance.md) 是分类与标签维护的单一运行入口，保存周期检查、提醒去重、当前问题及历史处置。它不复制 taxonomy 定义，不替代 SOP 的变更决策或 Checklist 的终审。定时任务每次读取该文件最新内容；同一问题复发沿用原 ID，不另建重复周报。词义、文章标签、正文和 UI 不因统计信号而自动修改。
