@@ -68,10 +68,10 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 }
 ```
 
-- 封面和正文图都完全可选；正文图只在能解释文字难以快速说清的关系、顺序、边界、分层或反馈回路时使用，数量为 0–2 张。
+- 封面可选；正文按写作阶段已确认的视觉规划登记，支持图文协同、概念搭配和递进图组，也允许零图。发布校验不设正文图片张数硬上限；每张仍须满足独立资产、描述、尺寸与安全契约。
 - 无图文章和已在 `legacy_without_visuals` 中的历史文章都使用全站图片回退；不必补图或改正文。
 - 主页与 Blog 列表继续保持纯文字，`visuals` 只服务文章页、OG/Twitter 分享预览、JSON-LD 和 public dist 白名单。
-- 尺寸、大小、alt/caption、生成提示词与 0–2 张决策门详见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)。
+- 数量参考、图文分工、尺寸、体积、alt/caption、制作与预览验收详见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)，不在发布层重复制定配图数量或替写作阶段判断。
 
 ### 双维度标签体系
 

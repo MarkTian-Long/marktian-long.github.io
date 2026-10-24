@@ -130,9 +130,39 @@ test('cover paths, dimensions, and alt text are validated', () => {
   }
 });
 
+test('editorial image counts are not a publishing quota', () => {
+  for (const count of [0, 1, 2, 3, 4, 6, 12]) {
+    const slug = 'visual-sequence';
+    const images = Array.from({ length: count }, (_, index) => inline(slug, `step-${index + 1}`));
+    assert.doesNotThrow(() => validateImageContract(metadata([post(slug, { inline: images })])), `count=${count}`);
+    assert.equal(collectPostImagePaths([post(slug, { inline: images })]).length, count);
+  }
+});
+
+test('all later images still receive path, text, and dimension validation', () => {
+  const slug = 'later-validation';
+  for (const overrides of [
+    { src: 'https://example.com/untrusted.webp' },
+    { src: `assets/images/blog/${slug}/../other.webp` },
+    { width: 1200 },
+    { alt: '' },
+    { caption: '' },
+  ]) {
+    const images = Array.from({ length: 5 }, (_, index) => inline(slug, `step-${index + 1}`));
+    images.push(inline(slug, 'final-step', overrides));
+    assert.throws(() => validateImageContract(metadata([post(slug, { inline: images })])));
+  }
+});
+
+test('larger image groups do not bypass duplicate checks', () => {
+  const slug = 'duplicate-sequence';
+  const images = Array.from({ length: 5 }, (_, index) => inline(slug, `step-${index + 1}`));
+  images.push({ ...images[0] });
+  assert.throws(() => validateImageContract(metadata([post(slug, { inline: images })])), /duplicate/i);
+});
+
 test('inline images stay local, descriptive, bounded, and fully described', () => {
   const invalid = [
-    [[inline('new-post'), inline('new-post', 'second'), inline('new-post', 'third')], /new-post.*0.*2.*inline/i],
     [[inline('new-post', 'context-loop', { src: 'https://example.com/image.webp' })], /new-post.*inline.*path/i],
     [[inline('new-post', 'context-loop', { src: 'assets/images/blog/other/context-loop.webp' })], /new-post.*inline.*path/i],
     [[inline('new-post', 'context-loop', { src: 'assets/images/blog/new-post/../other.webp' })], /new-post.*inline.*path/i],

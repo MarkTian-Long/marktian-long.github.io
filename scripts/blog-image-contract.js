@@ -6,7 +6,9 @@ const COVER_HEIGHT = 630;
 const INLINE_WIDTH = 1280;
 const INLINE_HEIGHT = 720;
 const INLINE_TALL_SVG_HEIGHT = 1024;
-const MAX_INLINE_IMAGES = 2;
+// Editorial guidance lives in VISUAL_GUIDE.md, not a publishing quota.
+// Preserve this export for consumers while removing the numeric hard cap.
+const MAX_INLINE_IMAGES = Number.POSITIVE_INFINITY;
 const MAX_TEXT_LENGTH = 160;
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const GENERIC_INLINE_NAMES = /^(?:asset|cover|figure|final|image|illustration|img|inline|new|photo)(?:-\d+)?$/;
@@ -138,9 +140,6 @@ function validateImageContract(metadata) {
     assertVisualKeys(post.visuals, `Post ${post.slug} visuals`);
     if (!Array.isArray(post.visuals.inline)) {
       throw new Error(`Post ${post.slug} inline images must be an array`);
-    }
-    if (post.visuals.inline.length > MAX_INLINE_IMAGES) {
-      throw new Error(`Post ${post.slug} must have 0 to ${MAX_INLINE_IMAGES} inline images`);
     }
     if (post.visuals.cover !== undefined) validateCover(post, paths);
     for (const image of post.visuals.inline) validateInlineImage(post, image, paths);
