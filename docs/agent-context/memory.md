@@ -124,6 +124,8 @@ initial migration.
 
 ### Blog system
 
+- 2026-10-24 ChatGPT: Cross-cutting Blog workflow improvement milestone. The visual-expression changes are recorded in the existing Charts Spec, Visual Guide, SOP, Checklist, publishing Skill and image-contract code history; research-depth changes are recorded in SOP v39 and Checklist v34. Do not add a separate `blog-workflow` Skill or force-call `structured-analysis-discussion`: the SOP remains the process source of truth, the Checklist validates outcomes, and external analysis methods are optional references. Validate the changes during the next formal article, especially whether visual aids improve comprehension and whether research identifies a more explanatory question before outline approval. This memory entry records the cross-cutting decision and follow-up only; detailed rules remain in their owning files.
+
 - 2026-09-30 ChatGPT: Cross-session Blog research items and potential groupings
   live in `tools/blog/research_backlog.md`. Read/write and promotion rules are
   owned by `tools/blog/governance/blog-sop.md`; the governance and Blog README
