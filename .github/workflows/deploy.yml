@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -29,6 +29,14 @@ jobs:
         working-directory: scripts
         run: npm ci
 
+      # One-time publication build; after the generated files have been committed, restore this workflow.
+      - name: Generate new SaaS article and discovery assets
+        run: |
+          node tools/blog/sync-post-metadata.js --write docs/blog/ai-saas-build-vs-buy.md
+          node -e 'const fs=require("fs"); const p="tools/blog/data/posts-meta.json"; const doc=JSON.parse(fs.readFileSync(p,"utf8")); const post=doc.posts.find(x=>x.slug==="ai-saas-build-vs-buy"); if(!post) throw Error("Missing SaaS post after metadata sync"); post.visuals={inline:[{"src":"assets/images/blog/ai-saas-build-vs-buy/article-roadmap.svg","alt":"从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。","caption":"从替代资格到相对成本，再到议价与分工，五个问题逐层衔接。","width":1280,"height":720},{"src":"assets/images/blog/ai-saas-build-vs-buy/cost-structure.svg","alt":"AI 可能降低编码和部分维护投入；运行费用取决于是否调用模型及其用量；协调、验收和风险仍需单独核算。","caption":"这是成本机制示意，不是比例或行业统计；AI 辅助开发不等于运行时必须调用 AI。","width":1280,"height":720},{"src":"assets/images/blog/ai-saas-build-vs-buy/decision-framework.svg","alt":"先定义任务与验收标准，再同时评估需求特殊性、跨客户复用和变化治理三个并列维度，核验约束后选择自建、采购或组合。","caption":"三个维度不是顺序步骤；它们共同影响选择，三种方案也可以按模块组合。","width":1280,"height":720}]}; fs.writeFileSync(p,JSON.stringify(doc,null,2)+"\n");'
+          node tools/blog/generate-post.js --write docs/blog/ai-saas-build-vs-buy.md tools/blog/posts/ai-saas-build-vs-buy.html
+          node scripts/generate-search-assets.js --write
+
       - name: Install Chromium for browser checks
         working-directory: scripts
         run: npx playwright install --with-deps chromium
@@ -42,6 +50,16 @@ jobs:
 
       - name: Smoke public artifact
         run: node scripts/check-public-dist.js
+
+      - name: Commit verified generated assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: generate SaaS article and discovery assets"
+            git push origin HEAD:main
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

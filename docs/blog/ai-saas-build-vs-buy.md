@@ -1,3 +1,12 @@
+---
+category: 商业
+tags: ["决策框架"]
+topics: ["企业AI"]
+concepts: ["Build vs Buy","可信替代选择","跨客户复用","客户特定变化","软件采购经济性","SaaS 议价条件"]
+share_quote: "值得长期购买的服务，是在客户拥有更强自建能力之后，仍能把一部分工作做得更合算的服务。"
+relations: [{"slug":"llm-saas-moat-disruption","type":"revises"},{"slug":"ai-software-operator-shift","type":"builds_on"}]
+---
+
 # 当 AI 能替你造软件，哪些服务仍值得买？
 
 > AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。
@@ -6,25 +15,23 @@
 
 最近看到有人尝试用 AI 重新开发 Adobe 的替代软件，我首先想到的不是“Photoshop 要消失了”，而是一个更贴近自己的问题：以后是不是可以只做自己需要的功能，不必接受整套产品的价格和工作方式？
 
-引起我兴趣的是两个不同的项目。[ArtCraft 的 PhotoCraft](https://github.com/storytold/photocraft)尝试独立重实现 Photoshop，提供图层、蒙版和 PSD 文件处理等能力，项目仍标为早期 Alpha。[REA（Reverse Engineer Anything）](https://rea.tools/)则把软件分析工具交给编码智能体，让它研究程序与运行行为，帮助理解和重建功能。前者是替代应用，后者是分析工具，不能把它们合成一次“Adobe 源码被公开”的事件。
+引起我兴趣的是两个不同的项目。[ArtCraft 的 PhotoCraft](https://github.com/storytold/photocraft)尝试独立重实现 Photoshop，提供图层、蒙版和 PSD 文件处理等能力，项目仍标为早期 Alpha。[REA（Reverse Engineer Anything）](https://rea.tools/)则把软件分析工具交给编码智能体，让它研究程序与运行行为，帮助理解和重建功能。PhotoCraft 是独立重实现的替代应用，REA 是辅助理解程序的分析工具；两者展示了不同的开发路径，并不意味着 Adobe 源代码已经被公开。
 
 我在意的，是重新实现已有软件和按需修改的门槛正在松动。一个用户不必复制 Photoshop 的全部功能；一家企业也未必需要重造供应商服务所有客户的产品，只要覆盖自己真正需要的任务。
 
 但桌面工具的复现，并不直接证明企业 SaaS 已经容易替换。企业还要让系统接入真实数据，交给多人使用，并在业务变化后继续工作。**如果客户和供应商都能使用越来越强的 AI，哪些服务仍值得买，判断依据究竟会怎样变化？**
 
-文章的推理路线先放在这里，后文会依次解释采购的经济基础、AI 如何改变双方成本，以及这些变化如何影响采购与定价。
+从功能能否替代，到谁更适合持续交付，再到采购范围与价格，需要依次回答不同的问题。
 
-![从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。](assets/ai-saas-build-vs-buy/article-roadmap.svg "文章从现象推进到经济机制、商业影响和决策，不是五个互不相关的观点。")
+![从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。](../../assets/images/blog/ai-saas-build-vs-buy/article-roadmap.svg "从替代资格到相对成本，再到议价与分工，五个问题逐层衔接。")
 
 ## 一、从功能复刻，到一个可信的替代选择
 
 AI Engineer 活动组织者 Swyx 把这个问题做成了 [How to Kill Your SaaS 实验](https://www.youtube.com/watch?v=zlD-CkLVKtU)：面对一款会议演讲者管理软件每年约 4.3 万美元的报价，邀请开发者用 AI 制作替代方案。组织方在[后续复盘](https://latent.space/p/tenex)中披露，人工评审选出的冠军，在 AI 评审榜上只排第 19。这里的报价与排名都是组织方披露，不是独立审计的节省额或行业测评。
 
-这个反差比参赛规模更有用：通过一组预设场景，与让实际运营人员愿意使用，并不是同一项检验。以会议管理为例，能新增讲者、保存日程，只证明某些操作可以完成；讲者临时改期后，审核状态、场地冲突和通知能否一起更新，才影响团队是否还要在系统外补做工作。这是对验收要求的简化举例，不是对参赛产品缺陷的逐项实测。
+这个反差提示了两种验收目标：通过一组预设场景，与让实际运营人员愿意使用，并不是同一项检验。以会议管理为例，能新增讲者、保存日程，只证明某些操作可以完成；讲者临时改期后，审核状态、场地冲突和通知能否一起更新，才影响团队是否还要在系统外补做工作。这是对验收要求的简化举例，不是对参赛产品缺陷的逐项实测。
 
 自动评测当然可以覆盖更多场景，但前提是团队知道哪些情况值得检查。已有软件可以提供界面、文档和可观察的行为，帮助开发者理解需求，却不会自动给出全部业务例外，更不会把 SaaS 服务端的数据与运行能力一并交出来。
-
-
 
 因此，**有可运行的版本，说明自建进入了候选；能在可接受的成本和风险下持续接手任务，才使它成为可信的替代选择。** Swyx 的实验提供了前进的证据，但尚不能替代多年真实运行的记录。真正进入比较的，也不只有自建，还包括开源组件、其他供应商和几种方式的组合。
 
@@ -38,7 +45,7 @@ AI Engineer 活动组织者 Swyx 把这个问题做成了 [How to Kill Your SaaS
 
 这与科斯讨论的[企业内部组织和市场交易之间的边界](https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/)相通：把工作交给市场需要寻找、协商和监督，在组织内部完成也有管理成本。借用这个视角，买与建就不再只是“订阅费对开发费”，而是比较两种持续提供能力的安排。
 
-[Every 的一场访谈](https://every.to/podcast/transcript-hugging-face-s-first-investor-on-why-technical-founders-win)给出了很具体的例子。咨询负责人 Natalia Quintero 曾用 AI 自建 CRM，使用数月后，因为维护挤占客户交付时间，将数据迁到 Attio。同场受访者 Matt Hartman 做出了本地语音转文字工具 Ghost Pepper，也因后续维护重新认识到持续更新的付费服务的价值。两段经历都是当事人自述，没有提供可横向比较的维护账本。
+[Every 的一场访谈](https://every.to/podcast/transcript-hugging-face-s-first-investor-on-why-technical-founders-win)给出了很具体的例子。咨询负责人 Natalia Quintero 曾用 AI 自建客户关系管理系统（CRM），使用数月后，因为维护挤占客户交付时间，将数据迁到 Attio。同场受访者 Matt Hartman 做出了本地语音转文字工具 Ghost Pepper，也因后续维护重新认识到持续更新的付费服务的价值。两段经历都是当事人自述，没有提供可横向比较的维护账本。
 
 Natalia 并不是证明了 CRM 不能自建，而是发现这项工作不值得继续占用自己的时间。已有工程团队也不会让机会成本归零，只是承担者和被挤占的事情不同。反过来，购买一个不合适的系统，让业务人员天天绕路，也可能比内部维护更浪费。
 
@@ -50,17 +57,17 @@ AI 会同时改变这两边。客户更容易从一个小范围的需求开始�
 
 维护也不能被冻结在今天的水平。[GitHub Copilot 的官方说明](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)已经包含让智能体修改代码、执行测试并提交变更的能力。它不等于无人值守的生产维护，却足以提醒我们：不能只让自建方案的开发成本下降，再把未来维护全部按今天的人力估算。厂商同样可以使用这些工具。
 
-Lucid 的产品经理 Ben Nelson 在 [airfocus 的 Build vs Buy 访谈](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)中分享过内部工具 Archie 的经历：30 人试点期间，团队一度发现模型费用达到每周数百美元，之后不得不投入时间优化模型与供应商选择。这个数字是当事人对初期试点的自述，不是行业成本基准；它说明运行时 AI 费用会随使用量和配置变化，应该与一次性开发成本分开核算。
+Lucid 的产品经理 Ben Nelson 在 [airfocus 的 Build vs Buy 访谈](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)中分享过内部工具 Archie 的经历：30 人试点期间，团队一度发现模型费用达到每周数百美元，之后不得不投入时间优化模型与供应商选择。这是当事人对初期试点的自述，不是行业成本基准。Archie 本身在运行时调用模型，这项费用需要按使用量和配置单独核算；它不能被当成所有 AI 辅助开发软件都会新增的成本。
+
+AI 对不同成本环节的影响并不相同，建设提效也不保证总成本下降：
+
+![AI 可能降低编码和部分维护投入；运行费用取决于是否调用模型及其用量；协调、验收和风险仍需单独核算。](../../assets/images/blog/ai-saas-build-vs-buy/cost-structure.svg "这是成本机制示意，不是比例或行业统计；AI 辅助开发不等于运行时必须调用 AI。")
 
 更有区分度的问题是：未来的变化主要发生在哪里？下面用两种简化情境说明，它们并不穷尽所有情况。
 
 如果是多家客户共同面对的外部接口或行业规则变化，供应商的一次更新有机会复用于多个客户。在能够共用实现的部分，变化越频繁，共同维护的价值可能越明显。每家企业都重复处理，未必更经济；开源社区或专业基础服务也可能承担这类复用，不只现有 SaaS 厂商能做。
 
 如果变化主要来自某家企业自己的审批规则、数据口径或实验流程，情况可能相反。每次都要跨公司解释、排期、报价和验收，等待本身就可能阻碍业务。在内部能力足够、修改可以验证的前提下，自己掌握这部分实现，或购买可快速修改的定制服务，反而更有吸引力。
-
-AI 同时影响几项成本，但它们的方向并不相同：
-
-![建设开发成本通常下降，维护迭代可能下降，运行时模型调用费用视场景变化，协调、验收与风险不会自动归零。](assets/ai-saas-build-vs-buy/cost-structure.svg "方向示意而非成本比例；客户自建和供应商交付都会受到这些变化影响。")
 
 这也修正了我在[《AI coding 之后，哪些 B 端 SaaS 会死，哪些会活》](https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html)里的一个偏强判断。当时我更倾向于把行业经验深、需求变化快，视为供应商更难被替代的理由。现在需要加上条件：已经体现在功能和流程里的经验并非天然不可复刻；变化究竟是共性的，还是高度客户特定的，可能让结论走向不同方向。
 
@@ -80,8 +87,6 @@ AI 同时影响几项成本，但它们的方向并不相同：
 
 由此可以推导出几条可能路径：客户自己承接部分任务，缩小采购范围；继续购买，但重新谈价格与服务；或者发现供应商仍然更划算，维持原安排。
 
-
-
 因此，**“客户没有流失”与“供应商的定价能力没有变化”，不是同一个结论。** 目前这些案例能帮助检验替代方案的形成，却不足以证明 SaaS 已经普遍降价。后续更值得观察的是续约折扣、采购范围、定制响应和客户真正承担的内部工作，而不只是退订数量。
 
 同样，“卖 Agent”或“按结果收费”可以改变交付和计费方式，却不会自动消除竞争。客户仍会比较谁能以更合算的投入达到同一标准。供应商要守住的，是可验证的额外价值；如果能力差异缩小，服务可以继续被需要，原来的溢价却未必保得住。
@@ -96,9 +101,9 @@ AI 同时影响几项成本，但它们的方向并不相同：
 
 因此，划分买与建的范围时，比“这是不是核心业务”更具体的检查是：这项能力能否通过清楚的输入、输出和验收条件独立交付；它与邻接系统是否必须一起修改；出错后谁有足够的信息和权限恢复服务。业务重要不自动意味着全部自己做，能力通用也不自动意味着必须交给某一家供应商。
 
-把这些条件合起来，可以用下面的判断框架决定从哪里开始比较；它提供的是判断顺序，不是自动替企业做决定的公式。
+先统一任务与验收标准，再同时比较三个维度，才能判断由谁承担哪部分工作；这些维度没有固定权重。
 
-![先定义任务与验收标准，再同时评估需求特殊性、跨客户复用和变化治理三个并列维度，核验约束后选择自建、采购或组合。](assets/ai-saas-build-vs-buy/decision-framework.svg "三个维度不是顺序步骤；它们共同影响选择，三种方案也可以按模块组合。")
+![先定义任务与验收标准，再同时评估需求特殊性、跨客户复用和变化治理三个并列维度，核验约束后选择自建、采购或组合。](../../assets/images/blog/ai-saas-build-vs-buy/decision-framework.svg "三个维度不是顺序步骤；它们共同影响选择，三种方案也可以按模块组合。")
 
 在[《AI 正在把“使用软件”和“操作软件”拆开》](https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html)中，我曾问过：删掉一个产品之后，为了完成任务，还必须补回什么？这次需要继续追问的是，补回这些能力，由谁来组织、在哪个边界上分工，才能既获得个性化，又不制造更多协调负担。
 
@@ -114,9 +119,10 @@ AI 同时影响几项成本，但它们的方向并不相同：
 - [REA：Reverse Engineer Anything](https://rea.tools/)
 - [GitHub：Copilot on GitHub.com](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)
 - [Airtable：Omni / AI App Building](https://www.airtable.com/platform/app-building)
-- [airfocus：Build vs. buy in the age of AI: lessons from vibe-coding an internal tool](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)——Lucid 产品经理对内部工具 Archie 的实践自述，费用数字为个案，不是行业基准。
 
 ### 实验组织者与当事人叙述
+
+- [airfocus：Build vs. buy in the age of AI: lessons from vibe-coding an internal tool](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)——Lucid 产品经理对内部工具 Archie 的实践自述，费用数字为个案，不是行业基准。
 
 - [Latent Space：How to Kill Your SaaS 原始节目](https://www.youtube.com/watch?v=zlD-CkLVKtU)
 - [Latent Space：Tenex 访谈中的 Kill My SaaS 复盘](https://latent.space/p/tenex)——报价、评审排名和使用预期来自组织方，不是长期成本对照实验。

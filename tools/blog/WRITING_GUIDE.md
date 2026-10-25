@@ -459,7 +459,7 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 - 检查 taxonomy 同步：每个 `tags/topics` 值都必须在 `blog-taxonomy.json` 中有完全一致的条目；新增词或定义调整必须在同一次变更更新 taxonomy 并完成历史 audit，不能把近期文章当作历史例外。
 - 检查 `tags/topics` 数量及空值：以 taxonomy 的 `label_rules` 为准；空数组必须来自已完成的内容审查，第二个标签必须具有独立信息价值，不用凑数通过校验。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
-- 检查视觉契约：图片完全可选；如使用图片，正文图为 0–2 张，Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
+- 检查视觉契约：图片完全可选；如使用图片，正文图数量由当前 `VISUAL_GUIDE.md` 的阅读任务与移动端验收决定，不设 0–2 张硬上限；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
