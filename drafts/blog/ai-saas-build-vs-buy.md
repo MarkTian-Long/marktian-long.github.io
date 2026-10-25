@@ -50,6 +50,8 @@ AI 会同时改变这两边。客户更容易从一个小范围的需求开始�
 
 维护也不能被冻结在今天的水平。[GitHub Copilot 的官方说明](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)已经包含让智能体修改代码、执行测试并提交变更的能力。它不等于无人值守的生产维护，却足以提醒我们：不能只让自建方案的开发成本下降，再把未来维护全部按今天的人力估算。厂商同样可以使用这些工具。
 
+Lucid 的产品经理 Ben Nelson 在 [airfocus 的 Build vs Buy 访谈](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)中分享过内部工具 Archie 的经历：30 人试点期间，团队一度发现模型费用达到每周数百美元，之后不得不投入时间优化模型与供应商选择。这个数字是当事人对初期试点的自述，不是行业成本基准；它说明运行时 AI 费用会随使用量和配置变化，应该与一次性开发成本分开核算。
+
 更有区分度的问题是：未来的变化主要发生在哪里？下面用两种简化情境说明，它们并不穷尽所有情况。
 
 如果是多家客户共同面对的外部接口或行业规则变化，供应商的一次更新有机会复用于多个客户。在能够共用实现的部分，变化越频繁，共同维护的价值可能越明显。每家企业都重复处理，未必更经济；开源社区或专业基础服务也可能承担这类复用，不只现有 SaaS 厂商能做。
@@ -112,6 +114,7 @@ AI 同时影响几项成本，但它们的方向并不相同：
 - [REA：Reverse Engineer Anything](https://rea.tools/)
 - [GitHub：Copilot on GitHub.com](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github)
 - [Airtable：Omni / AI App Building](https://www.airtable.com/platform/app-building)
+- [airfocus：Build vs. buy in the age of AI: lessons from vibe-coding an internal tool](https://airfocus.com/blog/product-managers-building-internal-ai-tools/)——Lucid 产品经理对内部工具 Archie 的实践自述，费用数字为个案，不是行业基准。
 
 ### 实验组织者与当事人叙述
 
