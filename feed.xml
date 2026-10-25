@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>当 AI 能替你造软件，哪些服务仍值得买？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html</guid>
+      <description>AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。</description>
+    </item>
+    <item>
       <title>Personal Agent：当 AI 开始长期接手你的事</title>
       <link>https://marktian-long.github.io/tools/blog/posts/personal-agent.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/personal-agent.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</guid>
       <description>LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。</description>
-    </item>
-    <item>
-      <title>从零搭建一个LLM智能客服：完整技术链路与关键决策</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/llm-customer-service-tech-guide.html</guid>
-      <description>智能客服是目前落地最广泛的LLM应用之一，但它的复杂度差异极大。本文以最复杂的生产级链路为蓝本，系统梳理从数据到工程的每一个技术环节，重点关注每个环节的评估维度、场景取舍逻辑，以及AI PM与算法团队的协作分工。</description>
     </item>
   </channel>
 </rss>

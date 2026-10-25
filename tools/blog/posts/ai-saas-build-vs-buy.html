@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--
+date:    2026.10
+title:   当 AI 能替你造软件，哪些服务仍值得买？
+tags:    [决策框架]
+slug:    ai-saas-build-vs-buy
+summary: AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>当 AI 能替你造软件，哪些服务仍值得买？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="当 AI 能替你造软件，哪些服务仍值得买？" />
+<meta property="og:description" content="AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI · Product · Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="当 AI 能替你造软件，哪些服务仍值得买？" />
+<meta name="twitter:description" content="AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI · Product · Builder" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"当 AI 能替你造软件，哪些服务仍值得买？","description":"AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。","url":"https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、从功能复刻，到一个可信的替代选择</a></li><li><a href="#section-2">二、采购的优势，不只是省下一次开发</a></li><li><a href="#section-3">三、同样是变化，为什么会把选择推向不同方向？</a></li><li><a href="#section-4">四、客户没有离开，采购条件也可能变化</a></li><li><a href="#section-5">五、把选择拆到能独立交付的能力上</a></li><li><a href="#section-6">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.10</span><span id="post-tags"></span></div><h1 class="post-title">当 AI 能替你造软件，哪些服务仍值得买？</h1><p class="post-summary">AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><p>最近看到有人尝试用 AI 重新开发 Adobe 的替代软件，我首先想到的不是“Photoshop 要消失了”，而是一个更贴近自己的问题：以后是不是可以只做自己需要的功能，不必接受整套产品的价格和工作方式？</p>
+<p>引起我兴趣的是两个不同的项目。<a href="https://github.com/storytold/photocraft" target="_blank" rel="noopener noreferrer">ArtCraft 的 PhotoCraft</a>尝试独立重实现 Photoshop，提供图层、蒙版和 PSD 文件处理等能力，项目仍标为早期 Alpha。<a href="https://rea.tools/" target="_blank" rel="noopener noreferrer">REA（Reverse Engineer Anything）</a>则把软件分析工具交给编码智能体，让它研究程序与运行行为，帮助理解和重建功能。PhotoCraft 是独立重实现的替代应用，REA 是辅助理解程序的分析工具；两者展示了不同的开发路径，并不意味着 Adobe 源代码已经被公开。</p>
+<p>我在意的，是重新实现已有软件和按需修改的门槛正在松动。一个用户不必复制 Photoshop 的全部功能；一家企业也未必需要重造供应商服务所有客户的产品，只要覆盖自己真正需要的任务。</p>
+<p>但桌面工具的复现，并不直接证明企业 SaaS 已经容易替换。企业还要让系统接入真实数据，交给多人使用，并在业务变化后继续工作。<strong>如果客户和供应商都能使用越来越强的 AI，哪些服务仍值得买，判断依据究竟会怎样变化？</strong></p>
+<p>从功能能否替代，到谁更适合持续交付，再到采购范围与价格，需要依次回答不同的问题。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-saas-build-vs-buy/article-roadmap.svg" alt="从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>从替代资格到相对成本，再到议价与分工，五个问题逐层衔接。</figcaption>
+</figure>
+<h2 id="section-1">一、从功能复刻，到一个可信的替代选择</h2>
+<p>AI Engineer 活动组织者 Swyx 把这个问题做成了 <a href="https://www.youtube.com/watch?v=zlD-CkLVKtU" target="_blank" rel="noopener noreferrer">How to Kill Your SaaS 实验</a>：面对一款会议演讲者管理软件每年约 4.3 万美元的报价，邀请开发者用 AI 制作替代方案。组织方在<a href="https://latent.space/p/tenex" target="_blank" rel="noopener noreferrer">后续复盘</a>中披露，人工评审选出的冠军，在 AI 评审榜上只排第 19。这里的报价与排名都是组织方披露，不是独立审计的节省额或行业测评。</p>
+<p>这个反差提示了两种验收目标：通过一组预设场景，与让实际运营人员愿意使用，并不是同一项检验。以会议管理为例，能新增讲者、保存日程，只证明某些操作可以完成；讲者临时改期后，审核状态、场地冲突和通知能否一起更新，才影响团队是否还要在系统外补做工作。这是对验收要求的简化举例，不是对参赛产品缺陷的逐项实测。</p>
+<p>自动评测当然可以覆盖更多场景，但前提是团队知道哪些情况值得检查。已有软件可以提供界面、文档和可观察的行为，帮助开发者理解需求，却不会自动给出全部业务例外，更不会把 SaaS 服务端的数据与运行能力一并交出来。</p>
+<p>因此，<strong>有可运行的版本，说明自建进入了候选；能在可接受的成本和风险下持续接手任务，才使它成为可信的替代选择。</strong> Swyx 的实验提供了前进的证据，但尚不能替代多年真实运行的记录。真正进入比较的，也不只有自建，还包括开源组件、其他供应商和几种方式的组合。</p>
+<h2 id="section-2">二、采购的优势，不只是省下一次开发</h2>
+<p>要解释这些选择，得把两种不同的成本放在一起看。一种是把软件建设和运行起来的投入，另一种是为了让它符合业务而发生的沟通、等待、协调与验证。供应商可以在前一种成本上有优势，却在后一种上让某个客户付出很大代价。</p>
+<p>假设多家企业都需要相似的权限管理、数据导入和备份恢复。供应商做一次通用实现、修复一个共同问题，就可能服务多个客户。单个客户只需承担其中一部分成本，也不必为每项能力单独组织团队。这种共同复用，是采购可能更经济的原因。</p>
+<p>但客户买到的未必刚好适合自己。为了迁就标准产品而重复录入、等待排期，或者每次修改都重新说明内部规则，同样会占用资源。供应商理解整个行业，不代表它比客户更了解这一家公司的每个特殊流程；客户熟悉自身业务，也不代表它有能力把所有软件工作高效组织起来。</p>
+<p>这与科斯讨论的<a href="https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/" target="_blank" rel="noopener noreferrer">企业内部组织和市场交易之间的边界</a>相通：把工作交给市场需要寻找、协商和监督，在组织内部完成也有管理成本。借用这个视角，买与建就不再只是“订阅费对开发费”，而是比较两种持续提供能力的安排。</p>
+<p><a href="https://every.to/podcast/transcript-hugging-face-s-first-investor-on-why-technical-founders-win" target="_blank" rel="noopener noreferrer">Every 的一场访谈</a>给出了很具体的例子。咨询负责人 Natalia Quintero 曾用 AI 自建客户关系管理系统（CRM），使用数月后，因为维护挤占客户交付时间，将数据迁到 Attio。同场受访者 Matt Hartman 做出了本地语音转文字工具 Ghost Pepper，也因后续维护重新认识到持续更新的付费服务的价值。两段经历都是当事人自述，没有提供可横向比较的维护账本。</p>
+<p>Natalia 并不是证明了 CRM 不能自建，而是发现这项工作不值得继续占用自己的时间。已有工程团队也不会让机会成本归零，只是承担者和被挤占的事情不同。反过来，购买一个不合适的系统，让业务人员天天绕路，也可能比内部维护更浪费。</p>
+<p><strong>采购是否值得，取决于供应商能够复用的投入，能否抵消客户为适配、协作和依赖付出的代价。</strong> 这是双方的相对优势，不是软件天生属于“应该买”或“应该建”的某一类。</p>
+<h2 id="section-3">三、同样是变化，为什么会把选择推向不同方向？</h2>
+<p>AI 会同时改变这两边。客户更容易从一个小范围的需求开始开发；供应商也更容易修改产品、提供定制。即使双方获得相同幅度的编码提效，相对优势仍可能变化：当第一次开发已经不那么贵，“把高昂研发分摊给很多客户”所带来的绝对节省会缩小，适配与等待就可能在决策中占据更大分量。这是一项成本机制推导，不是对当前行业平均成本的测量。</p>
+<p>维护也不能被冻结在今天的水平。<a href="https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github" target="_blank" rel="noopener noreferrer">GitHub Copilot 的官方说明</a>已经包含让智能体修改代码、执行测试并提交变更的能力。它不等于无人值守的生产维护，却足以提醒我们：不能只让自建方案的开发成本下降，再把未来维护全部按今天的人力估算。厂商同样可以使用这些工具。</p>
+<p>Lucid 的产品经理 Ben Nelson 在 <a href="https://airfocus.com/blog/product-managers-building-internal-ai-tools/" target="_blank" rel="noopener noreferrer">airfocus 的 Build vs Buy 访谈</a>中分享过内部工具 Archie 的经历：30 人试点期间，团队一度发现模型费用达到每周数百美元，之后不得不投入时间优化模型与供应商选择。这是当事人对初期试点的自述，不是行业成本基准。Archie 本身在运行时调用模型，这项费用需要按使用量和配置单独核算；它不能被当成所有 AI 辅助开发软件都会新增的成本。</p>
+<p>AI 对不同成本环节的影响并不相同，建设提效也不保证总成本下降：</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-saas-build-vs-buy/cost-structure.svg" alt="AI 可能降低编码和部分维护投入；运行费用取决于是否调用模型及其用量；协调、验收和风险仍需单独核算。" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>这是成本机制示意，不是比例或行业统计；AI 辅助开发不等于运行时必须调用 AI。</figcaption>
+</figure>
+<p>更有区分度的问题是：未来的变化主要发生在哪里？下面用两种简化情境说明，它们并不穷尽所有情况。</p>
+<p>如果是多家客户共同面对的外部接口或行业规则变化，供应商的一次更新有机会复用于多个客户。在能够共用实现的部分，变化越频繁，共同维护的价值可能越明显。每家企业都重复处理，未必更经济；开源社区或专业基础服务也可能承担这类复用，不只现有 SaaS 厂商能做。</p>
+<p>如果变化主要来自某家企业自己的审批规则、数据口径或实验流程，情况可能相反。每次都要跨公司解释、排期、报价和验收，等待本身就可能阻碍业务。在内部能力足够、修改可以验证的前提下，自己掌握这部分实现，或购买可快速修改的定制服务，反而更有吸引力。</p>
+<p>这也修正了我在<a href="https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html" target="_blank" rel="noopener noreferrer">《AI coding 之后，哪些 B 端 SaaS 会死，哪些会活》</a>里的一个偏强判断。当时我更倾向于把行业经验深、需求变化快，视为供应商更难被替代的理由。现在需要加上条件：已经体现在功能和流程里的经验并非天然不可复刻；变化究竟是共性的，还是高度客户特定的，可能让结论走向不同方向。</p>
+<p>所以，“复杂就采购，简单就自建”并不成立。复杂但决定竞争差异的业务，可能值得内部长期投入；简单但没有差异化收益的工具，也可能因为购买足够便宜而不值得自己维护。供应商的行业知识只有在持续减少错误、提高效果或降低客户投入时，才形成付费理由。</p>
+<p>实际比较时，总拥有成本（TCO）仍然有用，但它是核算工具，不是机制的替代品。应先统一任务范围、质量和使用周期，再同时计算自建的建设与维护、采购的实施与适配，以及两边的迁移、内部时间和退出成本；还要比较更快修改、数据控制和及时上线带来的收益。不可接受的安全或业务风险先作为门槛，不能靠一个低报价抵消。也要区分“用 AI 开发软件”和“软件运行时持续调用模型”：前者并不自动产生每次操作的推理费用。</p>
+<p><strong>真正决定边界的，是谁能更经济地处理接下来的变化，而不只是今天谁能把功能做出来。</strong> 如果 AI 把内部维护继续压低，自建范围可能扩大；如果供应商借助共同复用和定制能力降本更多，采购优势也可能增强。</p>
+<h2 id="section-4">四、客户没有离开，采购条件也可能变化</h2>
+<p>有了可信替代，接下来才进入商业问题：即使客户最后仍然采购，供应商还能收取多高的价格？</p>
+<p>可以做一个简化比较。假定两种方案的业务结果和风险已经达到可比水平，客户有一套算过迁移与长期运行投入的自建方案，那么它就多了一个判断采购是否值得的参照。供应商报价之外的实施、适配与协调成本，也要放进来比较。一个便宜的演示版本没有这种作用，因为客户还不能靠它完成替换。</p>
+<p>这并不意味着自建成本会机械决定报价。客户还可能愿意为更快上线、更少管理和更好的结果支付溢价；合同周期、迁移条件和供应商之间的竞争，也会影响能否重新协商。但与只有一个可行方案相比，客户多了一项可以实际采取的选择。</p>
+<p>由此可以推导出几条可能路径：客户自己承接部分任务，缩小采购范围；继续购买，但重新谈价格与服务；或者发现供应商仍然更划算，维持原安排。</p>
+<p>因此，<strong>“客户没有流失”与“供应商的定价能力没有变化”，不是同一个结论。</strong> 目前这些案例能帮助检验替代方案的形成，却不足以证明 SaaS 已经普遍降价。后续更值得观察的是续约折扣、采购范围、定制响应和客户真正承担的内部工作，而不只是退订数量。</p>
+<p>同样，“卖 Agent”或“按结果收费”可以改变交付和计费方式，却不会自动消除竞争。客户仍会比较谁能以更合算的投入达到同一标准。供应商要守住的，是可验证的额外价值；如果能力差异缩小，服务可以继续被需要，原来的溢价却未必保得住。</p>
+<h2 id="section-5">五、把选择拆到能独立交付的能力上</h2>
+<p>回到最初“只做自己需要的功能”的想法，它不必意味着每家企业都去维护一套完整的替代系统。更实际的做法，是检查一套产品里哪些部分值得自己控制，哪些部分继续购买更划算。</p>
+<p><a href="https://www.airtable.com/platform/app-building" target="_blank" rel="noopener noreferrer">Airtable Omni</a>允许用户通过自然语言创建和修改数据表、界面与自动化。用户可以定义自己的应用，同时继续购买平台能力。这说明个性化开发也可以发生在采购关系内部；它展示的是一种产品路径，不是已经证明最优的成本方案。</p>
+<p>但拆得越细并不一定越好。假设企业自建审批界面，采购数据存储和消息服务：如果接口稳定、数据能导出、故障有明确负责方，分工可能降低重复建设；如果每改一项规则都要协调几套系统，而各方又无法独立验收，拆分只是把原来集中处理的问题变成了接口协调。</p>
+<p>因此，划分买与建的范围时，比“这是不是核心业务”更具体的检查是：这项能力能否通过清楚的输入、输出和验收条件独立交付；它与邻接系统是否必须一起修改；出错后谁有足够的信息和权限恢复服务。业务重要不自动意味着全部自己做，能力通用也不自动意味着必须交给某一家供应商。</p>
+<p>先统一任务与验收标准，再同时比较三个维度，才能判断由谁承担哪部分工作；这些维度没有固定权重。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-saas-build-vs-buy/decision-framework.svg" alt="先定义任务与验收标准，再同时评估需求特殊性、跨客户复用和变化治理三个并列维度，核验约束后选择自建、采购或组合。" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>三个维度不是顺序步骤；它们共同影响选择，三种方案也可以按模块组合。</figcaption>
+</figure>
+<p>在<a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">《AI 正在把“使用软件”和“操作软件”拆开》</a>中，我曾问过：删掉一个产品之后，为了完成任务，还必须补回什么？这次需要继续追问的是，补回这些能力，由谁来组织、在哪个边界上分工，才能既获得个性化，又不制造更多协调负担。</p>
+<p>对买方，下一步可以从一个可隔离的小任务开始：验证业务结果，记录后续修改与人工补做的时间，并保留退出路径。对供应商，则要证明客户付费后确实少做了什么、获得了什么，而不是把“维护很麻烦”当成不必继续比较的理由。客户愿意把持续工作交出去，与愿意为旧产品一直支付原价，是两件事。</p>
+<p>从 PhotoCraft 和 REA 出发，我仍然看好按自己需要重新制作软件的空间。但它的商业意义不只是多出一些免费替代品，而是让客户更有能力决定哪些工作留在内部、哪些交给外部，以及愿意为后者支付多少。<strong>值得长期购买的服务，是在客户拥有更强自建能力之后，仍能把一部分工作做得更合算的服务。</strong></p>
+<h2 id="section-6">参考资料</h2>
+<h3 id="section-7">开源项目与官方产品资料</h3>
+<ul><li><a href="https://github.com/storytold/photocraft" target="_blank" rel="noopener noreferrer">PhotoCraft：项目 README</a></li><li><a href="https://rea.tools/" target="_blank" rel="noopener noreferrer">REA：Reverse Engineer Anything</a></li><li><a href="https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github" target="_blank" rel="noopener noreferrer">GitHub：Copilot on GitHub.com</a></li><li><a href="https://www.airtable.com/platform/app-building" target="_blank" rel="noopener noreferrer">Airtable：Omni / AI App Building</a></li></ul>
+<h3 id="section-8">实验组织者与当事人叙述</h3>
+<ul><li><a href="https://airfocus.com/blog/product-managers-building-internal-ai-tools/" target="_blank" rel="noopener noreferrer">airfocus：Build vs. buy in the age of AI: lessons from vibe-coding an internal tool</a>——Lucid 产品经理对内部工具 Archie 的实践自述，费用数字为个案，不是行业基准。</li></ul>
+<ul><li><a href="https://www.youtube.com/watch?v=zlD-CkLVKtU" target="_blank" rel="noopener noreferrer">Latent Space：How to Kill Your SaaS 原始节目</a></li><li><a href="https://latent.space/p/tenex" target="_blank" rel="noopener noreferrer">Latent Space：Tenex 访谈中的 Kill My SaaS 复盘</a>——报价、评审排名和使用预期来自组织方，不是长期成本对照实验。</li><li><a href="https://every.to/podcast/transcript-hugging-face-s-first-investor-on-why-technical-founders-win" target="_blank" rel="noopener noreferrer">Every：How Hugging Face’s Investor Spots Winners 逐字稿</a>——Ghost Pepper 与 CRM 迁移均为当事人自述。</li></ul>
+<h3 id="section-9">理论来源</h3>
+<ul><li><a href="https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/" target="_blank" rel="noopener noreferrer">Ronald Coase：The Institutional Structure of Production，诺贝尔奖演讲</a>——用于理解内部组织与市场交易的相对成本，不直接证明 AI 的行业效果。</li></ul>
+<h3 id="section-10">历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/llm-saas-moat-disruption.html" target="_blank" rel="noopener noreferrer">AI coding 之后，哪些 B 端 SaaS 会死，哪些会活</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">AI 正在把“使用软件”和“操作软件”拆开</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

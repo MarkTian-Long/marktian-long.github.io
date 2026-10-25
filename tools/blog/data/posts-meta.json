@@ -45,6 +45,64 @@
   },
   "posts": [
     {
+      "slug": "ai-saas-build-vs-buy",
+      "date": "2026.10",
+      "title": "当 AI 能替你造软件，哪些服务仍值得买？",
+      "summary": "AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。",
+      "category": "商业",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "企业AI"
+      ],
+      "concepts": [
+        "Build vs Buy",
+        "可信替代选择",
+        "跨客户复用",
+        "客户特定变化",
+        "软件采购经济性",
+        "SaaS 议价条件"
+      ],
+      "share_quote": "值得长期购买的服务，是在客户拥有更强自建能力之后，仍能把一部分工作做得更合算的服务。",
+      "relations": [
+        {
+          "slug": "llm-saas-moat-disruption",
+          "type": "revises"
+        },
+        {
+          "slug": "ai-software-operator-shift",
+          "type": "builds_on"
+        }
+      ],
+      "url": "posts/ai-saas-build-vs-buy.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/ai-saas-build-vs-buy/article-roadmap.svg",
+            "alt": "从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。",
+            "caption": "从替代资格到相对成本，再到议价与分工，五个问题逐层衔接。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/ai-saas-build-vs-buy/cost-structure.svg",
+            "alt": "AI 可能降低编码和部分维护投入；运行费用取决于是否调用模型及其用量；协调、验收和风险仍需单独核算。",
+            "caption": "这是成本机制示意，不是比例或行业统计；AI 辅助开发不等于运行时必须调用 AI。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/ai-saas-build-vs-buy/decision-framework.svg",
+            "alt": "先定义任务与验收标准，再同时评估需求特殊性、跨客户复用和变化治理三个并列维度，核验约束后选择自建、采购或组合。",
+            "caption": "三个维度不是顺序步骤；它们共同影响选择，三种方案也可以按模块组合。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "personal-agent",
       "date": "2026.10",
       "title": "Personal Agent：当 AI 开始长期接手你的事",
