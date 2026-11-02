@@ -8,6 +8,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/governance/blog-research-backlog-spec.md`：研究待办的记录结构、编号与日期、原位更新和整理验收；补充 SOP，不重定义研究流程或立项规则。
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
 - `tools/blog/governance/blog-charts-spec.md`：表格、流程图和其他可视化规范。
+- `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文概念/场景插图的任务定义、生图迭代、文字校验、选图与资产交接。
 - `tools/blog/WRITING_GUIDE.md`：最终 Markdown、metadata 和发布契约。
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
@@ -21,6 +22,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 | 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；形成独立起点后再读取 research_backlog.md 和 posts-meta.json |
 | 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
 | 正文写作 | 已确认大纲、blog-sop.md 的相关写作章节 | 仅为实际采用的图表读取 blog-charts-spec.md |
+| 正文配图与制作 | blog-sop.md 的视觉规划路由、VISUAL_GUIDE.md | 生图读取 IMAGE_GENERATION_WORKFLOW.md；精确图表读取 blog-charts-spec.md |
 | 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
 | 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
 
