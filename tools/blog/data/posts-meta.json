@@ -79,9 +79,16 @@
       "visuals": {
         "inline": [
           {
-            "src": "assets/images/blog/ai-saas-build-vs-buy/article-roadmap.svg",
-            "alt": "从软件复刻的现象，经过传统采购逻辑、双方成本变化与 SaaS 定价影响，最终进入自建、采购或组合的决策。",
-            "caption": "从替代资格到相对成本，再到议价与分工，五个问题逐层衔接。",
+            "src": "assets/images/blog/ai-saas-build-vs-buy/build-or-buy-editorial.webp",
+            "alt": "AI 辅助客户自建与专业 SaaS 交付的并列场景，目标都是持续完成业务任务。",
+            "caption": "客户和供应商都能使用 AI，真正的比较不止于能否写出软件。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/ai-saas-build-vs-buy/prototype-to-adoption.webp",
+            "alt": "软件功能复刻需要进一步经过真实业务验收、迁移与持续承接，才能构成可信替代。",
+            "caption": "功能复刻只是起点，能接手业务才构成可信的替代方案。",
             "width": 1280,
             "height": 720
           },
@@ -89,6 +96,13 @@
             "src": "assets/images/blog/ai-saas-build-vs-buy/cost-structure.svg",
             "alt": "AI 可能降低编码和部分维护投入；运行费用取决于是否调用模型及其用量；协调、验收和风险仍需单独核算。",
             "caption": "这是成本机制示意，不是比例或行业统计；AI 辅助开发不等于运行时必须调用 AI。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/ai-saas-build-vs-buy/saas-pricing-option.webp",
+            "alt": "客户拥有更多可行替代方案后，即使继续采购，也可能改变采购范围与议价条件。",
+            "caption": "客户没有离开，并不意味着供应商能够维持原来的价格。",
             "width": 1280,
             "height": 720
           },

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -29,6 +29,13 @@ jobs:
         working-directory: scripts
         run: npm ci
 
+      # Temporary one-article build. Restore original workflow after publishing.
+      - name: Generate updated SaaS article assets
+        run: |
+          node tools/blog/generate-post.js --write docs/blog/ai-saas-build-vs-buy.md tools/blog/posts/ai-saas-build-vs-buy.html
+          node scripts/generate-search-assets.js --write
+          git add -A
+
       - name: Install Chromium for browser checks
         working-directory: scripts
         run: npx playwright install --with-deps chromium
@@ -42,6 +49,16 @@ jobs:
 
       - name: Smoke public artifact
         run: node scripts/check-public-dist.js
+
+      - name: Commit verified generated assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: regenerate SaaS article with new editorial illustrations"
+            git push origin HEAD:main
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
