@@ -1,86 +1,89 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
-<title id="title">估值通过融资条件影响经营的条件路径</title>
-<desc id="desc">未来回报预期影响市场定价。企业是否需要外部融资或股权支付，决定定价变化是否影响融资条件和投资安排；不依赖融资时，短期直接影响通常较弱。经营结果会反馈并修正下一轮回报预期。</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+<title id="title">技术商业化需要四类配套资源</title>
+<desc id="desc">中央核心技术与算力供给、产品入口、业务知识与数据、客户关系与交付能力相互连接。四类资源共同支持技术进入真实业务。</desc>
 <defs>
  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#f2efe7"/></linearGradient>
- <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#294660"/><stop offset="1" stop-color="#101d30"/></linearGradient>
- <linearGradient id="clay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9a17f"/><stop offset="1" stop-color="#c96442"/></linearGradient>
- <filter id="shadow" x="-20%" y="-25%" width="140%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#172b43" flood-opacity=".12"/></filter>
- <marker id="arrowNavy" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0 0 L11 5.5 L0 11 Z" fill="#4f6f8a"/></marker>
- <marker id="arrowClay" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0 0 L11 5.5 L0 11 Z" fill="#c96442"/></marker>
+ <linearGradient id="coreTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3c5b78"/><stop offset="1" stop-color="#1c3048"/></linearGradient>
+ <linearGradient id="coreLeft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#25445f"/><stop offset="1" stop-color="#102237"/></linearGradient>
+ <linearGradient id="coreRight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#172b43"/><stop offset="1" stop-color="#0a1422"/></linearGradient>
+ <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#e9e5da"/></linearGradient>
+ <filter id="shadow" x="-25%" y="-30%" width="150%" height="170%"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#172b43" flood-opacity=".13"/></filter>
 </defs>
-<rect width="1280" height="1024" rx="22" fill="url(#paper)"/>
-<text x="72" y="78" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="43" font-weight="700" fill="#101d30">估值影响经营，要经过融资这道条件门</text>
-<text x="74" y="120" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="24" fill="#626b76">股价变化不会直接扣走公司现金；融资依赖决定它是否进一步传导。</text>
-<!-- top row -->
+<rect width="1280" height="720" rx="22" fill="url(#paper)"/>
+<text x="72" y="78" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="43" font-weight="700" fill="#101d30">技术不是终点：商业化需要四类配套资源</text>
+<text x="74" y="119" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="24" fill="#626b76">模型能力要进入真实业务，还需要供给、产品、业务知识与客户交付共同支撑。</text>
+<!-- connection lines behind the objects -->
+<g fill="none" stroke="#d98a69" stroke-width="5" stroke-linecap="round" opacity=".8">
+ <path d="M380 278 C455 278 480 318 520 350"/>
+ <path d="M900 278 C825 278 800 318 760 350"/>
+ <path d="M380 535 C455 535 485 475 525 445"/>
+ <path d="M900 535 C825 535 795 475 755 445"/>
+</g>
+<g fill="#c96442">
+ <circle cx="380" cy="278" r="7"/><circle cx="900" cy="278" r="7"/><circle cx="380" cy="535" r="7"/><circle cx="900" cy="535" r="7"/>
+</g>
+<!-- top-left platform: compute and supply -->
 <g filter="url(#shadow)">
- <rect x="105" y="165" width="450" height="112" rx="18" fill="#fffefa" stroke="#dce3e8" stroke-width="2"/>
- <rect x="725" y="165" width="450" height="112" rx="18" fill="#fffefa" stroke="#ead8cd" stroke-width="2"/>
+ <polygon points="245,190 410,278 245,366 80,278" fill="url(#tile)" stroke="#ded9ce" stroke-width="2"/>
+ <polygon points="80,278 245,366 245,388 80,300" fill="#d4cfc3"/>
+ <polygon points="410,278 245,366 245,388 410,300" fill="#e5e0d5"/>
 </g>
-<g>
- <circle cx="165" cy="221" r="30" fill="#e6edf2"/>
- <rect x="147" y="225" width="12" height="18" rx="3" fill="#4f6f8a"/><rect x="165" y="213" width="12" height="30" rx="3" fill="#31516e"/><rect x="183" y="201" width="12" height="42" rx="3" fill="#c96442"/>
- <text x="370" y="215" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" fill="#172b43">未来回报预期</text>
- <text x="370" y="248" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" fill="#687181">增长 · 盈利 · 竞争格局 · 风险</text>
+<g transform="translate(178 204)">
+ <rect x="0" y="0" width="35" height="69" rx="7" fill="#243d58"/><rect x="43" y="-12" width="35" height="81" rx="7" fill="#365773"/><rect x="86" y="5" width="35" height="64" rx="7" fill="#172b43"/>
+ <g fill="#e9a17f"><rect x="8" y="13" width="19" height="4" rx="2"/><rect x="8" y="28" width="19" height="4" rx="2"/><rect x="51" y="2" width="19" height="4" rx="2"/><rect x="51" y="17" width="19" height="4" rx="2"/><rect x="94" y="18" width="19" height="4" rx="2"/></g>
 </g>
-<path d="M565 221 H704" stroke="#c96442" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowClay)"/>
-<g>
- <circle cx="785" cy="221" r="30" fill="#f7e9e1"/>
- <path d="M768 236 L768 209 L785 195 L802 209 L802 236 Z" fill="#c96442" opacity=".9"/>
- <path d="M776 219 H794 M785 211 V227" stroke="#fffefa" stroke-width="3" stroke-linecap="round"/>
- <text x="985" y="215" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" fill="#a95336">市场定价</text>
- <text x="985" y="248" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" fill="#687181">股权价格 · 估值预期</text>
-</g>
-<path d="M950 278 V316" stroke="#c96442" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowClay)"/>
-<!-- decision gate -->
+<text x="245" y="320" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#172b43">算力与供给</text>
+<text x="245" y="348" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="19" fill="#687181">训练 · 推理 · 稳定容量</text>
+<!-- top-right platform: product and entry -->
 <g filter="url(#shadow)">
- <rect x="270" y="325" width="740" height="112" rx="20" fill="url(#navy)" stroke="#d97757" stroke-width="2"/>
+ <polygon points="1035,190 1200,278 1035,366 870,278" fill="url(#tile)" stroke="#ded9ce" stroke-width="2"/>
+ <polygon points="870,278 1035,366 1035,388 870,300" fill="#d4cfc3"/>
+ <polygon points="1200,278 1035,366 1035,388 1200,300" fill="#e5e0d5"/>
 </g>
-<text x="640" y="372" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="35" font-weight="700" fill="#fffefa">企业是否需要外部融资或股权支付？</text>
-<text x="640" y="407" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#dce4ec">现金储备、经营回款与扩张计划决定传导强度</text>
-<!-- branch lines -->
-<path d="M450 437 V478 H320 V515" fill="none" stroke="#4f6f8a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowNavy)"/>
-<path d="M830 437 V478 H960 V515" fill="none" stroke="#c96442" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowClay)"/>
-<circle cx="320" cy="490" r="20" fill="#4f6f8a"/><text x="320" y="497" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" font-weight="700" fill="#fffefa">否</text>
-<circle cx="960" cy="490" r="20" fill="#c96442"/><text x="960" y="497" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" font-weight="700" fill="#fffefa">是</text>
-<!-- no branch -->
+<g transform="translate(982 210)">
+ <rect x="0" y="0" width="106" height="64" rx="9" fill="#203b58" stroke="#d97757" stroke-width="3"/>
+ <rect x="9" y="9" width="88" height="45" rx="4" fill="#e8edf0"/>
+ <path d="M23 42 L42 26 L57 35 L80 17" fill="none" stroke="#c96442" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle cx="53" cy="59" r="3" fill="#e9a17f"/>
+</g>
+<text x="1035" y="320" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#172b43">产品与入口</text>
+<text x="1035" y="348" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="19" fill="#687181">产品化 · 权限 · 系统集成</text>
+<!-- bottom-left platform: business knowledge and data -->
 <g filter="url(#shadow)">
- <rect x="75" y="520" width="490" height="180" rx="18" fill="#edf3f8" stroke="#c8d8e5" stroke-width="2"/>
- <rect x="715" y="520" width="490" height="180" rx="18" fill="#f9eee8" stroke="#e8c7b6" stroke-width="2"/>
+ <polygon points="245,440 410,528 245,616 80,528" fill="url(#tile)" stroke="#ded9ce" stroke-width="2"/>
+ <polygon points="80,528 245,616 245,638 80,550" fill="#d4cfc3"/>
+ <polygon points="410,528 245,616 245,638 410,550" fill="#e5e0d5"/>
 </g>
-<g>
- <circle cx="145" cy="574" r="28" fill="#d9e6ef"/>
- <rect x="127" y="561" width="36" height="27" rx="5" fill="#31516e"/>
- <path d="M127 570 H163" stroke="#e9a17f" stroke-width="3"/>
- <text x="360" y="570" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#172b43">近期不依赖外部融资</text>
- <text x="320" y="620" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#596270">股价变化不等于现金流变化</text>
- <text x="320" y="654" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#596270">短期经营的直接影响通常较弱</text>
+<g transform="translate(190 455)">
+ <path d="M0 12 Q28 -2 56 12 V80 Q28 66 0 80 Z" fill="#e9a17f" stroke="#c96442" stroke-width="3"/>
+ <path d="M56 12 Q84 -2 112 12 V80 Q84 66 56 80 Z" fill="#fffefa" stroke="#c96442" stroke-width="3"/>
+ <path d="M56 12 V80" stroke="#c96442" stroke-width="3"/>
+ <path d="M14 28 Q29 22 43 28 M14 43 Q29 37 43 43 M70 28 Q85 22 99 28 M70 43 Q85 37 99 43" fill="none" stroke="#647b8e" stroke-width="3" stroke-linecap="round"/>
 </g>
-<g>
- <circle cx="785" cy="574" r="28" fill="#f3dfd4"/>
- <rect x="772" y="554" width="26" height="40" rx="4" fill="#fffefa" stroke="#c96442" stroke-width="2.5"/>
- <path d="M778 566 H792 M778 574 H792 M778 582 H788" stroke="#c96442" stroke-width="2.5" stroke-linecap="round"/>
- <text x="1000" y="570" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#a95336">近期需要融资或股权支付</text>
- <text x="960" y="620" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#596270">股权：稀释比例 · 并购支付能力</text>
- <text x="960" y="654" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#596270">债务：利率 · 担保 · 契约条件</text>
-</g>
-<!-- converge to choices -->
-<path d="M320 700 V740 H640 V760" fill="none" stroke="#4f6f8a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowNavy)"/>
-<path d="M960 700 V740 H640" fill="none" stroke="#c96442" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="245" y="582" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="27" font-weight="700" fill="#172b43">业务知识与数据</text>
+<text x="245" y="609" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="18" fill="#687181">行业规则 · 场景数据 · 上下文</text>
+<!-- bottom-right platform: customer relationships and delivery -->
 <g filter="url(#shadow)">
- <rect x="330" y="765" width="620" height="82" rx="16" fill="#fffefa" stroke="#e2ddd3" stroke-width="2"/>
+ <polygon points="1035,440 1200,528 1035,616 870,528" fill="url(#tile)" stroke="#ded9ce" stroke-width="2"/>
+ <polygon points="870,528 1035,616 1035,638 870,550" fill="#d4cfc3"/>
+ <polygon points="1200,528 1035,616 1035,638 1200,550" fill="#e5e0d5"/>
 </g>
-<text x="640" y="815" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" fill="#172b43">投资、采购与合作安排</text>
-<path d="M640 847 V878" stroke="#c96442" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowClay)"/>
+<g transform="translate(980 454)">
+ <circle cx="55" cy="18" r="18" fill="#c96442"/><circle cx="22" cy="38" r="14" fill="#4f6f8a"/><circle cx="88" cy="38" r="14" fill="#4f6f8a"/>
+ <path d="M24 86 Q25 52 55 52 Q85 52 86 86 Z" fill="#c96442"/>
+ <path d="M0 87 Q2 60 22 60 Q43 60 47 87 Z" fill="#4f6f8a"/><path d="M63 87 Q67 60 88 60 Q108 60 110 87 Z" fill="#4f6f8a"/>
+</g>
+<text x="1035" y="582" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="27" font-weight="700" fill="#172b43">客户关系与交付</text>
+<text x="1035" y="609" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="18" fill="#687181">渠道 · 实施 · 运维</text>
+<!-- central technology core -->
 <g filter="url(#shadow)">
- <rect x="330" y="885" width="620" height="84" rx="16" fill="url(#navy)"/>
+ <polygon points="640,245 790,330 640,415 490,330" fill="url(#coreTop)" stroke="#e5a184" stroke-width="3"/>
+ <polygon points="490,330 640,415 640,535 490,450" fill="url(#coreLeft)"/>
+ <polygon points="790,330 640,415 640,535 790,450" fill="url(#coreRight)"/>
+ <path d="M640 415 V535" stroke="#d97757" stroke-width="3"/>
 </g>
-<text x="640" y="920" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="31" font-weight="700" fill="#fffefa">实际经营结果</text>
-<text x="640" y="950" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="20" fill="#dce4ec">收入 · 成本 · 利用率 · 利润</text>
-<!-- feedback loop, outside main reading path -->
-<path d="M950 927 H1208 V221 H1185" fill="none" stroke="#4f6f8a" stroke-width="3.5" stroke-dasharray="10 9" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowNavy)"/>
-<rect x="1117" y="540" width="70" height="116" rx="12" fill="#e7edf2" stroke="#cbd8e2" stroke-width="1.5"/>
-<text x="1152" y="560" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="17" font-weight="700" fill="#31516e">
- <tspan x="1152" dy="0">经营</tspan><tspan x="1152" dy="23">结果</tspan><tspan x="1152" dy="23">修正</tspan><tspan x="1152" dy="23">下一轮</tspan><tspan x="1152" dy="23">预期</tspan>
-</text>
+<g fill="#e9a17f"><circle cx="640" cy="300" r="18"/><circle cx="640" cy="300" r="7" fill="#fffefa"/></g>
+<text x="640" y="450" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="34" font-weight="700" fill="#fffefa">核心技术</text>
+<text x="640" y="484" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="22" fill="#e4eaf0">模型 · 算法 · 能力</text>
+<text x="640" y="684" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="20" fill="#737a83">同一种资源，对模型厂商和应用公司可能分别是自有能力或外部投入。</text>
 </svg>
