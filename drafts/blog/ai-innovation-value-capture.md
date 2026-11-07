@@ -100,7 +100,7 @@ OpenAI 的融资报道提供了一个现实信号。[Bloomberg 10 月 23 日报�
 
 由此可以把估值与本文主线接起来。图中箭头表示可能的影响，不是每家公司都会发生的循环，也不预设结果只会向上或向下。
 
-![未来回报预期影响市场定价；企业是否依赖外部融资，决定定价变化会不会进一步影响投资与资源取得，经营结果再修正预期。](assets/ai-innovation-value-capture/valuation-financing-feedback.svg "股价变化不会自动改变经营；融资依赖、现金储备和融资方式决定传导强度。")
+![未来回报预期影响市场定价；企业是否依赖外部融资或股权支付，决定定价变化是否进一步影响融资条件与投资安排，经营结果再反馈到下一轮预期。](assets/ai-innovation-value-capture/valuation-financing-feedback.svg "股价变化不会自动改变经营；融资依赖、现金储备和融资方式决定传导强度。")
 
 这次选举后的市场反应，适合放在这里理解。[Reuters 报道](https://www.reuters.com/legal/government/democrats-seize-congress-sweeping-midterm-repudiation-trump-2026-11-04/)，民主党赢得两院多数，新一届国会将在 2027 年 1 月履职。短期交易面对的首先是政策预期，而不是已经全面实施的新规。市场还同时面对融资、建设和投资回报的不确定性，不能把全部跌幅分配给一个政治变量。
 
