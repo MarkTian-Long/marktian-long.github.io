@@ -440,6 +440,18 @@ Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致�
 7. `git add docs/blog/xxx.md tools/blog/posts/xxx.html tools/blog/data/posts-meta.json assets/images/blog/xxx/ robots.txt sitemap.xml feed.xml`
    （新文件必须显式 add，否则 GitHub Pages 404）
 
+### 未发布图文预览：走正式模板的候选构建，不接入公开入口
+
+完整图文预览不另起一份样式相似的自定义 HTML。待正文、图片和图表进入视觉确认阶段，使用唯一未发布 Markdown 工作稿和正式文章模板/运行时，在隔离的候选构建目录生成网页；生成器已有 `--candidate` 模式，可将输出限制在 `build/candidate-site/` 下，例如：
+
+```powershell
+node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/candidate-site/tools/blog/posts/your-slug.html
+```
+
+**运行前提：** 该生成器仍会读取当前工作区的 `tools/blog/data/posts-meta.json`，并要求与 H1、摘要及 frontmatter 匹配；新文章未正式入库时，应在**隔离的候选工作区**内建立临时 metadata 快照，完成预览需要的字段和 `visuals`，绝不可为了让候选构建通过而将草稿加到正式索引。候选目录须同时保留/复制所依赖的共享运行时及本地图片，确保相对路径与正式发布一致；如采用单文件离线交付，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。对外分享前移除或屏蔽指向尚未正式发布页面的 canonical、OG URL 与搜索结构化标记，标识为“未发布预览”；不更新首页、列表、搜索、RSS、sitemap、正式 HTML、发布日期或 publicly indexed metadata。未放进目录不代表私密：若另需线上不可枚举/未关联的直达 URL，应明确部署位置和 noindex/访问控制；默认仅提供隔离候选/离线预览，不自动公开上线。
+
+**候选 QA 按正式发布页面做视觉复核：** 目录、正文宽度、表格、图像、参考资料展开/折叠、上一/下一篇或继续阅读的预览状态、桌面/移动及浅色/深色、资源加载与失败 alt；候选层的元数据/导航隔离作为唯一允许的功能差异。预览没有运行真实构建或浏览器验证时应明确记录缺口，不能只凭一份漂亮的独立 HTML 声称与正式发布一致。正式发布仍按上节完整同步/构建/索引路径进行，不把 candidate 模式当成发布完成。
+
 ### 文章目录、订阅源与新文可发现性契约
 
 `posts-meta.json` 的 `posts` 数组不仅是文章索引，也决定归档分页与 RSS 的读取顺序。正式发布时必须保持**发布日期（`YYYY.MM`）从新到旧**，同月文章保持编辑顺序（新文章优先、旧文章同步不得无故打乱），不可假设“有 date 字段，前台自然会按时间排序”。
