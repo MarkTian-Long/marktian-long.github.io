@@ -37,9 +37,14 @@ function checkSource(rootDir, post, template, errors) {
   if (!parsed.frontmatter) return;
   const expected = buildPage(template, parsed.bodyMarkdown, post, sourcePath);
   const actual = read(rootDir, htmlPath);
-  if (extractBody(actual) !== extractBody(expected)) errors.push(`${htmlPath}: body is not generated from the current Markdown source.`);
+  if (extractBody(actual) !== extractBody(expected)) {
+    const got = extractBody(actual), wanted = extractBody(expected);
+    let offset = 0;
+    if (got !== null && wanted !== null) while (offset < Math.min(got.length, wanted.length) && got[offset] === wanted[offset]) offset++;
+    errors.push(`${htmlPath}: body is not generated from the current Markdown source. Diagnostics: ${JSON.stringify({ source_sha256: sha256(source), html_sha256: sha256(actual), expected_length: wanted === null ? null : wanted.length, actual_length: got === null ? null : got.length, first_difference: offset, expected_excerpt: wanted === null ? null : wanted.slice(Math.max(0, offset - 40), offset + 120), actual_excerpt: got === null ? null : got.slice(Math.max(0, offset - 40), offset + 120) })}`);
+  }
   if (htmlTagContent(actual, 'title') !== htmlTagContent(expected, 'title')) errors.push(`${htmlPath}: title differs from source metadata.`);
-  if (!actual.includes(post.summary)) errors.push(`${htmlPath}: summary differs from source metadata.`);
+  if (!actual.includes(post.summary)) errors.push(`${htmlPath}: summary differs from source metadata. Diagnostics: ${JSON.stringify({ metadata_summary: post.summary, source_summary: parsed.sourceSummary, rendered_summary: /<p class="post-summary">([\s\S]*?)<\/p>/.exec(actual)?.[1] ?? null })}`);
   checkPublishedNavigation(rootDir, post, errors);
 }
 function main(rootDir = ROOT_DIR) {
