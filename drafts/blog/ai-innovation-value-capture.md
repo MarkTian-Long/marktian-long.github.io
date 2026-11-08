@@ -1,10 +1,23 @@
+---
+category: 商业
+tags: [市场格局]
+topics: []
+concepts: [价值捕获, 互补资产, 可信替代选择, 纵向整合, 资源承诺, 估值与融资]
+share_quote: 技术领先创造机会；企业能否留下回报，取决于它如何组合资源、组织交易并承担风险。
+relations:
+  - slug: ai-industry-history-mechanisms
+    type: builds_on
+  - slug: ai-saas-build-vs-buy
+    type: builds_on
+---
+
 # 技术最领先的人，为什么不一定拿走最大的价值？
 
-> 技术创造的业务价值、企业能够保留的经济回报、资本市场愿意为未来回报支付的价格，是三个相关但不同的口径。技术领先不自动带来高利润；商业化所需的互补资产、交易双方的替代选择，以及取得资源时承担的投入与风险，都会影响回报。估值则可能通过融资条件，反过来改变企业下一轮经营选择。
+> 技术创造的业务价值、企业留下的经济回报和资本市场给出的估值，不是一回事。企业能留下多少回报，取决于商业化所需的互补资产、交易中的替代选择，以及取得资源时承担的投入和风险；估值又可能通过融资条件改变下一轮经营选择。
 
 ---
 
-最近看 AI 相关股票的波动，我最直观的感受是：技术进展、企业经营和市场估值，并不总是同步变化。2026 年美国中期选举之后，11 月 4 日美股大盘上涨、部分数据中心股票下跌；11 月 5 日，纳斯达克综合指数又下跌了约 5.5%。报道将担忧指向数据中心扩建和融资条件，而不是一次统一的模型能力退步。[Reuters 的两日市场报道](https://wealthinsights.metrobank.com.ph/news/us-stocks-wall-street-ends-higher-after-democrats-win-congress-data-center-stocks-tumble)与[11 月 5 日收盘报道](https://www.reuters.com/legal/transactional/ai-data-center-stocks-slip-democratic-sweep-clouds-expansion-plans-2026-11-05/)呈现了这种变化。
+最近看 AI 相关股票的波动，我最直观的感受是：技术进展、企业经营和市场估值，并不总是同步变化。2026 年美国中期选举之后，11 月 4 日美股大盘上涨、部分数据中心股票下跌；11 月 5 日，纳斯达克综合指数又下跌了约 5.5%。报道将部分市场担忧指向数据中心扩建和融资条件。[Reuters 的两日市场报道](https://wealthinsights.metrobank.com.ph/news/us-stocks-wall-street-ends-higher-after-democrats-win-congress-data-center-stocks-tumble)与[11 月 5 日收盘报道](https://www.reuters.com/legal/transactional/ai-data-center-stocks-slip-democratic-sweep-clouds-expansion-plans-2026-11-05/)呈现了这种变化。
 
 这组波动本身不能证明 AI 的商业价值消失，也不能证明某一层会成为赢家。它把上一篇[《看 AI，不要只问它像历史上的哪一年》](https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html)留下的问题推到眼前：技术可能继续进步，客户也仍然觉得产品有用，为什么企业的商业前景和市场定价仍会变化？如果基础模型是这一轮价值创造最重要的技术源头之一，什么决定收益最终留在模型、算力、应用、渠道，还是客户手里？
 
@@ -28,25 +41,25 @@
 
 ## 二、技术怎样变成生意：互补资产补上什么？
 
-David Teece 在[1986 年的创新获利研究](https://doi.org/10.1016/0048-7333(86)90027-2)中，把生产、分销、售后等商业化所需的配套资源称为互补资产。他同时考察技术能否被模仿，以及创新者能否取得这些资源。通用、专用和共同专用的区别，主要描述是否需要特殊适配，以及创新与配套资产之间存在单向还是双向依赖，不直接等于稀缺程度或议价权。
+David Teece 在[1986 年的创新获利研究](https://doi.org/10.1016/0048-7333%2886%2990027-2)中，把生产、分销、售后等商业化所需的配套资源称为互补资产。他同时考察技术能否被模仿，以及创新者能否取得这些资源。通用、专用和共同专用的区别，主要描述是否需要特殊适配，以及创新与配套资产之间存在单向还是双向依赖，不直接等于稀缺程度或议价权。
 
 EMI 的 CT 扫描仪提供了一个历史例子。EMI 率先实现商业化，却没能长期维持领先。[美国国会技术评估局的同期研究](https://www.princeton.edu/~ota/disk3/1981/8122/812204.PDF)记录了竞争者推出新一代设备、市场扩张放缓，以及包含 CT 业务的 EMI 医疗电子部门从盈利转向亏损。技术演进和需求变化都参与了结果，不能把它缩成“技术公司输给了渠道”的单因果故事。
 
 把这套理论用于 AI，需要先明确分析对象。对基础模型厂商来说，模型是核心技术，算力供给、开发者生态、产品入口和企业交付能力可以成为配套资源。对应用公司来说，模型又可能是它采购的一项投入，业务知识、客户关系与实施能力则可能是它自己积累的资源。同一种资源，换一个分析对象就可能改变角色。
 
-![核心技术与算力供给、产品入口、业务知识与数据、客户关系与交付四类资源连接，共同支持技术进入真实业务。](assets/ai-innovation-value-capture/value-capture-concept.svg "技术能力只有与供给、产品、业务知识和客户交付结合，才可能成为可持续的商业服务。")
+![核心技术与算力供给、产品入口、业务知识与数据、客户关系与交付四类资源连接，共同支持技术进入真实业务。](assets/ai-innovation-value-capture/value-capture-concept.svg "算力、产品集成、业务知识和客户交付，是帮助技术进入真实业务的配套条件。")
 
 也不能因为某种能力不可缺少，就认定它的提供者一定能赚得很多。所有客户都需要权限控制，如果多家供应商都能提供可兼容的服务，单个供应商仍可能缺乏定价权。反过来，如果进入一个市场必须依赖少数渠道，而技术本身又有多个替代来源，渠道控制者就可能获得更好的交易条件。
 
 数据、上下文和工作流也需要拆开看。客户拥有、能够导出并交给其他服务商的数据，并不自动成为原供应商独占的资产；为某个客户做得很深的定制，既可能让客户难以更换供应商，也可能让供应商难以离开这个客户。这些能力是否有商业价值，要落到控制权、替代代价和后续复用上判断。
 
-互补资产回答的是“把技术变成产品需要谁配合”，还没有回答“这些参与者各自能留下多少”。即使资源不可或缺，交易双方仍然会比较替代方案；这才进入下一步的议价问题。
+**互补资产回答的是“把技术变成产品需要谁配合”，还没有回答“这些参与者各自能留下多少”。**即使资源不可或缺，交易双方仍然会比较替代方案；这才进入下一步的议价问题。
 
 ## 三、有资源不等于有利润：替代选择决定议价空间
 
 我在[《当 AI 能替你造软件，哪些服务仍值得买？》](https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html)中已经展开过买与建的比较。这里承接一个必要前提：能做出可运行的软件，只是让自建进入候选；能在可接受的成本和风险下持续接手任务，才形成可信替代。
 
-这种替代即使没有被实际采用，也可能影响交易。客户可以自己承接一部分任务、缩小采购范围，或者在续约时重新比较价格与响应速度。供应商仍然更合算时，采购关系可以继续；因此，“客户没有流失”并不直接说明原有溢价得到了保留。这是议价机制的推导，不是对 SaaS 已经普遍降价的统计结论。
+**客户不必真正更换供应商，可信替代本身就可能改变交易条件。**客户可以自己承接一部分任务、缩小采购范围，或者在续约时重新比较价格与响应速度。供应商仍然更合算时，采购关系可以继续；因此，“客户没有流失”并不直接说明原有溢价得到了保留。这是议价机制的推导，不是对 SaaS 已经普遍降价的统计结论。
 
 AI 同时改变双方的成本。供应商可能把一次开发和维护复用于多个客户；客户则可能更了解自己频繁变化的内部规则，减少跨公司解释、排期和验收的代价。不能只让自建的开发成本下降，再把它的维护成本冻结在今天；也不能只看到供应商提效，而忽略客户同样获得了工具。谁更有优势，需要比较同一任务、同一质量要求和同一使用周期。
 
@@ -62,15 +75,15 @@ AI 同时改变双方的成本。供应商可能把一次开发和维护复用�
 
 Anthropic 在[2026 年 2 月 12 日的公告](https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation)中披露，Claude Code 当时的年化收入运行率已经超过 25 亿美元。这个公司自报指标不能代替全年收入或利润，但说明模型厂商能够直接经营付费工具。OpenAI 在[9 月 29 日 DevDay](https://openai.com/index/devday-2026-recap/)公布的运行服务和 Marketplace 采购安排，则显示它试图进一步进入交付和第三方软件采购过程。产品动作与变现信号，仍需分别检验其成本和长期结果。
 
-扩张的另一面，是取得这些资源需要付出什么条件。Anthropic 的[11 月 2 日 S-1/A](https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm)披露，算力和基础设施相关采购、租赁等承诺合计约 8954 亿美元，其中约 698 亿美元在 2026 年 9 月 30 日后的十二个月内到期。总额跨越多年、包含未开始的租赁，不是当期支出或现有债务。公司同时披露了现金、短期投资与融资渠道，仅凭总额不能判断短期资金缺口。
+扩张的另一面，是取得这些资源需要付出什么条件。Anthropic 的[11 月 2 日 S-1/A](https://www.sec.gov/Archives/edgar/data/2130357/000162828026068676/anthropicpbc-sx1ax1.htm)披露，算力和基础设施相关采购、租赁等承诺合计约 8954 亿美元，其中约 698 亿美元在 2026 年 9 月 30 日后的十二个月内到期。总额跨越多年、包含未开始的租赁，不等于当期支出，也不能全部当作现有债务；部分安排还有生效条件或终止权。公司同时披露了现金、短期投资与融资渠道，仅凭总额不能判断短期资金缺口。
 
 更值得分析的是期限结构：部分算力合同要求最低采购或“用不用都要付”，而收入主要按实际使用产生，大量收入没有对应的长期承诺。这是风险结构，不是已经违约。取得长期供给，也可能接下需求与利用率风险。
 
 下面用一个简化关系图说明这种错配，不按 Anthropic 的实际金额或合同期限绘制。
 
-![最低采购、租赁付款等合同义务在同一合同期内持续发生，而实际用量和收入随客户需求变化，两者之间可能形成潜在缺口。](assets/ai-innovation-value-capture/commitments-and-demand.svg "长期采购能保障供给，但需求不足时，企业仍可能承担持续的资源成本。")
+![企业向上游采购资源时可能已经承诺持续付款，而客户可以减少使用或不续约；两边承诺不同，收入减少时付款义务未必同步减少。](assets/ai-innovation-value-capture/commitments-and-demand.svg "客户少用了，已经承诺的资源付款也未必减少；具体后果要看合同条款。")
 
-长期采购并非天然不划算。如果需求稳定、价格条件有利，它可能帮助企业降低成本并保障供给；如果需求不及预期、交付延期或新技术更便宜，同样的安排就可能变成负担。评估一项互补资产，不能只看“拿到了什么”，还要看“为了拿到它，承诺了什么”。
+长期采购并非天然不划算。如果需求稳定、价格条件有利，它可能帮助企业降低成本并保障供给；如果需求不及预期、交付延期或新技术更便宜，同样的安排就可能变成负担。**评估一项互补资产，不能只看“拿到了什么”，还要看“为了拿到它，承诺了什么”。**
 
 资产所有权也不完全等于风险归属。假设一方融资购买设备，另一方长期租用，第三方提供担保，那么拥有设备、实际使用设备、垫付资金和承担违约损失的，可能不是同一方。谁先收费、付款有何条件、能否退出，以及损失由谁承担，都要沿合同核对。供应商拿到长期合同，不等于风险消失；它还要考虑客户的履约能力和资产能否转作其他用途。
 
@@ -84,11 +97,11 @@ Anthropic 在[2026 年 2 月 12 日的公告](https://www.anthropic.com/news/ant
 
 但价格变化与经营变化之间，还需要一条具体的传导路径。二级市场上的股价下跌，本身不会把同等金额从公司账户扣走。影响取决于它接下来是否需要发行股份、再融资、用股权收购，或者以其他方式依赖资本市场。现金充足、经营能持续回款的公司，与需要下一笔融资才能完成建设的公司，对同样波动的承受力不同。
 
-在新股融资额和其他条件相同的假设下，较低的股权定价意味着原股东需要让出更大的持股比例；债务融资则要另看利率、担保和约束条款，不能从股价单独推算借款成本。若资金仍能以可接受条件到位，投资可以继续；若额度不足或条款变化，企业才可能调整采购节奏、合作方式和进入新业务的范围。这个反馈并非自动发生。
+在新股融资额和其他条件相同的假设下，较低的股权定价意味着原股东需要让出更大的持股比例；债务融资则要另看利率、担保和约束条款，不能从股价单独推算借款成本。若资金仍能以可接受条件到位，投资可以继续；若额度不足或条款变化，企业才可能调整采购节奏、合作方式和进入新业务的范围。**估值不是已经实现的利润，但它可能通过融资条件，改变企业取得资源的能力。**
 
-OpenAI 的融资报道提供了一个现实信号。[Bloomberg 10 月 23 日报道](https://news.bloomberglaw.com/ip-law/openai-shifts-value-to-1-25-trillion-as-funding-talks-finalize)，其谈判中的目标估值从 1.4 万亿美元调至 1.25 万亿美元；[Reuters 10 月 30 日转述 FT](https://new.streetinsider.com/Reuters/OpenAI%2Bslashes%2Bfunding%2Btarget%2Bby%2B%2410%2Bbillion%2Bamid%2Btech%2Brout%2C%2BFT%2Breports/27267372.html)，称本轮募资目标减少 100 亿美元，转为约 200 亿美元。两项均为媒体援引知情人士的交易进展，不是本轮最终交割公告；目标估值下调，也不等于已经低于上一轮成交估值。这些报道发生在美国选举之前，不能倒写成选举造成的结果。
+OpenAI 的融资过程提供了一个现实信号。[Bloomberg 10 月 22 日（UTC）报道](https://news.bloomberglaw.com/ip-law/openai-shifts-value-to-1-25-trillion-as-funding-talks-finalize)，其谈判中的目标估值从 1.4 万亿美元调至 1.25 万亿美元；[Reuters 10 月 30 日转述 FT](https://new.streetinsider.com/Reuters/OpenAI%2Bslashes%2Bfunding%2Btarget%2Bby%2B%2410%2Bbillion%2Bamid%2Btech%2Brout%2C%2BFT%2Breports/27267372.html)，称本轮募资目标减少 100 亿美元，转为约 200 亿美元。随后，[Reuters 11 月 6 日援引知情人士称](https://www.reuters.com/business/openai-secures-11-billion-funding-125-trillion-valuation-bloomberg-news-reports-2026-11-06/)，OpenAI 已完成首批约 110 亿美元融资，对应估值约 1.25 万亿美元。前两项反映谈判目标，后一项反映部分资金已经到位的报道；部分融资完成，不等于整轮结束，更不等于未来利润已经兑现。这些变化始于美国选举之前，不能都归因于选举结果。
 
-由此可以把估值与本文主线接起来。图中箭头表示可能的影响，不是每家公司都会发生的循环，也不预设结果只会向上或向下。
+下图只展开融资和股权支付这条传导路径，不穷尽估值影响经营的所有渠道。箭头表示可能的影响，不是每家公司必然经历的循环；资金充足的企业也会投资，只是这轮价格波动未必直接约束它。
 
 ![未来回报预期影响市场定价；企业是否需要外部融资或股权支付，决定定价变化是否进一步影响融资条件和投资安排，经营结果再反馈到下一轮预期。](assets/ai-innovation-value-capture/valuation-financing-feedback.svg "不依赖融资时，短期直接影响通常较弱；需要融资时，估值可能改变资本成本与资源获取条件。")
 
@@ -112,7 +125,7 @@ OpenAI 的融资报道提供了一个现实信号。[Bloomberg 10 月 23 日报�
 
 ### 学术研究与估值方法
 
-- [David J. Teece：Profiting from Technological Innovation（1986）](https://doi.org/10.1016/0048-7333(86)90027-2)。用于解释技术可模仿性、互补资产与创新收益。
+- [David J. Teece：Profiting from Technological Innovation（1986）](https://doi.org/10.1016/0048-7333%2886%2990027-2)。用于解释技术可模仿性、互补资产与创新收益。
 - [Brandenburger 与 Stuart：Value-Based Business Strategy](https://business.columbia.edu/faculty/research/value-based-business-strategy)。用于区分共同创造价值与参与者价值捕获。
 - [Aswath Damodaran：Approaches to Valuation](https://pages.stern.nyu.edu/adamodar/New_Home_Page/lectures/approach.html)。用于解释未来现金流、风险与股权估值。
 - [Aswath Damodaran：Intrinsic vs Relative Value](https://pages.stern.nyu.edu/adamodar/New_Home_Page/littlebook/intrinsicvsrelative.htm)。用于区分估值方法与市场相对定价。
@@ -128,8 +141,9 @@ OpenAI 的融资报道提供了一个现实信号。[Bloomberg 10 月 23 日报�
 
 - [Reuters：11 月 4 日美股收盘报道，Metrobank 转载](https://wealthinsights.metrobank.com.ph/news/us-stocks-wall-street-ends-higher-after-democrats-win-congress-data-center-stocks-tumble)。区分大盘与不同 AI 相关股票的反应。
 - [Reuters：11 月 5 日科技股与 AI 基础设施抛售报道](https://www.reuters.com/legal/transactional/ai-data-center-stocks-slip-democratic-sweep-clouds-expansion-plans-2026-11-05/)。市场观察与受访者解释，不是单一因果识别。
-- [Bloomberg：OpenAI Shifts Value to $1.25 Trillion as Funding Talks Finalize](https://news.bloomberglaw.com/ip-law/openai-shifts-value-to-1-25-trillion-as-funding-talks-finalize)。2026 年 10 月 23 日谈判进展报道。
-- [Reuters 转述 FT：OpenAI 调整募资目标，StreetInsider 更正稿](https://new.streetinsider.com/Reuters/OpenAI%2Bslashes%2Bfunding%2Btarget%2Bby%2B%2410%2Bbillion%2Bamid%2Btech%2Brout%2C%2BFT%2Breports/27267372.html)。2026 年 10 月 30 日交易进展报道，不作为最终交割公告。
+- [Bloomberg：OpenAI Shifts Value to $1.25 Trillion as Funding Talks Finalize](https://news.bloomberglaw.com/ip-law/openai-shifts-value-to-1-25-trillion-as-funding-talks-finalize)。2026 年 10 月 22 日（UTC）谈判进展报道。
+- [Reuters 转述 FT：OpenAI 调整募资目标，StreetInsider 转载](https://new.streetinsider.com/Reuters/OpenAI%2Bslashes%2Bfunding%2Btarget%2Bby%2B%2410%2Bbillion%2Bamid%2Btech%2Brout%2C%2BFT%2Breports/27267372.html)。2026 年 10 月 30 日谈判进展报道。
+- [Reuters：OpenAI 完成首批约 110 亿美元融资](https://www.reuters.com/business/openai-secures-11-billion-funding-125-trillion-valuation-bloomberg-news-reports-2026-11-06/)。2026 年 11 月 6 日消息人士报道，不等于整轮融资结束。
 - [Reuters：2026 年美国中期选举后的国会格局](https://www.reuters.com/legal/government/democrats-seize-congress-sweeping-midterm-repudiation-trump-2026-11-04/)。用于区分选举结果与新一届国会履职时间。
 
 ### 本站前文

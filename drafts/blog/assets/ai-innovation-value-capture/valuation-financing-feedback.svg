@@ -1,19 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
 <title id="title">市场估值怎样通过融资条件影响经营</title>
-<desc id="desc">回报预期影响市场定价。仅当企业需要外部融资或股权支付时，市场定价才可能进一步改变融资条件和投资安排；没有近期融资依赖时，短期直接传导较弱。经营结果将再次修正未来回报预期。</desc>
+<desc id="desc">回报预期影响市场定价。在本文讨论的融资路径中，企业需要外部融资或股权支付时，市场定价可能进一步改变融资条件和投资安排；没有近期融资依赖时，短期直接传导较弱。经营结果将再次修正未来回报预期。</desc>
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffefa"/><stop offset="1" stop-color="#f4f1e9"/></linearGradient>
   <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#29445e"/><stop offset="1" stop-color="#111e30"/></linearGradient>
   <filter id="shadow" x="-10%" y="-15%" width="120%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#15283d" flood-opacity=".11"/></filter>
-  <marker id="arrOrange" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#c96442"/></marker>
-  <marker id="arrBlue" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#4b6d89"/></marker>
+  <marker markerUnits="userSpaceOnUse" id="arrOrange" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#c96442"/></marker>
+  <marker markerUnits="userSpaceOnUse" id="arrBlue" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#4b6d89"/></marker>
 </defs>
+<style>.phone{display:none}@media(max-width:500px){.full{display:none}.phone{display:block}}</style>
+<g class="full">
 <rect width="1280" height="1024" rx="24" fill="url(#bg)"/>
 <rect x="2" y="2" width="1276" height="1020" rx="22" fill="none" stroke="#e4e0d7" stroke-width="2"/>
 <g font-family="Noto Sans CJK SC,PingFang SC,Microsoft YaHei,sans-serif">
   <rect x="68" y="48" width="7" height="45" rx="3.5" fill="#c96442"/>
   <text x="96" y="87" font-size="45" font-weight="700" fill="#101d30">市场估值怎样反馈到企业经营？</text>
-  <text x="97" y="128" font-size="25" fill="#596270">不是价格一变化就影响现金；是否需要融资，才决定后续传导。</text>
+  <text x="97" y="128" font-size="25" fill="#596270">只展示融资与股权支付渠道；股价波动不等于公司现金被扣走。</text>
 </g>
 <!-- Top: future return expectations and equity market pricing. -->
 <g filter="url(#shadow)">
@@ -39,7 +41,7 @@
 <g font-family="Noto Sans CJK SC,PingFang SC,Microsoft YaHei,sans-serif">
   <circle cx="351" cy="411" r="24" fill="#e6a389"/>
   <path d="M338 407 L350 396 L363 407 L350 421 Z" fill="#fff4eb"/>
-  <text x="682" y="403" text-anchor="middle" font-size="37" font-weight="700" fill="#fffefa">企业是否需要外部融资或股权支付？</text>
+  <text x="682" y="403" text-anchor="middle" font-size="37" font-weight="700" fill="#fffefa">近期是否需要融资或股权支付？</text>
   <text x="682" y="440" text-anchor="middle" font-size="22" fill="#d7e2e9">现金储备、经营回款和扩张计划决定答案</text>
 </g>
 <path d="M476 479 V516 H342 V548" fill="none" stroke="#4b6d89" stroke-width="3.7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrBlue)"/>
@@ -63,7 +65,7 @@
   <circle cx="742" cy="617" r="23" fill="#f2dacd"/>
   <rect x="731" y="600" width="22" height="34" rx="3" fill="#fffefa" stroke="#c96442" stroke-width="2.5"/>
   <path d="M736 609 H748 M736 616 H748 M736 623 H745" stroke="#c96442" stroke-width="2" stroke-linecap="round"/>
-  <text x="785" y="624" font-size="31" font-weight="700" fill="#9f4e35">近期需要融资或股权支付</text>
+  <text x="785" y="624" font-size="31" font-weight="700" fill="#9f4e35">融资条件可能改变</text>
   <text x="727" y="677" font-size="24" fill="#6d5f5d">股权：融资稀释、交易支付能力</text>
   <text x="727" y="711" font-size="24" fill="#6d5f5d">债务：利率、担保和契约条件</text>
 </g>
@@ -85,4 +87,27 @@
 <!-- The only feedback loop runs around the perimeter, not through nodes. -->
 <path d="M675 976 H54 V233 H124" fill="none" stroke="#4b6d89" stroke-width="3" stroke-dasharray="9 10" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrBlue)"/>
 <text transform="translate(79 818) rotate(-90)" text-anchor="middle" font-family="Noto Sans CJK SC,PingFang SC,Microsoft YaHei,sans-serif" font-size="21" fill="#4b6d89">经营结果反馈到下一轮回报预期</text>
+
+</g>
+<g class="phone" font-family="Noto Sans CJK SC,PingFang SC,Microsoft YaHei,sans-serif">
+<rect width="1280" height="1024" rx="22" fill="#faf9f5"/>
+<text x="640" y="96" text-anchor="middle" font-size="64" font-weight="700" fill="#172b43">估值如何影响经营？</text>
+<text x="640" y="163" text-anchor="middle" font-size="46" fill="#637181">这里仅讨论融资与股权支付渠道</text>
+<rect x="130" y="207" width="1020" height="112" rx="18" fill="#f3e8df"/>
+<text x="640" y="280" text-anchor="middle" font-size="62" font-weight="700" fill="#9e4e34">回报预期改变 → 市场重新定价</text>
+<path d="M640 335 V375" stroke="#c96442" stroke-width="6" fill="none"/><path d="M626 363 L640 379 L654 363" stroke="#c96442" stroke-width="6" fill="none"/>
+<rect x="130" y="397" width="1020" height="112" rx="18" fill="#172b43"/>
+<text x="640" y="471" text-anchor="middle" font-size="63" font-weight="700" fill="#fffefa">近期需要融资或股权支付吗？</text>
+<path d="M380 525 V562 M900 525 V562" stroke="#a79280" stroke-width="6"/>
+<rect x="65" y="580" width="550" height="198" rx="20" fill="#e9f1f8"/>
+<rect x="665" y="580" width="550" height="198" rx="20" fill="#faebe0"/>
+<text x="340" y="651" text-anchor="middle" font-size="66" font-weight="700" fill="#31516e">不需要</text>
+<text x="340" y="720" text-anchor="middle" font-size="48" fill="#31516e">短期直接影响较弱</text>
+<text x="940" y="651" text-anchor="middle" font-size="66" font-weight="700" fill="#9e4e34">需要</text>
+<text x="940" y="720" text-anchor="middle" font-size="48" fill="#9e4e34">融资条件可能变化</text>
+<path d="M940 794 V830" stroke="#c96442" stroke-width="6"/><path d="M926 818 L940 834 L954 818" stroke="#c96442" stroke-width="6" fill="none"/>
+<rect x="380" y="855" width="835" height="94" rx="18" fill="#172b43"/>
+<text x="798" y="919" text-anchor="middle" font-size="56" font-weight="700" fill="#fffefa">可能改变投资与经营选择</text>
+<text x="640" y="1004" text-anchor="middle" font-size="42" fill="#637181">实际经营结果，又会修正下一轮回报预期。</text>
+</g>
 </svg>
