@@ -40,7 +40,7 @@ category: 技术
   
 .post-figure{margin:24px 0 28px}.post-figure img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:9px;background:#faf9f5}.post-figure figcaption{font-size:12px;color:var(--text-3);line-height:1.65;margin-top:8px}
 .preview-flag{border:1px solid var(--border);padding:3px 9px;border-radius:6px;font-size:11px;color:var(--text-2);margin-left:16px}.post-nav,.continue-reading{display:none!important}
-.reference-disclosure summary{cursor:pointer;color:var(--text-2);font-size:13px;margin:10px 0 16px}.reference-disclosure .reference-body{margin-top:16px}
+
 .remote-photo{aspect-ratio:3/2;object-fit:cover;min-height:210px}.photo-fallback{display:none;padding:25px;border:1px solid var(--border);border-radius:10px;background:var(--bg-subtle);font-size:13px}
 @media(max-width:520px){.post-figure{margin:20px 0}.top-bar{display:flex;gap:5px;align-items:center}.preview-flag{font-size:10px;margin-left:4px}}
 </style>
@@ -66,7 +66,7 @@ category: 技术
 <p>我之前在<a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html">《物理世界会有自己的 LLM 时刻吗？》</a>里讨论过，物理 AI 需要的不只是知识，还包括真实行动与反馈。在<a href="https://marktian-long.github.io/tools/blog/posts/video-world-model.html">《视频已经能“生成未来”，为什么还不等于会预测世界？》</a>里，则讨论了视频学习与可靠物理预测之间的距离。这次想进一步研究的是：当一个 AI 系统已经在某类物理任务中积累了经验，这些经验能否迁移到另一类任务，甚至另一种身体上？特斯拉的 FSD 和 Optimus，恰好让这个问题变得具体。</p>
 <h2 id="section-1">一、Optimus 已经从 FSD 复用了什么？</h2>
 <p>Tesla 把自动驾驶技术用于机器人的尝试，至少可以追溯到 2022 年。在那年的 <a href="https://www.elonmuskarchive.org/video/tesla-ai-day-2022">Tesla AI Day</a> 上，Milan Kovac 介绍，Optimus 沿用了部分自动驾驶视觉网络，包括用于识别周围三维空间占用情况的 Occupancy Network（占用网络）。团队还将机器人的行走控制代码接入 Autopilot 仿真系统，利用已有工具辅助开发和测试。</p>
-<figure class="post-figure" id="source-photo"><img alt="2024 年瑞典斯德哥尔摩展览现场陈列的两台 Tesla Optimus 机器人" class="remote-photo" decoding="async" loading="lazy" onerror="this.style.display='none';document.getElementById('photo-source-fallback').style.display='block'" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/960px-StockholmOptimus01.jpg"/><div class="photo-fallback" id="photo-source-fallback">图片需联网加载。<a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" rel="noopener noreferrer" target="_blank">查看 Wikimedia Commons 原图</a></div><figcaption>Optimus 实物陈列照片（2024 年），摄影：Ulf Klingström（Ulkl），<a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" rel="noopener noreferrer" target="_blank">公共领域 / Wikimedia Commons</a>。这是产品外观资料，不是机器人自主操作能力的实验依据。此图为联网素材候选，发布前需规范化为本地图片资产。</figcaption></figure>
+<figure class="post-figure" id="source-photo"><img alt="2024 年瑞典斯德哥尔摩展览现场陈列的两台 Tesla Optimus 机器人" class="remote-photo" decoding="async" loading="lazy" onerror="this.style.display='none';document.getElementById('photo-source-fallback').style.display='block'" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/960px-StockholmOptimus01.jpg"/><div class="photo-fallback" id="photo-source-fallback">图片需联网加载。<a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" rel="noopener noreferrer" target="_blank">查看 Wikimedia Commons 原图</a></div><figcaption>2024 年 5 月斯德哥尔摩陈列的 Tesla Optimus 样机。摄影：Ulf Klingström（Ulkl），作者声明置于公共领域；照片不证明其操作能力或量产状态。<a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" rel="noopener noreferrer" target="_blank">查看原图与授权说明</a>。</figcaption></figure>
 <p>这两项复用各有意义。占用网络帮助模型理解周围哪里有物体、空间如何分布；仿真工具则可以用于测试动作和发现问题。机器人需要的场景、运动方式与汽车不同，但并非所有感知组件和工程工具都要重新设计。</p>
 <p>同一场发布会上，Kovac 也明确提到，视觉网络可以沿用，但训练数据需要针对机器人重新采集。这句话比“自动驾驶技术全面迁移至机器人”更有解释力：可复用的可能是网络设计和训练方式，原有的数据与训练结果未必足以支撑新任务。</p>
 <p>这里需要区分两种情况。一种是模型能力本身的迁移，例如 FSD 学到的视觉、空间或运动规律，经过调整后帮助 Optimus 更快完成任务。另一种是工程体系的复用，例如继续使用相似的数据处理、仿真、模型训练和部署工具。后者即使不涉及直接继承驾驶模型的知识，也可能减少研发工作量。</p>
@@ -76,6 +76,7 @@ category: 技术
 <p>2025 年 11 月，她在 <a href="https://www.lennysnewsletter.com/p/the-godmother-of-ai">Lenny’s Podcast</a> 中谈到，自动驾驶汽车可以被理解为一种相对简单的机器人：它主要沿着二维路面移动，目标是避免碰撞；而更通用的机器人需要在三维世界里活动，并主动接触和操作物体。同年 12 月，她又在<a href="https://www.tmtpost.com/video/7819529.html">《赵何娟Talk》访谈视频节选</a>中用类似的说法解释这一差异。这里引用的是她本人对任务差异的描述，而不是两项独立的实验结论。</p>
 <p>这个对比很形象，但需要理解它的准确含义。自动驾驶当然需要三维空间感知，Tesla 自己在 2022 年介绍的占用网络就是用来建立三维环境表示的。李飞飞所说的“二维”，主要是指汽车运动受道路平面约束；她强调的是任务目标和动作自由度的不同，而不是汽车眼中的世界只有两个维度。</p>
 <p>想象一辆汽车从停着的车辆旁边驶过。它需要识别障碍物、判断距离、规划路线并安全通过。现在换成一个机器人，把任务改成从桌面拿起水杯。机器人同样要识别物体、判断距离、规划动作，但任务在接触水杯时才真正进入关键部分：抓在哪里、用多大力、水杯有没有滑动、拿起来后能否保持稳定。前面一部分能力可能相通，后面一部分却涉及新的经验。</p>
+<figure class="post-figure" id="task-contrast-image"><img src="assets/fsd-vs-manipulation.webp" alt="汽车在道路上识别并绕开障碍物；人形机器人在桌面抓取水杯，表现避障移动与主动接触的任务差异。" width="480" height="270" loading="lazy" decoding="async" /><figcaption>AI 生成概念示意：汽车在道路上识别并绕开障碍物，机器人则需要主动接触和操作物体。</figcaption></figure>
 <p>为了看清两类任务的差异，可以按实际控制目标作一个简化比较。</p>
 <div class="blog-table"><table>
 <thead>
@@ -130,6 +131,7 @@ category: 技术
 <p>Tesla 在 2026 年第三季度财报电话会上的表述，恰好提供了一个有价值的对照。</p>
 <p>负责 AI 的 Ashok Elluswamy 提到，Cybercab 能够利用 Model 3、Model Y 等已有车型的数据，因此不需要先建立规模同样庞大的 Cybercab 车队，才能获得训练所需的经验。不同车型虽然有硬件差异，但它们主要完成的是同一种驾驶任务，数据复用相对直接。</p>
 <p>讨论 Optimus 时，管理层强调的却是另一件事。在<a href="https://www.fool.com/earnings/call-transcripts/2026/10/22/tesla-tsla-q3-2026-earnings-call-transcript/">这场电话会</a>中，马斯克表示，Tesla 希望建设 Optimus Academy，让机器人练习大量不同任务，并提出未来可能需要约 1 万至 2 万台机器人参与训练。Elluswamy 则解释，机器人可以先通过观察人类学习任务，再依靠自己在现实和仿真环境中的练习不断改进。这些是当时披露的训练设想和建设目标，并不代表该规模的机器人训练体系已经建成。</p>
+<figure class="post-figure" id="academy-learning-image"><img src="assets/robot-learning-practice.webp" alt="人类示范机器人抓取积木，中央呈现数字化动作模拟，右侧机器人在工作台练习抓取与分类。" width="480" height="270" loading="lazy" decoding="async" /><figcaption>AI 生成概念示意：人类示范、仿真与机器人自身练习可提供互补经验，并非 Tesla Academy 的实景或已部署架构。</figcaption></figure>
 
 <p>这里恰好能看到迁移条件对 Tesla 实际路线的影响。对 Cybercab 来说，既有车辆已经产生大量与目标任务高度相关的数据；对 Optimus 来说，汽车提供的经验虽然可能有用，但机器人自己仍然要积累操作物体、全身协调和任务失败后的调整经验。前一节研究中提到的任务关联与机器人已有能力，在这里变成了具体的数据和训练需求。</p>
 <p>因此，<strong>Optimus Academy 并不是 FSD 技术复用失败的证明，而是跨任务迁移仍然需要付出的现实成本。</strong> 已有能力可以提供学习起点，但目标任务特有的经验仍需持续补充。</p>
@@ -148,20 +150,33 @@ category: 技术
 <p>回头看那次与同学的讨论，我对 Tesla 的关注没有改变，但判断它的依据需要更具体一些。Cybercab 可以较直接地继承其他车型的驾驶数据，Optimus 却仍然需要建立自己的训练体系。这种差异，恰好说明了 FSD 积累的价值与边界。</p>
 <p><strong>FSD 可能让 Optimus 提前起跑，却不能直接替它跨过接触和操作物体这道门槛。</strong> 接下来真正值得观察的，是 Tesla 能否利用已有的模型与工程积累，比其他技术路线更快、更经济地让机器人掌握新任务，并将这种学习优势转化为稳定交付。</p>
 <p>如果能，这些积累才有机会形成持续竞争优势；如果不能，FSD 仍可能是一份有价值的工程资产，却未必是决定机器人竞争格局的独特壁垒。</p>
-<h2 id="section-6">参考资料</h2><details class="reference-disclosure" id="references"><summary>参考资料 · 展开来源</summary><div class="reference-body"><h3>一手访谈与公司披露</h3><ul>
-<li><a href="https://www.lennysnewsletter.com/p/the-godmother-of-ai">Lenny's Podcast：The Godmother of AI on jobs, robots &amp; why world models are next（2025-11-16）</a></li>
-<li><a href="https://www.tmtpost.com/video/7819529.html">钛媒体《赵何娟Talk》：李飞飞谈自动驾驶与三维机器人（2025-12-24）</a></li>
-<li><a href="https://www.elonmuskarchive.org/video/tesla-ai-day-2022">Tesla AI Day 2022 文字稿</a>（Tesla 活动转录，非独立性能验证）</li>
-<li><a href="https://www.fool.com/earnings/call-transcripts/2026/10/22/tesla-tsla-q3-2026-earnings-call-transcript/">Tesla 2026 Q3 财报电话会文字稿</a>（管理层公开发言，由媒体转录；训练规模为计划）</li>
-</ul><h3>学术研究</h3><ul>
-<li><a href="https://arxiv.org/html/2402.19432v1">Pushing the Limits of Cross-Embodiment Learning for Manipulation and Navigation — RSS 2024</a></li>
-<li><a href="https://vision.ics.uci.edu/papers/emergence-of-human-to-robot-transfer-in-vision-2026/">Emergence of Human to Robot Transfer in Vision-Language-Action Models — RSS 2026</a></li>
-</ul><h3>近期研究预印本</h3><ul>
-<li><a href="https://arxiv.org/html/2602.01067v1">A Systematic Study of Data Modalities and Strategies for Co-training Large Behavior Models for Robot Manipulation — 2026</a></li>
-</ul><h3>相关历史文章</h3><ul>
-<li><a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html">物理世界会有自己的 LLM 时刻吗？</a></li>
-<li><a href="https://marktian-long.github.io/tools/blog/posts/video-world-model.html">视频已经能“生成未来”，为什么还不等于会预测世界？</a></li>
-</ul></div></details></div>
+<h2 id="section-6">参考资料</h2>
+<h3>人物访谈与 Tesla 管理层公开发言</h3>
+<ul>
+<li><a href="https://www.lennysnewsletter.com/p/the-godmother-of-ai" target="_blank" rel="noopener noreferrer">Lenny's Podcast：The Godmother of AI on jobs, robots &amp; why world models are next（2025-11-16）</a>。李飞飞本人访谈。</li>
+<li><a href="https://www.tmtpost.com/video/7819529.html" target="_blank" rel="noopener noreferrer">钛媒体《赵何娟Talk》：李飞飞谈自动驾驶与三维机器人（2025-12-24）</a>。原访谈视频节选。</li>
+<li><a href="https://www.elonmuskarchive.org/video/tesla-ai-day-2022" target="_blank" rel="noopener noreferrer">Tesla AI Day 2022 文字稿</a>。Tesla 公开活动的第三方转录，非独立性能验证。</li>
+<li><a href="https://www.fool.com/earnings/call-transcripts/2026/10/22/tesla-tsla-q3-2026-earnings-call-transcript/" target="_blank" rel="noopener noreferrer">Tesla 2026 Q3 财报电话会文字稿</a>。管理层公开发言的媒体转录；Optimus Academy 规模为计划。</li>
+</ul>
+<h3>同行评审研究</h3>
+<ul>
+<li><a href="https://arxiv.org/html/2402.19432v1" target="_blank" rel="noopener noreferrer">Pushing the Limits of Cross-Embodiment Learning for Manipulation and Navigation — RSS 2024</a></li>
+<li><a href="https://vision.ics.uci.edu/papers/emergence-of-human-to-robot-transfer-in-vision-2026/" target="_blank" rel="noopener noreferrer">Emergence of Human to Robot Transfer in Vision-Language-Action Models — RSS 2026</a></li>
+</ul>
+<h3>预印本（尚未同行评审）</h3>
+<ul>
+<li><a href="https://arxiv.org/html/2602.01067v1" target="_blank" rel="noopener noreferrer">A Systematic Study of Data Modalities and Strategies for Co-training Large Behavior Models for Robot Manipulation — 2026</a></li>
+</ul>
+<h3>图片素材与授权</h3>
+<ul>
+<li><a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" target="_blank" rel="noopener noreferrer">Ulf Klingström（Ulkl）：StockholmOptimus01.jpg（2024-05-13）</a>。Wikimedia Commons；作者声明作品置于公共领域（Public Domain）。</li>
+</ul>
+<h3>相关历史文章</h3>
+<ul>
+<li><a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" target="_blank" rel="noopener noreferrer">物理世界会有自己的 LLM 时刻吗？</a></li>
+<li><a href="https://marktian-long.github.io/tools/blog/posts/video-world-model.html" target="_blank" rel="noopener noreferrer">视频已经能“生成未来”，为什么还不等于会预测世界？</a></li>
+</ul>
+<p>来源可信度说明：Tesla AI Day 与 Q3 电话会为第三方转录的管理层公开发言，不是独立性能验证；RSS 研究证明的是特定实验条件下的迁移现象，不能直接代表 Tesla 内部实现；2026 年联合训练研究为预印本。</p></div>
 <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
   <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
   <div class="continue-reading-list" id="continueReadingList"></div>

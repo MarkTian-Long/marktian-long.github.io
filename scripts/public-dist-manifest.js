@@ -36,6 +36,8 @@ const PUBLIC_FILES = [
   'tools/blog/index.html',
   'tools/blog/previews/ai-innovation-value-capture.html',
   'tools/blog/previews/fsd-optimus.html',
+  'tools/blog/previews/assets/fsd-vs-manipulation.webp',
+  'tools/blog/previews/assets/robot-learning-practice.webp',
   'tools/blog/data/featured-posts.json',
   'tools/blog/data/posts-meta.json',
   'tools/blog/data/share-card-config.json',
