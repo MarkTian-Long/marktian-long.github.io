@@ -34,7 +34,7 @@
 | [长期委托能否有用且可持续？](#br-20260930-04) | 2026-09-30 | 已转入（已发布） | 待外部／需实测：自然事务周期净收益、留存与收入；不重写当前正文 |
 | [消费入口、交易与履约价值怎样分工？](#br-20260930-05) | 2026-09-30 | 可进大纲（交易链路与参与边界） | AI：对照需求入口、订单、支付、履约；利润迁移结论仍待真实经营数据 |
 
-**在途文章与系列，不重复新建卡。** 产业史系列 02 已有[当前工作稿](../../drafts/blog/ai-innovation-value-capture.md)，实际为写作中，不应依据旧 Brief 的“优先启动候选”重新开题；发现完整稿不等于终审通过。系列 03／04／05 的本轮证据见[系列分支补证](#series-evidence-20261107)，规划归属仍在原 Brief。多模态—视频—世界模型系列已结项，不自动补第六篇。
+**已发布文章与在途系列，不重复新建卡。** 产业史系列 02《[技术最领先的人，为什么不一定拿走最大的价值？](https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html)》已于 2026-11-08 正式发布，正式 Markdown 在 [`docs/blog/ai-innovation-value-capture.md`](../../docs/blog/ai-innovation-value-capture.md)；不再把旧 Brief 的“优先启动候选”或已失效 draft 路径当成当前状态。系列 03／04／05 的本轮证据见[系列分支补证](#series-evidence-20261107)，规划归属仍在原 Brief。多模态—视频—世界模型系列已结项，不自动补第六篇。
 
 已发布主题的后续证据：[记忆系统 × Personal Harness：Dreaming](#blog-memory-dreaming-20261107)。
 
