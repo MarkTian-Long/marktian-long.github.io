@@ -73,6 +73,13 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 - 主页与 Blog 列表继续保持纯文字，`visuals` 只服务文章页、OG/Twitter 分享预览、JSON-LD 和 public dist 白名单。
 - 数量参考、图文分工、尺寸、体积、alt/caption 与预览验收详见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)；正文生图的执行步骤见 [IMAGE_GENERATION_WORKFLOW.md](IMAGE_GENERATION_WORKFLOW.md)。发布层不重复制定配图数量或替写作阶段判断。
 
+### 文章页头标签与候选预览
+
+- 正式文章页头沿用模板的 `.post-meta`：日期占据日期位置，非空 `tags` 与 `topics` 由共享运行时渲染为关键词徽章；`category` 是栏目元数据，不在当前文章页头重复显示为徽章。
+- `concepts` 只用于作者与 AI 的历史语义召回，不在文章页头、继续阅读或读者可见关键词区展示；站点没有独立的 `keywords` frontmatter 字段，不要另造一套与 tags/topics 并行的关键词。
+- 未发布候选页也必须反映当前候选 metadata：优先在隔离候选站提供临时 `posts-meta.json` 记录，让共享运行时正常渲染；若采用不加载候选索引的直达预览页，可使用与当前候选 metadata 一致的静态徽章作为展示回退。已选标签不得因候选 slug 不在正式索引而静默消失；尚未完成审查时明确标为待确认，不伪装成已审查的空数组。
+- 徽章数量与词义仍以 taxonomy 为准。不得为了填满页头而增加标签；空数组经审查后仍可不显示徽章。
+
 ### 双维度标签体系
 
 分类提供编辑栏目；话题聚合主要研究对象；tags 只提供有增量的附加阅读提示，不要求每篇套入一种阅读类型。字段职责、选择边界和数量范围均以 `blog-taxonomy.json` 的 `field_roles / selection_rules / label_rules` 为准：
@@ -449,6 +456,8 @@ node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/cand
 ```
 
 **运行前提：** 该生成器仍会读取当前工作区的 `tools/blog/data/posts-meta.json`，并要求与 H1、摘要及 frontmatter 匹配；新文章未正式入库时，应在**隔离的候选工作区**内建立临时 metadata 快照，完成预览需要的字段和 `visuals`，绝不可为了让候选构建通过而将草稿加到正式索引。候选目录须同时保留/复制所依赖的共享运行时及本地图片，确保相对路径与正式发布一致；如采用单文件离线交付，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。对外分享前移除或屏蔽指向尚未正式发布页面的 canonical、OG URL 与搜索结构化标记，标识为“未发布预览”；不更新首页、列表、搜索、RSS、sitemap、正式 HTML、发布日期或 publicly indexed metadata。未放进目录不代表私密：若另需线上不可枚举/未关联的直达 URL，应明确部署位置和 noindex/访问控制；默认仅提供隔离候选/离线预览，不自动公开上线。
+
+**页头与分隔线复核：** 候选页头须按「文章页头标签与候选预览」显示候选 tags/topics，concepts 不前台显示；正式文章模板已经提供唯一的摘要后分隔线。Markdown 摘要后的 `---` 由生成器消费，不得在 `.post-body` 再输出第二条 `<hr>`。检查摘要与首段之间只有一条可见线，不能出现两条平行线或为修复间距而增加空分隔符。
 
 **候选 QA 按正式发布页面做视觉复核：** 目录、正文宽度、表格、图像、参考资料展开/折叠、上一/下一篇或继续阅读的预览状态、桌面/移动及浅色/深色、资源加载与失败 alt；候选层的元数据/导航隔离作为唯一允许的功能差异。预览没有运行真实构建或浏览器验证时应明确记录缺口，不能只凭一份漂亮的独立 HTML 声称与正式发布一致。正式发布仍按上节完整同步/构建/索引路径进行，不把 candidate 模式当成发布完成。
 
