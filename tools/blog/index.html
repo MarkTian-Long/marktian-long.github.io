@@ -128,6 +128,32 @@
         }
         .search-box input:focus { border-color: var(--clay); }
         .search-box input::placeholder { color: var(--text-3); }
+        .time-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .time-filter label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+        }
+        .time-filter-select {
+            width: 100%;
+            min-height: 36px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 7px 10px;
+            color: var(--text-2);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .time-filter-select:focus-visible {
+            outline: 2px solid var(--clay);
+            outline-offset: 2px;
+        }
         .cat-nav {
             display: flex;
             flex-direction: column;
@@ -297,6 +323,30 @@
         }
         .empty { color: var(--text-3); font-size: 14px; padding: 20px 0; }
         .loading { color: var(--text-3); font-size: 14px; padding: 20px 0; }
+        .filter-status {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin: -12px 0 22px;
+            font-size: 12px;
+            color: var(--text-3);
+        }
+        .filter-status[hidden] { display: none; }
+        .filter-status button {
+            border: 0;
+            background: transparent;
+            color: var(--clay);
+            font: inherit;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        .filter-status button:hover { text-decoration: underline; }
+        .filter-status button:focus-visible {
+            outline: 2px solid var(--clay);
+            outline-offset: 2px;
+        }
         .active-filters {
             display: flex;
             flex-wrap: wrap;
@@ -387,6 +437,9 @@
                 outline: none;
             }
             .mobile-controls input::placeholder { color: var(--text-3); }
+            .time-filter-mobile { flex-direction: row; align-items: center; gap: 12px; }
+            .time-filter-mobile select { width: auto; min-width: 0; max-width: 280px; flex: 1; min-height: 44px; }
+            .time-filter-mobile label { flex-shrink: 0; }
             .cat-tabs { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; }
             .cat-tabs::-webkit-scrollbar { display: none; }
             .cat-tab {
@@ -428,6 +481,12 @@
             <button class="cat-btn" data-cat="行业" aria-pressed="false">行业 <span class="cat-count" id="cnt-industry"></span></button>
             <button class="cat-btn" data-cat="实践" aria-pressed="false">实践 <span class="cat-count" id="cnt-practice"></span></button>
         </nav>
+        <div class="time-filter time-filter-desktop">
+            <label for="timeFilterDesktop">发布时间</label>
+            <select class="time-filter-select" id="timeFilterDesktop">
+                <option value="all">全部时间</option>
+            </select>
+        </div>
     </aside>
 
     <!-- 右侧主区 -->
@@ -459,8 +518,15 @@
                 <button class="cat-tab" data-cat="行业" aria-pressed="false">行业</button>
                 <button class="cat-tab" data-cat="实践" aria-pressed="false">实践</button>
             </div>
+            <div class="time-filter time-filter-mobile">
+                <label for="timeFilterMobile">发布时间</label>
+                <select class="time-filter-select" id="timeFilterMobile">
+                    <option value="all">全部时间</option>
+                </select>
+            </div>
         </div>
 
+        <div id="filterStatus" class="filter-status" role="status" aria-live="polite" hidden></div>
         <div id="featuredRoot"></div>
         <div id="archiveRoot"><div class="loading">加载中…</div></div>
     </main>
@@ -469,7 +535,7 @@
 
 <script>
 (function () {
-    let posts = [], featuredPosts = [], cat = 'all', query = '', timer, page = 1;
+    let posts = [], featuredPosts = [], cat = 'all', query = '', timeFilter = 'all', publishMonths = [], timer, page = 1;
     const PAGE_SIZE = 10;
 
     // ── 主题初始化 ──
@@ -499,11 +565,11 @@
             posts = data.posts.slice().sort(function (a, b) {
                 return b.date.localeCompare(a.date);
             });
-            const requestedCategory = new URLSearchParams(window.location.search).get('category');
-            if (requestedCategory !== null) {
-                cat = posts.some(function (post) { return post.category === requestedCategory; }) ? requestedCategory : 'all';
-                if (cat === 'all') updateCategoryUrl('replaceState');
-            }
+            publishMonths = Array.from(new Set(posts.map(function (post) { return post.date; }).filter(function (date) {
+                return /^\d{4}\.(0[1-9]|1[0-2])$/.test(date);
+            }))).sort().reverse();
+            populateTimeOptions();
+            readUrlFilters();
             featuredPosts = await loadFeaturedPosts();
             updateCounts();
             render();
@@ -527,6 +593,69 @@
             }, []).slice(0, 5);
         } catch (e) {
             return [];
+        }
+    }
+
+    // ── 发布时间筛选 ──
+    function populateTimeOptions() {
+        var counts = {};
+        posts.forEach(function (post) { counts[post.date] = (counts[post.date] || 0) + 1; });
+        ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
+            var select = document.getElementById(id);
+            if (!select) return;
+            select.replaceChildren();
+            select.add(new Option('全部时间', 'all'));
+            select.add(new Option('最近 3 个自然月', '3m'));
+            select.add(new Option('最近 6 个自然月', '6m'));
+            publishMonths.forEach(function (month) {
+                var label = month.slice(0, 4) + ' 年 ' + Number(month.slice(5)) + ' 月（' + counts[month] + ' 篇）';
+                select.add(new Option(label, month));
+            });
+        });
+    }
+
+    function syncTimeControls() {
+        ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
+            var select = document.getElementById(id);
+            if (select) select.value = timeFilter;
+        });
+    }
+
+    function formatMonth(date) {
+        return date.getFullYear() + '.' + String(date.getMonth() + 1).padStart(2, '0');
+    }
+
+    function timeLabel() {
+        if (timeFilter === '3m') return '最近 3 个自然月';
+        if (timeFilter === '6m') return '最近 6 个自然月';
+        return timeFilter.slice(0, 4) + ' 年 ' + Number(timeFilter.slice(5)) + ' 月';
+    }
+
+    function setTimeFilter(value, options) {
+        timeFilter = value === 'all' || value === '3m' || value === '6m' || publishMonths.includes(value) ? value : 'all';
+        page = 1;
+        syncTimeControls();
+        if (!options || options.updateUrl !== false) updateFilterUrl('pushState');
+        render();
+    }
+
+    function updateFilterStatus(total) {
+        var element = document.getElementById('filterStatus');
+        if (!element) return;
+        var active = cat !== 'all' || timeFilter !== 'all' || Boolean(query.trim());
+        element.hidden = !active;
+        element.replaceChildren();
+        if (!active) return;
+        var count = document.createElement('span');
+        count.textContent = '找到 ' + total + ' 篇文章';
+        element.appendChild(count);
+        if (timeFilter !== 'all') {
+            var clear = document.createElement('button');
+            clear.type = 'button';
+            clear.textContent = '清除时间';
+            clear.setAttribute('aria-label', '清除发布时间筛选');
+            clear.addEventListener('click', function () { setTimeFilter('all'); });
+            element.appendChild(clear);
         }
     }
 
@@ -554,6 +683,17 @@
                     (p.topics || []).some(function (t) { return t.toLowerCase().includes(q); });
             });
         }
+        if (timeFilter !== 'all') {
+            if (timeFilter === '3m' || timeFilter === '6m') {
+                var now = new Date();
+                var count = timeFilter === '3m' ? 3 : 6;
+                var oldest = formatMonth(new Date(now.getFullYear(), now.getMonth() - count + 1, 1));
+                var latest = formatMonth(now);
+                r = r.filter(function (p) { return p.date >= oldest && p.date <= latest; });
+            } else {
+                r = r.filter(function (p) { return p.date === timeFilter; });
+            }
+        }
         return r;
     }
 
@@ -562,14 +702,15 @@
         var root = document.getElementById('archiveRoot');
         var featuredRoot = document.getElementById('featuredRoot');
         var searchActive = Boolean(query.trim());
-        var selectedFeatured = searchActive ? [] : featuredPosts.filter(function (post) {
+        var selectedFeatured = (searchActive || timeFilter !== 'all') ? [] : featuredPosts.filter(function (post) {
             return cat === 'all' || post.category === cat;
         });
         var featuredSlugSet = new Set(featuredPosts.map(function (post) { return post.slug; }));
         var selectedFeaturedSlugs = new Set(selectedFeatured.map(function (post) { return post.slug; }));
         var showFeatured = page === 1 && selectedFeatured.length > 0;
         var list = filtered();
-        if (!searchActive && selectedFeaturedSlugs.size) {
+        updateFilterStatus(list.length);
+        if (!searchActive && timeFilter === 'all' && selectedFeaturedSlugs.size) {
             list = list.filter(function (post) { return !selectedFeaturedSlugs.has(post.slug); });
         }
         updateFilterChips();
@@ -598,7 +739,7 @@
             if (!byYM[ym]) byYM[ym] = [];
             byYM[ym].push(p);
         });
-        var groupsHtml = Object.keys(byYM).sort(function (a, b) { return b > a ? -1 : 1; }).reverse().map(function (ym) {
+        var groupsHtml = Object.keys(byYM).sort().reverse().map(function (ym) {
             var label = ym.replace('.', ' · ');
             return '<div class="year-group">' +
                 '<div class="year-label">' + label + '</div>' +
@@ -667,14 +808,19 @@
         if (query.trim()) {
             chips.push('<span class="filter-chip">"' + query + '" <button class="chip-clear" data-clear="query" aria-label="清除搜索">×</button></span>');
         }
+        if (timeFilter !== 'all') {
+            chips.push('<span class="filter-chip">' + timeLabel() + ' <button class="chip-clear" data-clear="time" aria-label="清除时间">×</button></span>');
+        }
         box.innerHTML = chips.join('');
         box.style.display = chips.length ? 'flex' : 'none';
         box.querySelectorAll('.chip-clear').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 if (btn.dataset.clear === 'cat') {
                     setCategory('all');
-                } else {
+                } else if (btn.dataset.clear === 'query') {
                     onSearch('');
+                } else if (btn.dataset.clear === 'time') {
+                    setTimeFilter('all');
                 }
             });
         });
@@ -689,20 +835,44 @@
         });
     }
 
-    function updateCategoryUrl(method) {
+    function updateFilterUrl(method) {
         var url = new URL(window.location.href);
         if (cat === 'all') url.searchParams.delete('category');
         else url.searchParams.set('category', cat);
+        url.searchParams.delete('month');
+        url.searchParams.delete('range');
+        if (timeFilter === '3m' || timeFilter === '6m') url.searchParams.set('range', timeFilter);
+        else if (timeFilter !== 'all') url.searchParams.set('month', timeFilter);
         var nextUrl = url.pathname + url.search + url.hash;
         var currentUrl = window.location.pathname + window.location.search + window.location.hash;
         if (nextUrl !== currentUrl) window.history[method]({}, '', nextUrl);
+    }
+
+    function readUrlFilters() {
+        var params = new URLSearchParams(window.location.search);
+        var requestedCategory = params.get('category');
+        var requestedMonth = params.get('month');
+        var requestedRange = params.get('range');
+        cat = requestedCategory && posts.some(function (post) { return post.category === requestedCategory; })
+            ? requestedCategory : 'all';
+        timeFilter = requestedMonth && publishMonths.includes(requestedMonth) ? requestedMonth
+            : requestedRange === '3m' || requestedRange === '6m' ? requestedRange : 'all';
+        page = 1;
+        syncCategoryControls();
+        syncTimeControls();
+        if ((params.has('category') && cat === 'all') ||
+            (params.has('month') && requestedMonth !== timeFilter) ||
+            (params.has('range') && requestedRange !== timeFilter) ||
+            (params.has('month') && params.has('range'))) {
+            updateFilterUrl('replaceState');
+        }
     }
 
     function setCategory(c, options) {
         cat = c === 'all' || posts.some(function (post) { return post.category === c; }) ? c : 'all';
         page = 1;
         syncCategoryControls();
-        if (!options || options.updateUrl !== false) updateCategoryUrl('pushState');
+        if (!options || options.updateUrl !== false) updateFilterUrl('pushState');
         render();
     }
 
@@ -724,13 +894,17 @@
         if (control) setCategory(control.dataset.cat);
     });
     window.addEventListener('popstate', function () {
-        var requestedCategory = new URLSearchParams(window.location.search).get('category');
-        setCategory(requestedCategory && posts.some(function (post) { return post.category === requestedCategory; }) ? requestedCategory : 'all', { updateUrl: false });
-        if (requestedCategory !== null && cat === 'all') updateCategoryUrl('replaceState');
+        readUrlFilters();
+        render();
     });
     ['searchInput', 'searchInputMobile'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) el.addEventListener('input', function (e) { onSearch(e.target.value); });
+    });
+
+    ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('change', function (e) { setTimeFilter(e.target.value); });
     });
 
     load();
