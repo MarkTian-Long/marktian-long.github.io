@@ -35,6 +35,7 @@ const PUBLIC_FILES = [
   'tools/blog/vendor/qrcode-generator.js',
   'tools/blog/index.html',
   'tools/blog/previews/ai-innovation-value-capture.html',
+  'tools/blog/previews/fsd-optimus.html',
   'tools/blog/data/featured-posts.json',
   'tools/blog/data/posts-meta.json',
   'tools/blog/data/share-card-config.json',
