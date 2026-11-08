@@ -1,14 +1,10 @@
 ---
 category: 商业
-tags: [市场格局]
+tags: ["市场格局"]
 topics: []
-concepts: [价值捕获, 互补资产, 可信替代选择, 纵向整合, 资源承诺, 估值与融资]
-share_quote: 技术领先创造机会；企业能否留下回报，取决于它如何组合资源、组织交易并承担风险。
-relations:
-  - slug: ai-industry-history-mechanisms
-    type: builds_on
-  - slug: ai-saas-build-vs-buy
-    type: builds_on
+concepts: ["价值捕获", "互补资产", "可信替代选择", "纵向整合", "资源承诺", "估值与融资"]
+share_quote: "技术领先创造机会；企业能否留下回报，取决于它如何组合资源、组织交易并承担风险。"
+relations: [{"slug":"ai-industry-history-mechanisms","type":"builds_on"},{"slug":"ai-saas-build-vs-buy","type":"builds_on"}]
 ---
 
 # 技术最领先的人，为什么不一定拿走最大的价值？
