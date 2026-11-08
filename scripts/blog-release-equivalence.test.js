@@ -1,0 +1,17 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { verifyPromotion } = require('./check-blog-release-equivalence');
+const slug = 'example-post';
+const approved = '# 标题\n\n> 摘要\n\n---\n\n**核心判断。**\n\n![关系](assets/example-post/relation.svg "说明")\n';
+const published = approved.replace('](assets/example-post/', '](../../assets/images/blog/example-post/');
+const options = { slug, readApprovedImage: () => Buffer.from('<svg/>'), readPublishedImage: () => Buffer.from('<svg/>') };
+test('allows path-only promotion and identical assets', () => assert.equal(verifyPromotion(approved, published, options).images, 1));
+test('allows normalized line endings', () => assert.equal(verifyPromotion(approved.replace(/\n/g, '\r\n'), published, options).images, 1));
+test('rejects rewritten conclusion', () => assert.throws(() => verifyPromotion(approved, published.replace('核心判断', '新判断'), options), /Approved content changed/));
+test('rejects changed emphasis', () => assert.throws(() => verifyPromotion(approved, published.replaceAll('**', ''), options), /Approved content changed/));
+test('rejects changed captions', () => assert.throws(() => verifyPromotion(approved, published.replace('说明', '新图注'), options), /Approved content changed/));
+test('rejects substituted image bytes', () => assert.throws(() => verifyPromotion(approved, published, { ...options, readPublishedImage: () => Buffer.from('<svg>changed</svg>') }), /Image bytes changed/));
+test('rejects unsafe article names', () => assert.throws(() => verifyPromotion(approved, published, { ...options, slug: '../example-post' }), /Invalid slug/));
+test('rejects unexpected image source paths', () => assert.throws(() => verifyPromotion(approved.replace('assets/example-post/', 'elsewhere/'), published, options), /Unexpected approved image path/));
+test('supports text-only articles', () => assert.equal(verifyPromotion('# Title\n', '# Title\n', options).images, 0));

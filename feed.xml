@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>技术最领先的人，为什么不一定拿走最大的价值？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html</guid>
+      <description>技术创造的业务价值、企业留下的经济回报和资本市场给出的估值，不是一回事。企业能留下多少回报，取决于商业化所需的互补资产、交易中的替代选择，以及取得资源时承担的投入和风险；估值又可能通过融资条件改变下一轮经营选择。</description>
+    </item>
+    <item>
       <title>当 AI 能替你造软件，哪些服务仍值得买？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</guid>
       <description>企业 Agent 进入真实组织后，竞争不再只是模型能力，还会被工作入口、软件商业模式和组织落地方式重新塑形。真正决定它能否规模化的，是能否把一次次落地沉淀成可复用产品能力。</description>
-    </item>
-    <item>
-      <title>物理世界会有自己的 LLM 时刻吗？</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html</guid>
-      <description>LLM 改造屏幕内工作，不只是因为模型强，而是因为数字世界早就有数据、工具和反馈闭环。物理世界要出现类似时刻，关键不在于再造一个会聊天的模型，而在于真实世界能不能被接入可观测、可预测、可试错、可执行、可验证的闭环。</description>
     </item>
   </channel>
 </rss>

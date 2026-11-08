@@ -35,11 +35,6 @@ const PUBLIC_FILES = [
   'tools/blog/vendor/qrcode-generator.js',
   'tools/blog/index.html',
   'tools/blog/previews/ai-innovation-value-capture.html',
-  // Explicit preview assets only: never expose the draft Markdown or its directory.
-  'drafts/blog/assets/ai-innovation-value-capture/value-and-price.svg',
-  'drafts/blog/assets/ai-innovation-value-capture/value-capture-concept.svg',
-  'drafts/blog/assets/ai-innovation-value-capture/commitments-and-demand.svg',
-  'drafts/blog/assets/ai-innovation-value-capture/valuation-financing-feedback.svg',
   'tools/blog/data/featured-posts.json',
   'tools/blog/data/posts-meta.json',
   'tools/blog/data/share-card-config.json',

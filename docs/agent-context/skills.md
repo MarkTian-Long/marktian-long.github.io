@@ -57,8 +57,13 @@ skills/                        # local legacy compatibility copy, do not edit
   report finding as authorization to rewrite a public page or a local key file.
 - `publish-blog` must run the currently available generator contract and search
   checks and must never bulk-regenerate historical article HTML to apply a
-  template change. A generator-level `--check` mode remains a pending migration
-  until `tools/blog/generate-post.js` implements it.
+  template change. `tools/blog/generate-post.js` already defaults to read-only
+  checking: `node tools/blog/generate-post.js <source.md> <output.html>`.
+  Use `--write` for publication output or `--candidate` for isolated candidate
+  output; do not invent a literal `--check` flag that this parser does not accept.
+  Approved-preview promotion additionally follows
+  `tools/blog/governance/blog-preview-release-spec.md` and its source/asset
+  equivalence check. This check does not replace taxonomy, image, SEO or visual QA.
 
 ## Migration notes
 
