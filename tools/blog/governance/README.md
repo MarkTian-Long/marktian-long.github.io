@@ -5,6 +5,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 ## 长期规范
 
 - `tools/blog/governance/blog-sop.md`：探讨、收敛、大纲确认、正式写稿与流程路由。
+- `tools/blog/governance/blog-cognitive-review-spec.md`：正文收束、图文预览前的可见认知增量反馈与章节依赖检查；不重复事实终审，不新增一轮默认审批。
 - `tools/blog/governance/blog-preview-release-spec.md`：正文确认后的发布级图文预览、作者批准与正式发布切换；补充 SOP 的阶段交付，不另定写作、视觉或发布契约。
 - `tools/blog/governance/blog-research-backlog-spec.md`：研究待办的记录结构、编号与日期、原位更新和整理验收；补充 SOP，不重定义研究流程或立项规则。
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
@@ -20,12 +21,13 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 | 阶段 | 默认读取 | 按需读取 |
 |---|---|---|
-| 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；形成独立起点后再读取 research_backlog.md 和 posts-meta.json |
+| 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；先保存独立起点，再读取 research_backlog.md 和 posts-meta.json |
 | 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
 | 正文写作 | 已确认大纲、blog-sop.md 的相关写作章节 | 仅为实际采用的图表读取 blog-charts-spec.md |
+| 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
+| 正文收束／认知增量验收 | blog-cognitive-review-spec.md、独立起点与当前正文 | 向用户反馈认识的保留／修正／新增及章节依赖图；只在核心问题或立场改变时再确认，不把图文预览提前到本节点之前 |
 | 正文配图与制作 | blog-sop.md 的视觉规划路由、VISUAL_GUIDE.md | 生图读取 IMAGE_GENERATION_WORKFLOW.md；精确图表读取 blog-charts-spec.md |
 | 插图后全局预览 | blog-preview-release-spec.md、正式文章模板与共享运行时 | 按待发布稿完成审校、metadata 与真实页面验收；不因预览地址而降低标准 |
-| 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
 | 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
 
 ## 标签定期维护
@@ -51,6 +53,8 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 
 未确认发布的完整文章维护在 `drafts/blog/<slug>.md`。这样可以保留完整 frontmatter，同时不触发 `docs/blog/` 的发布源校验。用户确认正式发布后，再将唯一当前稿迁移到 `docs/blog/<slug>.md`，同步 `posts-meta.json` 并生成发布 HTML；迁移完成后删除对应 draft，避免双版本。
 
+正文确定时，先按[认知增量与章节依赖检查](blog-cognitive-review-spec.md)向用户说明相对独立起点新增了什么解释、修正了什么判断、连接了哪些体系，以及各章如何共同回答主问题。不能只把更多案例和篇幅作为增量，也不凭空声称用户已经学会了什么。
+
 用户在正文讨论后要求插图或完整预览时，按[发布级图文预览规范](blog-preview-release-spec.md)先完成发布质量的加工与验收；预览只保留分发状态差异。确认发布后再迁移路径、索引和 SEO，不重新维护一份正文。
 
 ## 运行原则
@@ -61,3 +65,4 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 4. 规范变更按职责归属更新对应文件；文章专属判断不升级为长期规则。
 5. 历史公开事实仍按“当前线上正式发布页 → GitHub 发布 HTML → Markdown 源稿”判断；Series Brief 与聊天草稿不得覆盖正式发布事实。
 6. taxonomy 发生语义变化时，按 `WRITING_GUIDE.md` 执行 taxonomy 一致性检查和历史影响审查。
+7. 规范按当前阶段读取并以 SHA 识别变化；同一轮未变化的规则不反复全文加载。已确认正文只做受影响范围的修复，发布时验证同稿迁移，不重新写作。规范中的可执行命令必须有实现与测试，不能把规则写入当成执行闭环。
