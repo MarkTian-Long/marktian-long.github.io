@@ -66,7 +66,10 @@ category: 技术
         <div class="post-body"><p>前段时间和几位做 LLM 基础模型的同学吃饭，最初聊的是大模型接下来的发展，后来话题延伸到了世界模型和具身智能。我们当时有一个比较积极的判断：特斯拉可能会是物理 AI 领域非常有竞争力的选手。</p>
 <p>这个判断有它的依据。特斯拉已经在自动驾驶领域投入多年，拥有来自真实车辆的数据，也建立了模型训练、仿真、部署和持续改进的工程体系。相比一家从零开始研发人形机器人的公司，它似乎已经完成了一部分前期积累。而且，自动驾驶本身也是一个让 AI 观察物理世界、作出决策并执行动作的过程。但沿着这个思路往下想，就会碰到一个更具体的问题：<strong>汽车已经学到的东西，究竟能让机器人少走多少弯路？</strong></p>
 <p>我之前在<a href="https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html" target="_blank" rel="noopener noreferrer">《物理世界会有自己的 LLM 时刻吗？》</a>里讨论过，物理 AI 需要的不只是知识，还包括真实行动与反馈。在<a href="https://marktian-long.github.io/tools/blog/posts/video-world-model.html" target="_blank" rel="noopener noreferrer">《视频已经能“生成未来”，为什么还不等于会预测世界？》</a>里，则讨论了视频学习与可靠物理预测之间的距离。这次想进一步研究的是：当一个 AI 系统已经在某类物理任务中积累了经验，这些经验能否迁移到另一类任务，甚至另一种身体上？特斯拉的 FSD 和 Optimus，恰好让这个问题变得具体。</p>
-<p><a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" target="_blank" rel="noopener noreferrer">查看 Tesla Optimus 2024 年实物陈列照片（Wikimedia Commons）</a></p>
+<figure class="post-figure sourced-photo">
+  <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg" alt="2024 年 5 月斯德哥尔摩展陈中的两台 Tesla Optimus 样机" width="1280" height="853" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+  <figcaption>Tesla Optimus 2024 年实物陈列照。摄影：Ulf Klingström（Ulkl），Wikimedia Commons 公有领域；不代表机器人操作能力。 <a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" target="_blank" rel="noopener noreferrer">查看原图与授权</a></figcaption>
+</figure>
 <h2 id="section-1">一、Optimus 已经从 FSD 复用了什么？</h2>
 <p>Tesla 把自动驾驶技术用于机器人的尝试，至少可以追溯到 2022 年。在那年的 <a href="https://www.elonmuskarchive.org/video/tesla-ai-day-2022" target="_blank" rel="noopener noreferrer">Tesla AI Day</a> 上，Milan Kovac 介绍，Optimus 沿用了部分自动驾驶视觉网络，包括用于识别周围三维空间占用情况的 Occupancy Network（占用网络）。团队还将机器人的行走控制代码接入 Autopilot 仿真系统，利用已有工具辅助开发和测试。</p>
 <p>这两项复用各有意义。占用网络帮助模型理解周围哪里有物体、空间如何分布；仿真工具则可以用于测试动作和发现问题。机器人需要的场景、运动方式与汽车不同，但并非所有感知组件和工程工具都要重新设计。</p>

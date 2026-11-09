@@ -19,7 +19,7 @@ relations: [{"slug":"physical-world-llm","type":"builds_on"},{"slug":"video-worl
 
 我之前在[《物理世界会有自己的 LLM 时刻吗？》](https://marktian-long.github.io/tools/blog/posts/physical-world-llm.html)里讨论过，物理 AI 需要的不只是知识，还包括真实行动与反馈。在[《视频已经能“生成未来”，为什么还不等于会预测世界？》](https://marktian-long.github.io/tools/blog/posts/video-world-model.html)里，则讨论了视频学习与可靠物理预测之间的距离。这次想进一步研究的是：当一个 AI 系统已经在某类物理任务中积累了经验，这些经验能否迁移到另一类任务，甚至另一种身体上？特斯拉的 FSD 和 Optimus，恰好让这个问题变得具体。
 
-[查看 Tesla Optimus 2024 年实物陈列照片（Wikimedia Commons）](https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg)
+![2024 年 5 月斯德哥尔摩展陈中的两台 Tesla Optimus 样机](https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg "Tesla Optimus 2024 年实物陈列照。摄影：Ulf Klingström（Ulkl），Wikimedia Commons 公有领域；不代表机器人操作能力。")
 
 ## 一、Optimus 已经从 FSD 复用了什么？
 

@@ -401,7 +401,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 ![与论点相关的对象和关系](../../assets/images/blog/your-slug/context-feedback-loop.webp "这个回路会把本次任务的结果变成下次任务可复用的上下文。")
 ```
 
-Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致。不接受远程图片、未登记图片、跨文章资产或嵌在段落中的图片语法。
+Markdown 中的路径、alt 和 caption 必须与 `visuals.inline` 完全一致。默认不接受远程图片、未登记图片、跨文章资产或嵌在段落中的图片语法。**受限例外**：已经确认许可且当前环境无法取得本地原图的 Wikimedia Commons 原始来源照片，可使用 `https://thumb.wikimedia.org/wikipedia/commons/thumb/.../1280px-<filename>` 的独立 Markdown 图片形式，图注必须写明许可和作者；生成器将其渲染为 `sourced-photo`，保持原图/授权入口。不能用它替代普通生图资产本地化，也不能开放任意远程图片域名；浏览器实际加载和外链稳定性另行验收，取得图片字节后应迁回本地 `visuals.inline`。
 
 ---
 

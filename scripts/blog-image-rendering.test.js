@@ -120,6 +120,17 @@ test('Markdown parsing treats a registered standalone image as a figure block', 
   assert.doesNotMatch(result.bodyHtml, /<p>!\[/);
 });
 
+test('a licensed Wikimedia source photo retains an inline figure and its Commons citation', () => {
+  const source = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg';
+  const markdown = `![Tesla Optimus display](${source} "Photo: Ulkl, Public Domain")`;
+  const html = renderStandaloneImage(markdown, visualPost, 'docs/blog/sample-post.md');
+  assert.match(html, /class="post-figure sourced-photo"/);
+  assert.match(html, /width="1280" height="853"/);
+  assert.match(html, /commons.wikimedia.org\/wiki\/File:StockholmOptimus01.jpg/);
+  assert.doesNotMatch(html, /<figure class="post-figure">/);
+  assert.throws(() => renderStandaloneImage(`![Test](${source} "No source license")`, visualPost, 'docs/blog/sample-post.md'), /licensing/);
+});
+
 test('standalone images reject unsafe, unregistered, and metadata-mismatched sources', () => {
   const invalid = [
     '![Context <loop>](https://example.com/context.webp "One & useful sentence")',

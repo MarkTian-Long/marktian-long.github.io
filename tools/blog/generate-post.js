@@ -116,6 +116,20 @@ function renderStandaloneImage(line, metadata, sourceRepoPath) {
   const match = /^!\[([^\]\r\n]+)\]\(([^\s()]+)\s+"([^"\r\n]+)"\)\s*$/.exec(line);
   if (!match) throw new Error('Markdown image must use the registered standalone image form');
   const [, alt, source, caption] = match;
+  // Editorial exception: verified Wikimedia Commons photographs can be shown
+  // as sourced external images when the file cannot be vendored yet.
+  // Keep a distinct class so local asset registration remains strict.
+  const commons = /^https:\/\/thumb\.wikimedia\.org\/wikipedia\/commons\/thumb\/[0-9a-f]\/[0-9a-f]{2}\/([A-Za-z0-9_.-]+\.(?:jpg|jpeg|png|webp))\/1280px-\1$/.exec(source);
+  if (commons) {
+    if (!/(?:公有领域|公共领域|CC0|CC BY|Public Domain)/.test(caption)) {
+      throw new Error('Sourced Commons photo must include licensing in its caption');
+    }
+    const sourcePage = 'https://commons.wikimedia.org/wiki/File:' + commons[1];
+    return '<figure class="post-figure sourced-photo">\n'
+      + `  <img src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" width="1280" height="853" loading="lazy" decoding="async" referrerpolicy="no-referrer" />\n`
+      + `  <figcaption>${escapeHtml(caption)} <a href="${escapeHtml(sourcePage)}" target="_blank" rel="noopener noreferrer">查看原图与授权</a></figcaption>\n`
+      + '</figure>';
+  }
   const resolved = resolveMarkdownImagePath(sourceRepoPath, source);
   const expectedPrefix = `assets/images/blog/${metadata.slug}/`;
   if (!resolved.startsWith(expectedPrefix)) {
