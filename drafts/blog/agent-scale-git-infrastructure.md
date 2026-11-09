@@ -31,7 +31,9 @@ Git 的成功，很大程度上来自分布式设计。开发者可以把代码�
 
 这套设计长期非常合理。工程师不必依赖随时在线的中央服务器，每个人都能掌握自己的工作历史。
 
-大型代码仓库带来的压力并不是 Agent 首次创造的。Google 在 [2016 年介绍 Piper](https://research.google.com/pubs/pub45424.html) 时，已经讨论过超大规模代码库的协作与工程成本；Meta 的 [Sapling](https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/) 及其 Mononoke 服务端，也是在 Agent 普及前就开始建设的大型代码管理体系。它们说明，仓库规模、读取效率和团队协作一直是基础设施问题。
+大型代码仓库带来的压力并不是 Agent 首次创造的。Google 在 [2016 年介绍 Piper](https://research.google.com/pubs/pub45424.html) 时，已经讨论过超大规模代码库的协作与工程成本；Meta 的 [Sapling](https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/) 生态则包括 Mononoke 服务端和 EdenFS 虚拟文件系统，后者按需获取文件，而不是一开始就把整个仓库全部放到本地。它们说明，仓库规模、读取效率和团队协作一直是基础设施问题。
+
+这段历史还有一个直接联系：Anthropic 在 Scion 文章的脚注中明确提到，Meta 的 Mononoke 早已探索过 Scion 借鉴的部分技术，尤其是 Bonsai 数据模型。Agent 规模化并不意味着从零发明一套系统，过去为大型人类开发团队积累的工程经验，仍然可以成为新架构的起点。
 
 Git 自身也提供了[部分克隆](https://git-scm.com/docs/partial-clone)、[稀疏检出](https://git-scm.com/docs/git-sparse-checkout)等方式，减少客户端需要获取的数据。Anthropic 也披露，自己已经尝试过浅克隆、稀疏检出、按需获取对象、内部镜像和仓库快照；高峰期运营过数百个内部 Git 镜像。这些办法一度缓解了压力，但随着合并速度提高，维护成本也变得更高。
 
