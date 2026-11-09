@@ -191,22 +191,19 @@
             transform: rotate(225deg) translate(-1px, -1px);
         }
         .time-panel {
-            position: absolute;
-            top: calc(100% + 7px);
-            left: 0;
-            z-index: 50;
+            position: static;
             width: 100%;
+            margin-top: 7px;
             padding: 7px;
             border: 1px solid var(--border);
             border-radius: 10px;
             background: var(--bg-card);
-            box-shadow: 0 12px 28px rgba(20, 20, 19, 0.12);
+            box-shadow: 0 8px 20px rgba(20, 20, 19, 0.07);
         }
         .time-panel[hidden] { display: none; }
         .time-panel-inner {
-            max-height: min(320px, 55vh);
-            overflow-y: auto;
-            overscroll-behavior: contain;
+            max-height: none;
+            overflow: visible;
         }
         .time-group + .time-group {
             margin-top: 7px;
@@ -553,11 +550,10 @@
                 outline: none;
             }
             .mobile-controls input::placeholder { color: var(--text-3); }
-            .time-filter-mobile { flex-direction: row; align-items: center; gap: 12px; }
+            .time-filter-mobile { flex-direction: column; align-items: stretch; gap: 8px; }
             .time-filter-mobile .time-filter-label { flex-shrink: 0; }
-            .time-filter-mobile .time-dropdown { flex: 1; min-width: 0; }
+            .time-filter-mobile .time-dropdown { width: 100%; min-width: 0; }
             .time-filter-mobile .time-trigger { min-height: 44px; }
-            .time-filter-mobile .time-panel { right: 0; left: auto; }
             .cat-tabs { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; }
             .cat-tabs::-webkit-scrollbar { display: none; }
             .cat-tab {
@@ -793,6 +789,7 @@
     }
 
     function timeLabel() {
+        if (timeFilter === 'all') return '全部时间';
         if (timeFilter === '3m') return '最近 3 个自然月';
         if (timeFilter === '6m') return '最近 6 个自然月';
         return timeFilter.slice(0, 4) + ' 年 ' + Number(timeFilter.slice(5)) + ' 月';
