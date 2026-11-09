@@ -310,3 +310,22 @@ test('asset validation rejects wrong dimensions, format, and byte budget', async
   await writeMetadata(oversizedRoot, metadata('sample-post', coverVisual('sample-post')));
   await assert.rejects(() => validateBlogImages({ rootDir: oversizedRoot }), /350.*KB/i);
 });
+
+test('sourced external photos are checked against the exact publication allowlist', async () => {
+  const rootDir = fixtureRoot();
+  const visuals = { inline: [] };
+  await writeMetadata(rootDir, metadata('fsd-optimus', visuals));
+  writePostHtml(rootDir, 'fsd-optimus', visuals, { includeCover: false, includeInline: false });
+  const postPath = path.join(rootDir, 'tools', 'blog', 'posts', 'fsd-optimus.html');
+  const figure = '<figure class="post-figure sourced-photo">\n'
+    + '  <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg" alt="2024 年 5 月斯德哥尔摩展陈中的两台 Tesla Optimus 样机" width="1280" height="853" loading="lazy" decoding="async" referrerpolicy="no-referrer" />\n'
+    + '  <figcaption>Tesla Optimus 2024 年实物陈列照。摄影：Ulf Klingström（Ulkl），Wikimedia Commons 公有领域；不代表机器人操作能力。 <a href="https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg" target="_blank" rel="noopener noreferrer">查看原图与授权</a></figcaption>\n'
+    + '</figure>';
+  let html = fs.readFileSync(postPath, 'utf8');
+  html = html.replace('<div class="post-body">', '<div class="post-body">' + figure);
+  fs.writeFileSync(postPath, html, 'utf8');
+  await assert.doesNotReject(() => validateBlogImages({ rootDir }));
+  html = html.replace('width="1280" height="853"', 'width="1280" height="720"');
+  fs.writeFileSync(postPath, html, 'utf8');
+  await assert.rejects(() => validateBlogImages({ rootDir }), /sourced-photo/i);
+});

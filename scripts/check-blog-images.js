@@ -16,6 +16,16 @@ const PROFILE_BY_EXTENSION = Object.freeze({
   '.svg': Object.freeze({ width: 1280, height: 720, extraHeights: Object.freeze([INLINE_TALL_SVG_HEIGHT]), format: 'svg', maxBytes: 250 * 1024, label: '250 KB' }),
 });
 
+const SOURCED_PHOTO_ALLOWLIST = Object.freeze({
+  'fsd-optimus': Object.freeze({
+    src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg',
+    alt: '2024 年 5 月斯德哥尔摩展陈中的两台 Tesla Optimus 样机',
+    width: 1280,
+    height: 853,
+    caption: 'Tesla Optimus 2024 年实物陈列照。摄影：Ulf Klingström（Ulkl），Wikimedia Commons 公有领域；不代表机器人操作能力。',
+    sourcePage: 'https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg',
+  }),
+});
 // Published SVG diagrams are static and self-contained, including when opened directly.
 function validateStaticSvg(source, imagePath) {
   if (!/^\s*<svg\b/i.test(source) || !/<\/svg>\s*$/i.test(source)
@@ -44,6 +54,33 @@ function occurrenceCount(value, needle) {
   return String(value).split(needle).length - 1;
 }
 
+function validateSourcedPhotos(html, post) {
+  const marker = '<figure class="post-figure sourced-photo">';
+  const expected = SOURCED_PHOTO_ALLOWLIST[post.slug] ? [SOURCED_PHOTO_ALLOWLIST[post.slug]] : [];
+  let cursor = 0;
+  let count = 0;
+  while (true) {
+    const start = html.indexOf(marker, cursor);
+    if (start === -1) break;
+    const close = html.indexOf('</figure>', start);
+    if (close === -1) throw new Error(`Post ${post.slug} has an unclosed sourced-photo figure`);
+    const figure = html.slice(start, close + '</figure>'.length);
+    const spec = expected[count];
+    if (!spec) throw new Error(`Post ${post.slug} contains a sourced-photo outside the allowlist`);
+    const expectedFigure = marker + '\n'
+      + `  <img src="${spec.src}" alt="${escapeHtml(spec.alt)}" width="${spec.width}" height="${spec.height}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />\n`
+      + `  <figcaption>${escapeHtml(spec.caption)} <a href="${spec.sourcePage}" target="_blank" rel="noopener noreferrer">查看原图与授权</a></figcaption>\n`
+      + '</figure>';
+    if (figure !== expectedFigure) {
+      throw new Error(`Post ${post.slug} sourced-photo must match the registered source, dimensions, attribution and fallback link`);
+    }
+    count += 1;
+    cursor = close + '</figure>'.length;
+  }
+  if (count !== expected.length) {
+    throw new Error(`Post ${post.slug} sourced-photo count must match the allowlist (${expected.length})`);
+  }
+}
 function validateRenderedPostImages(rootDir, metadata) {
   for (const post of metadata.posts) {
     const postPath = path.join(rootDir, 'tools', 'blog', 'posts', `${post.slug}.html`);
@@ -51,6 +88,7 @@ function validateRenderedPostImages(rootDir, metadata) {
       throw new Error(`Missing rendered blog article: tools/blog/posts/${post.slug}.html`);
     }
     const html = fs.readFileSync(postPath, 'utf8').replace(/\r\n?/g, '\n');
+    validateSourcedPhotos(html, post);
     const coverMarker = '<figure class="post-cover">';
     const coverCount = occurrenceCount(html, coverMarker);
     if (!post.visuals) {
