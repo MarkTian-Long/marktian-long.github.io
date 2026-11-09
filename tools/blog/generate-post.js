@@ -116,9 +116,9 @@ function renderStandaloneImage(line, metadata, sourceRepoPath) {
   const match = /^!\[([^\]\r\n]+)\]\(([^\s()]+)\s+"([^"\r\n]+)"\)\s*$/.exec(line);
   if (!match) throw new Error('Markdown image must use the registered standalone image form');
   const [, alt, source, caption] = match;
-  // Editorial exception: verified Wikimedia Commons photographs can be shown
-  // as sourced external images when the file cannot be vendored yet.
-  // Keep a distinct class so local asset registration remains strict.
+  // Narrow editorial exception: only the exact, documented Optimus Commons
+  // photograph may remain external while its source bytes are unavailable.
+  // All other remote images must use registered local article assets.
   const commonsSource = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg';
   if (source === commonsSource) {
     if (!caption.includes('Ulf Klingström') || !/(?:公有领域|公共领域|Public Domain)/.test(caption)) {
