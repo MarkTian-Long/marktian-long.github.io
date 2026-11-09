@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
   <title id="title">AI 同时改变重构的两边成本</title>
-  <desc id="desc">Agent 执行成本下降可能增加并发任务，抬高旧系统负载；AI 编码与测试能力提升可能降低新系统的部分实现成本。是否重构仍需比较旧系统运行成本与新系统建设、迁移和运维成本。</desc>
+  <desc id="desc">Agent 让更多任务更便宜可能增加并发任务，抬高旧系统负载；AI 编码与测试能力提升可能降低新系统的部分实现成本。是否重构仍需比较旧系统运行成本与新系统建设、迁移和运维成本。</desc>
   <defs>
     <marker id="arrow-clay" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M1 1 L10 6 L1 11" fill="none" stroke="#c96442" stroke-width="2"/></marker>
     <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M1 1 L10 6 L1 11" fill="none" stroke="#2563eb" stroke-width="2"/></marker>
@@ -18,10 +18,10 @@
   <text x="338" y="351" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#080c18">Agent 执行成本下降</text>
   <path d="M338 395 V431" stroke="#c96442" stroke-width="4" fill="none" marker-end="url(#arrow-clay)"/>
   <rect x="104" y="446" width="468" height="94" rx="16" fill="#fbf0eb"/>
-  <text x="338" y="503" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#080c18">更多任务并行运行</text>
+  <text x="338" y="503" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#080c18">并发任务可能增加</text>
   <path d="M338 547 V583" stroke="#c96442" stroke-width="4" fill="none" marker-end="url(#arrow-clay)"/>
   <rect x="104" y="598" width="468" height="62" rx="14" fill="#f6ddd3"/>
-  <text x="338" y="640" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#8d3e29">读取、提交与验证请求增加</text>
+  <text x="338" y="640" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#8d3e29">旧系统负载可能上升</text>
   <rect x="708" y="294" width="468" height="94" rx="16" fill="#edf2ff"/>
   <text x="942" y="351" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="600" fill="#080c18">AI 编码与测试能力提升</text>
   <path d="M942 395 V431" stroke="#2563eb" stroke-width="4" fill="none" marker-end="url(#arrow-blue)"/>
@@ -40,5 +40,5 @@
   <rect x="684" y="856" width="500" height="100" rx="18" fill="#f0eee6" stroke="#d9d6ca" stroke-width="2"/>
   <text x="934" y="895" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#080c18">改造或重建</text>
   <text x="934" y="933" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="24" fill="#5e5d59">开发、迁移、运维与失败风险</text>
-  <text x="640" y="994" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" fill="#77756e">AI 不会自动降低架构决策、数据迁移和长期运维成本</text>
+  <text x="640" y="994" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="21" fill="#77756e">并非所有团队都会同时出现两种变化；迁移与长期运维仍需单独核算</text>
 </svg>
