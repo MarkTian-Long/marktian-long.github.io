@@ -31,7 +31,7 @@ Git 的成功，很大程度上来自分布式设计。开发者可以把代码�
 
 这套设计长期非常合理。工程师不必依赖随时在线的中央服务器，每个人都能掌握自己的工作历史。
 
-大型代码仓库带来的压力其实早就存在。Google 在 [2016 年介绍 Piper](https://research.google.com/pubs/pub45424.html) 时，已经讨论过超大规模代码库中的构建、读取和协作问题；Meta 后来公开的 [Sapling](https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/) 也在解决类似的规模化工程需求。Git 本身还提供了部分克隆、稀疏检出等机制，让客户端不必每次获取全部内容。
+大型代码仓库带来的压力其实早就存在。Google 在 [2016 年介绍 Piper](https://research.google.com/pubs/pub45424.html) 时，已经讨论过超大规模代码库中的构建、读取和协作问题；Meta 后来公开的 [Sapling](https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/) 也在解决类似的规模化工程需求。Git 本身还提供了[部分克隆](https://git-scm.com/docs/partial-clone)、[稀疏检出](https://git-scm.com/docs/git-sparse-checkout)等机制，让客户端不必每次获取全部内容。
 
 Agent 带来的变化，不是第一次出现大型仓库，而是让高并发、短生命周期、持续联网的代码操作变得更加普遍。一个 Agent 可能只处理几项文件修改，却会反复读取代码、创建环境、提交变更并触发测试。多个 Agent 同时工作时，这些操作又会相互叠加。
 
@@ -97,8 +97,6 @@ OpenAI 的选择不同。它在 [Pando 的官方说明](https://openai.com/index
 代码工作流还不只有版本存储。11 月 4 日，OpenAI 宣布拟收购 Pierre Computer Company。公告说明，Codex 已经使用 Pierre 的 Trees 和 Diffs 组件浏览文件、查看变更；Code Storage 则是收购交割后计划进一步整合的能力。公告发布时交易尚未完成，因此这只能证明代码浏览与差异审查组件已经采用、存储能力存在后续整合计划，不能写成收购完成或 Code Storage 已经全面进入 Codex。它也提醒我们，Agent 时代的代码基础设施不只是一套 Git 后端，还包括开发者和 Agent 如何理解、审查与追踪变更。
 
 GitHub 的情况又不同。它不是只服务一家公司的内部研发团队，而是需要继续服务广泛的开发者和企业用户。因此，Rubicon 选择在保留 Git 使用方式和现有保护机制的同时，重新组织底层存储、请求处理和后台维护，让不同部分能够独立扩展。新架构仍处于有限预览，不能把内部测试结果当作全面上线后的生产表现。
-
-这里还需要区分代码基础设施的不同层次。11 月 4 日，OpenAI 宣布拟收购 [Pierre Computer Company](https://openai.com/index/openai-to-acquire-pierre/)。Codex 已经使用 Pierre 的 Trees 和 Diffs 组件来浏览文件和审查变更；Code Storage 的能力整合则属于收购交割后的计划。公告发布时交易尚未完成，不能把它写成已经全面整合。它说明代码工作环境的演进不只有存储后端，还包括浏览、差异呈现和审查体验。
 
 **相似的技术能力和需求，不会自动导向相同的最优方案；已有系统、兼容性要求、风险承受能力和迁移成本，都可能改变合理的选择。**
 
@@ -180,6 +178,8 @@ GitHub 的情况又不同。它不是只服务一家公司的内部研发团队�
 - [OpenAI — OpenAI to acquire Pierre Computer Company, Inc.（2026-11-04）](https://openai.com/index/openai-to-acquire-pierre/)
 - [Stripe — Minions: Stripe’s one-shot, end-to-end coding agents（2026-02-09）](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents)
 - [GitHub Docs — Managing a merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
+- [Git — Partial clone](https://git-scm.com/docs/partial-clone)
+- [Git — Sparse checkout](https://git-scm.com/docs/git-sparse-checkout)
 
 ### 工程历史与既有系统
 
