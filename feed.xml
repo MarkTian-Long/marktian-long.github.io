@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>特斯拉的 FSD 经验，究竟能迁移到机器人多少？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/fsd-optimus.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/fsd-optimus.html</guid>
+      <description>特斯拉已经把部分自动驾驶技术和工程经验用于 Optimus，但会驾驶汽车与会操作物体之间，仍有很大的任务差异。FSD 的积累究竟能带来多少优势，取决于哪些经验能够复用、机器人还需要补上什么，以及这些积累最终能否减少学习和交付新任务的成本。</description>
+    </item>
+    <item>
       <title>技术最领先的人，为什么不一定拿走最大的价值？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</guid>
       <description>企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。</description>
-    </item>
-    <item>
-      <title>从 WorkBuddy 到 FDE：企业 Agent 为什么会走向不同落地方式？</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-fde.html</guid>
-      <description>企业 Agent 进入真实组织后，竞争不再只是模型能力，还会被工作入口、软件商业模式和组织落地方式重新塑形。真正决定它能否规模化的，是能否把一次次落地沉淀成可复用产品能力。</description>
     </item>
   </channel>
 </rss>

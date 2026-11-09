@@ -45,6 +45,58 @@
   },
   "posts": [
     {
+      "slug": "fsd-optimus",
+      "date": "2026.11",
+      "title": "特斯拉的 FSD 经验，究竟能迁移到机器人多少？",
+      "summary": "特斯拉已经把部分自动驾驶技术和工程经验用于 Optimus，但会驾驶汽车与会操作物体之间，仍有很大的任务差异。FSD 的积累究竟能带来多少优势，取决于哪些经验能够复用、机器人还需要补上什么，以及这些积累最终能否减少学习和交付新任务的成本。",
+      "category": "技术",
+      "tags": [
+        "技术判断"
+      ],
+      "topics": [
+        "模型能力"
+      ],
+      "concepts": [
+        "FSD 训练经验",
+        "Optimus",
+        "跨本体学习",
+        "驾驶与机器人操作",
+        "机器人接触反馈",
+        "机器人数据训练",
+        "技术复用边界"
+      ],
+      "share_quote": "FSD 可能让 Optimus 提前起跑，却不能直接替它跨过接触和操作物体这道门槛。",
+      "relations": [
+        {
+          "slug": "physical-world-llm",
+          "type": "builds_on"
+        },
+        {
+          "slug": "video-world-model",
+          "type": "builds_on"
+        }
+      ],
+      "url": "posts/fsd-optimus.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/fsd-optimus/driving-vs-grasping.webp",
+            "alt": "左侧通用自动驾驶车辆沿道路绕开施工路障，右侧通用人形机器人在工作台主动抓取陶瓷杯。",
+            "caption": "AI 生成概念对照：避障以保持安全距离为主；抓取则需要接触、施力与稳定控制。并非 Tesla FSD 或 Optimus 的实测画面，也不代表 FSD 的传感器配置。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/fsd-optimus/robot-demonstrate-simulate-practice.webp",
+            "alt": "人类在桌面示范物体操作，中央显示机器人的仿真练习示意，右侧机器人在工作台独立练习抓取积木。",
+            "caption": "AI 生成概念示意：人类示范、仿真与机器人自身练习可以提供互补经验。箭头只是画面组织，不表示 Tesla Optimus Academy 的实景或已验证的固定训练顺序。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "ai-innovation-value-capture",
       "date": "2026.11",
       "title": "技术最领先的人，为什么不一定拿走最大的价值？",
