@@ -122,7 +122,7 @@ test('Markdown parsing treats a registered standalone image as a figure block', 
 
 test('a licensed Wikimedia source photo retains an inline figure and its Commons citation', () => {
   const source = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg';
-  const markdown = `![Tesla Optimus display](${source} "Photo: Ulkl, Public Domain")`;
+  const markdown = `![Tesla Optimus display](${source} "Photo: Ulf Klingström (Ulkl), Public Domain")`;
   const html = renderStandaloneImage(markdown, visualPost, 'docs/blog/sample-post.md');
   assert.match(html, /class="post-figure sourced-photo"/);
   assert.match(html, /width="1280" height="853"/);
