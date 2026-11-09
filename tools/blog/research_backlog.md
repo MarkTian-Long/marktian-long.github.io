@@ -108,17 +108,21 @@
 
 ### BR-20261103-03｜当 AI Agent 成为主要执行者，哪些沿用多年的软件基础设施需要重新设计？
 
-**创建：2026-11-03｜内容更新：2026-11-07｜状态：可进大纲（先限定 Git 与代码协作／审查链路）。** 基础设施分支来自 [Agent 工作单位](#br-20261009-01)，不是对用户界面胜负的证明。
+**创建：2026-11-03｜内容更新：2026-11-09｜状态：已转入（2026-11-09 已确认大纲并进入写作；当前工作稿：`drafts/blog/agent-scale-git-infrastructure.md`；尚未发布）。** 基础设施分支来自 [Agent 工作单位](#br-20261009-01)，不是对用户界面胜负的证明。
+
+**当前文章标题。**《当 AI Agent 开始大规模写代码，Git 还够用吗？》以 Git 为具体切口，主线仍限定在代码协作与交付基础设施，不扩成所有 Agent 基础设施的综述。
+
+**当前章节与案例分工（2026-11-09）。** 五章沿“设计前提变化 → 重构成本变化 → 不同组织的架构取舍 → 可靠交付的必要保证 → 企业系统改造范围”递进。三条核心认识保持为：旧设计前提可能变化；相似需求因兼容性、已有资产和组织边界不同而导向不同方案；最终以整体交付和生命周期成本评价重构。Anthropic、OpenAI 与 GitHub 的集中比较放在第三章；其他章节的案例只承担各自不同的证据职责，不重复介绍同一背景。
 
 **核心问题与当前判断。** 当执行者变成高频、并发、短生命周期的 Agent，原先依赖人类工作节奏的版本管理假设如何变化？应区分存储／协调吞吐与审查／验证／交付能力。替换 Git 抽象、兼容 Git 协议重建服务端、调整工作流，是不同路径；“改进服务端”不能写成 Git 被普遍淘汰，代码数量增加也不等于交付效率增加。
 
 **证据与反证。** 本轮复核 [Anthropic Scion](https://www.anthropic.com/research/redesigning-source-control)、[OpenAI Pando](https://openai.com/index/scaling-git-at-openai/)、[GitHub Agent-scale 架构](https://github.blog/engineering/architecture-optimization/building-git-infrastructure-for-agent-scale-development/)一手材料。Scion 改变内部数据与操作抽象，后两者保留 Git 兼容性；厂商不同工作负载、基线与统计口径不能按性能倍数排名。Scion 的日均合并变更、CI checkout 和内部资源改善属于公司自述，且官方不将它定位为通用 Git 替代品。Pando 的每分支协调与因果一致性也包含放弃全局同一时点 refs 快照的取舍。Google Piper、Meta Sapling／Mononoke 等先行系统是必要前史，不把所有原理视作 AI 时代首创。
 
-**审查证据校准。** [Pierre 公告（11/04）](https://openai.com/index/openai-to-acquire-pierre/)是拟收购及既有组件使用，不能写成交易和全面整合已经完成。[GitHub 11/06 工程文章](https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering/)引用 [Faros 原始研究](https://www.faros.ai/blog/ai-code-quality-senior-engineer-review-burden)；本轮核对后区分审查时间中位数约增加 441.5%、均值及首次等待等不同指标。这是低／高 AI 采用组的观察性遥测，不是所有团队的因果增幅，也不是工程师实际劳动小时。Faros 文内另一组模型／上下文比较存在叙述与表格不一致，不用于建立“上下文一定胜过模型”的结论。
+**审查证据校准。** [Pierre 公告（11/04）](https://openai.com/index/openai-to-acquire-pierre/)是拟收购，交割尚未完成；Trees／Diffs 已用于 Codex 文件浏览与变更审查，Code Storage 的能力整合属于交割后的计划，不能写成交易和全面整合已经完成。[GitHub 11/06 工程文章](https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering/)引用 [Faros 原始研究](https://www.faros.ai/blog/ai-code-quality-senior-engineer-review-burden)；本轮核对后区分审查时间中位数约增加 441.5%、均值及首次等待等不同指标。这是低／高 AI 采用组的观察性遥测，不是所有团队的因果增幅，也不是工程师实际劳动小时。Faros 文内另一组模型／上下文比较存在叙述与表格不一致，不用于建立“上下文一定胜过模型”的结论。
 
 **成文边界与缺口。** 三条真实架构路线已足以承载限定比较，不必等待所有基础设施出现案例。CI、身份权限、搜索、队列等只在有具体生产证据时展开；普通企业是否应迁移、全链路交付净收益与因果归因仍未知，不能由头部实验室极端负载外推。
 
-**下一步与责任。** AI 将“旧假设—新负载—瓶颈—改动—代价”收敛成文章主线，作者确认大纲。统一负载横评、PR 人工审查时长、缺陷和回滚等属于可选深化／实测；未进行此类实验。与 [经营指标](#br-20261010-01)互补，不吞并其全成本主题。
+**下一步与责任。** 大纲已获作者确认，当前进入正文迭代。工作稿按单一当前版本维护在 `drafts/blog/agent-scale-git-infrastructure.md`。本轮将两张表分别用于三条架构路线比较与改造范围判断；案例跨章复用需承担不同证据命题，避免反复介绍 Anthropic／OpenAI。图表规范已有同行比较维度、边界说明和表格精简规则，本轮不修改 `blog-charts-spec`。统一负载横评、PR 人工审查时长、缺陷和回滚等属于可选深化／实测，尚未进行；不能将厂商内部数据横向排名。与 [经营指标](#br-20261010-01)互补，不吞并其全成本主题。
 
 <a id="br-20261103-01"></a>
 
