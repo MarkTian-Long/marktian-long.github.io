@@ -133,27 +133,143 @@
             flex-direction: column;
             gap: 8px;
         }
-        .time-filter label {
+        .time-filter-label {
             font-size: 12px;
             font-weight: 600;
             color: var(--text-3);
         }
-        .time-filter-select {
+        .time-dropdown {
+            position: relative;
             width: 100%;
-            min-height: 36px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 7px 10px;
-            color: var(--text-2);
-            font-family: inherit;
-            font-size: 13px;
-            cursor: pointer;
+            min-width: 0;
         }
-        .time-filter-select:focus-visible {
+        .time-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            min-height: 38px;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-2);
+            font: inherit;
+            font-size: 13px;
+            line-height: 1.4;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        .time-trigger:hover,
+        .time-dropdown.open .time-trigger {
+            border-color: var(--clay);
+            color: var(--text-1);
+            background: var(--bg-card);
+        }
+        .time-trigger:focus-visible {
             outline: 2px solid var(--clay);
             outline-offset: 2px;
         }
+        .time-trigger-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .time-trigger-icon {
+            width: 7px;
+            height: 7px;
+            flex: 0 0 auto;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.15s ease;
+        }
+        .time-dropdown.open .time-trigger-icon {
+            transform: rotate(225deg) translate(-1px, -1px);
+        }
+        .time-panel {
+            position: absolute;
+            top: calc(100% + 7px);
+            left: 0;
+            z-index: 50;
+            width: 100%;
+            padding: 7px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            box-shadow: 0 12px 28px rgba(20, 20, 19, 0.12);
+        }
+        .time-panel[hidden] { display: none; }
+        .time-panel-inner {
+            max-height: min(320px, 55vh);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+        .time-group + .time-group {
+            margin-top: 7px;
+            padding-top: 7px;
+            border-top: 1px solid var(--border);
+        }
+        .time-group-title {
+            padding: 5px 8px 4px;
+            color: var(--text-3);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+        }
+        .time-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            min-height: 34px;
+            padding: 6px 8px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--text-2);
+            font: inherit;
+            font-size: 12px;
+            line-height: 1.4;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .time-option:hover {
+            background: var(--bg-hover);
+            color: var(--text-1);
+        }
+        .time-option.active {
+            background: var(--clay-soft);
+            color: var(--clay);
+            font-weight: 600;
+        }
+        .time-option:focus-visible {
+            outline: 2px solid var(--clay);
+            outline-offset: -2px;
+        }
+        .time-option-title { min-width: 0; }
+        .time-option-count {
+            flex: 0 0 auto;
+            margin-left: auto;
+            color: var(--text-3);
+            font-size: 11px;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+        .time-option-check {
+            flex: 0 0 auto;
+            width: 12px;
+            color: var(--clay);
+            font-size: 11px;
+            text-align: right;
+            opacity: 0;
+        }
+        .time-option.active .time-option-check { opacity: 1; }
         .cat-nav {
             display: flex;
             flex-direction: column;
@@ -438,8 +554,10 @@
             }
             .mobile-controls input::placeholder { color: var(--text-3); }
             .time-filter-mobile { flex-direction: row; align-items: center; gap: 12px; }
-            .time-filter-mobile select { width: auto; min-width: 0; max-width: 280px; flex: 1; min-height: 44px; }
-            .time-filter-mobile label { flex-shrink: 0; }
+            .time-filter-mobile .time-filter-label { flex-shrink: 0; }
+            .time-filter-mobile .time-dropdown { flex: 1; min-width: 0; }
+            .time-filter-mobile .time-trigger { min-height: 44px; }
+            .time-filter-mobile .time-panel { right: 0; left: auto; }
             .cat-tabs { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; }
             .cat-tabs::-webkit-scrollbar { display: none; }
             .cat-tab {
@@ -482,10 +600,14 @@
             <button class="cat-btn" data-cat="实践" aria-pressed="false">实践 <span class="cat-count" id="cnt-practice"></span></button>
         </nav>
         <div class="time-filter time-filter-desktop">
-            <label for="timeFilterDesktop">发布时间</label>
-            <select class="time-filter-select" id="timeFilterDesktop">
-                <option value="all">全部时间</option>
-            </select>
+            <div class="time-filter-label" id="timeLabelDesktop">发布时间</div>
+            <div class="time-dropdown" data-time-dropdown="desktop">
+                <button class="time-trigger" type="button" data-time-trigger aria-expanded="false" aria-controls="timePanelDesktop" aria-labelledby="timeLabelDesktop timeValueDesktop">
+                    <span class="time-trigger-text" id="timeValueDesktop">全部时间</span>
+                    <span class="time-trigger-icon" aria-hidden="true"></span>
+                </button>
+                <div class="time-panel" id="timePanelDesktop" data-time-panel hidden></div>
+            </div>
         </div>
     </aside>
 
@@ -519,10 +641,14 @@
                 <button class="cat-tab" data-cat="实践" aria-pressed="false">实践</button>
             </div>
             <div class="time-filter time-filter-mobile">
-                <label for="timeFilterMobile">发布时间</label>
-                <select class="time-filter-select" id="timeFilterMobile">
-                    <option value="all">全部时间</option>
-                </select>
+                <div class="time-filter-label" id="timeLabelMobile">发布时间</div>
+                <div class="time-dropdown" data-time-dropdown="mobile">
+                    <button class="time-trigger" type="button" data-time-trigger aria-expanded="false" aria-controls="timePanelMobile" aria-labelledby="timeLabelMobile timeValueMobile">
+                        <span class="time-trigger-text" id="timeValueMobile">全部时间</span>
+                        <span class="time-trigger-icon" aria-hidden="true"></span>
+                    </button>
+                    <div class="time-panel" id="timePanelMobile" data-time-panel hidden></div>
+                </div>
             </div>
         </div>
 
@@ -597,27 +723,68 @@
     }
 
     // ── 发布时间筛选 ──
+    function renderTimeOption(value, label, count) {
+        return '<button class="time-option" type="button" data-time-value="' + value + '" aria-pressed="' + String(value === timeFilter) + '">' +
+            '<span class="time-option-title">' + label + '</span>' +
+            (count === null ? '' : '<span class="time-option-count">' + count + ' 篇</span>') +
+            '<span class="time-option-check" aria-hidden="true">✓</span>' +
+            '</button>';
+    }
+
     function populateTimeOptions() {
         var counts = {};
         posts.forEach(function (post) { counts[post.date] = (counts[post.date] || 0) + 1; });
-        ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
-            var select = document.getElementById(id);
-            if (!select) return;
-            select.replaceChildren();
-            select.add(new Option('全部时间', 'all'));
-            select.add(new Option('最近 3 个自然月', '3m'));
-            select.add(new Option('最近 6 个自然月', '6m'));
-            publishMonths.forEach(function (month) {
-                var label = month.slice(0, 4) + ' 年 ' + Number(month.slice(5)) + ' 月（' + counts[month] + ' 篇）';
-                select.add(new Option(label, month));
+        var quickOptions = [
+            { value: 'all', label: '全部时间' },
+            { value: '3m', label: '最近 3 个自然月' },
+            { value: '6m', label: '最近 6 个自然月' }
+        ];
+        var quickHtml = quickOptions.map(function (option) {
+            return renderTimeOption(option.value, option.label, null);
+        }).join('');
+        var monthHtml = publishMonths.map(function (month) {
+            var label = month.slice(0, 4) + ' 年 ' + Number(month.slice(5)) + ' 月';
+            return renderTimeOption(month, label, counts[month] || 0);
+        }).join('');
+        document.querySelectorAll('[data-time-panel]').forEach(function (panel) {
+            panel.innerHTML =
+                '<div class="time-panel-inner">' +
+                    '<section class="time-group" aria-label="快捷筛选">' +
+                        '<div class="time-group-title">快捷筛选</div>' + quickHtml +
+                    '</section>' +
+                    '<section class="time-group" aria-label="按月份浏览">' +
+                        '<div class="time-group-title">按月份浏览</div>' + monthHtml +
+                    '</section>' +
+                '</div>';
+        });
+        syncTimeControls();
+    }
+
+    function syncTimeControls() {
+        document.querySelectorAll('[data-time-dropdown]').forEach(function (dropdown) {
+            var text = dropdown.querySelector('.time-trigger-text');
+            if (text) text.textContent = timeLabel();
+            dropdown.querySelectorAll('[data-time-value]').forEach(function (option) {
+                var active = option.dataset.timeValue === timeFilter;
+                option.classList.toggle('active', active);
+                option.setAttribute('aria-pressed', String(active));
             });
         });
     }
 
-    function syncTimeControls() {
-        ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
-            var select = document.getElementById(id);
-            if (select) select.value = timeFilter;
+    function toggleTimeDropdown(dropdown, open) {
+        if (!dropdown) return;
+        var shouldOpen = open === undefined ? !dropdown.classList.contains('open') : open;
+        var panel = dropdown.querySelector('[data-time-panel]');
+        var trigger = dropdown.querySelector('[data-time-trigger]');
+        dropdown.classList.toggle('open', shouldOpen);
+        if (panel) panel.hidden = !shouldOpen;
+        if (trigger) trigger.setAttribute('aria-expanded', String(shouldOpen));
+    }
+
+    function closeAllTimeDropdowns() {
+        document.querySelectorAll('[data-time-dropdown].open').forEach(function (dropdown) {
+            toggleTimeDropdown(dropdown, false);
         });
     }
 
@@ -902,9 +1069,53 @@
         if (el) el.addEventListener('input', function (e) { onSearch(e.target.value); });
     });
 
-    ['timeFilterDesktop', 'timeFilterMobile'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('change', function (e) { setTimeFilter(e.target.value); });
+    document.querySelectorAll('[data-time-trigger]').forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+            var dropdown = trigger.closest('[data-time-dropdown]');
+            var shouldOpen = !dropdown.classList.contains('open');
+            closeAllTimeDropdowns();
+            toggleTimeDropdown(dropdown, shouldOpen);
+        });
+    });
+
+    document.addEventListener('click', function (event) {
+        var option = event.target.closest('[data-time-value]');
+        if (option) {
+            var dropdown = option.closest('[data-time-dropdown]');
+            setTimeFilter(option.dataset.timeValue);
+            closeAllTimeDropdowns();
+            var trigger = dropdown && dropdown.querySelector('[data-time-trigger]');
+            if (trigger) trigger.focus();
+            return;
+        }
+        if (!event.target.closest('[data-time-dropdown]')) closeAllTimeDropdowns();
+    });
+
+    document.addEventListener('focusin', function (event) {
+        if (!event.target.closest('[data-time-dropdown]')) closeAllTimeDropdowns();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        var dropdown = event.target.closest('[data-time-dropdown]');
+        if (!dropdown) return;
+        if (event.key === 'Escape' && dropdown.classList.contains('open')) {
+            toggleTimeDropdown(dropdown, false);
+            dropdown.querySelector('[data-time-trigger]').focus();
+            event.preventDefault();
+            return;
+        }
+        var options = Array.from(dropdown.querySelectorAll('[data-time-value]'));
+        if (!options.length) return;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
+            if (!dropdown.classList.contains('open')) toggleTimeDropdown(dropdown, true);
+            var index = options.indexOf(document.activeElement);
+            if (event.key === 'Home') index = 0;
+            else if (event.key === 'End') index = options.length - 1;
+            else if (index < 0) index = Math.max(0, options.findIndex(function (option) { return option.dataset.timeValue === timeFilter; }));
+            else index = (index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+            options[index].focus();
+            event.preventDefault();
+        }
     });
 
     load();
