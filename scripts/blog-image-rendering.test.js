@@ -128,7 +128,9 @@ test('a licensed Wikimedia source photo retains an inline figure and its Commons
   assert.match(html, /width="1280" height="853"/);
   assert.match(html, /commons.wikimedia.org\/wiki\/File:StockholmOptimus01.jpg/);
   assert.doesNotMatch(html, /<figure class="post-figure">/);
-  assert.throws(() => renderStandaloneImage(`![Test](${source} "No source license")`, visualPost, 'docs/blog/sample-post.md'), /licensing/);
+  assert.throws(() => renderStandaloneImage(`![Test](${source} "No source license")`, visualPost, 'docs/blog/sample-post.md'), /creator and Public Domain/);
+  const otherCommons = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/OtherPhoto.jpg/1280px-OtherPhoto.jpg';
+  assert.throws(() => renderStandaloneImage(`![Other photo](${otherCommons} "Other author, CC BY")`, visualPost, 'docs/blog/sample-post.md'), /local|Markdown image/i);
 });
 
 test('standalone images reject unsafe, unregistered, and metadata-mismatched sources', () => {

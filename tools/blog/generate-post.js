@@ -119,12 +119,15 @@ function renderStandaloneImage(line, metadata, sourceRepoPath) {
   // Editorial exception: verified Wikimedia Commons photographs can be shown
   // as sourced external images when the file cannot be vendored yet.
   // Keep a distinct class so local asset registration remains strict.
-  const commons = /^https:\/\/thumb\.wikimedia\.org\/wikipedia\/commons\/thumb\/[0-9a-f]\/[0-9a-f]{2}\/([A-Za-z0-9_.-]+\.(?:jpg|jpeg|png|webp))\/1280px-\1$/.exec(source);
-  if (commons) {
-    if (!/(?:公有领域|公共领域|CC0|CC BY|Public Domain)/.test(caption)) {
-      throw new Error('Sourced Commons photo must include licensing in its caption');
+  const commonsSource = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/StockholmOptimus01.jpg/1280px-StockholmOptimus01.jpg';
+  if (source === commonsSource) {
+    if (!caption.includes('Ulf Klingström') || !/(?:公有领域|公共领域|Public Domain)/.test(caption)) {
+      throw new Error('Allowlisted sourced photo must include creator and Public Domain attribution');
     }
-    const sourcePage = 'https://commons.wikimedia.org/wiki/File:' + commons[1];
+    if (!alt.trim() || alt.length > 160 || !caption.trim() || caption.length > 160) {
+      throw new Error('Sourced photo alt and caption must be between 1 and 160 characters');
+    }
+    const sourcePage = 'https://commons.wikimedia.org/wiki/File:StockholmOptimus01.jpg';
     return '<figure class="post-figure sourced-photo">\n'
       + `  <img src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" width="1280" height="853" loading="lazy" decoding="async" referrerpolicy="no-referrer" />\n`
       + `  <figcaption>${escapeHtml(caption)} <a href="${escapeHtml(sourcePage)}" target="_blank" rel="noopener noreferrer">查看原图与授权</a></figcaption>\n`
