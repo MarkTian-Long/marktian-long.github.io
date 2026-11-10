@@ -37,7 +37,7 @@ Git 自身也提供了[部分克隆](https://git-scm.com/docs/partial-clone)、[
 
 Agent 改变的是这类工作负载的频率与组合：高并发、短生命周期、持续联网的代码操作变得更加普遍。一个 Agent 可能只处理几项文件修改，却会反复读取代码、创建环境、提交变更并触发测试。多个 Agent 同时工作时，这些操作又会相互叠加。
 
-![左侧人类开发以较长任务为主，右侧多个 Agent 同时围绕共享代码仓库读取、修改、测试与提交的概念示意](../../assets/images/blog/agent-scale-git-infrastructure/agent-workload-shift.svg "示意 AI 编程扩大任务并发和代码仓库操作频率；不代表所有人类开发都顺序、所有 Agent 都并行。")
+![一名工程师处理长任务，与多名 AI Agent 围绕共享代码仓库并行读取、修改和测试的对照概念插画](../../assets/images/blog/agent-scale-git-infrastructure/agent-parallel-development.webp "AI 生成概念示意：对比任务执行节奏，重点是并发读写与测试增多，并非断言人类开发只能串行、Agent 必然并行。")
 
 Anthropic 披露，其内部每天合并的代码变更从 2026 年 5 月的约 2,500 项增长到 9 月的 30,000 多项；持续集成（CI）每天执行约 2,500 万次代码检出。这些都是 Anthropic 的内部数据，不代表普通团队的负载。Anthropic 也明确表示，对绝大多数仓库而言，Git 仍然是合适的设计，近期并不认为多数组织都会遇到同样的问题。
 
