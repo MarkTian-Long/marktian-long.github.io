@@ -1,6 +1,6 @@
 # Blog 视觉发布规范
 
-版本：2.0｜更新：2026-11-09
+版本：2.1｜更新：2026-11-10
 
 `Leo Editorial v1.1` 是思考碎片博客的视觉指南。正文主动考虑图片与文字共同表达，以改善进入感、理解、具体感、比较、回顾和阅读节奏；不要求图替代文字，也不强制每篇有图。主页与 Blog 列表继续保持纯文字；本轮不改变封面或首页展示机制。
 
@@ -61,14 +61,14 @@
 | 类型 | 必需性 | 最终路径 | 输出格式 | 尺寸 | 大小上限 | 加载策略 |
 |------|--------|----------|----------|------|----------|----------|
 | 文章封面 | 可选 | `assets/images/blog/<slug>/cover.jpg` | JPEG | 1200 × 630 | 350 KB | eager + high priority |
-| 正文位图 | 按第 3 节规划，无张数硬上限 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720 | 250 KB | lazy |
+| 正文位图 | 按第 3 节规划，无张数硬上限 | `assets/images/blog/<slug>/<descriptive-name>.webp` | WebP | 1280 × 720；有完整构图需求时可选 1280 × 960（4:3） | 250 KB | lazy |
 | 正文精确图形 | 按第 3 节与位图合并规划 | `assets/images/blog/<slug>/<descriptive-name>.svg` | 静态 SVG | 1280 × 720（常规）或 1280 × 1024（复杂分支） | 250 KB | lazy |
 
-- 栅格成品只能由 `scripts/prepare-blog-image.js` 生成；脚本会中心裁切、去除源元数据、控制质量和大小，并拒绝覆盖现有文件。
+- 栅格成品由 `scripts/prepare-blog-image.js` 生成；默认中心裁切为 16:9，确有已确认原图保真需求时可以传入 `--aspect 4:3`，输出 1280×960 WebP，不裁去原有上下内容；仍去除源元数据、限制大小并拒绝覆盖现有资产。不要仅为避免编辑构图而将所有位图改为 4:3。
 - 正文图文件名必须用能说明机制的 kebab-case，例如 `context-feedback-loop.webp`；禁止 `image.webp`、`figure-1.webp` 等通用名。
 - 候选图保存在被 Git 忽略的 `build/blog-image-work/<slug>/`，只有选中的规范化成品进入 `assets/images/blog/<slug>/`。
 - 精确图形可以直接登记为 SVG，沿用相同的 Markdown 独立图片语法、alt/caption 与 metadata 校验，由生成器输出普通 `<img>`，不注入任意 HTML。SVG 必须静态、自包含，不含脚本、事件处理、foreignObject、动画、外部引用或字体资源；由 `check-blog-images.js` 做结构、尺寸和完整解码检查。SVG 封面仍不支持。
-- `1280 × 1024` 仅供确有多层决策或分支连线的正文 SVG 使用；位图仍须为 `1280 × 720`，不因图需要更高而拉伸现有内容。画布变更后必须同步 SVG 固有尺寸、`visuals.inline` 的 `width/height` 和发布 HTML，并检查箭头、分支标签与节点的实际间距。
+- `1280 × 1024` 仅供确有多层决策或分支连线的正文 SVG 使用；位图可以是 `1280 × 720`，或在保留已确认图形上下信息的必要场合使用 `1280 × 960`。不能拉伸现有图填满不同画幅。画布变更后必须同步 SVG 固有尺寸、`visuals.inline` 的 `width/height` 和发布 HTML，并检查箭头、分支标签与节点的实际间距。
 - 同一张图只保留一个生效的发布表示；替换为 SVG 时同步 Markdown、metadata 和 HTML，并移除被替代的未登记位图。需要公众号栅格导出时从同一 SVG 图源渲染，再走位图规范化流程，不另外重画一张近似图。
 
 ## 3. 正文配图：主动规划，数量服从阅读任务

@@ -185,6 +185,13 @@ test('inline images stay local, descriptive, bounded, and fully described', () =
   }
 });
 
+test('inline WebP may preserve an editorial 4:3 composition without cropping', () => {
+  const slug = 'four-three-image';
+  const illustration = inline(slug, 'agent-workload-shift', { height: 960 });
+  assert.doesNotThrow(() => validateImageContract(metadata([post(slug, { inline: [illustration] })])));
+  assert.throws(() => validateImageContract(metadata([post(slug, { inline: [{ ...illustration, height: 900 }] })])), /1280.*720.*960/i);
+});
+
 test('extended-height diagrams are allowed only for static SVG, not raster images', () => {
   const slug = 'tall-flow';
   const tallSvg = inline(slug, 'decision-flow', {

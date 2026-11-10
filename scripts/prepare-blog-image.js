@@ -25,6 +25,11 @@ const PROFILES = Object.freeze({
   }),
 });
 
+const INLINE_4_3_PROFILE = Object.freeze({
+  ...PROFILES.inline,
+  height: 960,
+});
+
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function assertSafeSegment(value, label) {
@@ -57,14 +62,18 @@ async function prepareBlogImage({
   role,
   name,
   inputPath,
+  aspect,
 }) {
   assertSafeSegment(slug, 'slug');
   if (!Object.hasOwn(PROFILES, role)) throw new Error(`role must be one of: ${Object.keys(PROFILES).join(', ')}`);
   if (role === 'inline') assertSafeSegment(name, 'inline name');
   if (role === 'cover' && name !== undefined) throw new Error('cover does not accept an inline name');
+  if (aspect !== undefined && (role !== 'inline' || aspect !== '4:3')) {
+    throw new Error('aspect may only be 4:3 for inline blog images');
+  }
   if (typeof inputPath !== 'string' || !inputPath.trim()) throw new Error('input path is required');
 
-  const profile = PROFILES[role];
+  const profile = role === 'inline' && aspect === '4:3' ? INLINE_4_3_PROFILE : PROFILES[role];
   const resolvedInput = path.isAbsolute(inputPath)
     ? path.resolve(inputPath)
     : path.resolve(rootDir, inputPath);
@@ -120,7 +129,7 @@ async function prepareBlogImage({
 }
 
 function parseArgs(argv) {
-  const allowed = new Set(['--slug', '--role', '--name', '--input']);
+  const allowed = new Set(['--slug', '--role', '--name', '--input', '--aspect']);
   const values = new Map();
   for (let index = 0; index < argv.length; index += 2) {
     const flag = argv[index];
@@ -136,6 +145,7 @@ function parseArgs(argv) {
     inputPath: values.get('--input'),
   };
   if (values.has('--name')) result.name = values.get('--name');
+  if (values.has('--aspect')) result.aspect = values.get('--aspect');
   return result;
 }
 

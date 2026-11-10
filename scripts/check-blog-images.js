@@ -9,11 +9,12 @@ const {
   validateImageContract,
   collectPostImagePaths,
   INLINE_TALL_SVG_HEIGHT,
+  INLINE_4_3_WEBP_HEIGHT,
 } = require('./blog-image-contract');
 
 const PROFILE_BY_EXTENSION = Object.freeze({
   '.jpg': Object.freeze({ width: 1200, height: 630, format: 'jpeg', maxBytes: 350 * 1024, label: '350 KB' }),
-  '.webp': Object.freeze({ width: 1280, height: 720, format: 'webp', maxBytes: 250 * 1024, label: '250 KB' }),
+  '.webp': Object.freeze({ width: 1280, height: 720, extraHeights: Object.freeze([INLINE_4_3_WEBP_HEIGHT]), format: 'webp', maxBytes: 250 * 1024, label: '250 KB' }),
   '.svg': Object.freeze({ width: 1280, height: 720, extraHeights: Object.freeze([INLINE_TALL_SVG_HEIGHT]), format: 'svg', maxBytes: 250 * 1024, label: '250 KB' }),
 });
 
@@ -185,7 +186,7 @@ function collectDraftPreviewImagePaths(rootDir, previewPaths = PUBLIC_FILES.filt
       if (imageSlug !== slug || !alt.trim() || !caption.trim() || alt.length > 160 || caption.length > 160) {
         throw new Error('Invalid or cross-article draft preview image: ' + imagePath);
       }
-      const heights = imagePath.endsWith('.svg') ? [720, INLINE_TALL_SVG_HEIGHT] : [720];
+      const heights = imagePath.endsWith('.svg') ? [720, INLINE_TALL_SVG_HEIGHT] : [720, INLINE_4_3_WEBP_HEIGHT];
       const hasFigure = heights.some(height => {
         const expected = '<figure class="post-figure">\n'
           + '  <img src="../../../' + imagePath + '" alt="' + escapeHtml(alt)

@@ -6,6 +6,7 @@ const COVER_HEIGHT = 630;
 const INLINE_WIDTH = 1280;
 const INLINE_HEIGHT = 720;
 const INLINE_TALL_SVG_HEIGHT = 1024;
+const INLINE_4_3_WEBP_HEIGHT = 960;
 // Editorial guidance lives in VISUAL_GUIDE.md, not a publishing quota.
 // Preserve this export for consumers while removing the numeric hard cap.
 const MAX_INLINE_IMAGES = Number.POSITIVE_INFINITY;
@@ -82,11 +83,11 @@ function validateInlineImage(post, image, paths) {
     throw new Error(`Post ${post.slug} inline image needs a descriptive filename: ${match[1]}`);
   }
   const isSvg = image.src.endsWith('.svg');
-  const validHeights = isSvg ? [INLINE_HEIGHT, INLINE_TALL_SVG_HEIGHT] : [INLINE_HEIGHT];
+  const validHeights = isSvg ? [INLINE_HEIGHT, INLINE_TALL_SVG_HEIGHT] : [INLINE_HEIGHT, INLINE_4_3_WEBP_HEIGHT];
   if (image.width !== INLINE_WIDTH || !validHeights.includes(image.height)) {
     const expected = isSvg
       ? `${INLINE_WIDTH} x ${INLINE_HEIGHT} or ${INLINE_WIDTH} x ${INLINE_TALL_SVG_HEIGHT}`
-      : `${INLINE_WIDTH} x ${INLINE_HEIGHT}`;
+      : `${INLINE_WIDTH} x ${INLINE_HEIGHT} or ${INLINE_WIDTH} x ${INLINE_4_3_WEBP_HEIGHT}`;
     throw new Error(`${label} dimensions must be ${expected}`);
   }
   assertText(image.alt, `${label} alt`);
@@ -177,6 +178,7 @@ module.exports = {
   INLINE_WIDTH,
   INLINE_HEIGHT,
   INLINE_TALL_SVG_HEIGHT,
+  INLINE_4_3_WEBP_HEIGHT,
   MAX_INLINE_IMAGES,
   validateImageContract,
   collectPostImagePaths,

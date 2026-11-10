@@ -134,6 +134,18 @@ test('inline preparation writes a bounded named 1280x720 WebP', async () => {
   assert.ok(result.bytes <= 250 * 1024);
 });
 
+test('inline 4:3 preparation preserves a selected tall editorial composition', async () => {
+  const rootDir = fixtureRoot();
+  const inputPath = await createInput(rootDir, 'four-three.png', 1600, 1200);
+  const result = await prepareBlogImage({ rootDir, slug: 'sample-post', role: 'inline', name: 'parallel-agents', aspect: '4:3', inputPath });
+  const image = await sharp(result.outputPath).metadata();
+  assert.deepEqual({ width: image.width, height: image.height, format: image.format }, { width: 1280, height: 960, format: 'webp' });
+  assert.ok(result.bytes <= 250 * 1024);
+  assert.deepEqual(parsePrepareArgs(['--slug','sample-post','--role','inline','--name','parallel-agents','--input','candidate.png','--aspect','4:3']), {
+    slug:'sample-post', role:'inline', name:'parallel-agents', inputPath:'candidate.png', aspect:'4:3',
+  });
+});
+
 test('preparation rejects unsafe arguments, undersized inputs, and overwrites', async () => {
   const rootDir = fixtureRoot();
   const inputPath = await createInput(rootDir);
