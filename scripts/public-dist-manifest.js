@@ -37,7 +37,6 @@ const PUBLIC_FILES = [
   'tools/blog/previews/ai-innovation-value-capture.html',
   'tools/blog/previews/fsd-optimus.html',
   'tools/blog/previews/agent-scale-git-infrastructure.html',
-  'assets/images/blog/agent-scale-git-infrastructure/dual-cost-shift.svg',
   'tools/blog/data/featured-posts.json',
   'tools/blog/data/posts-meta.json',
   'tools/blog/data/share-card-config.json',

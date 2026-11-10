@@ -51,11 +51,9 @@ Anthropic 披露，其内部每天合并的代码变更从 2026 年 5 月的约 
 
 过去，企业即使发现某套基础设施越来越不合适，也未必会选择重做。重新建设意味着投入工程师，处理复杂的边界情况，迁移已有工具，还要确保新系统不会破坏正在进行的业务。旧系统虽然不完美，继续维护却可能仍然更划算。
 
-Agent 的出现可能同时改变两边的成本。下面这张图展示的是一种可能的机制，不是所有团队都会经历的固定过程。
+Agent 可能同时推动两种变化。一方面，更便宜的代码生成使企业能够并行安排更多任务，仓库读取、提交、测试和环境准备的成本随之上升；另一方面，同样的工具也能参与新系统的实现和测试，降低部分开发投入。
 
-![AI 同时改变系统使用侧与建设侧的成本：并发任务可能抬高旧系统负载，代码实现与测试提效可能降低新系统的部分建设成本。](../../assets/images/blog/agent-scale-git-infrastructure/dual-cost-shift.svg "Agent 一方面放大旧系统的并发压力，另一方面降低部分实现成本；迁移、架构决策和长期运维仍需单独核算。")
-
-前一条路径会抬高继续沿用旧系统的成本；后一条路径则可能降低改造的初始投入。两者同时发生，才构成重估旧系统的窗口。但架构设计、跨系统集成、数据迁移、长期运维和失败风险，不会因为代码生成变便宜而自动消失。
+这两种变化并非必然同时出现，但当旧系统的持续运行成本增加、新系统的部分建设成本下降时，重新计算改造的收益就有了意义。架构设计、数据迁移、长期运维和失败风险，仍须单独核算。
 
 Scion 的建设提供了一个具体例子。Anthropic 官方披露，一个七人团队在五个月内建设并迁移了 Scion，同时交付代码审查工具 Antique、代码搜索、源代码管理权限系统等配套能力。Claude 帮助团队更快实现和测试系统，但工程师仍然负责理解各系统之间的关系、确定架构边界和权衡设计取舍。Anthropic 甚至提到，工程师的一项重要工作经常是对 Agent 说“不”，防止它为了完成局部任务而破坏系统约束。
 
@@ -95,6 +93,8 @@ OpenAI 的选择不同。它在 [Pando 的官方说明](https://openai.com/index
 OpenAI 还披露，旧系统的合并可靠性一度低于 90%，说明问题不只是速度，也包括开发者能否稳定完成合并。因此，Pando 重建的是 Git 服务端，而不是开发者使用的整个工作方式。不同分支的更新可以相对独立地进行，服务器也能复用已经准备好的代码数据，避免为每个读取请求重复处理相同历史。
 
 这也有代价。同一分支上的更新仍保持必要的先后关系，写入后也能读到自己的修改；但一次读取多个分支时，它们不一定反映整个仓库在同一时刻的状态。OpenAI 接受这项取舍，以换取不同分支更高的并发能力。官方披露，Pando 已经支撑 OpenAI 内部大型代码仓库的全部开发，生产环境中的推送延迟中位数降低约 80%，约为原来的五分之一。这是公司内部相对原有系统的结果，不适合拿来与 Scion 直接比较。
+
+这条保留 Git 兼容性的路线也开始被外部开发者尝试。2026 年 11 月 5 日，Reason Machines 公布了 [Aspen](https://reasonmachines.com/blog/aspen)，一个借鉴 Pando 设计的开源 Git 服务端项目。其[代码仓库](https://github.com/reason-machines/aspen)明确标注为 pre-alpha，尚无正式发行版，也未完成长期稳定性和独立性能验证。Aspen 不是 Pando 的开源版本，更不能据此判断两者性能相当；它只是让我们看到，成熟系统的底层设计可以被借鉴，而真正生产可用还要跨过另一道验证门槛。
 
 代码工作流还不只有版本存储。11 月 4 日，OpenAI 在[官方公告](https://openai.com/index/openai-to-acquire-pierre/)中宣布拟收购 Pierre Computer Company。公告说明，Codex 已经使用 Pierre 的 Trees 和 Diffs 组件浏览文件、查看变更；Code Storage 则是收购交割后计划进一步整合的能力。公告发布时交易尚未完成，仍需满足惯常交割条件，包括监管批准。因此，这只能证明代码浏览与差异审查组件已经采用，Code Storage 的整合仍属于交割后的计划，不能写成收购完成或存储能力已全面进入 Codex。它也提醒我们，Agent 时代的代码基础设施不只是一套 Git 后端，还包括开发者和 Agent 如何理解、审查与追踪变更。
 
@@ -178,6 +178,8 @@ Git 的答案不是“被替代”或“保持不变”。对大多数团队，�
 - [OpenAI — Scaling Git at OpenAI（2026-11-02）](https://openai.com/index/scaling-git-at-openai/)
 - [GitHub — Inside GitHub's new Git storage architecture（2026-11-05）](https://github.blog/engineering/architecture-optimization/inside-githubs-new-git-storage-architecture/)
 - [OpenAI — OpenAI to acquire Pierre Computer Company, Inc.（2026-11-04）](https://openai.com/index/openai-to-acquire-pierre/)
+- [Reason Machines — Aspen: scaling agentic commits beyond what Git was built for（2026-11-05）](https://reasonmachines.com/blog/aspen)
+- [Reason Machines — Aspen open-source repository / README](https://github.com/reason-machines/aspen)
 - [Stripe — Minions: Stripe’s one-shot, end-to-end coding agents（2026-02-09）](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents)
 - [GitHub Docs — Managing a merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
 - [Git — Partial clone](https://git-scm.com/docs/partial-clone)
