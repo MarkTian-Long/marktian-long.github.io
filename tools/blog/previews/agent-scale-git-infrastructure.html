@@ -65,6 +65,10 @@ category: 技术
 <p>这段历史还有一个直接联系：Anthropic 在 Scion 文章的脚注中承认，Meta 的 Mononoke 已经探索过 Scion 借鉴的部分做法，包括把提交历史放在服务端统一组织。Agent 规模化并不意味着从零发明一套系统，过去为大型开发团队积累的工程经验，仍然可以成为新架构的起点。</p>
 <p>Git 自身也提供了<a href="https://git-scm.com/docs/partial-clone" target="_blank" rel="noopener noreferrer">部分克隆</a>、<a href="https://git-scm.com/docs/git-sparse-checkout" target="_blank" rel="noopener noreferrer">稀疏检出</a>等方式，减少客户端需要获取的数据。Anthropic 也披露，自己已经尝试过浅克隆、稀疏检出、按需获取对象、内部镜像和仓库快照；高峰期运营过数百个内部 Git 镜像。这些办法一度缓解了压力，但随着合并速度提高，维护成本也变得更高。</p>
 <p>Agent 改变的是这类工作负载的频率与组合：高并发、短生命周期、持续联网的代码操作变得更加普遍。一个 Agent 可能只处理几项文件修改，却会反复读取代码、创建环境、提交变更并触发测试。多个 Agent 同时工作时，这些操作又会相互叠加。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/agent-scale-git-infrastructure/agent-workload-shift.svg" alt="左侧人类开发以较长任务为主，右侧多个 Agent 同时围绕共享代码仓库读取、修改、测试与提交的概念示意" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>示意 AI 编程扩大任务并发和代码仓库操作频率；不代表所有人类开发都顺序、所有 Agent 都并行。</figcaption>
+</figure>
 <p>Anthropic 披露，其内部每天合并的代码变更从 2026 年 5 月的约 2,500 项增长到 9 月的 30,000 多项；持续集成（CI）每天执行约 2,500 万次代码检出。这些都是 Anthropic 的内部数据，不代表普通团队的负载。Anthropic 也明确表示，对绝大多数仓库而言，Git 仍然是合适的设计，近期并不认为多数组织都会遇到同样的问题。</p>
 <p><strong>一种技术过去的优势，在使用条件变化后，也可能成为需要重新权衡的成本。</strong></p>
 <p>这给了我一个观察成熟软件的新角度。看到某种旧技术受到 AI 冲击，首先应该问的不是“新工具能否取代它”，而是“它当初为什么这样设计，支撑这个选择的条件现在是否还成立”。</p>
@@ -73,6 +77,10 @@ category: 技术
 <p>如果只把 AI 编程理解为“写代码更快”，我们会漏掉它对技术演进的另一面影响。</p>
 <p>过去，企业即使发现某套基础设施越来越不合适，也未必会选择重做。重新建设意味着投入工程师，处理复杂的边界情况，迁移已有工具，还要确保新系统不会破坏正在进行的业务。旧系统虽然不完美，继续维护却可能仍然更划算。</p>
 <p>Agent 可能同时推动两种变化。一方面，更便宜的代码生成使企业能够并行安排更多任务，仓库读取、提交、测试和环境准备的成本随之上升；另一方面，同样的工具也能参与新系统的实现和测试，降低部分开发投入。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/agent-scale-git-infrastructure/dual-cost-reassessment.svg" alt="AI 编程在使用侧可能增加并行任务与系统负载，在建设侧可能降低部分实现成本，最后仍需比较生命周期总成本" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>重构是否划算取决于负载、实现、迁移和维护成本的共同变化，两条路径并非必然同时发生。</figcaption>
+</figure>
 <p>这两种变化并非必然同时出现，但当旧系统的持续运行成本增加、新系统的部分建设成本下降时，重新计算改造的收益就有了意义。架构设计、数据迁移、长期运维和失败风险，仍须单独核算。</p>
 <p>Scion 的建设提供了一个具体例子。Anthropic 官方披露，一个七人团队在五个月内建设并迁移了 Scion，同时交付代码审查工具 Antique、代码搜索、源代码管理权限系统等配套能力。Claude 帮助团队更快实现和测试系统，但工程师仍然负责理解各系统之间的关系、确定架构边界和权衡设计取舍。Anthropic 甚至提到，工程师的一项重要工作经常是对 Agent 说“不”，防止它为了完成局部任务而破坏系统约束。</p>
 <p>Anthropic 自报，Scion 将代码检出从分钟级降到秒级，CI 单项释放了约 25% 的计算资源。这些是厂商内部结果，不是独立横评，也不能直接外推到其他团队。它们说明的是：在特定负载下，AI 参与建设新系统后，重构的部分实现成本和运行收益都可能发生变化。</p>

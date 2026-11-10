@@ -282,6 +282,49 @@ test('asset validation rejects missing and orphan blog images', async () => {
   await assert.rejects(() => validateBlogImages({ rootDir: orphanRoot }), /orphan.*orphan\.webp/i);
 });
 
+
+test('noindex draft preview assets are verified without publishing metadata', async () => {
+  const rootDir = fixtureRoot();
+  await writeMetadata(rootDir, metadata('legacy-post', null, true));
+  writePostHtml(rootDir, 'legacy-post', { inline: [] }, { includeCover: false, includeInline: false });
+
+  const slug = 'preview-post';
+  const imagePath = 'assets/images/blog/' + slug + '/cost-mechanism.svg';
+  const assetPath = path.join(rootDir, ...imagePath.split('/'));
+  fs.mkdirSync(path.dirname(assetPath), { recursive: true });
+  fs.writeFileSync(assetPath,
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">'
+    + '<rect width="1280" height="720" fill="#faf9f5"/></svg>');
+
+  const alt = 'AI 改变使用和建设成本';
+  const caption = '示意两条成本变化路径。';
+  const draftPath = path.join(rootDir, 'drafts', 'blog', slug + '.md');
+  fs.mkdirSync(path.dirname(draftPath), { recursive: true });
+  fs.writeFileSync(draftPath, '![' + alt + '](../../' + imagePath + ' "' + caption + '")\n');
+
+  const previewPath = 'tools/blog/previews/' + slug + '.html';
+  const previewFile = path.join(rootDir, ...previewPath.split('/'));
+  fs.mkdirSync(path.dirname(previewFile), { recursive: true });
+  const figure = '<figure class="post-figure">\n'
+    + '  <img src="../../../' + imagePath + '" alt="' + alt
+    + '" width="1280" height="720" loading="lazy" decoding="async" />\n'
+    + '  <figcaption>' + caption + '</figcaption>\n</figure>';
+  fs.writeFileSync(previewFile,
+    '<html><head><meta name="robots" content="noindex, nofollow"/></head>'
+    + '<body>' + figure + '</body></html>');
+
+  assert.deepEqual(await validateBlogImages({ rootDir, previewPaths: [previewPath] }),
+    { declared: 1, checked: 1 });
+
+  fs.writeFileSync(previewFile,
+    '<html><head><meta name="robots" content="noindex, nofollow"/></head>'
+    + '<body>' + figure.replace('alt="' + alt + '"', 'alt="wrong"') + '</body></html>');
+  await assert.rejects(
+    () => validateBlogImages({ rootDir, previewPaths: [previewPath] }),
+    /preview image does not match/i,
+  );
+});
+
 test('asset validation rejects wrong dimensions, format, and byte budget', async () => {
   const wrongSizeRoot = fixtureRoot();
   const wrongSizePath = path.join(wrongSizeRoot, 'assets', 'images', 'blog', 'sample-post', 'cover.jpg');
