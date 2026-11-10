@@ -45,6 +45,59 @@
   },
   "posts": [
     {
+      "slug": "agent-scale-git-infrastructure",
+      "date": "2026.11",
+      "title": "当 AI Agent 开始大规模写代码，Git 还够用吗？",
+      "summary": "Anthropic 为大量在线 Agent 重建了内部代码管理系统，OpenAI 则保留开发者熟悉的 Git 使用方式、重做后台服务。两家面对相似压力，却因要保留的能力和迁移代价不同，选择了不同路径。这场分歧也说明，AI 改变的不只是旧系统的负载，还可能改变重构的经济性。",
+      "category": "技术",
+      "tags": [
+        "工程演进",
+        "技术判断"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "concepts": [
+        "Agent 规模化开发",
+        "代码版本管理",
+        "源代码管理架构",
+        "Git 兼容性",
+        "基础设施重构成本",
+        "系统协调成本",
+        "可靠交付"
+      ],
+      "share_quote": "AI 扩大了企业可选的技术方案，却不会替企业决定哪一种方案值得选择。",
+      "relations": [
+        {
+          "slug": "ai-software-operator-shift",
+          "type": "builds_on"
+        },
+        {
+          "slug": "ai-saas-build-vs-buy",
+          "type": "companion"
+        }
+      ],
+      "url": "posts/agent-scale-git-infrastructure.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/agent-scale-git-infrastructure/agent-parallel-development.webp",
+            "alt": "一名工程师处理长任务，与多名 AI Agent 围绕共享代码仓库并行读取、修改和测试的对照概念插画",
+            "caption": "AI 生成概念示意：对比任务执行节奏，重点是并发读写与测试增多，并非断言人类开发只能串行、Agent 必然并行。",
+            "width": 1280,
+            "height": 960
+          },
+          {
+            "src": "assets/images/blog/agent-scale-git-infrastructure/dual-cost-reassessment.svg",
+            "alt": "AI 编程在使用侧可能增加并行任务与系统负载，在建设侧可能降低部分实现成本，最后仍需比较生命周期总成本",
+            "caption": "重构是否划算取决于负载、实现、迁移和维护成本的共同变化，两条路径并非必然同时发生。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "fsd-optimus",
       "date": "2026.11",
       "title": "特斯拉的 FSD 经验，究竟能迁移到机器人多少？",

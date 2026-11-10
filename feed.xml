@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>当 AI Agent 开始大规模写代码，Git 还够用吗？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/agent-scale-git-infrastructure.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/agent-scale-git-infrastructure.html</guid>
+      <description>Anthropic 为大量在线 Agent 重建了内部代码管理系统，OpenAI 则保留开发者熟悉的 Git 使用方式、重做后台服务。两家面对相似压力，却因要保留的能力和迁移代价不同，选择了不同路径。这场分歧也说明，AI 改变的不只是旧系统的负载，还可能改变重构的经济性。</description>
+    </item>
+    <item>
       <title>特斯拉的 FSD 经验，究竟能迁移到机器人多少？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/fsd-optimus.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/fsd-optimus.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/agent-boundary.html</guid>
       <description>设计 Agent 产品时，业务流程能帮助理解任务，却不能直接决定系统需要几个 Agent。本文给出“删、合、拆”的判断：先确认流程节点是否需要自主决策，再检查责任、信息与权限边界，最后证明拆分收益能覆盖协调成本。</description>
-    </item>
-    <item>
-      <title>从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ontology-business-semantic-layer.html</guid>
-      <description>企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。</description>
     </item>
   </channel>
 </rss>

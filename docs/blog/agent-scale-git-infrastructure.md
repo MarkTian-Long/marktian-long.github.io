@@ -80,7 +80,7 @@ Anthropic 更愿意为自己的 Agent 工作方式重建内部系统；OpenAI �
 | 主要取舍 | 需要迁移配套工具，不再兼容通用 Git 客户端 | 保留 Git 使用方式，但同时查看多个开发版本时，不保证它们都来自同一时刻 | 在平台持续运行的同时分阶段迁移底层 |
 | 当前状态 | 已完成内部迁移 | 已投入内部生产 | 有限私有预览 |
 
-*依据三家官方工程说明整理。表格比较的是改造选择，不是性能排名；各家的负载和统计口径不同。GitHub Rubicon 截至 2026 年 11 月 10 日仍处于有限私有预览，官方计划在 2027 年初扩大开放范围。*
+*依据三家官方工程说明整理。表格比较的是改造选择，不是性能排名；各家的负载和统计口径不同。GitHub Rubicon 截至 2026 年 11 月 11 日仍处于有限私有预览，官方计划在 2027 年初扩大开放范围。*
 
 Anthropic 的选择来自一个很具体的判断：它内部大多数访问代码仓库的工具，都是持续联网的 Agent 和自动化任务。既然这些任务很少需要离线工作，就没有必要让每个临时环境都准备和维护一份完整仓库。
 
@@ -92,7 +92,7 @@ OpenAI 的选择不同。它在 [Pando 的官方说明](https://openai.com/index
 
 这也有代价：同一个开发版本上的修改仍须按顺序衔接；但如果同时查看多个开发版本，看到的内容不一定来自完全相同的时间点。OpenAI 接受这项取舍，以换取不同分支更高的并发能力。官方披露，Pando 已经支撑其内部大型代码仓库的全部开发，推送延迟中位数降低约 80%。这是公司内部相对原有系统的结果，不适合拿来与 Anthropic 直接比较。
 
-GitHub 的情况又不同。它要服务的是大量不同规模、不同工具链的开发者和企业，因此不能要求所有用户放弃熟悉的 Git 工作方式。[GitHub 最初的 Agent 规模化基础设施方案](https://github.blog/engineering/building-git-infrastructure-for-agent-scale-development/)说明，它希望在平台持续运行的同时逐步重建底层，不要求开发者改变使用方式；[随后公布的 Rubicon 架构](https://github.blog/engineering/architecture-optimization/inside-githubs-new-git-storage-architecture/)则展示了如何在保留 Git 操作习惯的同时，让存储、请求处理和后台维护分别扩展。该架构截至 2026 年 11 月 10 日仍处于有限私有预览，官方计划在 2027 年初扩大开放范围，不能把内部压力测试结果当成全面上线后的生产表现。
+GitHub 的情况又不同。它要服务的是大量不同规模、不同工具链的开发者和企业，因此不能要求所有用户放弃熟悉的 Git 工作方式。[GitHub 最初的 Agent 规模化基础设施方案](https://github.blog/engineering/building-git-infrastructure-for-agent-scale-development/)说明，它希望在平台持续运行的同时逐步重建底层，不要求开发者改变使用方式；[随后公布的 Rubicon 架构](https://github.blog/engineering/architecture-optimization/inside-githubs-new-git-storage-architecture/)则展示了如何在保留 Git 操作习惯的同时，让存储、请求处理和后台维护分别扩展。该架构截至 2026 年 11 月 11 日仍处于有限私有预览，官方计划在 2027 年初扩大开放范围，不能把内部压力测试结果当成全面上线后的生产表现。
 
 **相似的技术能力和需求，不会自动导向相同的最优方案；已有系统、兼容性要求、风险承受能力和迁移成本，都会改变合理的选择。**
 
@@ -106,7 +106,7 @@ GitHub 的情况又不同。它要服务的是大量不同规模、不同工具�
 
 代码进入共享仓库，只说明修改已经合并；测试通过，也只说明它在给定的测试范围内没有暴露问题。软件是否真正满足需求，还需要看它在实际业务中的表现。
 
-一项基于超过 50 万名 GitHub 开发者及其 AI 使用数据的[研究](https://www.nber.org/papers/w35275)估计，自主编码 Agent 的采用与代码提交活动增加约 240%、项目数量增加约 80%、实际发布数量增加约 30% 相关。研究者将使用 Agent 的开发者与特征相近的开发者匹配，观察使用前后的变化；这不是随机实验，不能排除采用者本身差异等因素。论文尚未同行评审。作者在[利益关系声明](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6843068)中披露，Demirer 和 Musolff 曾在 Microsoft 任博士后，目前担任该公司的付费研究顾问。研究没有证明产出差距全部来自测试或审查；它能支持的判断是，代码活动的增长并没有等比例转化为软件发布。
+一项基于超过 50 万名 GitHub 开发者及其 AI 使用数据的[研究](https://www.nber.org/papers/w35275)估计，自主编码 Agent 的采用与代码提交活动增加约 240%、项目数量增加约 80%、实际发布数量增加约 30% 相关。研究者将使用 Agent 的开发者与特征相近的开发者匹配，观察使用前后的变化；这不是随机实验，不能排除采用者本身差异等因素。论文尚未同行评审。作者在[NBER 页面披露](https://www.nber.org/papers/w35275)中披露，Demirer 和 Musolff 曾在 Microsoft 任博士后，目前担任该公司的付费研究顾问。研究没有证明产出差距全部来自测试或审查；它能支持的判断是，代码活动的增长并没有等比例转化为软件发布。
 
 [Anthropic 在介绍 Scion 时](https://www.anthropic.com/research/redesigning-source-control)，也谈到它如何调整验证的时机。传统做法通常是让修改排队，等前面的修改完成检查后再合并。但当大量 Agent 同时提交改动，这种等待会成为新的瓶颈。Anthropic 因此把更多自动化测试放到代码合并之后、正式部署之前。并发修改仍可能发生冲突，再由 Claude 尝试识别和修复。
 
@@ -168,10 +168,9 @@ Git 的答案不是“被替代”或“保持不变”。对大多数团队，�
 - [Potvin & Levenberg — Why Google Stores Billions of Lines of Code in a Single Repository（2016）](https://research.google.com/pubs/pub45424.html)
 - [Meta Engineering — Sapling: Source control that's user-friendly and scalable（2022-11-15）](https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/)
 
-### 研究机构工作论文与作者披露
+### 研究机构工作论文
 
-- [Demirer, Musolff & Yang — Writing Code vs. Shipping Code（NBER Working Paper 35275，2026-05；2026-09 修订；尚未同行评审）](https://www.nber.org/papers/w35275)
-- [SSRN 版本与利益关系声明（2026-09 修订）](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6843068)
+- [Demirer, Musolff & Yang — Writing Code vs. Shipping Code（NBER Working Paper 35275，2026-05；2026-09 修订；尚未同行评审，作者披露见论文页面）](https://www.nber.org/papers/w35275)
 
 ### 相关历史文章
 

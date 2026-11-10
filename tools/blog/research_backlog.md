@@ -108,15 +108,17 @@
 
 ### BR-20261103-03｜当 AI Agent 成为主要执行者，哪些沿用多年的软件基础设施需要重新设计？
 
-**创建：2026-11-03｜内容更新：2026-11-10｜状态：已转入（2026-11-09 已确认大纲并进入写作；当前工作稿：`drafts/blog/agent-scale-git-infrastructure.md`；尚未发布）。** 基础设施分支来自 [Agent 工作单位](#br-20261009-01)，不是对用户界面胜负的证明。
+**创建：2026-11-03｜内容更新：2026-11-11｜状态：已发布（2026-11-11；正式源稿：`docs/blog/agent-scale-git-infrastructure.md`；公开页面：`tools/blog/posts/agent-scale-git-infrastructure.html`）。** 基础设施分支来自 [Agent 工作单位](#br-20261009-01)，不是对用户界面胜负的证明。
 
 **当前文章标题。**《当 AI Agent 开始大规模写代码，Git 还够用吗？》以 Git 为具体切口，主线仍限定在代码协作与交付基础设施，不扩成所有 Agent 基础设施的综述。
 
-**当前章节与案例分工（2026-11-10）。** 五章沿“设计前提变化 → 重构成本变化 → 不同组织的架构取舍 → 可靠交付的必要保证 → 企业系统改造范围”递进。为降低读者知识切换成本，Anthropic 作为贯穿案例，分别承担负载、重构成本、架构选择和验证时机的证据职责；OpenAI 与 GitHub 只在第三章集中比较；第四章只保留一项独立研究作为外部证据，不再连续引入新厂商。
+**当前章节与案例分工（2026-11-10）。** 五章沿“设计前提变化 → 重构成本变化 → 不同组织的架构取舍 → 可靠交付的必要保证 → 企业系统改造范围”递进。为降低读者知识切换成本，Anthropic 作为贯穿案例，分别承担负载、重构成本、架构选择和验证时机的证据职责；OpenAI 与 GitHub 只在第三章集中比较；第四章只保留一项外部工作论文作为证据，不再连续引入新厂商。
 
 **核心问题与当前判断。** 当执行者变成高频、并发、短生命周期的 Agent，原先依赖人类工作节奏的版本管理假设如何变化？应区分存储／协调吞吐与审查／验证／交付能力。替换 Git 抽象、兼容 Git 协议重建服务端、调整工作流，是不同路径；“改进服务端”不能写成 Git 被普遍淘汰，代码数量增加也不等于交付效率增加。
 
-**证据与反证。** 本轮复核 [Anthropic Scion](https://www.anthropic.com/research/redesigning-source-control)、[OpenAI Pando](https://openai.com/index/scaling-git-at-openai/)、[GitHub Agent-scale 架构](https://github.blog/engineering/architecture-optimization/building-git-infrastructure-for-agent-scale-development/)一手材料。Scion 改变内部数据与操作抽象，后两者保留 Git 兼容性；厂商不同工作负载、基线与统计口径不能按性能倍数排名。Scion 的日均合并变更、CI checkout 和内部资源改善属于公司自述，且官方不将它定位为通用 Git 替代品。Pando 的每分支协调与因果一致性也包含放弃全局同一时点 refs 快照的取舍。Google Piper、Meta Sapling／Mononoke 等先行系统是必要前史，不把所有原理视作 AI 时代首创。
+**证据与反证。** 本轮复核 [Anthropic Scion](https://www.anthropic.com/research/redesigning-source-control)、[OpenAI Pando](https://openai.com/index/scaling-git-at-openai/)、[GitHub Agent-scale 架构](https://github.blog/engineering/building-git-infrastructure-for-agent-scale-development/)一手材料。Scion 改变内部数据与操作抽象，后两者保留 Git 兼容性；厂商不同工作负载、基线与统计口径不能按性能倍数排名。Scion 的日均合并变更、CI checkout 和内部资源改善属于公司自述，且官方不将它定位为通用 Git 替代品。Pando 的每分支协调与因果一致性也包含放弃全局同一时点 refs 快照的取舍。Google Piper、Meta Sapling／Mononoke 等先行系统是必要前史，不把所有原理视作 AI 时代首创。
+
+**11/11 外部研究｜代码产出与软件发布之间的差距。** [NBER Working Paper 35275](https://www.nber.org/papers/w35275)的 2026 年 9 月修订版基于超过 50 万名 GitHub 开发者及 AI 使用数据，估计三代工具对代码提交活动的累计影响分别为 30%、180% 和 240%；自主编码 Agent 对项目数量和实际发布数量的影响分别为 80% 和 30%。研究采用匹配事件研究设计，并非随机实验；论文尚未同行评审。NBER 页面披露，Demirer 与 Musolff 曾在 Microsoft 任博士后，目前担任该公司的付费研究顾问。当前正文只用它支持“代码活动增长不等于发布同步增长”，不把差距归因于单一审查或测试环节。
 
 **审查证据校准。** [Pierre 公告（11/04）](https://openai.com/index/openai-to-acquire-pierre/)是拟收购，交割尚未完成；Trees／Diffs 已用于 Codex 文件浏览与变更审查，Code Storage 的能力整合属于交割后的计划，不能写成交易和全面整合已经完成。[GitHub 11/06 工程文章](https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering/)引用 [Faros 原始研究](https://www.faros.ai/blog/ai-code-quality-senior-engineer-review-burden)；本轮核对后区分审查时间中位数约增加 441.5%、均值及首次等待等不同指标。这是低／高 AI 采用组的观察性遥测，不是所有团队的因果增幅，也不是工程师实际劳动小时。Faros 文内另一组模型／上下文比较存在叙述与表格不一致，不用于建立“上下文一定胜过模型”的结论。
 
@@ -126,7 +128,7 @@
 
 **成文边界与缺口。** 三条真实架构路线已足以承载限定比较，不必等待所有基础设施出现案例。CI、身份权限、搜索、队列等只在有具体生产证据时展开；普通企业是否应迁移、全链路交付净收益与因果归因仍未知，不能由头部实验室极端负载外推。
 
-**下一步与责任。** 正文按单一当前版本维护在 `drafts/blog/agent-scale-git-infrastructure.md`。Anthropic 作为贯穿案例，第三章集中比较 Anthropic、OpenAI 与 GitHub，第四章只使用 NBER 独立研究和 Scion 验证实践；Aspen、Pierre、Stripe、GitHub Merge Queue 与 Stanford CS146S 均不进入当前正文，避免每章重建陌生背景。两张表分别承担架构路线比较与改造范围判断，配图保持第一章工作负载对照、第二章双侧成本机制。图表规范不修改；本轮更新 SOP 的读者理解负担与知识切换规则，并由 Checklist 增加终稿核验。统一负载横评、PR 人工审查时长、缺陷和回滚等仍属可选实测，尚未进行；不能将厂商内部数据横向排名。与 [经营指标](#br-20261010-01)互补，不吞并其全成本主题。
+**发布结果（2026-11-11）。** 文章已按确认边界发布，正式 Markdown 维护在 `docs/blog/agent-scale-git-infrastructure.md`，公开页面为 `tools/blog/posts/agent-scale-git-infrastructure.html`。Anthropic 作为贯穿案例，第三章集中比较 Anthropic、OpenAI 与 GitHub，第四章使用 NBER 2026 年 9 月修订工作论文和 Scion 验证实践；Aspen、Pierre、Stripe、GitHub Merge Queue 与 Stanford CS146S 均保留在证据池，不进入正文。两张表分别承担架构路线比较与改造范围判断，配图保持第一章工作负载对照、第二章双侧成本机制。统一负载横评、PR 人工审查时长、缺陷和回滚等仍属可选实测，尚未进行；不能将厂商内部数据横向排名。与 [经营指标](#br-20261010-01)互补，不吞并其全成本主题。
 
 <a id="br-20261103-01"></a>
 

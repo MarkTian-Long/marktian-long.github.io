@@ -19,6 +19,7 @@ tools/blog/
 ├── article-template.html   新文章生成的独立模板来源
 ├── index.html              归档列表页（按年份分组，JS 渲染）
 └── posts/
+    ├── agent-scale-git-infrastructure.html       当 AI Agent 开始大规模写代码，Git 还够用吗？（2026.11）
     ├── agent-boundary.html                      业务流程，如何变成 Agent 产品架构？（2026.07）
     ├── ontology-business-semantic-layer.html    从同义词表到业务语义层（2026.07）
     ├── enterprise-agent-fde.html                从 WorkBuddy 到 FDE：企业 Agent 落地方式（2026.07）
