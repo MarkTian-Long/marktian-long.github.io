@@ -10,6 +10,15 @@
 html{scroll-behavior:smooth}
 body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 @media(max-width:680px){body{padding:0 0 30px}}
+.ly-travel .transport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.ly-travel .transport-card{display:flex;flex-direction:column;padding:18px;border:1px solid #d9e6da;border-radius:15px;background:#fff;min-width:0}
+.ly-travel .transport-day{font-size:11px;color:#477a5c;font-weight:750;margin-bottom:6px}
+.ly-travel .transport-card h3{font-size:16px;line-height:1.5;margin-bottom:13px;color:#264d3a}
+.ly-travel .transport-card dl{display:grid;grid-template-columns:78px minmax(0,1fr);gap:9px 10px;margin:0;font-size:12px;line-height:1.7}
+.ly-travel .transport-card dt{color:#7c8b7e}.ly-travel .transport-card dd{margin:0;color:#355941;overflow-wrap:anywhere}
+.ly-travel .transport-risk{margin:14px 0!important;padding:11px 12px;border-radius:9px;background:#faf5e9;font-size:12px;line-height:1.7;color:#806335}
+.ly-travel .transport-nav{display:block;margin-top:auto;border:1px solid #cfe2d4;background:#edf6ee;border-radius:8px;padding:9px 12px;font-size:12px;text-align:center}
+@media(max-width:760px){.ly-travel .transport-grid{grid-template-columns:1fr}.ly-travel .transport-card{padding:16px}.ly-travel .transport-card dl{grid-template-columns:70px minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -100,7 +109,6 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
 .ly-travel .mapnav a{font-size:11px;border:1px solid #dce8df;background:white;padding:6px 10px;border-radius:8px}
 .ly-travel .src{font-size:11px;color:#86978a;margin-top:13px}
 @media(max-width:760px){.ly-travel{border-radius:13px;font-size:13px}.ly-travel .hero{padding:25px 20px 23px}.ly-travel .trainbar{padding:15px 16px;gap:5px}.ly-travel .trainbar strong{font-size:11px}.ly-travel .trainbar .midmark{font-size:10px;padding:2px 5px}.ly-travel .tabbar{padding:9px 8px 0}.ly-travel .tab{padding:9px 13px}.ly-travel .content{padding:20px 15px 25px}.ly-travel .section-head{flex-direction:column}.ly-travel .switch{width:100%}.ly-travel .route-btn{flex:1}.ly-travel .days,.ly-travel .cards,.ly-travel .finance,.ly-travel .list{grid-template-columns:1fr}.ly-travel .item{grid-template-columns:93px 17px 1fr}.ly-travel .bill{padding:20px}.ly-travel .card{padding:16px}}
-
 .ly-travel .mapgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(235px,.7fr);gap:15px}
 .ly-travel .mapbox{border:1px solid #d9e5dd;border-radius:16px;background:#f1f5ed;padding:12px;position:relative;overflow:hidden}
 .ly-travel .mapbox svg{display:block;width:100%;height:auto;max-height:530px;border-radius:12px;background:linear-gradient(140deg,#f2f8f3,#e9f1e9);user-select:none}
@@ -131,19 +139,11 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
 .ly-travel .detailplace p{margin:6px 0 10px;font-size:11px;line-height:1.65;color:#64806f}
 .ly-travel .flexlinks{display:flex;gap:7px;flex-wrap:wrap}
 .ly-travel .flexlinks a{background:#fff;border:1px solid #cfddd0;border-radius:8px;padding:6px 9px;color:#35684f;font-size:11px}
-.ly-travel .seglist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:16px}
-.ly-travel .segcard{padding:13px 14px;background:#fff;border:1px solid #dfe8dd;border-radius:13px}
-.ly-travel .segcard .ntag{font-size:11px;color:#44815f;font-weight:750}
-.ly-travel .segcard h3{font-size:13px;line-height:1.5;margin:5px 0 4px}
-.ly-travel .segcard p{font-size:11px;color:#728679;margin-bottom:10px}
-.ly-travel .segcard a{font-size:11px;background:#ebf5ed;border-radius:7px;padding:6px 8px;display:inline-block}
 .ly-travel .copybox{margin-top:14px;padding:13px 15px;border-radius:12px;background:#f1f6ef;border:1px solid #dde9dd}
 .ly-travel .copybox .copyline{display:flex;gap:8px;align-items:center;margin-top:8px}
 .ly-travel .copybox input{min-width:0;flex:1;border:1px solid #dbe6d7;background:white;border-radius:7px;padding:9px;font:inherit;font-size:11px;color:#4f6c5b}
 .ly-travel .copybox button{background:#2b6b4e;color:white;border:0;border-radius:8px;padding:10px;cursor:pointer;font-size:12px}
 .ly-travel .legendnotes{font-size:11px;color:#7c8b7d;margin-top:12px}
-.ly-travel .maptype{font:inherit;font-size:12px;max-width:100%;border-radius:9px;padding:8px 12px;background:white;border:1px solid #d3e1d4;color:#355b45}
-.ly-travel iframe.mapif{width:100%;height:330px;border:1px solid #dce5de;background:#f7f9f7;border-radius:12px;margin-top:12px}
 .ly-travel .ticketgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:12px 0}
 .ly-travel .ticketbox{border:1px solid #dae6db;border-radius:14px;padding:17px;background:#fff}
 .ly-travel .ticketbox b{display:block;font-size:15px;color:#245740;margin:6px 0}
@@ -159,21 +159,11 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
 .ly-travel .btable td{color:#486258}
 .ly-travel .btable th:first-child{width:27%}
 .ly-travel .quote{font-size:12px;color:#7c8e80;margin-top:10px}
-@media(max-width:760px){.ly-travel .mapgrid,.ly-travel .seglist,.ly-travel .ticketgrid{grid-template-columns:1fr}.ly-travel .mapbox{padding:7px}.ly-travel .mapbox svg{max-height:none}.ly-travel .mapaside{padding:13px}.ly-travel .poilist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ly-travel .copybox .copyline{flex-direction:column;align-items:stretch}.ly-travel .copybox input{width:100%}.ly-travel iframe.mapif{height:260px}.ly-travel .btable th,.ly-travel .btable td{padding:9px 6px}}
-
-/* No third-party iframe. The segment overview is rendered locally. */
+@media(max-width:760px){.ly-travel .mapgrid,.ly-travel .ticketgrid{grid-template-columns:1fr}.ly-travel .mapbox{padding:7px}.ly-travel .mapbox svg{max-height:none}.ly-travel .mapaside{padding:13px}.ly-travel .poilist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ly-travel .copybox .copyline{flex-direction:column;align-items:stretch}.ly-travel .copybox input{width:100%}.ly-travel .btable th,.ly-travel .btable td{padding:9px 6px}}
 .ly-travel .weatherstrip{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:9px 23px;background:#fff9ed;border-bottom:1px solid #efe0bd}
 .ly-travel .weatherstrip .weatleft{display:flex;gap:13px;align-items:center;flex-wrap:wrap;font-size:12px;color:#7a5d30}
 .ly-travel .weatherstrip b{color:#695127;font-size:12px}
 .ly-travel .weatherstrip a{font-size:11px;color:#86632f;cursor:pointer}
-.ly-travel .legpreview{background:linear-gradient(138deg,#eaf4ed,#f6f8f0);border:1px solid #d9e8dc;border-radius:16px;overflow:hidden}
-.ly-travel .legpreview .legtop{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:16px 19px;border-bottom:1px solid #d9e6d8;background:#ffffff80}
-.ly-travel .legpreview .legtop strong{font-size:15px;color:#2a583f;display:block}
-.ly-travel .legpreview .legtop small{font-size:11px;color:#698071;display:block;margin-top:4px}
-.ly-travel .legpreview .roadsvg{display:block;width:100%;height:auto;max-height:295px}
-.ly-travel .legpreview .legfoot{display:flex;align-items:center;flex-wrap:wrap;gap:10px;justify-content:space-between;padding:12px 18px;background:#fff;border-top:1px solid #dce8db}
-.ly-travel .legpreview .legfoot span{font-size:12px;color:#5c7866}
-.ly-travel .legpreview .legfoot a{font-size:12px;border-radius:9px;padding:9px 13px;background:#2d6f52;color:#fff}
 .ly-travel .weathergrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .ly-travel .weathercard{border:1px solid #dbe7dd;border-radius:18px;background:#fff;padding:21px;overflow:hidden;position:relative}
 .ly-travel .weathercard.rain{background:linear-gradient(125deg,#f5f9fc,#f8fbf8)}
@@ -194,9 +184,7 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
 .ly-travel .weather-table th,.ly-travel .weather-table td{padding:11px 12px;text-align:left;border-bottom:1px solid #e5eee5;vertical-align:top}
 .ly-travel .weather-table th{width:21%;color:#37604a;background:#f2f7f0}
 .ly-travel .weathermeta{font-size:11px;color:#799081;margin-top:14px;line-height:1.65}
-@media(max-width:760px){.ly-travel .weathergrid{grid-template-columns:1fr}.ly-travel .weatherstrip{padding:10px 14px}.ly-travel .weatherstrip .weatleft{gap:6px}.ly-travel .legpreview .legtop{grid-template-columns:1fr;padding:12px 15px}.ly-travel .legpreview .legfoot{flex-direction:column;align-items:stretch}.ly-travel .legpreview .legfoot a{text-align:center}.ly-travel .weathercard{padding:17px}}
-
-
+@media(max-width:760px){.ly-travel .weathergrid{grid-template-columns:1fr}.ly-travel .weatherstrip{padding:10px 14px}.ly-travel .weatherstrip .weatleft{gap:6px}.ly-travel .weathercard{padding:17px}}
 .ly-travel .refreshrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
 .ly-travel .refresh-btn{background:#26694c!important;border:1px solid #26694c!important;color:#fff!important;border-radius:10px;padding:9px 14px;font:inherit;font-size:12px;font-weight:750;cursor:pointer;min-height:37px}
 .ly-travel .refresh-btn:disabled{opacity:.55;cursor:wait}
@@ -206,7 +194,6 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
 .ly-travel .metarefresh{color:#60786c;font-size:11px;background:#f3f8f2;border:1px solid #e0ebdf;border-radius:10px;padding:9px 13px;margin:11px 0}
 .ly-travel .weatherstrip button{font:inherit;border:1px solid #dabf92;color:#825c26;background:#fff;border-radius:9px;padding:5px 10px;font-size:11px;cursor:pointer}
 @media(max-width:760px){.ly-travel .refreshrow{justify-content:flex-start}.ly-travel .refresh-btn{width:100%}}
-
 </style>
 <header class="hero">
  <div class="eyebrow">LIYANG · WEEKEND FIELD GUIDE</div>
@@ -236,20 +223,16 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
  <div class="note"><strong>关键不是火车，而是游船与行李：</strong>周日争取 09:30 前进入山水园；票需含游船。景区介绍的经典船线约 3 小时，实际以当天航线及排队为准。返程目标 15:00—15:15 到达溧阳站，留足缓冲。</div>
  <div class="mapnav"><a target="_blank" rel="noopener noreferrer" href="https://www.tmhtour.com/shows/16/47.html">官方直通车时刻参考 ↗</a><a target="_blank" rel="noopener noreferrer" href="https://you.ctrip.com/sight/liyang598/48723.html">山水园游船说明 ↗</a><a target="_blank" rel="noopener noreferrer" href="https://www.tmhtour.com/">天目湖景区官网 ↗</a></div>
 </section>
-
 <section class="panel" id="map">
  <div class="section-head"><div><h2>路线地图与分段导航</h2><p>按高德 POI 坐标绘出方位；直线只表示先后顺序，不是可开车的道路。</p></div><div class="switch"><button class="route-btn active" type="button" data-mapday="both">两天总览</button><button class="route-btn" type="button" data-mapday="sat">周六</button><button class="route-btn" type="button" data-mapday="sun">周日</button></div></div>
  <div class="mapgrid">
   <div class="mapbox"><svg id="lyMapSvg" viewBox="0 0 760 520" role="img" aria-label="溧阳站、天目湖山水园、南山竹海、御水温泉及行程先后顺序的可点击方位图"></svg><div class="map-legend"><span><i class="dotleg dayone"></i>周六路线</span><span><i class="dotleg daytwo"></i>周日路线</span><span>上北下南 · 非道路线路图</span></div></div>
   <div class="mapaside"><h3>点击地图点位</h3><p>下面会显示具体地址、地图定位和相应出行方式。</p><div id="lyPoiList" class="poilist"></div><div id="lyPoiDetails" class="detailplace"></div></div>
  </div>
- <h3 style="margin:22px 0 9px;font-size:16px">按段开导航，比复制整条路线可靠</h3>
- <div id="lySegments" class="seglist"></div>
+ <h3 style="margin:22px 0 9px;font-size:18px">分段交通 · 出发时间与执行提醒</h3><p class="quote" id="lyTransportPlan"></p><p class="quote">以下均为排程建议，不是实时导航结果。酒店未选定，酒店相关导航先用片区地标；订房后替换为酒店实际入口。</p>
+ <div id="lySegments" class="transport-grid" aria-live="polite"></div>
  <div class="copybox"><strong style="font-size:13px;color:#2a6547">复制导航途经点</strong><p style="font-size:11px;color:#698271;margin:4px 0 0">与十一版相同的快捷功能。地标名称可直接粘贴到高德地图的路线途经点。</p><div class="copyline"><input readonly id="lyWaypoints" aria-label="当前方案途经点文本"><button type="button" id="lyCopy">复制整条路线</button></div><span class="quote" id="lyCopyState"></span></div>
  <div class="hotelcriteria"><b>公共交通作为备选：</b>天目湖官网的旅游直通车时刻表列出周六约10:40从高铁站集散中心发车、11:35抵达南山竹海；周日南山竹海10:00发车、10:30到山水园；山水园14:30发车、14:55到高铁站。<b>这只是官网时刻参考，不等于本周末已确认发车或可上车</b>；如重视上午游船，竹海→湖仍优先打车。</div>
- <div style="margin-top:20px"><div class="section-head"><div><h2 style="font-size:17px">分段路线预览 · 页面内显示</h2><p>不再嵌入高德网页，避免浏览器安全限制导致的灰色报错。</p></div><select id="lyRoadSelect" class="maptype" aria-label="切换路线预览"></select></div>
- <div class="legpreview"><div class="legtop"><div><strong id="lyLegTitle">路线概要</strong><small id="lyLegSub">具体道路请打开高德导航核实</small></div><span class="flag" id="lyLegBadge">路线参考</span></div><svg id="lyLegSvg" class="roadsvg" viewBox="0 0 800 265" role="img" aria-label="行程路段起点和终点示意图"></svg><div class="legfoot"><span id="lyLegDistance">以当天道路导航为准</span><a id="lyLegOpen" target="_blank" rel="noopener noreferrer" href="https://www.amap.com/">在高德查看实际道路路线 ↗</a></div></div>
- <div class="legendnotes">本页线段是自绘地理方位示意，<b>不是实际道路走向</b>；不显示实时路况或精确行驶距离。高德导航在新窗口打开，可查看真实路线和拥堵情况。</div></div>
  <div class="src">地点坐标：高德地图的溧阳站、天目湖山水园、南山竹海游客服务中心、御水温泉及候选酒店 POI；道路链接使用高德开放平台 URI API。</div>
 </section>
 <section class="panel" id="tickets">
@@ -280,7 +263,6 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
  <div class="hotelcriteria"><b>订房时只盯四件事：</b>① 是双床不是大床；② 酒店到竹海入口及御水温泉<strong>实际步行</strong>距离；③ 周六午前能否寄存行李；④ 包不包温泉双人票、早餐及取消政策。<br><br><b>不推荐默认住湖边：</b>周六泡完温泉再从竹海打车去湖区，会增加夜间转场。若山水园不能寄存行李，优先改为“周六湖、周日竹海”的路线，而不是硬换住宿区。</div>
  <div class="src">房型与步行信息来自天目湖景区官网酒店页面；没有核实 11/14 当晚实时房价、库存。</div>
 </section>
-
 <section class="panel" id="weather">
  <div class="section-head"><div><h2>溧阳 · 11月14–15日天气</h2><p id="lyWeatherHeadline">初始为11月11日保存的天气快照；点击刷新后使用 Open-Meteo 最新预报。</p></div><div class="refreshrow"><button type="button" class="refresh-btn" id="lyWeatherRefresh">↻ 刷新预报</button><a class="smallbtn" target="_blank" rel="noopener noreferrer" href="https://www.nmc.cn/publish/forecast/AJS/zuoyang5.html">中央气象台 ↗</a></div></div><div class="metarefresh" id="lyWeatherUpdated" aria-live="polite">当前显示：11月11日保存的快照 · 尚未联网刷新</div><p class="refresh-feedback" id="lyWeatherRefreshStatus" role="status" aria-live="polite">刷新会联网获取11月14–15日气温、天气现象、降雨概率和风速。数据来源：Open-Meteo。</p>
  <div class="weathergrid">
@@ -402,8 +384,8 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
    }).join('')+'</div></article>';
   }).join('');
  }
- root.querySelectorAll('.route-btn').forEach(function(btn){btn.addEventListener('click',function(){
-  root.querySelectorAll('.route-btn').forEach(function(b){b.classList.remove('active')});
+ root.querySelectorAll('.route-btn[data-route]').forEach(function(btn){btn.addEventListener('click',function(){
+  root.querySelectorAll('.route-btn[data-route]').forEach(function(b){b.classList.remove('active')});
   btn.classList.add('active');
   render(btn.getAttribute('data-route'));
  })});
@@ -458,12 +440,8 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
  const nav=(a,b,mode)=>{
   return 'https://uri.amap.com/navigation?from='+encodeURIComponent(from(a))+'&to='+encodeURIComponent(from(b))+'&mode='+(mode||'car')+'&policy=0&src=liyang-weekend&callnative=1';
  };
- const embedded=(a,b,mode)=>{
-  return 'https://www.amap.com/ssr/embed/dir?from='+encodeURIComponent(from(a))+'&to='+encodeURIComponent(from(b))+'&type='+(mode||'car')+'&policy=1&platform=pc&src=liyang-weekend';
- };
  function point(id){let p=places[id];return [(p.lon-119.40)/(119.57-119.40)*630+70,(31.41-p.lat)/(31.41-31.16)*440+37];}
- function poly(ids,cl,show){let pts=ids.map(id=>point(id).join(',')).join(' ');return '<polyline points="'+pts+'" class="'+cl+(show?'':' map-lineFaint')+'" />';
- }
+ function poly(ids,cl,show){let pts=ids.map(id=>point(id).join(',')).join(' ');return '<polyline points="'+pts+'" class="'+cl+(show?'':' map-lineFaint')+'" />';}
  function makeMap(){
   let d=routes[plan],a=d.sat,b=d.sun;
   let svg='<defs><pattern id="lyDots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#ccded0"/></pattern></defs>';
@@ -488,59 +466,35 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
   byId('lyPoiDetails').innerHTML='<h4>'+p.name+'</h4><p>'+p.address+'<br>'+p.desc+'</p><div class="flexlinks"><a target="_blank" rel="noopener noreferrer" href="'+p.url+'">高德地点 ↗</a><a target="_blank" rel="noopener noreferrer" href="'+nav('station',id,'car')+'">从溧阳站导航 ↗</a></div>';
   makeMap();
  }
+ const transportPlans={
+  new:[
+   {day:'周六①',from:'station',to:'bamboo',mode:'car',title:'溧阳站 → 竹海片区酒店',depart:'10:05 左右',allow:'合计预留约70分钟，含叫车、车程及寄存',arrive:'11:15 前完成酒店寄存',bag:'酒店尚未确定；导航先到竹海入口，正式出发前换成酒店入口。午前到店须先确认可寄存。',risk:'到店较晚就简化午餐；12:30 后才入竹海，减少游览项目，不压缩晚饭与休息。'},
+   {day:'周六②',from:'bamboo',to:'spa',mode:'walk',title:'竹海片区住处／晚餐点 → 御水温泉',depart:'18:40 左右',allow:'预留约20分钟；按酒店实际步行距离调整',arrive:'19:00 左右到温泉入口',bag:'16:10 离园后先入住、休息及吃晚饭；带泳裤。导航展示竹海入口至温泉，不代表酒店起点。',risk:'超过预计出发时间就缩短泡汤，不省略晚饭；营业及最晚入园时间以当天公告为准。'},
+   {day:'周日①',from:'spa',to:'lake',mode:'car',title:'竹海片区酒店 → 天目湖山水园',depart:'08:35 左右',allow:'约45分钟转场，另留10分钟寄存',arrive:'09:20 到园，争取09:30完成寄存',bag:'退房后带走全部行李。必须提前确认山水园接收行李及最晚取件时间；导航以温泉为片区起点。',risk:'寄存未确认就不要当天临时折返碰运气；先落实可用寄存点，再决定游船和午饭安排。'},
+   {day:'周日②',from:'lake',to:'station',mode:'car',title:'天目湖山水园 → 溧阳站',depart:'14:05 左右离开湖区',allow:'合计55–70分钟，含取件、等车和车程',arrive:'目标15:00–15:15到站',bag:'上车前取齐行李。返程暂按16:48 C3005，车次与时间仍须以实际车票核对。',risk:'14:15 仍未离开湖区就结束其他安排，立即取行李并叫车；该时间是行动提醒，不是保证赶车的最晚出发点。'}
+  ],
+  old:[
+   {day:'周六①',from:'station',to:'lake',mode:'car',title:'溧阳站 → 天目湖山水园',depart:'10:05 左右',allow:'约40分钟转场；按实际叫车情况调整',arrive:'10:45 左右到园',bag:'这条顺序同样需要先解决周六游湖时的行李。提前核实景区或附近寄存点，不默认买票即能寄存。',risk:'晚到优先核实游船排队及末班安排，先完成游船线；不以省略交通缓冲来补游览时间。'},
+   {day:'周六②',from:'lake',to:'spa',mode:'car',title:'天目湖山水园 → 竹海片区酒店',depart:'15:00 左右',allow:'约60分钟，含叫车、车程及到店',arrive:'16:00 左右入住',bag:'取回行李后上车。酒店未定，导航暂到御水温泉片区；到店休息、晚饭后再去泡汤。',risk:'离湖区较晚就缩短温泉时长，不再增加夜间远距离转场。'},
+   {day:'周日①',from:'spa',to:'bamboo',mode:'walk',title:'竹海片区酒店 → 南山竹海入口',depart:'08:45 左右',allow:'预留约15分钟；以酒店真实步行路线为准',arrive:'09:00 左右入园',bag:'早餐、退房后把行李寄存在酒店。导航以温泉为片区起点，实际起点应替换为所订酒店。',risk:'入园晚或项目排队长就减少项目，保留午饭、取件和返程用车时间。'},
+   {day:'周日②',from:'bamboo',to:'station',mode:'car',title:'竹海片区酒店取件 → 溧阳站',depart:'13:35 左右',allow:'约70分钟，含等车与车程',arrive:'目标14:45左右到站',bag:'先回酒店取齐行李再去车站，不从景区入口直接离开。导航以竹海入口代替尚未选定的酒店。',risk:'午饭或取件延误时马上确认车辆与实时路况，不继续补景点；返程暂按16:48，仍以车票为准。'}
+  ]
+ };
  function makeSegs(){
-  const d=routes[plan],steps=[
-   {name:'周六①',pair:[d.sat[0],d.sat[1]],time:plan==='new'?'打车预留约40—60分钟':'打车预留约30—45分钟'},
-   {name:'周六②',pair:[d.sat[1],d.sat[2]],time:plan==='new'?'竹海／温泉步行圈；酒店未定':'湖区到温泉区域，约25—40分钟'},
-   {name:'周日①',pair:[d.sun[0],d.sun[1]],time:plan==='new'?'打车预留约30—45分钟':'酒店步行到竹海，取决于具体酒店'},
-   {name:'周日②',pair:[d.sun[1],d.sun[2]],time:plan==='new'?'打车预留约25—40分钟':'打车预留约45—60分钟'}
-  ];
-  byId('lySegments').innerHTML=steps.map(function(s){let a=s.pair[0],b=s.pair[1],walking=(a==='bamboo'&&b==='spa')||(a==='spa'&&b==='bamboo');let mode=walking?'walk':'car';
-   return '<div class="segcard"><span class="ntag">'+s.name+'</span><h3>'+places[a].name+' → '+places[b].name+'</h3><p>'+s.time+'；以当天高德导航为准。</p><a target="_blank" rel="noopener noreferrer" href="'+nav(a,b,mode)+'">高德'+(walking?'步行':'打车')+'路线 ↗</a></div>';
-  }).join('');
-  const opts=steps.map(function(s,i){let a=s.pair[0],b=s.pair[1];return {key:a+'-'+b,label:s.name+'｜'+places[a].name+' → '+places[b].name,mode:(a==='bamboo'&&b==='spa')||(a==='spa'&&b==='bamboo')?'walk':'car',a,b}});
-  byId('lyRoadSelect').innerHTML=opts.map((s,i)=>'<option value="'+i+'">'+s.label+'</option>').join('');
-  byId('lyRoadSelect').dataset.opts=JSON.stringify(opts);
-  byId('lyRoadSelect').value='0';
-  makeRoad();
-  byId('lyWaypoints').value=d.words.join(' → ');
- }
- function makeRoad(){
-  let o=JSON.parse(byId('lyRoadSelect').dataset.opts||'[]')[Number(byId('lyRoadSelect').value)||0];if(!o)return;
-  
-  const f=places[o.a],t=places[o.b],mode=o.mode||'car';
-  const toRad=x=>x*Math.PI/180;const dLat=toRad(t.lat-f.lat),dLon=toRad(t.lon-f.lon);
-  const aa=Math.sin(dLat/2)**2+Math.cos(toRad(f.lat))*Math.cos(toRad(t.lat))*Math.sin(dLon/2)**2;
-  const km=6371*2*Math.atan2(Math.sqrt(aa),Math.sqrt(1-aa));
-  const steps=plan==='new'?[
-   '周六上午到站后先去竹海景区周边酒店寄存行李',
-   '同一片区步行接驳；酒店地址选定后再定精确入口',
-   '周日上午从竹海温泉区域打车前往山水园',
-   '周日离开山水园后直接前往溧阳站'
-  ]:[
-   '周六抵达溧阳站后打车到山水园',
-   '周六下午从山水园打车到竹海温泉区域',
-   '周日上午从酒店去竹海游览，先确认实际步行距离',
-   '周日从竹海区域乘车去溧阳站'
-  ];
-  const i=Number(byId('lyRoadSelect').value)||0;
-  byId('lyLegTitle').textContent=f.name+' → '+t.name;
-  byId('lyLegSub').textContent=steps[i]||'沿途出行信息';
-  byId('lyLegBadge').textContent=mode==='walk'?'步行优先':'两人一起打车';
-  byId('lyLegDistance').textContent='两地点直线相距约 '+km.toFixed(1)+' 公里（非道路里程）';
-  byId('lyLegOpen').href=nav(o.a,o.b,mode);
-  const escape=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const svg='<defs><pattern id="routeDots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="#bad5c6"/></pattern><linearGradient id="routeBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edf6ed"/><stop offset="1" stop-color="#daeadd"/></linearGradient></defs>'+
-  '<rect x="0" y="0" width="800" height="265" fill="url(#routeBg)"/><rect x="0" y="0" width="800" height="265" fill="url(#routeDots)"/>'+
-  '<path d="M-30 255 C160 180 225 315 430 195 S610 280 840 160" fill="none" stroke="#b9d4c0" stroke-width="36" opacity=".42"/>'+
-  '<path d="M-60 20 C160 130 320 20 470 90 S720 30 860 160" fill="none" stroke="#fefdf8" stroke-width="30" opacity=".7"/>'+
-  '<path d="M135 150 Q350 70 500 153 T660 128" fill="none" stroke="#4d9475" stroke-width="6" stroke-linecap="round" stroke-dasharray="13 10"/>'+
-  '<path d="M643 119 L662 128 L647 146" fill="none" stroke="#4d9475" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>'+
-  '<circle cx="135" cy="150" r="17" fill="#fff" stroke="#3d8062" stroke-width="6"/><circle cx="665" cy="128" r="17" fill="#397b5d" stroke="#fff" stroke-width="6"/>'+
-  '<rect x="25" y="184" width="260" height="55" rx="11" fill="#fff" opacity=".94"/><text x="43" y="217" fill="#22523e" font-size="18" font-family="sans-serif" font-weight="700">'+escape(f.name)+'</text>'+
-  '<rect x="520" y="18" width="252" height="58" rx="11" fill="#fff" opacity=".94"/><text x="536" y="53" fill="#22523e" font-size="18" font-family="sans-serif" font-weight="700">'+escape(t.name)+'</text>'+
-  '<text x="344" y="55" fill="#70917d" font-size="14" font-family="sans-serif">方位示意 · 非道路路线</text>';
-  byId('lyLegSvg').innerHTML=svg;
+  byId('lyTransportPlan').textContent=plan==='new'?'当前顺序：周六竹海＋温泉，周日天目湖＋返程。':'当前顺序：周六天目湖＋温泉，周日竹海＋返程。';
+  const container=byId('lySegments');container.replaceChildren();
+  const add=(parent,tag,text,cls)=>{const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;parent.appendChild(el);return el;};
+  transportPlans[plan].forEach(s=>{
+   const card=add(container,'article','','transport-card');
+   add(card,'div',s.day+' · '+(s.mode==='walk'?'步行接驳':'打车转场'),'transport-day');
+   add(card,'h3',s.title);
+   const dl=add(card,'dl','');
+   [['建议出发',s.depart],['排程预留',s.allow],['目标到达',s.arrive],['行李与前提',s.bag]].forEach(row=>{add(dl,'dt',row[0]);add(dl,'dd',row[1]);});
+   const warning=add(card,'p','','transport-risk');add(warning,'b','延误处理：');warning.appendChild(document.createTextNode(s.risk));
+   const link=add(card,'a','在高德查看实际'+(s.mode==='walk'?'步行':'道路')+'路线 ↗','transport-nav');
+   link.href=nav(s.from,s.to,s.mode);link.target='_blank';link.rel='noopener noreferrer';
+  });
+  byId('lyWaypoints').value=routes[plan].words.join(' → ');
  }
  function sync(){
   let active=root.querySelector('.route-btn[data-route].active');
@@ -550,7 +504,6 @@ body{margin:0;padding:24px 14px 60px;background:#f0f5f0;color:#234d3a;font-famil
  byId('lyPoiList').innerHTML=Object.keys(places).map(function(id){return '<button type="button" class="map-poi-btn" data-poi="'+id+'">'+(places[id].tag==='候选酒店'?'◦ ':'● ')+places[id].name+'</button>'}).join('');
  root.querySelectorAll('.map-poi-btn').forEach(btn=>btn.addEventListener('click',()=>select(btn.dataset.poi)));
  root.querySelectorAll('[data-mapday]').forEach(btn=>btn.addEventListener('click',function(){mapMode=this.dataset.mapday;root.querySelectorAll('[data-mapday]').forEach(b=>b.classList.toggle('active',b===this));makeMap()}));
- byId('lyRoadSelect').addEventListener('change',makeRoad);
  root.querySelectorAll('.route-btn[data-route]').forEach(btn=>btn.addEventListener('click',sync));
  byId('lyCopy').addEventListener('click',async function(){
   const inp=byId('lyWaypoints');let done=false;
