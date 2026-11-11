@@ -59,6 +59,7 @@ const PUBLIC_FILES = [
   'tools/trends/app.js',
   'tools/trends/contract.js',
   'tools/trends/data/trends.json',
+  'tools/liyang-weekend/index.html',
   'tools/yichun-roadtrip/index.html',
   'tools/hangzhou-family-trip/index.html',
 ];
