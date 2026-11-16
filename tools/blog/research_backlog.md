@@ -540,7 +540,7 @@
 
 ### BR-20260930-05｜消费入口迁移与信息中介的价值
 
-**创建：2026-09-30｜内容更新：2026-11-14｜状态：可进大纲（消费交易链路与价值分工，不判定利润池已迁移）。**
+**创建：2026-09-30｜内容更新：2026-11-16｜状态：可进大纲（消费交易链路与价值分工，不判定利润池已迁移）。**
 
 **核心问题与用户重点。** 用户把需求交给 Agent 后，发现、比较、下单、支付、履约、售后由谁负责，客户关系和收益归谁？逛购、审美、惊喜、自我表达和社区参与可能本身有价值，不能全当操作摩擦。少开 App 不等于不用原服务，继续提供服务也不保证保住利润。商家参与分为被动提供商品／库存、主动维护身份资料、运营明确标识的商家 Agent，不能混同。
 
@@ -559,6 +559,34 @@
 [Google Universal Cart](https://blog.google/products-and-platforms/products/shopping/universal-cart-launch/)、[UCP 背景](https://blog.google/company-news/inside-google/message-ceo/nrf-2026-remarks/)与 Shop 分别涉及入口、结构化交易和商家关系，竞争合作可并存。[ChatGPT 商品发现调整](https://openai.com/index/powering-product-discovery-in-chatgpt/)与[Shopify 渠道说明](https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/chatgpt)提醒费用和结账有时点变化；旧2025公告不作当前费率，上述未重核细节保留旧日期。
 
 **参与价值。** [购物功用／享乐研究](https://aquila.usm.edu/fac_pubs/7202/)、[Amazon Interests](https://www.aboutamazon.com/news/retail/artificial-intelligence-amazon-features-interest)和[即刻早期访谈](https://www.pingwest.com/a/182079)区分得到信息、亲自选择、被社群认识，不是当前人群结构或利润证据，不按性别推偏好。
+
+**2026-11-16 阿里／蚂蚁路线补证：生态入口与交易信任基础设施并行。**
+
+**阿里巴巴的消费入口路线（官方材料，不能代替采用效果）。** [阿里巴巴 2026-01-15 Qwen App 公告](https://home.alibabagroup.com/en-US/document-1948497434959151104)披露千问开始连接淘宝、淘宝闪购、支付宝、飞猪和高德，支持点餐、支付、旅行预订等跨服务任务；购物当时只覆盖少量试点品类。[2026-05-11 官方更新](https://home.alibabagroup.com/en-US/document-1991231293551017984)进一步称千问接入淘宝／天猫超过 40 亿商品，并在淘宝 App 内上线购物助手；Agent 能力涉及订单管理、物流与售后。它说明阿里可将模型、商品目录、订单与履约服务放在同一集团生态中协调，减少外部 Agent 需要逐家接入商户的摩擦；但商品库规模、功能发布和真实购物采用／增量 GMV 是不同证据，未取得独立交易转化、复购或利润数据。
+
+**支付宝／蚂蚁的产品边界：支付与信任，不等于掌握选品。** [支付宝 AI 付开发者概览（2026-10-12）](https://aipay.alipay.com/docs/overview.html)将产品分成 Vibe Pay（AI 应用收款）、Skill Pay（技能收费）、Machine Pay（API／机器按量付费）、Token Pay（模型额度／连续订阅）和 Agent Pay（代表用户购买）。这同时覆盖供给侧 AI 服务如何收费，以及需求侧 Agent 如何付款。该概览明确写明：**Agent Pay 聚焦交易最终购买环节，不负责 Agent 的商品选品和供应商决策**；商品与服务商家接收订单并交付，Agent 平台仍负责理解需求与选择供给。这个边界比“支付宝要成为 Agent Commerce 总入口”更准确。
+
+[Agent Pay 官方产品说明](https://aipay.alipay.com/products/agent-pay)把链路分为识别需求、用户授权、完成支付、结果回传；[移动 Agent Pay 文档](https://aipay.alipay.com/products/mobile-agent-pay)区分即时支付（每笔订单独立授权与身份确认）和预先委托（用户设定金额、频次与条件，Agent 在授权边界内执行，例如满足席别与 ¥680 价格上限后自动购票）。新终端产品页显示眼镜、耳机等场景，同时明确新终端厂商采取定向邀请试运营；不能将演示案例理解为所有设备和商户全面开放。AI 付官网当前列出 12 个合作场景／生态品牌，包括千问、扣子、百宝箱、高德、曹操出行、大麦、蜜雪冰城等；这证明合作和接入展示，不等于每家都具备相同的生产能力或交易规模。
+
+**ACT 2.1：把自然语言委托变成跨环节可验证的商业对象。** [ACT 协议官网](https://www.act-protocol.com/)与 [Ant Group/ACT 公共仓库](https://github.com/antgroup/ACT)显示 ACT 2.1 于 **2026-08-14** 定版，分为四个协作域：委托授权（ADD）、商业交互（CID）、支付服务（PSD）、信任服务（TSD）。ADD 把用户意图结构化为 ISR，并签发可验证的 IAC 授权凭证，支持 SPECIFIED（目标已指定）与 BOUNDED（只给目标和边界、允许 Agent 自主选择）两种委托；授权可暂停、恢复、吊销或到期。CID 处理结构化商品目录、意图上下文传递、支付能力协商和购物车确认；PSD 处理支付凭证、授权核验、支付请求与结果回传；TSD 记录关键事件并支持事后验证。[授权域规范](https://www.act-protocol.com/documentation/delegation)、[商业交互域规范](https://www.act-protocol.com/documentation/commerce)、[可信存证规范](https://www.act-protocol.com/documentation/trust/attestation)。
+
+**协议边界同样重要。** ACT 不规定 Agent 内部的偏好推断、排序和模型决策，也不替商户实现库存、订单、履约系统或支付清算网络。协议能定义参与方如何交换意图、授权、交易确认与证明，不代表它自己拥有商品供给、订单系统或客户关系。ACT 自称开放协议，官网邀请行业共建；但截至本轮公开资料，尚无证据证明它已成为行业共同治理的标准或已被大量独立平台生产采用。公共仓库把规范、产品无关样例、演示和支付宝参考接入分开；README 说明本地 A402 样例不会伪造支付成功，真实成功交易需在支付宝官方沙箱验证。应称“蚂蚁牵头发布的开放协议框架”，不写成已确立的行业标准或全生态互操作事实。
+
+**APASS：从 Agent ID 转向运行时身份与责任核验。** [支付宝 APASS 官方说明](https://aipay.alipay.com/act/apass)把身份拆成静态身份、运行时身份和责任主体身份，并提出持续核验环境、实例、代码组件、商业授权和行为权限，辅以意图安全、动态风控和可信存证。南方周末 2026-09-15 对蚂蚁 AI 支付安全负责人的访谈称 APASS 已接入超过 **100 万个 Agent**，其中 **11 万个激活**，覆盖 **442 家智能体服务供给方**；这些是公司披露的接入／激活口径，不是活跃消费者数、完成交易的 Agent 数或独立审计数据。其关键问题是：Agent 代码可迁移、环境可变，静态 ID 不足以证明当前运行实例仍受可信控制。
+
+**规模数字的口径警报。** 南方周末同一访谈称 AI 付自 2025-09-11 推出后，真实商业场景 Agent 支付已超过 **3 亿笔**、服务用户超过 **1 亿**，覆盖大模型、AI 创作、智能硬件、电商和本地生活等 12 类场景；采访还称 3 亿笔约为支付宝一年约 3000 亿笔交易的千分之一。[AI 付官网首页](https://aipay.alipay.com/)目前也显示 3 亿笔与 1 亿用户，但 Agent Pay 子页又把“1 亿用户规模／3 亿交易规模”标作“愿景”。**当前不能把 1 亿写成经过独立验证的去重活跃用户，更不能把 3 亿笔都写成消费购物订单或 Agent 自主下单。** 公开资料未给出场景拆分、去重规则、成功订单定义、GMV、复购、退款、支付收入或单位经济。上述数字只能作为蚂蚁披露的跨场景规模信号，并需显著标注口径不完整。
+
+**蚂蚁国际 AMP：跨境钱包与收单网络路线，不能和 ACT／APASS 混为同一产品。** [Ant International 2026-09-11 公告](https://idocs.alipay.com/intl-website/intl-website/en/ant-internationals-agentic-mobile-protocol-rolls-out-globally-with-wallets-acquirers-initiating-collaboration-on-kya-interoperability-framework-with-mastercard-and-visa)称 AMP 于 2026 年 4 月推出，Phase I 将与 10 家 Alipay+ 钱包及 7 家收单机构合作，钱包覆盖约 15 亿账户，并与 Visa、Mastercard 开展 KYA（Know Your Agent）互操作框架合作。15 亿是合作钱包的账户覆盖量，不是 Agent 用户数或 AMP 已完成交易量。Tech Wire Asia 2026-09-15 的独立报道指出，当时合作方尚未给出 go-live 日期，Ant 也未披露 AMP 已结算交易数量；因此 Phase I 合作名单不等于已上线规模。AMP 侧重移动钱包／收单互联，ACT 侧重商业授权与交易交互语义，APASS 侧重身份与信任基础设施；三者可以协同，但不应混写为一个协议。
+
+**阿里与蚂蚁的公司边界。** 阿里巴巴 2026 财年 Form 20-F 披露，截至 2026-03-31 持有蚂蚁集团完全摊薄后约 **33%** 股权，但明确称阿里及其他任何单一股东均不控制蚂蚁。[年报相关披露](https://data.alibabagroup.com/ecms-files/1514386754/b0f928b2-88f0-469d-905e-a714d19fb913/2026%20SEC%20Form%2020-F.pdf)还列明，2026 财年阿里为其电商平台支付处理与担保交易服务向蚂蚁／支付宝支付 **人民币 180.19 亿元**。这是历史电商支付处理服务费，不是 Agent Pay 收入；它说明双方有长期商业依赖与协作，但不能把千问、淘宝、支付宝、蚂蚁当作同一家公司内部完全可调度的资产。
+
+**全球路线的新增对照与采用证据。** Google 于 2026-04-28 将 AP2 捐赠给 FIDO Alliance，并推动 Agentic Authentication Technical Working Group；AP2 v0.2 增加 Human-Not-Present 预授权交易，治理路径比单一厂商托管更明确。[Google 公告](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/)与 [FIDO Alliance 公告](https://fidoalliance.org/fido-alliance-to-develop-standards-for-trusted-ai-agent-interactions/)。Visa、BILL、Billtrust 于 2026-10-20 宣布一个**正在处理端到端交易的 B2B 发票支付 live pilot**：Agent 使用 Tokenized Credentials、买方预先批准的支付控制，并由供应商门户验证 Agent 身份；这是实际试点，不是消费者零售规模证明。[Visa 一手公告](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)。Stripe 称 Shared Payment Tokens 已用于 Etsy、URBN 等商户，并接入 Visa／Mastercard 网络 Agent Token；这是 Stripe 自述的商户采用与能力 rollout，未披露 Agent 购物成交量。[Stripe 说明](https://stripe.com/blog/supporting-additional-payment-methods-for-agentic-commerce)。
+
+**消费者采用的独立参照（2026-06 调查，2026-10-28 发布）。** McKinsey 对 11 个市场约 21,000 名消费者调查称，全球 AI 用户中 **14%** 曾使用 AI 工具完成购买，约相当于总体消费者的 **9%**；美国 AI 用户完成 AI 购买的比例由 2025 年 12 月的 10% 升至 2026 年 6 月的 17%。发现阶段独立 AI 工具使用更强，但到购买环节，零售商 AI 助手为 15%、独立 AI 工具为 14%（问项措辞并不完全相同）；McKinsey 指出零售商已有实时库存、支付和配送基础设施。该结果支持“AI 发现入口与商家交易执行能力可能分离”，但仍是自报调查，不等于 GMV 或因果转化。[McKinsey 调查与方法](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce)。
+
+**当前可形成的核心推断（本文综合，不是已经验证的行业终局）。** 阿里／淘宝路线依赖“AI 入口＋自有商品目录＋订单与履约”的生态整合；支付宝／蚂蚁路线试图把支付、Agent 身份和授权能力做成可供不同 Agent 调用的信任／支付基础设施。两者互补，但阿里不控制蚂蚁，支付宝 Agent Pay 也明确不替 Agent 做选品和供应商决策。全球玩家亦分别争夺需求入口、商户交易协议、支付凭证、Agent 身份和授权标准。**Agentic Commerce 更像交易权力拆分，而不是某个 AI 平台完整接管交易。** 谁获得持续收入仍取决于用户是否重复委托、商家是否接受 Agent 订单、支付是否成功、履约与售后是否可靠，以及服务商能否证明自己创造了增量而非只替换既有渠道。
+
+**商业化缺口与反证。** 支付宝 AI 付公开资料尚未披露 Agent Pay 专属费率、交易收入、商户增量 GMV、净新增订单、退款争议率或 Agent 用户留存；官网开发者资料提示费率须按签约产品与商户主体核验，不存在可直接套用的统一 AI 付费率。阿里披露的 180.19 亿元传统支付服务费不能代替 AI 付商业化数据。AMP 的 15 亿钱包账户、APASS 的 100 万 Agent 接入、AI 付的 3 亿支付笔数分别是不同分母，禁止合并为统一网络规模。若没有这些经营数据，本文可判断交易控制点与价值捕获的成立条件，但不能宣称蚂蚁已拿下 Agent Commerce 支付标准或已经形成新的利润池。
 
 **成文边界与缺口。** 订单链现可具体拆出“发现／比较→商家接待→用户授权→支付令牌／发卡行核准→商家接单→履约售后”，对照 Shop 已披露的订单能力、OpenAI Businesses 的商家触达与 Wallet 的支付机制；**具备付款路径≠商家实际接受订单≠新增净收入**。结合 Uber 低采用反证，不预设赢家、利润规模或不可逆趋势。与已发表产业史价值篇的增量是订单、责任、支付、履约及用户参与，而非再讲互补资产。实际跨商家交易成功率、支付被拒／取消、争议退款结果、真实分账、商家全成本和同任务转化仍未取得；它们阻断经营收益判断，不阻碍当前机制比较。
 
