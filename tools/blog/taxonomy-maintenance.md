@@ -1,6 +1,6 @@
 # Blog 标签巡检与历史问题台账
 
-<!-- taxonomy-review: last=2026-11-09 next=2026-11-16 monthly-next=2026-12-07 timezone=Asia/Shanghai -->
+<!-- taxonomy-review: last=2026-11-16 next=2026-11-23 monthly-next=2026-12-07 timezone=Asia/Shanghai -->
 
 本文件是分类与标签维护的**单一运行入口和问题台账**，不另建词典。适用于 ChatGPT 定时任务及读取仓库的 Claude/Codex；它本身不会执行任务或发送通知。实际周期执行由 ChatGPT「Blog 标签巡检」任务承担。没有修改 GitHub Actions 配置，也没有扩大为整个网站的内容事实审计。
 
@@ -63,6 +63,10 @@ node --test scripts/taxonomy-health.test.js
 
 ## 最近检查
 
+- **2026-11-16 周期巡检（真实执行，北京时间 2026-11-16 08:10:59 +08:00）**：默认分支 `main` 的输入 commit `88f529016855586544df35035de4fc9928e3731f`；taxonomy semantic revision 5／blob SHA `cee8c0b150a7f8c1e3e5763afaaf2ba66a1e9b33`；完整索引 **53 篇**／blob SHA `ebc5ec34428eb3c9dedfa019b4c3968929e68f69`。对照最近一次成功巡检输入 `df9f91c8d84e012b7bc9a04bd4418464ed3772e2`／索引 SHA `415c91a7799867b0ef2f7eaa431bd92f593e8d15`：当前分支前进 79 个提交；**新增 2 篇** `agent-scale-git-infrastructure`、`fsd-optimus`，无删除，旧 51 篇索引记录逐字段未变；taxonomy、健康脚本、taxonomy 一致性脚本及其专门测试未变。预览文件不计入发布数。
+- **2026-11-16 完整 metadata 等价检查和增量正文审查**：从 GitHub 读取完整词典、53 篇索引及当前字段验证/健康信号代码，按现行分类、标签、话题、概念、关系、索引顺序、slug/URL 和密度约束只读核对，**53/53 有效**；栏目 技术24／产品14／行业8／商业5／实践2；tags+topics 密度 1项4篇、2项32篇、3项17篇、0项和4项均0；非法分类/标签、重复 slug/URL/字段值、概念与标签精确重复、候选或退役词在用、未使用 active 词、关系对象/类型/范围越界均0，显式关系28条、关联邻域最多4。健康信号仍两项：① `topic-gap / ai-innovation-value-capture`（原文无变化、topics=[]，延续11-09已有正文审查的暂接受结论）；② `corpus-concentration / topics:Agent` **18/53（34.0%）**，较前次17/51新增成员 `agent-scale-git-infrastructure`；新文以大量编程 Agent 的代码协作负载、后台源码管理重构与取舍为主，Agent 不是偶然案例，保留 Agent 话题、工程演进和技术判断的正文依据，TAX-009 继续 `accepted`，不以占比自动判错或重开。另一新文 `fsd-optimus` 的主线为驾驶能力与机器人操作的迁移、证据与边界，技术栏目／技术判断／模型能力均有正文支撑；不因涉及厂商竞争就自动加竞争判断。两篇仓库发布 HTML、Markdown 均已读取，**两份严格 frontmatter 的 category/tags/topics/concepts/share_quote/relations 与索引逐字段一致**，标题、摘要、原文分享句亦一致；各自两处视觉引用在发布 HTML 中可找到。仓库路径 53/53 发布 HTML 存在，`docs/blog` 有46份 Markdown；其余44份原稿和51篇旧发布正文未逐篇重新精读，无证据外推为整站语义复审。
+- **2026-11-16 CI、限制、历史问题与下一步**：输入 commit `88f52901` 的 Pages run `43662897478` 于北京时间 **2026-11-15 09:25:38** 结束，`success`（Verify site 的 `scripts/npm run check`、Build、Smoke、Deploy 步骤均成功）；该证据只说明该输入提交的 CI，不代表本轮本地重跑。正式线上新增两篇页面及旧空话题页访问失败，按优先级使用与成功部署输入 ref 对应的仓库发布 HTML／Markdown；未独立下载已部署 artifact。运行端 Node v22 可用，但本地 `git ls-remote` 因 `github.com` DNS 解析失败，无法取得完整仓库，**未本地执行** `node tools/blog/check-taxonomy-health.js --json`、`node tools/blog/check-blog-taxonomy.js`、`node --test scripts/taxonomy-health.test.js`；上述数据核对和两份严格 source 等价检查**不能称为全部原始脚本通过**。TAX-001/002/003/004/006/007 未从索引增量或新增正文发现有据复发；TAX-005 `accepted`（产品设计仍8篇且标注未变）；TAX-009 `accepted`（新增 Agent 成员已审，无具体误标）；TAX-008 `reviewing`（首轮聊天验收已于10-26发出一次，但仍无可验证送达证据，不补发、不关闭）。**下一次周检 2026-11-23**，下次月初边界语义抽查 2026-12-07；如后续发现相同空话题文章再按 SOP 评估词库缺口，通知仅按新增实质问题／变化／到期阻塞规则去重。本台账写入后的新提交 CI 状态需与输入提交的成功部署区分，不能预先写为通过。
+
 - **2026-11-09 周期巡检（真实执行，北京时间 2026-11-09 08:09:38 +08:00）**：默认分支 `main` 输入提交 `df9f91c8d84e012b7bc9a04bd4418464ed3772e2`，词典 semantic revision 5／blob SHA `cee8c0b150a7f8c1e3e5763afaaf2ba66a1e9b33`，完整索引 **51 篇**／blob SHA `415c91a7799867b0ef2f7eaa431bd92f593e8d15`。对照最近一次成功巡检的输入 `524924b4293def50f873d3f648e7357b95b22e53`／索引 SHA `bfae877a9a6911895773d3c539b3b3311128a884`：当前分支领先 65 个提交；已发布文章新增 1 篇 `ai-innovation-value-capture`，无删除，`ai-saas-build-vs-buy` 仅修改 visuals 图片元数据及相应源稿/发布 HTML 的插图呈现；其余 49 篇索引记录未变，taxonomy、健康脚本及 taxonomy 一致性脚本未变。新增的 `tools/blog/previews/fsd-optimus.html` 是预览稿，不计入已发布数量。
 - **2026-11-09 完整元数据等价检查与增量正文核查**：读取当前完整 taxonomy 和 51 篇 posts-meta，依据 `blog-taxonomy.js`、`check-taxonomy-health.js` 和 `generate-search-assets.js` 的现行字段与信号规则逐项做只读等价校验：**51/51 metadata 有效**，栏目 技术22／产品14／行业8／商业5／实践2；tags+topics 密度 1项4篇、2项31篇、3项16篇，0项/4项0篇；非法栏目/标签、重复 slug/URL/标签/概念、无效或过量字段、候选或退役词在用、未使用 active 词、关系对象/类型/范围越界均为0（索引显式关系24条）。健康复核信号两项：① `topic-gap / ai-innovation-value-capture`（新增、topics=[]）；② 原 `corpus-concentration / topics:Agent`，17/51（33.3%，成员及词义未变，分母+1）。新增商业文章发布 HTML 和严格 frontmatter／Markdown 核对，正文主要讨论 AI 技术链条的**价值创造与捕获、互补资产、议价条件、融资反馈**；「商业」分类及「市场格局」标签均由正文主线支持。现行 topics 的「企业AI」「产业史」「算力基础设施」等均非其独立核心话题，因此 **topics=[] 暂接受为审查后空值**，不为凑数强贴，也不因单篇缺口擅自建词；如后续出现多篇相同核心对象，再按 SOP 评估词典缺口。另核 `ai-saas-build-vs-buy` 严格 frontmatter／标题／摘要／share_quote 与索引一致，新增图像路径与仓库 HTML 引用相符；其栏目、tags/topics/concepts/relations 均未改。仓库 `docs/blog` 目录存在 44 份 Markdown、`tools/blog/posts` 有 51/51 发布 HTML 路径。**本轮逐文件内容核验聚焦新增及变更两篇**，其余 42 份 Markdown 未重新逐篇读取；2026-11-02 已核验的五份严格 frontmatter 中，除本次修改的 SaaS 外其余未在 diff 变化，38 份历史稿未采用严格 frontmatter，不能冒充逐字段全量源稿等同。
 - **2026-11-09 问题复核、CI、限制与下一步**：新 `topic-gap` 信号已依据发布正文审核为暂可接受，不因统计信号自动生成修复或改稿；TAX-001/002/003/004/006/007 未发现可证实复发，TAX-005 保持 `accepted`（产品设计仍 8 篇）、TAX-009 保持 `accepted`（Agent 17篇原成员无变化，原 fingerprint 与重开条件仍有效）；TAX-008 保持 `reviewing`（2026-10-26 一次性验收消息已发出，仍没有可验证的用户送达确认，不重发）。正式线上两篇页面及运行索引访问失败，按证据优先级回退到仓库已发布 HTML／Markdown，未独立下载本轮 Pages 部署产物。运行端 Node v22 可用，但 `git ls-remote` 因 `github.com` DNS 无法解析，**未本地执行** `node tools/blog/check-taxonomy-health.js --json`、`node tools/blog/check-blog-taxonomy.js`、`node --test scripts/taxonomy-health.test.js`；上述是从 GitHub 读取完整元数据后的数据等价核查及定向源稿检查，**不是原始脚本本轮全量通过**。输入 commit 对应的 GitHub Pages run `42493444925` 于北京时间 **2026-11-08 23:11:47** `success`（Verify site、Build public artifact、Smoke、Deploy 均成功）；台账新提交的 CI 另待验证。下一次周检 **2026-11-16**，下次月初语义抽查 **2026-12-07**；TAX-008 仅有明确送达证据才考虑关闭，不创建第二个周期任务。
@@ -118,7 +122,7 @@ node --test scripts/taxonomy-health.test.js
 
 ### TAX-005｜产品设计是否重复栏目
 
-- 首次发现：2026-10-15；最后核验：2026-11-09；状态：`accepted`。
+- 首次发现：2026-10-15；最后核验：2026-11-16；状态：`accepted`。
 - 复核 7 篇：`ai-software-operator-shift`、`agent-boundary`、`perplexity-analysis`、`claude-design-blog`、`manus-agent-analysis`、`openclaw-brand-creation`、`memory-system`。
 - 判断：产品职责、Agent 分工、交互/功能取舍、用户任务和记忆方案均有实质论证，不是仅因产品栏目而打标。保留名称与7篇标注；未借本次整理扩充产品话题词库。
 - 2026-10-18 手工增量复核：新增 `personal-agent` 正文围绕持续委托场景、产品职责、服务周期与验证标准展开，产品栏目及「Agent／产品设计」都由主线支持。当前匹配 8 篇，`accepted` 继续有效；发现后续仅谈商业竞争却贴产品设计的反例才重开。
@@ -140,19 +144,21 @@ node --test scripts/taxonomy-health.test.js
 
 ### TAX-008｜周期执行与历史台账脱节
 
-- 首次发现：2026-10-15；最后核验：2026-11-09；状态：`reviewing`（真实周期巡检、完整索引核查、台账回读和一次性聊天验收消息均已完成；通知送达尚无可验证证据）。
+- 首次发现：2026-10-15；最后核验：2026-11-16；状态：`reviewing`（真实周期巡检、完整索引核查、台账回读和一次性聊天验收消息均已完成；通知送达尚无可验证证据）。
 - 处理：本文件、只读健康脚本与测试、跨 Agent 维护入口链接及 ChatGPT「Blog 标签巡检」任务。任务已创建，不另建 GitHub 定时工作流；首次计划执行后再记录 last_run 和实际覆盖。
 - 已核验：2026-10-26 在周期任务中实时读取 main 最新 50 篇 metadata，完成等价元数据检查、相关发布 HTML 与源稿核查，并在本文件记录 ref、SHA 与不可访问项；2026-10-19 任务曾核查但回写遭拦截，不算成功。推送与邮件通知接口均未启用，不能由此推断用户终端设置，也不能承诺已送达。
 - 2026-10-18 已校正唯一已有巡检任务：计划统一为每周一北京时间 08:00（`DTSTART;TZID=Asia/Shanghai:20261019T080000`），避免旧起始时间与 RRULE 不一致。首次真实成功运行后增加一次性验收通知，即使无异常也报告输入 ref、检查覆盖和台账回写结果；往后恢复仅异常提醒。未另外创建同类周期任务。
 - **2026-10-26 首轮验收消息发出（北京时间 2026-10-26 08:09:39 +08:00）**：本次周期核查及台账首写已完成，首写 commit `653bc92312aac0c2efd69c9372b9972f04115add` 的 blob SHA `11dd973e4c2ac8ffc300f5a17c12c913b6a31832` 已通过 GitHub 回读一致性核对；随后确已在本任务对话输出**一次**短中文验收信息，包含执行时间、输入 ref、覆盖、写入状态和限制。仅能记录对话发出动作；没有设备推送／邮件的送达回执（运行环境两者开关为 false），不能声称用户收到，也不能关闭 TAX-008。该首轮验收不再重复发送，今后按新问题／实质变化／到期／阻塞去重提醒。
+- **2026-11-16 连续执行复核**：新输入53篇、两篇新增均已定向审查且完成台账写入核对；仍无用户确认收到此前验收通知的证据，保留 `reviewing`，不重复发出一次性验收。2026-11-23 继续复核；此前2026-11-09复核记录如下。
 - **2026-11-09 连续执行复核**：已读取 51 篇完整索引、增量检查新文与更新插图，并在本文件记录本轮输入和覆盖；无用户明确收到通知的回执或等效送达证据，不能关闭。单次聊天验收已于 2026-10-26 发出，本轮不重复发送。
 - **关闭条件**：①真实定时执行记录（不同于手工预检）；②读取当时最新完整索引与词典并真实检查、如实说明覆盖缺口；③原位回写台账且核实 GitHub SHA；④已实际发出一次性验收通知，并有可验证的通知送达证据（如用户确认收到）。任何一环失败维持 `reviewing` 并记录阻塞。
-- 下一步：2026-11-16 再核对回写连续性与是否存在送达回执；2026-12-07 做下次月初语义边界抽查；不重复首轮验收通知，不创建第二个任务。没有实际送达证据时维持 `reviewing`。
+- 下一步：2026-11-23 再核对回写连续性与是否存在送达回执；2026-12-07 做下次月初语义边界抽查；不重复首轮验收通知，不创建第二个任务。没有实际送达证据时维持 `reviewing`。
 
 ### TAX-009｜Agent 集中度信号的去重基线
 
 - 首次发现：2026-10-15；最后核验：2026-11-09；状态：`accepted`；最后通知：无独立告警（历史汇总说明）。
 - 信号：`corpus-concentration / topics:Agent`，此前 16/48（33.3%）；2026-10-18 最新手工预检 17/49（34.7%）。新增成员 `personal-agent` 的已发布正文确以持续代理机制与产品角色为主线，未发现因这次增长形成的具体误标，不按30%筛查阈值自动删除。旧 fingerprint 为当时已接受基线，不冒称对 49 篇重算了同一 fingerprint。
 - 2026-11-09 复核：17/51（33.3%），与 2026-11-02 完整索引的成员及词义相同，仅因新商业文章使分母 50→51，属于原集中度信号，无新增实质反证；未重新精读全部 17 篇。
+- 2026-11-16 增量复核：18/53（34.0%），新增 `agent-scale-git-infrastructure` 的仓库发布 HTML／严格 Markdown 说明编程 Agent 的并发源码读取、提交、测试及源代码管理重构为正文核心问题，命中 Agent 并非偶然提及；保持 `accepted`，仅统计成员扩展、不据占比重开。既有 fingerprint 保持历史记录，不冒称仍代表当前成员集合。
 - 已接受 fingerprint：`f0116d1fd9e5bcb6fc074c3b3d2c10cfef3e5d7cf2ef109c25bcb8be63bee304`（保留早期原 fingerprint，非当前索引重算值）。
 - 重开条件：新增成员、定义或正文发生实质变化且形成具体语义问题；仅同一信号每周再出现不通知。小幅分母变化更新统计即可，不等于发现新误标。
