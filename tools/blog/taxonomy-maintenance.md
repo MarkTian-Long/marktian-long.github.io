@@ -122,7 +122,7 @@ node --test scripts/taxonomy-health.test.js
 
 ### TAX-005｜产品设计是否重复栏目
 
-- 首次发现：2026-10-15；最后核验：2026-11-16；状态：`accepted`。
+- 首次发现：2026-10-15；最后核验：2026-11-09；状态：`accepted`。
 - 复核 7 篇：`ai-software-operator-shift`、`agent-boundary`、`perplexity-analysis`、`claude-design-blog`、`manus-agent-analysis`、`openclaw-brand-creation`、`memory-system`。
 - 判断：产品职责、Agent 分工、交互/功能取舍、用户任务和记忆方案均有实质论证，不是仅因产品栏目而打标。保留名称与7篇标注；未借本次整理扩充产品话题词库。
 - 2026-10-18 手工增量复核：新增 `personal-agent` 正文围绕持续委托场景、产品职责、服务周期与验证标准展开，产品栏目及「Agent／产品设计」都由主线支持。当前匹配 8 篇，`accepted` 继续有效；发现后续仅谈商业竞争却贴产品设计的反例才重开。
@@ -156,7 +156,7 @@ node --test scripts/taxonomy-health.test.js
 
 ### TAX-009｜Agent 集中度信号的去重基线
 
-- 首次发现：2026-10-15；最后核验：2026-11-09；状态：`accepted`；最后通知：无独立告警（历史汇总说明）。
+- 首次发现：2026-10-15；最后核验：2026-11-16；状态：`accepted`；最后通知：无独立告警（历史汇总说明）。
 - 信号：`corpus-concentration / topics:Agent`，此前 16/48（33.3%）；2026-10-18 最新手工预检 17/49（34.7%）。新增成员 `personal-agent` 的已发布正文确以持续代理机制与产品角色为主线，未发现因这次增长形成的具体误标，不按30%筛查阈值自动删除。旧 fingerprint 为当时已接受基线，不冒称对 49 篇重算了同一 fingerprint。
 - 2026-11-09 复核：17/51（33.3%），与 2026-11-02 完整索引的成员及词义相同，仅因新商业文章使分母 50→51，属于原集中度信号，无新增实质反证；未重新精读全部 17 篇。
 - 2026-11-16 增量复核：18/53（34.0%），新增 `agent-scale-git-infrastructure` 的仓库发布 HTML／严格 Markdown 说明编程 Agent 的并发源码读取、提交、测试及源代码管理重构为正文核心问题，命中 Agent 并非偶然提及；保持 `accepted`，仅统计成员扩展、不据占比重开。既有 fingerprint 保持历史记录，不冒称仍代表当前成员集合。
