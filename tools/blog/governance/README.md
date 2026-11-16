@@ -5,7 +5,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 ## 长期规范
 
 - `tools/blog/governance/blog-sop.md`：探讨、收敛、大纲确认、正式写稿与流程路由。
-- `tools/blog/governance/blog-cognitive-review-spec.md`：正文收束、图文预览前的可见认知增量反馈与章节依赖检查；不重复事实终审，不新增一轮默认审批。
+- `tools/blog/governance/blog-cognitive-review-spec.md`：大纲确认后的写作前认知增量反馈、正文完成后的认知增量验收及章节依赖检查；具体触发顺序由 SOP 路由。
 - `tools/blog/governance/blog-preview-release-spec.md`：正文确认后的发布级图文预览、作者批准与正式发布切换；补充 SOP 的阶段交付，不另定写作、视觉或发布契约。
 - `tools/blog/governance/blog-research-backlog-spec.md`：研究待办的记录结构、编号与日期、原位更新和整理验收；补充 SOP，不重定义研究流程或立项规则。
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
@@ -23,9 +23,10 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 |---|---|---|
 | 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；先保存独立起点，再读取 research_backlog.md 和 posts-meta.json |
 | 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
-| 正文写作 | 已确认大纲、blog-sop.md 的相关写作章节 | 仅为实际采用的图表读取 blog-charts-spec.md |
+| 写作前认知增量反馈与作者确认 | blog-cognitive-review-spec.md、独立起点、研究结论与已确认大纲 | 大纲确认后、内部完整初稿前单独交付；必须取得作者明确确认，不能由分类或大纲确认代替 |
+| 正文写作 | 已确认大纲 + 已确认写作前认知增量反馈、blog-sop.md 的相关写作章节 | 未完成前一关不得开始正式完整初稿；仅为实际采用的图表读取 blog-charts-spec.md |
 | 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
-| 正文收束／认知增量验收 | blog-cognitive-review-spec.md、独立起点与当前正文 | 向用户反馈认识的保留／修正／新增及章节依赖图；只在核心问题或立场改变时再确认，不把图文预览提前到本节点之前 |
+| 正文收束／认知增量验收 | blog-cognitive-review-spec.md、独立起点与当前正文 | 完整正文、活人感审校和 Checklist 适用项通过后、全局图文预览前，反馈正文实际新增认识与章节依赖；不把此验收与写作前作者确认混为一谈 |
 | 正文配图与制作 | blog-sop.md 的视觉规划路由、VISUAL_GUIDE.md | 生图读取 IMAGE_GENERATION_WORKFLOW.md；精确图表读取 blog-charts-spec.md |
 | 插图后全局预览 | blog-preview-release-spec.md、正式文章模板与共享运行时 | 按待发布稿完成审校、metadata 与真实页面验收；不因预览地址而降低标准 |
 | 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
@@ -53,7 +54,7 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 
 未确认发布的完整文章维护在 `drafts/blog/<slug>.md`。这样可以保留完整 frontmatter，同时不触发 `docs/blog/` 的发布源校验。用户确认正式发布后，再将唯一当前稿迁移到 `docs/blog/<slug>.md`，同步 `posts-meta.json` 并生成发布 HTML；迁移完成后删除对应 draft，避免双版本。
 
-正文确定时，先按[认知增量与章节依赖检查](blog-cognitive-review-spec.md)向用户说明相对独立起点新增了什么解释、修正了什么判断、连接了哪些体系，以及各章如何共同回答主问题。不能只把更多案例和篇幅作为增量，也不凭空声称用户已经学会了什么。
+完整正文完成、活人感审校与 Checklist 适用项通过后、全局图文预览之前，先按[认知增量与章节依赖检查](blog-cognitive-review-spec.md)向用户说明相对独立起点新增了什么解释、修正了什么判断、连接了哪些体系，以及各章如何共同回答主问题。它与大纲确认后的写作前认知增量反馈是两个不同节点；不能只把更多案例和篇幅作为增量，也不凭空声称用户已经学会了什么。
 
 用户在正文讨论后要求插图或完整预览时，按[发布级图文预览规范](blog-preview-release-spec.md)先完成发布质量的加工与验收；预览只保留分发状态差异。确认发布后再迁移路径、索引和 SEO，不重新维护一份正文。
 
