@@ -4,7 +4,7 @@ tags: ["市场格局", "决策框架"]
 topics: ["Agent"]
 concepts: ["Agentic Commerce", "交易协调权", "代理授权", "Agent 支付", "渠道迁移", "净新增交易"]
 share_quote: "Agent 改变的不是交易第一次出现多方分工，而是消费者有机会通过独立代理者重新组织原有交易能力。"
-relations: [{"slug":"ai-innovation-value-capture","type":"builds_on"}]
+relations: [{"slug":"ai-innovation-value-capture","type":"builds_on"}, {"slug":"personal-agent","type":"builds_on"}]
 ---
 
 # 当 AI 开始替用户付款，谁真正拥有交易？
@@ -47,7 +47,17 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 
 判断 Agent 带来了什么变化，必须先看没有 Agent 时，一笔交易如何完成。
 
-传统淘宝购物中，平台提供商品搜索与推荐、交易规则和订单管理；商家控制商品、价格、库存和接单；支付机构、银行和支付网络处理支付与资金授权；物流完成交付；商家与平台分别承担售后与争议处理。它们原本就不是同一个权力主体。
+传统淘宝购物中，一笔交易由多个主体共同完成：
+
+| 参与者 | 主要职责 |
+|---|---|
+| 电商平台 | 商品搜索与推荐、交易规则、订单管理和平台内协调 |
+| 商家 | 商品、价格、库存、是否接单，以及商品交付相关义务 |
+| 支付机构、银行与支付网络 | 支付处理、资金授权与结算 |
+| 物流服务商 | 仓储、运输和配送 |
+| 商家与平台 | 按各自规则承担售后、退款和争议处理 |
+
+它们原本就不是同一个权力主体。
 
 消费者之所以感觉自己只在一个 App 里购物，是因为平台承担了大量协调工作：把商品、商家、支付、订单状态和售后组织到连续体验中。平台的优势不只是入口，还来自真实交易所需的数据、规则和商业关系。
 
@@ -74,6 +84,8 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 ![传统电商由平台集中协调消费路径，外部Agent模式由消费者委托代理者跨商家协调；二者都保留商家、支付、履约等原有职责。](../../assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg "交易参与者原本就分工协作；Agent 可能改变的是由谁组织用户需求与跨商家流程。")
 
 这组对照要区分三种变化。**需求入口变化**是用户先向谁表达购买意图；**交易协调变化**是谁跨商家组织选品、订单与付款；**代理决策变化**是用户是否把选品、时机甚至预算范围内的决定委托给 Agent。三者可能一起发生，也可能只发生其中一项。
+
+此前在[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)中，讨论的是用户把一类事务长期交给 Agent 后，如何持续跟进未完事项并协调不同应用和相关方。本文沿用的是“用户委托 Agent 组织跨服务任务”这一前提，进一步研究当委托进入商品选择、资金授权和真实交易后，商家、支付机构与原有平台的职责边界如何变化。两篇文章相关，但研究对象不同：前者关注个人事务能否被持续接手，本文关注交易链如何被重新协调。
 
 此前在[《AI 正在把“使用软件”和“操作软件”拆开》](https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html)中讨论过：用户不再亲自操作软件，不代表软件已经消失。在交易里，这个区别还要进一步延伸到订单、付款、履约与客户关系。
 
@@ -235,9 +247,13 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 - [Google Maps：Ask Maps 新增本地服务能力（2026-11-16）](https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/)
 - [Uber：Q3 2026 Prepared Remarks](https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf)
 
-### 独立研究、企业经营与历史文章
+### 独立研究与企业经营披露
 
 - [McKinsey：Who wins when AI does the shopping?（2026-10-28）](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce)
 - [Uber：Q3 2026 Earnings Call Transcript](https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf)
+
+### 相关历史文章
+
 - [《技术最领先的人，为什么不一定拿走最大的价值？》](https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html)
 - [《AI 正在把“使用软件”和“操作软件”拆开》](https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html)
+- [《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)
