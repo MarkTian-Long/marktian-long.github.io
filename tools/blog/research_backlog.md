@@ -554,7 +554,7 @@
 
 **创建：2026-09-30｜内容更新：2026-11-17｜状态：已转入（图文网页预览审阅中，未正式发表；不判定利润池已迁移）。**
 
-**当前写作去向。** 作者已确认分类、七章大纲和写作前认知增量，授权图文预览。唯一 Markdown 工作稿为 [`drafts/blog/agentic-commerce-transaction-control.md`](../../drafts/blog/agentic-commerce-transaction-control.md)，独立审阅预览为 [`tools/blog/previews/agentic-commerce-transaction-control.html`](previews/agentic-commerce-transaction-control.html)，两张主图使用文章专属 SVG；此状态不是正式发布。
+**当前写作去向。** 作者已确认分类、七章大纲和写作前认知增量，授权图文预览。唯一 Markdown 工作稿为 [`drafts/blog/agentic-commerce-transaction-control.md`](../../drafts/blog/agentic-commerce-transaction-control.md)，独立审阅预览为 [`tools/blog/previews/agentic-commerce-transaction-control.html`](previews/agentic-commerce-transaction-control.html)，两张机制图使用文章专属 SVG，另有一张 AI 生成场景插图；此状态不是正式发布。
 
 **核心问题与用户重点。** 用户把需求交给 Agent 后，发现、比较、下单、支付、履约、售后由谁负责，客户关系和收益归谁？逛购、审美、惊喜、自我表达和社区参与可能本身有价值，不能全当操作摩擦。少开 App 不等于不用原服务，继续提供服务也不保证保住利润。商家参与分为被动提供商品／库存、主动维护身份资料、运营明确标识的商家 Agent，不能混同。
 
