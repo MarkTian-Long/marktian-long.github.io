@@ -55,7 +55,7 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 
 下面这张主地图同时适用于传统电商和 Agent Commerce。它不是 Agent 创造的新交易环节，而是我们比较**由谁协调、谁能决策、谁承担责任、谁取得回报**的共同基线。
 
-![一笔典型交易从需求到复购的八个环节，下方以控制权、责任和经济价值三个维度进行逐环节分析。](../../assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg)
+![一笔典型交易从需求到复购的八个环节，下方以控制权、责任和经济价值三个维度进行逐环节分析。](../../assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg "从用户需求到复购的典型交易链。不同组织方式下，三个分析维度保持不变。")
 
 这里的顺序是分析用的典型路径，不是所有交易都必须遵循的固定技术流程：用户可以在搜索前授予长期权限，具体支付授权和商家接单的先后也可能因业务模式不同而变化。
 
@@ -69,7 +69,7 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 
 ### 真正变化的是协调关系
 
-![传统电商由平台集中协调消费路径，外部Agent模式由消费者委托代理者跨商家协调；二者都保留商家、支付、履约等原有职责。](../../assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg)
+![传统电商由平台集中协调消费路径，外部Agent模式由消费者委托代理者跨商家协调；二者都保留商家、支付、履约等原有职责。](../../assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg "交易参与者原本就分工协作；Agent 可能改变的是由谁组织用户需求与跨商家流程。")
 
 这组对照要区分三种变化。**需求入口变化**是用户先向谁表达购买意图；**交易协调变化**是谁跨商家组织选品、订单与付款；**代理决策变化**是用户是否把选品、时机甚至预算范围内的决定委托给 Agent。三者可能一起发生，也可能只发生其中一项。
 
