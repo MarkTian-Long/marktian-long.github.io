@@ -51,13 +51,13 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 
 | 参与者 | 主要职责 |
 |---|---|
+| 消费者 | 提出需求、作出购买选择，并按交易方式授权付款 |
 | 电商平台 | 商品搜索与推荐、交易规则、订单管理和平台内协调 |
-| 商家 | 商品、价格、库存、是否接单，以及商品交付相关义务 |
-| 支付机构、银行与支付网络 | 支付处理、资金授权与结算 |
+| 商家 | 商品、定价、库存、是否接单，以及商品交付和质量责任 |
+| 支付机构、支付网络与发卡行 | 支付机构处理交易，支付网络传递支付信息，发卡行决定是否授权扣款 |
 | 物流服务商 | 仓储、运输和配送 |
-| 商家与平台 | 按各自规则承担售后、退款和争议处理 |
 
-它们原本就不是同一个权力主体。
+商品售后通常由商家负责，平台则按自身规则提供订单协调、争议处理或消费者保障。它们原本就不是同一个权力主体。
 
 消费者之所以感觉自己只在一个 App 里购物，是因为平台承担了大量协调工作：把商品、商家、支付、订单状态和售后组织到连续体验中。平台的优势不只是入口，还来自真实交易所需的数据、规则和商业关系。
 
@@ -125,7 +125,7 @@ OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消
 
 OpenAI 靠消费者 AI 入口接近需求与选择，再通过 Wallet 延伸至支付；但仍依赖外部商家提供商品、接受订单和履约。Google 与 Shopify 共同推动的 [Universal Commerce Protocol（UCP）](https://www.shopify.com/ucp) 则试图用结构化接口连接 Agent 和商家，覆盖商品发现、购物车、结账及购买后流程，降低商家重复接入多种 Agent 的成本。
 
-Google 的 [Agent Payments Protocol（AP2）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/) 侧重用户授权与支付验证。2026 年 4 月，Google 宣布将 AP2 捐赠给 FIDO Alliance；其后续版本进一步探索用户不在场时的预授权交易。但协议目标相似，并不等于 ACT、AP2 和 UCP 已经互相兼容。
+Google 的 [Agent Payments Protocol（AP2）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/) 侧重用户授权与支付验证。2026 年 4 月，Google 将 AP2 捐赠给 FIDO Alliance；AP2 0.2 探索基于预授权指令的 Human Not Present 交易。Google 与 Mastercard 共同开发的 Verifiable Intent，则尝试为用户授权的 Agent 行为留下防篡改记录。[FIDO Alliance 对 AP2 与 Verifiable Intent 的说明](https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/)可见其信任层设计。但协议目标相似，并不等于 ACT、AP2 和 UCP 已经互相兼容。
 
 支付网络则从原有职能向 Agent 身份和支付控制延伸。2026 年 10 月，[Visa、BILL 与 Billtrust](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)宣布一项实际运行的 B2B 发票支付试点：买方 Agent 在预先批准的规则内使用令牌化支付凭证，通过供应商门户付款。这是企业发票结算的生产试点，不是消费者购物已经普及的证据。
 
@@ -133,7 +133,7 @@ Google 的 [Agent Payments Protocol（AP2）](https://blog.google/products-and-p
 |---|---|---|
 | 消费者需求入口 | OpenAI、阿里千问 | 理解需求、影响选择、组织购买 |
 | 商业交互与授权 | Google、Shopify、蚂蚁 | 让 Agent、商家与支付系统跨平台协作 |
-| 支付与交易信任 | 支付宝、Visa、Mastercard、Stripe | 身份、令牌、授权及风险验证 |
+| 支付与交易信任 | 支付宝、Visa、Mastercard | 身份、令牌、授权及风险验证 |
 
 这不是互斥的公司分类。同一家企业可以覆盖多个位置，不同企业也可能合作。一笔交易可能由独立 Agent 理解需求，Shopify 商家提供商品，支付网络核验付款，再由商家完成交付。Agent Commerce 不必然形成一个拥有所有能力的超级平台。
 
@@ -163,19 +163,15 @@ Agent 平台可能获得订阅费、推荐费或交易分成，但需要证明�
 
 即使基础设施重要，也不保证单一提供方可以获得高利润。若商家能在多个兼容服务商之间选择，供应商仍受竞争约束。
 
-### Instinct：个人代理如何把持续委托变成商家分发？
+### Instinct：个人代理如何变成商家分发渠道？
 
-Personal Agent 里的 Instinct 是一个值得放在这里观察的案例。9 月 28 日，Instinct 创始人 Noah Shinn 宣布与 Shopify 合作：Instinct 可以搜索 Shopify 商家网络中的商品，读取实时价格、尺码和库存；用户准备购买时，Agent 将订单交给商家，通过 Shop Pay 使用已保存的付款和配送信息结账，并继续提供价格变动、到货提醒、物流更新和退货窗口提醒。[Shinn 的合作公告](https://nitter.cf/noahrshinn/status/2104628465488306183)称，当时 35% 的用户会用 Instinct 做个人购物。这是创始人披露的产品使用比例，不是独立审计的购买转化率。
+Instinct 是从 Personal Agent 延伸到 Agentic Commerce 的一个具体案例。与 Shopify 合作后，它可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并持续跟踪物流、价格变化和退货窗口。[创始人的合作公告](https://x.com/noahrshinn/status/2104628465488306183)称，当时 35% 的用户使用个人购物功能；这是公司披露的使用比例，不代表购买转化率。
 
-这让 Instinct 从 Personal Agent 的持续事务委托，延伸到真实的商品发现、结账和订单跟踪。它不是支付网络的替代者，而是试图控制消费者需求与商家之间的分发关系。
+更值得关注的是它设想的收费方式。在 [Invest Like the Best 第 493 期访谈](https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848)中，创始人 Noah Shinn 提出用户免费、由商家为带来客户和完成购买支付交易抽成。Instinct 希望通过理解用户长期偏好，再把需求匹配给商家，而不是靠支付手续费赚钱。但这仍是创始人描述的商业模式方向，不能写成已经落地的统一佣金费率或已验证收入。
 
-更值得注意的是它设想的收费方式。在 9 月 28 日的 [Invest Like the Best 访谈](https://iltb.podhood.com/)中，Shinn 表示 Instinct 希望对用户免费，由商家为它带来的客户和完成的购买支付交易抽成。他把这与 Shopify、Amazon 和 Apple 的平台抽成作比较，并提到部分精品酒店愿意为成功预订支付较高佣金。但他没有公布 Instinct 已经实施的统一费率；这是一种拟议中的商家付费分发模式，不应写成已经确认的收入结构。
+这条路线也带来新的信任问题。Business Insider 报道，三名早期用户收到过非请求式商品推荐；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。[Business Insider 的调查](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)并未证明存在付费推荐，却揭示了潜在利益冲突：**当 Agent 同时掌握用户的私人偏好和商家的付费分发需求时，推荐究竟优先服务谁？** 如果商业关系、排序依据和用户控制权不透明，长期委托建立的信任可能被佣金激励侵蚀。
 
-规模数字也要谨慎。Shinn 在访谈中称平台年化交易额已超过 10 亿美元、约一半来自旅行；TechCrunch 报道了这一说法，同时指出他没有解释年化交易额的具体计算口径。[TechCrunch 的报道](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)因此只能作为创始人披露的交易规模信号，不能当成 Instinct 的收入、GMV 审计结果或已实现佣金。
-
-这条路线也带来个人代理特有的利益冲突。Business Insider 采访了三位收到非请求式商品推荐的早期用户；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。创始人此前强调 Agent 不应利用个人信息诱导用户购买，但当商家佣金成为收入来源，Agent 是否会更积极地创造购物场景，就成为必须治理的问题。[Business Insider 的调查](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)没有证明这些推荐是付费广告，却揭示了一个结构性张力：**用户把长期偏好和私人上下文交给 Agent，Agent 又可能从促成消费中获得收入。** 如果推荐的商业关系、排序依据和用户控制权不透明，个人代理积累的信任就可能被分发收入侵蚀。
-
-Instinct 因而把本章的商业问题具体化了：个人 Agent 可以先通过长期委托理解用户，再利用这种理解组织购买；它可能不靠支付手续费，而靠把商家需求与消费者匹配来收费。但这种分发价值是否真实、佣金是否已经落地、推荐是否始终符合用户利益，目前仍不能混为一谈。
+Instinct 因此补充了一条不同于支付基础设施的商业路径：个人 Agent 可以通过持续理解用户来组织消费分发，再向商家收费。它能否持续创造增量客户、佣金能否落地，以及推荐能否始终符合用户利益，仍需验证。
 
 判断这门生意是否成立，至少应该分开观察：
 
@@ -192,7 +188,7 @@ Instinct 因而把本章的商业问题具体化了：个人 Agent 可以先通�
 
 **Agent 参与了越来越多交易，与 Agent Commerce 已经创造出一个新的利润池，是两种不同判断。**
 
-## 六、为什么交易跑通了，却还没有出现明确赢家？
+## 六、为什么能力已经出现，仍不足以判断赢家？
 
 真正完成技术链路，与消费者持续委托、商家长期接入、平台形成新增利润之间仍有距离。
 
@@ -257,8 +253,10 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 - [阿里巴巴：2026 财年 Form 20-F](https://data.alibabagroup.com/ecms-files/1514386754/b0f928b2-88f0-469d-905e-a714d19fb913/2026%20SEC%20Form%2020-F.pdf)
 - [Shopify：Universal Commerce Protocol](https://www.shopify.com/ucp)
 - [Google：AP2 与 FIDO Alliance（2026-04-28）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/)
+- [FIDO Alliance：AP2 与 Mastercard Verifiable Intent 信任层（2026-05-26）](https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/)
 - [Visa：BILL 与 Billtrust Agent 支付试点（2026-10-20）](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)
-- [Instinct 创始人：Instinct 与 Shopify 商品发现、Shop Pay 结账及订单更新合作（2026-09-28）](https://nitter.cf/noahrshinn/status/2104628465488306183)
+- [Instinct 创始人：Instinct 与 Shopify 商品发现、Shop Pay 结账及订单更新合作（2026-09-28）](https://x.com/noahrshinn/status/2104628465488306183)
+- [Invest Like the Best：Noah Shinn - Building Instinct: The Personal Agent，EP.493（2026-09-28）](https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848)
 - [Google Maps：Ask Maps 新增本地服务能力（2026-11-16）](https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/)
 - [Uber：Q3 2026 Prepared Remarks](https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf)
 
@@ -266,8 +264,6 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 
 - [McKinsey：Who wins when AI does the shopping?（2026-10-28）](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce)
 - [Uber：Q3 2026 Earnings Call Transcript](https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf)
-- [Invest Like the Best：Noah Shinn 访谈（2026-09-28）](https://iltb.podhood.com/)
-- [TechCrunch：Instinct 创始人披露年化交易额与旅行占比（2026-09-29）](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)
 - [Business Insider：Instinct 非请求式购物推荐引发的商业激励问题（2026-10-05）](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)
 
 ### 相关历史文章
