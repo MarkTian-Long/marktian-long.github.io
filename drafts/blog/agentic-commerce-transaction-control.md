@@ -23,6 +23,8 @@ relations: [{"slug":"ai-innovation-value-capture","type":"builds_on"}]
 
 **Agent 改变的不是交易第一次出现多方分工，而是消费者有机会通过独立代理者重新组织原有交易能力。** 这种新协调方式能否持续，以及由谁获得商业回报，才是 Agentic Commerce 值得研究的问题。
 
+![消费者坐在桌前通过抽象 Agent 连接多个商家、银行卡支付和配送包裹的概念场景](../../assets/images/blog/agentic-commerce-transaction-control/agentic-shopping-scene.webp "AI 生成概念插图：用户可以借助 Agent 协调购物，但商家、支付与履约仍由不同主体承担职责。")
+
 ## 一、AI 开始替用户付款，但交易并没有因此属于 AI
 
 ### ChatGPT Wallet：从商品推荐进入真实支付
