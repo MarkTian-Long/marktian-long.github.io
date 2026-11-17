@@ -165,7 +165,7 @@ Agent 平台可能获得订阅费、推荐费或交易分成，但需要证明�
 
 ### Instinct：个人代理如何变成商家分发渠道？
 
-Instinct 是从 Personal Agent 延伸到 Agentic Commerce 的一个具体案例。与 Shopify 合作后，它可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并持续跟踪物流、价格变化和退货窗口。[创始人的合作公告](https://x.com/noahrshinn/status/2104628465488306183)称，当时 35% 的用户使用个人购物功能；这是公司披露的使用比例，不代表购买转化率。
+此前在[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)中介绍的 Instinct，是从个人事务委托延伸到 Agentic Commerce 的一个具体案例。与 Shopify 合作后，它可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并持续跟踪物流、价格变化和退货窗口。[创始人的合作公告](https://x.com/noahrshinn/status/2104628465488306183)称，当时 35% 的用户使用个人购物功能；这是公司披露的使用比例，不代表购买转化率。
 
 更值得关注的是它设想的收费方式。在 [Invest Like the Best 第 493 期访谈](https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848)中，创始人 Noah Shinn 提出用户免费、由商家为带来客户和完成购买支付交易抽成。Instinct 希望通过理解用户长期偏好，再把需求匹配给商家，而不是靠支付手续费赚钱。但这仍是创始人描述的商业模式方向，不能写成已经落地的统一佣金费率或已验证收入。
 
@@ -260,7 +260,7 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 - [Google Maps：Ask Maps 新增本地服务能力（2026-11-16）](https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/)
 - [Uber：Q3 2026 Prepared Remarks](https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf)
 
-### 独立研究与企业经营披露
+### 独立研究、企业访谈与媒体报道
 
 - [McKinsey：Who wins when AI does the shopping?（2026-10-28）](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce)
 - [Uber：Q3 2026 Earnings Call Transcript](https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf)
