@@ -24,11 +24,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 | 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；先保存独立起点，再读取 research_backlog.md 和 posts-meta.json |
 | 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
 | 写作前认知增量反馈与作者确认 | blog-cognitive-review-spec.md、独立起点、研究结论与已确认大纲 | 大纲确认后、内部完整初稿前单独交付；必须取得作者明确确认，不能由分类或大纲确认代替 |
-| 正文写作 | 已确认大纲 + 已确认写作前认知增量反馈、blog-sop.md 的相关写作章节 | 未完成前一关不得开始正式完整初稿；仅为实际采用的图表读取 blog-charts-spec.md |
-| 初稿审校 | .agents/skills/blog-human-writing/SKILL.md 与 references/prose-review.md，随后 blog-review-checklist.md | 有图表时复核图表规范；材料检查不是初稿审校的替代品 |
-| 正文收束／认知增量验收 | blog-cognitive-review-spec.md、独立起点与当前正文 | 完整正文、活人感审校和 Checklist 适用项通过后、全局图文预览前，反馈正文实际新增认识与章节依赖；不把此验收与写作前作者确认混为一谈 |
-| 正文配图与制作 | blog-sop.md 的视觉规划路由、VISUAL_GUIDE.md | 生图读取 IMAGE_GENERATION_WORKFLOW.md；精确图表读取 blog-charts-spec.md |
-| 插图后全局预览 | blog-preview-release-spec.md、正式文章模板与共享运行时 | 按待发布稿完成审校、metadata 与真实页面验收；不因预览地址而降低标准 |
+| 图文一体成稿与预览迭代（连续阶段） | 已确认大纲与写作前认知增量反馈、blog-sop.md、blog-preview-release-spec.md | 内部完整正文与图意同步推进；正文完成后依次读取 GitHub 当前 blog-human-writing/SKILL.md 与 prose-review.md 执行活人感审校，再执行 blog-review-checklist.md，完成正文认知增量验收并在首个完整预览前反馈；之后制作并验收图表、页面，用户授权后部署可公开访问的固定预览 URL。首次全文审阅默认发生在带图网页，不额外交付无图长文。图表、视觉与生图各按独立规范；反馈修改仍使用同一 Markdown 与预览地址，不跳过受影响检查点。 |
 | 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
 
 ## 标签定期维护
@@ -56,7 +52,7 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 
 完整正文完成、活人感审校与 Checklist 适用项通过后、全局图文预览之前，先按[认知增量与章节依赖检查](blog-cognitive-review-spec.md)向用户说明相对独立起点新增了什么解释、修正了什么判断、连接了哪些体系，以及各章如何共同回答主问题。它与大纲确认后的写作前认知增量反馈是两个不同节点；不能只把更多案例和篇幅作为增量，也不凭空声称用户已经学会了什么。
 
-用户在正文讨论后要求插图或完整预览时，按[发布级图文预览规范](blog-preview-release-spec.md)先完成发布质量的加工与验收；预览只保留分发状态差异。确认发布后再迁移路径、索引和 SEO，不重新维护一份正文。
+完成写作前独立确认后，默认图文一体成稿，按[发布级图文预览规范](blog-preview-release-spec.md)将第一次完整阅读直接交付带图网页；所有内部审校、正文认知增量验收及预览公开部署授权仍逐项执行。预览只保留分发状态差异。确认发布后再迁移路径、索引和 SEO，不重新维护一份正文。
 
 ## GitHub 读写能力与工具发现（跨会话操作门槛）
 
