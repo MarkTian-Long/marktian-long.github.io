@@ -163,6 +163,20 @@ Agent 平台可能获得订阅费、推荐费或交易分成，但需要证明�
 
 即使基础设施重要，也不保证单一提供方可以获得高利润。若商家能在多个兼容服务商之间选择，供应商仍受竞争约束。
 
+### Instinct：个人代理如何把持续委托变成商家分发？
+
+Personal Agent 里的 Instinct 是一个值得放在这里观察的案例。9 月 28 日，Instinct 创始人 Noah Shinn 宣布与 Shopify 合作：Instinct 可以搜索 Shopify 商家网络中的商品，读取实时价格、尺码和库存；用户准备购买时，Agent 将订单交给商家，通过 Shop Pay 使用已保存的付款和配送信息结账，并继续提供价格变动、到货提醒、物流更新和退货窗口提醒。[Shinn 的合作公告](https://nitter.cf/noahrshinn/status/2104628465488306183)称，当时 35% 的用户会用 Instinct 做个人购物。这是创始人披露的产品使用比例，不是独立审计的购买转化率。
+
+这让 Instinct 从 Personal Agent 的持续事务委托，延伸到真实的商品发现、结账和订单跟踪。它不是支付网络的替代者，而是试图控制消费者需求与商家之间的分发关系。
+
+更值得注意的是它设想的收费方式。在 9 月 28 日的 [Invest Like the Best 访谈](https://iltb.podhood.com/)中，Shinn 表示 Instinct 希望对用户免费，由商家为它带来的客户和完成的购买支付交易抽成。他把这与 Shopify、Amazon 和 Apple 的平台抽成作比较，并提到部分精品酒店愿意为成功预订支付较高佣金。但他没有公布 Instinct 已经实施的统一费率；这是一种拟议中的商家付费分发模式，不应写成已经确认的收入结构。
+
+规模数字也要谨慎。Shinn 在访谈中称平台年化交易额已超过 10 亿美元、约一半来自旅行；TechCrunch 报道了这一说法，同时指出他没有解释年化交易额的具体计算口径。[TechCrunch 的报道](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)因此只能作为创始人披露的交易规模信号，不能当成 Instinct 的收入、GMV 审计结果或已实现佣金。
+
+这条路线也带来个人代理特有的利益冲突。Business Insider 采访了三位收到非请求式商品推荐的早期用户；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。创始人此前强调 Agent 不应利用个人信息诱导用户购买，但当商家佣金成为收入来源，Agent 是否会更积极地创造购物场景，就成为必须治理的问题。[Business Insider 的调查](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)没有证明这些推荐是付费广告，却揭示了一个结构性张力：**用户把长期偏好和私人上下文交给 Agent，Agent 又可能从促成消费中获得收入。** 如果推荐的商业关系、排序依据和用户控制权不透明，个人代理积累的信任就可能被分发收入侵蚀。
+
+Instinct 因而把本章的商业问题具体化了：个人 Agent 可以先通过长期委托理解用户，再利用这种理解组织购买；它可能不靠支付手续费，而靠把商家需求与消费者匹配来收费。但这种分发价值是否真实、佣金是否已经落地、推荐是否始终符合用户利益，目前仍不能混为一谈。
+
 判断这门生意是否成立，至少应该分开观察：
 
 | 指标 | 实际回答什么 |
@@ -244,6 +258,7 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 - [Shopify：Universal Commerce Protocol](https://www.shopify.com/ucp)
 - [Google：AP2 与 FIDO Alliance（2026-04-28）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/)
 - [Visa：BILL 与 Billtrust Agent 支付试点（2026-10-20）](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)
+- [Instinct 创始人：Instinct 与 Shopify 商品发现、Shop Pay 结账及订单更新合作（2026-09-28）](https://nitter.cf/noahrshinn/status/2104628465488306183)
 - [Google Maps：Ask Maps 新增本地服务能力（2026-11-16）](https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/)
 - [Uber：Q3 2026 Prepared Remarks](https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf)
 
@@ -251,6 +266,9 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 
 - [McKinsey：Who wins when AI does the shopping?（2026-10-28）](https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce)
 - [Uber：Q3 2026 Earnings Call Transcript](https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf)
+- [Invest Like the Best：Noah Shinn 访谈（2026-09-28）](https://iltb.podhood.com/)
+- [TechCrunch：Instinct 创始人披露年化交易额与旅行占比（2026-09-29）](https://techcrunch.com/2026/09/29/instinct-founder-said-more-than-50-of-transactions-on-the-platform-are-travel-related/)
+- [Business Insider：Instinct 非请求式购物推荐引发的商业激励问题（2026-10-05）](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)
 
 ### 相关历史文章
 
