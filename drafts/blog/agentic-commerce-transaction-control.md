@@ -165,13 +165,11 @@ Agent 平台可能获得订阅费、推荐费或交易分成，但需要证明�
 
 ### Instinct：个人代理如何变成商家分发渠道？
 
-此前在[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)中介绍的 Instinct，是从个人事务委托延伸到 Agentic Commerce 的一个具体案例。与 Shopify 合作后，它可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并持续跟踪物流、价格变化和退货窗口。[创始人的合作公告](https://x.com/noahrshinn/status/2104628465488306183)称，当时 35% 的用户使用个人购物功能；这是公司披露的使用比例，不代表购买转化率。
+此前在[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)中介绍的 Instinct，已经把长期委托延伸到真实购物。它与 Shopify 合作后，可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并跟踪物流、价格变化和退货窗口。[创始人的合作公告](https://x.com/noahrshinn/status/2104628465488306183)展示了这条产品路径。
 
-更值得关注的是它设想的收费方式。在 [Invest Like the Best 第 493 期访谈](https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848)中，创始人 Noah Shinn 提出用户免费、由商家为带来客户和完成购买支付交易抽成。Instinct 希望通过理解用户长期偏好，再把需求匹配给商家，而不是靠支付手续费赚钱。但这仍是创始人描述的商业模式方向，不能写成已经落地的统一佣金费率或已验证收入。
+Instinct 更值得关注的是商家付费分发的构想。在 [Invest Like the Best 访谈](https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848)中，创始人 Noah Shinn 提出用户免费、商家为带来客户和完成购买支付交易抽成。这不是已公布的统一费率，也不能写成已经验证的佣金收入。
 
-这条路线也带来新的信任问题。Business Insider 报道，三名早期用户收到过非请求式商品推荐；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。[Business Insider 的调查](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)并未证明存在付费推荐，却揭示了潜在利益冲突：**当 Agent 同时掌握用户的私人偏好和商家的付费分发需求时，推荐究竟优先服务谁？** 如果商业关系、排序依据和用户控制权不透明，长期委托建立的信任可能被佣金激励侵蚀。
-
-Instinct 因此补充了一条不同于支付基础设施的商业路径：个人 Agent 可以通过持续理解用户来组织消费分发，再向商家收费。它能否持续创造增量客户、佣金能否落地，以及推荐能否始终符合用户利益，仍需验证。
+这种模式会触及个人代理的信任边界。Business Insider 报道，三名早期用户收到过非请求式商品推荐；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。[相关调查](https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10)没有证明存在付费推荐，却提出一个结构性问题：**当 Agent 用长期积累的个人上下文匹配商家，而收入又可能来自成交佣金时，它如何证明推荐仍然优先服务用户？** Instinct 展示了个人委托转化为消费分发的可能性，也暴露了商业化与用户信任之间需要治理的张力。
 
 判断这门生意是否成立，至少应该分开观察：
 
