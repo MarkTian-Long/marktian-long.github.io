@@ -37,7 +37,7 @@ relations: [{"slug":"ai-innovation-value-capture","type":"builds_on"}, {"slug":"
 
 ### 千问：把 AI 接入已有的消费生态
 
-阿里采取了不同路线。2026 年 1 月，千问开始连接淘宝、淘宝闪购、支付宝、飞猪和高德等服务。同年 5 月，阿里宣布将千问连接到淘宝和天猫超过 40 亿件商品，并在淘宝 App 内上线千问购物助手。相关能力覆盖商品搜索比较、下单、订单管理、物流及售后。[阿里巴巴 5 月 11 日官方公告](https://home.alibabagroup.com/en-US/document-1991231293551017984)对此有具体说明。
+阿里采取了不同路线。2026 年 1 月，千问开始连接淘宝、淘宝闪购、支付宝、飞猪和高德等服务。[阿里巴巴 1 月 15 日公告](https://home.alibabagroup.com/en-US/document-1948497434959151104)介绍了首批跨服务任务。同年 5 月，阿里宣布将千问连接到淘宝和天猫超过 40 亿件商品，并在淘宝 App 内上线千问购物助手。相关能力覆盖商品搜索比较、下单、订单管理、物流及售后。[阿里巴巴 5 月 11 日官方公告](https://home.alibabagroup.com/en-US/document-1991231293551017984)对此有具体说明。
 
 这不是给淘宝增加聊天框那么简单。阿里已经拥有商品目录、商家关系、订单系统和履约网络。千问可以调用既有能力，而不像一个独立 AI 平台那样从头寻找商品供给和结账服务商。
 
@@ -244,6 +244,7 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 
 - [OpenAI：Introducing ChatGPT Wallet（2026-11-13）](https://openai.com/index/introducing-chatgpt-wallet/)
 - [OpenAI：ChatGPT Wallet Terms](https://openai.com/policies/chatgpt-wallet-terms/)
+- [阿里巴巴：千问接入淘宝闪购、支付宝、飞猪和高德（2026-01-15）](https://home.alibabagroup.com/en-US/document-1948497434959151104)
 - [阿里巴巴：Alibaba Opens All of Taobao to Qwen AI（2026-05-11）](https://home.alibabagroup.com/en-US/document-1991231293551017984)
 - [支付宝：AI 付产品概览](https://aipay.alipay.com/docs/overview.html)
 - [ACT：委托授权规范](https://www.act-protocol.com/documentation/delegation)
