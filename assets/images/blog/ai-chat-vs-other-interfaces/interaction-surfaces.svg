@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="t d"><title id="t">同一任务中的聊天与持续工作界面</title><desc id="d">左侧自然语言对话将意图交给右侧持续可见的状态面板；箭头表示结果检查后可以回到对话修正。</desc>
+<defs>
+<filter id="sh" x="-25%" y="-30%" width="150%" height="170%"><feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#18263d" flood-opacity=".13"/></filter>
+<linearGradient id="bg" x1="0" x2="1" y2="1"><stop stop-color="#faf9f5"/><stop offset="1" stop-color="#f0eee6"/></linearGradient>
+<marker id="arr" markerWidth="13" markerHeight="13" refX="9" refY="6" orient="auto"><path d="M1 1 L10 6 L1 11" fill="none" stroke="#c96442" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></marker>
+</defs>
+<rect width="1280" height="720" fill="url(#bg)"/>
+<circle cx="1210" cy="80" r="142" fill="#c96442" opacity=".09"/>
+<circle cx="92" cy="646" r="178" fill="#4f8fff" opacity=".07"/>
+<text x="80" y="98" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-size="43" font-weight="700" fill="#18263d">同一任务，切换不同交互</text>
+<text x="82" y="145" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-size="23" fill="#5e5d59">表达目标 · 直接操作 · 观察当前状态</text>
+<g filter="url(#sh)">
+ <rect x="82" y="205" width="450" height="380" rx="24" fill="#fff" stroke="#dcdedc" stroke-width="2"/>
+ <rect x="82" y="205" width="450" height="61" rx="24" fill="#e7eef6"/>
+ <path d="M82 244 V267 H532 V244" fill="#e7eef6"/>
+ <circle cx="117" cy="236" r="8" fill="#d97757"/><circle cx="145" cy="236" r="8" fill="#e2b260"/><circle cx="173" cy="236" r="8" fill="#82a991"/>
+ <rect x="119" y="296" width="281" height="80" rx="15" fill="#dfeaf5"/>
+ <rect x="139" y="321" width="192" height="9" rx="4" fill="#6689ac"/><rect x="139" y="344" width="158" height="8" rx="4" fill="#88a3bd"/>
+ <path d="M154 407 h251 q24 0 24 24 v60 q0 24-24 24 H225 l-39 27 v-27 h-32 q-24 0-24-24 v-60 q0-24 24-24" fill="#f8ede4"/>
+ <rect x="172" y="438" width="199" height="9" rx="4" fill="#c98565"/><rect x="172" y="462" width="157" height="8" rx="4" fill="#d8a088"/>
+</g>
+<g filter="url(#sh)">
+ <rect x="751" y="205" width="448" height="380" rx="24" fill="#fff" stroke="#dcdedc" stroke-width="2"/>
+ <rect x="751" y="205" width="448" height="61" rx="24" fill="#e7eef6"/><path d="M751 244 V267 H1199 V244" fill="#e7eef6"/>
+ <circle cx="787" cy="236" r="8" fill="#d97757"/><circle cx="815" cy="236" r="8" fill="#e2b260"/><circle cx="843" cy="236" r="8" fill="#82a991"/>
+ <rect x="789" y="291" width="370" height="147" rx="14" fill="#faf9f5" stroke="#e5e8eb"/>
+ <path d="M814 391 L862 371 L918 382 L979 347 L1031 362 L1096 318 L1135 335" fill="none" stroke="#c96442" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+ <path d="M814 408 H1136" stroke="#bac9d8" stroke-width="2"/><rect x="814" y="460" width="160" height="80" rx="12" fill="#dfeaf5"/>
+ <rect x="834" y="476" width="110" height="9" rx="4" fill="#6c88a4"/><rect x="834" y="499" width="85" height="8" rx="4" fill="#a4b8c9"/>
+ <rect x="993" y="460" width="166" height="80" rx="12" fill="#f8ede4"/><circle cx="1020" cy="492" r="11" fill="#c96442"/><rect x="1042" y="486" width="90" height="8" rx="4" fill="#c99b83"/><rect x="1042" y="506" width="70" height="7" rx="4" fill="#dec0af"/>
+</g>
+<path d="M545 335 C618 286 667 286 738 335" fill="none" stroke="#c96442" stroke-width="7" stroke-linecap="round" marker-end="url(#arr)"/>
+<path d="M738 490 C664 541 617 541 548 490" fill="none" stroke="#507fa1" stroke-width="7" stroke-linecap="round"/>
+<path d="M548 490 l25 -4 l-12 25" fill="none" stroke="#507fa1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="553" y="385" width="176" height="56" rx="28" fill="#18263d"/>
+<text x="641" y="420" text-anchor="middle" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-size="23" font-weight="600" fill="#fff">共同完成任务</text>
+<text x="307" y="641" text-anchor="middle" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-size="27" fill="#18263d">聊天：澄清与探索</text>
+<text x="977" y="641" text-anchor="middle" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-size="27" fill="#18263d">工作界面：观察与操作</text>
+</svg>
