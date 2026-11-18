@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc"><title id="title">Norman 的行动循环及数据触发入口</title><desc id="desc">意图形成、行动选择、执行行动、评估系统状态组成可循环的行动过程。另有系统异常和外部数据变化直接进入状态感知与评估，之后用户才形成目标。</desc>
+<defs><marker id="end" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#c96442" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#507fa1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect width="1280" height="720" fill="#faf9f5"/>
+<text x="55" y="79" font-size="41" font-weight="700" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#18263d">用户行动不总从表达意图开始</text>
+<text x="56" y="119" font-size="22" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#5e5d59">四阶段作为分析镜头；状态变化也可能先触发观察，再形成下一次行动。</text>
+<g stroke="#d8deda" fill="#fff" stroke-width="2">
+ <rect x="65" y="194" rx="18" width="240" height="134"/><rect x="365" y="194" rx="18" width="240" height="134"/>
+ <rect x="665" y="194" rx="18" width="240" height="134"/><rect x="965" y="194" rx="18" width="240" height="134"/>
+</g>
+<g font-family="Arial,'Noto Sans CJK SC',sans-serif" text-anchor="middle" fill="#18263d">
+ <text x="185" y="242" font-size="29" font-weight="700">意图</text><text x="185" y="284" font-size="21">我想做什么？</text>
+ <text x="485" y="242" font-size="29" font-weight="700">选择</text><text x="485" y="284" font-size="21">采用什么行动？</text>
+ <text x="785" y="242" font-size="29" font-weight="700">执行</text><text x="785" y="284" font-size="21">让操作发生</text>
+ <text x="1085" y="242" font-size="29" font-weight="700">评估</text><text x="1085" y="284" font-size="21">看到并理解状态</text>
+</g>
+<g fill="none" stroke="#c96442" stroke-width="5" marker-end="url(#end)">
+ <path d="M307 262 H356"/><path d="M607 262 H656"/><path d="M907 262 H956"/>
+ <path d="M1085 331 V390 C1085 426 1041 436 1014 436 H260 C190 436 185 406 185 378 V336"/>
+</g>
+<rect x="112" y="403" width="140" height="44" rx="22" fill="#f8e8df"/><text x="182" y="432" text-anchor="middle" font-size="20" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#b45d3c">反馈与修正</text>
+<path d="M1085 564 V349" stroke="#507fa1" stroke-width="5" fill="none" marker-end="url(#blue)"/>
+<g>
+ <rect x="880" y="536" width="322" height="102" rx="18" fill="#e6eef5" stroke="#a9c2d8" stroke-width="2"/>
+ <circle cx="929" cy="587" r="17" fill="#c96442"/><path d="M927 576 l-7 15 h13 l-7 14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ <text x="963" y="576" font-size="24" font-family="Arial,'Noto Sans CJK SC',sans-serif" font-weight="700" fill="#18263d">外部事件 / 数据变化</text>
+ <text x="963" y="610" font-size="20" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#5e5d59">监控异常、持续任务更新</text>
+</g>
+<text x="73" y="587" font-size="24" font-weight="700" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#18263d">注意：这是分析关系，不是强制顺序。</text>
+<text x="73" y="624" font-size="21" font-family="Arial,'Noto Sans CJK SC',sans-serif" fill="#5e5d59">用户可以跳过或反复进入阶段。</text>
+</svg>
