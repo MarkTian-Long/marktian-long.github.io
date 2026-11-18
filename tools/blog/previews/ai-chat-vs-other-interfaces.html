@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- 未发布的图文审阅预览；唯一正文源 drafts/blog/ai-chat-vs-other-interfaces.md；不在正式博客索引 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 时代，什么时候该用聊天，什么时候该保留其他界面？｜未发布预览 — Leo 的思考碎片</title>
+
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="description" content="AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。" />
+<style>.preview-flag{display:flex;align-items:center;gap:10px;margin:0 0 22px;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg-subtle);color:var(--text-2);font-size:13px;line-height:1.6}.preview-flag strong{color:var(--clay)}.post-figure{max-width:100%} .post-figure figcaption{font-size:12px}</style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、聊天成为入口，不等于聊天适合承担整个产品</a></li><li><a href="#section-2">二、先分析用户在做什么，再决定用什么界面</a></li><li><a href="#section-3">三、形成意图和选择行动时，聊天什么时候更合适？</a></li><li><a href="#section-4">四、执行阶段，为什么还需要直接操作界面？</a></li><li><a href="#section-5">五、观察和评估阶段，用户需要看到的是当前状态</a></li><li><a href="#section-6">六、AI Product Builder 如何选择交互方式？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <main>
+        <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">决策框架</span><span class="tag">产品设计</span><span class="tag">人机协作</span></span></div><h1 class="post-title">AI 时代，什么时候该用聊天，什么时候该保留其他界面？</h1><p class="post-summary">AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><figure class="post-figure"><img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg" alt="聊天与持续工作界面围绕同一个任务协作：左侧澄清意图，右侧保持状态和操作可见" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>聊天降低表达与探索成本，持续工作界面让对象、状态与操作保持可见。</figcaption></figure>
+<h2 id="section-1">一、聊天成为入口，不等于聊天适合承担整个产品</h2>
+<p>我最初也倾向于认为，AI 会把多数软件入口变成聊天。用户只要说出想做什么，模型就能理解目标、调用工具，再把结果交回来。相比记住菜单在哪里、表单怎么填、流程怎么走，聊天似乎可以把这些中间步骤全部省掉。</p>
+<p>但在实际产品讨论中，我开始留意到一些以会话记录为主要组织方式的产品：用户重新打开时，首先看到的可能是上次的对话和当时生成的结果。如果上次让 AI 做了一张表格，这张表格可能仍然停留在当时的状态；用户想知道今天有哪些待办、哪个任务出了异常，还得重新发问。一个接入可靠数据刷新机制的运营看板，则可以在打开时直接呈现当前状态，不需要用户先回忆自己应该问什么。</p>
+<p>是否实时取决于数据源、刷新机制和持久状态，而不是界面叫 Chat 还是看板。聊天窗口可以调用接口、刷新数据，甚至持续更新卡片。<strong>一段对话记录不会自动成为一个持续维护的业务状态。</strong> 数据从哪里来、多久更新一次、当前结果对应哪个版本、用户离开后任务是否继续运行，都需要产品另外设计。</p>
+<p>我也看到一些成熟 App 增加了 AI 助手入口，却没有因此取消原来的搜索、浏览、列表和业务对象。美团在官方科技页面中把「小团」放在 App 底部入口；Amazon 则把 Alexa for Shopping 放进主搜索栏、搜索结果和商品详情页，同时保留专门的聊天窗口。它们展示的是不同的入口组合，不是聊天已经取代原有界面的证据。<a href="https://www.meituan.com/technology" target="_blank" rel="noopener noreferrer">美团的产品入口说明</a>；<a href="https://www.aboutamazon.com/news/retail/alexa-for-shopping-ai-assistant" target="_blank" rel="noopener noreferrer">Amazon 对 Alexa for Shopping 的介绍</a>。</p>
+<p>这些观察指向同一个问题：用户使用产品，不只是在表达需求。他还要发现信息、比较对象、执行操作、观察变化，并在稍后回来时接着处理。聊天可以成为其中一个入口，但不能因为它能理解自然语言，就默认它适合承担整条任务链。</p>
+<h2 id="section-2">二、先分析用户在做什么，再决定用什么界面</h2>
+<p>要讨论聊天界面（Chat）和图形用户界面（GUI）的分工，可以先不从界面出发，而从用户完成一项任务时经历的行动过程出发。</p>
+<p>Donald Norman 在 1984 年的《Stages and Levels in Human–Machine Interaction》中，把人机交互概括为四个阶段：形成意图、选择行动、执行行动、评估结果。这里的「选择」不是泛指比较商品或方案，而是把想达到的目标转换成当前可行的方法和具体命令。Norman 还指出，不同交互技术各有优势和缺陷，而且这些取舍会随着行动阶段变化。<a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">论文原文</a>。</p>
+<div class="blog-table"><table><thead><tr><th>行动阶段</th><th>用户在做什么</th><th>产品需要提供什么支持</th></tr></thead><tbody><tr><td>意图</td><td>想达到什么目标</td><td>帮助用户表达目标、补充约束</td></tr><tr><td>选择</td><td>用什么方法和操作完成</td><td>展示可选行动、前提和后果</td></tr><tr><td>执行</td><td>让选定的操作发生</td><td>提供操作入口、即时反馈和纠错</td></tr><tr><td>评估</td><td>结果是否符合目标</td><td>呈现系统状态、解释变化、发现异常</td></tr></tbody></table></div>
+<p>表格第三列是我把 Norman 的行动阶段转译成产品设计问题，并不是 Norman 原文提出的界面分类。这四个阶段适合用来定位交互问题，但不能直接对应四种界面。聊天不只用于表达意图，也能帮助用户选择方案、触发操作和理解结果；表格、菜单、画布和看板也不只承担某一个固定阶段。</p>
+<p>Norman 在 1986 年的《Cognitive Engineering》中又把行动过程细化为七个活动：建立目标、形成意图、明确行动序列、执行行动、感知系统状态、解释状态、评估结果。他把目标与意图拆开，又把结果评估细化为感知、解释和评估。这也解释了为什么模型有四个阶段，也可以有七个：四阶段适合观察较宏观的行动过程，七阶段适合定位更细的认知断点。它们不是互相竞争的界面分类，本文用四阶段组织分析，再用七阶段解释状态观察和结果评估。</p>
+<p>Norman 特别提醒，这些阶段不是边界清晰、严格串行的心理步骤，现实活动会跳过、重复或改变顺序。对于持续运行的系统，用户甚至可能先观察到异常，再形成目标和行动意图。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
+<figure class="post-figure"><img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg" alt="Norman 的四阶段行动循环，并显示异常和数据变化可先触发观察与评估" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>行动可能从状态观察开始，再形成意图；四阶段是分析镜头而非强制顺序。</figcaption></figure>
+<p>用户不一定总是先打开聊天框、说出目标，再等待 AI 回答。运营人员可能先看到指标异常；消费者可能先浏览到一件商品，才产生购买需求；接入持续监控的智能体（Agent）也可能先发现任务状态变化，再判断是否需要提醒用户。</p>
+<p>因此，Norman 的模型更适合作为分析镜头，而不是界面模板。产品需要识别用户此刻正在形成意图、选择行动、执行操作，还是观察和评估状态，再决定哪种交互方式能降低当前环节的成本。</p>
+<h2 id="section-3">三、形成意图和选择行动时，聊天什么时候更合适？</h2>
+<p>聊天最有价值的地方，是降低用户把模糊目标转换成系统可理解输入的成本。</p>
+<p>用户可能知道自己想解决什么问题，却不知道产品里有哪些功能，也不知道应该先选哪个筛选条件、打开哪个模块。自然语言允许用户先描述目标，再通过追问补充约束。对于目标尚未明确、需要探索多个方向，或需要综合不同信息的任务，聊天可以减少用户学习命令和寻找功能的负担。</p>
+<p>美团的「小团」是一个例子。它作为 App 内的 AI 入口，承接用户对吃喝玩乐的需求；但美团原有的商家、商品、搜索和服务页面仍然存在。用户可以先用自然语言描述需求，也可以直接浏览已有内容。两种方式服务的是不同的起点：前者适合已经有一个大致目标、希望系统帮忙缩小范围的人；后者适合还没有形成明确问题、想先发现选项的人。</p>
+<p>Amazon 的做法更能说明入口不必独立成一个聊天产品。Alexa for Shopping 既有专门的聊天窗口，也能在主搜索栏接收问题；用户还可以从搜索结果中选择多个商品，让 AI 并排比较价格、功能和评价。AI 摘要也出现在搜索结果和商品详情页中。<a href="https://www.aboutamazon.com/news/retail/alexa-for-shopping-ai-assistant" target="_blank" rel="noopener noreferrer">Amazon 官方说明</a>。</p>
+<p>Amazon 的做法说明，AI 可以进入原有任务节点，而不必把搜索、比较和详情都迁移到对话窗口。用户在搜索阶段可能需要开放式提问，在比较阶段需要同时看到多个商品，在详情页需要核对某个具体对象。AI 可以参与这些环节，但不必把所有信息都转换成一轮轮对话。</p>
+<p>反过来，如果用户已经知道要找什么，操作路径也很熟悉，那么先把需求写成一句话、等待模型理解、再从回答里找到目标，可能比直接搜索或点击更绕。无明确目标的浏览也有价值：用户可能是在发现需求，而不是表达一个已经存在的需求。</p>
+<p>所以，聊天是否更合适，不取决于任务是不是复杂，而取决于用户是否需要借助语言来形成、澄清或探索目标。如果目标明确、操作路径稳定，传统搜索、菜单和浏览可能更直接；如果目标模糊、约束多、选项难以枚举，聊天更可能降低进入成本。</p>
+<h2 id="section-4">四、执行阶段，为什么还需要直接操作界面？</h2>
+<p>当用户已经知道要改什么，问题就从「怎么表达」转向「怎么把对象改对」。</p>
+<p>Ben Shneiderman 在 1983 年讨论的直接操纵（Direct Manipulation），强调让用户持续看见正在操作的对象，通过快速、渐进、可逆的动作直接改变对象，并立即看到结果。<a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">论文原文</a>。直接操纵不是 GUI 的同义词，也不是所有图形界面自动具备的特征；它是一种让用户直接作用于可见对象的交互风格。</p>
+<p>这解释了为什么很多精细操作仍然适合在画布、表格、表单或编辑器里完成。用户调整图表范围、移动设计元素、修改规则条件时，未必能一次说准最终数值；他可能需要拖动、比较、撤销，再尝试另一个值。此时，直接看到对象和变化，比反复把每个细节翻译成自然语言更省力。</p>
+<p>但这不意味着 GUI 必须保留成今天的固定页面。另一种设计方向，是让 AI 先理解高层意图，再生成可以继续操作的界面。</p>
+<p>CHI 2024 的 DynaVis 研究展示了这种组合：用户用自然语言描述图表修改要求，系统执行修改，同时生成持续存在的控件，供用户继续调整。研究邀请了 24 名参与者；他们更偏好这种方式，理由包括后续修改更容易，以及即时视觉反馈带来的编辑信心。研究范围是可视化编辑，不能直接推导所有产品任务都应该生成控件。<a href="https://doi.org/10.1145/3613904.3642639" target="_blank" rel="noopener noreferrer">DynaVis 论文</a>。</p>
+<p>我在设计审核产品时也遇到过类似问题。当时讨论的一种可能方式，是让用户上传制度材料，通过聊天让 AI 先生成审核规则草案。但草案并不等于正式生效的规则。规则版本、适用范围、生效状态，以及哪些审核任务正在引用它，都必须有明确的产品表示。这个经历此前也记录在<a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">《AI 正在把“使用软件”和“操作软件”拆开》</a>。</p>
+<p>在这样的场景里，聊天适合解释制度材料、澄清审核目标和生成初稿；具体条件的修改更适合结构化编辑；版本之间的差异需要对比视图；规则是否生效、哪些任务引用了哪个版本，则需要状态列表或管理界面。后面这些是根据业务约束推导出的设计方案，并不是在声称当时产品已经按这套界面实现。</p>
+<p><strong>AI 可以接管一部分操作，但用户仍然需要看见自己正在改变什么，以及改变之后发生了什么。</strong> 直接操作界面的价值，不是证明模型能力不足，而是让修改过程可见、可控、可撤销。</p>
+<h2 id="section-5">五、观察和评估阶段，用户需要看到的是当前状态</h2>
+<p>执行完成并不意味着任务结束。用户还要判断变化是否生效、是否达到目标；对于持续运行的任务，还要知道当前状态有没有变化。</p>
+<p>聊天记录适合保留交流过程，却不天然适合承担持续状态管理。</p>
+<p>如果用户每天都要检查待办、订单、审核进度或业务指标，他需要的不只是上一次问答的答案，而是当前状态、变化时间和异常位置。这里的关键不是界面叫 Chat 还是 Dashboard，而是数据是否持续更新、状态是否有明确来源，以及用户回来时能否恢复到当前任务。</p>
+<p>Norman 的七阶段模型把结果评估拆成感知状态、解释状态和对照目标。系统不仅要把数据输出给用户，还要帮助用户理解这些数据意味着什么；如果操作结果延迟出现，用户还可能忘记自己刚才做了什么，从而增加评估成本。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
+<p>监控任务还会反过来改变行动起点。用户可能没有先提出一个目标，而是打开看板发现指标越界，或者收到异常提醒，才开始调查和处理。此时，持续可见的状态视图不是聊天回答的装饰，而是用户形成下一步意图的依据。</p>
+<p>Graphics Interface 2026 的一项研究直接比较了聊天式自然语言界面与看板（Dashboard）在鱼场数据监控任务中的表现。研究采用被试内设计，24 名来自不同专业的学生都使用两种界面；他们此前没有鱼场数据经验。两种界面使用同一数据集，任务则由行业专家参与验证。任务正确率和系统可用性量表（SUS）评分没有显著差异；在 180 秒限制内，Dashboard 的任务完成率为 87.7%，聊天界面为 70.5%。两种界面的总体任务完成时间存在显著差异，看板更快。经过多重比较校正后，10 项任务中只有 3 项的时间差异仍然显著；NASA-TLX 工作负荷量表的六个维度中，只有时间压力（Temporal Demand）仍然显著，不能把摘要中提到的心理负荷差异写成显著结论。<a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">研究论文</a>。</p>
+<p>参与者反馈还呈现出更细的分工：他们往往用 Dashboard 查精确数值、快速点击和定位数据点，用聊天做自定义比较和探索；但反复输入提示词会拖慢较长任务，Dashboard 控件在参数和筛选项变多时也可能变得繁琐。这些是特定实验中的参与者反馈，不是对所有用户的普遍结论。</p>
+<p>研究任务限定在鱼场监控，参与者也没有鱼场数据经验，因此结果不能外推为看板在所有场景都更好。它提示，在需要持续观察、快速识别变化的任务里，固定布局和并列信息可能减少用户反复描述查询、等待回答和重建上下文的成本。</p>
+<p>还要把两个问题分开：<strong>状态是否最新，和状态如何呈现，是两项不同的设计决策。</strong> 看板可能因为数据管道延迟而过时；聊天也可以通过实时数据接口给出最新结果。产品需要明确数据来源、更新时间、刷新频率，以及用户看到的是实时状态、定时快照还是模型生成的解释。不能仅凭界面形式判断数据是否可信。</p>
+<p>从产品设计上看，主动提醒也不是越多越好。只有当事件足够重要、用户确实需要介入时，提醒才有价值；否则它只是把用户从原有工作中打断。持续监控、异常通知和用户主动打开看板，应该作为不同的产品行为设计，而不是统一归入「让 AI 主动找用户」。</p>
+<h2 id="section-6">六、AI Product Builder 如何选择交互方式？</h2>
+<p>把前面的理论和案例放回产品设计，第一步不是决定首页放不放聊天框，而是先回答几个具体问题。</p>
+<ol><li><strong>任务从哪里开始？</strong> 用户已经知道自己要做什么，还是需要浏览、观察或由系统发现异常后才形成目标？前者可以测试聊天入口，后者不能默认要求用户先提问。</li><li><strong>用户需要怎样理解选项？</strong> 如果约束模糊、需要澄清和探索，语言交互可能更自然；用户不熟悉产品功能时，聊天也可以帮助他找到可行路径。如果需要同时比较多个对象，卡片、列表或表格通常更容易让差异保持可见；熟悉业务和操作路径的专业用户，也可能更偏好稳定、直接的控件。</li><li><strong>用户需要怎样操作对象？</strong> 一次性、高层级的修改可以交给 AI；高频、精确、需要反复试探的操作，应保留直接操纵或可持续编辑的控件。</li><li><strong>用户离开后，任务是否还在继续？</strong> 如果需要持续跟踪，就要有持久状态、可靠的数据刷新和重新进入任务的入口，不能只留下上一次的对话记录。</li><li><strong>出错之后怎样恢复？</strong> 修改是否可撤销，版本是否可比较，高风险操作是否需要预览和确认，执行记录能否追溯？模型负责理解、建议还是执行，边界是否明确？精确计算、规则校验、权限检查和正式写回应由哪个可信服务完成？权威业务状态来自哪个系统，模型生成的解释与正式记录是否清楚区分？这些都应在交互设计时确定，而不是等智能体上线后再补。</li></ol>
+<p>最后还要评估整条任务链的成本，而不是只看点击次数或对话轮数。用户表达需求花了多久，系统澄清了几次，用户是否找到需要的信息，是否看懂当前状态，修改后能否发现错误，出错后是否容易恢复，以及不同界面之间是否需要重复解释，这些都会影响真实的完成成本。</p>
+<p>固定图形界面、聊天和动态生成 UI 也不必互相排斥。任务结构变化很大、用户需要快速得到专用工作区时，可以考虑动态生成界面；如果某个工作对象会被反复使用、持续更新或多人共同维护，就应该考虑把它保存为稳定、可再次进入的界面，而不是每次从聊天里重新生成。</p>
+<p>一个有力的反方判断是：模型足够强以后，用户可能只需要一个自然语言入口，系统再按任务生成临时界面，固定页面逐渐减少。这个方向有现实依据，DynaVis 已经展示了特定可视化编辑任务中生成并持续使用控件的做法。但固定页面减少，不等于直接操作、持续状态和结果恢复的需求消失。更可能被替代的是今天的页面组织方式，而不是用户完成任务所需的这些能力。</p>
+<p>AI 时代不需要先选一个唯一入口，再把所有功能塞进去。<strong>聊天负责降低表达和探索成本，结构化界面负责让对象、信息和操作保持可见，持续状态机制负责让用户知道事情现在进行到哪里，确认与恢复机制则让执行结果仍然可控。</strong> 同一个产品可以同时需要这些能力，真正的设计问题是它们在具体任务中如何衔接。</p>
+<h2 id="section-7">参考资料</h2>
+<h3 id="section-8">一手理论与原始论文</h3>
+<ul><li><a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)</a></li><li><a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Cognitive Engineering” (1986)</a></li><li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">Ben Shneiderman, “Direct Manipulation: A Step Beyond Programming Languages” (1983)</a></li></ul>
+<h3 id="section-9">同行评审研究</h3>
+<ul><li><a href="https://doi.org/10.1145/3613904.3642639" target="_blank" rel="noopener noreferrer">Priyan Vaithilingam et al., “DynaVis: Dynamically Synthesized UI Widgets for Visualization Editing,” CHI 2024</a></li></ul>
+<h3 id="section-10">会议论文公开稿</h3>
+<ul><li><a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">Melika Besharati Amirkandeh and Derek Reilly, “A Comparative Evaluation of Natural Language and Dashboard Visualization Interfaces for Data Monitoring Tasks,” Graphics Interface 2026</a>（公开作者稿首页的 DOI 仍为占位符，本文引用其研究方法与结果）</li></ul>
+<h3 id="section-11">厂商产品资料</h3>
+<ul><li><a href="https://www.meituan.com/technology" target="_blank" rel="noopener noreferrer">美团：我们的科技</a></li><li><a href="https://www.aboutamazon.com/news/retail/alexa-for-shopping-ai-assistant" target="_blank" rel="noopener noreferrer">Amazon: Meet Alexa for Shopping</a></li></ul>
+<h3 id="section-12">相关历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">AI 正在把“使用软件”和“操作软件”拆开</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>
