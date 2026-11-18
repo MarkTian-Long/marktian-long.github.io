@@ -42,7 +42,10 @@
       <main>
         <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">决策框架</span><span class="tag">产品设计</span><span class="tag">人机协作</span></span></div><h1 class="post-title">AI 时代，什么时候该用聊天，什么时候该保留其他界面？</h1><p class="post-summary">AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</p></header>
         <hr class="divider" />
-        <div class="post-body"><figure class="post-figure"><img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg" alt="聊天与持续工作界面围绕同一个任务协作：左侧澄清意图，右侧保持状态和操作可见" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>聊天降低表达与探索成本，持续工作界面让对象、状态与操作保持可见。</figcaption></figure>
+        <div class="post-body"><figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg" alt="聊天与持续工作界面围绕同一个任务协作：左侧澄清意图，右侧保持状态和操作可见" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>聊天降低表达与探索成本，持续工作界面让对象、状态与操作保持可见。</figcaption>
+</figure>
 <h2 id="section-1">一、聊天成为入口，不等于聊天适合承担整个产品</h2>
 <p>我最初也倾向于认为，AI 会把多数软件入口变成聊天。用户只要说出想做什么，模型就能理解目标、调用工具，再把结果交回来。相比记住菜单在哪里、表单怎么填、流程怎么走，聊天似乎可以把这些中间步骤全部省掉。</p>
 <p>但在实际产品讨论中，我开始留意到一些以会话记录为主要组织方式的产品：用户重新打开时，首先看到的可能是上次的对话和当时生成的结果。如果上次让 AI 做了一张表格，这张表格可能仍然停留在当时的状态；用户想知道今天有哪些待办、哪个任务出了异常，还得重新发问。一个接入可靠数据刷新机制的运营看板，则可以在打开时直接呈现当前状态，不需要用户先回忆自己应该问什么。</p>
@@ -56,7 +59,10 @@
 <p>表格第三列是我把 Norman 的行动阶段转译成产品设计问题，并不是 Norman 原文提出的界面分类。这四个阶段适合用来定位交互问题，但不能直接对应四种界面。聊天不只用于表达意图，也能帮助用户选择方案、触发操作和理解结果；表格、菜单、画布和看板也不只承担某一个固定阶段。</p>
 <p>Norman 在 1986 年的《Cognitive Engineering》中又把行动过程细化为七个活动：建立目标、形成意图、明确行动序列、执行行动、感知系统状态、解释状态、评估结果。他把目标与意图拆开，又把结果评估细化为感知、解释和评估。这也解释了为什么模型有四个阶段，也可以有七个：四阶段适合观察较宏观的行动过程，七阶段适合定位更细的认知断点。它们不是互相竞争的界面分类，本文用四阶段组织分析，再用七阶段解释状态观察和结果评估。</p>
 <p>Norman 特别提醒，这些阶段不是边界清晰、严格串行的心理步骤，现实活动会跳过、重复或改变顺序。对于持续运行的系统，用户甚至可能先观察到异常，再形成目标和行动意图。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
-<figure class="post-figure"><img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg" alt="Norman 的四阶段行动循环，并显示异常和数据变化可先触发观察与评估" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>行动可能从状态观察开始，再形成意图；四阶段是分析镜头而非强制顺序。</figcaption></figure>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg" alt="Norman 的四阶段行动循环，并显示异常和数据变化可先触发观察与评估" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>行动可能从状态观察开始，再形成意图；四阶段是分析镜头而非强制顺序。</figcaption>
+</figure>
 <p>用户不一定总是先打开聊天框、说出目标，再等待 AI 回答。运营人员可能先看到指标异常；消费者可能先浏览到一件商品，才产生购买需求；接入持续监控的智能体（Agent）也可能先发现任务状态变化，再判断是否需要提醒用户。</p>
 <p>因此，Norman 的模型更适合作为分析镜头，而不是界面模板。产品需要识别用户此刻正在形成意图、选择行动、执行操作，还是观察和评估状态，再决定哪种交互方式能降低当前环节的成本。</p>
 <h2 id="section-3">三、形成意图和选择行动时，聊天什么时候更合适？</h2>
