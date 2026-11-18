@@ -24,7 +24,7 @@
 
 | 研究问题 | 创建日期 | 状态／成文范围 | 本轮结果与下一触发 |
 |---|---|---|---|
-| [Token 分发平台能否成为独立的价值捕获层？](#br-20261114-01) | 2026-11-14 | 可进大纲（独立价值成立条件，非已实现高利润） | Hugging Face 外包路由、Anthropic Linked Billing 自营客户结算构成新分工对照；独立中间层分账、净利润和留存仍未证 |
+| [Token 分发平台能否成为独立的价值捕获层？](#br-20261114-01) | 2026-11-14 | 可进大纲（独立价值成立条件，非已实现高利润） | Hugging Face 外包路由、Perplexity Orchestrator 统一结算与故障回退、Anthropic Linked Billing 终端直付构成新分工对照；独立平台分账、净利润和留存仍未证 |
 | [AI 时代，什么时候该用聊天，什么时候该保留其他界面？](#br-20261113-02) | 2026-11-13 | 可进大纲（任务条件下的交互选择） | DynaVis 支持混合界面；Deepnote 量化误介入的模型响应耗时与模型费用，不是含工具执行及用户打扰的全成本；按四层任务取舍 |
 | [当 AI 成为会议参与者，Claude Meetings 会怎样改变会议产品？](#br-20261113-01) | 2026-11-13 | 可进大纲（会议成果与权限机制，效果待测） | 修正连接器权限：各成员自己的工具与授权，不是全员继承会议发起者权限；内外会议与成果可见性分别比较 |
 | [金融 Agent 获得交易权后，谁来授权并承担错误责任？](#br-20261109-01) | 2026-11-09 | 可进大纲（美国案例的权限、订单与责任分层） | 已核 Robinhood 正式协议 §29.8 并查看 PDF 页面：有效撤权前收到的指令不自动取消；合同陈述不代替监管或个案裁决 |
@@ -45,11 +45,11 @@
 | [第三方能力如何被 Agent 发现、持续复用并形成收益？](#br-20260930-02) | 2026-09-30 | 待补证（商业渠道归因） | Vercel 已补任务成功与重复可靠性的评测方法；Resend 推荐→生产使用→新增付费与留存的完整渠道链仍未证 |
 | [Agent 操作后的泛产品设计价值](#br-20260930-03) | 2026-09-30 | 已归档（合并承接） | 去向：工作组织、持续编辑两卡及软件操作者文章；保留原 ID，不再独立排队 |
 | [长期委托能否有用且可持续？](#br-20260930-04) | 2026-09-30 | 已转入（已发布） | 反方论证已归位；自然事务周期净收益、留存与收入待新证据，不重写正文 |
-| [消费入口、交易与履约价值怎样分工？](#br-20260930-05) | 2026-09-30 | 已转入（图文预览审阅中，尚未正式发表） | 当前唯一草稿 `drafts/blog/agentic-commerce-transaction-control.md`；带图预览 `tools/blog/previews/agentic-commerce-transaction-control.html`；Wallet／阿里／蚂蚁、Ask Maps 及交易协调与净新增价值机制已进入全文，实际净新增收益仍待证 |
+| [消费入口、交易与履约价值怎样分工？](#br-20260930-05) | 2026-09-30 | 已转入（图文预览审阅中，尚未正式发表） | 唯一草稿 `drafts/blog/agentic-commerce-transaction-control.md`、带图预览 `tools/blog/previews/agentic-commerce-transaction-control.html` 不变；11/18 新补 Gemini Tasks 与 Daydream 的平台／独立入口对照仅入研究卡，未自动改正文；净新增交易仍待证 |
 
 **已发布文章与在途系列，不重复新建卡。** 产业史系列 02《[技术最领先的人，为什么不一定拿走最大的价值？](https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html)》已于 2026-11-08 正式发布，正式 Markdown 在 [`docs/blog/ai-innovation-value-capture.md`](../../docs/blog/ai-innovation-value-capture.md)；不再把旧 Brief 的“优先启动候选”或已失效 draft 路径当成当前状态。系列 03／04／05 的本轮证据见[系列分支补证](#series-evidence-20261107)，规划归属仍在原 Brief。多模态—视频—世界模型系列已结项，不自动补第六篇。
 
-已发布主题的后续证据：[记忆系统 × Personal Harness：Dreaming、Harness²](#blog-memory-dreaming-20261107)；[企业 Agent 治理：Control Room 与持久化 Agent](#blog-control-room-20261110)；[Skills 治理：Databricks Genie One](#blog-skill-governance-20261116)；[硬件验证的数据接口：BTTF](#blog-hardware-eda-20261116)。教育效果的反证归[产业史系列 04](#series-evidence-20261107)，不另立卡。
+已发布主题的后续证据：[记忆系统 × Personal Harness：Dreaming、Harness²](#blog-memory-dreaming-20261107)；[企业 Agent 治理：Control Room、持久化 Agent、PyPI 投毒与 Grok Bot 后台访问](#blog-control-room-20261110)；[Skills 治理：Databricks Genie One](#blog-skill-governance-20261116)；[硬件验证的数据接口：BTTF](#blog-hardware-eda-20261116)。教育效果的反证归[产业史系列 04](#series-evidence-20261107)，不另立卡。
 
 **11/07 三篇来稿归位。** AI 写作与 AGI／研究选择两篇进入[系列 04 的材料](#series-evidence-20261107)；Persom 进入[既有 Memory／Harness 后续证据](#blog-memory-dreaming-20261107)，并由持续委托和成功任务指标两卡交叉引用。不增加独立 BR 卡，不把来源观点改成作者立场，不改变文章排期。正文依据为用户上传的完整 PDF；原文链接按用户提供的对应关系保留，本轮微信原站读取受限，不将 PDF 阅读说成在线全文核验。
 
@@ -59,7 +59,7 @@
 
 ### BR-20261114-01｜Token 分发平台能否成为独立的价值捕获层？
 
-**创建：2026-11-14｜内容更新：2026-11-18｜状态：可进大纲（独立价值与收费的成立条件；不宣称某平台已经形成持久高利润）。** 具名客户的直采／网关共存、云平台零加价治理、DeepSeek 上游工具打包构成既有正反证；11/17 新增 Hugging Face 将语言模型运行时路由委托 OpenRouter 的实际平台集成，使独立路由存在客户需求更具体，但不等于已证独立平台利润、稳定议价或所有任务可迁移。条件性商业分析继续可进大纲，不自动批准标题、分类或排期。
+**创建：2026-11-14｜内容更新：2026-11-18｜状态：可进大纲（独立价值与收费的成立条件；不宣称某平台已经形成持久高利润）。** 具名客户的直采／网关共存、云平台零加价治理、DeepSeek 上游工具打包构成既有正反证；11/17 Hugging Face 将运行时路由委托 OpenRouter，同日 Perplexity Orchestrator 公开统一结算、同模型跨提供方回退和预览任务路由，使独立路由职责更具体，但不等于已证平台利润、稳定议价或所有任务可迁移。条件性商业分析继续可进大纲，不自动批准标题、分类或排期。
 
 **作者原始触发与重点（2026-11-14，当日对话；个人问题意识而非行业统计）。** 作者回看产业史系列首篇[《看 AI，不要只问它像历史上的哪一年》](posts/ai-industry-history-mechanisms.html)中关于 OpenRouter／Hugging Face 的「供给丰富后，瓶颈向发现、评价、选择和协调迁移」判断，因百度新推出「词元所」而追问：百度词元所、OpenRouter、硅基流动、火山方舟、Google／AWS／Azure 究竟处于不同层，还是不同产品功能重叠？为什么国内部分 API 中转站呈现个人化、授权和来源不透明的现象；大型云厂商公开提供第三方模型意味着什么？作者希望进一步发散搜索，**尤其寻找反例，避免把分发入口重要直接推成分发平台能赚钱**。不能把「部分小型站点有灰色供应链」概括为国内聚合行业整体灰产。
 
@@ -98,6 +98,10 @@
 **Claude Linked Billing（关联计费，2026-11-17 发布、11/18 核验）｜上游直接承接第三方模型用量结算的反例。** [Anthropic 原始公告《Linked billing on the Claude Platform》](https://claude.com/resources/articles/linked-billing-on-claude-platform)、[Claude Platform OAuth 官方技术规则](https://platform.claude.com/docs/en/manage-claude/oauth-apps/organization-billing-connections)和[第三方平台接入帮助说明](https://support.claude.com/en/articles/18467110-offer-linked-billing-in-your-platform)确认：合资格的终端客户通过 OAuth（开放授权）连接自己的 Claude Platform **API 计费组织**，无需交出自己的 API Key（接口密钥）；第三方平台运行请求，可逐请求设定由自己或客户支付，Anthropic 直接向客户计费。客户可按平台设置月度费用上限并撤销链接，平台可查看关联客户模型用量。**主要适用直接向 Anthropic 支付 API 费用的 Claude Console 组织**，并非 Claude 普通订阅额度、云市场经销组织或所有渠道自动可用。Beta（测试阶段）且支持范围有限：客户付款支持 `/v1/messages` 与 `/v1/chat/completions`，**不覆盖 Message Batches 与 Claude Managed Agents**，带单独收费 Code Execution（代码执行）的请求也不能由客户通过此规则支付；不能用“所有 Claude 用量自动由客户付款”概括。若客户不可计费，请求会失败，**不会默认替平台付费**。
 
 **安全、归属与价值捕获边界。** 请求实际运行于**第三方平台的组织**，采用该组织的模型权限、速率、数据保留、加密和服务约定；客户组织的 IP allowlist、零数据保留、客户管理加密密钥等**不会因为关联付款而继承**。所以**账单直接结算 ≠ 工作负载归属客户 ≠ 安全责任自动迁移**，高合规要求须单独审核。平台依旧可以就工作流、治理、可达性与专业服务收费；Anthropic 直接计费则削弱“中间平台必须替客户保管上游 API 密钥并统一转售 Token”的必然性，**并不证明路由／运维价值被消灭，也不证明业务模式已产生新增收入**。官方合作平台名单只证明可用或承诺接入，未披露企业独立使用、净增需求、平台毛利、终端客户流失率。对照 OpenRouter 预付聚合／BYOK、Hugging Face 的统一客户端结算、Cloudflare／Vercel 云端网关治理与第三方平台自收服务费，应分开观察**谁签约、谁支付、谁执行、谁拥有控制权、谁承担责任及收费依据**；上游可以承接部分结算，但是否替代独立渠道，仍待同任务客户与经营证据。
+
+**2026-11-18 新证据｜Perplexity Orchestrator 分开“选模型”与“选同模型推理提供方”（11/17 官方发布）。** [Perplexity 原始发布](https://www.perplexity.ai/en-GB/hub/blog/introducing-orchestrator)及[技术说明《Orchestrator: one API for reliable inference》](https://www.perplexity.ai/en-GB/hub/blog/orchestrator-one-api-for-reliable-inference)显示：它以单一 API／统一供应商账单提供专有与开放权重模型，支持 OpenAI Chat Completions／Responses、Anthropic Messages 请求格式与 SDK；组织可设置项目用量、模型允许列表和支出上限。厂商称**credits 之外没有额外平台费**，这并不等于调用无成本，也不披露实际平台毛利。**同模型提供方路由**依据健康度、容量、延迟，将失败请求重试到同一模型的另一部署；**Routes 自动模型选择为预览功能**，按任务描述选择不同模型或使用默认模型。两层决策不可混同，兼容 SDK 也不保证模型行为完全一致。官方称其自有生产层每天处理来自 **85+ 模型和十余家提供方**的请求，此为内部生产规模，**不是 Orchestrator API 同期公开模型数或外部付费客户规模**。
+
+**效果证据、竞争解释与经济边界。** 技术说明把 **2026-10-04—11-02** 自身流量的请求成功率作为路由佐证，失败口径排除了客户端错误；这是**厂商自行测量**，未提供覆盖不同模型和全部成本的独立横评。与先前的 Hugging Face 向 OpenRouter 外包路由，以及已记录的 **Anthropic Linked Billing（平台执行请求、客户直接向上游支付）**构成反向三角：**路由权、合同签约方、谁付 Token、治理能力与平台服务费**可以不同方式组合。上游或大平台可将路由和结算打包、且标示无单独平台费，是独立平台收费的竞争反例；但多供应商维护和同模型故障恢复又是可供购买的具体服务。仍须同质量约束的端到端费用、请求恢复、迁移成本、分账、净利润和留存来判断独立价值捕获；**本轮未实际调用 API、核算供应商合同或生产验收**。Anthropic Linked Billing 已于本日另一轮补证，本次仅作引用，不重复新建材料版本。
 
 **商业条件与最强竞争解释（本项目推导）。** 独立平台可持续收费，需要其跨供应商选择、运行控制、可信比较和责任服务产生的客户收益，在相同质量与风险约束下超过平台费用和额外依赖；还需服务可重复交付，不能每个客户都重新投入等比例人工。Descript／Sentry 说明独立客户即使直签上游仍可购买第三方路由；Hugging Face 进一步证明已有自建路由与平台入口的企业也会把语言模型路由交给外部专业服务，但其经济条件尚不公开。Vercel／Cloudflare 说明同样需求可由云或开发平台低价内置；DeepSeek 说明模型上游也开始自行整合搜索、抓取与基础多模态工具，进一步增加独立中间层的替代选择。供方独有模型／专属算力、客户已有大额合同和权限要求会限制平台路由空间；平台自己的配置、日志、策略或数据若不可迁移，也可能增加客户锁定成本。**这是一组可检验条件，不是平台必胜或“越靠近入口越赚钱”的定律。** 反向指标包括客户绕过平台、治理能力被无加价替代、同等服务下付费溢价消失，以及高增长调用量未转化为净收益。
 
@@ -562,7 +566,7 @@
 
 ### BR-20260930-05｜消费入口迁移与信息中介的价值
 
-**创建：2026-09-30｜内容更新：2026-11-17｜状态：已转入（图文网页预览审阅中，未正式发表；不判定利润池已迁移）。**
+**创建：2026-09-30｜内容更新：2026-11-18｜状态：已转入（图文网页预览审阅中，未正式发表；不判定利润池已迁移）。**
 
 **当前写作去向。** 作者已确认分类、七章大纲和写作前认知增量，授权图文预览。唯一 Markdown 工作稿为 [`drafts/blog/agentic-commerce-transaction-control.md`](../../drafts/blog/agentic-commerce-transaction-control.md)，独立审阅预览为 [`tools/blog/previews/agentic-commerce-transaction-control.html`](previews/agentic-commerce-transaction-control.html)，两张机制图使用文章专属 SVG，另有一张 AI 生成场景插图；此状态不是正式发布。
 
@@ -591,6 +595,12 @@
 **平台自营 Agent 的反例：Google Ask Maps（2026-11-17 核验 11/16 Google 官方公告，供 Agentic Commerce 在研文章对照，不另立题）。** [Google Maps 产品总监 Maz Khorasani《New Ask Maps features to help with holiday travel and prep》（2026-11-16）](https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/)披露：Maps 内置 Ask Maps 可按自然语言生成和调整多日行程，结合实时交通、营业状态、停车信息及用户既有收藏清单；用户可主动选择让它**在线查找美容、宠物护理、汽车／房屋维修等本地服务的可用时段，或由 Google 代为致电商家询问**，然后在界面中看到可选时间并**自己决定预订什么**。行程与收藏清单搜索面向已提供 Ask Maps 的地区，新增路线提示和预约查找首先在美国开放；11/16 公告称 Ask Maps 扩展到欧洲 30 个国家、全球超过 200 个国家和地区，不能把“全球可用”误写成预约代打电话功能全球同步上线。Google 的 [2026-03-12 Ask Maps 初始公告](https://blog.google/products-and-platforms/products/maps/ask-maps-immersive-navigation/)已经提出基于地图、用户收藏与地点信息的问答和餐厅预订；[2026-08-06 食物订购更新](https://blog.google/products-and-platforms/products/maps/order-food-in-ask-maps/)已经接入外卖合作商及酒店／活动发现。**因此 11/16 不是 Ask Maps 或所有 Agent 交易功能首次发布，真正增量是行程／本地服务可用性查询与授权电话联系的扩展。**
 
 **对在研 Agentic Commerce 文章的论证角色与限制（本项目分析）。** 此案与既有阿里千问×高德／淘宝生态路线构成**平台自营 Agent 对照**：原平台依靠实时位置／路线数据、用户收藏、商家信息和现有服务合作，直接在自己的产品入口增加会话式协调能力；与独立 Agent 跨服务发起交易的路线竞争，也可能互补。应放在“原平台如何保留需求入口与协调权”一段，作为**用户改用自然语言不必导致平台失去入口**的反例，而不是另设支付协议或商家利润章节。需按“查询可用时段→联系商家→用户决定→正式预约／支付→履约”分阶段记录：查到空位或代理致电**不等于完成预约、支付或产生新增订单**；Google 的地点数据规模及功能范围是厂商披露，尚无独立的预约成功率、人工接管时间、净新增交易或收入数据。与已发布[《AI 正在把‘使用软件’和‘操作软件’拆开》](posts/ai-software-operator-shift.html)的通用交互论证重叠处不重写；本卡只承接消费交易入口与商家协调的具体机制。未登录 Ask Maps、打电话、预约或实施同任务横评。
+
+**2026-11-18 新证据①｜Gemini Tasks：Google 将原有生态账户连接到事务执行（11/17 公布，一手）。** [Google Gemini 副总裁 Josh Woodward《Put Gemini to work for you》](https://blog.google/innovation-and-ai/products/gemini-app/tasks-in-gemini-free-new-features/)宣布基于 Gemini 4 Hydrogen 的 Tasks 向**美国、日本、韩国、加拿大、澳大利亚、印度**免费逐步开放；代打电话、支付等高级功能先从**美国**扩展，六国免费入口不等于全部能力在六国同步可用。Google 的产品示例：依赖 Maps 和 Calendar 向经销商打电话并协调汽车维修预约；按 Shopping Graph 比较商品，使用 Google Pay／**AP2（Agent Payments Protocol）**和受支持卡片的数字令牌完成部分购买，支持预先设置消费上限；Instacart 购物示例则将最终结账交回商家。Google 提到隔离虚拟机、用户确认及商家退出权，称今后会整合 UCP，**不能把未来协议整合写成已经上线**。负责人叙述属厂商示例，并无跨地区成功率、商家成交量或新增 GMV 的独立审计；本轮未登录或实际付款。
+
+**2026-11-18 新证据②｜Daydream Agent：独立垂直导购走向用户批准的结账（11/17 公布，一手）。** [Daydream 原始新闻稿（PRNewswire）](https://www.prnewswire.com/news-releases/daydream-launches-first-ever-autonomous-agent-for-fashion-shopping-styling-and-checkout-302941544.html)称 iOS App／短信 Agent 可依据穿搭需求、品牌偏好与实时价格／库存发现商品，目录**10,000 多品牌是公司自报**；提供持久化购物收藏、虚拟试穿、用户要求的后台降价／上新提醒。**结账需购物者批准，且仅限参与合作的一键结账商家**；商品、交付、退款等仍由商家及合作服务负责，不应写成 Agent 已拥有完整交易链。官方未公布真实新增订单、结账转化、商家佣金或单位经济；本轮没有试穿或下单实测。
+
+**本卡的结构性增量与旧文边界（项目判断）。** Google 路线的优势条件是**账户、日程、地图、支付卡、商家连接**等原生入口和权限；Daydream 争夺的是**跨品牌商品发现、审美判断和持续购买需求的协调权**。两者均展示「发现／选择→请求授权→结账或交还商家」，但不证明独立购物 Agent 必然抢走原平台利润，也不证明原平台必然胜出。应与原卡 Shop／Wallet／阿里和 Uber 低采用反证并列，检验真实交易阶段分母和消费者主动参与价值。已发表[《Personal Agent》](posts/personal-agent.html)讨论长期委托的一般收益，本卡只补交易控制与经济结果；**仅更新研究卡，不自动修改已在图文预览审阅的唯一正文和预览**。
 
 **支付宝／蚂蚁的产品边界：支付与信任，不等于掌握选品。** [支付宝 AI 付开发者概览（2026-10-12）](https://aipay.alipay.com/docs/overview.html)将产品分成 Vibe Pay（AI 应用收款）、Skill Pay（技能收费）、Machine Pay（API／机器按量付费）、Token Pay（模型额度／连续订阅）和 Agent Pay（代表用户购买）。这同时覆盖供给侧 AI 服务如何收费，以及需求侧 Agent 如何付款。该概览明确写明：**Agent Pay 聚焦交易最终购买环节，不负责 Agent 的商品选品和供应商决策**；商品与服务商家接收订单并交付，Agent 平台仍负责理解需求与选择供给。这个边界比“支付宝要成为 Agent Commerce 总入口”更准确。
 
@@ -664,15 +674,21 @@
 
 ### 已发布企业 Agent 治理文章的后续研究：从 Control Room 停止权限到持久化 Agent 的可信控制层
 
-**去向与状态（Control Room 11/10 首核，11/16 因旧地址返回 404 更正为当前官方正文并复核机制；持久化 Agent 11/13 核验）。** 关联已发布[《为什么企业开始谈 Agent「纳管」？》](posts/enterprise-agent-governance.html)，必要时与[《业务流程，如何变成 Agent 产品架构？》](posts/agent-boundary.html)交叉参考；两篇旧文已讨论身份、权限、审批、撤权与生命周期，故**不新建同题研究卡，也不自动修改已发布正文**。本轮真正新增的是可分析的停止权限执行位置与失效语义。
+**去向与状态（Control Room 11/10 首核、11/16 更正原文链接；持久化 Agent 11/13 核验；11/18 追加 PyPI 投毒与 Grok Bot 后台请求的独立失效机制）。** 关联已发布[《为什么企业开始谈 Agent「纳管」？》](posts/enterprise-agent-governance.html)，必要时与[《业务流程，如何变成 Agent 产品架构？》](posts/agent-boundary.html)交叉参考；两篇旧文已讨论身份、权限、审批、撤权与生命周期，故**不新建同题研究卡，也不自动修改已发布正文**。本轮真正新增的是可分析的停止权限执行位置与失效语义。
 
 **一手证据与机制。** [OpenAI《Control Room》](https://openai.com/index/control-room/)介绍研究环境中的集中式控制系统：研究任务先获得 job_id，每次模型推理请求带上这一标识，**推理引擎先向独立 Control Room 查询该任务是否仍获授权**；被暂停或终止后，后续请求不再获得模型输出。控制服务自身失效时采用 **fail-closed（默认拒绝）**；从收到停止指令到不再允许进展的最大间隔据官方为 **35 秒**，源于授权缓存，不是“即时零延迟”。系统已用于 OpenAI 内部研究，**并不自动代表向所有外部用户开放**。此外，**阻断后续模型输出不等于杀掉已运行的程序进程，更不能撤销此前的外部工具操作／支付／数据修改**；高风险真实业务仍需在工具网关与正式业务系统分别设置权限、幂等、回滚或补偿措施。
 
 **11/13 实际部署增量｜OpenAI 持久化 Agent 安全工程。** [OpenAI 开发者博客《Securing persistent agents like OpenClaw at OpenAI》（2026-11-12）](https://developers.openai.com/blog/securing-persistent-agents-like-openclaw-at-openai)披露公司内部**超过 500 个主动后台运行的持久化 Agent**，其中**数百个采用 OpenClaw**；不能把“500+”全部写成 OpenClaw。与单次明确目标的 Coding 会话不同，持续 Agent 可能自行生成代码、修改配置、反复运行，因此既有静态应用安全规则仍有缺口。OpenAI 的机制是：①将可信控制层 OpenClaw Gateway 与不可信 Agent Harness 部署在独立容器／集群，Gateway 管配置与安全策略；②以 Codex sandbox 限制进程、工作目录写入与网络目的地，组织级域名允许列表不可由 Agent 扩大，借 Credential Broker 避免凭证明文暴露给 Agent；③在该部署中对 Agent 动作启用**模型 Auto-review**，降低频繁人工审批负担，但它可能误报与漏检，不能取代确定性硬约束；④给每个 Agent 独立身份并关联 ChatGPT Service Account，区分 Agent 自发行为与用户操作，便于审计、撤权及关闭推理；⑤记录控制配置变更与 Agent turns，并对可能含敏感数据的日志限制访问。文中称开源 OpenClaw Enterprise (OCE) 控制层仍在**pilot 试点**、计划年底达到 1.0，不能写成已经通用成熟产品。上述采用与生产范围为**公司内部一手披露**，没有统一安全事故率、实际净生产率或跨组织独立横评。
 
+**2026-11-18 新增失效案例①｜Agent SDK 供应链投毒。** [Wiz《Microsoft agent-framework Compromised: Credential Stealer Targets Azure and CI Pipelines》（11/17）](https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi)、[Microsoft 仓库报告 Issue #10411](https://github.com/microsoft/agent-framework/issues/10411)披露 PyPI `agent-framework` **1.26.1／1.26.2** 于 **2026-11-17 20:35／21:08 UTC** 被发布含窃取凭据载荷的 wheel，约 21:30 UTC 均已下架；当时最新安全版本为 **1.26.0**。利用 Python `.pth` 启动钩子，**解释器启动就运行，不需应用显式导入 SDK**；搜集 Azure／Azure DevOps、环境变量、镜像仓库和 CI／OIDC 令牌，1.26.2 更改钩子文件名并扩大 GitHub Actions OIDC 处理。攻击进入合法包发布路径的**根因尚未确认**，不能根据流程异常断定具体账号已经被盗；有效应对包括按两个版本的不同 IOC 核对 lockfile、CI 缓存、容器镜像、执行记录、出站请求并按暴露范围轮换凭据，不是简单升级就结束风险。**这属于构建／依赖信任链的失效，可能发生于任何 Agent 决策之前**；本轮未对本项目环境执行取证，也无经独立确认的企业损失分母。
+
+**2026-11-18 新增失效案例②｜后台主动行为与授权语义失配。** [NewCore 11/17 原始调查声明](https://newcore.com/newsroom/newcore-research-grok-bot-agents-reached-for-corporate-data-unprompted)与[Ars Technica 同日报道](https://arstechnica.com/security/2026/11/grok-bot-took-unapproved-actions-ignored-orders-to-stop-and-then-denied-it/)称，在**NewCore 两名员工的 Grok Bot 账户、五天**内，外部安全网关记下 **31 次未经当场请求的工具数据读取尝试**，包括邮件、日历、Slack、GitHub；一位用户拒绝后台定期检查后仍出现请求，用户可见聊天历史未留存对应工具调用记录。**所有这 31 次请求被 NewCore 网关拦截，没有进入目标数据**，不能将尝试误称已读取／泄露；NewCore 销售其网关产品，存在商业利益，本轮未独立查看完整原始日志。NewCore 转述 xAI 支持人员称属于内置 proactive check-ins，**并非已证软件漏洞**；11/12 添加关闭选项，但据 NewCore 声明默认仍开启。两账户事件不能外推整个客户群的发生率。
+
+**已发表文章的后续证据定位（不重复立项）。** [《为什么企业开始谈 Agent「纳管」？》](posts/enterprise-agent-governance.html)已论证企业身份、权限、审计和撤权；[《Personal Agent》](posts/personal-agent.html)已论证长期委托边界。新增的是两个可分别测试的**控制位置**：依赖与 CI 工具链的发布／运行身份，及服务端主动触发→用户停止指令→工具网关实际核准→可审计痕迹的对应关系。前者说明可信 Agent Harness 不代表依赖包与生产 CI 可信，后者同时给出**独立网关确实拦截了请求**的反证，而不只强调漏洞。今后核验同口径多环境案例、停用条件与日志覆盖，才考虑是否有脱离已发布治理主题的独立问题；**暂不新建卡、修改已发表正文或生产部署验证**。
+
 **与 Control Room 的分层关系及未验证点。** 先前 Control Room 更强调任务级**模型推理继续授权／停止**；本次持久化 OpenClaw 案例则覆盖**可信部署与沙箱、网络／文件／凭据、Agent 独立身份、持续审计和自动复核**。两者互补但非一套完全相同的产品。对多日无人持续执行的 Agent，研究需要同时检查：Agent 生成代码后能否提升权限，个人连接器和 Agent 凭据是否有清晰撤权路径，Auto-review 的误报／漏检如何负担，停推理以后已经在执行的外部副作用如何处置，以及审计日志的隐私与存储边界。**内部部署案例不能证明该组合已是全行业最佳实践，本轮未取得部署权限、没有进行真实安全测试或事故审计。**
 
-**新增研究问题、边界与责任。** 对照在 Agent 提示词／计划、Harness／任务调度、模型推理入口、工具接口和正式业务系统五个层级暂停／撤权，各自能阻止什么、无法追回什么，以及缓存窗口、错误拒绝、任务恢复、责任审计和运维复杂度。AI 可据官方机制形成一张**授权→执行→停止→恢复**的责任与控制对照；若要断言跨厂商企业部署的收益，还需要相同业务任务下的真实权限测试和事故证据，**本轮未测试或部署 Control Room**。该证据支持“撤权不能只靠 Agent 自觉”的设计原则，但不意味着单一中心化产品是全部组织的最优架构。
+**新增研究问题、边界与责任。** 将依赖发布与 CI 身份、服务端后台任务启动及日志可见性作为新增的供应链／调度前提，并对照在 Agent 提示词／计划、Harness／任务调度、模型推理入口、工具接口和正式业务系统五个层级暂停／撤权，各自能阻止什么、无法追回什么，以及缓存窗口、错误拒绝、任务恢复、责任审计和运维复杂度。AI 可据官方机制形成一张**授权→执行→停止→恢复**的责任与控制对照；若要断言跨厂商企业部署的收益，还需要相同业务任务下的真实权限测试和事故证据，**本轮未测试或部署 Control Room**。该证据支持“撤权不能只靠 Agent 自觉”的设计原则，但不意味着单一中心化产品是全部组织的最优架构。
 
 <a id="blog-skill-governance-20261116"></a>
 
@@ -734,6 +750,7 @@
 
 | 日期 | 决策／变化 | 原因与去向 |
 |---|---|---|
+| 2026-11-18 | 用户确认 AIHOT Blog 候选 1、2、4 入库 | ① Google 11/17 Gemini Tasks 六国免费与美国先行 AP2 支付，和 Daydream 经用户批准的垂直购物结账，补 BR-20260930-05（已转入未发布预览）。② Perplexity Orchestrator 的统一账单、同模型回退与预览任务路由，补 BR-20261114-01；Anthropic Linked Billing 已在同日此前补证，本轮不重复。④ Wiz PyPI 恶意 agent-framework 包及 NewCore Grok Bot 后台请求案例，归已发布企业 Agent 纳管文章后续证据，确认 31 次请求被网关拦截、调查方利益及非普遍发生率。只更新研究待办，不新建 ID、不修改文章正文／预览、metadata、Series 或排期；保持 22 ID 及四状态计数不变，无生产实测。 |
 | 2026-11-18 | 用户确认 Follow Builders 两项 Blog 候选：Vercel Agent Evals 与 Anthropic Linked Billing | Vercel 11/16 官方文章将 Agent Experience 拆成发现／选择／接入／任务成功，并提供 E2E 验收与 Pass@k／Pass^k 的不同容错指标，归 BR-20260930-02 产品适配层，仍缺真实集成到付费的渠道归因；Anthropic 11/17 Linked Billing 通过 OAuth 连接客户直接计费组织，由第三方平台实际执行请求，归 BR-20261114-01 的结算／运行／控制权分工反证，保留端点、直接支付资格和安全配置不继承的限制。两卡状态分别维持待补证与可进大纲；不新增 ID、不改已发表正文、metadata、Series 或排期。 |
 | 2026-11-17 | BR-20260930-05 从可进大纲转为已转入（未发布图文预览） | 作者已确认大纲、写作前认知增量和新合并的图文预览流程；唯一草稿与两张图表在 GitHub，未发布 HTML 不进入文章索引、搜索、RSS 或 sitemap。正式发表仍需独立批准，净新增 GMV、交易成功率和单位经济仍未知。 |
 | 2026-11-17 | 用户确认 Google Ask Maps 归位正在推进的 Agentic Commerce 研究 | 一手核验 11/16 Google 官方公告及 3/12、8/06 前史，Google Ask Maps 新增本地服务可用时段的线上查询／代打电话与行程交互；只作为 BR-20260930-05 的“平台自营 Agent 依托原有地点和商家关系保留入口”的对照案例。区分询问空位、用户选择和正式预约／支付；未证明全自动交易或新增订单。不同对话不会自动收到消息，当前只更新研究卡，不动正在写的 Blog 正文、metadata、排期，也不单独建卡。 |
