@@ -127,6 +127,8 @@ OpenAI 靠消费者 AI 入口接近需求与选择，再通过 Wallet 延伸至�
 
 Google 的 [Agent Payments Protocol（AP2）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/) 侧重用户授权与支付验证。2026 年 4 月，Google 将 AP2 捐赠给 FIDO Alliance；AP2 0.2 探索基于预授权指令的 Human Not Present 交易。Google 与 Mastercard 共同开发的 Verifiable Intent，则尝试为用户授权的 Agent 行为留下防篡改记录。[FIDO Alliance 对 AP2 与 Verifiable Intent 的说明](https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/)可见其信任层设计。但协议目标相似，并不等于 ACT、AP2 和 UCP 已经互相兼容。
 
+这一协议也进入了 Google 自己的消费者产品。根据 [Google 11 月 17 日公告](https://blog.google/innovation-and-ai/products/gemini-app/tasks-in-gemini-free-new-features/)，Gemini Tasks 在部分购物场景中通过 Shopping Graph 比较商品，再结合 Google Pay 和 AP2 协助结账；购买需要用户确认或事先授权，购物支付功能首先面向美国开放。UCP 集成仍是未来计划。这证明协议已进入具体产品流程，不代表跨商家普及、完成率或净新增交易得到验证。
+
 支付网络则从原有职能向 Agent 身份和支付控制延伸。2026 年 10 月，[Visa、BILL 与 Billtrust](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)宣布一项实际运行的 B2B 发票支付试点：买方 Agent 在预先批准的规则内使用令牌化支付凭证，通过供应商门户付款。这是企业发票结算的生产试点，不是消费者购物已经普及的证据。
 
 | 主要竞争位置 | 代表企业 | 重点能力 |
@@ -252,6 +254,7 @@ Uber 和 Google Maps 的任务不同，共同点却很清楚：**原有平台可
 - [阿里巴巴：2026 财年 Form 20-F](https://data.alibabagroup.com/ecms-files/1514386754/b0f928b2-88f0-469d-905e-a714d19fb913/2026%20SEC%20Form%2020-F.pdf)
 - [Shopify：Universal Commerce Protocol](https://www.shopify.com/ucp)
 - [Google：AP2 与 FIDO Alliance（2026-04-28）](https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/)
+- [Google：Gemini Tasks 使用 Google Pay 与 AP2（2026-11-17）](https://blog.google/innovation-and-ai/products/gemini-app/tasks-in-gemini-free-new-features/)
 - [FIDO Alliance：AP2 与 Mastercard Verifiable Intent 信任层（2026-05-26）](https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/)
 - [Visa：BILL 与 Billtrust Agent 支付试点（2026-10-20）](https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html)
 - [Instinct 创始人：Instinct 与 Shopify 商品发现、Shop Pay 结账及订单更新合作（2026-09-28）](https://x.com/noahrshinn/status/2104628465488306183)
