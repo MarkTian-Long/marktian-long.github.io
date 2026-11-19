@@ -24,10 +24,10 @@
 
 | 研究问题 | 创建日期 | 状态／成文范围 | 本轮结果与下一触发 |
 |---|---|---|---|
-| [Token 分发平台能否成为独立的价值捕获层？](#br-20261114-01) | 2026-11-14 | 可进大纲（独立价值成立条件，非已实现高利润） | Hugging Face 外包路由、Perplexity Orchestrator 统一结算与故障回退、Anthropic Linked Billing 终端直付构成新分工对照；独立平台分账、净利润和留存仍未证 |
+| [Token 分发平台能否成为独立的价值捕获层？](#br-20261114-01) | 2026-11-14 | 可进大纲（独立价值成立条件，非已实现高利润） | DeepSeek 11/18 模型端搜索不另计费、独立 Search／Fetch 仍收费，是上游工具层定价新反例；结合 Hugging Face／Perplexity／Anthropic 的路由与结算分工，独立平台净利润和留存仍未证 |
 | [AI 时代，什么时候该用聊天，什么时候该保留其他界面？](#br-20261113-02) | 2026-11-13 | 可进大纲（任务条件下的交互选择） | DynaVis 支持混合界面；Deepnote 量化误介入的模型响应耗时与模型费用，不是含工具执行及用户打扰的全成本；按四层任务取舍 |
 | [当 AI 成为会议参与者，Claude Meetings 会怎样改变会议产品？](#br-20261113-01) | 2026-11-13 | 可进大纲（会议成果与权限机制，效果待测） | 修正连接器权限：各成员自己的工具与授权，不是全员继承会议发起者权限；内外会议与成果可见性分别比较 |
-| [金融 Agent 获得交易权后，谁来授权并承担错误责任？](#br-20261109-01) | 2026-11-09 | 可进大纲（美国案例的权限、订单与责任分层） | 已核 Robinhood 正式协议 §29.8 并查看 PDF 页面：有效撤权前收到的指令不自动取消；合同陈述不代替监管或个案裁决 |
+| [金融 Agent 获得交易权后，谁来授权并承担错误责任？](#br-20261109-01) | 2026-11-09 | 可进大纲（美国案例的权限、订单与责任分层） | 新核 Citi 11 月第三方 AI Agent 条款 H 的用户风险分配与适用法律例外，并以 CFPB 的 EFTA／Regulation E 解释辨析合同免责边界；不预判具体损失责任 |
 | [AI for Science 的生物学突破口，会是虚拟细胞驱动的实验闭环吗？](#br-20261108-01) | 2026-11-08 | 可进大纲（预测、实验设计与验收机制） | 新增 Isomorphic 跨药物项目学习复利的待验证机制对照；Arc 支持跨背景评价，LabCompass 全文访问未解决；不虚构临床增益或完整闭环 |
 | [软件调用智能时，模型与程序怎样分工？](#br-20261107-01) | 2026-11-07 | 可进大纲（接口、判断与代码决策边界） | 用“语义判断→确定规则→授权执行→实际结果”解释原命题；新增退款任务的论证落点，不能把合法 JSON 当业务正确 |
 | [Agent 工作负载如何改变 Git 与代码协作基础设施？](#br-20261103-03) | 2026-11-03 | 已转入（已发布，限定 Git／审查链路） | [正式文章](https://marktian-long.github.io/tools/blog/posts/agent-scale-git-infrastructure.html)；仅在同口径负载、审查、缺陷或回滚新证据出现时补充 |
@@ -49,7 +49,7 @@
 
 **已发布文章与在途系列，不重复新建卡。** 产业史系列 02《[技术最领先的人，为什么不一定拿走最大的价值？](https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html)》已于 2026-11-08 正式发布，正式 Markdown 在 [`docs/blog/ai-innovation-value-capture.md`](../../docs/blog/ai-innovation-value-capture.md)；不再把旧 Brief 的“优先启动候选”或已失效 draft 路径当成当前状态。系列 03／04／05 的本轮证据见[系列分支补证](#series-evidence-20261107)，规划归属仍在原 Brief。多模态—视频—世界模型系列已结项，不自动补第六篇。
 
-已发布主题的后续证据：[记忆系统 × Personal Harness：Dreaming、Harness²](#blog-memory-dreaming-20261107)；[企业 Agent 治理：Control Room、持久化 Agent、PyPI 投毒与 Grok Bot 后台访问](#blog-control-room-20261110)；[Skills 治理：Databricks Genie One](#blog-skill-governance-20261116)；[硬件验证的数据接口：BTTF](#blog-hardware-eda-20261116)。教育效果的反证归[产业史系列 04](#series-evidence-20261107)，不另立卡。
+已发布主题的后续证据：[记忆系统 × Personal Harness：Dreaming、Harness²](#blog-memory-dreaming-20261107)；[企业 Agent 治理：Control Room、持久化 Agent、PyPI 投毒与 Grok Bot 后台访问](#blog-control-room-20261110)；[Skills 治理：Databricks Genie One](#blog-skill-governance-20261116)；[硬件验证与生产设计后续：BTTF、OpenAI × AMD](#blog-hardware-eda-20261116)。教育效果的反证归[产业史系列 04](#series-evidence-20261107)，不另立卡。
 
 **11/07 三篇来稿归位。** AI 写作与 AGI／研究选择两篇进入[系列 04 的材料](#series-evidence-20261107)；Persom 进入[既有 Memory／Harness 后续证据](#blog-memory-dreaming-20261107)，并由持续委托和成功任务指标两卡交叉引用。不增加独立 BR 卡，不把来源观点改成作者立场，不改变文章排期。正文依据为用户上传的完整 PDF；原文链接按用户提供的对应关系保留，本轮微信原站读取受限，不将 PDF 阅读说成在线全文核验。
 
@@ -59,7 +59,7 @@
 
 ### BR-20261114-01｜Token 分发平台能否成为独立的价值捕获层？
 
-**创建：2026-11-14｜内容更新：2026-11-18｜状态：可进大纲（独立价值与收费的成立条件；不宣称某平台已经形成持久高利润）。** 具名客户的直采／网关共存、云平台零加价治理、DeepSeek 上游工具打包构成既有正反证；11/17 Hugging Face 将运行时路由委托 OpenRouter，同日 Perplexity Orchestrator 公开统一结算、同模型跨提供方回退和预览任务路由，使独立路由职责更具体，但不等于已证平台利润、稳定议价或所有任务可迁移。条件性商业分析继续可进大纲，不自动批准标题、分类或排期。
+**创建：2026-11-14｜内容更新：2026-11-19｜状态：可进大纲（独立价值与收费的成立条件；不宣称某平台已经形成持久高利润）。** 具名客户直采／网关共存、云平台零加价治理、DeepSeek 上游工具打包，及 11/17 Hugging Face／OpenRouter 运行时分工与 Perplexity 模型路由已提供正反证；11/18 DeepSeek 模型端服务端搜索／抓取免另计费（独立 Search／Fetch 仍收费）增加直接定价反例，不能据此证明独立平台利润或必然替代。条件性商业分析继续可进大纲，不自动批准标题、分类或排期。
 
 **作者原始触发与重点（2026-11-14，当日对话；个人问题意识而非行业统计）。** 作者回看产业史系列首篇[《看 AI，不要只问它像历史上的哪一年》](posts/ai-industry-history-mechanisms.html)中关于 OpenRouter／Hugging Face 的「供给丰富后，瓶颈向发现、评价、选择和协调迁移」判断，因百度新推出「词元所」而追问：百度词元所、OpenRouter、硅基流动、火山方舟、Google／AWS／Azure 究竟处于不同层，还是不同产品功能重叠？为什么国内部分 API 中转站呈现个人化、授权和来源不透明的现象；大型云厂商公开提供第三方模型意味着什么？作者希望进一步发散搜索，**尤其寻找反例，避免把分发入口重要直接推成分发平台能赚钱**。不能把「部分小型站点有灰色供应链」概括为国内聚合行业整体灰产。
 
@@ -102,6 +102,10 @@
 **2026-11-18 新证据｜Perplexity Orchestrator 分开“选模型”与“选同模型推理提供方”（11/17 官方发布）。** [Perplexity 原始发布](https://www.perplexity.ai/en-GB/hub/blog/introducing-orchestrator)及[技术说明《Orchestrator: one API for reliable inference》](https://www.perplexity.ai/en-GB/hub/blog/orchestrator-one-api-for-reliable-inference)显示：它以单一 API／统一供应商账单提供专有与开放权重模型，支持 OpenAI Chat Completions／Responses、Anthropic Messages 请求格式与 SDK；组织可设置项目用量、模型允许列表和支出上限。厂商称**credits 之外没有额外平台费**，这并不等于调用无成本，也不披露实际平台毛利。**同模型提供方路由**依据健康度、容量、延迟，将失败请求重试到同一模型的另一部署；**Routes 自动模型选择为预览功能**，按任务描述选择不同模型或使用默认模型。两层决策不可混同，兼容 SDK 也不保证模型行为完全一致。官方称其自有生产层每天处理来自 **85+ 模型和十余家提供方**的请求，此为内部生产规模，**不是 Orchestrator API 同期公开模型数或外部付费客户规模**。
 
 **效果证据、竞争解释与经济边界。** 技术说明把 **2026-10-04—11-02** 自身流量的请求成功率作为路由佐证，失败口径排除了客户端错误；这是**厂商自行测量**，未提供覆盖不同模型和全部成本的独立横评。与先前的 Hugging Face 向 OpenRouter 外包路由，以及已记录的 **Anthropic Linked Billing（平台执行请求、客户直接向上游支付）**构成反向三角：**路由权、合同签约方、谁付 Token、治理能力与平台服务费**可以不同方式组合。上游或大平台可将路由和结算打包、且标示无单独平台费，是独立平台收费的竞争反例；但多供应商维护和同模型故障恢复又是可供购买的具体服务。仍须同质量约束的端到端费用、请求恢复、迁移成本、分账、净利润和留存来判断独立价值捕获；**本轮未实际调用 API、核算供应商合同或生产验收**。Anthropic Linked Billing 已于本日另一轮补证，本次仅作引用，不重复新建材料版本。
+
+**2026-11-19 核验｜DeepSeek 模型端搜索免单独计费，独立 Search／Fetch 仍收费（11/18 12:00 北京时间生效）。** [DeepSeek 官方《模型 & 价格》](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)写明：调用模型触发的服务端文字搜索／网页抓取自北京时间 **2026-11-18 12:00 起不再另外计费，只收模型 token**；所列入口包括其联网工具、Anthropic API `web_search` 和 Responses API `web_search`。与之不同，[独立 Search／Fetch API](https://api-docs.deepseek.com/zh-cn/guides/search/)仍按**成功请求次数**收费，文字 Search 与 Fetch 均为**人民币 5 元／1000 次**；不能写成“DeepSeek 所有搜索 API 免费”。该日期与金额来自当次可读官方价格合同；未验证实际账单、历史调价差额或长期价格承诺。
+
+**对既有核心论点的真实增量。** 11/13 本卡已证明模型上游开始直接**提供**搜索、抓取等工具；此轮新增的是**模型厂商可以通过 token 收费打包工具请求，而把获取独立结构化搜索结果／抓取内容的 API 继续单独收费**。因此“上游工具存在”与“上游如何抽取收入”不再混为一层：直接独立网关若只转售同质的模型内联网调用，单独收费空间可能受到挤压；跨上游模型选择／回退、原始结果控制、预算策略、隐私、透明度、责任 SLA 仍可能有实际付费价值。与 Hugging Face—OpenRouter 实际路由外包、Perplexity Orchestrator 统一账单、Anthropic Linked Billing 终端直付构成竞争组织方式对照。判断是否真的迁移利润，仍须同任务质量约束下核验模型端搜索／独立工具 API／第三方网关的**端到端费用、重试、人工纠错、成功率、独立客户采用及净利润**；本轮未调用付费 API 或做供应链审计。维持“可进大纲”的条件性成文范围，不重新建立同题卡。
 
 **商业条件与最强竞争解释（本项目推导）。** 独立平台可持续收费，需要其跨供应商选择、运行控制、可信比较和责任服务产生的客户收益，在相同质量与风险约束下超过平台费用和额外依赖；还需服务可重复交付，不能每个客户都重新投入等比例人工。Descript／Sentry 说明独立客户即使直签上游仍可购买第三方路由；Hugging Face 进一步证明已有自建路由与平台入口的企业也会把语言模型路由交给外部专业服务，但其经济条件尚不公开。Vercel／Cloudflare 说明同样需求可由云或开发平台低价内置；DeepSeek 说明模型上游也开始自行整合搜索、抓取与基础多模态工具，进一步增加独立中间层的替代选择。供方独有模型／专属算力、客户已有大额合同和权限要求会限制平台路由空间；平台自己的配置、日志、策略或数据若不可迁移，也可能增加客户锁定成本。**这是一组可检验条件，不是平台必胜或“越靠近入口越赚钱”的定律。** 反向指标包括客户绕过平台、治理能力被无加价替代、同等服务下付费溢价消失，以及高增长调用量未转化为净收益。
 
@@ -172,7 +176,7 @@
 
 ### BR-20261109-01｜当金融 Agent 获得真实交易权，谁来授权、约束并承担错误责任？
 
-**创建：2026-11-09｜内容更新：2026-11-14｜状态：可进大纲（美国自主管理账户案例的权限、订单与责任分层；不作个案法律判责或安全效果保证）。** 来自 11/09 Follow Builders 对 [No Priors 2026-11-05 Vlad Tenev 原始访谈](https://podcasts.apple.com/nl/podcast/tokenization-agentic-trading-harmonic-robinhoods-mission/id1668002688?i=1000800029787)的候选 1，用户确认加入研究待办；确认的是**高风险金融 Agent 的执行权责问题**，不是确认单篇标题、大纲或金融投资建议。本轮补足监管原文和订单生命周期的明确边界，不再要求先出现事故赔付才能分析权责结构。
+**创建：2026-11-09｜内容更新：2026-11-19｜状态：可进大纲（美国自主管理账户案例的权限、订单与责任分层；不作个案法律判责或安全效果保证）。** 来自 11/09 Follow Builders 对 [No Priors 2026-11-05 Vlad Tenev 原始访谈](https://podcasts.apple.com/nl/podcast/tokenization-agentic-trading-harmonic-robinhoods-mission/id1668002688?i=1000800029787)的候选 1，用户确认加入研究待办；确认的是**高风险金融 Agent 的执行权责问题**，不是确认单篇标题、大纲或金融投资建议。本轮补足监管原文和订单生命周期的明确边界，不再要求先出现事故赔付才能分析权责结构。
 
 **核心问题与用户重点。** 当 AI 从只读分析、投资建议跨入可执行订单，如何在客户授权、第三方模型、交易券商和监管责任之间划定边界？研究必须拆开**①资金与账户的执行权限；②跨账户的只读金融数据；③单笔交易建议／人工审批／自动执行；④事前限制、异常中止、事后审计和损失责任**，不能用一个“Agent 已被授权”覆盖四层。需要区分内置 Agent 与通过 MCP（Model Context Protocol，模型上下文协议）接入的外部 Agent，以及真实可用功能与平台未来愿景。
 
@@ -187,6 +191,12 @@
 **第二平台与监管参照（2026-11-14 核验官方原文）。** [Alpaca Trading API MCP](https://docs.alpaca.markets/us/docs/trading-api-mcp)支持订单，默认 paper trading，配置及对应凭证可用于真实交易；文档提醒审核 AI 建议不等于已证明服务端强制逐笔审批。[Alpaca Broker API MCP](https://docs.alpaca.markets/us/docs/broker-api-mcp)是另一产品：Beta 面向部分券商伙伴，生产环境当前只读、sandbox 支持写入，OAuth 仅具相应权限的 superuser 可授权，移除角色在下一次 token 刷新时撤权。不能把 Broker 的沙箱写入当真实资金交易，也不能混用两产品的安全规则。
 
 [FINRA Regulatory Notice 24-09（2024-06-27）](https://www.finra.org/rules-guidance/notices/24-09)明确会员机构在业务中使用自研或第三方生成式 AI 时，适用的现有规则仍生效；具体义务依部署方式和业务用途，不是新增统一 Agent 法规。**它不能直接推出券商须为所有客户自带模型的投资损失负责，也不能支持合同免责声明消除全部既有义务。** 既有[《2026 Annual Regulatory Oversight Report》](https://www.finra.org/sites/default/files/2025-12/2026-annual-regulatory-oversight-report.pdf)第 27 页的自主性、越权和审计风险参照沿用前轮截图核验；报告实际发表于 2025 年 12 月，不是 2026 年 11 月新法规。
+
+**2026-11-19 新证据｜Citi 第三方 AI Agent 合同条款与银行授权风险（11 月新增，11/19 核对原始合同）。** [Citi《Citi Online User Agreement》官方可打印合同](https://www.citi.com/tandc/view-printable-version)首页声明 **2026 年 11 月**新增 H 节“Use of Third-Party Artificial Intelligence (‘AI’) Agents”；适用于第三方 Agent 通过 **Citi Online／Citi Mobile** 访问账户或服务，定义覆盖自主／半自主／非自主执行，**不适用于 Citi 在其服务内提供的工具**。H 节劝阻用户交给第三方 Agent 登录凭据或交易执行权；若用户授权，Citi **在合同中主张**将 Agent 操作视为用户授权，也主张由用户承担凭据进一步共享／泄露、Agent 误解指令、超越授权和后台执行的风险，并允许银行限制或停止第三方 Agent 访问。其明确告知 Citi 隐私声明不覆盖第三方 Agent 的数据处理。关键限定：责任措辞含 **“except as otherwise permitted under applicable law”**（适用法律另有规定的除外），不能把条款解读为银行在任何盗号、错误转账场景中当然免责。
+
+**监管与事故类型的对照（2026-11-19 核验官方说明，法规本身不是当日新法）。** [CFPB《Electronic Fund Transfers FAQs》](https://www.consumerfinance.gov/compliance/compliance-resources/deposit-accounts-resources/electronic-fund-transfers/electronic-fund-transfers-faqs/)解释美国 EFTA／Regulation E 对覆盖的**消费者电子资金转移（EFT）**保留未经授权转账和错误处理保护；第三方被黑导致凭据被盗与用户**明示授权代理使用凭据却内部越权**并非自动等价情形。该 FAQ 还表明金融机构**不能仅靠合同或消费者一般疏忽放弃法定的责任限制**。具体争议仍要分析谁获得访问设备、是否真正授权、何时通知撤权、转账渠道、个人／企业账户及交易发生阶段；这些保护不能机械套用到证券买卖、所有电汇或每种企业金融账户。[TechCrunch 2026-11-18 报道](https://techcrunch.com/2026/11/18/more-banks-says-customers-using-ai-agents-are-on-their-own-even-if-they-get-hacked/)转述 Citi 发言人，并提及 JPMorgan、Bank of America、PNC、Citizens 的相关安排，但**本轮未逐家核验后四家完整有效条款和生效日**，不称其合同内容全部相同。
+
+**对在研卡的结论与已发布文章碰撞。** 原 Robinhood／Alpaca 案例聚焦交易券商、专用账户、逐笔审批、订单取消与不可逆成交；Citi 进一步显示**金融服务提供方可在客户委托第三方 Agent 时改变合同风险叙事**，但合约主张须同时受强制法与监管义务检验。需区分银行自营代理／外部代理、只读数据／支付／证券订单、技术授权／合同免责／实际损失责任三层。已发表[《为什么企业开始谈 Agent「纳管」？》](posts/enterprise-agent-governance.html)已有一般身份撤权治理，本卡不新写泛安全文章，只建立**美国金融真实交易的授权、纠纷和法律有效性条件**；无实际银行登录、交易或司法结论，状态维持可进大纲。
 
 **成文边界与成熟度修正。** 现有两平台机制、监管一手说明及订单状态反例，足以回答“哪些权力由谁授予、控制在哪里执行、风险披露与责任判断为何不能混为一谈”。原卡把实际事故率／赔付结果作为全部权责分析的大纲前置条件过严，现仅将它们保留为**验证控制效果、实际损失分担和具体案件责任**的阻断项。当前限定美国案例，不外推中国监管，不跨股票／期权／加密资产套用同一法律结论；不得宣称最佳实践、安全保证或某方一律承担／免除损失。
 
@@ -708,13 +718,17 @@
 
 <a id="blog-hardware-eda-20261116"></a>
 
-### 已发布硬件编码主题的后续证据：BTTF 将芯片仿真反馈变成可查询的数字接口
+### 已发布硬件编码主题后续证据：BTTF 仿真反馈与 OpenAI × AMD 生产设计优化
 
-**去向与状态：已发布主题的后续证据，2026-11-16 核对论文 HTML，不新建研究卡。** 主归已发表[《让 AI 写代码这件事，为什么到硬件就不行了》](posts/ai-coding-hardware.html)，与[BR-20261107-01 模型判断／确定性程序分工](#br-20261107-01)交叉引用。旧文讨论真实硬件环境的物理不确定性，本条讨论**芯片设计中尚处于仿真／RTL 的数字化验证子环节**，不能把二者合并或用论文抹平现实鸿沟。
+**去向与状态：已发布主题的后续证据，2026-11-16 核对 BTTF 论文、11/19 核对 OpenAI × AMD 官方研究，不新建研究卡。** 主归已发表[《让 AI 写代码这件事，为什么到硬件就不行了》](posts/ai-coding-hardware.html)，与[BR-20261107-01 模型判断／确定性程序分工](#br-20261107-01)交叉引用。旧文讨论真实硬件环境的物理不确定性，本条讨论**芯片设计中尚处于仿真／RTL 的数字化验证子环节**，不能把二者合并或用论文抹平现实鸿沟。
 
 **来源与方法。** [Je Yang、Ivan Lobov、Thomas Karpati《Back to the Future: Rethinking EDA Infrastructure for Agentic Systems in Chip Design Verification》，arXiv:2610.06790](https://arxiv.org/abs/2610.06790)于 **2026-10-05** 提交，**10-22 修订 v2**。BTTF 把原本超出模型上下文容量的仿真波形转储拆成带信号层级、时间戳及版本信息的 **SQLite 关系数据**，由多 Agent 将自然语言问题转换为受结构约束的 SQL／确定性工具查询，关联 RTL 代码；论文列出查信号、计数、异常时间定位、静态／动态规则检查等范围。在**150 个专家标注验证查询**上，论文报告 **95.33% execution accuracy**，不是整块芯片从设计到流片的成功率、真实硅片通过率或相同硬件修复净收益。该结果是作者自报，未复现代码，也不是可直接对所有物理硬件场景外推的因果评测。
 
 **对旧文的必要校正及下次触发。** 旧文“硬件环境难构成软件式数字闭环”的结论应**限定在真实嵌入式设备、传感器、现场物理测试等环节**；芯片前硅仿真与波形调试原本就有数字反馈，真正瓶颈可能是非结构化数据太大、缺索引、缺供 Agent 安全调用的工具，而非“硬件问题都无法数字化验证”。BTTF 提供该反例，但**只提升检索／分析与部分检查流程，不证明物理校准、时序边界、量产验证或现实鸿沟已解决**。进一步需以同设计、同波形、同问题比较人工调试、原始日志 Agent 与 BTTF 的错误定位准确率、漏检、可解释性、总人时与集成成本；若有更可靠跨芯片外部复现或真实 post-silicon 进展，再评估旧文是否需要单独修订。目前先保留研究记录，不自动改正式文章。
+
+**2026-11-18 生产工程增量｜OpenAI × AMD 与自研 Jalapeño（11/19 核验官方一手）。** [OpenAI《Advancing chip design with OpenAI models》](https://openai.com/index/advancing-chip-design-with-our-models/)区分三个证据层级：① **AMD 旗舰 GPU 的部分 IP 模块**，在工程师已经长期优化的 RTL 基线上，模型通过 SystemVerilog 重写、Synopsys EDA 工具验证逻辑等价及 PPA（功耗／性能／面积）权衡，实现**最高约 14% 的指标改进**；AMD 把**部分修改送入最近一次制造设计**，另有修改纳入供未来使用的生产文件，**不等于这 14% 已经经 AMD 量产硅片实测**。② AMD 下一代旗舰 CPU 的若干模块，经 AMD 验证有**个位数百分比的 PPA 增益**，与 GPU 指标分开。③ OpenAI 自研 **Jalapeño** 的向量单元、矩阵单元标准单元面积，分别估算减少**约 13%／10%**，且官方称在该芯片 **silicon bring-up（上硅调试）**期间已验证；不能把 Jalapeño 的硅片证据借给 AMD。模型、EDA 工具和工程师共同参与方案选择与验证，厂商未披露跨芯片独立审计或通用研发增益。
+
+**研究中的评测反证与旧文校正。** 同一 OpenAI 发布还用 PicoRV32／Ibex 两种开源 32-bit RISC-V 核比较 RTL 优化和从文字规格重建的吞吐，经过模拟检查、不通过或超面积记零；约 **11.2 万 token／次**的共同预算下 GPT-6.2 Astra 在该组测试平均最优。但“按规格重建”可能省略原 CPU 的性能计数器或额外指令，官方也指出更严格的特性保持、面积与物理综合时序约束才更接近生产。因此**模拟基准不等于真实流片、可靠交付或无需专家参与**。已发布[《让 AI 写代码这件事，为什么到硬件就不行了》](posts/ai-coding-hardware.html)曾把硬件反馈难形成数字闭环说得过宽；继 BTTF 验证波形结构化后，此次为**RTL／前硅仿真／EDA 验证与可制造设计**提供更强的反例，说明芯片设计有机器可检查的局部数字反馈并已有真实硬件结果。仍不得外推为传感器、板级系统、热、电磁干扰、可靠性与现场维护的物理不确定性都已解决，或 AI 独立完成全芯片设计。需要时应修正旧文**“硬件编码几乎失效”**的概括，而非另建一篇同题文章；正式修订须单独确认，本轮只维护后续研究记录。
 
 <a id="series-evidence-20261107"></a>
 
@@ -756,6 +770,9 @@
 
 | 日期 | 决策／变化 | 原因与去向 |
 |---|---|---|
+| 2026-11-19 | 用户确认 AIHOT Blog 候选 1、2、4 | ① DeepSeek 11/18 12:00（北京）模型触发的服务端搜索／抓取不再单独计费、独立 Search／Fetch 仍每千次成功请求 5 元，归 BR-20261114-01 定价反证。② OpenAI 官方 AMD GPU 部分 PPA 最高 14% 改善、部分修改送制造，与 Jalapeño 13%／10% 面积减少且经硅片验证分开，归已发表硬件编码主题后续，与 BTTF 互补。④ Citi 11 月协议 H 节限制第三方 AI Agent 并主张客户风险，结合 CFPB EFTA／Regulation E 的强制保护归 BR-20261109-01，合同主张不等于法律免责。本次核来源、区分证据级别；不新建卡，不改已发布正文、metadata、Series 或排期，不作金融或硬件生产实测，22 ID／原状态不变。 |
+
+
 | 2026-11-19 | 用户确认 Follow Builders Blog 候选 1：Replit Missions 纳入工作组织研究 | 在 BR-20261009-01 记录 Replit 11/17 目标契约、预算及人工审批、多 Agent 并行执行、AI Judge 验收／预算耗尽停止；DataCat 的两天／3000 美元预算上限、38 秒告警、2600 万事件／440 万日志及 51 项检查为厂商自测，区分独立兼容性测试和单次构建对照，不外推为真实销售净收益或普适组织优越性。维持“可进大纲”，不新建 ID、不修改 Blog 正文、metadata、Series 或排期。 |
 | 2026-11-18 | 用户确认 AIHOT Blog 候选 1、2、4 入库 | ① Google 11/17 Gemini Tasks 六国免费与美国先行 AP2 支付，和 Daydream 经用户批准的垂直购物结账，补 BR-20260930-05（已转入未发布预览）。② Perplexity Orchestrator 的统一账单、同模型回退与预览任务路由，补 BR-20261114-01；Anthropic Linked Billing 已在同日此前补证，本轮不重复。④ Wiz PyPI 恶意 agent-framework 包及 NewCore Grok Bot 后台请求案例，归已发布企业 Agent 纳管文章后续证据，确认 31 次请求被网关拦截、调查方利益及非普遍发生率。只更新研究待办，不新建 ID、不修改文章正文／预览、metadata、Series 或排期；保持 22 ID 及四状态计数不变，无生产实测。 |
 | 2026-11-18 | 用户确认 Follow Builders 两项 Blog 候选：Vercel Agent Evals 与 Anthropic Linked Billing | Vercel 11/16 官方文章将 Agent Experience 拆成发现／选择／接入／任务成功，并提供 E2E 验收与 Pass@k／Pass^k 的不同容错指标，归 BR-20260930-02 产品适配层，仍缺真实集成到付费的渠道归因；Anthropic 11/17 Linked Billing 通过 OAuth 连接客户直接计费组织，由第三方平台实际执行请求，归 BR-20261114-01 的结算／运行／控制权分工反证，保留端点、直接支付资格和安全配置不继承的限制。两卡状态分别维持待补证与可进大纲；不新增 ID、不改已发表正文、metadata、Series 或排期。 |
