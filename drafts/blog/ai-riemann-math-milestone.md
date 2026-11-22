@@ -13,7 +13,7 @@ relations: [{"slug":"automated-research","type":"builds_on"}]
 
 ---
 
-![米白色数学手稿汇入验证节点，再向右延伸为确定的线条，象征复杂推理经独立验证](../../assets/images/blog/ai-riemann-math-milestone/proof-verification-hero.svg "编辑概念示意：从数学推理走向独立核验；画面并非实际 Lean 代码或 RH 的证明步骤。")
+![米白色数学手稿汇入验证节点，再向右延伸为确定的线条，象征复杂推理经独立验证](../../assets/images/blog/ai-riemann-math-milestone/proof-verification-editorial.webp "AI 生成概念示意：表现数学推理经独立核验；画面中的符号不代表实际 RH 证明。")
 
 11 月 20 日看到 Claude 参与证明黎曼猜想的新闻时，我的第一反应不是兴奋，而是怀疑。当天和朋友聊天，我还觉得这大概又是一次 AI 厂商的营销。最近几个月，“AI 解决某某数学难题”的消息一再出现：有些是竞赛题，有些是研究猜想，有些只有论文，有些附了 Lean 代码。看得多了，我对这种标题已经有些麻木。
 
