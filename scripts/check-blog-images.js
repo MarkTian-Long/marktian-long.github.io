@@ -2,8 +2,9 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const sharp = require('sharp');
-const { PUBLIC_FILES } = require('./public-dist-manifest');
+const { PUBLIC_FILES, resolvePublicPath } = require('./public-dist-manifest');
 
 const {
   validateImageContract,
@@ -206,6 +207,42 @@ function collectDraftPreviewImagePaths(rootDir, previewPaths = PUBLIC_FILES.filt
   return [...images].sort();
 }
 
+async function validateBlogImageAsset({ rootDir, imagePath }) {
+  const extension = path.extname(imagePath).toLowerCase();
+  const profile = PROFILE_BY_EXTENSION[extension];
+  if (!profile) throw new Error(`Unexpected blog image extension: ${imagePath}`);
+  const absolutePath = resolvePublicPath(rootDir, imagePath);
+  let current = path.resolve(rootDir);
+  for (const segment of imagePath.split('/')) {
+    current = path.join(current, segment);
+    const stat = fs.lstatSync(current);
+    if (stat.isSymbolicLink()) throw new Error(`Blog image symlinks are not allowed: ${imagePath}`);
+  }
+  if (!fs.statSync(absolutePath).isFile()) throw new Error(`Blog image must be a regular file: ${imagePath}`);
+  const bytes = fs.readFileSync(absolutePath);
+  if (bytes.length > profile.maxBytes) {
+    throw new Error(`Blog image must be at most ${profile.label}: ${imagePath} (${bytes.length} bytes)`);
+  }
+  if (extension === '.svg') validateStaticSvg(bytes.toString('utf8'), imagePath);
+  const image = await sharp(bytes).metadata();
+  if (image.format !== profile.format) {
+    throw new Error(`Blog image format must be ${profile.format}: ${imagePath} (found ${image.format})`);
+  }
+  const allowedHeights = [profile.height, ...(profile.extraHeights || [])];
+  if (image.width !== profile.width || !allowedHeights.includes(image.height)) {
+    throw new Error(`Blog image dimensions must be ${profile.width} x ${allowedHeights.join(' or ')}: ${imagePath}`);
+  }
+  try {
+    await sharp(bytes, { failOn: 'warning' }).stats();
+  } catch (error) {
+    throw new Error(`Blog image failed full decode: ${imagePath} (${error.message})`);
+  }
+  return {
+    width: image.width, height: image.height, format: image.format, bytes: bytes.length,
+    sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
+  };
+}
+
 async function validateBlogImages({ rootDir = path.resolve(__dirname, '..'), previewPaths } = {}) {
   const metadataPath = path.join(rootDir, 'tools', 'blog', 'data', 'posts-meta.json');
   if (!fs.existsSync(metadataPath)) throw new Error(`Missing blog metadata: ${metadataPath}`);
@@ -228,29 +265,7 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..'), pre
 
   let checked = 0;
   for (const imagePath of declared) {
-    const extension = path.extname(imagePath).toLowerCase();
-    const profile = PROFILE_BY_EXTENSION[extension];
-    if (!profile) throw new Error(`Unexpected blog image extension: ${imagePath}`);
-    const absolutePath = path.join(rootDir, ...imagePath.split('/'));
-    const fileStat = fs.lstatSync(absolutePath);
-    if (fileStat.isSymbolicLink()) throw new Error(`Blog image symlinks are not allowed: ${imagePath}`);
-    if (fileStat.size > profile.maxBytes) {
-      throw new Error(`Blog image must be at most ${profile.label}: ${imagePath} (${fileStat.size} bytes)`);
-    }
-    if (extension === '.svg') validateStaticSvg(fs.readFileSync(absolutePath, 'utf8'), imagePath);
-    const image = await sharp(absolutePath).metadata();
-    if (image.format !== profile.format) {
-      throw new Error(`Blog image format must be ${profile.format}: ${imagePath} (found ${image.format})`);
-    }
-    const allowedHeights = [profile.height, ...(profile.extraHeights || [])];
-    if (image.width !== profile.width || !allowedHeights.includes(image.height)) {
-      throw new Error(`Blog image dimensions must be ${profile.width} x ${allowedHeights.join(' or ')}: ${imagePath}`);
-    }
-    try {
-      await sharp(absolutePath, { failOn: 'warning' }).stats();
-    } catch (error) {
-      throw new Error(`Blog image failed full decode: ${imagePath} (${error.message})`);
-    }
+    await validateBlogImageAsset({ rootDir, imagePath });
     checked += 1;
   }
   validateRenderedPostImages(rootDir, metadata);
@@ -270,4 +285,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftPreviewImagePaths, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };
+module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftPreviewImagePaths, validateBlogImageAsset, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };

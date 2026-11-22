@@ -232,9 +232,12 @@
       }, 'image/png');
     });
   }
+  function accessibleTextFor(model) {
+    return [model.title, model.summary, model.quote, '扫码可打开原文：' + model.articleUrl].join('\n\n');
+  }
   function setAccessibleText(model) {
     var target = document.getElementById('posterAccessibleText');
-    if (target) target.textContent = model.title + '。' + model.quote + '。扫码可打开原文：' + model.articleUrl;
+    if (target) target.textContent = accessibleTextFor(model);
   }
   function setArticleLinks(model, poster) {
     var openArticle = document.getElementById('openArticle');
@@ -277,5 +280,5 @@
       var button = document.getElementById('downloadPoster'); if (button) { button.disabled = false; button.addEventListener('click', function () { downloadPoster(canvas, model).catch(showError); }); }
     }).catch(showError);
   }
-  return { POSTER_WIDTH: POSTER_WIDTH, POSTER_HEIGHT: POSTER_HEIGHT, QR_ERROR_CORRECTION: QR_ERROR_CORRECTION, QR_QUIET_ZONE: QR_QUIET_ZONE, canonicalArticleUrl: canonicalArticleUrl, createPosterModel: createPosterModel, createQrMatrix: createQrMatrix, renderQrPixels: renderQrPixels, linesForWidth: linesForWidth, fitText: fitText, drawPoster: drawPoster, filenameFor: filenameFor, boot: boot };
+  return { POSTER_WIDTH: POSTER_WIDTH, POSTER_HEIGHT: POSTER_HEIGHT, QR_ERROR_CORRECTION: QR_ERROR_CORRECTION, QR_QUIET_ZONE: QR_QUIET_ZONE, canonicalArticleUrl: canonicalArticleUrl, createPosterModel: createPosterModel, createQrMatrix: createQrMatrix, renderQrPixels: renderQrPixels, linesForWidth: linesForWidth, fitText: fitText, drawPoster: drawPoster, filenameFor: filenameFor, accessibleTextFor: accessibleTextFor, boot: boot };
 });

@@ -232,13 +232,13 @@ function renderToc(sections) {
   }).join('');
 }
 
-function buildPage(template, markdown, metadata, sourceRepoPath) {
+function buildPage(template, markdown, metadata, sourceRepoPath, { preview = false } = {}) {
   const rendered = renderMarkdown(markdown, metadata, sourceRepoPath);
   let page = template;
   if (!/<script src="\.\.\/article-runtime\.js"><\/script>/.test(page)) {
     page = page.replace(/<body([^>]*)>/, '<body$1>\n  <script src="../article-runtime.js"></script>');
   }
-  page = page.replace(/<!--[\s\S]*?-->/, '<!--\ndate:    ' + metadata.date + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\ncategory: ' + metadata.category + '\n-->');
+  page = page.replace(/<!--[\s\S]*?-->/, () => '<!--\n' + (preview ? 'status:  unpublished-preview' : 'date:    ' + metadata.date) + '\ntitle:   ' + metadata.title + '\ntags:    [' + metadata.tags.join(', ') + ']\nslug:    ' + metadata.slug + '\nsummary: ' + metadata.summary + '\ncategory: ' + metadata.category + '\n-->');
   page = page.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(metadata.title) + ' — Leo 的思考碎片</title>');
   page = page.replace(/(<meta property="og:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
   page = page.replace(/(<meta property="og:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
@@ -246,11 +246,22 @@ function buildPage(template, markdown, metadata, sourceRepoPath) {
   page = page.replace(/(<meta name="twitter:title" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.title) + '$2');
   page = page.replace(/(<meta name="twitter:description" content=")[^"]*(" \/>)/, '$1' + escapeHtml(metadata.summary) + '$2');
   page = ensureArticleSeo(page, metadata, config);
+  if (preview) {
+    // Keep the formal template and runtime, but remove publication semantics.
+    page = page
+      .replace(/^[\t ]*<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>\r?\n?/gmi, '')
+      .replace(/^[\t ]*<meta\b(?=[^>]*\bproperty=["']og:url["'])[^>]*>\r?\n?/gmi, '')
+      .replace(/^[\t ]*<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>\r?\n?/gmi, '')
+      .replace(/<script\b(?=[^>]*\btype=["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script>\r?\n?/gi, '')
+      .replace(/<meta\b(?=[^>]*\bproperty=["']og:type["'])[^>]*>/gi, '<meta property="og:type" content="website" />')
+      .replace('</head>', '<meta name="robots" content="noindex, nofollow" />\n</head>');
+  }
   if (!/\.post-body pre\b/.test(page)) {
     page = page.replace(/(\.post-body code \{[^}]+\})/, '$1 .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; }');
   }
   page = replaceTocList(page, renderToc(rendered.sections));
-  page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, '<span class="post-date">' + metadata.date + '</span><span id="post-tags"></span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
+  const badges = preview ? [...metadata.tags, ...(metadata.topics || [])].map(tag => '<span class="tag">' + escapeHtml(tag) + '</span>').join('') : '';
+  page = page.replace(/<span class="post-date">[^<]*<\/span>[\s\S]*?<h1 class="post-title">[\s\S]*?<\/h1>[\s\S]*?<p class="post-summary">[\s\S]*?<\/p>/, () => '<span class="post-date">' + (preview ? '未发布预览' : metadata.date) + '</span><span id="post-tags">' + badges + '</span></div><h1 class="post-title">' + inline(metadata.title) + '</h1><p class="post-summary">' + inline(metadata.summary) + '</p>');
   page = injectPostCover(page, metadata);
   page = page.replace(/<div class="post-body">[\s\S]*?<\/div>\s*<section class="continue-reading"/, () => '<div class="post-body">' + rendered.bodyHtml + '</div>\n        <section class="continue-reading"');
   return page;

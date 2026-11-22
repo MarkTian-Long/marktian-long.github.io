@@ -113,3 +113,16 @@ test('poster model fails clearly if a new article omits share_quote', () => {
   assert.equal(articleRuntime.shareCardHref(baselinePost), '../share-card.html?slug=alignment-under-change');
   assert.equal(shareCard.filenameFor({ slug: 'alignment-under-change' }), 'alignment-under-change-share.png');
 });
+
+test('accessible poster copy includes the summary and preserves source punctuation', () => {
+  const model = {
+    title: 'AI 数学的新阶段？',
+    summary: '文章讨论独立核验的意义。',
+    quote: '需要可重复的证据！',
+    articleUrl: 'https://example.com/tools/blog/posts/math.html',
+  };
+  assert.equal(
+    shareCard.accessibleTextFor(model),
+    'AI 数学的新阶段？\n\n文章讨论独立核验的意义。\n\n需要可重复的证据！\n\n扫码可打开原文：https://example.com/tools/blog/posts/math.html'
+  );
+});

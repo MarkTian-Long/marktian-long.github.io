@@ -5,6 +5,7 @@ const path = require('node:path');
 const { chromium } = require('@playwright/test');
 
 const { BLOCKED_BROWSER_PORTS, createStaticServer } = require('./equivalence/servers');
+const metadata = require('../tools/blog/data/posts-meta.json');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -65,6 +66,35 @@ async function expectToolbarAtViewportTop(page) {
   }), true);
 }
 
+test('share-card accessible text preserves all poster copy without adding sentence marks', { timeout: 30000 }, async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH
+        ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH }
+        : {}),
+    });
+    const page = await browser.newPage();
+    await blockRemoteFonts(page.context());
+    const post = metadata.posts.find((entry) => entry.slug === 'ai-riemann-math-milestone');
+    await page.goto(`${url}/tools/blog/share-card.html?slug=${post.slug}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => !document.querySelector('#downloadPoster').disabled);
+
+    const text = await page.locator('#posterAccessibleText').textContent();
+    const errors = [];
+    for (const field of ['title', 'summary', 'share_quote']) {
+      if (!text.includes(post[field])) errors.push(`accessible poster omits or changes ${field}`);
+    }
+    if (/[。！？.!?]。/u.test(text)) errors.push('accessible poster adds duplicate sentence marks');
+    assert.deepEqual(errors, []);
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
+
 test('share-card renders and downloads a 1080×1920 poster across desktop and mobile themes', { timeout: 30000 }, async () => {
   const { server, url } = await startServer();
   let browser;
@@ -109,7 +139,16 @@ test('share-card renders and downloads a 1080×1920 poster across desktop and mo
           const canvas = document.createElement('canvas');
           canvas.width = window.BlogShareCard.POSTER_WIDTH;
           canvas.height = window.BlogShareCard.POSTER_HEIGHT;
-          window.BlogShareCard.drawPoster(canvas, window.BlogShareCard.createPosterModel(post, config));
+          const poster = window.BlogShareCard.drawPoster(canvas, window.BlogShareCard.createPosterModel(post, config));
+          const areas = {
+            qr: { ...poster.qrCard, width: poster.qrCard.size, height: poster.qrCard.size },
+            hostLink: poster.hostLinkArea,
+          };
+          for (const [name, area] of Object.entries(areas)) {
+            if (area.x < 0 || area.y < 0 || area.x + area.width > canvas.width || area.y + area.height > canvas.height) {
+              throw new Error(`${name} falls outside the exported poster`);
+            }
+          }
           return '';
         } catch (error) {
           return `${post.slug}: ${error.message}`;

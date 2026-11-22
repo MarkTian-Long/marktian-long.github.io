@@ -17,6 +17,7 @@ tools/blog/
 ├── share-card.*            本地 Canvas 分享海报页（固定 1080 × 1920 PNG）
 ├── vendor/qrcode-generator.js  受同步脚本校验的本地二维码资产
 ├── article-template.html   新文章生成的独立模板来源
+├── build-preview.js        唯一 draft 的首图检查与隔离候选预览入口
 ├── index.html              归档列表页（按年份分组，JS 渲染）
 └── posts/
     ├── agent-scale-git-infrastructure.html       当 AI Agent 开始大规模写代码，Git 还够用吗？（2026.11）
@@ -65,7 +66,8 @@ tools/blog/
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表。当前固定 5 篇，分别覆盖 技术 / 产品 / 商业 / 行业 / 实践五个一级分类且每类恰好 1 篇；第一项仍承担首页唯一「推荐阅读」，Blog 默认页展示全部 5 篇精选。精选只改变发现入口，不写入文章 metadata，也不影响 relations / Continue Reading。
 - **正文源稿**：未发布完整稿在 `drafts/blog/<slug>.md` 原位维护；用户确认发布后迁移为 `docs/blog/<slug>.md`，同步 metadata、生成 `tools/blog/posts/<slug>.html` 后删除对应 draft。历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
-- **发布生成**：新文章固定经过「网页版写作 → 最终 Markdown frontmatter → Codex 读取当前 taxonomy 后校验 → sync posts-meta → generate HTML → search/RSS/sitemap → QA → 发布」。Codex 不选择或生成 `category`、`tags`、`topics`、`concepts`、`share_quote` 或 relations；它只校验最终 frontmatter。随后运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它读取 frontmatter 和 H1/blockquote，同步运行索引并保留已有 `visuals` 等资产字段。图片完全可选；如使用图片，再用 `scripts/prepare-blog-image.js` 处理成品并维护 `visuals` 和 Markdown 独立图片语法，随后运行 `node tools/blog/generate-post.js --write <source.md> <output.html>`。`publish_handoff` 仅可兼容历史文件，`body_link_only` 仅是其历史 transport 字段，二者均不属于新文章路径；最后运行 `node scripts/generate-search-assets.js --write`
+- **候选预览**：`node tools/blog/build-preview.js --source drafts/blog/<slug>.md` 默认只检查；加 `--write --out build/candidate-site/blog-preview/<slug>` 在空的隔离候选目录生成正式样式页面，并向标准输出打印 JSON 构建报告。入口自动检查首图，复用正式模板和共享资源，不把草稿加入正式 metadata。输出不是部署；首图例外和公开预览授权见 [预览规范](governance/blog-preview-release-spec.md)。
+- **发布生成**：按当前 `.agents/skills/publish-blog/SKILL.md` 执行已获授权的正式发布；最终源稿的语义字段由写作阶段确定，发布端只校验与同步。使用 `sync-post-metadata.js --write`、`generate-post.js --write` 和 `generate-search-assets.js --write` 生成正式索引、HTML 与搜索资产。新文首图适用范围、其他图片与独立 OG 封面契约以 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 为准；不得为构建预览提前走正式同步路径。历史 handoff 仅兼容旧稿，新稿不使用。
 - **材料与活人感审校**：`.agents/skills/blog-human-writing/` 是唯一长期规则真源。每次真正执行材料检查或活人感审校，读取其当前 `SKILL.md` 和对应 `references/`；已安装 Skill 与 `.claude/skills/` 仅为运行入口/兼容副本，不能独立演化。每篇正式 Blog 完成后的统一规范沉淀复盘，评估是否存在应写回权威源的跨文章稳定规则。
 - **taxonomy impact review**：每篇发布始终运行 `node tools/blog/check-blog-taxonomy.js`。只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才在确定性校验后执行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>`；普通文章发布不需要 base ref，也不得运行 placeholder audit 命令。category 的 `core_question`、`definition`、`status`，以及 tag/topic 的 `definition`、`distinguish_from`、`notes`、`status`（包括范围、rename、merge、deprecate 等语义变化）都会触发全历史 metadata 第一轮筛查；新增 vocabulary 也不能只按新词字面召回。`--categories` 只标示优先阅读范围；已落地定义的专项复核必须明确使用 `--focus category:<名称> --full-screen` 才会跨产品/行业等边界全量筛查。脚本不改历史 metadata；Codex 再按 title / summary / concepts / tags / topics / category 缩小真正相关候选，并以“线上正式页 → 仓库 HTML → Markdown”读正文，逐篇给出保持/人工复核/有充分理由建议迁移，不为分类数量均衡迁移。
 - **分享海报**：文章页的「生成分享图」统一进入 `share-card.html?slug=<slug>`；预览页的「打开原文」、二维码区和底部域名均直达 canonical 原文，导出的 PNG 是普通图片，仅通过二维码跳转。海报页加载与首页相同的 Libre Baskerville / Source Sans 3 字重组合。二维码资产更新后运行 `node scripts/sync-share-card-vendor.js --check`，不使用第三方二维码服务。
@@ -73,7 +75,7 @@ tools/blog/
 - **参考资料**：仅写语义化标题、分组、列表和可选可信度说明；历史 `.refs` 与新文章的 Markdown 结构均由 `article-runtime.js` 统一为默认收起、可键盘展开的紧凑辅助信息层。目录或 URL 锚点直达会自动展开，不批量改写 HTML 正文。
 - **阅读预期**：文章页由 `article-runtime.js` 从最终 HTML 正文在本地计算“约 X 字 · Y 分钟阅读”；排除摘要、参考资料、代码块和图片说明，按每分钟 400 个阅读单位估算。不得在 Markdown 或 `posts-meta.json` 手填该数值。
 - **发布检查**：提交前始终运行 `node tools/blog/check-blog-taxonomy.js`；只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才以真实变更前 Git ref 运行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>` 并完成正文审查。普通文章发布不要求 taxonomy base ref。之后再运行 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、相关 Node 测试、`node scripts/migrate-blog-continue-reading.js --check`、`node scripts/check-blog-body-integrity.js` 和 `node scripts/check-repository-policy.js`。新公开图片还必须进入 metadata 声明的 public-dist 白名单，运行 `npm run build:public` 与 `npm run check:public-dist`，并按 `CONVENTIONS.md` 完成文章页桌面/移动、浅色/深色和图片失败状态的视觉检查
-- **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前必须按 HITL 规则取得用户确认
+- **发布交付**：检查通过后只暂存本次文章及对应生成资产，完成 review 和 commit；`git push` 前核对目标、范围与已有授权，授权已覆盖时沿用，不重复请求同一确认
 - **推送回退**：直连 GitHub 失败时按 `CONVENTIONS.md` 的「GitHub 推送网络排查」使用临时代理，不修改全局 Git 配置，也不把凭据写入仓库
 - **完成标准**：远端 `main` 与本地 HEAD 指向同一提交，线上文章 URL 返回 HTTP 200 且包含唯一标题，并按 `WRITING_GUIDE.md` 的可发现性契约核对博客目录（必要时包括 RSS）。仅生成 HTML、完成 commit 或只有 GitHub Actions 绿色状态都不能代替实际读者入口验收；执行细节由 `.agents/skills/publish-blog/SKILL.md` 维护
 - **域名维护**：搜索资产与自动生成的页面 head 域名维护在 `scripts/site-config.js`；正文显式链接按内容语义单独核对。Search Console/Bing 验证属于后续账号操作，不写入文章或本目录配置

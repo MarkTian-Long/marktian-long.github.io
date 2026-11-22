@@ -302,61 +302,47 @@ git status --short
 
 ## 八、博客内容规范
 
-### 数据文件
-- 博客元数据统一存放在 `tools/blog/data/posts-meta.json` v4（单一来源）
-- 主页和列表页都通过 `fetch` 读取，**不得**在 HTML 内联重复的文章数组
-- `posts-meta.json` 是文章元数据的单一来源；新增文章时先添加元数据，再由生成脚本创建 HTML 和搜索发现资产
-- 博客正文源稿优先维护在 `docs/blog/<slug>.md`；新文章必须同时提交 Markdown 源稿和 `tools/blog/posts/<slug>.html` 发布物。历史文章可能存在 HTML 与 Markdown 不一致，禁止批量从旧 Markdown 重新生成并覆盖已发布 HTML
-- 主页与 Blog 列表保持纯文字；单篇图片只在文章页、分享元数据和结构化数据中使用，不为列表增加封面或缩略图
+本节保留站点层面的约束；博客任务先读 `tools/blog/governance/README.md`，再按阶段读取唯一责任文件。字段语法、视觉规格、流程和执行命令不在本节另维护一套。
 
-### posts-meta.json 字段规范
+### 内容源稿与运行索引
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| slug | string | 文件名不含 .html，唯一标识符，kebab-case |
-| date | string | 格式 `YYYY.MM` |
-| title | string | 完整标题 |
-| summary | string | 标题下唯一 Markdown blockquote 经结构解析和空白规范化后的原文；用于文章页、主页、搜索、SEO、RSS 与分享海报 |
-| share_quote | string | 发布阶段从最终正文选择的完整原句，用于分享海报；Markdown 不携带该字段，规则见 WRITING_GUIDE.md |
-| tags | string[] | 细粒度标签，见 WRITING_GUIDE.md 标签库 |
-| topics | string[] | 话题领域标签，见 WRITING_GUIDE.md 标签库 |
-| concepts | string[] | 4-7 个具体检索概念：关键对象、机制、产品/公司或层级；不用于前台、SEO 或静态关联 |
-| category | string | 正式大分类：技术 / 产品 / 商业 / 行业 / 实践；生活仅为历史兼容值，不作为当前维护中的正式分类 |
-| url | string | 相对于 `tools/blog/` 的路径，如 `posts/xxx.html` |
-| relations | object[]（可选） | 新文章单向指向较早文章的强关系；仅 `builds_on` / `revises` / `companion`，target 必须存在且不能自引或重复 |
-| visuals | object（可选） | 有图片时声明；`inline` 声明 0–2 张正文图，`cover` 按需要声明 |
+- 最终 Markdown 是标题、摘要及 frontmatter 内容语义的唯一来源；`tools/blog/data/posts-meta.json` 是供首页、列表、分享和搜索资产读取的统一派生运行索引。主页和列表通过 `fetch` 读取索引，不在 HTML 内联重复文章数组。
+- 未发布唯一工作稿维护在 `drafts/blog/<slug>.md`。正式发布获准后迁移为 `docs/blog/<slug>.md`，同步运行索引并生成 `tools/blog/posts/<slug>.html`，不保留两份可编辑正文。预览按 `blog-preview-release-spec.md` 隔离构建，不为让生成器通过而把草稿加入正式索引。
+- 历史文章可能存在 HTML 与 Markdown 不一致，禁止批量从旧 Markdown 重新生成并覆盖已发布 HTML。
+- 主页与 Blog 列表保持纯文字；单篇图片只在文章页、分享元数据和结构化数据中使用，不为列表增加封面或缩略图。
 
-`concepts` 只用于历史语义召回，不能推导显式关系或前端推荐。文章页「继续阅读」从中央 metadata 动态计算：强关系优先，旧文自动反向显示后续延展/修正；未来关系不得回写历史正文。
+### 字段、taxonomy 与分享文案
+
+- 完整 frontmatter、字段来源、视觉声明及确定性同步契约由 `tools/blog/WRITING_GUIDE.md` 维护。写作阶段确定 `category / tags / topics / concepts / share_quote / relations`，发布端仅校验和同步，不重新选择语义字段。
+- `summary` 来自标题下唯一 Markdown blockquote；`share_quote` 在写作阶段选定并保存在 frontmatter，必须真实来自最终正文。摘要、分享句的职责和选句标准遵守 Writing Guide；分享句不替代摘要，也不进入 SEO 或 RSS。
+- category、tags、topics、concepts 的合法词义和选用规则以 `tools/blog/data/blog-taxonomy.json` 为唯一源；按文章核心问题分类，不因作者职业、公司数量或标题关键词套类。
+- `concepts` 只用于历史语义召回，不进入前台、SEO，也不能据此推导显式关系。文章页「继续阅读」按 Writing Guide 和共享运行时计算；未来关系不得回写历史正文。
 
 ### 博客图片契约
 
-- 根级 `image_contract.version` 为 `1`；`legacy_without_visuals` 仅保留历史记录，不再限制新文章是否可无图。文章可完全不声明 `visuals`，并使用全站默认分享图。
-- 封面和正文图都按内容需要选择：封面路径为 `assets/images/blog/<slug>/cover.jpg`，规格为 JPEG 1200 × 630、不超过 350 KB；正文图使用 0–2 张 WebP，规格为 1280 × 720、单张不超过 250 KB。无图文章无需补图，OG/Twitter/JSON-LD 回退到全站默认图。
-- 图片成品必须用 `scripts/prepare-blog-image.js` 生成，并通过 `node scripts/check-blog-images.js`。Markdown 正文图必须独立成行，其路径、alt 和 caption 与 `visuals.inline` 完全一致。
-- 完整视觉语言、生成模式、决策门和 alt/caption 规则见 `tools/blog/VISUAL_GUIDE.md`。
+- 当前新文章及尚未首次完整预览文章的开篇独立首图要求、位置和作者例外按 Blog SOP 与 `tools/blog/VISUAL_GUIDE.md` 执行；OG 分享封面不能替代正文首图，历史已发布文章不自动追补。
+- 其他正文图片按阅读任务选择，不设固定张数；封面按需声明，未声明封面时使用默认分享图，与正文首图是否存在独立。
+- Markdown 正文图的路径、alt 和 caption 必须与对应视觉声明一致；预览资产、实际呈现和公开白名单按当前预览契约核验，不公开整个草稿目录。
+- 素材许可、SVG 与栅格图的制作方式、规格和检查由 Visual Guide、Writing Guide 及当前脚本维护。机器校验、实际页面视觉验收分别记录；脚本通过不替代图意、清晰度和移动端检查。
 
 ### 历史文章两阶段检索
 
-- 按 `tools/blog/WRITING_GUIDE.md` 的「历史博客滚动检索与复用」执行：完整读取 `posts-meta.json` 的 `title`、`summary`、`concepts`、`topics`、`tags` 与 `category` 形成高相关/潜在相关/弱相关候选池；无固定候选数量上限，只有论点、机制、边界、案例或大纲出现实质变化时才滚动重搜，正式大纲前再做最终覆盖扫描。
-- 编辑和生成仍以 `docs/blog/<slug>.md` 为源并生成 `tools/blog/posts/<slug>.html`；判断历史发表事实、引用资格或观点冲突时，正文按“线上正式页 → 仓库 HTML → Markdown”读取。禁止为了检索而批量重新生成或补写历史源稿。
+- 按 Blog SOP 先保留独立研究起点，再按 `tools/blog/WRITING_GUIDE.md` 的「历史博客滚动检索与复用」读取 `posts-meta.json` 的 `title`、`summary`、`concepts`、`topics`、`tags` 与 `category`，形成高相关/潜在相关/弱相关候选池；出现实质论点、机制、边界或案例变化时动态重搜，正式大纲前完成最终覆盖扫描。
+- 已发布文章以 `docs/blog/<slug>.md` 为编辑与生成源；判断历史发表事实、引用资格或观点冲突时，正文按“线上正式页 → 仓库 HTML → Markdown”读取。禁止为了检索而批量重新生成或补写历史源稿。
 - 命中元数据不等于应引用。只有核心问题、因果机制、观点延伸/修正、可复用框架、直接证据或读者需要理解的观点连续性成立时，才在新文章中引用旧文；共享关键词、分类、公司或模型名称，以及仅为增加内链的需求均不足以构成引用理由。
 
 ### 搜索元数据与发现资产
-- `posts-meta.json` 仍是文章 `title`、`summary`、`url` 和（如有）`visuals` 的单一来源；canonical、标准 description、JSON-LD、OG/Twitter、RSS 与 sitemap 由脚本生成，**不得**在文章里手工复制域名或维护重复数据源。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 与 JSON-LD；无图文章回退到全站 `assets/images/og-cover.png`。
-- 新文章发布流程：从 `docs/blog/<slug>.md` 的 H1 和标题下唯一 blockquote 提取并校验 `title`、`summary`，再更新 `posts-meta.json`（包括 `concepts`，以及按需的 `visuals`）→可按内容需要生成封面或 0–2 张正文图，也可不使用图片→ `node tools/blog/generate-post.js --write <source.md> <output.html>` → `node scripts/generate-search-assets.js --write` → `node scripts/check-search-foundation.js` →构建/检查 public dist，并在有图时做文章页视觉复核。`summary` 是提取和同步字段，不是 Codex 的二次创作字段；生成器在声明的图片不一致时直接失败。
-- 发布检查至少包含 `node scripts/check-blog-images.js`、`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`npm run build:public` 和 `npm run check:public-dist`。有图文章页必须在桌面/移动、浅色/深色及图片加载失败状态下做真实截图审查。
+
+- 正式发布后的 `posts-meta.json` 为 canonical、description、JSON-LD、OG/Twitter、RSS 与 sitemap 提供统一运行数据，由脚本派生这些资产，不在文章中维护重复数据源。已声明的封面用于对应分享元数据；无封面时回退全站默认图。
+- 正式发布按 `tools/blog/WRITING_GUIDE.md` 与 `.agents/skills/publish-blog/SKILL.md` 执行源稿同步、生成、检查和发现入口核验；隔离候选及公开预览按 `blog-preview-release-spec.md` 执行，不提前进入首页、正式索引、搜索、RSS 或 sitemap。公开预览与正式发布分别取得明确授权。
+- `summary` 是确定性提取和同步字段，发布端不得二次创作。发布须完成当前脚本与 public-dist 校验，并核验桌面/移动、浅色/深色及图片加载失败状态；机器检查不能替代实际页面与线上结果。
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。
 
 ### 分类原则
-- **技术**：回答「为什么能工作」；适用于架构设计、工程实现、技术选型、模型机制与训练/推理/评测机制。
-- **产品**：回答「产品应该怎么做」；适用于 PM 决策框架、产品分析、场景判断、边界划分与功能设计。
-- **商业**：回答「谁付钱、怎么赚钱、值多少钱、买还是建」；适用于商业模式、定价、收入、成本、TCO、采购经济性、估值/TAM、单位经济、Build vs Buy、护城河与价值分配。
-- **行业**：回答「这个领域正在怎么变」；适用于产业/职业结构、市场演进、跨公司厂商路线、生态与标准、组织形态与行业级竞争重心迁移。
-- **实践**：回答「真实工作中怎么做」；适用于作者亲身经历的 AI 使用、产品工作、项目推进或工作系统实践，并从实际问题、行动、反馈和结果中沉淀方法或判断。实践不是带个人故事的文章，而是实践过程本身构成文章主体。
-- **生活**：仅为历史兼容值，不作为当前正式博客分类；不得用于承接新的 AI 或产品工作实践文章。
-- **判断原则**：核心内容决定分类，叙事视角不决定分类。具体产品判断仍归「产品」；竞争叙事下的技术机制仍归「技术」；收入、成本、采购、估值或护城河为核心仍归「商业」；第一人称叙事或可操作教程不自动归「实践」。
+
+分类词义与边界统一读取 `tools/blog/data/blog-taxonomy.json`，按核心问题和正文证据选择；叙事视角、第一人称或教程形式不自动决定分类。发现词义缺口或需要变更时，按 Blog SOP 的 taxonomy change 流程处理，不在本节扩展第二套词典。
 
 ### 目录导航
 - 目录服务于读者建立论证地图，不是正文标题的逐条镜像：所有核心 `h2` 作为一级目录；只有可独立跳转的关键 `h3` 才作为可折叠二级项。

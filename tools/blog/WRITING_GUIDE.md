@@ -27,20 +27,21 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 ---
 
 正文……
+```
 
 > **summary 与正文导语：** 最终 Markdown 标题下、正文分隔线之前的唯一连续 blockquote 就是正式 `summary`。发布阶段只做结构解析、去掉每行 `>` 并规范空白，然后原样同步到 `posts-meta.json`；不得重新创作、改写、扩写或缩写。真正的正文导语是 `---` 之后的正文开头，它可以与 `summary` 不同。
 
-> **摘要 vs 分享引语：** `summary` 回答“这篇文章讲什么”；`share_quote` 回答“这篇文章最值得单独带走的一句话是什么”。两者均由写作阶段定稿：`summary` 是 H1 下唯一 blockquote，`share_quote` 是 frontmatter 中且在最终正文真实出现的完整原句。Codex 不重新创作、选择或替换它们。
+> **标题、摘要与分享引语：** `title` 说明讨论对象和核心问题或判断；`summary` 交代文章范围、关键事实和主要判断；`share_quote` 留下一条代表文章主线的判断或解释。三者在写作/审校阶段放在一起检查：中心一致、各有用途，不能只是重复同一信息。`title` 来自 H1，`summary` 是 H1 下唯一 blockquote，`share_quote` 是 frontmatter 中且在最终正文真实出现的完整原句。发布端不重新创作、选择或替换它们。
 >
-> **share_quote 选择规则：** `share_quote` 必须是最终正文中真实存在、可独立阅读的完整句子，不得为 metadata 另造一句。
-> 写作/审校阶段选择并固定该原句；若没有合适原句，应先修改最终 Markdown，而不是让发布端另造文案。
+> **share_quote 选择规则：** `share_quote` 必须是最终正文中真实存在、可独立阅读的完整句子，优先代表核心判断、关键机制或可迁移的认知增量；不得为 metadata 另造一句，也不得删掉原句成立所需的条件、范围和限定。
+> 局部边界、反例或保留意见只有在边界本身就是文章主论点时，才适合作为唯一分享引语；不能因为一句话简短、加粗或位于结尾就选用。真实出现只能证明来源，不能替代主线代表性的审查。
+> 写作/审校阶段选择并固定该原句，并结合标题、摘要检查其是否准确代表全文；若没有合适原句，应先修改最终 Markdown，而不是让发布端另造文案。发布端及渲染器只校验、同步和完整排版，不根据标题、摘要或正文自动选句、改写或截断。
 >
 > `share_quote` 只服务分享海报，不服务 SEO / RSS / continue-reading，也不替代 `summary`；不用标题、摘要或夸张口号替代。
 
 > **标题质量规则：** 标题应先说清对象与核心判断，再追求修辞；发布前在列表页的桌面和移动宽度检查，不应因 CSS 裁切而丢失关键语义。标题可以超过 20 字，但若删去修饰语后不损失判断，应优先精简；不要为了凑字数批量改写已发布文章。
 
 > **摘要质量规则：** 标题下 blockquote 应是可自然阅读的文章摘要，不是关键词列表或 SEO 文案，尽量交代文章讨论的对象或问题、核心判断/冲突，以及决定性机制、关系或边界。`posts-meta.json` 是网站运行索引/派生 metadata，不能替代最终 Markdown 的内容语义判断。
-```
 
 ### `posts-meta.json` v4 视觉契约
 
@@ -83,7 +84,7 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 - 正式文章页头沿用模板的 `.post-meta`：日期占据日期位置，非空 `tags` 与 `topics` 由共享运行时渲染为关键词徽章；`category` 是栏目元数据，不在当前文章页头重复显示为徽章。
 - `concepts` 只用于作者与 AI 的历史语义召回，不在文章页头、继续阅读或读者可见关键词区展示；站点没有独立的 `keywords` frontmatter 字段，不要另造一套与 tags/topics 并行的关键词。
-- 未发布候选页也必须反映当前候选 metadata：优先在隔离候选站提供临时 `posts-meta.json` 记录，让共享运行时正常渲染；若采用不加载候选索引的直达预览页，可使用与当前候选 metadata 一致的静态徽章作为展示回退。已选标签不得因候选 slug 不在正式索引而静默消失；尚未完成审查时明确标为待确认，不伪装成已审查的空数组。
+- 未发布预览页从当前 draft 的 frontmatter 静态渲染 `.tag` 徽章；`/previews/` 不符合共享运行时的正式文章 slug 路径，不通过向正式 `posts-meta.json` 添加草稿来补标签。已选标签不得因候选 slug 不在正式索引而静默消失；尚未完成审查时明确标为待确认，不伪装成已审查的空数组。
 - 徽章数量与词义仍以 taxonomy 为准。不得为了填满页头而增加标签；空数组经审查后仍可不显示徽章。
 
 ### 双维度标签体系
@@ -455,13 +456,18 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
 
 ### 未发布图文预览：走正式模板的候选构建，不接入公开入口
 
-完整图文预览不另起一份样式相似的自定义 HTML。按 SOP 完成写作前授权、内部正文、审校与正文认知增量验收后，使用唯一未发布 Markdown 工作稿和正式文章模板/运行时，在隔离的候选构建目录生成网页；不要求作者先确认一份纯文字全文。生成器已有 `--candidate` 模式，可将输出限制在 `build/candidate-site/` 下，例如：
+完整图文预览不另起一份样式相似的自定义 HTML。按 SOP 完成写作前授权、内部正文、审校与正文认知增量验收后，使用唯一未发布 Markdown 工作稿和正式文章模板/运行时生成网页；不要求作者先确认一份纯文字全文。专用入口默认只检查，显式写入时仅在 `build/candidate-site/` 的空子目录生成完整候选站：
 
 ```powershell
-node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/candidate-site/tools/blog/posts/your-slug.html
+node tools/blog/build-preview.js --source drafts/blog/your-slug.md
+node tools/blog/build-preview.js --source drafts/blog/your-slug.md --write --out build/candidate-site/blog-preview/your-slug
 ```
 
-**运行前提：** 该生成器仍会读取当前工作区的 `tools/blog/data/posts-meta.json`，并要求与 H1、摘要及 frontmatter 匹配；新文章未正式入库时，应在**隔离的候选工作区**内建立临时 metadata 快照，完成预览需要的字段和 `visuals`，绝不可为了让候选构建通过而将草稿加到正式索引。候选目录须同时保留/复制所依赖的共享运行时及本地图片，确保相对路径与正式发布一致。隔离候选与离线渲染用于公开授权前的内部构建、验收，不默认作为首次完整审阅的交付，也不自动创建下载附件；用户明确要求离线交付时，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。
+**数据与输出：** `build-preview.js` 从唯一 draft 派生候选 metadata，从真实图片读取尺寸，并复用正式 `buildPage()`、图片契约与公开文件精确白名单。候选 HTML 位于输出根下 `tools/blog/previews/<slug>.html`；共享资源保持正式相对路径，正式 `posts-meta.json` 在源仓库和候选站均不加入草稿。源稿、图源、正式索引及搜索资产保持原样，检查结果和源稿/图片哈希以 JSON 构建报告输出，不创建另一份长期 metadata。`generate-post.js --candidate` 仍是依赖正式 metadata 的旧生成模式，不作为新稿预览入口。
+
+**首图门禁：** 构建器默认调用 `scripts/check-blog-opening-image.js`，核对第一正文块、独立图片语法、同篇实际资产及派生登记。作者明确首图例外或规则生效前已完整预览的文章，按 [预览规范](governance/blog-preview-release-spec.md) 提供本篇既有证据和具体理由；没有无理由跳过开关。该检查不证明图片语义、许可判断或实际视觉效果合格。
+
+隔离候选与离线渲染用于公开授权前的内部构建、验收，不默认作为首次完整审阅的交付，也不自动创建下载附件；用户明确要求离线交付时，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。
 
 **公开部署与分发隔离：** 按 [发布级图文预览规范](governance/blog-preview-release-spec.md) 取得公开预览授权后，部署到稳定预览地址；未获授权时继续完成内部准备，并说明待批准的具体部署内容。预览移除或屏蔽指向尚未正式发布页面的 canonical、OG URL 与搜索结构化标记，标识“未发布预览”并设置 noindex；不更新首页、列表、搜索、RSS、sitemap、正式 HTML、发布日期或正式索引。未放进目录不代表私密，公开预览仍可被知道链接的人访问。公开预览授权不包含正式发布批准，candidate 模式也不自动完成部署。
 
@@ -488,7 +494,7 @@ node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/cand
 - 检查 taxonomy 同步：每个 `tags/topics` 值都必须在 `blog-taxonomy.json` 中有完全一致的条目；新增词或定义调整必须在同一次变更更新 taxonomy 并完成历史 audit，不能把近期文章当作历史例外。
 - 检查 `tags/topics` 数量及空值：以 taxonomy 的 `label_rules` 为准；空数组必须来自已完成的内容审查，第二个标签必须具有独立信息价值，不用凑数通过校验。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
-- 检查视觉契约：按当前 `VISUAL_GUIDE.md` 核对必选首图或已记录的作者例外；其他正文图由阅读任务与移动端验收决定，不设张数配额；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。当前图片检查器验证已登记资产和对应呈现，不自动证明首图必选要求、首段前位置或实际视觉效果已满足；这些项目须在当前稿与真实页面中另行核验。
+- 检查视觉契约：按当前 `VISUAL_GUIDE.md` 核对必选首图或已记录的作者例外；其他正文图由阅读任务与移动端验收决定，不设张数配额；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。新稿在预览阶段通过 `node scripts/check-blog-opening-image.js --source drafts/blog/<slug>.md` 检查必需性和位置；发布时仍运行 `node scripts/check-blog-images.js` 验证正式登记和呈现，并由同稿迁移检查保持已验收图文。历史文章不批量补首图。自动检查不代替当前稿的语义、许可和真实页面视觉验收。
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。

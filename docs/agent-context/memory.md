@@ -169,9 +169,10 @@ initial migration.
   product framing, make the product-design audience explicit in the title,
   summary, and opening context, but avoid repeating "PM" throughout the body.
   Metadata can then use `category: 产品` and include `产品设计` as a topic.
-- Validate `tags` and `topics` against the writing guide before writing them: a
-  topic must be central to the title, summary, and conclusion, rather than an
-  example, implementation path, or frequently mentioned technology.
+- Validate `tags` and `topics` against the current `tools/blog/data/blog-taxonomy.json`
+  before writing them; use Blog SOP for semantic selection and taxonomy changes.
+  A topic describes the main object and question, not merely an example,
+  implementation path, or frequently mentioned technology.
 - `tags` and `topics` should not duplicate the same terms.
 - 2026-08-08 Codex: Historical blog retrieval is a rolling two-stage process:
   read complete `posts-meta.json` title, summary, concepts, topics, tags, and
@@ -190,8 +191,10 @@ initial migration.
   online page → repository HTML → Markdown; never auto-write historical
   metadata, infer a bulk migration from a definition change, or balance counts.
   The historical Markdown-source exception never exempts vocabulary validation.
-- Blog publishing follows: Markdown, generation script, metadata JSON update,
-  product maturity check when applicable, then delivery.
+- Blog stage routing follows `tools/blog/governance/blog-sop.md`; source/metadata
+  synchronization and publishing follow `tools/blog/WRITING_GUIDE.md` and the
+  canonical `publish-blog` skill. Candidate previews must not enter the formal
+  metadata index; public preview and formal publication require separate authorization.
 - Blog callouts should be the last element inside `post-body` and use
   article-specific titles.
 - Article pages should derive filenames from metadata URLs with
@@ -313,7 +316,7 @@ initial migration.
 
 ### Blog publishing (2026-09-02, Codex)
 
-- Blog images are optional for every article. New metadata may omit `visuals`; if images are used, retain the local-asset, size, declaration and rendered-markup checks. Text, numbers and article-relevant marks are allowed in images; avoid unreadable artifacts, misleading watermarks and unauthorized third-party assets. Affected files: `CONVENTIONS.md`, `tools/blog/*GUIDE.md`, blog image contract and `publish-blog` skill. This rule is already in `CONVENTIONS.md`.
+- Historical decision, superseded for new/unpreviewed articles on 2026-11-22: the earlier all-images-optional policy is no longer the current rule. Opening-image applicability, author exceptions, asset requirements and visual acceptance now belong to Blog SOP and `tools/blog/VISUAL_GUIDE.md`; published historical articles are not automatically retrofitted. Cover/OG assets and the required body opening image are separate. Do not use this dated entry to override the current owning files.
 
 ## Update protocol
 

@@ -4,6 +4,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 ## 长期规范
 
+- [ChatGPT 网页版项目指令](chatgpt-project-instructions.md)：可直接复制到 Blog Project 设置的长期约束入口；GitHub 文件为维护真源，网页版是运行副本。仅在权威层级、作者关口、授权或默认交付方式变化时同步该入口；CLI、规格、词表和检查细则留在所属文件。更新本文件不代表已经修改网页版设置。
 - `tools/blog/governance/blog-sop.md`：探讨、收敛、大纲确认、正式写稿与流程路由。
 - `tools/blog/governance/blog-cognitive-review-spec.md`：大纲确认后的写作前认知增量反馈、正文完成后的认知增量验收及章节依赖检查；具体触发顺序由 SOP 路由。
 - `tools/blog/governance/blog-preview-release-spec.md`：首次完整图文预览、同稿迭代、公开预览授权和正式发布切换；补充 SOP 的阶段交付，不另定写作、视觉或发布契约。
