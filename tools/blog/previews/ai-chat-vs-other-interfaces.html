@@ -55,8 +55,7 @@
 <p>但得到一次回答，不等于拥有一个可以持续使用的工作对象。用户可能需要并排比较几个结果、反复修改其中一项，也可能隔一段时间回来，接着处理已经发生变化的业务状态。如果产品只能让用户从对话历史里寻找上次的答案，就把查找、比较和恢复上下文的成本留给了下一次使用。<strong>一段对话记录不会自动成为一个持续维护的业务状态。</strong> 数据来源、更新时间、对象版本和可操作范围，都需要产品另外设计。</p>
 <p>这些能力不一定只能放在固定图形界面里：聊天可以连接实时数据，也可以嵌入可直接操作的卡片；原有业务页面同样能加入 AI。值得比较的是，同一个任务在不同环节需要什么信息和控制方式，以及如何让用户不用反复解释同一个对象。这也是为什么要先理解用户的行动过程，再讨论 Chat 和其他界面怎么分工。</p>
 <h2 id="section-2">二、先分析用户在做什么，再决定用什么界面</h2>
-<p>与其先选聊天还是 GUI，不如先看用户完成任务时经历什么。</p>
-<p>Donald Norman 在 1984 年的《Stages and Levels in Human–Machine Interaction》中，把人机交互概括为形成意图、选择行动、执行行动、评估结果四个阶段。其中「选择」指把目标转换为可行的行动或命令，并非泛指商品、方案的横向比较。不同交互技术在这些阶段各有优势和代价。<a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">论文原文</a>。</p>
+<p>要判断聊天和 GUI 的分工，需要先看用户完成任务的行动过程。Donald Norman 在 1984 年的《Stages and Levels in Human–Machine Interaction》中，把人机交互概括为形成意图、选择行动、执行行动、评估结果四个阶段。其中「选择」指把目标转换为可行的行动或命令，并非泛指商品、方案的横向比较。不同交互技术在这些阶段各有优势和代价。<a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">论文原文</a>。</p>
 <div class="blog-table"><table><thead><tr><th>行动阶段</th><th>用户在做什么</th><th>产品需要提供什么支持</th></tr></thead><tbody><tr><td>意图</td><td>想达到什么目标</td><td>帮助用户表达目标、补充约束</td></tr><tr><td>选择</td><td>用什么方法和操作完成</td><td>展示可选行动、前提和后果</td></tr><tr><td>执行</td><td>让选定的操作发生</td><td>提供操作入口、即时反馈和纠错</td></tr><tr><td>评估</td><td>结果是否符合目标</td><td>呈现系统状态、解释变化、发现异常</td></tr></tbody></table></div>
 <p>表格第三列是我根据模型作的产品设计转译，不是 Norman 提出的界面分类。聊天可以参与选择、执行和解释结果；菜单、画布、看板也能帮助用户形成意图或理解状态。</p>
 <p>Norman 在 1986 年的《Cognitive Engineering》中把行动过程细化为七个活动：建立目标、形成意图、明确行动序列、执行、感知状态、解释状态、评估结果。四阶段适合观察整体过程，七阶段有助于定位更具体的认知断点；实际行动也会跳过或重复某些阶段。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
