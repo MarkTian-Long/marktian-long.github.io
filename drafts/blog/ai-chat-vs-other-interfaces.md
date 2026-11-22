@@ -124,7 +124,7 @@ AI 时代不需要先选一个唯一入口，再把所有功能塞进去。**聊
 
 ### 一手理论与原始论文
 
-- [Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)](https://doi.org/10.1016/S0020-7373%2884%2980054-1)（[全文 PDF](https://www.laurahuisinga-design.com/698Research/wp-content/uploads/2013/05/Norman_Stages_Levels_HCI.pdf)）
+- [Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)，全文 PDF](https://www.laurahuisinga-design.com/698Research/wp-content/uploads/2013/05/Norman_Stages_Levels_HCI.pdf)
 - [Donald A. Norman, “Cognitive Engineering” (1986)，作者公开稿](https://www.researchgate.net/publication/235616560_Cognitive_Engineering)
 - [Ben Shneiderman, “Direct Manipulation: A Step Beyond Programming Languages” (1983)](https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf)
 
