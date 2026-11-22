@@ -23,6 +23,8 @@ relations: []
 
 [黎曼猜想](https://www.claymath.org/millennium/Riemann-Hypothesis/)由黎曼在 1859 年提出，涉及素数分布偏离平均趋势的程度。用数学语言说，它断言黎曼 ζ 函数的所有非平凡零点都位于实部为 1/2 的直线上。它被列为千禧年难题，并非只是因为历史久或奖金高，而是因为在解析数论中有基础地位：大量定理和估计都与它存在深刻联系。
 
+举一个不需要读懂 ζ 函数的例子：统计不超过 x 的数里有多少个素数，可以先用一个平滑公式估计。根据 [NIST 的标准数学参考](https://dlmf.nist.gov/27.12)，黎曼猜想等价于将实际素数数量与一种更精细估计之间的误差，限制在约 √x × log x 的增长量级。这里的 x 是统计范围，谈的是范围扩大时误差最多增长多快，而不是某次计算的精确误差。相比只知道平均趋势，这是一项强得多的控制。
+
 11 月 20 日，数论学家 Levent Alpöge 在[个人说明](https://alpo.ge/remark.pdf)里宣布，他与 Claude 合作找到证明，公开约 1700 万行 Lean 代码。[MIT 的主定理核验记录](https://math.mit.edu/~drew/grh/)列明，成果涵盖经典黎曼猜想，以及 Dirichlet L 函数版本的广义黎曼猜想。这不是对所有更一般 L 函数的泛化证明，范围必须说清。
 
 更值得重视的是 Claude 参与了什么。Alpöge 自己引导研究方向、选择可类比的问题结构，同时描述 Claude 在后续技术探索中提出了令他惊讶的关键步骤。[《自然》对其他数学家的采访](https://www.nature.com/articles/d41586-026-03812-7)也强调 Alpöge 长期建立这套数学研究工作方式的投入。这里的 AI 不只是把一篇现成论文转成代码，而是进入了新证明的搜索与构建；人的研究判断也远未消失。
@@ -118,6 +120,7 @@ RSI（递归式自我改进）仍是更远的一条链：AI 参与数学研究�
 ### 数学原始材料与独立核验
 
 - [Clay：Riemann Hypothesis](https://www.claymath.org/millennium/Riemann-Hypothesis/)
+- [NIST DLMF：素数定理与黎曼猜想的等价误差界](https://dlmf.nist.gov/27.12)
 - [Levent Alpöge：本人声明（11 月 20 日）](https://alpo.ge/remark.pdf)
 - [MIT Andrew Sutherland：验证与算术推论](https://math.mit.edu/~drew/grh/)
 - [Lean 与 Mathlib 社区联合认证](https://leanprover-community.github.io/blog/posts/riemann-hypothesis/)
