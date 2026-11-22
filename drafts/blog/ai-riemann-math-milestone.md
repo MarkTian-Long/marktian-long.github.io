@@ -4,7 +4,7 @@ tags: ["技术判断"]
 topics: ["科研自动化", "模型能力"]
 concepts: ["黎曼猜想", "形式化数学证明", "Lean 第三方复核", "AI 辅助原创数学研究", "数学成果学术认可", "人类可读证明"]
 share_quote: "Lean 能确认一份已经找到的证明正确，不保证下一个问题总能找到证明。"
-relations: [{"slug":"automated-research","type":"builds_on"}]
+relations: []
 ---
 
 # 黎曼猜想之后，AI 数学真的迎来了里程碑吗？
@@ -64,6 +64,8 @@ Alpöge 在[原始说明](https://alpo.ge/remark.pdf)中举过一个具体例子
 来源分别是 [Google DeepMind 的 IMO 报告](https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/)、[Anthropic 8 月 ζ 函数研究](https://www.anthropic.com/research/riemann-zeta)、[OpenAI 十项成果](https://openai.com/index/ten-advances-in-mathematics/)、[Navier–Stokes 公告](https://openai.com/index/navier-stokes-solution/)和 [OpenAI 数学仓库](https://github.com/openai/math/blob/main/README.md)。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。更重要的是，Anthropic 在 8 月明确表示，当时的技术路线预计无法直接证明 RH。**11 月的结果不能描述成同一方法从 67.2% 进展到了 100%；它意味着找到了一条不同的证明路径。**
 
 最强的反例是 Navier–Stokes。11 月 12 日，Buzzard 就已经指出那项证明完成了类似四项核验；[Clay 研究所此前也曾积极回应](https://www.claymath.org/news/navier-stokes-announcement/)。因此，“此前 GPT 只会发论文，直到 Claude 这次才第一次有可信数学证明”并不成立。
+
+实际上，即使不谈 AI，数学界早已用证明助手检查重大成果：[Flyspeck 项目在 2014 年完成了开普勒猜想的形式化证明](https://github.com/hol-light-family/Flyspeck)。因此，这次值得关注的变化不是“计算机终于能够验证重大定理”，而是 AI 开始参与寻找此前未知的证明，并与人类数学家和形式化验证体系共同完成研究。
 
 但有一件事反而因此更清楚了：**里程碑不要求它是同一种机制的第一次。**此前一个重大问题被攻克，不会使另一个同样处在数学核心的重大问题变得不重要；关键是这一次取得了什么成果，以及这些成果如何被数学界接住。
 
@@ -130,6 +132,7 @@ RSI（递归式自我改进）仍是更远的一条链：AI 参与数学研究�
 - [OpenAI：Navier–Stokes 研究](https://openai.com/index/navier-stokes-solution/)
 - [OpenAI math 公开仓库与验证阶段](https://github.com/openai/math/blob/main/README.md)
 - [Clay：Navier–Stokes 公告](https://www.claymath.org/news/navier-stokes-announcement/)
+- [Flyspeck：2014 年完成的开普勒猜想形式化证明](https://github.com/hol-light-family/Flyspeck)
 
 ### 数学家评价与正式制度
 
