@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+date:    2026.11
+title:   当 AI 开始替用户付款，谁真正拥有交易？
+tags:    [市场格局, 决策框架]
+slug:    agentic-commerce-transaction-control
+summary: AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>当 AI 开始替用户付款，谁真正拥有交易？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="当 AI 开始替用户付款，谁真正拥有交易？" />
+<meta property="og:description" content="AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI · Product · Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="当 AI 开始替用户付款，谁真正拥有交易？" />
+<meta name="twitter:description" content="AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI · Product · Builder" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"当 AI 开始替用户付款，谁真正拥有交易？","description":"AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？","url":"https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-1"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-1">一、AI 开始替用户付款，但交易并没有因此属于 AI</a></div><ul class="toc-sublist" id="toc-section-1" hidden><li><a href="#section-2">ChatGPT Wallet：从商品推荐进入真实支付</a></li><li><a href="#section-3">千问：把 AI 接入已有的消费生态</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-4"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-4">二、一笔交易由谁组织？先看传统电商，再看 Agent</a></div><ul class="toc-sublist" id="toc-section-4" hidden><li><a href="#section-5">同一条交易链，为什么要问「3+1」个问题？</a></li><li><a href="#section-6">真正变化的是协调关系</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-7"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-7">三、阿里与蚂蚁，正在争夺交易链的不同位置</a></div><ul class="toc-sublist" id="toc-section-7" hidden><li><a href="#section-8">阿里：把 AI 入口连接到供给和履约</a></li><li><a href="#section-9">蚂蚁：为跨平台 Agent 提供可信交易能力</a></li><li><a href="#section-10">生态整合与跨平台基础设施，不是同一家公司的一套战略</a></li></ul></li><li><a href="#section-11">四、全球玩家争夺的不是同一个位置</a></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-12"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-12">五、Agent 带来的交易，究竟是新增收入还是渠道迁移？</a></div><ul class="toc-sublist" id="toc-section-12" hidden><li><a href="#section-13">Agent 来源订单，未必是新增订单</a></li><li><a href="#section-14">用户少操作，不意味着全链路成本下降</a></li><li><a href="#section-15">可能收费，不等于已经形成利润池</a></li><li><a href="#section-16">Instinct：个人代理如何变成商家分发渠道？</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-17"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-17">六、为什么能力已经出现，仍不足以判断赢家？</a></div><ul class="toc-sublist" id="toc-section-17" hidden><li><a href="#section-18">AI 购物的使用率，不等于购买率</a></li><li><a href="#section-19">原有平台会把 Agent 能力留在自己的入口里</a></li><li><a href="#section-20">购物也不只有效率价值</a></li></ul></li><li><a href="#section-21">七、谁真正拥有交易？要看哪一种控制发生了迁移</a></li><li><a href="#section-22">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.11</span><span id="post-tags"></span></div><h1 class="post-title">当 AI 开始替用户付款，谁真正拥有交易？</h1><p class="post-summary">AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？</p></header>
+        <hr class="divider" />
+        <div class="post-body"><figure class="post-figure">
+  <img src="../../../assets/images/blog/agentic-commerce-transaction-control/agentic-shopping-scene.webp" alt="消费者坐在桌前通过抽象 Agent 连接多个商家、银行卡支付和配送包裹的概念场景" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>AI 生成概念插图：用户可以借助 Agent 协调购物，但商家、支付与履约仍由不同主体承担职责。</figcaption>
+</figure>
+<p>2026 年 11 月，OpenAI 发布了 <a href="https://openai.com/index/introducing-chatgpt-wallet/" target="_blank" rel="noopener noreferrer">ChatGPT Wallet</a>。用户可以让 AI 帮自己寻找商品、准备订单，再通过保存的银行卡完成购买。几个月前，阿里已经把千问与淘宝、天猫的商品和交易体系连接起来，让消费者通过自然语言搜索商品、比较价格和管理订单。支付宝则在推进另一类能力：它不一定替用户选择商品，却希望让不同平台上的 Agent 获得支付能力，并解决 Agent 身份、商业授权和交易验证问题。</p>
+<p>这些变化容易让人得出一个结论：AI 开始接管购物，电商平台可能要失去交易入口了。</p>
+<p>但这里有两个不同的问题。AI 能不能替用户购买商品？在部分受支持场景中，已经可以。<strong>当 AI 能够组织一笔交易，原有平台究竟失去了什么？</strong> 这个问题远没有那么简单。</p>
+<p>传统电商从来不是一个平台独自完成所有交易。商家管理商品和库存，支付机构处理付款，银行参与资金授权，物流公司负责交付，消费者决定是否购买。平台的价值，部分来自它把这些参与者组织在一起，并成为消费者进入交易的主要入口。</p>
+<p><strong>Agent 改变的不是交易第一次出现多方分工，而是消费者有机会通过独立代理者重新组织原有交易能力。</strong> 这种新协调方式能否持续，以及由谁获得商业回报，才是 Agentic Commerce 值得研究的问题。</p>
+<h2 id="section-1">一、AI 开始替用户付款，但交易并没有因此属于 AI</h2>
+<h3 id="section-2">ChatGPT Wallet：从商品推荐进入真实支付</h3>
+<p><a href="https://openai.com/index/introducing-chatgpt-wallet/" target="_blank" rel="noopener noreferrer">OpenAI 2026 年 11 月 13 日的产品公告</a>明确，ChatGPT Wallet 首期通过 Dots 向美国符合资格的成年 Pro 用户逐步开放。用户保存合格的支付卡后，Agent 可以在结账时使用与银行卡关联的令牌化支付凭证，而不接触实际卡号。当前流程仍要求用户检查商家、商品、总额与银行卡，并完成安全验证。</p>
+<p><a href="https://openai.com/policies/chatgpt-wallet-terms/" target="_blank" rel="noopener noreferrer">Wallet 服务条款</a>预留了提前授权的合同安排，但条款允许不等于当前面向所有用户开放无监督购买。产品公告描述的逐笔安全确认，与未来更广的持续委托能力，需要分开讨论。</p>
+<p>更重要的是，Wallet 没有让 OpenAI 成为商品卖方。发卡机构仍决定是否批准支付，商家决定是否接单，并负责商品、交付、退款和售后。用户批准提交订单，也不保证商家最终接受。Wallet 证明 AI 平台开始进入真实交易执行环节，却不能证明 OpenAI 已经取得整笔交易的控制权。</p>
+<h3 id="section-3">千问：把 AI 接入已有的消费生态</h3>
+<p>阿里采取了不同路线。2026 年 1 月，千问开始连接淘宝、淘宝闪购、支付宝、飞猪和高德等服务。<a href="https://home.alibabagroup.com/en-US/document-1948497434959151104" target="_blank" rel="noopener noreferrer">阿里巴巴 1 月 15 日公告</a>介绍了首批跨服务任务。同年 5 月，阿里宣布将千问连接到淘宝和天猫超过 40 亿件商品，并在淘宝 App 内上线千问购物助手。相关能力覆盖商品搜索比较、下单、订单管理、物流及售后。<a href="https://home.alibabagroup.com/en-US/document-1991231293551017984" target="_blank" rel="noopener noreferrer">阿里巴巴 5 月 11 日官方公告</a>对此有具体说明。</p>
+<p>这不是给淘宝增加聊天框那么简单。阿里已经拥有商品目录、商家关系、订单系统和履约网络。千问可以调用既有能力，而不像一个独立 AI 平台那样从头寻找商品供给和结账服务商。</p>
+<p>OpenAI 从 AI 消费入口向外连接商家和支付网络；阿里从既有消费生态内部整合 Agent 能力。两种路线显示了不同的起点，但谁真正增加了交易、保留了客户，还需要另行验证。</p>
+<h2 id="section-4">二、一笔交易由谁组织？先看传统电商，再看 Agent</h2>
+<p>判断 Agent 带来了什么变化，必须先看没有 Agent 时，一笔交易如何完成。</p>
+<p>传统淘宝购物中，一笔交易由多个主体共同完成：</p>
+<div class="blog-table"><table><thead><tr><th>参与者</th><th>主要职责</th></tr></thead><tbody><tr><td>消费者</td><td>提出需求、作出购买选择，并按交易方式授权付款</td></tr><tr><td>电商平台</td><td>商品搜索与推荐、交易规则、订单管理和平台内协调</td></tr><tr><td>商家</td><td>商品、定价、库存、是否接单，以及商品交付和质量责任</td></tr><tr><td>支付机构、支付网络与发卡行</td><td>支付机构处理交易，支付网络按付款方式传递支付信息；使用银行卡时由发卡行决定是否批准扣款</td></tr><tr><td>物流服务商</td><td>仓储、运输和配送</td></tr></tbody></table></div>
+<p>具体参与方会随付款方式与交易安排变化。商品售后通常由商家负责，平台则按自身规则提供订单协调、争议处理或消费者保障。它们原本就不是同一个权力主体。</p>
+<p>消费者之所以感觉自己只在一个 App 里购物，是因为平台承担了大量协调工作：把商品、商家、支付、订单状态和售后组织到连续体验中。平台的优势不只是入口，还来自真实交易所需的数据、规则和商业关系。</p>
+<p>假设用户不打开淘宝，而是向独立 Agent 提出需求：「找一台适合视频剪辑、价格不超过 8000 元、这周能够送达的电脑。」Agent 可以跨商家搜索，比较配置、价格、库存和配送条件，再准备订单、请求授权并发起付款。商品仍可能来自淘宝，付款仍需支付系统核验（使用银行卡时还需发卡行批准），履约仍由商家负责；但需求理解、跨商家比较和部分交易协调工作，可能已经由平台之外的 Agent 承担。</p>
+<h3 id="section-5">同一条交易链，为什么要问「3+1」个问题？</h3>
+<p>上面的传统电商与独立 Agent 场景，都需要有人协调交易、有人作出决定、有人完成履约，但这些工作不必属于同一个主体。为了判断 Agent 到底改变了什么，可以先问三个关于<strong>交易如何运行</strong>的问题，再单独问一个关于<strong>经济结果</strong>的问题。</p>
+<p><strong>三个运行问题是并列的观察角度，而不是依次执行的三个步骤。</strong> <strong>组织与协调</strong>看谁连接用户、商家和支付服务并推进流程；<strong>决策与授权</strong>看谁选择、批准、拒绝或撤销交易；<strong>履约与责任</strong>看谁交付、纠错并承担相应义务。<strong>加上的经济回报</strong>则检验谁获得收入、承担成本、留住客户，以及这种分工能否形成持续回报。</p>
+<p>这套「3+1」是本文借鉴<a href="https://doi.org/10.1111/j.1468-0335.1937.tb00002.x" target="_blank" rel="noopener noreferrer">Coase 对交易组织成本的分析</a>、<a href="https://doi.org/10.1086/467037" target="_blank" rel="noopener noreferrer">Fama 与 Jensen 对决策和控制分工的研究</a>，以及<a href="https://doi.org/10.1016/0048-7333%2886%2990027-2" target="_blank" rel="noopener noreferrer">Teece 对价值捕获的讨论</a>后作出的分析归纳，<strong>并非任何一篇论文提出的标准四分法，也不是所有交易权利的穷尽分类</strong>。它的作用，是让新旧交易方式能够在同一问题下比较。</p>
+<p>主图把典型交易拆成八个环节：需求表达、商品发现与比较、选择与订单、用户委托与授权、支付与交易验证、商家接受订单、履约与售后、客户关系与复购。八个环节用于定位交易动作，不代表所有业务都按固定顺序执行；三个运行问题可以逐环节追问，经济回报则属于结果层。只有当收益足以支持下一轮投入时，结果才可能反过来改变协调方式，图中的虚线并非必然闭环。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg" alt="典型交易的八个环节与三加一诊断框架：组织与协调、决策与授权、履约与责任是并列的运行问题，经济回报是结果层；虚线仅表示有条件的反馈。" width="1280" height="1024" loading="lazy" decoding="async" />
+  <figcaption>八个典型环节用于定位交易动作；三个运行问题并列分析各方职责，经济回报单独检验商业结果，反馈并非必然发生。</figcaption>
+</figure>
+<p>记住这套框架只需要四个短问：<strong>谁串联、谁拍板、谁兜底；最后谁得利？</strong> 沿用买电脑的例子：独立 Agent 可以搜集信息、比较商家并准备订单；用户仍决定是否购买，商家可以拒绝接单并负责交付，支付服务则核验付款。Agent 承担了协调工作，不等于它得到了交易佣金。</p>
+<p>同一主体可以同时负责多个问题，同一问题也可能由多个参与者分担。尤其要区分<strong>操作发生在哪里</strong>与<strong>决定权属于谁</strong>：用户在 ChatGPT 中发起购买，不意味着 OpenAI 成了卖家；商品由淘宝商家发货，也不意味着原平台仍独占用户需求和比较过程。</p>
+<h3 id="section-6">真正变化的是协调关系</h3>
+<p>把刚才那台电脑的购买过程放到两条路径里，差异会更清楚：传统电商中，用户通常先进入平台，平台在自己的商家与规则体系内协调选品和订单；独立 Agent 场景中，用户先提出目标，再由 Agent 对接多个商家或服务。<strong>可能改变的是需求入口和跨商家协调的位置，而不是商家、支付机构与用户原有的权利义务一夜间消失。</strong></p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg" alt="传统电商由平台集中协调消费路径，外部Agent模式由消费者委托代理者跨商家协调；二者都保留商家、支付、履约等原有职责。" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>交易参与者原本就分工协作；Agent 可能改变的是由谁组织用户需求与跨商家流程。</figcaption>
+</figure>
+<p>两条路径并非互斥：原有平台也可以在自己的 App 内部署 Agent，独立 Agent 也仍要调用商家和支付系统。<strong>入口迁移、协调权迁移与商业收益迁移不是一回事。</strong> 后面再看不同玩家如何占位，以及 Agent 订单是否真的带来增量价值。</p>
+<p>此前在<a href="https://marktian-long.github.io/tools/blog/posts/personal-agent.html" target="_blank" rel="noopener noreferrer">《Personal Agent：当 AI 开始长期接手你的事》</a>中讨论过用户如何把跨应用事务持续委托给 Agent，也在<a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">《AI 正在把“使用软件”和“操作软件”拆开》</a>中讨论过操作权转移不等于软件消失。到了真实交易，新问题是：用户授权、商家接单、支付验证与履约责任如何协作，协调权和商业回报又会怎样变化。</p>
+<h2 id="section-7">三、阿里与蚂蚁，正在争夺交易链的不同位置</h2>
+<p>沿交易链观察，中国市场有两条可以协同、却并不相同的路线。阿里利用已有消费生态整合 Agent 交易，蚂蚁则尝试让不同 Agent 获得跨平台支付与信任能力。</p>
+<h3 id="section-8">阿里：把 AI 入口连接到供给和履约</h3>
+<p>阿里已经拥有商品目录、商家运营、交易数据和订单物流体系。千问接入淘宝商品后，可以把自然语言需求转化为既有商品和订单能力的调用，减少跨平台接入摩擦。商品缺货、配送延误、退款等真实状态，又能够约束 Agent 后续行动。推荐能力只有连上这些业务系统，才能持续完成购买任务。</p>
+<p>这一路线能够减少部分协调成本，但不自动创造新增 GMV。如果消费者原本就会在淘宝购买，只是改由千问发起订单，集团不一定增加收入。千问仍需证明能提高转化、创造新增需求或降低全链路交易成本。</p>
+<h3 id="section-9">蚂蚁：为跨平台 Agent 提供可信交易能力</h3>
+<p><a href="https://aipay.alipay.com/docs/overview.html" target="_blank" rel="noopener noreferrer">支付宝 AI 付开发者概览</a>同时覆盖 AI 服务如何收费与 Agent 如何付款：Vibe Pay 面向 AI 应用收款，Skill Pay 处理技能收费，Machine Pay 支持机器或 API 按量支付，Token Pay 涉及模型额度与订阅，Agent Pay 则面向 Agent 代表用户购买商品和服务。</p>
+<p>其中有一个清楚的边界：<strong>Agent Pay 聚焦最终购买环节，不负责 Agent 的商品选择和供应商决策。</strong> 支付宝不必掌握每个用户的购物入口，也能成为不同 Agent 调用的交易服务方。</p>
+<p>但 Agent 发起支付后，支付系统需要回答比过去更多的问题。用户说「替我找一张周五从上海到杭州、不超过 680 元的车票」，对人来说容易理解，对跨平台运行的 Agent 来说，还需要转换成能够验证的购买目标、时间、价格和授权条件。否则，商家和支付机构很难判断付款请求有没有超出用户委托范围。</p>
+<p>蚂蚁提出的 <a href="https://www.act-protocol.com/documentation/delegation" target="_blank" rel="noopener noreferrer">ACT 协议</a>支持两类委托：SPECIFIED 适用于购买对象已指定的情况；BOUNDED 允许 Agent 在用户给定的目标和约束下作出具体选择。协议还设计授权暂停、恢复、撤销和过期机制，试图把自然语言委托转化为跨环节可核验的商业对象。</p>
+<p>另一项能力 <a href="https://aipay.alipay.com/act/apass" target="_blank" rel="noopener noreferrer">APASS</a> 关注 Agent 的静态身份、运行时身份和责任主体身份。Agent 可能更新代码、切换环境、调用不同工具；固定的 Agent ID 不足以证明当前执行支付的实例仍然可信。因此，身份、授权和执行状态需要分别核验。</p>
+<p>这并不意味着 ACT 已成为行业通用标准，或 APASS 接入规模可以直接换算为真实消费订单。它们证明的是蚂蚁正在建设哪种能力，而不是最终商业模式已经获得市场验证。</p>
+<h3 id="section-10">生态整合与跨平台基础设施，不是同一家公司的一套战略</h3>
+<p><a href="https://data.alibabagroup.com/ecms-files/1514386754/b0f928b2-88f0-469d-905e-a714d19fb913/2026%20SEC%20Form%2020-F.pdf" target="_blank" rel="noopener noreferrer">阿里巴巴 2026 财年 Form 20-F</a>披露阿里持有蚂蚁约三分之一股权，但不控制蚂蚁。双方有长期支付合作，却不能把千问、淘宝、支付宝和蚂蚁的全部能力视为一个公司内部可自由调度的资产。</p>
+<p>阿里更接近消费生态内部的 Agent 整合；蚂蚁更接近跨 Agent 的支付与信任基础设施。它们可以互补，但客户、控制点和商业利益并不完全相同。</p>
+<h2 id="section-11">四、全球玩家争夺的不是同一个位置</h2>
+<p>把中国市场放进全球对照，就能看到不同企业正在争夺交易链上的不同位置。</p>
+<p>OpenAI 靠消费者 AI 入口接近需求与选择，再通过 Wallet 延伸至支付；但仍依赖外部商家提供商品、接受订单和履约。Google 与 Shopify 共同推动的 <a href="https://www.shopify.com/ucp" target="_blank" rel="noopener noreferrer">Universal Commerce Protocol（UCP）</a> 则试图用结构化接口连接 Agent 和商家，覆盖商品发现、购物车、结账及购买后流程，降低商家重复接入多种 Agent 的成本。</p>
+<p>Google 的 <a href="https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/" target="_blank" rel="noopener noreferrer">Agent Payments Protocol（AP2）</a> 侧重用户授权与支付验证。2026 年 4 月，Google 将 AP2 捐赠给 FIDO Alliance；AP2 0.2 探索基于预授权指令的 Human Not Present 交易。Google 与 Mastercard 共同开发的 Verifiable Intent，则尝试为用户授权的 Agent 行为留下防篡改记录。<a href="https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/" target="_blank" rel="noopener noreferrer">FIDO Alliance 对 AP2 与 Verifiable Intent 的说明</a>可见其信任层设计。但协议目标相似，并不等于 ACT、AP2 和 UCP 已经互相兼容。</p>
+<p>这一协议也进入了 Google 自己的消费者产品。根据 <a href="https://blog.google/innovation-and-ai/products/gemini-app/tasks-in-gemini-free-new-features/" target="_blank" rel="noopener noreferrer">Google 11 月 17 日公告</a>，Gemini Tasks 在部分购物场景中通过 Shopping Graph 比较商品，再结合 Google Pay 和 AP2 协助结账；购买需要用户确认或事先授权，购物支付功能首先面向美国开放。UCP 集成仍是未来计划。这证明协议已进入具体产品流程，不代表跨商家普及、完成率或净新增交易得到验证。</p>
+<p>支付网络则从原有职能向 Agent 身份和支付控制延伸。2026 年 10 月，<a href="https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html" target="_blank" rel="noopener noreferrer">Visa、BILL 与 Billtrust</a>宣布一项实际运行的 B2B 发票支付试点：买方 Agent 在预先批准的规则内使用令牌化支付凭证，通过供应商门户付款。这是企业发票结算的生产试点，不是消费者购物已经普及的证据。</p>
+<div class="blog-table"><table><thead><tr><th>主要竞争位置</th><th>代表企业</th><th>重点能力</th></tr></thead><tbody><tr><td>消费者需求入口</td><td>OpenAI、阿里千问</td><td>理解需求、影响选择、组织购买</td></tr><tr><td>商业交互与授权</td><td>Google、Shopify、蚂蚁</td><td>让 Agent、商家与支付系统跨平台协作</td></tr><tr><td>支付与交易信任</td><td>支付宝、Visa、Mastercard</td><td>身份、令牌、授权及风险验证</td></tr></tbody></table></div>
+<p>这不是互斥的公司分类。同一家企业可以覆盖多个位置，不同企业也可能合作。一笔交易可能由独立 Agent 理解需求，Shopify 商家提供商品，支付网络核验付款，再由商家完成交付。Agent Commerce 不必然形成一个拥有所有能力的超级平台。</p>
+<h2 id="section-12">五、Agent 带来的交易，究竟是新增收入还是渠道迁移？</h2>
+<p>沿交易链讨论完参与者的位置，接下来需要分清两件事：Agent 有没有创造新增需求、降低全链路成本？既有收入又会怎样在平台、Agent、商家和支付服务之间重新分配？此前在<a href="https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html" target="_blank" rel="noopener noreferrer">《技术最领先的人，为什么不一定拿走最大的价值？》</a>中讨论过互补资产与价值捕获，这里把问题落到真实交易的成本与收益。</p>
+<h3 id="section-13">Agent 来源订单，未必是新增订单</h3>
+<p>假设一位用户原本每月在淘宝购物五次，现在改为通过千问下单。千问的 Agent 来源订单占比提高了，但如果购买商品、次数、金额都没有变化，阿里整体未必获得新增 GMV。</p>
+<p>反过来，如果 Agent 帮用户发现了原本不知道的商品，或持续追踪库存和价格，促成了一笔过去会放弃的购买，就可能带来新增需求。</p>
+<p>所以，<strong>Agent 来源订单不等于 Agent 净新增订单。</strong> 要判断增量，需要回答反事实问题：如果没有 Agent，交易是否仍会发生？订单来源标签不能回答。更可靠的证据是可比用户与商品条件下的对照实验，或能够合理剔除渠道替代的经营数据。</p>
+<p>还有一种情况：总成交额没有增加，收入却在参与者之间重新分配。假设一笔原本由电商平台带来的订单改由独立 Agent 促成，商家把部分获客预算转向 Agent。Agent 可能获得渠道收入，原平台可能失去相应收入，但这不等于行业创造了同等规模的新价值。<strong>净新增交易与既有收益的再分配，需要分别判断。</strong></p>
+<h3 id="section-14">用户少操作，不意味着全链路成本下降</h3>
+<p>Agent 可以减少搜索、比较、填写表单的时间，但也带来新的成本：商家需要维护可供 Agent 使用的商品数据，平台要开放受控的订单接口，支付机构要核验 Agent 身份与授权，交易失败还要处理重试、取消、退款和争议。</p>
+<p>例如，Agent 推荐了正确商品，但商家拒绝接单；或者付款获得授权，但商品库存已经变化。用户可能最终仍然需要人工处理。若 Agent 在预算边界内买了不合适的商品，还可能增加退货成本。</p>
+<p>因此，用户体验更流畅，不等于整个交易系统更便宜。Agent 真正创造的效率收益，必须扣除接入、风控、异常处理和售后新增支出。</p>
+<h3 id="section-15">可能收费，不等于已经形成利润池</h3>
+<p>Agent 平台可能获得订阅费、推荐费或交易分成，但需要证明自己持续带来有价值的订单。支付机构可能获得支付处理收入，但如果 Agent 只是替换旧渠道，整体支付需求未必增加。身份和授权服务也可能独立收费，却需要跨平台接入、持续调用和可验证的安全效益。</p>
+<p>即使基础设施重要，也不保证单一提供方可以获得高利润。若商家能在多个兼容服务商之间选择，供应商仍受竞争约束。</p>
+<h3 id="section-16">Instinct：个人代理如何变成商家分发渠道？</h3>
+<p>此前在<a href="https://marktian-long.github.io/tools/blog/posts/personal-agent.html" target="_blank" rel="noopener noreferrer">《Personal Agent：当 AI 开始长期接手你的事》</a>中介绍的 Instinct，已经把长期委托延伸到真实购物。它与 Shopify 合作后，可以搜索商家商品、读取实时价格和库存，通过 Shop Pay 结账，并跟踪物流、价格变化和退货窗口。<a href="https://x.com/noahrshinn/status/2104628465488306183" target="_blank" rel="noopener noreferrer">创始人的合作公告</a>展示了这条产品路径。</p>
+<p>Instinct 更值得关注的是商家付费分发的构想。在 <a href="https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848" target="_blank" rel="noopener noreferrer">Invest Like the Best 访谈</a>中，创始人 Noah Shinn 提出用户免费、商家为带来客户和完成购买支付交易抽成。这不是已公布的统一费率，也不能写成已经验证的佣金收入。</p>
+<p>这种模式会触及个人代理的信任边界。Business Insider 报道，三名早期用户收到过非请求式商品推荐；这些推荐没有标注为广告，报道也无法确认 Instinct 是否从后续购买中获利。<a href="https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10" target="_blank" rel="noopener noreferrer">相关调查</a>没有证明存在付费推荐，却提出一个结构性问题：<strong>当 Agent 用长期积累的个人上下文匹配商家，而收入又可能来自成交佣金时，它如何证明推荐仍然优先服务用户？</strong> Instinct 展示了个人委托转化为消费分发的可能性，也暴露了商业化与用户信任之间需要治理的张力。</p>
+<p>判断这门生意是否成立，至少应该分开观察：</p>
+<div class="blog-table"><table><thead><tr><th>指标</th><th>实际回答什么</th></tr></thead><tbody><tr><td>Agent 来源订单量</td><td>Agent 参与了多少交易</td></tr><tr><td>完整交易成功率</td><td>选品、授权、支付、商家接单有多少真正走通</td></tr><tr><td>净新增 GMV</td><td>相比没有 Agent 的情况，多产生多少购买</td></tr><tr><td>渠道替代率</td><td>有多少订单只从旧入口迁移过来</td></tr><tr><td>单笔贡献利润</td><td>扣除新增成本后，还留下多少收益</td></tr><tr><td>持续委托与复购</td><td>用户是否形成稳定使用习惯</td></tr></tbody></table></div>
+<p>支付宝公开披露的 AI 付交易数量覆盖模型、AI 应用、技能收费、电商、本地生活等多个场景，不能全部写成 Agent 自主完成的消费购物。现有公开材料也不足以确认 Agent Pay 独立收入、净新增 GMV 或完整单位经济。</p>
+<p><strong>Agent 参与更多交易，不代表行业创造了新的利润池；即使没有净新增交易，渠道收入也可能重新分配。</strong></p>
+<h2 id="section-17">六、为什么能力已经出现，仍不足以判断赢家？</h2>
+<p>真正完成技术链路，与消费者持续委托、商家长期接入、平台形成新增利润之间仍有距离。</p>
+<h3 id="section-18">AI 购物的使用率，不等于购买率</h3>
+<p><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce" target="_blank" rel="noopener noreferrer">McKinsey 2026 年 10 月调查分析</a>基于当年 6 月约 21,000 名消费者的反馈。全球 11 个市场平均有 53% 的消费者在过去三个月使用过 AI 完成至少一项购物任务；但全球 AI 用户中，只有 14% 表示曾使用 AI 工具完成购买，折算到总体消费者约为 9%。</p>
+<p>这说明 AI 辅助搜索与决策已经很常见，实际购买则仍是另一个门槛。调查还发现，到结账阶段，零售商自有 AI 助手和独立 AI 工具的使用比例接近，分别约 15% 和 14%。两组题项的措辞不完全相同，不能将它们当成精确市场份额，但至少说明独立 AI 在发现阶段的优势没有自动延续到付款阶段。</p>
+<p>这属于消费者自报调查，不是交易日志，更不能用来计算新增 GMV。</p>
+<h3 id="section-19">原有平台会把 Agent 能力留在自己的入口里</h3>
+<p>Uber 提供了一个现实参照。<a href="https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf" target="_blank" rel="noopener noreferrer">2026 年第三季度财报电话会</a>披露，万圣节所在的一周，第三方 Agent 只带来约 500 笔 Uber Eats 订单和 4 笔 Uber Rides。这个规模说明外部 Agent 已经可以形成实际交易，但仍处于早期。不能拿不同业务的季度或周度总体订单直接计算这一场景的转化率。</p>
+<p>Uber 同时在建设自己的购物助手，并强调司机实时匹配、商家供给、价格、库存、取货位置和履约体系仍然关键。<a href="https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf" target="_blank" rel="noopener noreferrer">Uber 官方经营说明</a>提供了更多背景。外部 Agent 可以提出任务，但真正完成出行或配送仍需要 Uber 的实时服务网络。</p>
+<p>更直接体现商业博弈的是，Uber CEO Dara Khosrowshahi 在<a href="https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf" target="_blank" rel="noopener noreferrer">同一次财报电话会</a>上表示，公司正在与第三方 AI 服务商谈判合作的交易条件（terms of trade）。这说明即使 Agent 带来新的消费入口，掌握实时供给与履约能力的平台仍能参与决定合作条件；<strong>协调权可能转移，交易条件却仍需要各方谈判。</strong> 至于是否收费、如何分成以及这些合作能否创造新增需求，Uber 当时并未披露结果。</p>
+<p>Google Maps 则提供了一个更接近日常服务的反例。2026 年 11 月 16 日，<a href="https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/" target="_blank" rel="noopener noreferrer">Google 宣布扩展 Ask Maps</a>：用户可以通过自然语言查询美容、宠物护理、汽车或房屋维修等本地服务的可用时段，也可以选择让 Google 代为致电商家询问，然后由用户查看时段并决定预约哪项服务。</p>
+<p>这里要注意：<strong>查询到空余时段、联系商家，不等于已经完成预约或支付。</strong> 相关预约查询能力也首先在美国推出，不能把 Ask Maps 更广的地理覆盖理解为这些功能同步全球可用。</p>
+<p>但它仍然说明了重要的竞争路径。Google Maps 本来就拥有地点、商家、营业状态、路线和用户收藏信息。通过在原产品中增加 Agent 能力，它可以继续留住消费者的需求入口并承担部分服务协调工作。消费者使用了自然语言，不代表入口必然迁移到外部 AI 平台。</p>
+<p>Uber 和 Google Maps 的任务不同，共同点却很清楚：<strong>原有平台可以利用真实供给和业务数据，自行吸收 Agent 能力，而不是只能被动接受第三方 Agent 分发的订单。</strong></p>
+<h3 id="section-20">购物也不只有效率价值</h3>
+<p>消费者购物未必只是为了买到确定商品。探索、比较、发现品牌、寻找礼物、审美表达，本身也可能构成体验价值。</p>
+<p>如果购买目标明确、可验证、风险较低，Agent 可以替用户承担更多重复工作；但如果用户希望发现新选择，过早自动下单反而可能损害体验。Uber 在经营说明中披露的大量用户主动调整出行选项、尝试新的餐厅，也从自身业务角度提示了选择与发现的价值；这些数据不能外推为所有消费者行为。</p>
+<p>因此，Agent Commerce 不太可能简单地把全部消费场景变成自动采购。真正的产品设计问题是：<strong>用户愿意把哪部分判断交出去，又希望保留哪部分参与？</strong></p>
+<h2 id="section-21">七、谁真正拥有交易？要看哪一种控制发生了迁移</h2>
+<p>回到标题。如果「拥有交易」指法律上的卖方身份、商品所有权或资金权利，就必须看具体合同和交易关系，不可能一概归给 Agent。</p>
+<p>如果讨论的是商业上的交易控制力，那么需要区分三种变化。</p>
+<p><strong>第一，交互入口迁移。</strong> 用户不再先打开电商 App，而是向独立 Agent 提出需求。这可能改变商品被发现与推荐的方式，但商家、订单和履约系统仍可能完全保留在原平台。</p>
+<p><strong>第二，交易协调权迁移。</strong> Agent 能够稳定地跨商家组织发现、比较、授权、订单和付款，用户不再需要分别进入多个平台完成交易。这比聊天界面变化更深，但不意味着原有商家和履约系统失去价值。</p>
+<p><strong>第三，商业价值迁移。</strong> Agent 形成持续的新增交易、降低全链路成本，或者获得稳定客户关系与合理收费能力，才有更充分的依据讨论商业价值真正发生迁移。</p>
+<p>这三种变化并非必然递进的阶段，也不一定同时发生。独立 Agent 可以成为需求入口，却高度依赖淘宝、Shopify 商家或 Uber 的供给和履约；也可以承担大量协调工作，却因无法创造新增需求而缺乏独立商业回报。反过来，原平台即使不再是消费者首先打开的 App，也可能凭借商家关系、实时业务状态和自营 Agent 保留交易价值。</p>
+<p>因此，未来谁占据优势，不应该只看谁的模型更聪明、谁发布了更多支付协议。沿一笔真实交易继续追问才有意义：用户把需求交给谁，谁决定商品和条件，谁获得授权，谁可以接受或拒绝交易，谁负责交付，最后谁因为这种新组织方式得到持续收益？</p>
+<p><strong>Agent 改变的不是交易第一次出现多方分工，而是消费者有机会通过独立代理者重新组织原有交易能力。</strong> 能力已经开始出现，但这种协调方式能否成为稳定习惯、能否增加整体交易价值，以及既有收入会如何重新分配，目前仍需要真实交易数据来回答。</p>
+<h2 id="section-22">参考资料</h2>
+<h3 id="section-23">一手文件、协议与官方披露</h3>
+<ul><li><a href="https://openai.com/index/introducing-chatgpt-wallet/" target="_blank" rel="noopener noreferrer">OpenAI：Introducing ChatGPT Wallet（2026-11-13）</a></li><li><a href="https://openai.com/policies/chatgpt-wallet-terms/" target="_blank" rel="noopener noreferrer">OpenAI：ChatGPT Wallet Terms</a></li><li><a href="https://home.alibabagroup.com/en-US/document-1948497434959151104" target="_blank" rel="noopener noreferrer">阿里巴巴：千问接入淘宝闪购、支付宝、飞猪和高德（2026-01-15）</a></li><li><a href="https://home.alibabagroup.com/en-US/document-1991231293551017984" target="_blank" rel="noopener noreferrer">阿里巴巴：Alibaba Opens All of Taobao to Qwen AI（2026-05-11）</a></li><li><a href="https://aipay.alipay.com/docs/overview.html" target="_blank" rel="noopener noreferrer">支付宝：AI 付产品概览</a></li><li><a href="https://www.act-protocol.com/documentation/delegation" target="_blank" rel="noopener noreferrer">ACT：委托授权规范</a></li><li><a href="https://aipay.alipay.com/act/apass" target="_blank" rel="noopener noreferrer">支付宝：APASS 智能体身份体系</a></li><li><a href="https://data.alibabagroup.com/ecms-files/1514386754/b0f928b2-88f0-469d-905e-a714d19fb913/2026%20SEC%20Form%2020-F.pdf" target="_blank" rel="noopener noreferrer">阿里巴巴：2026 财年 Form 20-F</a></li><li><a href="https://www.shopify.com/ucp" target="_blank" rel="noopener noreferrer">Shopify：Universal Commerce Protocol</a></li><li><a href="https://blog.google/products-and-platforms/platforms/google-pay/agent-payments-protocol-fido-alliance/" target="_blank" rel="noopener noreferrer">Google：AP2 与 FIDO Alliance（2026-04-28）</a></li><li><a href="https://blog.google/innovation-and-ai/products/gemini-app/tasks-in-gemini-free-new-features/" target="_blank" rel="noopener noreferrer">Google：Gemini Tasks 使用 Google Pay 与 AP2（2026-11-17）</a></li><li><a href="https://fidoalliance.org/building-the-trust-layer-for-agentic-payments-with-ap2-and-verifiable-intent/" target="_blank" rel="noopener noreferrer">FIDO Alliance：AP2 与 Mastercard Verifiable Intent 信任层（2026-05-26）</a></li><li><a href="https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-bill-billtrust-launch-pilot.html" target="_blank" rel="noopener noreferrer">Visa：BILL 与 Billtrust Agent 支付试点（2026-10-20）</a></li><li><a href="https://x.com/noahrshinn/status/2104628465488306183" target="_blank" rel="noopener noreferrer">Instinct 创始人：Instinct 与 Shopify 商品发现、Shop Pay 结账及订单更新合作（2026-09-28）</a></li><li><a href="https://podcasts.apple.com/us/podcast/noah-shinn-building-instinct-the-personal-agent/id1154105909?i=1000792019848" target="_blank" rel="noopener noreferrer">Invest Like the Best：Noah Shinn - Building Instinct: The Personal Agent，EP.493（2026-09-28）</a></li><li><a href="https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/" target="_blank" rel="noopener noreferrer">Google Maps：Ask Maps 新增本地服务能力（2026-11-16）</a></li><li><a href="https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf" target="_blank" rel="noopener noreferrer">Uber：Q3 2026 Prepared Remarks</a></li></ul>
+<h3 id="section-24">理论研究（用于分析问题，不是现成的「3+1」框架）</h3>
+<ul><li><a href="https://doi.org/10.1111/j.1468-0335.1937.tb00002.x" target="_blank" rel="noopener noreferrer">Coase：The Nature of the Firm（1937）</a></li><li><a href="https://doi.org/10.1086/467037" target="_blank" rel="noopener noreferrer">Fama 与 Jensen：Separation of Ownership and Control（1983）</a></li><li><a href="https://doi.org/10.1016/0048-7333%2886%2990027-2" target="_blank" rel="noopener noreferrer">Teece：Profiting from Technological Innovation（1986）</a></li></ul>
+<h3 id="section-25">独立研究、企业访谈与媒体报道</h3>
+<ul><li><a href="https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/who-wins-when-ai-does-the-shopping-new-evidence-on-agentic-commerce" target="_blank" rel="noopener noreferrer">McKinsey：Who wins when AI does the shopping?（2026-10-28）</a></li><li><a href="https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf" target="_blank" rel="noopener noreferrer">Uber：Q3 2026 Earnings Call Transcript</a></li><li><a href="https://www.businessinsider.com/instinct-users-say-its-ai-agent-is-pushing-unsolicited-products-2026-10" target="_blank" rel="noopener noreferrer">Business Insider：Instinct 非请求式购物推荐引发的商业激励问题（2026-10-05）</a></li></ul>
+<h3 id="section-26">相关历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html" target="_blank" rel="noopener noreferrer">《技术最领先的人，为什么不一定拿走最大的价值？》</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">《AI 正在把“使用软件”和“操作软件”拆开》</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/personal-agent.html" target="_blank" rel="noopener noreferrer">《Personal Agent：当 AI 开始长期接手你的事》</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

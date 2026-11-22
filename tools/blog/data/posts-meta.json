@@ -45,6 +45,65 @@
   },
   "posts": [
     {
+      "slug": "agentic-commerce-transaction-control",
+      "date": "2026.11",
+      "title": "当 AI 开始替用户付款，谁真正拥有交易？",
+      "summary": "AI Agent 正在从购物助手走向交易代理，但能够推荐商品、发起支付并不代表拥有整笔交易。当消费者开始通过独立 Agent 组织交易，原有电商平台的需求入口、交易协调和客户关系会发生什么变化？",
+      "category": "商业",
+      "tags": [
+        "市场格局",
+        "决策框架"
+      ],
+      "topics": [
+        "Agent"
+      ],
+      "concepts": [
+        "Agentic Commerce",
+        "交易协调权",
+        "代理授权",
+        "Agent 支付",
+        "渠道迁移",
+        "净新增交易"
+      ],
+      "share_quote": "Agent 改变的不是交易第一次出现多方分工，而是消费者有机会通过独立代理者重新组织原有交易能力。",
+      "relations": [
+        {
+          "slug": "ai-innovation-value-capture",
+          "type": "builds_on"
+        },
+        {
+          "slug": "personal-agent",
+          "type": "builds_on"
+        }
+      ],
+      "url": "posts/agentic-commerce-transaction-control.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/agentic-commerce-transaction-control/agentic-shopping-scene.webp",
+            "alt": "消费者坐在桌前通过抽象 Agent 连接多个商家、银行卡支付和配送包裹的概念场景",
+            "caption": "AI 生成概念插图：用户可以借助 Agent 协调购物，但商家、支付与履约仍由不同主体承担职责。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg",
+            "alt": "典型交易的八个环节与三加一诊断框架：组织与协调、决策与授权、履约与责任是并列的运行问题，经济回报是结果层；虚线仅表示有条件的反馈。",
+            "caption": "八个典型环节用于定位交易动作；三个运行问题并列分析各方职责，经济回报单独检验商业结果，反馈并非必然发生。",
+            "width": 1280,
+            "height": 1024
+          },
+          {
+            "src": "assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg",
+            "alt": "传统电商由平台集中协调消费路径，外部Agent模式由消费者委托代理者跨商家协调；二者都保留商家、支付、履约等原有职责。",
+            "caption": "交易参与者原本就分工协作；Agent 可能改变的是由谁组织用户需求与跨商家流程。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "ai-riemann-math-milestone",
       "date": "2026.11",
       "title": "黎曼猜想之后，AI 数学真的迎来了里程碑吗？",
