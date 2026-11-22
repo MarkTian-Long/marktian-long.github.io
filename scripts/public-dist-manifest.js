@@ -47,6 +47,7 @@ const PUBLIC_FILES = [
   'assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg',
   'assets/images/blog/agentic-commerce-transaction-control/coordination-contrast.svg',
   'assets/images/blog/agentic-commerce-transaction-control/agentic-shopping-scene.webp',
+  'assets/images/blog/agentic-commerce-transaction-control/transaction-3plus1-scene.webp',
   'assets/images/blog/agent-scale-git-infrastructure/agent-parallel-development.webp',
   'assets/images/blog/agent-scale-git-infrastructure/dual-cost-reassessment.svg',
   'tools/blog/data/featured-posts.json',
