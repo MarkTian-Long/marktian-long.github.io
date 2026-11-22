@@ -9,7 +9,7 @@ relations: [{"slug":"automated-research","type":"builds_on"}]
 
 # 黎曼猜想之后，AI 数学真的迎来了里程碑吗？
 
-> 11 月 20 日，AI 又证明了一道数学难题的消息起初让我怀疑只是 PR；随后到来的独立核验和数学家回应，让我改变了判断。这次不是 AI 第一次完成严格形式化证明，而是重大数学成果、可独立复核的完整证据与数学界的严肃回应，集中构成了值得记录的里程碑。
+> 一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。
 
 ---
 
@@ -26,6 +26,8 @@ relations: [{"slug":"automated-research","type":"builds_on"}]
 11 月 20 日，数论学家 Levent Alpöge 在[个人说明](https://alpo.ge/remark.pdf)里宣布，他与 Claude 合作找到证明，公开约 1700 万行 Lean 代码。[MIT 的主定理核验记录](https://math.mit.edu/~drew/grh/)列明，成果涵盖经典黎曼猜想，以及 Dirichlet L 函数版本的广义黎曼猜想。这不是对所有更一般 L 函数的泛化证明，范围必须说清。
 
 更值得重视的是 Claude 参与了什么。Alpöge 自己引导研究方向、选择可类比的问题结构，同时描述 Claude 在后续技术探索中提出了令他惊讶的关键步骤。[《自然》对其他数学家的采访](https://www.nature.com/articles/d41586-026-03812-7)也强调 Alpöge 长期建立这套数学研究工作方式的投入。这里的 AI 不只是把一篇现成论文转成代码，而是进入了新证明的搜索与构建；人的研究判断也远未消失。
+
+Alpöge 在[原始说明](https://alpo.ge/remark.pdf)中举过一个具体例子：他希望借鉴函数域上已有的证明思想，把关键构造迁移到整数问题中，但传统方法依赖的某种“重数”结构在这里难以找到。Claude 提议通过串联若干 theta 提升（theta lifts）模拟这一作用，并给出链条长度的具体选择。普通读者不必掌握这些技术细节，也可以看清其贡献类型：模型在研究者确定的方向内提出了新的构造选择，而非单纯整理已有公式。**这项贡献归属来自合作数学家本人的说明；Lean 所验证的是数学结论，不是研究过程中的创意归属。**
 
 ## 二、这次不再只是作者声称证明成功
 
@@ -59,7 +61,7 @@ relations: [{"slug":"automated-research","type":"builds_on"}]
 | **2026 年 10 月：OpenAI 数学手稿集** | 大量数学稿件，结果重要性不一 | 有的主定理形式化，有的只是辅助引理，部分撤回或修订 | “有论文与 Lean”不等于每项已经完成核验 |
 | **2026 年 11 月：Alpöge–Claude RH** | 完整 RH 及 Dirichlet L 函数版 GRH | 标准命题、完整独立核验、公开社区认证 | 数论中心问题与强证据、专家严肃回应集中出现 |
 
-来源分别是 [Google DeepMind 的 IMO 报告](https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/)、[Anthropic 8 月 ζ 函数研究](https://www.anthropic.com/research/riemann-zeta)、[OpenAI 十项成果](https://openai.com/index/ten-advances-in-mathematics/)、[Navier–Stokes 公告](https://openai.com/index/navier-stokes-solution/)和 [OpenAI 数学仓库](https://github.com/openai/math/blob/main/README.md)。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。
+来源分别是 [Google DeepMind 的 IMO 报告](https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/)、[Anthropic 8 月 ζ 函数研究](https://www.anthropic.com/research/riemann-zeta)、[OpenAI 十项成果](https://openai.com/index/ten-advances-in-mathematics/)、[Navier–Stokes 公告](https://openai.com/index/navier-stokes-solution/)和 [OpenAI 数学仓库](https://github.com/openai/math/blob/main/README.md)。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。更重要的是，Anthropic 在 8 月明确表示，当时的技术路线预计无法直接证明 RH。**11 月的结果不能描述成同一方法从 67.2% 进展到了 100%；它意味着找到了一条不同的证明路径。**
 
 最强的反例是 Navier–Stokes。11 月 12 日，Buzzard 就已经指出那项证明完成了类似四项核验；[Clay 研究所此前也曾积极回应](https://www.claymath.org/news/navier-stokes-announcement/)。因此，“此前 GPT 只会发论文，直到 Claude 这次才第一次有可信数学证明”并不成立。
 
@@ -77,11 +79,15 @@ relations: [{"slug":"automated-research","type":"builds_on"}]
 
 **数学界的接续行动。** 不同的外部主体没有重复一句“太厉害了”：形式化专家认真检查逻辑，领域专家评价学科意义，数学家开始把庞大的代码解释为传统数学论证。人类对证明的理解尚在继续，这不是缺陷包装，而是研究实际进入下一阶段的信号。
 
+对“是不是 PR”的质疑也有现实背景：[《自然》报道](https://www.nature.com/articles/d41586-026-03812-7)，成果公布恰在 Anthropic 上市次日；Alpöge 在[本人说明](https://alpo.ge/remark.pdf)中也承认时机不理想，并反对将动机归结为商业宣传。外界无法仅凭这些说法证实或否定动机，但**发布时机与数学命题是否得到独立证明，是两件需要分别判断的事**。即使存在营销收益，也不能用它替代对证明本身的审查。
+
 **对我来说，里程碑意味着一项足够重要、获得强证据支持的成果，已经改变后续研究者可以认真继续做的事。** 这次不必自称“史上第一次所有条件同时成立”，也有充分理由被这样记录。
 
 ## 五、数学家的认可，为什么既强烈又谨慎？
 
 2022 年菲尔兹奖得主 James Maynard 在 [《自然》11 月 20 日报道](https://www.nature.com/articles/d41586-026-03812-7)中说，如果全部核验通过，这会是数学史上的里程碑。他当时保留了条件，并不表示自己已经独立审读完整代码。11 月 22 日，[他在《每日经济新闻》采访](https://www.nbd.com.cn/articles/2026-11-22/4655007.html)中又强调，理解一个定理为什么成立，比仅仅知道它被证明更有意义。
+
+这段采访还有一条比赞美更值得注意的判断：Maynard 说，这次结果并未显著改变他对 AI 数学能力的总体看法，因为今年夏季已经出现重要突破。他同时认为，黎曼猜想之所以被寄予厚望，不只是因为大家期待结论正确，更因为人们盼望从证明中发现能够解释素数分布的新理论。**所以，这可以是数学史上的重大成果，却未必代表 AI 能力在同一天第一次跨越全新阶段；证明的长期理论价值仍取决于后续理解。**
 
 丘成桐在[《新京报》采访](https://www.bjnews.com.cn/detail/1795313481168719.html)中称这是“伟大的贡献”，认为数学可能进入新的纪元；他同时谈到数学下一步往哪个方向走，以及怎样建立新理论。这是对成果分量的高度肯定，不等于他个人已经复核了 1700 万行代码。
 
