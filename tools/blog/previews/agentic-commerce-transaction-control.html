@@ -39,7 +39,7 @@
     .preview-table-wrap th {background:var(--bg-subtle); font-weight:600; white-space:nowrap;}
     .preview-table-wrap tr:last-child td {border-bottom:none;}
     .preview-table-wrap tbody tr:nth-child(even) {background:var(--bg-card);}
-    @media (max-width:600px) {.post-body .preview-table-wrap table {font-size:13px;} .preview-table-wrap th,.preview-table-wrap td {padding:10px 12px;}}
+    @media (max-width:600px) {.post-body .preview-table-wrap table {min-width:0; width:100%; table-layout:fixed; font-size:12px; line-height:1.55;} .preview-table-wrap th,.preview-table-wrap td {padding:9px 8px; overflow-wrap:anywhere; word-break:break-word;}}
   </style>
 </head>
 <body data-theme="light">
@@ -81,7 +81,7 @@
 <p>上面的传统电商与独立 Agent 场景，都需要有人协调交易、有人作出决定、有人完成履约，但这些工作不必属于同一个主体。为了判断 Agent 到底改变了什么，可以先问三个关于<strong>交易如何运行</strong>的问题，再单独问一个关于<strong>经济结果</strong>的问题。</p>
 <p><strong>三个运行问题是并列的观察角度，而不是依次执行的三个步骤。</strong> <strong>组织与协调</strong>看谁连接用户、商家和支付服务并推进流程；<strong>决策与授权</strong>看谁选择、批准、拒绝或撤销交易；<strong>履约与责任</strong>看谁交付、纠错并承担相应义务。<strong>加上的经济回报</strong>则检验谁获得收入、承担成本、留住客户，以及这种分工能否形成持续回报。</p>
 <p>这套「3+1」是本文借鉴<a href="https://doi.org/10.1111/j.1468-0335.1937.tb00002.x" target="_blank" rel="noopener noreferrer">Coase 对交易组织成本的分析</a>、<a href="https://doi.org/10.1086/467037" target="_blank" rel="noopener noreferrer">Fama 与 Jensen 对决策和控制分工的研究</a>，以及<a href="https://doi.org/10.1016/0048-7333%2886%2990027-2" target="_blank" rel="noopener noreferrer">Teece 对价值捕获的讨论</a>后作出的分析归纳，<strong>并非任何一篇论文提出的标准四分法，也不是所有交易权利的穷尽分类</strong>。它的作用，是让新旧交易方式能够在同一问题下比较。</p>
-<p>下面的主图保留从需求表达到复购的八个典型业务环节，并把「3+1」放在其下方。八个环节用于定位交易中的动作；三个运行问题可以逐环节追问；经济回报是结果层。只有当收益足以支持下一轮投入时，结果才可能反过来改变交易组织方式，虚线不表示必然闭环。</p>
+<p>主图把典型交易拆成八个环节：需求表达、商品发现与比较、选择与订单、用户委托与授权、支付与交易验证、商家接受订单、履约与售后、客户关系与复购。八个环节用于定位交易动作，不代表所有业务都按固定顺序执行；三个运行问题可以逐环节追问，经济回报则属于结果层。只有当收益足以支持下一轮投入时，结果才可能反过来改变协调方式，图中的虚线并非必然闭环。</p>
 <figure class="post-figure">
   <img src="../../../assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg" alt="典型交易的八个环节与三加一诊断框架：组织与协调、决策与授权、履约与责任是并列的运行问题，经济回报是结果层；虚线仅表示有条件的反馈。" width="1280" height="1024" loading="lazy" decoding="async" />
   <figcaption>八个典型环节用于定位交易动作；三个运行问题并列分析各方职责，经济回报单独检验商业结果，反馈并非必然发生。</figcaption>
@@ -150,6 +150,7 @@
 <h3>原有平台会把 Agent 能力留在自己的入口里</h3>
 <p>Uber 提供了一个现实参照。<a href="https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf" target="_blank" rel="noopener noreferrer">2026 年第三季度财报电话会</a>披露，万圣节所在的一周，第三方 Agent 只带来约 500 笔 Uber Eats 订单和 4 笔 Uber Rides。这个规模说明外部 Agent 已经可以形成实际交易，但仍处于早期。不能拿不同业务的季度或周度总体订单直接计算这一场景的转化率。</p>
 <p>Uber 同时在建设自己的购物助手，并强调司机实时匹配、商家供给、价格、库存、取货位置和履约体系仍然关键。<a href="https://s23.q4cdn.com/407969754/files/doc_earnings/2026/q3/transcript/Uber-Q3-26-Prepared-Remarks.pdf" target="_blank" rel="noopener noreferrer">Uber 官方经营说明</a>提供了更多背景。外部 Agent 可以提出任务，但真正完成出行或配送仍需要 Uber 的实时服务网络。</p>
+<p>更直接体现商业博弈的是，Uber CEO Dara Khosrowshahi 在<a href="https://s23.q4cdn.com/407969754/files/doc_events/2026/Nov/04/Uber-Q3-Earnings-Call-Transcript.pdf" target="_blank" rel="noopener noreferrer">同一次财报电话会</a>上表示，公司正在与第三方 AI 服务商谈判合作的交易条件（terms of trade）。这说明即使 Agent 带来新的消费入口，掌握实时供给与履约能力的平台仍能参与决定合作条件；<strong>协调权可能转移，交易条件却仍需要各方谈判。</strong> 至于是否收费、如何分成以及这些合作能否创造新增需求，Uber 当时并未披露结果。</p>
 <p>Google Maps 则提供了一个更接近日常服务的反例。2026 年 11 月 16 日，<a href="https://blog.google/products-and-platforms/products/maps/ask-maps-holiday-travel-features-2026/" target="_blank" rel="noopener noreferrer">Google 宣布扩展 Ask Maps</a>：用户可以通过自然语言查询美容、宠物护理、汽车或房屋维修等本地服务的可用时段，也可以选择让 Google 代为致电商家询问，然后由用户查看时段并决定预约哪项服务。</p>
 <p>这里要注意：<strong>查询到空余时段、联系商家，不等于已经完成预约或支付。</strong> 相关预约查询能力也首先在美国推出，不能把 Ask Maps 更广的地理覆盖理解为这些功能同步全球可用。</p>
 <p>但它仍然说明了重要的竞争路径。Google Maps 本来就拥有地点、商家、营业状态、路线和用户收藏信息。通过在原产品中增加 Agent 能力，它可以继续留住消费者的需求入口并承担部分服务协调工作。消费者使用了自然语言，不代表入口必然迁移到外部 AI 平台。</p>
