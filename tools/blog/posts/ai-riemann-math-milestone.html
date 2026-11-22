@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!--
+date:    2026.11
+title:   黎曼猜想之后，AI 数学真的迎来了里程碑吗？
+tags:    [技术判断]
+slug:    ai-riemann-math-milestone
+summary: 一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。
+category: 技术
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>黎曼猜想之后，AI 数学真的迎来了里程碑吗？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。" />
+<link rel="canonical" href="https://marktian-long.github.io/tools/blog/posts/ai-riemann-math-milestone.html" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="黎曼猜想之后，AI 数学真的迎来了里程碑吗？" />
+<meta property="og:description" content="一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。" />
+<meta property="og:url" content="https://marktian-long.github.io/tools/blog/posts/ai-riemann-math-milestone.html" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI · Product · Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="黎曼猜想之后，AI 数学真的迎来了里程碑吗？" />
+<meta name="twitter:description" content="一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI · Product · Builder" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"黎曼猜想之后，AI 数学真的迎来了里程碑吗？","description":"一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。","url":"https://marktian-long.github.io/tools/blog/posts/ai-riemann-math-milestone.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://marktian-long.github.io/tools/blog/posts/ai-riemann-math-milestone.html"},"image":["https://marktian-long.github.io/assets/images/og-cover.png"],"author":{"@type":"Person","name":"Leo Liu","url":"https://marktian-long.github.io/"}}</script>
+<!-- search-foundation:end -->
+<meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、黎曼猜想为什么是数学史上的顶级难题？</a></li><li><a href="#section-2">二、这次不再只是作者声称证明成功</a></li><li><a href="#section-3">三、和过去几个月的 AI 数学成果相比，这次究竟不同在哪里？</a></li><li><a href="#section-4">四、为什么我仍然愿意称它为里程碑？</a></li><li><a href="#section-5">五、数学家的认可，为什么既强烈又谨慎？</a></li><li><a href="#section-6">结尾：下一座里程碑，可能在哪里？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">2026.11</span><span id="post-tags"></span></div><h1 class="post-title">黎曼猜想之后，AI 数学真的迎来了里程碑吗？</h1><p class="post-summary">一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-riemann-math-milestone/proof-verification-editorial.webp" alt="米白色数学手稿汇入验证节点，再向右延伸为确定的线条，象征复杂推理经独立验证" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>AI 生成概念示意：表现数学推理经独立核验；画面中的符号不代表实际 RH 证明。</figcaption>
+</figure>
+<p>11 月 20 日看到 Claude 参与证明黎曼猜想的新闻时，我的第一反应不是兴奋，而是怀疑。当天和朋友聊天，我还觉得这大概又是一次 AI 厂商的营销。最近几个月，“AI 解决某某数学难题”的消息一再出现：有些是竞赛题，有些是研究猜想，有些只有论文，有些附了 Lean 代码。看得多了，我对这种标题已经有些麻木。</p>
+<p>但第二天，事情开始变得不同。数学证明工具社区给出明确认证，独立核验者公布了可复查的结果，数学家也开始认真讨论成果的分量和里面的数学。<strong>我更想知道的不是哪家公司赢了，而是：这一次究竟跨过了什么门槛，足以让人把它称为里程碑？</strong></p>
+<h2 id="section-1">一、黎曼猜想为什么是数学史上的顶级难题？</h2>
+<p>2000 年，克雷数学研究所向全世界公布<a href="https://www.claymath.org/Millennium%20Problems/" target="_blank" rel="noopener noreferrer">七大千禧年数学难题</a>，每道设立 100 万美元奖金。这些问题不是按奖金高低排出来的，而是由顶尖数学家遴选、足以代表学科长期挑战的难题。直到这次新闻发布，克雷正式认定已经解决的仍只有庞加莱猜想。黎曼猜想还拥有一个特殊身份：1900 年希尔伯特提出的 23 个著名数学问题中有它，整整一个世纪后，它又出现在千禧年七题里。<a href="https://www.claymath.org/collections/riemanns-1859-manuscript/" target="_blank" rel="noopener noreferrer">克雷对两次名单的回顾</a>也特别指出了这层历史联系。</p>
+<p>提出猜想的<a href="https://mathshistory.st-andrews.ac.uk/Biographies/Riemann/" target="_blank" rel="noopener noreferrer">伯恩哈德·黎曼</a>本身就是 19 世纪最重要的数学家之一。他的名字留在黎曼积分、黎曼曲面、黎曼几何中；关于弯曲空间的思想经后人发展，成为广义相对论的重要数学基础。但这道猜想的重要性，并不只是因为提出它的人伟大。</p>
+<p>真正的原因是它触及了数论的基础问题：<strong>素数究竟怎样分布？</strong> 2、3、5、7 这样的素数可以看作构成整数的基本材料；它们在数轴上出现得似乎毫无规律。数学家早就能大致估计一定范围内有多少个素数，却仍想知道，实际数量会偏离估计多远。黎曼在 1859 年提出的猜想，正是对这种偏差给出极其严格的约束。<a href="https://www.claymath.org/millennium/Riemann-Hypothesis/" target="_blank" rel="noopener noreferrer">克雷研究所的通俗介绍</a>用的也是这个角度：已有理论告诉我们平均趋势，黎曼猜想告诉我们偏差能有多大。</p>
+<p>更能让外行感受到分量的，是它牵动的后续研究。许多数学结论已经写成“<strong>如果黎曼猜想成立，那么……</strong>”的形式。数学科普作者卢昌海在<a href="https://www.thepaper.cn/newsDetail_forward_20413607" target="_blank" rel="noopener noreferrer">2022 年的回顾</a>中提到，有人估计，以黎曼猜想<strong>或其推广形式</strong>为前提的数学命题超过千条。这个数字不是一份统一核定的官方清单，也不能说只证明经典 RH 就能自动解除所有更强推广猜想的条件；但它足以说明，数学界有大量工作长期建立在这些尚待证明的前提上。这不是孤零零的一道题，而是许多研究共同等待的一块基础。</p>
+<p>有了这样的背景，再看 11 月 20 日的消息，分量就完全不同了：数论学家 Levent Alpöge 在<a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener noreferrer">个人说明</a>中宣布与 Claude 合作找到了证明，公开约 1700 万行 Lean 形式化代码。<a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener noreferrer">MIT 的主定理核验记录</a>显示，证明对象包含经典黎曼猜想，以及 Dirichlet L 函数版本的广义黎曼猜想；但不能由此推成“所有推广版本都已解决”。这份成果是否真的可靠，需要看下一章的独立检查。</p>
+<h2 id="section-2">二、这次不再只是作者声称证明成功</h2>
+<p>“提供了 Lean 代码”“代码能编译”和“原始数学问题得到证明”，不是同一回事。Lean 专家 Kevin Buzzard 甚至在这次新闻发生之前，就写了<a href="https://xenaproject.wordpress.com/2026/11/12/and-the-proof-is-checked-in-lean/" target="_blank" rel="noopener noreferrer">关于如何检验 AI 形式化证明的文章</a>：代码可能只证明辅助引理，命题定义可能被悄悄改变，关键结论也可能被偷偷当成公理。</p>
+<p>11 月 21 日，<a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener noreferrer">Lean 与 Mathlib 社区的联合声明</a>明确确认，所证明的数学命题和证明本身均正确，四项标准都已满足。声明获得 Lean FRO 与 Mathlib Initiative 背书，比“厂商宣布验证成功”多出一层可供共同体追责和复查的公共记录。</p>
+<div class="blog-table"><table><thead><tr><th>核验对象</th><th>要排除的风险</th><th>这次留下的证据</th></tr></thead><tbody><tr><td><strong>命题是否写对</strong></td><td>证明的是被改写过的“黎曼猜想”</td><td>使用 Mathlib 中由专家审查的 RH 标准命题</td></tr><tr><td><strong>完整代码是否可构建</strong></td><td>只有原作者的机器能运行</td><td>多方独立编译，重现相同的证明导出</td></tr><tr><td><strong>证明的目标和公理是否正确</strong></td><td>偷换定义、暗中增加未证明前提</td><td>两套独立工具匹配目标；主定理只依赖 Lean 三项标准基础公理</td></tr><tr><td><strong>证明本身是否可信</strong></td><td>利用单个内核漏洞通过检查</td><td>官方内核和多个独立实现的检查器接受完整证明</td></tr></tbody></table></div>
+<p><a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener noreferrer">MIT 数学家 Andrew Sutherland 的日志</a>更具体：175,187 个 Lean 模块成功编译，五条主定理依赖的公理经过审计，独立的 nanoda、con-leche 等检查器接受原始导出。<a href="https://www.math.uwaterloo.ca/~mrubinst/alpoge_claude_grh/" target="_blank" rel="noopener noreferrer">滑铁卢大学 Michael Rubinstein 的验证记录</a>还提供了另一套检查步骤和脚本。Sutherland 页面另有耗时更长的附加检查尚未结束；这和社区已经认证的四项标准不矛盾。</p>
+<p>还有一项更有意思的交叉检查：MIT 的记录将这份证明与另一套独立形式化的等价判据结合，推出 Robin 和 Lagarias 关于约数和的算术不等式，再次经检查器接受。这不是第二份独立发现的黎曼猜想证明，却说明外界已经能用<strong>另一条形式化的数学关系</strong>检查结果，而不只是看某个文件是否编译成功。</p>
+<p>这意味着正确性判断逐渐脱离发布方的叙事：<strong>数学家可以从一份未经信任的 AI 生成材料出发，检查其最终数学命题是否成立。</strong>但这种核验机制到底是不是这次才第一次出现，仍必须放到历史里比较。</p>
+<h2 id="section-3">三、和过去几个月的 AI 数学成果相比，这次究竟不同在哪里？</h2>
+<p>回想过去那些“AI 数学突破”的新闻，最大的混淆在于它们讨论的根本不是同一类交付物。用同一张表比较，差别会清楚很多。</p>
+<div class="blog-table"><table><thead><tr><th>成果与时间</th><th>数学上做到什么</th><th>验证与专业回应</th><th>本次 RH 与它的差异</th></tr></thead><tbody><tr><td><strong>2024：AlphaProof / AlphaGeometry 2</strong></td><td>六道 IMO 竞赛题解出四道</td><td>AlphaProof 使用 Lean，解题经竞赛规则评定</td><td>解出了高难题，但并非未解的研究猜想</td></tr><tr><td><strong>2026 年 8 月：Claude ζ 函数进展</strong></td><td>零点在临界线上的比例下界从 41.6% 提升到 67.2%</td><td>有数学家审阅及形式化材料</td><td>和 RH 直接相关，却是局部结果，不是完整 RH</td></tr><tr><td><strong>2026 年 8 月：OpenAI 十项研究成果</strong></td><td>在多个开放研究问题上得到新结果</td><td>发布 Lean 证书，独立核验程度须逐项区分</td><td>AI 此前已经参与原创数学，不是这次首次</td></tr><tr><td><strong>2026 年 9 月：OpenAI Navier–Stokes</strong></td><td>针对另一项千禧年难题给出重要结果</td><td>完整形式化、多检查器接受，Clay 曾积极回应；文字稿与 Lean 仍有对应争议</td><td>此前已有重大数学问题接受类似的严格检查</td></tr><tr><td><strong>2026 年 10 月：OpenAI 数学手稿集</strong></td><td>大量数学稿件，结果重要性不一</td><td>有的主定理形式化，有的只是辅助引理，部分撤回或修订</td><td>“有论文与 Lean”不等于每项已经完成核验</td></tr><tr><td><strong>2026 年 11 月：Alpöge–Claude RH</strong></td><td>完整 RH 及 Dirichlet L 函数版 GRH</td><td>标准命题、完整独立核验、公开社区认证</td><td>数论中心问题与强证据、专家严肃回应集中出现</td></tr></tbody></table></div>
+<p>来源分别是 <a href="https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/" target="_blank" rel="noopener noreferrer">Google DeepMind 的 IMO 报告</a>、<a href="https://www.anthropic.com/research/riemann-zeta" target="_blank" rel="noopener noreferrer">Anthropic 8 月 ζ 函数研究</a>、<a href="https://openai.com/index/ten-advances-in-mathematics/" target="_blank" rel="noopener noreferrer">OpenAI 十项成果</a>、<a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener noreferrer">Navier–Stokes 公告</a>和 <a href="https://github.com/openai/math/blob/main/README.md" target="_blank" rel="noopener noreferrer">OpenAI 数学仓库</a>。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。更重要的是，Anthropic 在 8 月明确表示，当时的技术路线预计无法直接证明 RH。<strong>11 月的结果不能描述成同一方法从 67.2% 进展到了 100%；两次研究究竟有哪些思想可以复用，还要等新证明得到更清楚的解释。</strong></p>
+<p>最强的反例是 Navier–Stokes。11 月 12 日，Buzzard 就已经指出那项证明完成了类似四项核验；<a href="https://www.claymath.org/news/navier-stokes-announcement/" target="_blank" rel="noopener noreferrer">Clay 研究所此前也曾积极回应</a>。因此，“此前 GPT 只会发论文，直到 Claude 这次才第一次有可信数学证明”并不成立。</p>
+<p>实际上，即使不谈 AI，数学界早已用证明助手检查重大成果：<a href="https://github.com/hol-light-family/Flyspeck" target="_blank" rel="noopener noreferrer">Flyspeck 项目在 2014 年完成了开普勒猜想的形式化证明</a>。因此，这次值得关注的变化不是“计算机终于能够验证重大定理”，而是 AI 开始参与寻找此前未知的证明，并与人类数学家和形式化验证体系共同完成研究。</p>
+<p>但有一件事反而因此更清楚了：<strong>里程碑不要求它是同一种机制的第一次。</strong>此前一个重大问题被攻克，不会使另一个同样处在数学核心的重大问题变得不重要；关键是这一次取得了什么成果，以及这些成果如何被数学界接住。</p>
+<h2 id="section-4">四、为什么我仍然愿意称它为里程碑？</h2>
+<p>如果只有 RH 的名气，确实可能只是更大的新闻；如果只有 Lean 的四项检查，又不足以称为全新的验证范式。但放在一起看，这次至少有四种性质不同的证据支撑，彼此不能互相替代。</p>
+<p><strong>数学问题的中心性。</strong> 这是完整 RH，而不是普通竞赛题、零散引理，也不是“把已知答案重新写出”。8 月 Claude 关于同一个 ζ 函数的部分进展已经有价值，11 月完整命题被核验则跨越了清楚的数学边界。问题的重要性来自它在学科中的位置，而不是 PR 声量。</p>
+<p><strong>证明结果的独立可靠性。</strong> 一份形式化文件可能远远不足以证明原问题，但这次的标准 Mathlib 命题、目标比较、公理审计和多检查器结果都已留下公开记录。前面 Navier–Stokes 也有强核验，说明一种可靠的交付标准开始在最重要的研究问题上反复发挥作用，而不是只有厂商自证。</p>
+<p><strong>AI 的研究贡献。</strong> Claude 在数学家引导下参与搜索并构建新证明，而非简单转述资料或排版。<a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener noreferrer">Alpöge 的说明</a>里有一个具体例子：研究者试图把一类已知方法应用到另一种数学对象，却找不到原方法依赖的关键结构；Claude 提议串联几次间接构造来替代，还给出了链条长度的选择。这是研究中的具体路线建议，而不是重复已有答案。但这段创意归属主要来自合作者的自述，不能据此说模型独立完成了全部科研判断；形式化系统验证的是最终证明，不是每一步灵感属于谁。</p>
+<p><strong>数学界的接续行动。</strong> 不同的外部主体没有重复一句“太厉害了”：形式化专家认真检查逻辑，领域专家评价学科意义，数学家开始把庞大的代码解释为传统数学论证。人类对证明的理解尚在继续，这不是缺陷包装，而是研究实际进入下一阶段的信号。</p>
+<p>对“是不是 PR”的质疑也有现实背景：<a href="https://www.nature.com/articles/d41586-026-03812-7" target="_blank" rel="noopener noreferrer">《自然》报道</a>，成果公布恰在 Anthropic 上市次日；Alpöge 在<a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener noreferrer">本人说明</a>中也承认时机不理想，并反对将动机归结为商业宣传。外界无法仅凭这些说法证实或否定动机，但<strong>发布时机与数学命题是否得到独立证明，是两件需要分别判断的事</strong>。即使存在营销收益，也不能用它替代对证明本身的审查。</p>
+<p><strong>对我来说，里程碑意味着一项足够重要、获得强证据支持的成果，已经改变后续研究者可以认真继续做的事。</strong> 这次不必自称“史上第一次所有条件同时成立”，也有充分理由被这样记录。</p>
+<h2 id="section-5">五、数学家的认可，为什么既强烈又谨慎？</h2>
+<p>2022 年菲尔兹奖得主 James Maynard 在 <a href="https://www.nature.com/articles/d41586-026-03812-7" target="_blank" rel="noopener noreferrer">《自然》11 月 20 日报道</a>中说，如果全部核验通过，这会是数学史上的里程碑。他当时保留了条件，并不表示自己已经独立审读完整代码。11 月 22 日，<a href="https://www.nbd.com.cn/articles/2026-11-22/4655007.html" target="_blank" rel="noopener noreferrer">他在《每日经济新闻》采访</a>中又强调，理解一个定理为什么成立，比仅仅知道它被证明更有意义。</p>
+<p>这段采访还有一条比赞美更值得注意的判断：Maynard 说，这次结果并未显著改变他对 AI 数学能力的总体看法，因为今年夏季已经出现重要突破。他同时认为，黎曼猜想之所以被寄予厚望，不只是因为大家期待结论正确，更因为人们盼望从证明中发现能够解释素数分布的新理论。<strong>所以，这可以是数学史上的重大成果，却未必代表 AI 能力在同一天第一次跨越全新阶段；证明的长期理论价值仍取决于后续理解。</strong></p>
+<p>丘成桐在<a href="https://www.bjnews.com.cn/detail/1795313481168719.html" target="_blank" rel="noopener noreferrer">《新京报》采访</a>中称这是“伟大的贡献”，认为数学可能进入新的纪元；他同时谈到数学下一步往哪个方向走，以及怎样建立新理论。这是对成果分量的高度肯定，不等于他个人已经复核了 1700 万行代码。</p>
+<p>另一种态度是等待人类能读懂的论证。<a href="https://app.xinhuanet.com/news/article.html?articleId=20261122050d5923ebaf4c62aa26c7221df3778e" target="_blank" rel="noopener noreferrer">2026 年菲尔兹奖得主邓煜的回应</a>关注可读性，而不是证明稿的页数。<a href="https://www.math.uwaterloo.ca/~mrubinst/alpoge_claude_grh/" target="_blank" rel="noopener noreferrer">Rubinstein 的 164 页解释性草稿</a>显示这种工作已经开始：它用传统解析数论语言解释证明，但一个关键不等式仍直接取自 Lean 开发，尚未写出自足的人类证明。</p>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-riemann-math-milestone/three-judgments.svg" alt="证明正确性、数学思想价值和正式学术认可由不同的主体与证据支持，不能彼此替代" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>三种判断分别回答“形式证明是否有效”“新思想是什么”“如何进入学术制度”。</figcaption>
+</figure>
+<p>另外，<a href="https://www.claymath.org/millennium/Riemann-Hypothesis/" target="_blank" rel="noopener noreferrer">Clay 目前仍把 RH 列为未解决问题</a>；按其<a href="https://www.claymath.org/millennium-problems/rules/" target="_blank" rel="noopener noreferrer">大奖规则</a>，还需合格发表、至少两年和全球数学界广泛接受。Lean 社区认证、数学家高度评价、Clay 最终认定是不同环节。</p>
+<p>因此，这些回应并不矛盾：<strong>形式化正确性已经得到强有力的确认；解释、简化、教学、推广和制度认定仍在发生。</strong>这次的尊重不是所有人同时给出一个“是”，而是很多不同角色真正开始承担后续工作。</p>
+<h2 id="section-6">结尾：下一座里程碑，可能在哪里？</h2>
+<p>回到 11 月 20 日和朋友的聊天，让我从“这会不会又是 PR”转向认真对待的，并不是支持者数量，而是来自不同位置的证据相互补强。一次突破具有营销价值，并不能否定成果真实；反过来，数学证明成立也不能自动替所有宣传背书。</p>
+<p>接下来值得关注的，是<strong>数学研究的工作次序可能变化</strong>。在一部分问题上，AI 与人类数学家可以先通过大量搜索找到候选证明；形式化系统确认结论有效；数学界再花时间解释关键思想、把它简化成能传授和复用的理论。形式化验证不是今天才发明的，但当 AI 参与产生重大原创结果，这种分工就不再只是数学软件的技术演示。</p>
+<p>要判断 AI 能否解决越来越多的数学问题，下一步需要的是跨学科、可重复的成功率与失败记录、计算资源、人类引导程度，而非只看下一条更大的新闻。要判断这次对数学本身的长期影响，还需要看 1700 万行证明能否被提炼出新的数学方法。<strong>Lean 能确认一份已经找到的证明正确，不保证下一个问题总能找到证明。</strong></p>
+<p>但这不妨碍我现在就作出判断。<strong>当 AI 参与完成一项处在数学核心的问题，并留下数学共同体能够独立核验、继续理解和使用的成果时，它已不只是一场漂亮的演示。这就是我愿意称之为里程碑的原因。</strong></p>
+<h2 id="section-7">参考资料</h2>
+<h3 id="section-8">数学史与问题地位</h3>
+<ul><li><a href="https://www.claymath.org/Millennium%20Problems/" target="_blank" rel="noopener noreferrer">Clay：七大千禧年数学难题</a></li><li><a href="https://www.claymath.org/collections/riemanns-1859-manuscript/" target="_blank" rel="noopener noreferrer">Clay：黎曼的 1859 年论文及其历史</a></li><li><a href="https://mathshistory.st-andrews.ac.uk/Biographies/Riemann/" target="_blank" rel="noopener noreferrer">圣安德鲁斯大学 MacTutor：黎曼数学家传记</a></li><li><a href="https://www.thepaper.cn/newsDetail_forward_20413607" target="_blank" rel="noopener noreferrer">卢昌海：什么是黎曼猜想？（2022）</a></li></ul>
+<h3 id="section-9">数学原始材料与独立核验</h3>
+<ul><li><a href="https://www.claymath.org/millennium/Riemann-Hypothesis/" target="_blank" rel="noopener noreferrer">Clay：Riemann Hypothesis</a></li><li><a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener noreferrer">Levent Alpöge：本人声明（11 月 20 日）</a></li><li><a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener noreferrer">MIT Andrew Sutherland：验证与算术推论</a></li><li><a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener noreferrer">Lean 与 Mathlib 社区联合认证</a></li><li><a href="https://www.math.uwaterloo.ca/~mrubinst/alpoge_claude_grh/" target="_blank" rel="noopener noreferrer">Waterloo Michael Rubinstein：验证与解释稿</a></li></ul>
+<h3 id="section-10">AI 数学历史成果</h3>
+<ul><li><a href="https://xenaproject.wordpress.com/2026/11/12/and-the-proof-is-checked-in-lean/" target="_blank" rel="noopener noreferrer">Kevin Buzzard：Lean 证明四项检查（11 月 12 日）</a></li><li><a href="https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/" target="_blank" rel="noopener noreferrer">DeepMind：2024 年 IMO 成果</a></li><li><a href="https://www.anthropic.com/research/riemann-zeta" target="_blank" rel="noopener noreferrer">Anthropic：8 月 ζ 函数研究</a></li><li><a href="https://openai.com/index/ten-advances-in-mathematics/" target="_blank" rel="noopener noreferrer">OpenAI：十项数学进展</a></li><li><a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener noreferrer">OpenAI：Navier–Stokes 研究</a></li><li><a href="https://github.com/openai/math/blob/main/README.md" target="_blank" rel="noopener noreferrer">OpenAI math 公开仓库与验证阶段</a></li><li><a href="https://www.claymath.org/news/navier-stokes-announcement/" target="_blank" rel="noopener noreferrer">Clay：Navier–Stokes 公告</a></li><li><a href="https://github.com/hol-light-family/Flyspeck" target="_blank" rel="noopener noreferrer">Flyspeck：2014 年完成的开普勒猜想形式化证明</a></li></ul>
+<h3 id="section-11">数学家评价与正式制度</h3>
+<ul><li><a href="https://www.nature.com/articles/d41586-026-03812-7" target="_blank" rel="noopener noreferrer">Nature：数学家对 RH 证明的讨论</a></li><li><a href="https://www.nbd.com.cn/articles/2026-11-22/4655007.html" target="_blank" rel="noopener noreferrer">每日经济新闻：James Maynard 专访</a></li><li><a href="https://www.bjnews.com.cn/detail/1795313481168719.html" target="_blank" rel="noopener noreferrer">新京报：丘成桐回应</a></li><li><a href="https://app.xinhuanet.com/news/article.html?articleId=20261122050d5923ebaf4c62aa26c7221df3778e" target="_blank" rel="noopener noreferrer">新华网：邓煜谈数学证明可读性</a></li><li><a href="https://www.claymath.org/millennium-problems/rules/" target="_blank" rel="noopener noreferrer">Clay：千禧年大奖认定规则</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>

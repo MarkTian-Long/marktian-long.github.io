@@ -40,8 +40,6 @@ const PUBLIC_FILES = [
   'tools/blog/previews/agentic-commerce-transaction-control.html',
   'tools/blog/previews/ai-chat-vs-other-interfaces.html',
   'tools/blog/previews/ai-riemann-math-milestone.html',
-  'assets/images/blog/ai-riemann-math-milestone/proof-verification-editorial.webp',
-  'assets/images/blog/ai-riemann-math-milestone/three-judgments.svg',
   'assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg',
   'assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg',
   'assets/images/blog/agentic-commerce-transaction-control/transaction-map.svg',
