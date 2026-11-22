@@ -43,7 +43,10 @@
         <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">技术判断</span><span class="tag">科研自动化</span><span class="tag">模型能力</span></span></div><h1 class="post-title">黎曼猜想之后，AI 数学真的迎来了里程碑吗？</h1><p class="post-summary">数学家与 Claude 合作完成的黎曼猜想证明，已经获得 Lean 与 Mathlib 社区的明确认证。这是 AI 数学研究的一座重大里程碑，但不是首次有重大成果通过完整形式化核验；理解它的意义，需要区分证明正确、数学价值与后续学术接受。</p></header>
         <hr class="divider" />
         <div class="post-body">
-<figure class="post-figure"><img src="../../../assets/images/blog/ai-riemann-math-milestone/proof-verification-hero.svg" alt="米白色手稿从左侧汇入验证节点，沿陶土色直线延伸至右侧，象征一份数学证明获得可独立检查的依据" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async" /><figcaption>概念示意：从提出数学论证到独立形式化核验；不是实际的 Lean 代码或黎曼猜想推导。</figcaption></figure>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-riemann-math-milestone/proof-verification-hero.svg" alt="米白色手稿从左侧汇入验证节点，沿陶土色直线延伸至右侧，象征一份数学证明获得可独立检查的依据" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>概念示意：从提出数学论证到独立形式化核验；不是实际的 Lean 代码或黎曼猜想推导。</figcaption>
+</figure>
 <p>11 月 20 日看到这条新闻时，我的第一反应并不是兴奋。当天和朋友聊起，甚至觉得，它会不会又是一轮 AI 营销？过去几个月，“AI 证明某个数学难题”的消息出现得太密集：有的涉及竞赛题，有的涉及长期开放猜想，有的附带 Lean 代码。看得多了，“证明”两个字反而越来越难让人立刻相信发生了什么。</p>
 <p>后来让我重新认真对待这次事件的，是 21 日陆续出现的核验记录和数学家回应。它们不再只是研究者或模型厂商宣称成功。但这究竟是不是里程碑？<strong>最需要回答的不是“谁先表达震撼”，而是这次到底被确认了什么，以及过去那些证明已经走到哪里。</strong></p>
 <h2 id="section-1">一、这次证明的，究竟是什么问题？</h2>
@@ -62,7 +65,10 @@
 <p>最有力的反例来自 Navier–Stokes。11 月 12 日，Lean 专家 Kevin Buzzard 在<a href="https://xenaproject.wordpress.com/2026/11/12/and-the-proof-is-checked-in-lean/" target="_blank" rel="noopener noreferrer">公开文章</a>中确认，该成果已经执行了类似的四项核验；9 月，<a href="https://www.claymath.org/news/navier-stokes-announcement/" target="_blank" rel="noopener noreferrer">Clay 数学研究所也曾积极回应这项进展</a>。所以，“这是第一份同时完成四项核验的重大 AI 数学证明”并不符合事实。</p>
 <p>那为什么仍然是里程碑？因为里程碑并不要求首先发明了某种工具。<strong>它可以发生在已有方法被用来解决一个学科中心难题、并留下足以被独立复核的成果时。</strong>数学贡献的大小与证明的可靠程度，是相互关联但不等同的两条比较轴。</p>
 <h2 id="section-4">四、数学家高度认可，为什么还有人继续审查？</h2>
-<figure class="post-figure"><img src="../../../assets/images/blog/ai-riemann-math-milestone/three-judgments.svg" alt="证明正确性、数学思想价值、学术制度接受三种不同的判断并列呈现，分别由形式检查、研究理解和学术程序提供证据" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>本文的分析归纳：形式正确、数学思想的可理解性与正式学术程序并不在同一时刻完成。</figcaption></figure>
+<figure class="post-figure">
+  <img src="../../../assets/images/blog/ai-riemann-math-milestone/three-judgments.svg" alt="证明正确性、数学思想价值、学术制度接受三种不同的判断并列呈现，分别由形式检查、研究理解和学术程序提供证据" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>本文的分析归纳：形式正确、数学思想的可理解性与正式学术程序并不在同一时刻完成。</figcaption>
+</figure>
 <p>数学家的回应值得细分，而不是简单统计多少人点赞。11 月 20 日，2022 年菲尔兹奖得主 James Maynard 在 <a href="https://www.nature.com/articles/d41586-026-03812-7" target="_blank" rel="noopener noreferrer">Nature 的报道</a>中表示，如果这项工作通过全面检查，那显然会是数学史上的里程碑。他发言时保留了条件，不能倒写成他已经亲自审查完数千万行代码。</p>
 <p>11 月 21 日晚间，丘成桐在<a href="https://www.bjnews.com.cn/detail/1795313481168719.html" target="_blank" rel="noopener noreferrer">《新京报》采访</a>中给予高度评价，认为这项工作可能意味着数学进入了新阶段；他同时强调，数学家还要决定往哪个方向研究，发展新的理论。<strong>高度认可成果的分量，不等于学界已经完成了对证明思想的理解。</strong></p>
 <p><a href="https://www.math.uwaterloo.ca/~mrubinst/alpoge_claude_grh/" target="_blank" rel="noopener noreferrer">Waterloo 的 Michael Rubinstein 已公开一份 164 页的解释性工作稿</a>，试图将机器形式化代码整理成传统解析数论的语言。但其中一个核心不等式仍直接依赖 Lean 证明，并未在该文稿里独立完整证明。这是后续理解工作的进展，而非一份已经自足的最终解释。</p>
