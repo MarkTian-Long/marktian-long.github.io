@@ -41,7 +41,7 @@ const PUBLIC_FILES = [
   'tools/blog/previews/ai-chat-vs-other-interfaces.html',
   'tools/blog/previews/ai-riemann-math-milestone.html',
   'assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg',
-  'assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg',
+  'assets/images/blog/ai-chat-vs-other-interfaces/title-style-action-cycle.svg',
   'assets/images/blog/agent-scale-git-infrastructure/agent-parallel-development.webp',
   'assets/images/blog/agent-scale-git-infrastructure/dual-cost-reassessment.svg',
   'tools/blog/data/featured-posts.json',

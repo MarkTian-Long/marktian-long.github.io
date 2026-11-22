@@ -50,7 +50,7 @@ relations: []
 
 Norman 在 1986 年的《Cognitive Engineering》中进一步细分了行动过程，并说明实际活动可能跳过、重复或改变顺序。比如监控人员先发现异常，再决定处理什么；浏览商品也可能先于购买目标的形成。[《Cognitive Engineering》作者公开稿](https://www.researchgate.net/publication/235616560_Cognitive_Engineering)。
 
-![以标题改色说明意图、选择、执行与评估，标出需要修正时的反馈及状态变化触发的观察入口](../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg "以同一任务拆解四种活动；需要修正时可能再次行动，状态变化也可先触发观察。依据 Norman 模型绘制，例子为本文示意。")
+![以标题改色说明意图、选择、执行与评估，标出需要修正时的反馈及状态变化触发的观察入口](../../assets/images/blog/ai-chat-vs-other-interfaces/title-style-action-cycle.svg "以同一任务拆解四种活动；需要修正时可能再次行动，状态变化也可先触发观察。依据 Norman 模型绘制，例子为本文示意。")
 
 **行动模型的价值，是帮助我们找出用户卡在哪里，以及哪些操作可以委托、哪些信息仍需看见。** 同一次交互可以涉及多个阶段，后文因此按澄清目标、精确修改、持续观察等任务需求讨论界面分工。
 
