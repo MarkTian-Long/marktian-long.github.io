@@ -38,12 +38,11 @@
   <div class="page-outer">
     <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
     <div class="two-col">
-      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、聊天成为入口，不等于聊天适合承担整个产品</a></li><li><a href="#section-2">二、先分析用户在做什么，再决定用什么界面</a></li><li><a href="#section-3">三、形成意图和选择行动时，聊天什么时候更合适？</a></li><li><a href="#section-4">四、执行阶段，为什么还需要直接操作界面？</a></li><li><a href="#section-5">五、观察和评估阶段，用户需要看到的是当前状态</a></li><li><a href="#section-6">六、AI Product Builder 如何选择交互方式？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、聊天成为入口，不等于聊天适合承担整个产品</a></li><li><a href="#section-2">二、先分析用户在做什么，再决定用什么界面</a></li><li><a href="#section-3">三、澄清目标、探索路径时，聊天什么时候更合适？</a></li><li><a href="#section-4">四、精确修改、反复调整时，为什么还需要直接操作界面？</a></li><li><a href="#section-5">五、持续观察与核验结果时，怎样让当前状态可见？</a></li><li><a href="#section-6">六、AI Product Builder 如何选择交互方式？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
       <main>
         <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">决策框架</span><span class="tag">产品设计</span><span class="tag">人机协作</span></span></div><h1 class="post-title">AI 时代，什么时候该用聊天，什么时候该保留其他界面？</h1><p class="post-summary">AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</p></header>
         <hr class="divider" />
-        <div class="post-body">
-<p>前段时间讨论 AI 产品的交互设计时，我重新想起一个原本很自然的判断：既然 AI 已经能理解自然语言、调用工具替用户完成操作，未来多数软件是不是只需要一个聊天入口？但当这个想法落到具体产品里，卡片、列表和表格能同时展示很多信息、方便横向比较，这些优势并没有因为 AI 能回答问题就消失。</p>
+        <div class="post-body"><p>前段时间讨论 AI 产品的交互设计时，我重新想起一个原本很自然的判断：既然 AI 已经能理解自然语言、调用工具替用户完成操作，未来多数软件是不是只需要一个聊天入口？但当这个想法落到具体产品里，卡片、列表和表格能同时展示很多信息、方便横向比较，这些优势并没有因为 AI 能回答问题就消失。</p>
 <p>更让我在意的是用户重新打开产品时会遇到什么。在以聊天记录为主要组织方式的产品里，上次生成的表格可能仍停留在当时的结果；如果想知道现在有哪些待办、哪个任务出现异常，往往还得再问一次。一个接入持续更新数据的看板，则可以在打开时直接看到当前状态。这不是聊天技术无法实时刷新，而是过去的回答和当前业务状态本来就不是同一回事。</p>
 <p>我也注意到，不少手机 App 把 AI 助手放到了首页或一级导航，却保留搜索、浏览、卡片和原有业务界面。一个更灵活的入口出现以后，为什么这些界面仍然有用？这让我想讨论的，不再只是聊天会不会取代 GUI，而是用户在同一个任务的不同环节，究竟需要怎样表达意图、看见信息、修改对象和接续工作。</p>
 <figure class="post-figure">
@@ -55,21 +54,24 @@
 <p>但得到一次回答，不等于拥有一个可以持续使用的工作对象。用户可能需要并排比较几个结果、反复修改其中一项，也可能隔一段时间回来，接着处理已经发生变化的业务状态。如果产品只能让用户从对话历史里寻找上次的答案，就把查找、比较和恢复上下文的成本留给了下一次使用。<strong>一段对话记录不会自动成为一个持续维护的业务状态。</strong> 数据来源、更新时间、对象版本和可操作范围，都需要产品另外设计。</p>
 <p>这些能力不一定只能放在固定图形界面里：聊天可以连接实时数据，也可以嵌入可直接操作的卡片；原有业务页面同样能加入 AI。值得比较的是，同一个任务在不同环节需要什么信息和控制方式，以及如何让用户不用反复解释同一个对象。这也是为什么要先理解用户的行动过程，再讨论 Chat 和其他界面怎么分工。</p>
 <h2 id="section-2">二、先分析用户在做什么，再决定用什么界面</h2>
-<p>要判断聊天和 GUI 的分工，需要先看用户完成任务的行动过程。Donald Norman 在 1984 年的《Stages and Levels in Human–Machine Interaction》中，把人机交互概括为形成意图、选择行动、执行行动、评估结果四个阶段。其中「选择」指把目标转换为可行的行动或命令，并非泛指商品、方案的横向比较。不同交互技术在这些阶段各有优势和代价。<a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">论文原文</a>。</p>
-<div class="blog-table"><table><thead><tr><th>行动阶段</th><th>用户在做什么</th><th>产品需要提供什么支持</th></tr></thead><tbody><tr><td>意图</td><td>想达到什么目标</td><td>帮助用户表达目标、补充约束</td></tr><tr><td>选择</td><td>用什么方法和操作完成</td><td>展示可选行动、前提和后果</td></tr><tr><td>执行</td><td>让选定的操作发生</td><td>提供操作入口、即时反馈和纠错</td></tr><tr><td>评估</td><td>结果是否符合目标</td><td>呈现系统状态、解释变化、发现异常</td></tr></tbody></table></div>
-<p>表格第三列是我根据模型作的产品设计转译，不是 Norman 提出的界面分类。聊天可以参与选择、执行和解释结果；菜单、画布、看板也能帮助用户形成意图或理解状态。</p>
-<p>Norman 在 1986 年的《Cognitive Engineering》中把行动过程细化为七个活动：建立目标、形成意图、明确行动序列、执行、感知状态、解释状态、评估结果。四阶段适合观察整体过程，七阶段有助于定位更具体的认知断点；实际行动也会跳过或重复某些阶段。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
+<p>要判断聊天和 GUI 的分工，可以先拆开看用户如何完成任务。Donald Norman 在 1984 年的《Stages and Levels in Human–Machine Interaction》中，将这个过程概括为形成意图、选择行动、执行行动、评估结果四个阶段。<a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">论文原文</a>。</p>
+<p>下面用一个假设任务说明：文档已经使用标题样式，现在要把全文的一级标题统一改成蓝色。</p>
+<div class="blog-table"><table><thead><tr><th>行动阶段</th><th>同一任务中具体在做什么</th></tr></thead><tbody><tr><td>意图</td><td>想让全文一级标题都变成蓝色</td></tr><tr><td>选择</td><td>决定修改「标题 1」样式，确定要使用的命令</td></tr><tr><td>执行</td><td>实际打开样式设置，把颜色改成蓝色并应用</td></tr><tr><td>评估</td><td>检查一级标题是否全部改好，正文和其他级别标题有无误改</td></tr></tbody></table></div>
+<p>中间两项的区别是确定怎样做，以及实际把操作做出来。熟悉编辑器的人可能顺手就完成了，不会明显感到自己经过两个阶段。遇到困难时，这个区分更有用：不知道该用哪个命令，与已经知道正确命令却手滑点错，通常需要不同的帮助。Norman 在原文中也明确说，阶段只是便于分析的近似，实际心理活动没有这样清晰的边界。<a href="https://www.laurahuisinga-design.com/698Research/wp-content/uploads/2013/05/Norman_Stages_Levels_HCI.pdf" target="_blank" rel="noopener noreferrer">原文第 367–369 页</a>。</p>
+<p>如果一个助手具备读写文档的工具，并已获得修改授权，同一任务还可以这样完成：用户说「把所有一级标题改成蓝色」，助手确定底层操作、调用工具并应用修改，用户检查结果。用户更明显地经历的是提出要求与查看结果；选择使用助手、发送请求本身仍是人的行动。这里移交的是文档修改的底层操作，这是本文对 AI 协作的设计推演。</p>
+<p>这也意味着，产品不必为了凑齐阶段，强制展示计划或增加确认。是否让用户介入，取决于目标有无歧义、修改影响多大、能否撤销，以及授权范围。</p>
+<p>Norman 在 1986 年的《Cognitive Engineering》中进一步细分了行动过程，并说明实际活动可能跳过、重复或改变顺序。比如监控人员先发现异常，再决定处理什么；浏览商品也可能先于购买目标的形成。<a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》作者公开稿</a>。</p>
 <figure class="post-figure">
-  <img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg" alt="Norman 的四阶段行动循环，并显示异常和数据变化可先触发观察与评估" width="1280" height="720" loading="lazy" decoding="async" />
-  <figcaption>行动可能从状态观察开始，再形成意图；四阶段是分析镜头而非强制顺序。</figcaption>
+  <img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/action-cycle.svg" alt="以标题改色说明意图、选择、执行与评估，标出需要修正时的反馈及状态变化触发的观察入口" width="1280" height="720" loading="lazy" decoding="async" />
+  <figcaption>以同一任务拆解四种活动；需要修正时可能再次行动，状态变化也可先触发观察。依据 Norman 模型绘制，例子为本文示意。</figcaption>
 </figure>
-<p>监控人员可能先看到异常才决定处理什么；消费者也可能先浏览商品再产生购买目标；Agent 的提醒同样可能触发下一轮行动。<strong>行动模型帮助我们定位用户需要怎样的输入、操作和反馈，不规定每个阶段必须对应一种界面。</strong></p>
-<h2 id="section-3">三、形成意图和选择行动时，聊天什么时候更合适？</h2>
-<p>用户有一个大致目标，却不知道产品里该找哪个功能、先做哪一步时，聊天可以接住不完整的表达，再通过追问澄清约束、探索路径。它降低了学习菜单和命令的门槛，但并不自动减少后续比较与核验的成本。</p>
+<p><strong>行动模型的价值，是帮助我们找出用户卡在哪里，以及哪些操作可以委托、哪些信息仍需看见。</strong> 同一次交互可以涉及多个阶段，后文因此按澄清目标、精确修改、持续观察等任务需求讨论界面分工。</p>
+<h2 id="section-3">三、澄清目标、探索路径时，聊天什么时候更合适？</h2>
+<p>用户有一个大致目标，却不知道产品里该找哪个功能、先做哪一步时，聊天可以接住不完整的表达，再通过追问澄清约束、探索路径。这是在帮助用户把目标转成可做的操作；比较商品或方案的优劣，则还涉及信息呈现与结果评估。</p>
 <p><a href="https://www.meituan.com/technology" target="_blank" rel="noopener noreferrer">美团官方科技页面</a>介绍的「小团」作为 App 内的 AI 入口，承接用户对吃喝玩乐的需求；原有商家、商品和搜索页面仍然存在。已有目标、希望缩小范围的用户可以先描述需求；还没有明确目标的人，则可能更愿意直接浏览。</p>
 <p>Amazon 的 Alexa for Shopping 同时提供聊天窗口、主搜索栏提问、搜索结果中的商品比较，以及商品详情页的 AI 摘要。<a href="https://www.aboutamazon.com/news/retail/alexa-for-shopping-ai-assistant" target="_blank" rel="noopener noreferrer">Amazon 官方说明</a>。AI 在不同任务节点提供帮助，不要求用户把搜索、比较和核对全部搬进同一个对话窗口。</p>
 <p>如果目标已经明确、操作路径又很熟悉，直接搜索或点击可能比描述需求、等待模型解释再寻找结果更快。浏览也不总是效率问题：有时用户就是想从选项中发现自己的需求。<strong>聊天适合降低目标澄清与开放探索的成本；目标越明确、操作越熟悉，就越值得保留直接的搜索和浏览。</strong></p>
-<h2 id="section-4">四、执行阶段，为什么还需要直接操作界面？</h2>
+<h2 id="section-4">四、精确修改、反复调整时，为什么还需要直接操作界面？</h2>
 <p>当用户知道要改什么，问题便从「怎么表达」变成「怎么把对象改对」。</p>
 <p>Ben Shneiderman 在 1983 年讨论的直接操纵（Direct Manipulation），强调操作对象持续可见、操作快速且可逆、结果即时反馈。<a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">论文原文</a>。这是一种交互风格，不等于所有 GUI 都天然具备这些能力。</p>
 <p>调整图表范围、移动画布元素或修改规则条件时，用户未必能一次说准最终值，往往需要边看边改、尝试和撤销。直接操作比反复把每一步翻译成自然语言更合适，但界面不一定要固定：AI 也可以先理解高层意图，再生成可持续操作的控件。</p>
@@ -77,11 +79,11 @@
 <p>我设计审核产品时也讨论过一种可能路径：用户上传制度材料，通过聊天让 AI 生成审核规则草案。但草案与正式生效的规则不同，版本、适用范围、生效状态，以及被哪些审核任务引用，都需要明确表示。此前的<a href="https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html" target="_blank" rel="noopener noreferrer">《AI 正在把“使用软件”和“操作软件”拆开》</a>也记录了这一经历。</p>
 <p>由此推导，聊天可以负责澄清目标和生成草案，结构化编辑负责精确修改，版本对比和任务列表负责核对变化与当前状态。这是基于业务约束的设计判断，并非声称原产品已经实现了这些界面。</p>
 <p><strong>AI 可以接管一部分操作，但用户仍然需要看见自己正在改变什么，以及改变之后发生了什么。</strong> 直接操作的价值是让修改过程可见、可控、可撤销，而不是证明模型能力不足。</p>
-<h2 id="section-5">五、观察和评估阶段，用户需要看到的是当前状态</h2>
+<h2 id="section-5">五、持续观察与核验结果时，怎样让当前状态可见？</h2>
 <p>执行完成并不意味着任务结束。用户还要判断变化是否生效、是否达到目标；对于持续运行的任务，还要知道当前状态有没有变化。</p>
 <p>聊天记录适合保留交流过程，却不天然适合承担持续状态管理。</p>
 <p>如果用户每天都要检查待办、订单、审核进度或业务指标，他需要的不只是上一次问答的答案，而是当前状态、变化时间和异常位置。这里的关键不是界面叫 Chat 还是 Dashboard，而是数据是否持续更新、状态是否有明确来源，以及用户回来时能否恢复到当前任务。</p>
-<p>Norman 的七阶段模型把结果评估拆成感知状态、解释状态和对照目标。系统不仅要把数据输出给用户，还要帮助用户理解这些数据意味着什么；如果操作结果延迟出现，用户还可能忘记自己刚才做了什么，从而增加评估成本。<a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》原文</a>。</p>
+<p>Norman 的七阶段模型把结果评估拆成感知状态、解释状态和对照目标。系统不仅要把数据输出给用户，还要帮助用户理解这些数据意味着什么；如果操作结果延迟出现，用户还可能忘记自己刚才做了什么，从而增加评估成本。<a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》作者公开稿</a>。</p>
 <p>监控任务还会反过来改变行动起点。用户可能没有先提出一个目标，而是打开看板发现指标越界，或者收到异常提醒，才开始调查和处理。此时，持续可见的状态视图不是聊天回答的装饰，而是用户形成下一步意图的依据。</p>
 <p>Graphics Interface 2026 的一项研究直接比较了聊天式自然语言界面与看板（Dashboard）在鱼场数据监控任务中的表现。研究采用被试内设计，24 名来自不同专业的学生都使用两种界面；他们此前没有鱼场数据经验。两种界面使用同一数据集，任务则由行业专家参与验证。任务正确率和系统可用性量表（SUS）评分没有显著差异；在 180 秒限制内，Dashboard 的任务完成率为 87.7%，聊天界面为 70.5%。两种界面的总体任务完成时间存在显著差异，看板更快。经过多重比较校正后，10 项任务中只有 3 项的时间差异仍然显著；NASA-TLX 工作负荷量表的六个维度中，只有时间压力（Temporal Demand）仍然显著，不能把摘要中提到的心理负荷差异写成显著结论。<a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">研究论文</a>。</p>
 <p>参与者反馈还呈现出更细的分工：他们往往用 Dashboard 查精确数值、快速点击和定位数据点，用聊天做自定义比较和探索；但反复输入提示词会拖慢较长任务，Dashboard 控件在参数和筛选项变多时也可能变得繁琐。这些是特定实验中的参与者反馈，不是对所有用户的普遍结论。</p>
@@ -97,7 +99,7 @@
 <p>AI 时代不需要先选一个唯一入口，再把所有功能塞进去。<strong>聊天负责降低表达和探索成本，结构化界面负责让对象、信息和操作保持可见，持续状态机制负责让用户知道事情现在进行到哪里，确认与恢复机制则让执行结果仍然可控。</strong> 同一个产品可以同时需要这些能力，真正的设计问题是它们在具体任务中如何衔接。</p>
 <h2 id="section-7">参考资料</h2>
 <h3 id="section-8">一手理论与原始论文</h3>
-<ul><li><a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)</a></li><li><a href="https://cel.cs.brown.edu/pdf/norman-cognitive-engineering.pdf" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Cognitive Engineering” (1986)</a></li><li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">Ben Shneiderman, “Direct Manipulation: A Step Beyond Programming Languages” (1983)</a></li></ul>
+<ul><li><a href="https://doi.org/10.1016/S0020-7373%2884%2980054-1" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)</a>（<a href="https://www.laurahuisinga-design.com/698Research/wp-content/uploads/2013/05/Norman_Stages_Levels_HCI.pdf" target="_blank" rel="noopener noreferrer">全文 PDF</a>）</li><li><a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Cognitive Engineering” (1986)，作者公开稿</a></li><li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">Ben Shneiderman, “Direct Manipulation: A Step Beyond Programming Languages” (1983)</a></li></ul>
 <h3 id="section-9">同行评审研究</h3>
 <ul><li><a href="https://doi.org/10.1145/3613904.3642639" target="_blank" rel="noopener noreferrer">Priyan Vaithilingam et al., “DynaVis: Dynamically Synthesized UI Widgets for Visualization Editing,” CHI 2024</a></li></ul>
 <h3 id="section-10">会议论文公开稿</h3>
