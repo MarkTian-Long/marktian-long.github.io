@@ -38,7 +38,7 @@
   <div class="page-outer">
     <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
     <div class="two-col">
-      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、这次证明的不是一道难题，而是数学研究中的中心问题</a></li><li><a href="#section-2">二、这次不再只是作者声称证明成功</a></li><li><a href="#section-3">三、和过去几个月的 AI 数学成果相比，这次究竟不同在哪里？</a></li><li><a href="#section-4">四、为什么我仍然愿意称它为里程碑？</a></li><li><a href="#section-5">五、数学家的认可，为什么既强烈又谨慎？</a></li><li><a href="#section-6">结尾：下一座里程碑，可能在哪里？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、黎曼猜想为什么有如此大的分量？</a></li><li><a href="#section-2">二、这次不再只是作者声称证明成功</a></li><li><a href="#section-3">三、和过去几个月的 AI 数学成果相比，这次究竟不同在哪里？</a></li><li><a href="#section-4">四、为什么我仍然愿意称它为里程碑？</a></li><li><a href="#section-5">五、数学家的认可，为什么既强烈又谨慎？</a></li><li><a href="#section-6">结尾：下一座里程碑，可能在哪里？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
       <main>
         <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">技术判断</span><span class="tag">科研自动化</span><span class="tag">模型能力</span></span></div><h1 class="post-title">黎曼猜想之后，AI 数学真的迎来了里程碑吗？</h1><p class="post-summary">一份由数学家与 Claude 协作完成的黎曼猜想证明，通过了标准命题比对、公理审计和多种独立检查器的复核。它并非首次让重大 AI 数学成果获得严格验证，却使核心数学突破、公开核验和后续数学研究汇聚于同一事件，也留下了需要被理解与推广的新问题。</p></header>
         <hr class="divider" />
@@ -49,7 +49,7 @@
 </figure>
 <p>11 月 20 日看到 Claude 参与证明黎曼猜想的新闻时，我的第一反应不是兴奋，而是怀疑。当天和朋友聊天，我还觉得这大概又是一次 AI 厂商的营销。最近几个月，“AI 解决某某数学难题”的消息一再出现：有些是竞赛题，有些是研究猜想，有些只有论文，有些附了 Lean 代码。看得多了，我对这种标题已经有些麻木。</p>
 <p>但第二天，事情开始变得不同。数学证明工具社区给出明确认证，独立核验者公布了可复查的结果，数学家也开始认真讨论成果的分量和里面的数学。<strong>我更想知道的不是哪家公司赢了，而是：这一次究竟跨过了什么门槛，足以让人把它称为里程碑？</strong></p>
-<h2 id="section-1">一、这次证明的不是一道难题，而是数学研究中的中心问题</h2>
+<h2 id="section-1">一、黎曼猜想为什么有如此大的分量？</h2>
 <p><a href="https://www.claymath.org/millennium/Riemann-Hypothesis/" target="_blank" rel="noopener noreferrer">黎曼猜想</a>由黎曼在 1859 年提出，涉及素数分布偏离平均趋势的程度。用数学语言说，它断言黎曼 ζ 函数的所有非平凡零点都位于实部为 1/2 的直线上。它被列为千禧年难题，并非只是因为历史久或奖金高，而是因为在解析数论中有基础地位：大量定理和估计都与它存在深刻联系。</p>
 <p>举一个不需要读懂 ζ 函数的例子：统计不超过 x 的数里有多少个素数，可以先用一个平滑公式估计。根据 <a href="https://dlmf.nist.gov/27.12" target="_blank" rel="noopener noreferrer">NIST 的标准数学参考</a>，黎曼猜想等价于将实际素数数量与一种更精细估计之间的误差，限制在约 √x × log x 的增长量级。这里的 x 是统计范围，谈的是范围扩大时误差最多增长多快，而不是某次计算的精确误差。相比只知道平均趋势，这是一项强得多的控制。</p>
 <p>11 月 20 日，数论学家 Levent Alpöge 在<a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener noreferrer">个人说明</a>里宣布，他与 Claude 合作找到证明，公开约 1700 万行 Lean 代码。<a href="https://math.mit.edu/~drew/grh/" target="_blank" rel="noopener noreferrer">MIT 的主定理核验记录</a>列明，成果涵盖经典黎曼猜想，以及 Dirichlet L 函数版本的广义黎曼猜想。这不是对所有更一般 L 函数的泛化证明，范围必须说清。</p>
