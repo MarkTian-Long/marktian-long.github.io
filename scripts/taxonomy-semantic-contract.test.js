@@ -13,6 +13,16 @@ function fixture(overrides = {}) {
   };
 }
 
+function taxonomyFile(t) {
+  const directory = fs.mkdtempSync(path.join(__dirname, '.taxonomy-fixture-'));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const file = path.join(directory, 'taxonomy.json');
+  return (taxonomy) => {
+    fs.writeFileSync(file, JSON.stringify(taxonomy));
+    return loadBlogTaxonomy(file);
+  };
+}
+
 test('reviewed empty labels are valid; required fields and array types remain strict', () => {
   assert.doesNotThrow(() => validateSemanticMetadata(fixture()));
   for (const field of ['tags', 'topics']) {
@@ -35,6 +45,73 @@ test('deprecated tags are only accepted through the legacy metadata path', () =>
   const value = fixture({ tags: ['架构设计'] });
   assert.throws(() => validateSemanticMetadata(value), /deprecated/);
   assert.doesNotThrow(() => validateSemanticMetadata(value, { allowLegacyCategory: true }));
+});
+
+for (const field of ['tags', 'topics']) {
+  test(`candidate ${field} cannot be used by new or legacy metadata`, () => {
+    const taxonomy = structuredClone(loadBlogTaxonomy());
+    taxonomy[field].push({ name: '候选词', definition: '待审查', status: 'candidate' });
+    for (const allowLegacyCategory of [false, true]) {
+      assert.throws(() => validateSemanticMetadata(fixture({ [field]: ['候选词'] }), {
+        taxonomy, allowLegacyCategory,
+      }), /candidate|not active/);
+    }
+  });
+
+  test(`unknown ${field} status cannot bypass vocabulary validation`, () => {
+    for (const status of ['', null, false, 'retired']) {
+      const taxonomy = structuredClone(loadBlogTaxonomy());
+      taxonomy[field].push({ name: '无效状态词', definition: '测试词', status });
+      for (const allowLegacyCategory of [false, true]) {
+        assert.throws(() => validateSemanticMetadata(fixture({ [field]: ['无效状态词'] }), {
+          taxonomy, allowLegacyCategory,
+        }), /status|not active/);
+      }
+    }
+  });
+
+  test(`omitted and explicit active ${field} remain available`, () => {
+    for (const status of [undefined, 'active']) {
+      const taxonomy = structuredClone(loadBlogTaxonomy());
+      taxonomy[field].push({ name: '有效词', definition: '测试词', status });
+      assert.doesNotThrow(() => validateSemanticMetadata(fixture({ [field]: ['有效词'] }), { taxonomy }));
+    }
+  });
+}
+
+test('deprecated topics retain the explicit legacy metadata exception', () => {
+  const value = fixture({ topics: ['前沿研究'] });
+  assert.throws(() => validateSemanticMetadata(value), /deprecated/);
+  assert.doesNotThrow(() => validateSemanticMetadata(value, { allowLegacyCategory: true }));
+});
+
+test('taxonomy loader rejects invalid vocabulary statuses before any article uses them', (t) => {
+  const read = taxonomyFile(t);
+  for (const field of ['tags', 'topics']) {
+    for (const status of ['', null, false, 'retired']) {
+      const taxonomy = structuredClone(loadBlogTaxonomy());
+      taxonomy[field][0].status = status;
+      assert.throws(() => read(taxonomy), /status/);
+    }
+  }
+});
+
+test('taxonomy loader rejects duplicate names within one vocabulary', (t) => {
+  const read = taxonomyFile(t);
+  for (const field of ['tags', 'topics']) {
+    const taxonomy = structuredClone(loadBlogTaxonomy());
+    taxonomy[field].push({ ...taxonomy[field][0], definition: '冲突定义' });
+    assert.throws(() => read(taxonomy), /duplicate|unique/);
+  }
+});
+
+test('taxonomy loader rejects category names repeated within or across availability lists', (t) => {
+  const read = taxonomyFile(t);
+  for (const target of ['active', 'legacy']) {
+    const taxonomy = structuredClone(loadBlogTaxonomy());
+    taxonomy.categories[target].push({ ...taxonomy.categories.active[0] });
+    assert.throws(() => read(taxonomy), /duplicate|unique/);
+  }
 });
 
 test('optional labels do not make concepts, quote, or category optional', () => {

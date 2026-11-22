@@ -14,6 +14,17 @@ function loadBlogTaxonomy(taxonomyPath = TAXONOMY_PATH) {
       throw new Error('blog-taxonomy.json contains an invalid named collection');
     }
   }
+  const collections = {
+    categories: [...taxonomy.categories.active, ...taxonomy.categories.legacy],
+    tags: taxonomy.tags,
+    topics: taxonomy.topics,
+  };
+  for (const [field, entries] of Object.entries(collections)) {
+    if (names(entries).size !== entries.length) throw new Error(`blog-taxonomy.json ${field} names must be unique`);
+  }
+  for (const field of ['tags', 'topics']) {
+    for (const entry of taxonomy[field]) vocabularyStatus(entry, field);
+  }
   if (!Array.isArray(taxonomy.relation_types) || !taxonomy.concepts || !Number.isInteger(taxonomy.concepts.min_items) || !Number.isInteger(taxonomy.concepts.max_items)) {
     throw new Error('blog-taxonomy.json contains an invalid validator contract');
   }
@@ -30,6 +41,13 @@ function loadBlogTaxonomy(taxonomyPath = TAXONOMY_PATH) {
 }
 
 function names(items) { return new Set(items.map((item) => item.name)); }
+function vocabularyStatus(entry, field) {
+  const status = entry.status === undefined ? 'active' : entry.status;
+  if (!['active', 'deprecated', 'candidate'].includes(status)) {
+    throw new Error(`Invalid taxonomy ${field} status for ${entry.name}`);
+  }
+  return status;
+}
 function assertStringArray(value, field, source, { minItems = 1, maxItems = Infinity } = {}) {
   if (!Array.isArray(value) || !value.every((item) => typeof item === 'string' && item.trim() === item && item)) {
     throw new Error(`${field} must be a trimmed string array: ${source}`);
@@ -56,8 +74,9 @@ function validateVocabulary(values, field, taxonomy, source, { allowDeprecated =
   const byName = new Map(taxonomy[field].map((item) => [item.name, item]));
   for (const value of values) {
     if (!byName.has(value)) throw new Error(`${field} value is not defined by blog taxonomy: ${value} (${source})`);
-    if (!allowDeprecated && byName.get(value).status === 'deprecated') {
-      throw new Error(`${field} value is deprecated for new Markdown: ${value} (${source})`);
+    const status = vocabularyStatus(byName.get(value), field);
+    if (status !== 'active' && !(allowDeprecated && status === 'deprecated')) {
+      throw new Error(`${field} value is ${status} and is not allowed here: ${value} (${source})`);
     }
   }
 }

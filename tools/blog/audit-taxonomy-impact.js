@@ -61,6 +61,11 @@ function diffTaxonomySemantics(before, after) {
         changes.push({ kind: 'removed', entity, name });
         continue;
       }
+      if (entity === 'category') {
+        const wasActive = (before.categories?.active || []).some(entry => entry.name === name);
+        const isActive = (after.categories?.active || []).some(entry => entry.name === name);
+        if (wasActive !== isActive) changes.push({ kind: 'availability_changed', entity, name });
+      }
       for (const field of SEMANTIC_FIELDS[entity]) {
         if (!sameValue(oldEntry[field], newEntry[field])) {
           changes.push({ kind: changeKind(field, newEntry), entity, name });
@@ -181,7 +186,16 @@ function auditTaxonomyImpact({ rootDir = path.resolve(__dirname, '..', '..'), be
   validateBlogMetadata(metadata);
   const baseline = before ? readJson(path.resolve(rootDir, before)) : baseRef ? taxonomyFromGitRef(rootDir, baseRef) : null;
   const changes = baseline ? diffTaxonomySemantics(baseline, current) : focus ? [focus] : [];
-  return prepareImpactReview({ changes, posts: metadata.posts, reviewCategories: categories, forceFullScreen: fullScreen });
+  const result = prepareImpactReview({ changes, posts: metadata.posts, reviewCategories: categories, forceFullScreen: fullScreen });
+  return {
+    ...result,
+    comparisonPerformed: Boolean(baseline),
+    message: !baseline && !focus
+      ? categories.length
+        ? '已准备分类范围候选池；未提供词典比较基线，未进行词典差异比较。'
+        : 'taxonomy 一致性检查已通过；未提供比较基线或 --focus，未执行历史影响审查。'
+      : result.message,
+  };
 }
 
 function main(argv = process.argv.slice(2)) {

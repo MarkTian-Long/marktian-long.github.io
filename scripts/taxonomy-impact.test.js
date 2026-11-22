@@ -71,6 +71,25 @@ test('taxonomy impact audit detects a category core_question change and screens 
   assert.ok(result.candidates.every((candidate) => candidate.reasons.includes('core_question change: full metadata screen')));
 });
 
+for (const [from, to] of [['active', 'legacy'], ['legacy', 'active']]) {
+  test(`taxonomy impact audit detects category ${from} to ${to} without an entry-field change`, () => {
+    const before = taxonomy();
+    if (from === 'legacy') {
+      before.categories.legacy.push(before.categories.active.splice(1, 1)[0]);
+    }
+    const after = structuredClone(before);
+    const index = after.categories[from].findIndex(entry => entry.name === '商业');
+    after.categories[to].push(after.categories[from].splice(index, 1)[0]);
+
+    const changes = diffTaxonomySemantics(before, after);
+    assert.deepEqual(changes, [{ kind: 'availability_changed', entity: 'category', name: '商业' }]);
+    const result = prepareImpactReview({ changes, posts });
+    assert.equal(result.fullMetadataScreen, true);
+    assert.deepEqual(result.candidates.map(candidate => candidate.slug), ['business', 'product', 'industry']);
+    assert.equal(result.mutationCount, 0);
+  });
+}
+
 test('taxonomy impact audit detects a tag distinguish_from change and screens all historical metadata', () => {
   const before = taxonomy();
   const after = taxonomy();
@@ -120,6 +139,40 @@ test('taxonomy impact audit reports no migration when no semantic change is pres
   const result = prepareImpactReview({ changes: [], posts });
   assert.deepEqual(result.candidates, []);
   assert.equal(result.message, '历史 audit 完成，无需迁移。');
+});
+
+test('taxonomy audit without a baseline does not claim a completed historical comparison', () => {
+  const result = auditTaxonomyImpact({ rootDir: path.resolve(__dirname, '..') });
+  assert.doesNotMatch(result.message, /历史 audit 完成/);
+  assert.equal(result.comparisonPerformed, false);
+  assert.deepEqual(result.candidates, []);
+  assert.equal(result.mutationCount, 0);
+});
+
+test('category-only audit reports its candidate pool without claiming a taxonomy comparison', () => {
+  const result = auditTaxonomyImpact({ rootDir: path.resolve(__dirname, '..'), categories: ['商业'] });
+  assert.ok(result.candidates.length > 0);
+  assert.ok(result.candidates.every(candidate => candidate.category === '商业'));
+  assert.match(result.message, /分类范围候选池/);
+  assert.match(result.message, /未进行词典差异比较/);
+  assert.equal(result.comparisonPerformed, false);
+  assert.equal(result.fullMetadataScreen, false);
+  assert.equal(result.mutationCount, 0);
+});
+
+test('taxonomy audit with an identical baseline confirms that a comparison was performed', (t) => {
+  const rootDir = path.resolve(__dirname, '..');
+  const directory = fs.mkdtempSync(path.join(__dirname, '.taxonomy-baseline-'));
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const before = path.join(directory, 'before.json');
+  fs.copyFileSync(path.join(rootDir, 'tools/blog/data/blog-taxonomy.json'), before);
+
+  const result = auditTaxonomyImpact({ rootDir, before });
+  assert.equal(result.comparisonPerformed, true);
+  assert.deepEqual(result.changes, []);
+  assert.deepEqual(result.candidates, []);
+  assert.equal(result.message, '历史 audit 完成，无需迁移。');
+  assert.equal(result.mutationCount, 0);
 });
 
 test('taxonomy impact audit resolves the repository root when invoked from scripts', () => {
