@@ -44,7 +44,7 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
 
 ### `posts-meta.json` v4 视觉契约
 
-`tools/blog/data/posts-meta.json` 必须使用根级 `version: 4`。根级 `image_contract.legacy_without_visuals` 仅保留历史兼容记录；新文章可以省略 `visuals`，纯文字文章会使用全站默认分享图。只有选择使用图片时才声明 `visuals`：
+`tools/blog/data/posts-meta.json` 必须使用根级 `version: 4`。新文章开篇首图按正文图片契约登记，本地首图写入 `visuals.inline`；`visuals.cover` 是独立的可选分享封面。首图适用范围与作者例外见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)。根级 `image_contract.legacy_without_visuals` 仅保留历史兼容记录；已发布历史文章及作者明确批准无图例外的文章可以省略 `visuals`。未声明封面的文章使用全站默认分享图。登记示例：
 
 ```json
 {
@@ -62,14 +62,20 @@ relations: [{"slug":"llm-saas-moat-disruption","type":"builds_on"}]
         "width": 1200,
         "height": 630
       },
-      "inline": []
+      "inline": [{
+        "src": "assets/images/blog/your-slug/opening-context.webp",
+        "alt": "帮助读者进入本文的真实对象或核心关系",
+        "caption": "图中对象与关系对应文章开篇提出的问题。",
+        "width": 1280,
+        "height": 720
+      }]
     }
   }]
 }
 ```
 
-- 封面可选；正文按写作阶段已确认的视觉规划登记，支持图文协同、概念搭配和递进图组，也允许零图。发布校验不设正文图片张数硬上限；每张仍须满足独立资产、描述、尺寸与安全契约。
-- 无图文章和已在 `legacy_without_visuals` 中的历史文章都使用全站图片回退；不必补图或改正文。
+- 分享封面可选，不能代替正文开篇首图；其他正文图按写作阶段已确认的阅读任务登记，支持图文协同、概念搭配和递进图组。发布校验不设正文图片张数硬上限；每张仍须满足独立资产、描述、尺寸与安全契约。
+- 已发布历史文章不因首图规则批量补图或改正文；作者明确批准的无图例外记录在该文现有审查记录中，不自动加入历史兼容名单。
 - 主页与 Blog 列表继续保持纯文字，`visuals` 只服务文章页、OG/Twitter 分享预览、JSON-LD 和 public dist 白名单。
 - 数量参考、图文分工、尺寸、体积、alt/caption 与预览验收详见 [VISUAL_GUIDE.md](VISUAL_GUIDE.md)；正文生图的执行步骤见 [IMAGE_GENERATION_WORKFLOW.md](IMAGE_GENERATION_WORKFLOW.md)。发布层不重复制定配图数量或替写作阶段判断。
 
@@ -395,7 +401,7 @@ div.page-outer（max-width: 1008px; padding: 40px 20px 80px）
 
 ### Markdown 正文图片语法
 
-有独立文章级解释价值时，封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。无图文章直接从 header 进入正文。正文图必须在 Markdown 中独立成行：
+有独立文章级解释价值时，可选分享封面不写进 Markdown，生成器会从 `visuals.cover` 将它放在文章 header 与正文分隔线之间。新文章开篇首图使用正文图片语法，放在摘要分隔线之后、第一段正文之前；不能用 header 中的封面代替。已发布历史无图文章或作者明确批准的无图例外可以直接进入正文。正文图必须在 Markdown 中独立成行：
 
 ```markdown
 ![与论点相关的对象和关系](../../assets/images/blog/your-slug/context-feedback-loop.webp "这个回路会把本次任务的结果变成下次任务可复用的上下文。")
@@ -426,7 +432,7 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
    node tools/blog/sync-post-metadata.js --write docs/blog/your-slug.md
    ```
    不手工创建或补写语义 metadata；需要明确回填新文章月份时使用 `--date YYYY.MM`。同步不会删除或覆盖已有 `visuals` 等发布资产字段。
-2. 图片完全可选。需要使用封面或正文图时，按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 维护 `visuals`；选中的候选图先放在 `build/blog-image-work/<slug>/`，再用确定性脚本生成最终资产：
+2. 按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 完成必选开篇首图及其他已选图片，维护 `visuals`；历史无图文章与作者明确例外按其适用范围处理。选中的位图候选先放在 `build/blog-image-work/<slug>/`，再只为实际选用的角色运行对应命令；分享封面不因此变为必选：
    ```powershell
    node scripts/prepare-blog-image.js --slug your-slug --role cover --input build/blog-image-work/your-slug/candidate.png
    node scripts/prepare-blog-image.js --slug your-slug --role inline --name context-feedback-loop --input build/blog-image-work/your-slug/inline-candidate.png
@@ -449,13 +455,15 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
 
 ### 未发布图文预览：走正式模板的候选构建，不接入公开入口
 
-完整图文预览不另起一份样式相似的自定义 HTML。待正文、图片和图表进入视觉确认阶段，使用唯一未发布 Markdown 工作稿和正式文章模板/运行时，在隔离的候选构建目录生成网页；生成器已有 `--candidate` 模式，可将输出限制在 `build/candidate-site/` 下，例如：
+完整图文预览不另起一份样式相似的自定义 HTML。按 SOP 完成写作前授权、内部正文、审校与正文认知增量验收后，使用唯一未发布 Markdown 工作稿和正式文章模板/运行时，在隔离的候选构建目录生成网页；不要求作者先确认一份纯文字全文。生成器已有 `--candidate` 模式，可将输出限制在 `build/candidate-site/` 下，例如：
 
 ```powershell
 node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/candidate-site/tools/blog/posts/your-slug.html
 ```
 
-**运行前提：** 该生成器仍会读取当前工作区的 `tools/blog/data/posts-meta.json`，并要求与 H1、摘要及 frontmatter 匹配；新文章未正式入库时，应在**隔离的候选工作区**内建立临时 metadata 快照，完成预览需要的字段和 `visuals`，绝不可为了让候选构建通过而将草稿加到正式索引。候选目录须同时保留/复制所依赖的共享运行时及本地图片，确保相对路径与正式发布一致；如采用单文件离线交付，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。对外分享前移除或屏蔽指向尚未正式发布页面的 canonical、OG URL 与搜索结构化标记，标识为“未发布预览”；不更新首页、列表、搜索、RSS、sitemap、正式 HTML、发布日期或 publicly indexed metadata。未放进目录不代表私密：若另需线上不可枚举/未关联的直达 URL，应明确部署位置和 noindex/访问控制；默认仅提供隔离候选/离线预览，不自动公开上线。
+**运行前提：** 该生成器仍会读取当前工作区的 `tools/blog/data/posts-meta.json`，并要求与 H1、摘要及 frontmatter 匹配；新文章未正式入库时，应在**隔离的候选工作区**内建立临时 metadata 快照，完成预览需要的字段和 `visuals`，绝不可为了让候选构建通过而将草稿加到正式索引。候选目录须同时保留/复制所依赖的共享运行时及本地图片，确保相对路径与正式发布一致。隔离候选与离线渲染用于公开授权前的内部构建、验收，不默认作为首次完整审阅的交付，也不自动创建下载附件；用户明确要求离线交付时，图片与运行时可打包为离线派生物，但不能改变页面 DOM、内容、图文位置和交互语义。
+
+**公开部署与分发隔离：** 按 [发布级图文预览规范](governance/blog-preview-release-spec.md) 取得公开预览授权后，部署到稳定预览地址；未获授权时继续完成内部准备，并说明待批准的具体部署内容。预览移除或屏蔽指向尚未正式发布页面的 canonical、OG URL 与搜索结构化标记，标识“未发布预览”并设置 noindex；不更新首页、列表、搜索、RSS、sitemap、正式 HTML、发布日期或正式索引。未放进目录不代表私密，公开预览仍可被知道链接的人访问。公开预览授权不包含正式发布批准，candidate 模式也不自动完成部署。
 
 **页头与分隔线复核：** 候选页头须按「文章页头标签与候选预览」显示候选 tags/topics，concepts 不前台显示；正式文章模板已经提供唯一的摘要后分隔线。Markdown 摘要后的 `---` 由生成器消费，不得在 `.post-body` 再输出第二条 `<hr>`。检查摘要与首段之间只有一条可见线，不能出现两条平行线或为修复间距而增加空分隔符。
 
@@ -480,7 +488,7 @@ node tools/blog/generate-post.js --candidate drafts/blog/your-slug.md build/cand
 - 检查 taxonomy 同步：每个 `tags/topics` 值都必须在 `blog-taxonomy.json` 中有完全一致的条目；新增词或定义调整必须在同一次变更更新 taxonomy 并完成历史 audit，不能把近期文章当作历史例外。
 - 检查 `tags/topics` 数量及空值：以 taxonomy 的 `label_rules` 为准；空数组必须来自已完成的内容审查，第二个标签必须具有独立信息价值，不用凑数通过校验。
 - 检查继续阅读：最多 3 篇且允许不足；强关系优先。自动同主题候选必须共享至少一个 `topic`，tags/category 只作排序，`concepts` 不参与；正文已有历史文章不进入自动同主题，最多一条必要的显式关系可重复。若推荐明显偏题，应先复核 `topics` 或关系评审，而不是降低门槛凑满。
-- 检查视觉契约：图片完全可选；如使用图片，正文图数量由当前 `VISUAL_GUIDE.md` 的阅读任务与移动端验收决定，不设 0–2 张硬上限；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。
+- 检查视觉契约：按当前 `VISUAL_GUIDE.md` 核对必选首图或已记录的作者例外；其他正文图由阅读任务与移动端验收决定，不设张数配额；Markdown 的路径、alt/caption 与 `visuals.inline` 一致。运行 `node scripts/check-blog-images.js`。当前图片检查器验证已登记资产和对应呈现，不自动证明首图必选要求、首段前位置或实际视觉效果已满足；这些项目须在当前稿与真实页面中另行核验。
 - 检查正文和参考资料区是否出现可见的转义标签，例如 `&lt;br /&gt;`、`&lt;a`、`&lt;strong`。这些不是编码乱码，而是 HTML 标签被错误转义，必须修成真实标签或改写为语义 HTML。
 - 多行列表说明（例如参考资料链接下一行的「注：...」）可以用真实 `<br />` 换行，但不能把 `<br />` 作为已转义文本写进页面。
 - 检查浏览器标题 `<title>` 是否保留中文后缀 `— Leo 的思考碎片`，避免 Windows 管道或脚本编码把它改成问号。
@@ -715,7 +723,7 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 <meta name="twitter:image:alt"   content="与文章核心机制相关的图像描述" />
 ```
 
-> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 和 JSON-LD；无图文章回退到全站 `assets/images/og-cover.png`，不因本契约批量补图。
+> `og:url`、canonical、RSS 地址和 sitemap 等生成内容的域名以 `scripts/site-config.js` 为准，不在文章 head 里手工复制域名。正文中的正常外链或站内链接不属于该生成范围。声明 `visuals.cover` 的文章将其用于 OG、Twitter large image card 和 JSON-LD；未声明该封面的文章回退到全站 `assets/images/og-cover.png`，正文首图不自动成为分享封面，不因本契约批量补图。
 
 ### 搜索发现维护
 

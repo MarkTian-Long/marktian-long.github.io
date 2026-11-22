@@ -6,10 +6,11 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 - `tools/blog/governance/blog-sop.md`：探讨、收敛、大纲确认、正式写稿与流程路由。
 - `tools/blog/governance/blog-cognitive-review-spec.md`：大纲确认后的写作前认知增量反馈、正文完成后的认知增量验收及章节依赖检查；具体触发顺序由 SOP 路由。
-- `tools/blog/governance/blog-preview-release-spec.md`：正文确认后的发布级图文预览、作者批准与正式发布切换；补充 SOP 的阶段交付，不另定写作、视觉或发布契约。
+- `tools/blog/governance/blog-preview-release-spec.md`：首次完整图文预览、同稿迭代、公开预览授权和正式发布切换；补充 SOP 的阶段交付，不另定写作、视觉或发布契约。
 - `tools/blog/governance/blog-research-backlog-spec.md`：研究待办的记录结构、编号与日期、原位更新和整理验收；补充 SOP，不重定义研究流程或立项规则。
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
 - `tools/blog/governance/blog-charts-spec.md`：表格、流程图和其他可视化规范。
+- `tools/blog/VISUAL_GUIDE.md`：首图与其他正文图的视觉语言、资产规格、许可、制作方式和实际页面验收。
 - `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文概念/场景插图的任务定义、生图迭代、文字校验、选图与资产交接。
 - `tools/blog/WRITING_GUIDE.md`：最终 Markdown、metadata 和发布契约。
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
@@ -17,15 +18,14 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 ## 按阶段读取
 
-下表只负责导航到正确的规范入口，不复制各文件中的详细规则。默认按当前阶段读取相关章节，不把全部规范在每轮重复加载。
+[Blog SOP](blog-sop.md) 维护完整流程、进入条件、交付和作者授权关口；本入口只导航到当前任务所需的规范，不再复制一张流程表。按阶段读取相关章节，同一轮以文件 SHA 判断是否需要重读。
 
-| 阶段 | 默认读取 | 按需读取 |
-|---|---|---|
-| 新文章探讨 | blog-sop.md 的探讨与收敛部分、blog-taxonomy.json | 系列文章读取对应 Series Brief；先保存独立起点，再读取 research_backlog.md 和 posts-meta.json |
-| 历史关联与大纲确认 | blog-sop.md 的历史检索与大纲部分、完整 posts-meta.json | 只深读高相关历史正文；材料承载力检查按需触发 |
-| 写作前认知增量反馈与作者确认 | blog-cognitive-review-spec.md、独立起点、研究结论与已确认大纲 | 大纲确认后、内部完整初稿前单独交付；必须取得作者明确确认，不能由分类或大纲确认代替 |
-| 图文一体成稿与预览迭代（连续阶段） | 已确认大纲与写作前认知增量反馈、blog-sop.md、blog-preview-release-spec.md | 内部完整正文与图意同步推进；正文完成后依次读取 GitHub 当前 blog-human-writing/SKILL.md 与 prose-review.md 执行活人感审校，再执行 blog-review-checklist.md，完成正文认知增量验收并在首个完整预览前反馈；之后制作并验收图表、页面，用户授权后部署可公开访问的固定预览 URL。首次全文审阅默认发生在带图网页，不额外交付无图长文。图表、视觉与生图各按独立规范；反馈修改仍使用同一 Markdown 与预览地址，不跳过受影响检查点。 |
-| 终稿与发布 | 最新 blog-taxonomy.json、WRITING_GUIDE.md、publish-blog/SKILL.md | 有图片时读取 VISUAL_GUIDE.md；按发布脚本运行对应检查 |
+- **研究、收敛与大纲**：[SOP](blog-sop.md)；taxonomy、研究待办、历史 metadata 和 Series Brief 按 SOP 的读取顺序进入。
+- **认知增量反馈与验收方法**：[认知规范](blog-cognitive-review-spec.md)。
+- **正文审校**：GitHub 当前 `.agents/skills/blog-human-writing/SKILL.md` 与对应 reference；终审执行 [Checklist](blog-review-checklist.md)。
+- **图片与图表**：[图表规范](blog-charts-spec.md)、[视觉规范](../VISUAL_GUIDE.md)；决定使用生成式图片时再读 [生图工作流](../IMAGE_GENERATION_WORKFLOW.md)。
+- **网页预览与同稿发布切换**：[预览规范](blog-preview-release-spec.md)；模板、metadata 与生成器契约查 [Writing Guide](../WRITING_GUIDE.md)。
+- **正式发布执行**：最新 `blog-taxonomy.json`、[Writing Guide](../WRITING_GUIDE.md) 和 GitHub 当前 `.agents/skills/publish-blog/SKILL.md`。
 
 ## 标签定期维护
 
@@ -35,7 +35,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 
 [研究待办与聚合候选](../research_backlog.md) 是唯一当前记录，保存研究总览、当前研究卡、跨事项聚合关系和关键决策/结项；它不等于正式立项，也不进入网站文章索引。
 
-研究决策仍由 [Blog SOP](blog-sop.md) 的“研究待办记录与跨事项聚合”负责：何时收录、如何召回与聚合、采用什么状态、何时有资格进入正式写作。维护记录时另读 [待办维护规范](blog-research-backlog-spec.md)：创建、内容更新、证据核验与事件日期分开；同一问题原位合并，独立新问题才建新 ID；当前判断默认展开，长材料折叠。不要在记录文件复制规范，也不要把 SOP 与维护细则各写成一套相同流程。
+研究决策由 [Blog SOP](blog-sop.md) 的“研究待办记录与跨事项聚合”负责；结构、编号、日期、原位更新和记录验收由 [待办维护规范](blog-research-backlog-spec.md) 负责。记录文件只保存研究事项，不复制上述通用规则。
 
 ## Series Brief
 
@@ -48,11 +48,7 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 
 ## 当前工作稿
 
-未确认发布的完整文章维护在 `drafts/blog/<slug>.md`。这样可以保留完整 frontmatter，同时不触发 `docs/blog/` 的发布源校验。用户确认正式发布后，再将唯一当前稿迁移到 `docs/blog/<slug>.md`，同步 `posts-meta.json` 并生成发布 HTML；迁移完成后删除对应 draft，避免双版本。
-
-完整正文完成、活人感审校与 Checklist 适用项通过后、全局图文预览之前，先按[认知增量与章节依赖检查](blog-cognitive-review-spec.md)向用户说明相对独立起点新增了什么解释、修正了什么判断、连接了哪些体系，以及各章如何共同回答主问题。它与大纲确认后的写作前认知增量反馈是两个不同节点；不能只把更多案例和篇幅作为增量，也不凭空声称用户已经学会了什么。
-
-完成写作前独立确认后，默认图文一体成稿，按[发布级图文预览规范](blog-preview-release-spec.md)将第一次完整阅读直接交付带图网页；所有内部审校、正文认知增量验收及预览公开部署授权仍逐项执行。预览只保留分发状态差异。确认发布后再迁移路径、索引和 SEO，不重新维护一份正文。
+未发布唯一 Markdown 工作稿位于 `drafts/blog/<slug>.md`；正式发布批准后的迁移、预览地址和同稿一致性检查见 [预览规范](blog-preview-release-spec.md)，最终 `docs/blog/<slug>.md` 与网站 metadata/HTML 契约见 [Writing Guide](../WRITING_GUIDE.md)。内容审校、认知验收和首次完整网页审阅的先后关系由 [SOP](blog-sop.md) 统一路由，不在本入口另写流程。
 
 ## GitHub 读写能力与工具发现（跨会话操作门槛）
 

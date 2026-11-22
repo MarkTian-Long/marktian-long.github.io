@@ -1,7 +1,7 @@
 ---
 category: 技术
 tags: ["技术判断"]
-topics: []
+topics: ["AI数学"]
 concepts: ["黎曼猜想", "形式化数学证明", "Lean 第三方复核", "AI 辅助原创数学研究", "数学成果学术认可", "人类可读证明"]
 share_quote: "Lean 能确认一份已经找到的证明正确，不保证下一个问题总能找到证明。"
 relations: []

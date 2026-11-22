@@ -10,24 +10,24 @@ type: workflow
 
 ## 1. 预检
 
-1. 按 `AGENTS.md` 顺序读取共享上下文、`tools/blog/README.md`、`tools/blog/WRITING_GUIDE.md` 和 `docs/repository-policy.md`。
-2. 确认当前文章只有一个 GitHub 工作稿。未发布文章可以位于 `drafts/blog/<slug>.md`；用户已经明确确认发布时，将它迁移为 `docs/blog/<slug>.md` 后再继续发布流程，并在同一发布变更中删除对应 draft，避免双版本。从最终 `docs/blog/<slug>.md` 文件名取得 kebab-case `slug`。
+1. 按 `AGENTS.md` 顺序读取共享上下文，再从 `tools/blog/governance/README.md` 定位当前阶段规范，读取 `tools/blog/README.md`、`tools/blog/WRITING_GUIDE.md` 和 `docs/repository-policy.md`；从预览晋升时另读 `tools/blog/governance/blog-preview-release-spec.md`。
+2. 确认当前文章只有一个 GitHub 工作稿，并已取得本次正式发布授权；公开预览授权不能替代正式发布授权。未发布文章可以位于 `drafts/blog/<slug>.md`；迁移前记录作者确认稿对应的完整 40 位 Git commit，再将唯一当前稿迁移为 `docs/blog/<slug>.md`，在同一发布变更中删除对应 draft，避免双版本。从最终文件名取得 kebab-case `slug`；批准稿与正式稿按第 3 节执行同源检查。
 3. 运行 `git status --short --branch`、`git diff --name-only` 和 `git diff --cached --name-only`。保留用户已有改动，只处理本次文章相关文件。
 4. 读取 `tools/blog/data/posts-meta.json`。使用 JSON 解析处理元数据，不做字符串拼接。
 5. 判断恢复点：
-   - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章后直接进入“推送 HITL”，不要重复生成或创建空提交。
-   - 若本地与远端已同步，直接进入线上验证；线上也已通过时报告完成。
+   - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章及第 3 节必需验证的实际结果，再进入“推送 HITL”；缺少验证时只补相应检查，不重复生成或创建空提交。
+   - 若本地与远端已同步，直接进入线上验证；线上也已通过时，只补齐本次尚未完成的统一规范复盘，再报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 新文章必须有严格 frontmatter；若从 `drafts/blog/` 迁移，先确认内容与最终 `docs/blog/<slug>.md` 完全一致且 draft 已纳入本次删除。再运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
-7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。每篇正式文章完成后，在统一规范沉淀复盘中评估是否有跨文章稳定规则需要更新这一权威源。
+6. 新文章必须有严格 frontmatter；从 `drafts/blog/` 迁移时，只允许预览发布规范规定的图片路径迁移和换行符规范化，不改已确认正文、语义 metadata 或图源，并确认 draft 已纳入本次删除。再运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
+7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。统一规范沉淀复盘在第 5 节的实际发布验证完成后执行。
 
 ## 2. 生成发布资产
 
 1. 读取最终 Markdown 的 frontmatter、H1、summary blockquote 和正文。Codex 只验证：category/tags/topics/concepts/share_quote/relations 均符合 `blog-taxonomy.json`，share_quote 在正文存在，H1/blockquote 与同步结果一致，slug/url 派生正确。不得改 category、创造或替换 tag/topic、追加 concepts、另造 share_quote，或从相似度/正文链接/推荐位推断 relations；冲突必须 fail。
 2. 确认 metadata 包含 `slug/date/title/summary/share_quote/tags/topics/concepts/category/url`，且 `url` 为 `posts/<slug>.html`。已有文章保留 date 和 visuals；新文章由同步命令赋予实际 YYYY.MM。不要人工编辑这些语义字段。
 3. 读取写作阶段已有的视觉规划和图源，在最终内容与元数据评审完成后、生成 HTML 前完成资产处理和验收；不把正文配图首次决策推迟到发布阶段：
-   - 正文配图按 `tools/blog/VISUAL_GUIDE.md` 主动规划和登记，支持相关搭配、图文共同表达及递进图组；不为符合旧的两张限制删图，也不因有图自动删正文。零图文章仍可省略 `visuals` 并使用默认分享图。
-   - 按表达目的选工具：正文概念/场景插图和封面优先使用可用的内置 `imagegen`/`image_gen`；精确结构、数值与连线优先用可编辑 SVG/HTML 等确定性制作；截图取可核实原始来源。生成示意不充当数据或真实截图。内置生图不索取 API key，外部 CLI/API 回退须经用户明确选择。
+   - 正文配图按 `tools/blog/VISUAL_GUIDE.md` 规划和登记；新文章的独立开篇首图必选，适用范围、位置及历史兼容按该视觉规范执行，OG 分享图不能替代。其他正文图按阅读任务选择，不因有图自动删正文。只有历史无图文章或作者明确确认的首图例外，在确无其他图片时才可省略 `visuals` 并使用默认分享图。
+   - 按表达目的选工具：正文概念/场景插图和封面先按 `tools/blog/IMAGE_GENERATION_WORKFLOW.md` 的生成前必要性门槛判断是否调用生图；精确结构、数值与连线优先用可编辑 SVG/HTML 等确定性制作；截图取可核实原始来源。生成示意不充当数据或真实截图。内置生图不索取 API key，外部 CLI/API 回退须经用户明确选择。
    - 按 `tools/blog/VISUAL_GUIDE.md` 检查图源、文字、数字和关系，再看实际页面效果；生成式候选最多进行一次针对明确缺陷的定向修订，不生成开放式候选批次。该次数不限制确定性图形修错；未通过语义或阅读验收时必须修复、换表示或如实暂停，不能以修订次数耗尽作为通过依据。
    - 将选中的候选复制到 `build/blog-image-work/<slug>/`，不得只留在 Codex 的生成图片目录。记录每张最终图使用的完整 prompt 和生成模式。
    - 仅为实际需要的封面或正文图运行对应命令；正文图使用唯一、描述性的 kebab-case `name`：
@@ -38,7 +38,7 @@ type: workflow
      ```
 
    - 将最终路径、尺寸、alt、caption 写入该文章的 `visuals`；声明的封面由生成器从元数据渲染，正文图同时按 `tools/blog/WRITING_GUIDE.md` 的 Markdown 图片语法放到确有解释价值的位置。
-   - 已决定保留的图片在 `imagegen` 失败、结果经一次定向修订仍不合格、或资产准备失败时，移除该图片后仍能完整表达的文章可以按纯文字文章继续发布；否则暂停并报告原因。不得为了满足流程而强制配图。
+   - 生图或资产准备失败时，修复、采用权利明确的真实素材或确定性表示，仍不能满足首图要求则暂停并报告缺口，不能默认改成无图发布。需要改变已经确认的正文或图源时，回到同一稿件的相应审校与确认节点，不在发布迁移中擅自删图或换图。
 4. 生成文章：
 
    ```powershell
@@ -56,7 +56,16 @@ type: workflow
 
 ## 3. 验证与提交
 
-所有写入操作完成后，只运行一次最终验证批次。每篇文章始终运行：
+所有写入操作完成后，只运行一次最终验证批次。从 `drafts/blog/<slug>.md` 迁移发布时，先使用预检记录的作者确认稿 commit 执行：
+
+```powershell
+node scripts/check-blog-release-equivalence.js --approved-ref <已确认稿的完整40位commit> --slug <slug>
+node --test scripts/blog-release-equivalence.test.js
+```
+
+该检查逐字核对批准稿与正式稿，并核对图片字节，只允许规定的路径迁移和换行符规范化。缺少确认 commit 时按权限取得该明确版本，不能用最新 main 冒充；检查器未覆盖的路径或图片例外，按预览发布规范记录差异并人工核准，不修改允许范围来通过检查。历史文章原位维护不要求虚构 draft 批准基线；同源检查不替代下面的发布校验，也不会自动发布。
+
+每篇文章始终运行：
 
 ```powershell
 node tools/blog/check-blog-taxonomy.js
@@ -80,7 +89,7 @@ node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更�
 
 然后：
 
-1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据与完整正文；声明图片时再核对封面和正文图，无图文章不得渲染页首封面并使用全站默认 OG 图。
+1. 检查新 HTML 包含正确标题、canonical、description、JSON-LD、OG/Twitter 图片元数据与完整正文；按 `tools/blog/VISUAL_GUIDE.md` 核验新文章首图，并核对已声明的正文图。页首封面与 OG 分享图按是否声明 `visuals.cover` 处理：已声明时核对封面及对应分享图；未声明时不渲染页首封面并使用全站默认 OG 图，与正文首图是否存在独立。
 2. 对新增文章检查发现入口：`posts-meta.json` 的月份必须从新到旧；最新月份的新文应在博客目录首页的普通归档区或精选区被找到（不强制重复显示）；相应分类、标题与链接必须正确。若它位于 RSS 最新 20 篇范围，还应检查 `feed.xml` 包含该文且顺序正确。只检查 Markdown/HTML 文件存在、搜索资产和元数据彼此一致，不足以证明读者能找到新文章。此项排序与发现契约以 `tools/blog/WRITING_GUIDE.md` 为准。
 3. 确认新图片进入 public-dist，`build/blog-image-work/` 候选没有进入；若输出目录已经存在且非空，改用新的显式同级目录，不隐式删除或覆盖。
 4. 通过本地 HTTP 服务打开真实文章；在受影响的桌面/移动视口完成一次页面复核。如使用图片，再在明/暗主题下检查图片加载状态，并模拟一次图片加载失败，确认裁切、层级、间距、alt 回退、溢出和目录碰撞均正常。
@@ -90,7 +99,7 @@ node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更�
 
 ## 4. 推送 HITL
 
-`git push` 是危险操作。展示目标远端、分支和提交 SHA，明确等待用户确认。未经确认不得推送，禁止 force push。
+`git push` 是危险操作。展示目标远端、分支和提交 SHA，核对已有明确授权是否覆盖本次目标与变更范围；已经覆盖时沿用授权，不重复询问。尚未获得该范围授权时必须等待用户确认，未经确认不得推送，禁止 force push。
 
 确认后先尝试：
 
@@ -121,7 +130,8 @@ git push origin <branch>
 5. 等待 GitHub Pages 刷新并请求文章 URL，确认 HTTP 200 且响应包含文章唯一标题。代理环境下可为 Node 临时设置 `NODE_USE_ENV_PROXY=1` 与 `HTTPS_PROXY=http://127.0.0.1:7897`；不得写入项目配置。
 6. 打开线上博客目录并核验该文实际可被找到：普通归档首页或按规则配置的精选区、对应日期与分类、点进文章的链接；同时验证该文应进入的 RSS 条目。前端分页和订阅源顺序均须以当前线上结果为准，不能只凭文章直链 200 或仓库中 JSON 已更新宣称可发现性通过。因浏览器、网络或缓存限制无法验证时如实标记待验。
 7. 页面尚未刷新时最多重试 3 次，每次间隔约 20 秒，并向用户报告进度。
+8. 实际发布与线上验证完成后，按 `tools/blog/governance/blog-sop.md` 执行一次规范沉淀复盘；已有本次复盘结果时不重复执行。只将本轮验证过、跨文章可复用且职责明确的问题更新到对应真源；未完成发布验收时不预记复盘或发布成功。
 
 ## 6. 完成报告
 
-报告提交 SHA、远端同步状态、线上文章链接、目录可发现性和 RSS 核验结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”；目录未核验时不得声称“已在首页正常展示”。
+报告提交 SHA、远端同步状态、线上文章链接、目录可发现性、RSS 核验及规范复盘结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”；目录未核验时不得声称“已在首页正常展示”。
