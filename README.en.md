@@ -65,7 +65,7 @@ All public tools open independently. They use static data or Mock demonstrations
 
 ## Maintaining Thought Fragments
 
-The single source of blog metadata is [`tools/blog/data/posts-meta.json`](tools/blog/data/posts-meta.json). New Markdown drafts live in [`docs/blog/`](docs/blog/), and public article pages live in [`tools/blog/posts/`](tools/blog/posts/).
+The single source of blog metadata is [`tools/blog/data/posts-meta.json`](tools/blog/data/posts-meta.json). Unpublished Markdown drafts live in [`drafts/blog/`](drafts/blog/); after explicit publication approval the sole current Markdown source moves to [`docs/blog/`](docs/blog/), and public article pages live in [`tools/blog/posts/`](tools/blog/posts/).
 
 Historical articles retain their original published text; older articles are not rewritten in bulk to match a template. Scripts and metadata maintain SEO, RSS, the sitemap, and related-article navigation.
 

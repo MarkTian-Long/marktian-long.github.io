@@ -13,16 +13,16 @@
 `AGENTS.md` 是 Codex 入口适配层；跨 Agent 的长期规范、skill 规则、memory 沉淀必须写回 `docs/agent-context/` 或 `CONVENTIONS.md`，不能只留在 Codex 私有记忆里。
 
 ## 项目概览
-Leo Liu（刘洋）的个人品牌站，定位为 AI · Product · Builder 的长期思想输出站。纯前端，零依赖，无构建工具。
+Leo Liu（刘洋）的个人品牌站，定位为 AI · Product · Builder 的长期思想输出站。线上运行是无应用后端的静态前端；开发与发布通过 Node.js 脚本、浏览器测试与 GitHub Actions 构建经白名单筛选的 `dist/`。
 
 **入口文件**：`index.html`（唯一入口，锚点导航）
 **工具目录**：`tools/<tool-name>/index.html`（独立直链页面）
 **规范文档**：`CONVENTIONS.md`（完整开发规范，有疑问先查这里）
 
 ## 技术栈
-- HTML5 + CSS3 + Vanilla JS（零依赖）
+- HTML5 + CSS3 + Vanilla JS（线上运行无需 Node.js 服务）
 - localStorage（数据持久化，Key 格式：`qiuzhi_<模块>_<版本>`）
-- 无后端，无构建步骤，浏览器直接打开
+- 无应用后端；网页由浏览器直接加载，发布前须通过 Node.js 测试及 `dist/` 构建验证
 
 ## 目录结构（快速定位）
 ```
@@ -36,7 +36,7 @@ tools/product-collector/        # AI 产品信息采集器（手动录入）
 tools/radar/                    # 前沿雷达（研究意图 + 信源覆盖 + 工作流去向）
 tools/trends/                   # 热点快照（历史信号 + 新鲜度 + 来源账本）
 tools/service-agent/            # 智能客服决策沙盘（场景验收+故障注入+HITL）
-scripts/                        # 本地脚本（fetch-trends.js 爬虫）
+scripts/                        # Node.js 构建、验证、浏览器回归与数据候选采集
 content/                        # 可共享的 Markdown 内容资料
 docs/                           # 项目文档（仅 personal/ 和根目录二进制原稿排除）
 docs/repository-policy.md       # GitHub / 本地文件边界的唯一规则

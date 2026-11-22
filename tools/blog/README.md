@@ -4,57 +4,31 @@
 
 ## 目录结构
 
-```
+```text
 tools/blog/
-├── README.md               本文件
-├── WRITING_GUIDE.md        博客规范（元数据/结构/命名/更新流程）
-├── VISUAL_GUIDE.md         新文章视觉系统（封面/正文图/提示词/资产检查）
-├── governance/             写作流程、待办维护、终审与图表规范的长期真源
-├── series/                 系列研究 Brief（含已结项归档，状态以文件为准）
-├── research_backlog.md     跨会话研究待办与聚合候选
-├── article-links.css       文章页共享链接语义与键盘焦点样式
-├── article-runtime.js      文章页共享主题、阅读预期、元数据降级、参考资料呈现、继续阅读与时间导航
-├── share-card.*            本地 Canvas 分享海报页（固定 1080 × 1920 PNG）
-├── vendor/qrcode-generator.js  受同步脚本校验的本地二维码资产
-├── article-template.html   新文章生成的独立模板来源
-├── build-preview.js        唯一 draft 的首图检查与隔离候选预览入口
-├── index.html              归档列表页（按年份分组，JS 渲染）
-└── posts/
-    ├── agent-scale-git-infrastructure.html       当 AI Agent 开始大规模写代码，Git 还够用吗？（2026.11）
-    ├── agent-boundary.html                      业务流程，如何变成 Agent 产品架构？（2026.07）
-    ├── ontology-business-semantic-layer.html    从同义词表到业务语义层（2026.07）
-    ├── enterprise-agent-fde.html                从 WorkBuddy 到 FDE：企业 Agent 落地方式（2026.07）
-    ├── physical-world-llm.html                  物理世界会有自己的 LLM 时刻吗？（2026.07）
-    ├── llm-customer-service-tech-guide.html     从零搭建一个LLM智能客服（2026.07）
-    ├── spacex-ai-infrastructure-valuation.html  一份招股书里，两种不同节奏的"AI"（2026.06）
-    ├── llm-saas-moat-disruption.html            AI coding 之后，哪些 B 端 SaaS 会死，哪些会活（2026.06）
-    ├── perplexity-analysis.html                 Perplexity：做对了产品，但站错了位置（2026.06）
-    ├── ai-arbitration-layer.html                当AI开始主动找你：仲裁层范式的产品机会（2026.06）
-    ├── ai-chips-explainer.html                  搞懂 AI 芯片这件事（2026.06）
-    ├── human-ai-boundary-shift.html             从模糊到确定：人机边界是怎么移动的（2026.05）
-    ├── training-vs-inference.html               训练和推理，是两件不同的事（2026.05）
-    ├── ai-benchmark-failure.html                模型跑出了测量边界，评测体系跟不上了（2026.05）
-    ├── llm-soft-quality.html                    大模型的分越来越高，但有些差距只用几天就能感觉到（2026.05）
-    ├── automated-research.html                  AI能大量生产方向，但还不会判断什么重要（2026.05）
-    ├── ai-coding-hardware.html                  让 AI 写代码这件事，为什么到硬件就不行了（2026.05）
-    ├── fde-blog-v3.html                         OpenAI 和 Anthropic 同一周下场做咨询，FDE 时代来了？（2026.05）
-    ├── llm-second-half.html                     大模型的下半场：当预训练不再是唯一战场（2026.05）
-    ├── enterprise-ai-data-security.html         企业引入大模型 API，数据真的安全吗（2026.04）
-    ├── agent-vs-workflow.html                   你叫它智能体，但它可能只是个工作流（2026.04）
-    ├── claude-design-blog.html                  Claude Design：设计工具的iPhone时刻，还是一场更大的吞并？（2026.04）
-    ├── manus-agent-analysis.html                Manus：它卖的不是 Agent，是一次认知震撼（2026.04）
-    ├── openclaw-brand-creation.html             OpenClaw 爆红背后：一个品类的诞生与宿命（2026.04）
-    ├── enterprise-ai-three-stages.html          企业AI应用不是一条线，而是三个不同的战场（2026.04）
-    ├── memory-system.html                       AI产品记忆系统：从四阶段演进到怎么做对（2026.04）
-    ├── harness-engineering.html                 工程演进三段论：从 Prompt 到 Harness（2026.04）
-    ├── agent-three-problems.html                Agent 现在面临的三大工程问题（2026.04）
-    ├── market-landscape-2026.html               2026 年 AI Agent 市场格局（2026.04）
-    ├── tech-obsolescence.html                   技术消亡度框架（2026.03）
-    ├── rag-evolution.html                       RAG 的演进（2026.03）
-    ├── skill-system-and-harness.html            Skill 系统的本质（2026.03）
-    ├── finetuning-evolution.html                微调的演进（2026.03）
-    └── prompt-engineering-lifecycle.html        Prompt Engineering 的生命周期（2026.03）
+├── governance/                 唯一博客治理入口：SOP、认知审查、Checklist、预览规范等
+├── data/                       taxonomy、正式文章索引、精选列表、分享图配置
+├── series/                     系列研究 Brief
+├── research_backlog.md         跨会话研究待办与聚合候选
+├── WRITING_GUIDE.md            Markdown、metadata、发布契约
+├── VISUAL_GUIDE.md             首图、资产、来源许可与视觉验收
+├── IMAGE_GENERATION_WORKFLOW.md
+├── BLOG_DESIGN.md              博客界面设计参考
+├── article-template.html       正式文章模板
+├── markdown-source.js          单一 Markdown 源稿解析
+├── article-runtime.js          主题、阅读信息、参考资料、继续阅读
+├── article-links.css           共享链接样式
+├── build-preview.js            独立草稿预览构建与首图检查入口
+├── sync-post-metadata.js       已发布 metadata 同步
+├── generate-post.js            正式文章 HTML 生成
+├── index.html                  博客归档列表页
+├── share-card.html / .css / .js 分享海报（浏览器本地 PNG）
+├── vendor/                     本地二维码代码
+├── posts/                      已发布 HTML；不在 README 手工维护文章清单
+└── previews/                   预览入口（也可能保留已发布文章的历史跳转）
 ```
+
+文章的权威运行清单为 [`data/posts-meta.json`](data/posts-meta.json)，完整在线目录由 [博客归档页](https://marktian-long.github.io/tools/blog/) 根据运行索引生成；此处只列实际目录和核心职责，不列会过期的手工文章名单。未发布唯一工作稿在 `../../drafts/blog/<slug>.md`，正式源稿在 `../../docs/blog/<slug>.md`，图片资产在 `../../assets/images/blog/<slug>/`。
 
 ## 快速使用
 
@@ -62,7 +36,7 @@ tools/blog/
 - **浏览 GitHub 项目**：归档页的站点导航提供「工具与工作流」，指向首页 `#resources`；桌面侧栏和移动端页首均可访问，与文章分类分开。
 - **研究待办**：[research_backlog.md](research_backlog.md) 是研究问题与聚合候选的唯一当前记录。收录、召回、聚合、状态和立项由 `governance/blog-sop.md` 管；整理记录时另读 [待办维护规范](governance/blog-research-backlog-spec.md)，统一编号、创建/更新/核验日期、当前卡片、来源折叠与安全回写，不连续追加多份旧判断。
 - **新增文章**：研究/写作先从 `governance/README.md` 进入，按需读取 `governance/blog-sop.md`、`governance/blog-review-checklist.md`、`governance/blog-charts-spec.md` 与对应 `series/*.md`；网站发布契约仍以 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md` 为准。未发布完整稿维护在 `../../drafts/blog/<slug>.md`，最终 Markdown 顶部的严格 frontmatter 固定 category、tags、topics、concepts、share_quote 和 relations；标题下唯一 blockquote 是正式 `summary`
-- **文章清单**：`data/posts-meta.json` v4 是网站运行索引；文章内容语义以最终 Markdown 为源。单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方目录只保留近期与代表性文章，避免手工清单漂移
+- **文章清单**：`data/posts-meta.json` v4 是网站运行索引；文章内容语义以最终 Markdown 为源。单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方为稳定架构树，不手工复制文章清单；完整文章数、标题、链接以运行索引与线上归档为准
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表。当前固定 5 篇，分别覆盖 技术 / 产品 / 商业 / 行业 / 实践五个一级分类且每类恰好 1 篇；第一项仍承担首页唯一「推荐阅读」，Blog 默认页展示全部 5 篇精选。精选只改变发现入口，不写入文章 metadata，也不影响 relations / Continue Reading。
 - **正文源稿**：未发布完整稿在 `drafts/blog/<slug>.md` 原位维护；用户确认发布后迁移为 `docs/blog/<slug>.md`，同步 metadata、生成 `tools/blog/posts/<slug>.html` 后删除对应 draft。历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
