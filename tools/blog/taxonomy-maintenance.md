@@ -63,6 +63,8 @@ node --test scripts/taxonomy-health.test.js
 
 ## 最近检查
 
+- **2026-11-22 事件触发修复（非周期巡检）**：用户反馈新发布的 `ai-riemann-math-milestone` 三标签与正文主问题不一致。核对 GitHub 当前 taxonomy semantic revision 5、严格发布 Markdown、发布 HTML 和完整运行索引（当时 55 篇）；发现「科研自动化／模型能力」只在工具、参与和研究过程上有关联，非本文的核心研究对象；进一步发现此前推荐的「前沿研究」已 `deprecated`，不能使用。将该文章 topics 暂改 `[]`（保留「技术判断」），记录有据的真实话题缺口，恢复 TAX-006 和 TAX-007 的追踪；强化 SOP 推荐时的状态核查和 Checklist 语义反证，不改变 taxonomy 或其他文章。输入分支 ref `56917b8387b037af096100c14c3ff1faf7c2c643`，taxonomy blob SHA `cee8c0b150a7f8c1e3e5763afaaf2ba66a1e9b33`，原 metadata SHA `5dece11b5c831828c81d081467c1f9226419b992`。本项不是全库逐篇语义巡检，仓库写入与 CI/部署状态以下次独立回读为准；待确认本次提交完整验证后记录执行结果。
+
 - **2026-11-16 周期巡检（真实执行，北京时间 2026-11-16 08:10:59 +08:00）**：默认分支 `main` 的输入 commit `88f529016855586544df35035de4fc9928e3731f`；taxonomy semantic revision 5／blob SHA `cee8c0b150a7f8c1e3e5763afaaf2ba66a1e9b33`；完整索引 **53 篇**／blob SHA `ebc5ec34428eb3c9dedfa019b4c3968929e68f69`。对照最近一次成功巡检输入 `df9f91c8d84e012b7bc9a04bd4418464ed3772e2`／索引 SHA `415c91a7799867b0ef2f7eaa431bd92f593e8d15`：当前分支前进 79 个提交；**新增 2 篇** `agent-scale-git-infrastructure`、`fsd-optimus`，无删除，旧 51 篇索引记录逐字段未变；taxonomy、健康脚本、taxonomy 一致性脚本及其专门测试未变。预览文件不计入发布数。
 - **2026-11-16 完整 metadata 等价检查和增量正文审查**：从 GitHub 读取完整词典、53 篇索引及当前字段验证/健康信号代码，按现行分类、标签、话题、概念、关系、索引顺序、slug/URL 和密度约束只读核对，**53/53 有效**；栏目 技术24／产品14／行业8／商业5／实践2；tags+topics 密度 1项4篇、2项32篇、3项17篇、0项和4项均0；非法分类/标签、重复 slug/URL/字段值、概念与标签精确重复、候选或退役词在用、未使用 active 词、关系对象/类型/范围越界均0，显式关系28条、关联邻域最多4。健康信号仍两项：① `topic-gap / ai-innovation-value-capture`（原文无变化、topics=[]，延续11-09已有正文审查的暂接受结论）；② `corpus-concentration / topics:Agent` **18/53（34.0%）**，较前次17/51新增成员 `agent-scale-git-infrastructure`；新文以大量编程 Agent 的代码协作负载、后台源码管理重构与取舍为主，Agent 不是偶然案例，保留 Agent 话题、工程演进和技术判断的正文依据，TAX-009 继续 `accepted`，不以占比自动判错或重开。另一新文 `fsd-optimus` 的主线为驾驶能力与机器人操作的迁移、证据与边界，技术栏目／技术判断／模型能力均有正文支撑；不因涉及厂商竞争就自动加竞争判断。两篇仓库发布 HTML、Markdown 均已读取，**两份严格 frontmatter 的 category/tags/topics/concepts/share_quote/relations 与索引逐字段一致**，标题、摘要、原文分享句亦一致；各自两处视觉引用在发布 HTML 中可找到。仓库路径 53/53 发布 HTML 存在，`docs/blog` 有46份 Markdown；其余44份原稿和51篇旧发布正文未逐篇重新精读，无证据外推为整站语义复审。
 - **2026-11-16 CI、限制、历史问题与下一步**：输入 commit `88f52901` 的 Pages run `43662897478` 于北京时间 **2026-11-15 09:25:38** 结束，`success`（Verify site 的 `scripts/npm run check`、Build、Smoke、Deploy 步骤均成功）；该证据只说明该输入提交的 CI，不代表本轮本地重跑。正式线上新增两篇页面及旧空话题页访问失败，按优先级使用与成功部署输入 ref 对应的仓库发布 HTML／Markdown；未独立下载已部署 artifact。运行端 Node v22 可用，但本地 `git ls-remote` 因 `github.com` DNS 解析失败，无法取得完整仓库，**未本地执行** `node tools/blog/check-taxonomy-health.js --json`、`node tools/blog/check-blog-taxonomy.js`、`node --test scripts/taxonomy-health.test.js`；上述数据核对和两份严格 source 等价检查**不能称为全部原始脚本通过**。TAX-001/002/003/004/006/007 未从索引增量或新增正文发现有据复发；TAX-005 `accepted`（产品设计仍8篇且标注未变）；TAX-009 `accepted`（新增 Agent 成员已审，无具体误标）；TAX-008 `reviewing`（首轮聊天验收已于10-26发出一次，但仍无可验证送达证据，不补发、不关闭）。**下一次周检 2026-11-23**，下次月初边界语义抽查 2026-12-07；如后续发现相同空话题文章再按 SOP 评估词库缺口，通知仅按新增实质问题／变化／到期阻塞规则去重。本台账写入后的新提交 CI 状态需与输入提交的成功部署区分，不能预先写为通过。
@@ -131,16 +133,18 @@ node --test scripts/taxonomy-health.test.js
 
 ### TAX-006｜前沿研究混合研究成熟度与对象
 
-- 首次发现/最后核验：2026-10-15；状态：`closed`；实现提交 `b343460fcfe6197991b682ce3857c76328dbbe96`、run `38737665514` 及实际部署产物已核验。
-- 处理：退役「前沿研究」，新增准确话题「科研自动化」；旧定义保留为历史记录，不设置等义重命名映射。
-- `ai-rd-self-acceleration-rsi` 与 `automated-research` 围绕 AI 研发/科研执行及判断循环，改用科研自动化；`physical-world-llm` 是物理数据、行动与验证条件，不机械迁移，只保留模型能力。
-- 重开条件：新论文仅因“前沿”被套进科研自动化。新增词仍须做全量 metadata 初筛与相关正文判断。
+- 首次发现：2026-10-15；最后事件核验：2026-11-22；状态：`pending_decision`（复发，当前文章误标已定向修正，尚有真实话题缺口）。2026-10-15 修复提交 `b343460fcfe6197991b682ce3857c76328dbbe96`、run `38737665514` 当时已核验，原处理历史保留。
+- 原处理：退役「前沿研究」，新增准确话题「科研自动化」；旧定义仅保留历史，不建立等义映射。`ai-rd-self-acceleration-rsi` 与 `automated-research` 确以科研执行与判断循环为主要对象；`physical-world-llm` 研究物理模型的反馈条件，不迁移。
+- **本次复发（2026-11-22）**：新文 `ai-riemann-math-milestone` 主问题是判断由 AI 参与的黎曼猜想证明为何具有里程碑意义，核心证据是数学成果、形式化复核与专业共同体回应；它不是科研流程自动化的系统分析，也不是 Claude 模型能力的通用测评。原索引 `topics: ["科研自动化", "模型能力"]` 是主问题与背景手段错位；作者指出「科研自动化」突兀，审查确认两个 topic 均不足以承担主线。当前 `前沿研究` 为 `deprecated`，不能拿作替代值。只将此文的 `topics` 原位修正为 `[]`，保留 `tags: ["技术判断"]`；现有 active 话题没有精确覆盖“重大数学成果的独立可信性／里程碑判断”，记录 `topic-gap / ai-riemann-math-milestone`，不为凑两个标签误用相邻词。
+- **机制处置**：SOP 在推荐标签阶段核查词条状态、确认主对象；Checklist 6.4 增加反证性语义检查。保持词典语义 revision 5；没有新增话题、重新启用退役词或批量重分类其他已发布文章。
+- **待决与重开条件**：当前空话题是准确性优先的暂行方案。后续若同类数学/科研成果分析成为稳定话题集合，再按 taxonomy change 提出有区别度的候选定义并评估历史影响；作者可明确决定是否为这类文章建立新话题。若有新的具体误标继续原 ID 更新，不为每篇再创建相同问题。
 
 ### TAX-007｜未使用词不等于当前可用词
 
-- 首次发现/最后核验：2026-10-15；状态：`closed`；实现提交 `b343460fcfe6197991b682ce3857c76328dbbe96`、run `38737665514` 及实际部署产物已核验。
-- 独立开发、冷启动、出海没有已发布文章匹配；保留定义但从 active tags 移入 `reserved_tags`，标 candidate。当前校验只接受 active 集合，因此这些候选不能被新稿直接使用。
-- 启用条件：真实文章需要且有清楚边界，经 taxonomy change 回溯后再启用。没有为了消除 unused 提醒删除历史名称。
+- 首次发现：2026-10-15；最后事件核验：2026-11-22；状态：`reviewing`（有效性筛选规则已补强，待本轮最终 CI/部署和下次标注过程检验）。历史实现提交 `b343460fcfe6197991b682ce3857c76328dbbe96`、run `38737665514` 保留原成功结论。
+- 原问题：独立开发、冷启动、出海没有已发布文章匹配，已从 active tags 移入 `reserved_tags`，作为 candidate 保留。当前发布校验仅接受 active 标签。
+- **2026-11-22 新证据**：讨论 `ai-riemann-math-milestone` 标签时，先前错误推荐了处于 `deprecated` 状态的「前沿研究」，未核对完整词条 `status` 就把名称命中当成当前可用值。用户对该候选的局部认可不能替代全词典启用授权，亦不得静默创建等义映射。
+- 修复：不更动 `blog-taxonomy.json` 退役状态；在 SOP 的建议阶段和 Checklist 的终审阶段分别强制完整词条状态核验（决策路由与结果检查，不维护两份词典）。重开条件：又出现非 active 词被推荐为可直接上线，或发布索引出现退役/候选词。后续 CI/下一次真实标注过程核对后再决定关闭。
 
 ### TAX-008｜周期执行与历史台账脱节
 
