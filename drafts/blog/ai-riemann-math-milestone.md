@@ -63,7 +63,7 @@ Alpöge 在[原始说明](https://alpo.ge/remark.pdf)中举过一个具体例子
 | **2026 年 10 月：OpenAI 数学手稿集** | 大量数学稿件，结果重要性不一 | 有的主定理形式化，有的只是辅助引理，部分撤回或修订 | “有论文与 Lean”不等于每项已经完成核验 |
 | **2026 年 11 月：Alpöge–Claude RH** | 完整 RH 及 Dirichlet L 函数版 GRH | 标准命题、完整独立核验、公开社区认证 | 数论中心问题与强证据、专家严肃回应集中出现 |
 
-来源分别是 [Google DeepMind 的 IMO 报告](https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/)、[Anthropic 8 月 ζ 函数研究](https://www.anthropic.com/research/riemann-zeta)、[OpenAI 十项成果](https://openai.com/index/ten-advances-in-mathematics/)、[Navier–Stokes 公告](https://openai.com/index/navier-stokes-solution/)和 [OpenAI 数学仓库](https://github.com/openai/math/blob/main/README.md)。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。更重要的是，Anthropic 在 8 月明确表示，当时的技术路线预计无法直接证明 RH。**11 月的结果不能描述成同一方法从 67.2% 进展到了 100%；它意味着找到了一条不同的证明路径。**
+来源分别是 [Google DeepMind 的 IMO 报告](https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level/)、[Anthropic 8 月 ζ 函数研究](https://www.anthropic.com/research/riemann-zeta)、[OpenAI 十项成果](https://openai.com/index/ten-advances-in-mathematics/)、[Navier–Stokes 公告](https://openai.com/index/navier-stokes-solution/)和 [OpenAI 数学仓库](https://github.com/openai/math/blob/main/README.md)。注意 67.2% 是某类零点比例的已证明下界，不是“黎曼猜想完成了 67.2%”。更重要的是，Anthropic 在 8 月明确表示，当时的技术路线预计无法直接证明 RH。**11 月的结果不能描述成同一方法从 67.2% 进展到了 100%；两次研究究竟有哪些思想可以复用，还要等新证明得到更清楚的解释。**
 
 最强的反例是 Navier–Stokes。11 月 12 日，Buzzard 就已经指出那项证明完成了类似四项核验；[Clay 研究所此前也曾积极回应](https://www.claymath.org/news/navier-stokes-announcement/)。因此，“此前 GPT 只会发论文，直到 Claude 这次才第一次有可信数学证明”并不成立。
 
