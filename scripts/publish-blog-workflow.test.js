@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 
 const canonicalSkillPath = path.resolve(__dirname, '../.agents/skills/publish-blog/SKILL.md');
 const workflowPaths = [
@@ -34,5 +35,21 @@ test('publish workflow documentation consistently describes conditional taxonomy
     assert.match(content, /tools\/blog\/data\/blog-taxonomy\.json/);
     assert.match(content, /audit-taxonomy-impact\.js --base-ref <真实的 taxonomy 变更前 git ref>/);
     assert.doesNotMatch(content, /<taxonomy-change-base-ref>/);
+  }
+});
+
+// These checks apply to every main-branch build, not only to manual publication.
+test('CI runs blog taxonomy/source sync and Continue Reading shell checks', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'check-all.js'), 'utf8');
+  assert.match(source, /\['Blog taxonomy and source sync', node, \['tools\/blog\/check-blog-taxonomy\.js'\], repoRoot\]/);
+  assert.match(source, /\['Blog Continue Reading shells', node, \['scripts\/migrate-blog-continue-reading\.js', '--check'\], repoRoot\]/);
+});
+
+test('legacy migration no longer offers template or writing-guide overwrite commands', () => {
+  const script = path.join(__dirname, 'migrate-blog-continue-reading.js');
+  for (const flag of ['--create-template', '--update-writing-guide']) {
+    const result = spawnSync(process.execPath, [script, flag], { cwd: path.resolve(__dirname, '..'), encoding: 'utf8' });
+    assert.notEqual(result.status, 0, `${flag} should be rejected`);
+    assert.match(result.stderr, /Usage:.*--write\|--check/);
   }
 });
