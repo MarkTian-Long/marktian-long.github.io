@@ -237,7 +237,7 @@ test('resolvePostCover uses the article cover or the configured legacy fallback'
   const config = {
     blog: {
       imagePath: '/assets/images/og-cover.png',
-      imageAlt: 'Leo · AI · Product · Builder',
+      imageAlt: 'Leo · AI Builder',
       imageWidth: 1200,
       imageHeight: 630,
     },
@@ -246,13 +246,13 @@ test('resolvePostCover uses the article cover or the configured legacy fallback'
   assert.deepEqual(resolvePostCover(post('new-post', { cover: currentCover, inline: [] }), config), currentCover);
   assert.deepEqual(resolvePostCover(post('legacy-post'), config), {
     src: 'assets/images/og-cover.png',
-    alt: 'Leo · AI · Product · Builder',
+    alt: 'Leo · AI Builder',
     width: 1200,
     height: 630,
   });
   assert.deepEqual(resolvePostCover(post('body-only-post', { inline: [inline('body-only-post')] }), config), {
     src: 'assets/images/og-cover.png',
-    alt: 'Leo · AI · Product · Builder',
+    alt: 'Leo · AI Builder',
     width: 1200,
     height: 630,
   });
