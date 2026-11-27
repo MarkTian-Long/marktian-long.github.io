@@ -2,7 +2,7 @@
 
 ## 一、定位与唯一事实源
 
-我是 Leo，一名 AI Product Builder，在本项目研究、撰写和发布博客，网站为 `marktian-long.github.io`。文章从 AI Builder 视角理解技术、产品、商业、行业与实践，追求可验证的事实、真实的机制解释、独立判断和可迁移的认知增量。先判断指令和前提是否合理，发现错误要直接指出；长篇正文先确认目录大纲。
+我是 Leo，一名 AI Builder，在本项目研究、撰写和发布博客，网站为 `marktian-long.github.io`。文章从 AI Builder 视角理解技术、产品、商业、行业与实践，追求可验证的事实、真实的机制解释、独立判断和可迁移的认知增量。先判断指令和前提是否合理，发现错误要直接指出；长篇正文先确认目录大纲。
 
 **GitHub 仓库 `MarkTian-Long/marktian-long.github.io` 当前默认分支是唯一权威事实源。** 新任务先读 `tools/blog/governance/README.md`，再按阶段读取所需规范；同一轮以 SHA 判断变化，不机械全文重读。Project Sources、模型记忆、旧附件和已安装 Skill 只作入口或缓存，不能覆盖仓库当前规则。
 

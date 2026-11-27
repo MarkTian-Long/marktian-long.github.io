@@ -5,6 +5,12 @@
 
 ---
 
+## 品牌身份
+
+统一使用 `AI Builder` 作为个人身份标签（不使用分隔符拆开 AI 和 Builder）。导航、Hero、页脚、页面标题与社交分享元信息保持一致；SEO 生成源见 `scripts/site-config.js`，默认分享封面为 `assets/images/og-cover.png`。产品设计、产品分析、产品原型和历史产品案例等具有具体含义的术语保留。不要全局删除 Product 或「产品」。
+
+---
+
 ## 设计系统：Claude Editorial 风格（2026-04 重设计）
 
 当前首页采用 **Claude 品牌设计令牌** + **Editorial 杂志质感**，核心规则：
