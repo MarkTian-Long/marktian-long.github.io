@@ -17,9 +17,9 @@ relations: []
 
 Agent 指标看起来不错，企业却未必因此得到更多价值。
 
-Intercom 在 2026 年 8 月调整 Fin 的表现指标时，给出过一个说明分母变化的例子：1,000 次会话中，Fin 解决了 250 次；旧口径把 750 次 Fin 参与的会话作为解决率分母，得到约 33%；新口径只把 Fin 实际有机会回答的 500 次纳入分母，解决率变成 50%。解决数量仍是 250 次，自动化率也保持在 25%，变化的是解决率的分母。[Intercom 对 Fin 指标口径的说明](https://www.intercom.com/help/en/articles/15599377-update-to-fin-performance-metrics)明确指出，Fin 没有机会回答的受限会话不再计入 Fin Involved。这个口径更适合诊断 Fin 在适格会话中的表现，但新旧解决率不能直接当作同一条业务结果曲线比较。
+Intercom 在 2026 年 8 月调整其客服 Agent Fin 的表现指标时，给出过一个说明分母变化的例子：1,000 次会话中，Fin 解决了 250 次；旧口径把 750 次 Fin 参与会话（Fin Involved）作为解决率分母，得到约 33%；新口径只把 Fin 实际有机会回答的 500 次纳入分母，解决率变成 50%。解决数量仍是 250 次，自动化率也保持在 25%，变化的是解决率的分母。[Intercom 对 Fin 指标口径的说明](https://www.intercom.com/help/en/articles/15599377-update-to-fin-performance-metrics)明确指出，Fin 没有机会回答的受限会话不再计入 Fin Involved。这个口径更适合诊断 Fin 在适格会话中的表现，但新旧解决率不能直接当作同一条业务结果曲线比较。
 
-人工参与也会改变指标的含义。Fin 的 Human in the Loop 允许它向同事请求信息、审批或判断，再由 Fin 发出最终回复；如果最终由 Fin 完成解决，这类会话仍计入 Fin 的解决率和自动化率。若同事直接接管，才会被报告为升级处理。[Intercom 的人工协助规则](https://www.intercom.com/help/en/articles/16198358-ask-a-teammate-for-help-with-fin-s-replies-human-in-the-loop)说明，产品指标中的“自动完成”未必意味着全程没有人。与此同时，Fin 的计费文档把 Resolution、Procedure handoff 等列为不同的可计费 outcome，每段会话最多计一次；计费 outcome、解决率和自动化率也不是同一指标。[Fin 的 outcome 定义](https://www.intercom.com/help/en/articles/8205718-fin-ai-agent-outcomes)
+人工参与也会改变指标的含义。Fin 的人工协同（Human in the Loop）功能允许它向同事请求信息、审批或判断，再由 Fin 发出最终回复；如果最终由 Fin 完成解决，这类会话仍计入 Fin 的解决率和自动化率。若同事直接接管，才会被报告为升级处理。[Intercom 的人工协助规则](https://www.intercom.com/help/en/articles/16198358-ask-a-teammate-for-help-with-fin-s-replies-human-in-the-loop)说明，产品指标中的“自动完成”未必意味着全程没有人。与此同时，Fin 的计费文档把解决（Resolution）、流程交接（Procedure handoff）等列为不同的可计费结果（outcome），每段会话最多计一次；计费 outcome、解决率和自动化率也不是同一指标。[Fin 的 outcome 定义](https://www.intercom.com/help/en/articles/8205718-fin-ai-agent-outcomes)
 
 这些例子引出本文真正关心的问题：看板上的自动化率、解决率和成功率，究竟说明了什么？它们能否证明企业降低了成本、增加了产能、获得了新增收入，或者让客户得到更好的结果？
 
@@ -182,14 +182,14 @@ Intercom 在 2026 年 8 月调整 Fin 的表现指标时，给出过一个说明
 | 研究方向 | 更值得观察的业务结果 | 关键护栏 |
 |---|---|---|
 | 技术评测与执行框架（Harness） | 合格交付量、返工、交付周期 | 正确性、安全和可追溯性 |
-| 多 Agent 工作组织 | 净合格吞吐、端到端周期 | 协调成本、冲突和人工审查负担 |
+| 多 Agent（多智能体）工作组织 | 净合格吞吐、端到端周期 | 协调成本、冲突和人工审查负担 |
 | 个人 Agent（Personal Agent） | 完整事务是否推进、用户少承担多少跟进 | 授权、遗漏和补救能力 |
 | 企业治理与金融 Agent | 安全可执行的业务范围、风险事件 | 权限、审计、撤权和责任 |
-| Agentic Commerce（智能体商业） | 净新增交易、贡献利润和复购 | 用户授权、退款、履约和信任 |
+| Agentic Commerce（Agent 参与的商业交易） | 净新增交易、贡献利润和复购 | 用户授权、退款、履约和信任 |
 
-多 Agent 系统不能只比较并行任务数，还要扣除协调、冲突和审查成本；Personal Agent 不能只看一次任务成功率，还要看完整事务是否持续推进，这与[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)讨论的持续委托价值相呼应；Commerce Agent 则必须区分来源订单和净新增交易，相关的渠道迁移、交易完成与贡献利润问题已在[《当 AI 开始替用户付款，谁真正拥有交易？》](https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html)中展开。
+多 Agent 系统不能只比较并行任务数，还要扣除协调、冲突和审查成本；Personal Agent 不能只看一次任务成功率，还要看完整事务是否持续推进，这与[《Personal Agent：当 AI 开始长期接手你的事》](https://marktian-long.github.io/tools/blog/posts/personal-agent.html)讨论的持续委托价值相呼应；面向交易的 Agent 则必须区分来源订单和净新增交易，相关的渠道迁移、交易完成与贡献利润问题已在[《当 AI 开始替用户付款，谁真正拥有交易？》](https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html)中展开。
 
-这些方向不需要使用同一个北极星指标。它们需要的是同一套衡量纪律：先确定价值主体和目标，再描述工作方式变化，证明结果及归因，最后判断价值是否兑现、扩围是否仍然划算。
+这些方向不需要使用同一个主指标。它们共享的是同一套衡量纪律：先确定价值主体和目标，再描述工作方式变化，证明结果及归因，最后判断价值是否兑现、扩围是否仍然划算。
 
 ## 结语：不要只问 Agent 做了多少事
 
