@@ -19,7 +19,8 @@ tools/blog/
 ├── article-runtime.js          主题、阅读信息、参考资料、继续阅读
 ├── article-links.css           共享链接样式
 ├── build-preview.js            独立草稿预览构建与首图检查入口
-├── sync-post-metadata.js       已发布 metadata 同步
+├── sync-post-metadata.js       metadata 与图片登记同步（发布编排器调用）
+├── publish.js                  确认稿晋升、资产生成与发布检查编排
 ├── generate-post.js            正式文章 HTML 生成
 ├── index.html                  博客归档列表页
 ├── share-card.html / .css / .js 分享海报（浏览器本地 PNG）
@@ -41,7 +42,7 @@ tools/blog/
 - **正文源稿**：未发布完整稿在 `drafts/blog/<slug>.md` 原位维护；用户确认发布后迁移为 `docs/blog/<slug>.md`，同步 metadata、生成 `tools/blog/posts/<slug>.html` 后删除对应 draft。历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖
 - **历史检索**：完整读取 metadata 形成高相关/潜在相关/弱相关候选池，并随核心论点、机制、边界、案例或大纲的实质变化滚动重搜；正式大纲前完成最终覆盖扫描。判断历史发表事实时按“线上正式页 → 仓库 HTML → Markdown”读正文。命中不等于应引用，详见 `WRITING_GUIDE.md`。
 - **候选预览**：`node tools/blog/build-preview.js --source drafts/blog/<slug>.md` 默认只检查；加 `--write --out build/candidate-site/blog-preview/<slug>` 在空的隔离候选目录生成正式样式页面，并向标准输出打印 JSON 构建报告。入口自动检查首图，复用正式模板和共享资源，不把草稿加入正式 metadata。输出不是部署；首图例外和公开预览授权见 [预览规范](governance/blog-preview-release-spec.md)。
-- **发布生成**：按当前 `.agents/skills/publish-blog/SKILL.md` 执行已获授权的正式发布；最终源稿的语义字段由写作阶段确定，发布端只校验与同步。使用 `sync-post-metadata.js --write`、`generate-post.js --write` 和 `generate-search-assets.js --write` 生成正式索引、HTML 与搜索资产。新文首图适用范围、其他图片与独立 OG 封面契约以 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 为准；不得为构建预览提前走正式同步路径。历史 handoff 仅兼容旧稿，新稿不使用。
+- **正式发布**：作者确认终稿并授权后，按 `.agents/skills/publish-blog/SKILL.md` 执行。新文章使用 `node tools/blog/publish.js --slug <slug> --approved-ref <完整40位SHA> --prepare`，可先附加 `--dry-run` 检查计划。编排器从批准稿验证起，统一完成 metadata/图片登记、HTML、SEO/RSS/sitemap、预览跳转、唯一源稿迁移、等价检查、全量校验和 public-dist Smoke Test；只准备工作树，不自动 commit/push。底层 `sync-post-metadata.js`、`generate-post.js` 和 `generate-search-assets.js` 保留给局部维护与专项排查。新文首图及其他图片契约以 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 为准；不得为构建预览提前走正式同步路径。
 - **材料与活人感审校**：`.agents/skills/blog-human-writing/` 是唯一长期规则真源。每次真正执行材料检查或活人感审校，读取其当前 `SKILL.md` 和对应 `references/`；已安装 Skill 与 `.claude/skills/` 仅为运行入口/兼容副本，不能独立演化。每篇正式 Blog 完成后的统一规范沉淀复盘，评估是否存在应写回权威源的跨文章稳定规则。
 - **taxonomy impact review**：每篇发布始终运行 `node tools/blog/check-blog-taxonomy.js`。只有本次发布/维护实际修改 `tools/blog/data/blog-taxonomy.json` 时，才在确定性校验后执行 `node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更前 git ref>`；普通文章发布不需要 base ref，也不得运行 placeholder audit 命令。category 的 `core_question`、`definition`、`status`，以及 tag/topic 的 `definition`、`distinguish_from`、`notes`、`status`（包括范围、rename、merge、deprecate 等语义变化）都会触发全历史 metadata 第一轮筛查；新增 vocabulary 也不能只按新词字面召回。`--categories` 只标示优先阅读范围；已落地定义的专项复核必须明确使用 `--focus category:<名称> --full-screen` 才会跨产品/行业等边界全量筛查。脚本不改历史 metadata；Codex 再按 title / summary / concepts / tags / topics / category 缩小真正相关候选，并以“线上正式页 → 仓库 HTML → Markdown”读正文，逐篇给出保持/人工复核/有充分理由建议迁移，不为分类数量均衡迁移。
 - **分享海报**：文章页的「生成分享图」统一进入 `share-card.html?slug=<slug>`；预览页的「打开原文」、二维码区和底部域名均直达 canonical 原文，导出的 PNG 是普通图片，仅通过二维码跳转。海报页加载与首页相同的 Libre Baskerville / Source Sans 3 字重组合。二维码资产更新后运行 `node scripts/sync-share-card-vendor.js --check`，不使用第三方二维码服务。
