@@ -72,15 +72,26 @@ function verifyPromotion(approvedSource, publishedSource, options = {}) {
   const images = [];
   const imagePattern = /^!\[([^\]\r\n]+)\]\(([^\s()]+)\s+"([^"\r\n]+)"\)\s*$/gm;
   const promoted = approved.replace(imagePattern, (line, alt, src, caption) => {
-    const prefix = `assets/${slug}/`;
-    const filename = src.startsWith(prefix) ? src.slice(prefix.length) : '';
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:svg|webp|jpg)$/.test(filename)) {
-      throw new Error(`Unexpected approved image path: ${src}`);
+    const canonicalPrefix = '../../assets/images/blog/' + slug + '/';
+    const legacyPrefix = 'assets/' + slug + '/';
+    let filename = '';
+    let target = '';
+    let approvedRepositoryPath = '';
+    if (src.startsWith(canonicalPrefix)) {
+      filename = src.slice(canonicalPrefix.length);
+      target = src;
+      approvedRepositoryPath = 'assets/images/blog/' + slug + '/' + filename;
+    } else if (src.startsWith(legacyPrefix)) {
+      filename = src.slice(legacyPrefix.length);
+      target = canonicalPrefix + filename;
+      approvedRepositoryPath = 'drafts/blog/assets/' + slug + '/' + filename;
     }
-    const target = `../../assets/images/blog/${slug}/${filename}`;
-    images.push({ approved: src, published: target, path: `assets/images/blog/${slug}/${filename}` });
-    // Replace only the path: even whitespace and caption spelling remain protected.
-    return line.replace(`](${src}`, `](${target}`);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:svg|webp|jpg)$/.test(filename)) {
+      throw new Error('Unexpected approved image path: ' + src);
+    }
+    const publicAssetPath = 'assets/images/blog/' + slug + '/' + filename;
+    images.push({ approved: src, published: target, path: publicAssetPath, approvedRepositoryPath });
+    return line.replace('](' + src, '](' + target);
   });
   if ((approved.match(/^!\[/gm) || []).length !== images.length) throw new Error('Unexpected approved image path or syntax');
   if (promoted !== published) throw new Error('Approved content changed beyond image paths or line endings');
@@ -88,14 +99,13 @@ function verifyPromotion(approvedSource, publishedSource, options = {}) {
     if (typeof readApprovedImage !== 'function' || typeof readPublishedImage !== 'function') {
       throw new Error('Both image readers are required to verify image bytes');
     }
-    const before = Buffer.from(readApprovedImage(image.approved));
-    const after = Buffer.from(readPublishedImage(image.published));
-    if (!before.equals(after)) throw new Error(`Image bytes changed: ${image.path}`);
+    const before = Buffer.from(readApprovedImage(image.approved, image.approvedRepositoryPath));
+    const after = Buffer.from(readPublishedImage(image.published, image.path));
+    if (!before.equals(after)) throw new Error('Image bytes changed: ' + image.path);
     return { path: image.path, sha256: sha256(after) };
   });
   return { images: images.length, source_sha256: sha256(published), assets };
 }
-
 function verifyPromotionAtRef({ rootDir = ROOT_DIR, approvedRef, slug }) {
   validateSlug(slug);
   if (typeof approvedRef !== 'string' || !/^[a-f0-9]{40}$/.test(approvedRef)) throw new Error('approved-ref must be a full 40-character commit SHA');
@@ -107,8 +117,8 @@ function verifyPromotionAtRef({ rootDir = ROOT_DIR, approvedRef, slug }) {
   const published = fs.readFileSync(path.join(rootDir, publishedPath), 'utf8');
   return verifyPromotion(approved, published, {
     slug,
-    readApprovedImage: src => git(['show', `${approvedRef}:drafts/blog/${src}`]),
-    readPublishedImage: src => fs.readFileSync(path.resolve(rootDir, DOCS_DIR, src)),
+    readApprovedImage: (src, repositoryPath) => git(['show', approvedRef + ':' + repositoryPath]),
+    readPublishedImage: (src, repositoryPath) => fs.readFileSync(path.join(rootDir, repositoryPath)),
   });
 }
 

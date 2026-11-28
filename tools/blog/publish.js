@@ -6,6 +6,7 @@ const { spawnSync } = require('node:child_process');
 const { parseSourceMarkdown } = require('./markdown-source.js');
 const siteConfig = require('../../scripts/site-config.js');
 const { PUBLIC_FILES } = require('../../scripts/public-dist-manifest.js');
+const { safeRepositoryPath } = require('../../scripts/check-blog-opening-image.js');
 
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const FULL_SHA = /^[a-f0-9]{40}$/i;
@@ -80,7 +81,7 @@ function parseArgs(argv) {
 }
 
 function normalizeLineEndings(value) {
-  return String(value).replace(/\r\n/g, '\n');
+  return String(value).replace(/\r\n?/g, '\n');
 }
 
 function runGit(args, rootDir) {
@@ -124,13 +125,11 @@ function assertApprovedDraft({ rootDir, slug, approvedRef }) {
   const docRelative = 'docs/blog/' + slug + '.md';
   const htmlRelative = 'tools/blog/posts/' + slug + '.html';
   const previewRelative = 'tools/blog/previews/' + slug + '.html';
-  const draftPath = path.join(rootDir, ...draftRelative.split('/'));
-  const docPath = path.join(rootDir, ...docRelative.split('/'));
-  const htmlPath = path.join(rootDir, ...htmlRelative.split('/'));
-  const previewPath = path.join(rootDir, ...previewRelative.split('/'));
-  if (!fs.existsSync(draftPath) || !fs.statSync(draftPath).isFile()) {
-    throw new Error('Missing unique current draft: ' + draftRelative);
-  }
+  if (!SAFE_SLUG.test(slug)) throw new Error('Invalid article slug: ' + slug);
+  const draftPath = safeRepositoryPath(rootDir, draftRelative);
+  const docPath = safeRepositoryPath(rootDir, docRelative, { allowMissing: true });
+  const htmlPath = safeRepositoryPath(rootDir, htmlRelative, { allowMissing: true });
+  const previewPath = safeRepositoryPath(rootDir, previewRelative, { allowMissing: true });
   if (fs.existsSync(docPath)) throw new Error('Formal Markdown already exists; refusing to create a second source: ' + docRelative);
   if (fs.existsSync(htmlPath)) throw new Error('Formal HTML already exists; inspect current publication state before continuing: ' + htmlRelative);
 
@@ -147,26 +146,20 @@ function assertApprovedDraft({ rootDir, slug, approvedRef }) {
   if (metadata.posts.some(post => post.slug === slug)) {
     throw new Error('Article already exists in formal metadata: ' + slug);
   }
-  return {
-    draftRelative,
-    docRelative,
-    htmlRelative,
-    previewRelative,
-    draftPath,
-    docPath,
-    htmlPath,
-    previewPath,
-    title: parsed.sourceTitle,
-    hasPreview: fs.existsSync(previewPath),
-  };
-  if (fs.existsSync(previewPath) && !PUBLIC_FILES.includes(previewRelative)) {
+  const hasPreview = fs.existsSync(previewPath);
+  if (hasPreview && !PUBLIC_FILES.includes(previewRelative)) {
     throw new Error('Existing preview URL is not registered in the public asset manifest: ' + previewRelative);
   }
+  return {
+    draftRelative, docRelative, htmlRelative, previewRelative,
+    draftPath, docPath, htmlPath, previewPath,
+    title: parsed.sourceTitle, hasPreview,
+  };
 }
 
 function ensureEmptyBuildOutput(rootDir, slug) {
   const relative = 'build/public-dist-' + slug;
-  const absolute = path.join(rootDir, ...relative.split('/'));
+  const absolute = safeRepositoryPath(rootDir, relative, { allowMissing: true, directory: true });
   if (fs.existsSync(absolute) && fs.readdirSync(absolute).length > 0) {
     throw new Error('Public build output already exists and is not empty: ' + relative);
   }
@@ -220,9 +213,7 @@ function prepareRelease(options, rootDir = path.resolve(__dirname, '../..')) {
     '--slug',
     options.slug,
   ], 'Verify approved source and image equivalence');
-  runNode(rootDir, ['scripts/check-all.js'], 'Run full repository and blog checks');
-  runNode(rootDir, ['scripts/check-blog-body-integrity.js'], 'Check published body integrity');
-  runNode(rootDir, ['scripts/generate-search-assets.js', '--check'], 'Verify generated search assets');
+  runNode(rootDir, ['scripts/check-blog-release.js', '--release'], 'Run focused blog release checks');
   runNode(rootDir, ['scripts/build-public-dist.js', '--out', buildOutput], 'Build isolated public artifact');
   runNode(rootDir, ['scripts/check-public-dist.js', '--out', buildOutput], 'Smoke-check public artifact');
 

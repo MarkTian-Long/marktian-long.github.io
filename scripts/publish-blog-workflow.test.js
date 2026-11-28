@@ -19,7 +19,8 @@ function finalValidationSection() {
 test('ordinary blog publishing always runs taxonomy validation without requiring a taxonomy base ref', () => {
   const section = finalValidationSection();
   assert.match(section, /tools\/blog\/publish\.js/);
-  assert.match(section, /完整仓库检查/);
+  assert.match(section, /scripts\/check-blog-release\.js --release/);
+  assert.doesNotMatch(section, /完整仓库检查/);
   assert.match(section, /普通文章发布不得要求 taxonomy base ref/);
   assert.doesNotMatch(section, /<taxonomy-change-base-ref>/);
 });
@@ -33,10 +34,21 @@ test('publish workflow documentation consistently describes conditional taxonomy
   for (const workflowPath of workflowPaths) {
     const content = fs.readFileSync(workflowPath, 'utf8');
     assert.match(content, /tools\/blog\/publish\.js/);
+    assert.match(content, /check-blog-release\.js --release/);
     assert.match(content, /tools\/blog\/data\/blog-taxonomy\.json/);
     assert.match(content, /audit-taxonomy-impact\.js --base-ref <真实的 taxonomy 变更前 git ref>/);
     assert.doesNotMatch(content, /<taxonomy-change-base-ref>/);
   }
+});
+
+test('CI routes blog-only changes through focused source/release checks and keeps engineering changes on the full suite', () => {
+  const classifier = fs.readFileSync(path.join(__dirname, 'classify-public-changes.js'), 'utf8');
+  const workflow = fs.readFileSync(path.join(__dirname, '../.github/workflows/deploy.yml'), 'utf8');
+  assert.match(classifier, /blogReleaseChanged/);
+  assert.match(workflow, /blog_release_changed/);
+  assert.match(workflow, /check-blog-release\.js --source/);
+  assert.match(workflow, /check-blog-release\.js --release --base-ref/);
+  assert.match(workflow, /npm run check/);
 });
 
 // These checks apply to every main-branch build, not only to manual publication.

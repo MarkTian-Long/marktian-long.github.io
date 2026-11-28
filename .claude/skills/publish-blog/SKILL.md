@@ -26,7 +26,7 @@ type: workflow
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章及第 3 节必需验证的实际结果，再进入“推送 HITL”；缺少验证时只补相应检查，不重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时，只补齐本次尚未完成的统一规范复盘，再报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 新文章必须有严格 frontmatter；从 `drafts/blog/` 晋升时，确认稿必须与 `--approved-ref` 指定的完整 40 位 Git commit 逐字一致。图源和正文不得在发布迁移中擅自修改。完成图源准备后统一运行 `node tools/blog/publish.js --slug <slug> --approved-ref <已确认稿完整40位SHA> --prepare`；需要先检查执行计划时附加 `--dry-run`。该编排器负责 metadata 与 inline visuals 同步、正式 HTML、SEO/RSS/sitemap、旧预览跳转、draft→docs 迁移、批准稿等价检查、完整仓库检查和 public-dist 构建/Smoke Test。它只准备工作树，不执行 git commit 或 git push。历史源稿若已有 `publish_handoff`，仅为兼容旧路径；新文章不得使用 handoff 或 `body_link_only`。
+6. 新文章必须有严格 frontmatter；从 `drafts/blog/` 晋升时，确认稿必须与 `--approved-ref` 指定的完整 40 位 Git commit 逐字一致。图源和正文不得在发布迁移中擅自修改。完成图源准备后统一运行 `node tools/blog/publish.js --slug <slug> --approved-ref <已确认稿完整40位SHA> --prepare`；需要先检查执行计划时附加 `--dry-run`。该编排器负责 metadata 与 inline visuals 同步、正式 HTML、SEO/RSS/sitemap、旧预览跳转、draft→docs 迁移、批准稿等价检查、博客发布专项检查（`scripts/check-blog-release.js --release`）和 public-dist 构建/Smoke Test。它只准备工作树，不执行 git commit 或 git push。历史源稿若已有 `publish_handoff`，仅为兼容旧路径；新文章不得使用 handoff 或 `body_link_only`。
 7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。统一规范沉淀复盘在第 5 节的实际发布验证完成后执行。
 
 ## 2. 生成发布资产
@@ -54,7 +54,7 @@ type: workflow
 
 ## 3. 验证与提交
 
-新文章使用 `tools/blog/publish.js` 时，脚本已经执行批准稿一致性、完整仓库检查、搜索资产检查和 public-dist 构建/Smoke Test；不要无条件重复运行同一批确定性检查。脚本完成后仍需人工复核实际 diff、文章 HTML 的 SEO/图片/链接和本地 HTTP 页面，并完成适用的桌面/移动与深浅主题视觉检查。若脚本中途失败，先检查工作树状态与具体失败项，只补执行缺失步骤，不盲目重跑或覆盖已有构建产物。
+新文章使用 `tools/blog/publish.js` 时，脚本已经执行批准稿一致性、博客发布专项检查、搜索资产检查和 public-dist 构建/Smoke Test；不要无条件重复运行同一批确定性检查。脚本完成后仍需人工复核实际 diff、文章 HTML 的 SEO/图片/链接和本地 HTTP 页面，并完成适用的桌面/移动与深浅主题视觉检查。若脚本中途失败，先检查工作树状态与具体失败项，只补执行缺失步骤，不盲目重跑或覆盖已有构建产物。
 
 底层发布命令仍适用于局部维护或需要单独排查的情况。从 `drafts/blog/<slug>.md` 迁移发布时，批准稿等价检查由编排器调用；独立排查时使用：
 
@@ -65,7 +65,7 @@ node --test scripts/blog-release-equivalence.test.js
 
 该检查逐字核对批准稿与正式稿，并核对图片字节，只允许规定的路径迁移和换行符规范化。缺少确认 commit 时按权限取得该明确版本，不能用最新 main 冒充；检查器未覆盖的路径或图片例外，按预览发布规范记录差异并人工核准，不修改允许范围来通过检查。历史文章原位维护不要求虚构 draft 批准基线；同源检查不替代下面的发布校验，也不会自动发布。
 
-**新文章通过 `tools/blog/publish.js` 准备时，上述确定性检查已经在同一批次执行，不要再次手工重复。** 编排器运行完整 `check-all`（包含 Node tests、taxonomy、image assets、search foundation、repository policy 等），再运行 body integrity、search asset freshness、public-dist build 和 Smoke Test。若脚本失败，只修复失败项并重跑受影响阶段；不要因为流程清单列出了命令，就无条件再跑第二遍。局部维护、脚本排查或编排器不可用时，按实际变更范围执行以下底层检查；taxonomy audit 仍只在本次实际修改 taxonomy 真源时触发。
+**新文章通过 `tools/blog/publish.js` 准备时，上述确定性检查已经在同一批次执行，不要再次手工重复。** 编排器运行 `node scripts/check-blog-release.js --release`，覆盖 taxonomy、图片资产、搜索/SEO/RSS、Continue Reading、精选文章、历史正文保护、repository policy 和博客专项 Node tests；随后构建并 Smoke Test public-dist。全仓 `check-all` 仍用于脚本、模板、运行时、部署和安全边界等工程变更，不再因单篇文章内容发布重复执行。若脚本失败，只修复失败项并重跑受影响阶段；不要因为流程清单列出了命令，就无条件再跑第二遍。局部维护、脚本排查或编排器不可用时，按实际变更范围执行以下底层检查；taxonomy audit 仍只在本次实际修改 taxonomy 真源时触发。
 只有本次发布/维护实际修改了 `tools/blog/data/blog-taxonomy.json`，才运行：
 
 ```powershell

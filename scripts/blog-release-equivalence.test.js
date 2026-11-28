@@ -6,6 +6,23 @@ const slug = 'example-post';
 const approved = '# 标题\n\n> 摘要\n\n---\n\n**核心判断。**\n\n![关系](assets/example-post/relation.svg "说明")\n';
 const published = approved.replace('](assets/example-post/', '](../../assets/images/blog/example-post/');
 const options = { slug, readApprovedImage: () => Buffer.from('<svg/>'), readPublishedImage: () => Buffer.from('<svg/>') };
+const approvedCanonical = approved.replace('](assets/example-post/', '](../../assets/images/blog/example-post/');
+test('accepts the canonical draft asset path without rewriting the Markdown', () => {
+  const result = verifyPromotion(approvedCanonical, approvedCanonical, {
+    slug,
+    readApprovedImage: (src, repositoryPath) => {
+      assert.equal(src, '../../assets/images/blog/example-post/relation.svg');
+      assert.equal(repositoryPath, 'assets/images/blog/example-post/relation.svg');
+      return Buffer.from('<svg/>');
+    },
+    readPublishedImage: (src, repositoryPath) => {
+      assert.equal(src, '../../assets/images/blog/example-post/relation.svg');
+      assert.equal(repositoryPath, 'assets/images/blog/example-post/relation.svg');
+      return Buffer.from('<svg/>');
+    },
+  });
+  assert.equal(result.images, 1);
+});
 test('allows path-only promotion and identical assets', () => assert.equal(verifyPromotion(approved, published, options).images, 1));
 test('allows normalized line endings', () => assert.equal(verifyPromotion(approved.replace(/\n/g, '\r\n'), published, options).images, 1));
 test('rejects rewritten conclusion', () => assert.throws(() => verifyPromotion(approved, published.replace('核心判断', '新判断'), options), /Approved content changed/));
@@ -31,12 +48,12 @@ test('checks an actual approved Git commit and current published files', () => {
   const write = (name, content) => { fs.mkdirSync(path.dirname(path.join(rootDir, name)), { recursive: true }); fs.writeFileSync(path.join(rootDir, name), content); };
   try {
     git(['init', '-q']); git(['config', 'user.name', 'Local Test']); git(['config', 'user.email', 'test@example.invalid']);
-    write(`drafts/blog/${slug}.md`, approved);
-    write(`drafts/blog/assets/${slug}/relation.svg`, '<svg/>');
+    write('drafts/blog/' + slug + '.md', approvedCanonical);
+    write('assets/images/blog/' + slug + '/relation.svg', '<svg/>');
     git(['add', '.']); git(['commit', '-qm', 'Approved fixture']);
     const approvedRef = git(['rev-parse', 'HEAD']);
-    write(`docs/blog/${slug}.md`, published);
-    write(`assets/images/blog/${slug}/relation.svg`, '<svg/>');
+    write('docs/blog/' + slug + '.md', approvedCanonical);
+    write('assets/images/blog/' + slug + '/relation.svg', '<svg/>');
     assert.equal(verifyPromotionAtRef({ rootDir, approvedRef, slug }).images, 1);
     write(`assets/images/blog/${slug}/relation.svg`, '<svg>changed</svg>');
     assert.throws(() => verifyPromotionAtRef({ rootDir, approvedRef, slug }), /Image bytes changed/);

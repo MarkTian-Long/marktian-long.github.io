@@ -10,7 +10,9 @@
     "check:public-dist": "node check-public-dist.js",
     "check:equivalence:a0": "playwright test --config=playwright.config.cjs",
     "check:equivalence:candidate": "node check-candidate-equivalence.js",
-    "build:candidate": "node build-candidate-site.js"
+    "build:candidate": "node build-candidate-site.js",
+    "check:blog-source": "node check-blog-release.js --source",
+    "check:blog-release": "node check-blog-release.js --release"
   },
   "keywords": [],
   "author": "",

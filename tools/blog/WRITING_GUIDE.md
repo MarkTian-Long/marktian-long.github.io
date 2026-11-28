@@ -439,7 +439,7 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
    ~~~powershell
    node tools/blog/publish.js --slug your-slug --approved-ref <已确认稿的完整40位commit SHA> --prepare
    ~~~
-   需要先检查计划时追加 `--dry-run`；需要明确回填发布日期时追加 `--date YYYY.MM`。编排器要求干净工作树，核对批准 commit 是当前 HEAD 的祖先，并验证当前 draft 与批准版本一致；随后依次执行 opening-image 门禁、metadata/visuals 同步、正式 HTML、SEO/RSS/sitemap、旧预览 noindex 跳转、唯一 Markdown 从 `drafts/blog/` 迁移到 `docs/blog/` 并删除旧 draft、批准稿/图源等价检查、完整 `check-all`、body integrity、search freshness、public-dist 构建与 Smoke Test。
+   需要先检查计划时追加 `--dry-run`；需要明确回填发布日期时追加 `--date YYYY.MM`。编排器要求干净工作树，核对批准 commit 是当前 HEAD 的祖先，并验证当前 draft 与批准版本一致；随后依次执行 opening-image 门禁、metadata/visuals 同步、正式 HTML、SEO/RSS/sitemap、旧预览 noindex 跳转、唯一 Markdown 从 `drafts/blog/` 迁移到 `docs/blog/` 并删除旧 draft、批准稿/图源等价检查、博客发布专项检查 `node scripts/check-blog-release.js --release`、public-dist 构建与 Smoke Test。
 4. 编排器只准备工作树，不执行 git commit 或 git push。成功后检查 `git status` 与完整 diff，确认只有本文章和必要派生资产变化；若失败，先检查失败阶段与工作树，不盲目重复覆盖。底层 `sync-post-metadata.js`、`generate-post.js`、`generate-search-assets.js` 仍保留给已发布文章局部维护或专项排查，不再作为新文章发布时需要手动串联的步骤。
 5. 发布准备通过后，仍需通过本地 HTTP 服务打开真实文章，核验正文、目录、参考资料、图片和链接；按 `VISUAL_GUIDE.md` 完成受影响视口的桌面/移动、浅色/深色及图片失败状态检查。核对新文章能从博客目录首页或精选区找到，检查分类、月份、标题、链接，以及 RSS 最新 20 篇范围内的订阅入口。确定性脚本和 CI 不替代这些读者体验验收。
 6. 最终只暂存本文章 Markdown、正式 HTML、metadata、图源、搜索资产、预览跳转及真实必要的生成器修复；不暂存候选图、临时 public-dist 或无关文件。按 `.agents/skills/publish-blog/SKILL.md` 核对目标分支与已有授权后 commit/push。
