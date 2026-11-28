@@ -1,50 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
 <title id="title">Agent 业务价值衡量框架的五个应用方向</title>
 <desc id="desc">技术评测、多 Agent、Personal Agent、企业治理和 Agentic Commerce 共享四步衡量问题，但各自拥有不同的业务结果和风险护栏。</desc>
-<rect width="1280" height="860" fill="#f7f4ee"/>
-<text x="64" y="82" fill="#14243a" font-size="46" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量语法，五种 Agent 方向</text>
-<text x="64" y="130" fill="#536273" font-size="26" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同的问题相同，业务结果变量和不可折抵护栏各不相同</text>
+<rect width="1280" height="1024" fill="#f7f4ee"/>
+<text x="64" y="82" fill="#14243a" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量逻辑，五个 Agent 方向</text>
+<text x="64" y="130" fill="#536273" font-size="32" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同的问题相同，业务结果变量和不可折抵护栏各不相同</text>
+<rect x="64" y="160" width="1152" height="92" rx="20" fill="#e9eef3"/>
+<text x="96" y="197" fill="#294663" font-size="34" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同四步</text>
+<text x="96" y="233" fill="#14243a" font-size="31" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">价值目标 → 工作系统 → 结果归因 → 价值兑现</text>
 <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="64" y="180" width="1152" height="110" rx="22" fill="#e9eef3"/>
-  <text x="96" y="224" fill="#294663" font-size="26" font-weight="700">共同四步</text>
-  <text x="96" y="265" fill="#14243a" font-size="27">价值目标与主体 → 工作系统变化 → 结果证据与归因 → 价值兑现与投入决策</text>
-  <rect x="64" y="338" width="216" height="330" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <rect x="64" y="338" width="216" height="14" rx="7" fill="#4f82b8"/>
-  <text x="88" y="404" fill="#294663" font-size="27" font-weight="700">技术评测</text>
-  <text x="88" y="443" fill="#294663" font-size="27" font-weight="700">与 Harness</text>
-  <text x="88" y="516" fill="#536273" font-size="24">合格交付</text>
-  <text x="88" y="554" fill="#536273" font-size="24">返工与周期</text>
-  <text x="88" y="615" fill="#9a4f37" font-size="21">护栏：正确性、安全</text>
-  <rect x="304" y="338" width="216" height="330" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <rect x="304" y="338" width="216" height="14" rx="7" fill="#7a6ca8"/>
-  <text x="328" y="404" fill="#695a95" font-size="27" font-weight="700">多 Agent</text>
-  <text x="328" y="443" fill="#695a95" font-size="27" font-weight="700">工作组织</text>
-  <text x="328" y="516" fill="#536273" font-size="24">净合格吞吐</text>
-  <text x="328" y="554" fill="#536273" font-size="24">端到端周期</text>
-  <text x="328" y="615" fill="#9a4f37" font-size="21">护栏：协调与审查</text>
-  <rect x="544" y="338" width="216" height="330" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <rect x="544" y="338" width="216" height="14" rx="7" fill="#5f9b78"/>
-  <text x="568" y="404" fill="#3e7857" font-size="27" font-weight="700">Personal</text>
-  <text x="568" y="443" fill="#3e7857" font-size="27" font-weight="700">Agent</text>
-  <text x="568" y="516" fill="#536273" font-size="24">完整事务</text>
-  <text x="568" y="554" fill="#536273" font-size="24">用户负担</text>
-  <text x="568" y="615" fill="#9a4f37" font-size="21">护栏：授权与补救</text>
-  <rect x="784" y="338" width="216" height="330" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <rect x="784" y="338" width="216" height="14" rx="7" fill="#d59b43"/>
-  <text x="808" y="404" fill="#9b6c27" font-size="27" font-weight="700">企业治理</text>
-  <text x="808" y="443" fill="#9b6c27" font-size="27" font-weight="700">与金融 Agent</text>
-  <text x="808" y="516" fill="#536273" font-size="24">安全执行范围</text>
-  <text x="808" y="554" fill="#536273" font-size="24">风险事件</text>
-  <text x="808" y="615" fill="#9a4f37" font-size="21">护栏：权限与责任</text>
-  <rect x="1024" y="338" width="192" height="330" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <rect x="1024" y="338" width="192" height="14" rx="7" fill="#d97757"/>
-  <text x="1048" y="404" fill="#9a4f37" font-size="27" font-weight="700">Agentic</text>
-  <text x="1048" y="443" fill="#9a4f37" font-size="27" font-weight="700">Commerce</text>
-  <text x="1048" y="516" fill="#536273" font-size="24">净新增交易</text>
-  <text x="1048" y="554" fill="#536273" font-size="24">贡献利润</text>
-  <text x="1048" y="615" fill="#9a4f37" font-size="21">护栏：授权与信任</text>
+  <rect x="64" y="280" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="326" fill="#294663" font-size="44" font-weight="700">技术评测与 Harness</text>
+  <text x="96" y="370" fill="#536273" font-size="36">结果：合格交付、返工与周期　｜　护栏：正确性与安全</text>
+  <rect x="64" y="426" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="472" fill="#695a95" font-size="44" font-weight="700">多 Agent 工作组织</text>
+  <text x="96" y="516" fill="#536273" font-size="36">结果：净合格吞吐与周期　｜　护栏：协调和人工审查</text>
+  <rect x="64" y="572" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="618" fill="#3e7857" font-size="44" font-weight="700">Personal Agent</text>
+  <text x="96" y="662" fill="#536273" font-size="36">结果：完整事务与用户负担　｜　护栏：授权、遗漏与补救</text>
+  <rect x="64" y="718" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="764" fill="#9b6c27" font-size="44" font-weight="700">企业治理与金融 Agent</text>
+  <text x="96" y="808" fill="#536273" font-size="36">结果：安全执行范围与风险　｜　护栏：权限、审计和责任</text>
+  <rect x="64" y="864" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="910" fill="#9a4f37" font-size="44" font-weight="700">Agentic Commerce</text>
+  <text x="96" y="954" fill="#536273" font-size="36">结果：净新增交易与利润　｜　护栏：授权、退款和信任</text>
 </g>
-<rect x="64" y="716" width="1152" height="82" rx="18" fill="#f3e8e2"/>
-<text x="94" y="767" fill="#8e4e38" font-size="27" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同的是衡量逻辑，不是统一 KPI。</text>
 </svg>

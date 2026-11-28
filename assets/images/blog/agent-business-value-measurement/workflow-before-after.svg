@@ -1,52 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
 <title id="title">Agent 进入前后的典型业务流程</title>
-<desc id="desc">上方为人工主导的请求分流、查资料、判断操作和复核跟进。下方为 Agent 在授权范围内收集和处理，常规任务工具执行，不确定或高风险任务转人工，最终核验状态并跟进异常。</desc>
-<rect width="1280" height="860" fill="#f7f4ee"/>
-<text x="64" y="82" fill="#14243a" font-size="46" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">比较完整工作方式，而不是 Agent 单独一段</text>
-<text x="64" y="130" fill="#536273" font-size="26" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">以下为通用示意流程；实际节点和责任必须按业务场景还原</text>
+<desc id="desc">上方是人工主导的请求、分流、判断与跟进。下方是 Agent 在授权范围内处理，随后判断是否在授权范围且风险可接受；常规任务交由工具执行，例外任务转人工判断，两条路径最终汇入结果核验与交付。</desc>
+<defs>
+  <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+    <path d="M0 0 L12 6 L0 12 Z" fill="#8b95a2"/>
+  </marker>
+</defs>
+<rect width="1280" height="1024" fill="#f7f4ee"/>
+<text x="64" y="82" fill="#14243a" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">比较完整工作方式，而不是 Agent 单独一段</text>
+<text x="64" y="130" fill="#536273" font-size="32" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">通用示意流程；实际节点与责任需要按业务场景还原</text>
 <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">
-  <text x="64" y="212" fill="#536273" font-size="30" font-weight="700">引入前：人工主导</text>
-  <rect x="64" y="248" width="250" height="142" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="92" y="302" fill="#14243a" font-size="30" font-weight="700">请求进入</text>
-  <text x="92" y="347" fill="#536273" font-size="24">客户或业务需求</text>
-  <rect x="354" y="248" width="250" height="142" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="382" y="302" fill="#14243a" font-size="30" font-weight="700">人工分流</text>
-  <text x="382" y="347" fill="#536273" font-size="24">查资料、找上下文</text>
-  <rect x="644" y="248" width="250" height="142" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="672" y="302" fill="#14243a" font-size="30" font-weight="700">判断与操作</text>
-  <text x="672" y="347" fill="#536273" font-size="24">跨系统处理</text>
-  <rect x="934" y="248" width="282" height="142" rx="22" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="962" y="302" fill="#14243a" font-size="30" font-weight="700">复核与跟进</text>
-  <text x="962" y="347" fill="#536273" font-size="24">回复、返工或重开</text>
-  <g stroke="#8b95a2" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M318 319 H344 M334 309 L346 319 L334 329"/>
-    <path d="M608 319 H634 M624 309 L636 319 L624 329"/>
-    <path d="M898 319 H924 M914 309 L926 319 L914 329"/>
+  <text x="64" y="190" fill="#536273" font-size="40" font-weight="700">引入前：人工主导</text>
+  <rect x="64" y="218" width="250" height="126" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="92" y="270" fill="#14243a" font-size="38" font-weight="700">请求进入</text>
+  <text x="92" y="315" fill="#536273" font-size="28">客户或业务需求</text>
+  <rect x="354" y="218" width="250" height="126" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="382" y="270" fill="#14243a" font-size="38" font-weight="700">人工分流</text>
+  <text x="382" y="315" fill="#536273" font-size="28">查资料、找上下文</text>
+  <rect x="644" y="218" width="250" height="126" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="672" y="270" fill="#14243a" font-size="38" font-weight="700">判断与操作</text>
+  <text x="672" y="315" fill="#536273" font-size="28">跨系统处理</text>
+  <rect x="934" y="218" width="282" height="126" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="962" y="270" fill="#14243a" font-size="38" font-weight="700">复核与跟进</text>
+  <text x="962" y="315" fill="#536273" font-size="28">回复、返工或重开</text>
+  <g stroke="#8b95a2" stroke-width="5" fill="none" stroke-linecap="round" marker-end="url(#arrow)">
+    <path d="M318 281 H342"/>
+    <path d="M608 281 H632"/>
+    <path d="M898 281 H922"/>
   </g>
-  <text x="64" y="486" fill="#4f82b8" font-size="30" font-weight="700">引入后：Agent 与人协作</text>
-  <rect x="64" y="520" width="235" height="150" rx="22" fill="#fffdf9" stroke="#b7cce0" stroke-width="2"/>
-  <text x="88" y="574" fill="#14243a" font-size="29" font-weight="700">请求进入</text>
-  <text x="88" y="620" fill="#536273" font-size="23">定义业务对象</text>
-  <rect x="332" y="520" width="270" height="150" rx="22" fill="#e9f0f7" stroke="#8eb1d1" stroke-width="2"/>
-  <text x="356" y="574" fill="#294663" font-size="29" font-weight="700">Agent 处理</text>
-  <text x="356" y="620" fill="#536273" font-size="23">收集上下文、执行</text>
-  <text x="356" y="649" fill="#536273" font-size="21">仅限已授权范围</text>
-  <rect x="635" y="520" width="270" height="150" rx="22" fill="#fff4e7" stroke="#dfb36f" stroke-width="2"/>
-  <text x="659" y="570" fill="#875d23" font-size="27" font-weight="700">按风险分流</text>
-  <text x="659" y="613" fill="#6f5c43" font-size="22">常规：工具执行</text>
-  <text x="659" y="645" fill="#6f5c43" font-size="22">例外：人工判断 / 审批</text>
-  <rect x="938" y="520" width="278" height="150" rx="22" fill="#edf2ed" stroke="#b9c8b9" stroke-width="2"/>
-  <text x="962" y="574" fill="#294d38" font-size="28" font-weight="700">核验与交付</text>
-  <text x="962" y="620" fill="#536273" font-size="22">状态写回、回复、跟进</text>
-  <text x="962" y="649" fill="#536273" font-size="21">异常与重开回到队列</text>
-  <g stroke="#8b95a2" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M303 595 H322 M312 585 L324 595 L312 605"/>
-    <path d="M606 595 H625 M615 585 L627 595 L615 605"/>
-    <path d="M909 595 H928 M918 585 L930 595 L918 605"/>
-  </g>
+
+  <text x="64" y="440" fill="#37658f" font-size="40" font-weight="700">引入后：Agent 与人协作</text>
+  <rect x="64" y="548" width="250" height="118" rx="20" fill="#fffdf9" stroke="#b7cce0" stroke-width="2"/>
+  <text x="92" y="596" fill="#14243a" font-size="38" font-weight="700">请求进入</text>
+  <text x="92" y="638" fill="#536273" font-size="28">定义业务对象</text>
+  <rect x="370" y="548" width="300" height="118" rx="20" fill="#e9f0f7" stroke="#8eb1d1" stroke-width="2"/>
+  <text x="398" y="596" fill="#294663" font-size="38" font-weight="700">Agent 处理</text>
+  <text x="398" y="638" fill="#536273" font-size="28">收集上下文、执行授权任务</text>
+  <path d="M318 607 H358" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M674 607 H785" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+
+  <polygon points="885,525 995,607 885,689 775,607" fill="#fff4e7" stroke="#dfb36f" stroke-width="3"/>
+  <text x="885" y="592" text-anchor="middle" fill="#875d23" font-size="26" font-weight="700">是否在授权范围</text>
+  <text x="885" y="627" text-anchor="middle" fill="#875d23" font-size="26" font-weight="700">且风险可接受？</text>
+
+  <rect x="1030" y="472" width="186" height="118" rx="20" fill="#edf2ed" stroke="#b9c8b9" stroke-width="2"/>
+  <text x="1054" y="518" fill="#294d38" font-size="34" font-weight="700">常规任务</text>
+  <text x="1054" y="560" fill="#536273" font-size="28">工具执行</text>
+  <rect x="1030" y="656" width="186" height="118" rx="20" fill="#f4e8e3" stroke="#d6b4a7" stroke-width="2"/>
+  <text x="1054" y="702" fill="#8e4e38" font-size="34" font-weight="700">例外任务</text>
+  <text x="1054" y="744" fill="#6e5b55" font-size="27">人工判断 / 审批</text>
+
+  <path d="M961 550 C986 535 1002 531 1018 531" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+  <text x="986" y="500" fill="#536273" font-size="24">是</text>
+  <path d="M961 664 C986 692 1002 715 1018 715" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+  <text x="986" y="697" fill="#536273" font-size="24">否</text>
+
+  <rect x="644" y="830" width="572" height="90" rx="20" fill="#e9eef3" stroke="#c8d3dd" stroke-width="2"/>
+  <text x="680" y="870" fill="#294663" font-size="36" font-weight="700">状态核验与交付</text>
+  <text x="680" y="905" fill="#536273" font-size="27">异常、返工与重开回到后续队列</text>
+  <path d="M1122 594 C1122 760 1080 798 1080 818" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M1122 778 C1122 798 1120 805 1120 818" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
 </g>
-<rect x="64" y="720" width="1152" height="88" rx="18" fill="#f0e7e1"/>
-<text x="92" y="758" fill="#8e4e38" font-size="25" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">关键提醒</text>
-<text x="92" y="790" fill="#6e5b55" font-size="23" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 可能减少重复搬运，也可能增加授权、核验和异常处理；节点数量不是最终价值。</text>
+<rect x="64" y="944" width="1152" height="58" rx="16" fill="#f0e7e1"/>
+<text x="96" y="983" fill="#8e4e38" font-size="30" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 可能减少重复搬运，也可能增加授权、核验和异常处理；节点数量不是最终价值。</text>
 </svg>

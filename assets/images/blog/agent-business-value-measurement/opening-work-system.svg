@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
 <title id="title">企业业务请求由人、Agent 与工具共同完成</title>
-<desc id="desc">一个客户请求进入工作系统后，由 Agent 在授权范围内处理，调用业务工具，必要时交由人工判断，最后核验结果并完成交付。</desc>
+<desc id="desc">客户请求进入工作系统后，由 Agent 在授权范围内处理并调用业务工具，必要时交由人工判断，最终核验状态并完成交付。</desc>
 <rect width="1280" height="720" fill="#f7f4ee"/>
 <path d="M0 570 C210 520 340 635 560 580 S930 510 1280 585 V720 H0Z" fill="#efe9df"/>
-<path d="M150 350 C320 350 340 270 505 270 S765 380 930 350 S1070 320 1140 350" fill="none" stroke="#d97757" stroke-width="12" stroke-linecap="round" opacity=".78"/>
-<path d="M150 350 C320 350 340 270 505 270 S765 380 930 350 S1070 320 1140 350" fill="none" stroke="#fffaf4" stroke-width="3" stroke-dasharray="4 18" stroke-linecap="round"/>
+<path d="M165 350 C320 350 340 270 505 270 S760 350 910 350 S1050 350 1135 350" fill="none" stroke="#d97757" stroke-width="12" stroke-linecap="round" opacity=".78"/>
+<path d="M165 350 C320 350 340 270 505 270 S760 350 910 350 S1050 350 1135 350" fill="none" stroke="#fffaf4" stroke-width="3" stroke-dasharray="4 18" stroke-linecap="round"/>
 <g>
   <rect x="78" y="235" width="230" height="255" rx="26" fill="#e5ddd0"/>
   <rect x="64" y="220" width="230" height="255" rx="26" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
@@ -14,7 +14,7 @@
   <circle cx="179" cy="408" r="29" fill="#d9e2e8"/>
   <path d="M125 463 C130 428 151 420 179 420 C207 420 229 431 234 463" fill="#4f82b8"/>
   <circle cx="179" cy="402" r="13" fill="#4f82b8"/>
-  <text x="179" y="520" text-anchor="middle" fill="#34485d" font-size="26" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">业务请求</text>
+  <text x="179" y="520" text-anchor="middle" fill="#34485d" font-size="38" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">请求</text>
 </g>
 <g>
   <rect x="444" y="180" width="370" height="260" rx="34" fill="#dce6ef"/>
@@ -24,43 +24,39 @@
   <path d="M615 225 L652 246 L652 290 L615 312 L578 290 L578 246Z" fill="#f7c7a9"/>
   <circle cx="615" cy="268" r="19" fill="#fffaf4"/>
   <path d="M615 249 V287 M596 268 H634" stroke="#b85e43" stroke-width="7" stroke-linecap="round"/>
-  <text x="615" y="378" text-anchor="middle" fill="#34485d" font-size="30" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 处理</text>
-  <text x="615" y="410" text-anchor="middle" fill="#647282" font-size="21" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">理解 · 计划 · 执行</text>
+  <text x="615" y="378" text-anchor="middle" fill="#34485d" font-size="42" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent</text>
+  <text x="615" y="412" text-anchor="middle" fill="#647282" font-size="27" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">理解 · 计划 · 执行</text>
 </g>
 <g>
   <rect x="362" y="78" width="205" height="112" rx="20" fill="#e9eef3" stroke="#c8d3dd" stroke-width="2"/>
   <circle cx="405" cy="120" r="18" fill="#4f82b8"/>
   <path d="M375 166 C381 143 394 137 405 137 C416 137 430 143 436 166" fill="#4f82b8"/>
-  <text x="458" y="119" fill="#294663" font-size="23" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">人工判断</text>
-  <text x="458" y="151" fill="#536273" font-size="18" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">审批与例外处理</text>
+  <text x="458" y="119" fill="#294663" font-size="30" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">人工判断</text>
+  <text x="458" y="154" fill="#536273" font-size="23" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">审批 · 例外</text>
   <path d="M515 190 C520 215 550 222 572 229" stroke="#4f82b8" stroke-width="5" fill="none" stroke-linecap="round"/>
 </g>
 <g>
-  <rect x="842" y="195" width="210" height="142" rx="22" fill="#e7eee8" stroke="#c2d1c5" stroke-width="2"/>
-  <rect x="873" y="228" width="52" height="76" rx="8" fill="#6f9d7c"/>
-  <path d="M885 245 H913 M885 260 H913 M885 275 H906" stroke="#f7fbf7" stroke-width="5" stroke-linecap="round"/>
-  <rect x="940" y="228" width="78" height="76" rx="8" fill="#dce8df"/>
-  <path d="M953 248 H1005 M953 265 H1005 M953 282 H995" stroke="#6f9d7c" stroke-width="5" stroke-linecap="round"/>
-  <text x="947" y="370" text-anchor="middle" fill="#3d6449" font-size="24" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">工具与业务系统</text>
+  <rect x="842" y="195" width="170" height="142" rx="22" fill="#e7eee8" stroke="#c2d1c5" stroke-width="2"/>
+  <rect x="866" y="228" width="48" height="76" rx="8" fill="#6f9d7c"/>
+  <path d="M877 245 H903 M877 260 H903 M877 275 H899" stroke="#f7fbf7" stroke-width="5" stroke-linecap="round"/>
+  <rect x="928" y="228" width="60" height="76" rx="8" fill="#dce8df"/>
+  <path d="M939 248 H977 M939 265 H977 M939 282 H971" stroke="#6f9d7c" stroke-width="5" stroke-linecap="round"/>
+  <text x="927" y="370" text-anchor="middle" fill="#3d6449" font-size="31" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">工具系统</text>
 </g>
 <g>
-  <rect x="1032" y="235" width="188" height="255" rx="26" fill="#e6e3d9"/>
-  <rect x="1018" y="220" width="188" height="255" rx="26" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
-  <circle cx="1112" cy="326" r="58" fill="#e3eee5"/>
-  <path d="M1083 326 L1103 347 L1143 302" stroke="#5f9470" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M1072 402 H1152" stroke="#9aa7ae" stroke-width="9" stroke-linecap="round"/>
-  <path d="M1088 428 H1136" stroke="#c3ccd0" stroke-width="9" stroke-linecap="round"/>
-  <text x="1112" y="520" text-anchor="middle" fill="#34485d" font-size="26" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">结果验收</text>
+  <rect x="1052" y="235" width="164" height="255" rx="26" fill="#e6e3d9"/>
+  <rect x="1038" y="220" width="164" height="255" rx="26" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
+  <circle cx="1120" cy="326" r="54" fill="#e3eee5"/>
+  <path d="M1094 326 L1113 346 L1148 304" stroke="#5f9470" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1080 402 H1160" stroke="#9aa7ae" stroke-width="9" stroke-linecap="round"/>
+  <path d="M1094 428 H1146" stroke="#c3ccd0" stroke-width="9" stroke-linecap="round"/>
+  <text x="1120" y="520" text-anchor="middle" fill="#34485d" font-size="36" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">验收</text>
 </g>
-<g fill="#d97757">
-  <circle cx="344" cy="350" r="10"/>
-  <circle cx="825" cy="350" r="10"/>
-  <circle cx="1002" cy="350" r="10"/>
-</g>
-<g fill="none" stroke="#8b95a2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+<g fill="#d97757"><circle cx="330" cy="350" r="10"/><circle cx="826" cy="350" r="10"/><circle cx="1025" cy="350" r="10"/></g>
+<g fill="none" stroke="#8b95a2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
   <path d="M308 350 H418 M405 338 L420 350 L405 362"/>
   <path d="M800 350 H832 M820 338 L835 350 L820 362"/>
-  <path d="M1054 350 H1009 M1022 338 L1007 350 L1022 362"/>
+  <path d="M1012 350 H1028 M1018 338 L1032 350 L1018 362"/>
 </g>
-<text x="640" y="630" text-anchor="middle" fill="#536273" font-size="26" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">最终交付来自整套工作系统，而不是某一次模型调用</text>
+<text x="640" y="630" text-anchor="middle" fill="#536273" font-size="32" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">最终交付来自整条工作流程，而不是某一次模型调用</text>
 </svg>

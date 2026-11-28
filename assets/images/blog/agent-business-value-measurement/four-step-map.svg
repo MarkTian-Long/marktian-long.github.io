@@ -1,49 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
 <title id="title">Agent 业务价值的四步衡量框架</title>
-<desc id="desc">从价值目标与主体、工作系统变化、结果证据与归因，到价值兑现与投入决策。技术指标作为诊断，授权安全质量作为护栏。</desc>
-<rect width="1280" height="720" fill="#f7f4ee"/>
-<text x="64" y="82" fill="#14243a" font-size="48" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 业务价值的四步衡量框架</text>
-<text x="64" y="132" fill="#536273" font-size="28" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">从企业想得到什么结果，走到是否值得持续投入</text>
+<desc id="desc">四个连续判断：明确价值目标与主体，识别工作系统变化，建立结果证据与归因，判断价值兑现和投入决策。技术诊断与硬护栏横跨各步。</desc>
+<rect width="1280" height="1024" fill="#f7f4ee"/>
+<text x="64" y="82" fill="#14243a" font-size="54" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 业务价值的四步衡量框架</text>
+<text x="64" y="132" fill="#536273" font-size="34" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">从企业想得到什么结果，走到是否值得持续投入</text>
 <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="52" y="190" width="270" height="330" rx="26" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
-  <rect x="52" y="190" width="270" height="16" rx="8" fill="#d97757"/>
-  <text x="82" y="260" fill="#d97757" font-size="30" font-weight="700">01</text>
-  <text x="82" y="315" fill="#14243a" font-size="34" font-weight="700">价值目标</text>
-  <text x="82" y="360" fill="#14243a" font-size="34" font-weight="700">与主体</text>
-  <text x="82" y="425" fill="#536273" font-size="26">谁希望得到</text>
-  <text x="82" y="462" fill="#536273" font-size="26">什么结果？</text>
-  <rect x="352" y="190" width="270" height="330" rx="26" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
-  <rect x="352" y="190" width="270" height="16" rx="8" fill="#4f82b8"/>
-  <text x="382" y="260" fill="#4f82b8" font-size="30" font-weight="700">02</text>
-  <text x="382" y="315" fill="#14243a" font-size="34" font-weight="700">工作系统</text>
-  <text x="382" y="360" fill="#14243a" font-size="34" font-weight="700">变化</text>
-  <text x="382" y="425" fill="#536273" font-size="26">Agent 改变了</text>
-  <text x="382" y="462" fill="#536273" font-size="26">哪些工作？</text>
-  <rect x="652" y="190" width="270" height="330" rx="26" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
-  <rect x="652" y="190" width="270" height="16" rx="8" fill="#7a6ca8"/>
-  <text x="682" y="260" fill="#7a6ca8" font-size="30" font-weight="700">03</text>
-  <text x="682" y="315" fill="#14243a" font-size="34" font-weight="700">结果证据</text>
-  <text x="682" y="360" fill="#14243a" font-size="34" font-weight="700">与归因</text>
-  <text x="682" y="425" fill="#536273" font-size="26">结果改善了吗？</text>
-  <text x="682" y="462" fill="#536273" font-size="26">能归因于谁？</text>
-  <rect x="952" y="190" width="270" height="330" rx="26" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
-  <rect x="952" y="190" width="270" height="16" rx="8" fill="#d59b43"/>
-  <text x="982" y="260" fill="#b47c28" font-size="30" font-weight="700">04</text>
-  <text x="982" y="315" fill="#14243a" font-size="34" font-weight="700">价值兑现</text>
-  <text x="982" y="360" fill="#14243a" font-size="34" font-weight="700">与投入决策</text>
-  <text x="982" y="425" fill="#536273" font-size="26">收益是否实现？</text>
-  <text x="982" y="462" fill="#536273" font-size="26">还值得扩大吗？</text>
+  <rect x="64" y="175" width="1152" height="145" rx="24" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
+  <rect x="64" y="175" width="18" height="145" rx="9" fill="#d97757"/>
+  <circle cx="130" cy="247" r="36" fill="#f3e4db"/>
+  <text x="130" y="260" text-anchor="middle" fill="#9a4f37" font-size="38" font-weight="700">01</text>
+  <text x="198" y="238" fill="#14243a" font-size="46" font-weight="700">价值目标与主体</text>
+  <text x="198" y="285" fill="#536273" font-size="36">谁受益、谁付款、谁承担风险？</text>
+  <rect x="64" y="345" width="1152" height="145" rx="24" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
+  <rect x="64" y="345" width="18" height="145" rx="9" fill="#4f82b8"/>
+  <circle cx="130" cy="417" r="36" fill="#e4edf5"/>
+  <text x="130" y="430" text-anchor="middle" fill="#37658f" font-size="38" font-weight="700">02</text>
+  <text x="198" y="408" fill="#14243a" font-size="46" font-weight="700">工作系统变化</text>
+  <text x="198" y="455" fill="#536273" font-size="36">任务、人机分工和交接怎样改变？</text>
+  <rect x="64" y="515" width="1152" height="145" rx="24" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
+  <rect x="64" y="515" width="18" height="145" rx="9" fill="#7a6ca8"/>
+  <circle cx="130" cy="587" r="36" fill="#ece8f4"/>
+  <text x="130" y="600" text-anchor="middle" fill="#695a95" font-size="38" font-weight="700">03</text>
+  <text x="198" y="578" fill="#14243a" font-size="46" font-weight="700">结果证据与归因</text>
+  <text x="198" y="625" fill="#536273" font-size="36">相对基线，结果是否改善？</text>
+  <rect x="64" y="685" width="1152" height="145" rx="24" fill="#fffdf9" stroke="#d9d5cc" stroke-width="2"/>
+  <rect x="64" y="685" width="18" height="145" rx="9" fill="#d59b43"/>
+  <circle cx="130" cy="757" r="36" fill="#f6ecd9"/>
+  <text x="130" y="770" text-anchor="middle" fill="#9b6c27" font-size="38" font-weight="700">04</text>
+  <text x="198" y="748" fill="#14243a" font-size="46" font-weight="700">价值兑现与投入决策</text>
+  <text x="198" y="795" fill="#536273" font-size="36">收益是否实现，扩围是否仍值得？</text>
+  <path d="M640 322 V340 M628 331 L640 344 L652 331 M640 492 V510 M628 501 L640 514 L652 501 M640 662 V680 M628 671 L640 684 L652 671" stroke="#8b95a2" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
-<g fill="none" stroke="#8b95a2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M326 354 H344 M337 344 L347 354 L337 364"/>
-  <path d="M626 354 H644 M637 344 L647 354 L637 364"/>
-  <path d="M926 354 H944 M937 344 L947 354 L937 364"/>
-</g>
-<rect x="52" y="565" width="570" height="92" rx="18" fill="#e9eef3"/>
-<text x="82" y="604" fill="#294663" font-size="27" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">技术诊断</text>
-<text x="82" y="638" fill="#536273" font-size="23" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">正确性 · 完整验收 · 可靠性 · 延迟 · 成本</text>
-<rect x="642" y="565" width="580" height="92" rx="18" fill="#f3e8e2"/>
-<text x="672" y="604" fill="#9a4f37" font-size="27" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">不可折抵的护栏</text>
-<text x="672" y="638" fill="#6e5b55" font-size="23" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">授权 · 安全 · 质量 · 合规</text>
+<rect x="64" y="870" width="1152" height="58" rx="16" fill="#e9eef3"/>
+<text x="94" y="909" fill="#294663" font-size="34" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">技术诊断：正确性 · 完整验收 · 可靠性 · 延迟 · 成本</text>
+<rect x="64" y="944" width="1152" height="58" rx="16" fill="#f3e8e2"/>
+<text x="94" y="983" fill="#9a4f37" font-size="34" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">硬护栏：授权 · 安全 · 质量 · 合规</text>
 </svg>
