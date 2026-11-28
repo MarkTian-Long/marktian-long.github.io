@@ -155,6 +155,50 @@ function listAssetFiles(rootDir) {
 }
 
 
+
+/**
+ * Draft-only images are tracked and validated from the current Markdown source.
+ * They are deliberately not added to the public artifact manifest.
+ */
+function collectDraftSourceImagePaths(rootDir) {
+  const draftsDir = path.join(rootDir, 'drafts', 'blog');
+  if (!fs.existsSync(draftsDir)) return [];
+  const images = new Set();
+  const entries = fs.readdirSync(draftsDir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && entry.name.endsWith('.md'));
+
+  for (const entry of entries) {
+    const slug = entry.name.slice(0, -3);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      throw new Error('Draft Markdown filename must use lowercase kebab-case: ' + entry.name);
+    }
+    const sourcePath = 'drafts/blog/' + entry.name;
+    const markdown = fs.readFileSync(path.join(draftsDir, entry.name), 'utf8').replace(/\r\n?/g, '\n');
+    const imagePattern = /^!\[([^\]\r\n]+)\]\(([^)\s()]+)\s+"([^"\r\n]+)"\)$/gm;
+
+    for (const match of markdown.matchAll(imagePattern)) {
+      const alt = match[1];
+      const source = match[2];
+      const caption = match[3];
+      const resolved = path.posix.normalize(path.posix.join('drafts/blog', source));
+      const expectedPrefix = 'assets/images/blog/' + slug + '/';
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(source)
+        || source.includes('\\')
+        || path.posix.isAbsolute(source)
+        || source !== '../../' + resolved
+        || !resolved.startsWith(expectedPrefix)
+        || !/^assets\/images\/blog\/[a-z0-9-]+\/[a-z0-9-]+\.(?:svg|webp)$/.test(resolved)) {
+        throw new Error('Draft image must use a local asset from the same article: ' + sourcePath + ' -> ' + source);
+      }
+      if (!alt.trim() || alt.length > 160 || !caption.trim() || caption.length > 160) {
+        throw new Error('Draft image alt and caption must be between 1 and 160 characters: ' + sourcePath);
+      }
+      images.add(resolved);
+    }
+  }
+  return [...images].sort();
+}
+
 /**
  * Draft-only assets are declared jointly by the current Markdown source and a
  * noindex preview included in the public whitelist, not by published posts-meta.
@@ -251,6 +295,7 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..'), pre
 
   const declared = [...new Set([
     ...collectPostImagePaths(metadata.posts),
+    ...collectDraftSourceImagePaths(rootDir),
     ...collectDraftPreviewImagePaths(rootDir, previewPaths),
   ])].sort();
   const actual = listAssetFiles(rootDir);
@@ -285,4 +330,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftPreviewImagePaths, validateBlogImageAsset, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };
+module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftSourceImagePaths, collectDraftPreviewImagePaths, validateBlogImageAsset, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };

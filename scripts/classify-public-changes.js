@@ -1,0 +1,137 @@
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+const { execFileSync } = require('node:child_process');
+const { publicFiles } = require('./public-dist-manifest');
+const { collectPostImagePaths } = require('./blog-image-contract');
+
+const PUBLIC_BUILD_FILES = new Set([
+  'scripts/build-public-dist.js',
+  'scripts/public-dist-manifest.js',
+]);
+
+function runGit(args, rootDir) {
+  return execFileSync('git', args, {
+    cwd: rootDir,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+}
+
+function parseStaticPublicFiles(source) {
+  const match = source.match(/const PUBLIC_FILES = \[([\s\S]*?)\n\];/);
+  if (!match) throw new Error('Could not parse PUBLIC_FILES from public-dist-manifest.js');
+  return [...match[1].matchAll(/'([^']+)'/g)].map(item => item[1]);
+}
+
+function readBasePublicFiles(baseRef, rootDir) {
+  const manifestSource = runGit(['show', baseRef + ':scripts/public-dist-manifest.js'], rootDir);
+  const metadata = JSON.parse(runGit(['show', baseRef + ':tools/blog/data/posts-meta.json'], rootDir));
+  const postFiles = runGit(['ls-tree', '-r', '--name-only', baseRef, '--', 'tools/blog/posts'])
+    .split(/\r?\n/)
+    .filter(Boolean);
+  return new Set([
+    ...parseStaticPublicFiles(manifestSource),
+    ...collectPostImagePaths(metadata.posts || []),
+    ...postFiles,
+  ]);
+}
+
+function isFullCheckPath(filePath) {
+  return filePath.startsWith('scripts/')
+    || filePath.startsWith('.github/workflows/')
+    || filePath.startsWith('.agents/')
+    || filePath.startsWith('.claude/')
+    || filePath.startsWith('site/')
+    || filePath === 'AGENTS.md'
+    || filePath === 'CLAUDE.md'
+    || filePath === 'CONVENTIONS.md'
+    || filePath === '.gitignore'
+    || filePath === 'skills-lock.json'
+    || filePath === 'eleventy.candidate.cjs'
+    || filePath === 'tools/blog/data/blog-taxonomy.json'
+    || /^tools\/blog\/[^/]+\.(?:js|html|css)$/.test(filePath);
+}
+
+function isBlogSourcePath(filePath) {
+  return filePath.startsWith('drafts/blog/')
+    || filePath.startsWith('docs/blog/')
+    || filePath.startsWith('assets/images/blog/')
+    || filePath === 'tools/blog/data/blog-taxonomy.json'
+    || filePath === 'tools/blog/data/posts-meta.json';
+}
+
+function classifyChanges({ changedFiles, currentPublicFiles, basePublicFiles }) {
+  const publicSet = new Set([...currentPublicFiles, ...basePublicFiles]);
+  const normalized = changedFiles.map(file => file.replace(/\\/g, '/'));
+  const publicChanged = normalized.some(file => publicSet.has(file) || PUBLIC_BUILD_FILES.has(file));
+  const fullCheck = publicChanged || normalized.some(isFullCheckPath);
+  const blogSourceChanged = normalized.some(isBlogSourcePath);
+  return { publicChanged, fullCheck, blogSourceChanged };
+}
+
+function parseArgs(argv) {
+  const values = new Map();
+  for (let index = 0; index < argv.length; index += 2) {
+    const flag = argv[index];
+    const value = argv[index + 1];
+    if (!['--base', '--head', '--root'].includes(flag)) throw new Error('Unknown argument: ' + flag);
+    if (!value || value.startsWith('--')) throw new Error('Argument ' + flag + ' requires a value');
+    if (values.has(flag)) throw new Error('Duplicate argument: ' + flag);
+    values.set(flag, value);
+  }
+  if (!values.has('--base') || !values.has('--head')) {
+    throw new Error('Usage: node scripts/classify-public-changes.js --base <sha> --head <sha> [--root <path>]');
+  }
+  return {
+    base: values.get('--base'),
+    head: values.get('--head'),
+    rootDir: path.resolve(values.get('--root') || path.join(__dirname, '..')),
+  };
+}
+
+function main(argv = process.argv.slice(2)) {
+  const args = parseArgs(argv);
+  if (/^0+$/.test(args.base)) {
+    const result = { publicChanged: true, fullCheck: true, blogSourceChanged: true, changedFiles: ['<initial-push>'] };
+    writeOutputs(result);
+    return result;
+  }
+  const changedFiles = runGit(['diff', '--name-only', '-z', args.base, args.head, '--'], args.rootDir)
+    .split('\0')
+    .filter(Boolean);
+  const current = publicFiles(args.rootDir);
+  const previous = readBasePublicFiles(args.base, args.rootDir);
+  const result = {
+    ...classifyChanges({
+      changedFiles,
+      currentPublicFiles: current,
+      basePublicFiles: [...previous],
+    }),
+    changedFiles,
+  };
+  writeOutputs(result);
+  return result;
+}
+
+function writeOutputs(result) {
+  const output = [
+    'public_changed=' + String(result.publicChanged),
+    'full_check=' + String(result.fullCheck),
+    'blog_source_changed=' + String(result.blogSourceChanged),
+  ].join('\n') + '\n';
+  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, output, 'utf8');
+  console.log(JSON.stringify(result, null, 2));
+}
+
+if (require.main === module) {
+  try {
+    main();
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+  }
+}
+
+module.exports = { classifyChanges, isBlogSourcePath, isFullCheckPath, parseStaticPublicFiles, readBasePublicFiles };

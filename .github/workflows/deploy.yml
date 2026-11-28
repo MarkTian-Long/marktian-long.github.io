@@ -7,49 +7,118 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
-  deploy:
+  classify:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+    outputs:
+      public_changed: ${{ steps.classify.outputs.public_changed }}
+      full_check: ${{ steps.classify.outputs.full_check }}
+      blog_source_changed: ${{ steps.classify.outputs.blog_source_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Classify changed files
+        id: classify
+        if: github.event_name == 'push'
+        run: node scripts/classify-public-changes.js --base "${{ github.event.before }}" --head "${{ github.sha }}"
+
+      - name: Force full verification and deployment for manual runs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "public_changed=true" >> "$GITHUB_OUTPUT"
+          echo "full_check=true" >> "$GITHUB_OUTPUT"
+          echo "blog_source_changed=true" >> "$GITHUB_OUTPUT"
+
+  verify:
+    needs: classify
+    if: needs.classify.outputs.full_check == 'true' || needs.classify.outputs.blog_source_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: scripts/package-lock.json
 
       - name: Install verification dependencies
         working-directory: scripts
         run: npm ci
 
+      - name: Cache Playwright browsers
+        if: needs.classify.outputs.full_check == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('scripts/package-lock.json') }}
+
       - name: Install Chromium for browser checks
+        if: needs.classify.outputs.full_check == 'true'
         working-directory: scripts
         run: npx playwright install --with-deps chromium
 
-      - name: Verify site
+      - name: Run full repository checks
+        if: needs.classify.outputs.full_check == 'true'
         working-directory: scripts
         run: npm run check
 
+      - name: Run focused blog source checks
+        if: needs.classify.outputs.blog_source_changed == 'true' && needs.classify.outputs.full_check != 'true'
+        run: |
+          node tools/blog/check-blog-taxonomy.js
+          node scripts/check-blog-images.js
+
       - name: Build public artifact
+        if: needs.classify.outputs.public_changed == 'true'
         run: node scripts/build-public-dist.js
 
       - name: Smoke public artifact
+        if: needs.classify.outputs.public_changed == 'true'
         run: node scripts/check-public-dist.js
 
+      - name: Upload verified public artifact
+        if: needs.classify.outputs.public_changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: [classify, verify]
+    if: needs.classify.outputs.public_changed == 'true' && needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Download verified public artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: public-dist
+          path: dist/
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist'
+          path: dist/
 
       - name: Deploy to GitHub Pages
         id: deployment

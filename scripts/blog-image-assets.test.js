@@ -10,6 +10,7 @@ const {
   parseArgs: parsePrepareArgs,
 } = require('./prepare-blog-image');
 const { validateBlogImages } = require('./check-blog-images');
+const { publicFiles } = require('./public-dist-manifest');
 
 const BUILD_FIXTURE_ROOT = path.resolve(__dirname, '..', 'build', 'test-blog-images');
 
@@ -294,6 +295,46 @@ test('asset validation rejects missing and orphan blog images', async () => {
   await assert.rejects(() => validateBlogImages({ rootDir: orphanRoot }), /orphan.*orphan\.webp/i);
 });
 
+
+test('draft-only image assets are validated but excluded from the public artifact', async () => {
+  const rootDir = fixtureRoot();
+  await writeMetadata(rootDir, metadata('legacy-post', null, true));
+  writePostHtml(rootDir, 'legacy-post', { inline: [] }, { includeCover: false, includeInline: false });
+
+  const slug = 'draft-only-post';
+  const imagePath = 'assets/images/blog/' + slug + '/diagram.svg';
+  const assetPath = path.join(rootDir, ...imagePath.split('/'));
+  fs.mkdirSync(path.dirname(assetPath), { recursive: true });
+  fs.writeFileSync(assetPath,
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">'
+    + '<rect width="1280" height="720" fill="#faf9f5"/></svg>');
+
+  const alt = '草稿中的业务流程图';
+  const caption = '仅用于内部草稿检查，不进入公开站点。';
+  const draftPath = path.join(rootDir, 'drafts', 'blog', slug + '.md');
+  fs.mkdirSync(path.dirname(draftPath), { recursive: true });
+  fs.writeFileSync(draftPath,
+    '# Draft\n\n![' + alt + '](../../' + imagePath + ' "' + caption + '")\n');
+
+  assert.deepEqual(await validateBlogImages({ rootDir }), { declared: 1, checked: 1 });
+  assert.equal(publicFiles(rootDir).includes(imagePath), false);
+});
+
+test('draft image references cannot cross into another article asset directory', async () => {
+  const rootDir = fixtureRoot();
+  await writeMetadata(rootDir, metadata('legacy-post', null, true));
+  writePostHtml(rootDir, 'legacy-post', { inline: [] }, { includeCover: false, includeInline: false });
+
+  const draftPath = path.join(rootDir, 'drafts', 'blog', 'draft-only-post.md');
+  fs.mkdirSync(path.dirname(draftPath), { recursive: true });
+  fs.writeFileSync(draftPath,
+    '![Other article](../../assets/images/blog/other-post/diagram.svg "Cross-article image")\n');
+
+  await assert.rejects(
+    () => validateBlogImages({ rootDir }),
+    /same article/i,
+  );
+});
 
 test('noindex draft preview assets are verified without publishing metadata', async () => {
   const rootDir = fixtureRoot();
