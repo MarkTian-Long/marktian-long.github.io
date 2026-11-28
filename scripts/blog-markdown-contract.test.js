@@ -107,14 +107,16 @@ function writeSource(rootDir, slug, source = validSource) {
   const sourcePath = path.join(rootDir, 'docs/blog', `${slug}.md`);
   const normalizedSource = source.replaceAll('../../assets/images/blog/new-post/', '../../assets/images/blog/' + slug + '/');
   fs.writeFileSync(sourcePath, normalizedSource, 'utf8');
-  const imageLine = normalizedSource.split('\\n').find((line) => line.startsWith('!['));
+  const imageLine = normalizedSource.split(String.fromCharCode(10)).find((line) => line.startsWith('!['));
   if (imageLine) {
-    const match = /^!\\[[^\\]]+\\]\\(([^ )]+)/.exec(imageLine);
-    const repoPath = match && path.posix.normalize(path.posix.join('docs/blog', match[1]));
+    const open = imageLine.indexOf('](');
+    const end = imageLine.indexOf(' "', open + 2);
+    const imageSource = open >= 0 && end > open ? imageLine.slice(open + 2, end) : '';
+    const repoPath = imageSource && path.posix.normalize(path.posix.join('docs/blog', imageSource));
     if (repoPath && repoPath.startsWith('assets/images/blog/' + slug + '/')) {
       const imagePath = path.join(rootDir, repoPath);
       fs.mkdirSync(path.dirname(imagePath), { recursive: true });
-      fs.writeFileSync(imagePath, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\"><rect width=\"1280\" height=\"720\" fill=\"#f4f3ed\"/><rect x=\"80\" y=\"80\" width=\"1120\" height=\"560\" rx=\"24\" fill=\"#c96442\"/></svg>", 'utf8');
+      fs.writeFileSync(imagePath, '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#f4f3ed"/><rect x="80" y="80" width="1120" height="560" rx="24" fill="#c96442"/></svg>', 'utf8');
     }
   }
   return sourcePath;
