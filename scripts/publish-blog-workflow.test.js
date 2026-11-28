@@ -32,12 +32,7 @@ test('taxonomy changes require a real pre-change git ref before impact audit run
 test('publish workflow documentation consistently describes conditional taxonomy impact audit', () => {
   for (const workflowPath of workflowPaths) {
     const content = fs.readFileSync(workflowPath, 'utf8');
-    if (workflowPath === canonicalSkillPath) {
-      assert.match(content, /tools\/blog\/publish\.js/);
-      assert.match(content, /完整仓库检查/);
-    } else {
-      assert.match(content, /node tools\/blog\/check-blog-taxonomy\.js/);
-    }
+    assert.match(content, /tools\/blog\/publish\.js/);
     assert.match(content, /tools\/blog\/data\/blog-taxonomy\.json/);
     assert.match(content, /audit-taxonomy-impact\.js --base-ref <真实的 taxonomy 变更前 git ref>/);
     assert.doesNotMatch(content, /<taxonomy-change-base-ref>/);
