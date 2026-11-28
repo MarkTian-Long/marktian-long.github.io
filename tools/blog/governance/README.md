@@ -12,7 +12,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
 - `tools/blog/governance/blog-charts-spec.md`：表格、流程图和其他可视化规范。
 - `tools/blog/VISUAL_GUIDE.md`：首图与其他正文图的视觉语言、资产规格、许可、制作方式和实际页面验收。
-- `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文自制视觉资产的任务选择、逐图 Prompt Packet、模型交接、有界迭代、文字校验与资产交接。
+- `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文自制视觉资产的任务选择、逐图 Prompt Packet、每篇一会话顺序推进、实际 Prompt 回显、有界迭代、失败归因与资产交接。
 - `tools/blog/visual-prompts/<slug>.md`：每篇文章唯一的逐图 Prompt Packet；保存局部 Brief、Final Prompt、参考图角色、状态与尝试记录，不进入网站 public-dist。
 - `.agents/skills/blog-image-prompting/SKILL.md`：项目专用生图 Prompt、视觉探索、参考图和有界编辑；模板见 references/prompt-recipes.md，逐图文件格式见 references/prompt-packet-template.md。
 - `tools/blog/IMAGE_REVIEW_CHECKLIST.md`：逐张图片的硬性拒绝条件、视觉质量评分、语义/资产门禁；不替代页面级视觉验收。
