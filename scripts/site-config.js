@@ -107,5 +107,55 @@ module.exports = Object.freeze({
       "description": "单文件离线文件夹容量与目录层级分析工具；只读取名称和元数据，不上传文件正文。",
       "featured": false
     }
+  ],
+  publicProjects: [
+    {
+      "name": "AI 工作流工具包（Kit）",
+      "url": "https://github.com/MarkTian-Long/ai-workflow-kit",
+      "description": "按任务取用 Skill、SOP、模板和小工具；不必安装整套 Harness。",
+      "featured": true
+    },
+    {
+      "name": "多平台资料库",
+      "url": "https://github.com/MarkTian-Long/multi-platform-content-library",
+      "description": "Windows 本地资料收集应用：保存主动提交的链接和选定本地文件，支持离线阅读、搜索、校订和导出。",
+      "featured": true
+    },
+    {
+      "name": "LocalFolderBridge｜本机文件桥",
+      "url": "https://github.com/MarkTian-Long/local-folder-bridge",
+      "description": "通过 MCP 连接 AI 与明确授权的本地资料；默认只读，不提供远程 shell。",
+      "featured": true
+    },
+    {
+      "name": "Harness Starter",
+      "url": "https://github.com/MarkTian-Long/harness-starter",
+      "description": "本地文件式 AI 协作套件，提供通用方法、任务模板、验证和续接入口；不包含个人画像或项目资料。",
+      "featured": true
+    },
+    {
+      "name": "AI Daily Radar",
+      "url": "https://github.com/MarkTian-Long/ai-daily-radar",
+      "description": "可交给联网 AI 使用的每日 AI 情报双源工作流，强调来源完整性、事件去重和证据边界。",
+      "featured": false
+    },
+    {
+      "name": "Codex Work Watch",
+      "url": "https://github.com/MarkTian-Long/codex-work-watch",
+      "description": "监测 Codex 与 ChatGPT Work 可用性、路由、额度和容量变化的证据驱动工作流。",
+      "featured": false
+    },
+    {
+      "name": "AI Usage Dashboard",
+      "url": "https://github.com/MarkTian-Long/ai-usage-dashboard",
+      "description": "Windows 本地只读分析 Codex 日志的个人使用看板；真实日志和本机配置留在本地。",
+      "featured": false
+    },
+    {
+      "name": "FolderLens",
+      "url": "https://github.com/MarkTian-Long/folder-lens",
+      "description": "单文件离线文件夹容量与目录层级分析工具；只读取名称和元数据，不上传文件正文。",
+      "featured": false
+    }
   ]
 });
