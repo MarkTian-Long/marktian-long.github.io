@@ -26,7 +26,7 @@
 A polished, text-free 3D clay-style scene presents a warm, studio-lit workflow on a cream background: documents in an orange inbox flow through a friendly robot working at a laptop, surrounded by database, automation, and analytics icons, then move into two-way review with a thoughtful human collaborator before reaching a checked delivery package. Soft blue and terracotta arrows—including a sweeping feedback loop beneath—connect the stages, while rounded matte forms, subtle shadows, balanced spacing, and gentle highlights create a clean professional look.
 
 - Attempt log:
-  - Attempt 1（2026-11-28）：生成独立场景图；输出 1664×1024 PNG，主体/协作关系/留白初看通过，待单图 Checklist、规范化和页面显示验收。
+  - Attempt 1（2026-11-28）：生成独立场景图；输出 1664×1024 PNG，主体/协作关系/留白初看通过。已按项目脚本规范化为 1280×720 WebP（28,976 bytes，quality 82），仅保存在当前工作容器，尚未上传 GitHub；仍待单图 Checklist 与页面显示验收。
 - Final decision: Generated / QA pending
 
 ---
