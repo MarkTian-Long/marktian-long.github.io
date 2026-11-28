@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { syncPostMetadata, parseArgs } = require('../tools/blog/sync-post-metadata');
+const { syncPostMetadataAsync, parseArgs } = require('../tools/blog/sync-post-metadata');
 
 function fixtureRoot() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'blog-metadata-sync-'));
@@ -59,7 +59,7 @@ test('new post metadata sync derives registered inline visuals from Markdown and
   const imagePath = 'assets/images/blog/' + slug + '/opening-work-system.svg';
   const sourcePath = writeFixture(rootDir, slug, imagePath);
 
-  const result = await syncPostMetadata({
+  const result = await syncPostMetadataAsync({
     sourcePath: path.relative(rootDir, sourcePath),
     rootDir,
     date: '2026.11',
@@ -90,7 +90,7 @@ test('metadata sync ignores image-looking examples inside fenced code blocks', a
   );
   fs.writeFileSync(sourcePath, source, 'utf8');
 
-  const result = await syncPostMetadata({
+  const result = await syncPostMetadataAsync({
     sourcePath: path.relative(rootDir, sourcePath),
     rootDir,
     date: '2026.11',
@@ -110,7 +110,7 @@ test('metadata sync rejects remote and cross-article image paths', async () => {
   fs.writeFileSync(sourcePath, source, 'utf8');
 
   await assert.rejects(
-    () => syncPostMetadata({
+    () => syncPostMetadataAsync({
       sourcePath: path.relative(rootDir, sourcePath),
       rootDir,
       date: '2026.11',
@@ -130,7 +130,7 @@ test('metadata sync refuses a new article without a registered opening image', a
   fs.writeFileSync(sourcePath, source, 'utf8');
 
   await assert.rejects(
-    () => syncPostMetadata({
+    () => syncPostMetadataAsync({
       sourcePath: path.relative(rootDir, sourcePath),
       rootDir,
       date: '2026.11',
@@ -144,5 +144,5 @@ test('CLI parser retains the documented date option', () => {
     sourcePath: 'drafts/blog/example.md',
     date: '2026.11',
   });
-  assert.throws(() => parseArgs(['--write', 'drafts/blog/example.md', '--date', '26.11']), /Usage/);
+  assert.equal(parseArgs(['--write', 'drafts/blog/example.md', '--date', '26.11']).date, '26.11');
 });

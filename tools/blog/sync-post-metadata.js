@@ -91,7 +91,55 @@ async function collectInlineVisuals({ bodyMarkdown, sourcePath, slug, rootDir })
   return visuals;
 }
 
-async function syncPostMetadata({ sourcePath, rootDir = process.cwd(), date } = {}) {
+function syncPostMetadata({ sourcePath, rootDir = process.cwd(), date } = {}) {
+  if (!sourcePath) throw new Error('sourcePath is required');
+  if (date !== undefined) validateDate(date);
+  const absoluteSourcePath = path.resolve(rootDir, sourcePath);
+  const source = fs.readFileSync(absoluteSourcePath, 'utf8');
+  const slug = path.basename(absoluteSourcePath, '.md');
+  const parsed = parseSourceMarkdown(source, sourcePath);
+  const metadataPath = path.join(rootDir, 'tools/blog/data/posts-meta.json');
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  const existingIndex = metadata.posts.findIndex((post) => post.slug === slug);
+
+  if (!parsed.frontmatter) {
+    if (existingIndex === -1) throw new Error('New Markdown sources require strict frontmatter: ' + sourcePath);
+    return { slug, legacy: true, changed: false, post: metadata.posts[existingIndex] };
+  }
+
+  validateSemanticMetadata({ ...parsed.frontmatter, slug }, {
+    knownSlugs: metadata.posts.map((post) => post.slug),
+    source: sourcePath,
+  });
+  const existing = existingIndex === -1 ? null : metadata.posts[existingIndex];
+  const synced = {
+    ...(existing || {}),
+    slug,
+    date: existing ? existing.date : (date || currentPublicationMonth()),
+    title: parsed.sourceTitle,
+    summary: parsed.sourceSummary,
+    category: parsed.frontmatter.category,
+    tags: parsed.frontmatter.tags,
+    topics: parsed.frontmatter.topics,
+    concepts: parsed.frontmatter.concepts,
+    share_quote: parsed.frontmatter.share_quote,
+    relations: parsed.frontmatter.relations,
+    url: 'posts/' + slug + '.html',
+  };
+  validateDate(synced.date);
+  const next = { ...metadata, posts: [...metadata.posts] };
+  if (existingIndex === -1) next.posts.unshift(synced);
+  else next.posts[existingIndex] = synced;
+  next.posts.sort((a, b) => b.date.localeCompare(a.date));
+  validateBlogMetadata(next);
+
+  const serialized = JSON.stringify(next, null, 2) + '\n';
+  const current = fs.readFileSync(metadataPath, 'utf8');
+  if (current !== serialized) fs.writeFileSync(metadataPath, serialized, 'utf8');
+  return { slug, legacy: false, changed: current !== serialized, post: synced };
+}
+
+async function syncPostMetadataAsync({ sourcePath, rootDir = process.cwd(), date } = {}) {
   if (!sourcePath) throw new Error('sourcePath is required');
   if (date !== undefined) validateDate(date);
   const absoluteSourcePath = path.resolve(rootDir, sourcePath);
@@ -164,7 +212,7 @@ function parseArgs(argv) {
 }
 
 async function main(argv = process.argv.slice(2)) {
-  const result = await syncPostMetadata(parseArgs(argv));
+  const result = await syncPostMetadataAsync(parseArgs(argv));
   console.log(result.legacy ? '✓ legacy metadata retained: ' + result.slug : '✓ metadata sync: ' + result.slug + (result.changed ? '' : ' (current)'));
 }
 
@@ -175,4 +223,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { collectInlineVisuals, currentPublicationMonth, markdownLinesOutsideFences, parseArgs, syncPostMetadata };
+module.exports = { collectInlineVisuals, currentPublicationMonth, markdownLinesOutsideFences, parseArgs, syncPostMetadata, syncPostMetadataAsync };
