@@ -12,7 +12,9 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - `tools/blog/governance/blog-review-checklist.md`：初稿后的全量终审、确定性修复与交付验证。
 - `tools/blog/governance/blog-charts-spec.md`：表格、流程图和其他可视化规范。
 - `tools/blog/VISUAL_GUIDE.md`：首图与其他正文图的视觉语言、资产规格、许可、制作方式和实际页面验收。
-- `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文概念/场景插图的任务定义、生图迭代、文字校验、选图与资产交接。
+- `tools/blog/IMAGE_GENERATION_WORKFLOW.md`：正文概念/场景插图的执行顺序、候选迭代、文字校验与资产交接。
+- `.agents/skills/blog-image-prompting/SKILL.md`：项目专用生图 Prompt、视觉探索、参考图和编辑迭代；模板见 `references/prompt-recipes.md`。
+- `tools/blog/IMAGE_REVIEW_CHECKLIST.md`：逐张图片的硬性拒绝条件、视觉质量评分、语义/资产门禁；不替代页面级视觉验收。
 - `tools/blog/WRITING_GUIDE.md`：最终 Markdown、metadata 和发布契约。
 - `tools/blog/data/blog-taxonomy.json`：category / tags / topics / concepts 的唯一词典。
 - `.agents/skills/blog-human-writing/`：材料承载力检查与活人感审校的唯一长期规则真源。
@@ -24,7 +26,7 @@ GitHub 是 Blog Project 的唯一长期真源。ChatGPT Project Source、已安�
 - **研究、收敛与大纲**：[SOP](blog-sop.md)；taxonomy、研究待办、历史 metadata 和 Series Brief 按 SOP 的读取顺序进入。
 - **认知增量反馈与验收方法**：[认知规范](blog-cognitive-review-spec.md)。
 - **正文审校**：GitHub 当前 `.agents/skills/blog-human-writing/SKILL.md` 与对应 reference；终审执行 [Checklist](blog-review-checklist.md)。
-- **图片与图表**：[图表规范](blog-charts-spec.md)、[视觉规范](../VISUAL_GUIDE.md)；决定使用生成式图片时再读 [生图工作流](../IMAGE_GENERATION_WORKFLOW.md)。
+- **图片与图表**：[图表规范](blog-charts-spec.md)、[视觉规范](../VISUAL_GUIDE.md)；决定使用生成式图片时读取项目专用 [Prompt Skill](../../../.agents/skills/blog-image-prompting/SKILL.md)，按 [生图工作流](../IMAGE_GENERATION_WORKFLOW.md)执行，并逐张通过 [图片验收清单](../IMAGE_REVIEW_CHECKLIST.md)。
 - **网页预览与同稿发布切换**：[预览规范](blog-preview-release-spec.md)；模板、metadata 与生成器契约查 [Writing Guide](../WRITING_GUIDE.md)。
 - **正式发布执行**：最新 `blog-taxonomy.json`、[Writing Guide](../WRITING_GUIDE.md) 和 GitHub 当前 `.agents/skills/publish-blog/SKILL.md`。
 
