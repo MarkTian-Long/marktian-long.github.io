@@ -16,6 +16,14 @@ type: workflow
 - **公开预览**：先完成上述候选和当前阶段验收，再核对作者是否已明确授权这次公开预览。授权覆盖时沿用，将同一候选页面及必要图源部署到稳定预览地址，按精确白名单登记；保持 noindex、未发布标识及正式索引隔离。只报告实际完成的部署、线上和视觉结果，不自动进入下面的正式发布步骤。
 - **正式发布或已发布文章维护**：按以下章节执行；新文必须有正式发布授权，公开预览授权不能替代。纯局部维护按实际影响范围校验，不虚构新的写作或发布批准基线。
 
+### 0.1 执行环境适配
+
+先确认当前会话实际具备哪种执行环境，不混用两套写入模型：
+
+- **本地 Git / Codex / Work 工作区**：可运行本 Skill 的 Node、PowerShell 和 Git 命令；按本地工作区路径执行生成、测试、暂存、提交及授权后的推送。
+- **GitHub Connector**：只负责 GitHub 文件、分支、PR 和 Actions API，不等于本地代码执行环境。先完整发现当前会话的 `mcp__GitHub__*` 工具；多文件写入按“读取 main → `create_branch` → Blob → Tree → Commit → `update_ref(expected_sha)` → 回读 → PR → 检查 → 合并”执行。**必须先 `create_branch`，不得用 `update_ref` 假装创建分支。**
+- Connector 不能执行 Node CLI。生成器必须在真实 Node 工作区或已批准的远程构建入口运行；不得手工拼接或仿写 `posts-meta.json`、正式 HTML、RSS、Sitemap、搜索资产来冒充生成器输出。若当前只有 Connector 且没有可用 Node 执行环境，停在生成前，说明所需执行入口；不要用未经测试的 API 写入替代确定性构建。
+- 本仓库有 `verify-pr` 工作流。正式发布默认走 PR 检查门禁；所有必需检查成功后才合并。只有仓库策略明确允许时才走直接 main 写入。
 ## 1. 预检
 
 1. 按 `AGENTS.md` 顺序读取共享上下文，再从 `tools/blog/governance/README.md` 定位当前阶段规范，读取 `tools/blog/README.md`、`tools/blog/WRITING_GUIDE.md` 和 `docs/repository-policy.md`；从预览晋升时另读 `tools/blog/governance/blog-preview-release-spec.md`。
@@ -26,7 +34,7 @@ type: workflow
    - 若文章已在本地提交且分支显示 `ahead`，核对最新提交包含本次文章及第 3 节必需验证的实际结果，再进入“推送 HITL”；缺少验证时只补相应检查，不重复生成或创建空提交。
    - 若本地与远端已同步，直接进入线上验证；线上也已通过时，只补齐本次尚未完成的统一规范复盘，再报告完成。
    - 只有文章资产缺失或存在真实内容差异时，才继续生成、验证和提交。
-6. 新文章必须有严格 frontmatter；从 `drafts/blog/` 迁移时，只允许预览发布规范规定的图片路径迁移和换行符规范化，不改已确认正文、语义 metadata 或图源，并确认 draft 已纳入本次删除。再运行 `node tools/blog/sync-post-metadata.js --write <source.md>`，由它确定性同步 metadata。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
+6. 新文章必须有严格 frontmatter；从 `drafts/blog/` 迁移时，draft 与 docs 目录深度相同，图片相对路径通常保持不变，只允许换行符规范化，不改已确认正文、语义 metadata 或图源，并确认 draft 已纳入本次删除。再运行 `node tools/blog/sync-post-metadata.js --write docs/blog/<slug>.md`，由它确定性同步 metadata，并从 Markdown 图片行和本地资产自动派生 `visuals.inline`。历史源稿若已有 `publish_handoff`，仅为兼容在同步前运行交接脚本；新文章不得使用 handoff 或 `body_link_only`，它们不属于新文章标准路径。
 7. 真正执行材料检查或活人感审校时，读取 `.agents/skills/blog-human-writing/SKILL.md` 与当前阶段对应的 `references/`；该目录是长期权威源。已安装入口和 `.claude` 副本仅作运行/兼容用途，冲突时以 `.agents` 为准。统一规范沉淀复盘在第 5 节的实际发布验证完成后执行。
 
 ## 2. 生成发布资产
@@ -45,7 +53,7 @@ type: workflow
      node scripts/prepare-blog-image.js --slug <slug> --role inline --name <descriptive-name> --input build/blog-image-work/<slug>/<inline-candidate>
      ```
 
-   - 将最终路径、尺寸、alt、caption 写入该文章的 `visuals`；声明的封面由生成器从元数据渲染，正文图同时按 `tools/blog/WRITING_GUIDE.md` 的 Markdown 图片语法放到确有解释价值的位置。
+   - 在 Markdown 独立图片行登记最终路径、alt、caption；正式 metadata 同步命令会从这些图片行和本地资产派生 `visuals.inline`，不要手工再写一份重复 JSON。声明的封面由生成器从 metadata 渲染，正文图放在确有解释价值的位置。
    - 生图或资产准备失败时，修复、采用权利明确的真实素材或确定性表示，仍不能满足首图要求则暂停并报告缺口，不能默认改成无图发布。需要改变已经确认的正文或图源时，回到同一稿件的相应审校与确认节点，不在发布迁移中擅自删图或换图。
 4. 生成文章：
 
@@ -71,7 +79,7 @@ node scripts/check-blog-release-equivalence.js --approved-ref <已确认稿的�
 node --test scripts/blog-release-equivalence.test.js
 ```
 
-该检查逐字核对批准稿与正式稿，并核对图片字节，只允许规定的路径迁移和换行符规范化。缺少确认 commit 时按权限取得该明确版本，不能用最新 main 冒充；检查器未覆盖的路径或图片例外，按预览发布规范记录差异并人工核准，不修改允许范围来通过检查。历史文章原位维护不要求虚构 draft 批准基线；同源检查不替代下面的发布校验，也不会自动发布。
+该检查逐字核对批准稿与正式稿，并核对图片字节；drafts/blog 与 docs/blog 同深度，图片相对路径应保持不变，只允许换行符规范化。缺少确认 commit 时按权限取得该明确版本，不能用最新 main 冒充；检查器未覆盖的路径或图片例外，按预览发布规范记录差异并人工核准，不修改允许范围来通过检查。历史文章原位维护不要求虚构 draft 批准基线；同源检查不替代下面的发布校验，也不会自动发布。
 
 每篇文章始终运行：
 
@@ -105,7 +113,10 @@ node tools/blog/audit-taxonomy-impact.js --base-ref <真实的 taxonomy 变更�
 6. 只暂存 Markdown、文章 HTML、元数据、最终图片、真实发生内容变化的搜索资产，以及为支持该文章所需的生成器修复；不得暂存候选图或临时 public-dist。
 7. 运行 `git diff --cached --check` 和 `git diff --cached --stat`，再按 `docs: <描述>` 提交。若检查后只发生格式修正，先重新确认 staged diff，再只重跑受影响的检查，不重复整套无关 QA。
 
-## 4. 推送 HITL
+## 4. 分支写入与推送 HITL
+
+### 4.1 本地 Git 推送
+
 
 `git push` 是危险操作。展示目标远端、分支和提交 SHA，核对已有明确授权是否覆盖本次目标与变更范围；已经覆盖时沿用授权，不重复询问。尚未获得该范围授权时必须等待用户确认，未经确认不得推送，禁止 force push。
 
@@ -129,6 +140,15 @@ git push origin <branch>
 5. 若授权审查在命令启动前报 `Unknown parameter: input[...].namespace`，停止重复推送。说明这是 Codex 授权通道故障，建议重启 Codex 并以本仓库为工作区恢复；恢复后从状态核对继续。
 6. 未配置 SSH key 时不自动切换 SSH。
 
+### 4.2 GitHub Connector 分支与 PR
+
+仅在当前会话完整发现对应 GitHub 工具且仓库授权可用时执行：
+
+1. 读取最新 `main` SHA 与本次涉及文件的 blob SHA；核对作者确认稿的完整 40 位 commit。
+2. 使用 `create_branch` 从该精确 `main` SHA 创建发布分支，并回读分支 head。分支不存在时必须先创建；`update_ref` 只更新已经存在的分支。
+3. 多文件变更使用 Blob → Tree（传入最新 `base_tree_sha`）→ Commit（`parent_sha` 为当前分支 head）→ `update_ref`（`expected_sha` 为刚读取的分支 head，`force:false`）。单文件文字更新可顺序使用 `update_file` 和最新 blob SHA。并发 head 变化时停止、重读并合并，不强推。
+4. 回读每个变更文件及分支 head，确认内容和 SHA 与预期一致；创建 PR，等待 `Verify pull request` 的必需检查全部完成且成功。
+5. 合并时传入 PR 最新 `head.sha` 作为 `expected_head_sha`；合并后回读 `main`，确认合并 commit 和正式文件都在 main。PR 创建、检查成功、合并成功是三个不同状态。
 ## 5. 远端与线上验证
 
 1. 确认 `git status --short --branch` 不再显示 `ahead`。
@@ -136,10 +156,17 @@ git push origin <branch>
 3. 用 `git ls-remote origin refs/heads/<branch>` 确认远端 SHA 等于本地 HEAD。
 4. 从 `scripts/site-config.js` 和元数据 URL 组合线上地址。
 5. 等待 GitHub Pages 刷新并请求文章 URL，确认 HTTP 200 且响应包含文章唯一标题。代理环境下可为 Node 临时设置 `NODE_USE_ENV_PROXY=1` 与 `HTTPS_PROXY=http://127.0.0.1:7897`；不得写入项目配置。
-6. 打开线上博客目录并核验该文实际可被找到：普通归档首页或按规则配置的精选区、对应日期与分类、点进文章的链接；同时验证该文应进入的 RSS 条目。前端分页和订阅源顺序均须以当前线上结果为准，不能只凭文章直链 200 或仓库中 JSON 已更新宣称可发现性通过。因浏览器、网络或缓存限制无法验证时如实标记待验。
+6. 打开个人主页 `index.html` 的「思考碎片」最近更新区，以及线上博客目录；分别核验该文在个人主页最近更新列表和博客归档普通列表/精选区中实际可被找到，日期、分类、标题与链接正确；同时验证该文应进入的 RSS 条目。前端分页和订阅源顺序均须以当前线上结果为准，不能只凭文章直链 200 或仓库中 JSON 已更新宣称可发现性通过。因浏览器、网络或缓存限制无法验证时如实标记待验。
 7. 页面尚未刷新时最多重试 3 次，每次间隔约 20 秒，并向用户报告进度。
 8. 实际发布与线上验证完成后，按 `tools/blog/governance/blog-sop.md` 执行一次规范沉淀复盘；已有本次复盘结果时不重复执行。只将本轮验证过、跨文章可复用且职责明确的问题更新到对应真源；未完成发布验收时不预记复盘或发布成功。
 
+### Pages 部署失败恢复
+
+- 先确认失败 run 对应的 `main` SHA、`run_attempt`、失败步骤和该 run 的 `github-pages` artifact 列表；区分构建/校验失败与上传/部署 API 故障。
+- 构建或检查步骤失败时，先修复真实失败，不得只重试部署。
+- **Do not rerun the same Pages workflow run after artifact upload。** 同一 workflow run 的再次执行可能留下多个同名 `github-pages` artifact，导致 `deploy-pages` 无法唯一选择。
+- 若 `upload-pages-artifact` 已成功而部署步骤因 artifact 重复、metadata API 暂时不可用或找不到刚上传的 artifact 失败，确认 `main` 未变化后，使用 `workflow_dispatch` 在当前 `main` 上启动一个 **fresh workflow run**（新 run ID），而不是重跑同一 run 的 failed jobs；再按精确 `main` SHA 检查新 run 的构建与部署结果。不要为了触发部署创建空提交。
+- 新 run 仍失败时，保存真实失败步骤与日志；GitHub Actions/Pages 服务故障不得误判成文章内容问题。不得引用其他 SHA 的成功部署替代当前 main 的部署证据。
 ## 6. 完成报告
 
-报告提交 SHA、远端同步状态、线上文章链接、目录可发现性、RSS 核验及规范复盘结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit 或 push 中的一部分时，明确说明剩余步骤，不得声称“已发布”；目录未核验时不得声称“已在首页正常展示”。
+报告提交 SHA、PR 检查、合并后的 main SHA、对应 Pages run、线上文章链接、个人主页与博客目录可发现性、RSS 核验及规范复盘结果；如使用图片，再报告每张图的最终公开路径、完整最终 prompt、生成模式，以及图片/生成器/SEO/public-dist/视觉检查结果。只完成生成、commit、分支更新、PR、合并或部署中的一部分时，明确说明剩余步骤，不得声称“已发布”；个人主页或博客目录未核验时不得声称“已在首页正常展示”。Headless browser test 不等于人工截图验收；未真实生成并检查截图时不得报告截图已验收。

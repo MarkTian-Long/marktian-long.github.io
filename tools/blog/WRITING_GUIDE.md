@@ -432,7 +432,7 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
    ```powershell
    node tools/blog/sync-post-metadata.js --write docs/blog/your-slug.md
    ```
-   不手工创建或补写语义 metadata；需要明确回填新文章月份时使用 `--date YYYY.MM`。同步不会删除或覆盖已有 `visuals` 等发布资产字段。
+   不手工创建或补写语义 metadata；需要明确回填新文章月份时使用 `--date YYYY.MM`。同步不会删除或覆盖已有 `visuals` 等发布资产字段。新文章的 `visuals.inline` 由同步命令从 Markdown 独立图片行和本地资产自动派生，统一写入 src、alt、caption、width、height；现有文章保留已冻结的 visuals。不得再手工维护一份重复的图片 metadata。新文章缺少合格首图时同步失败，作者例外必须同时提供理由和本篇证据路径。
 2. 按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 完成必选开篇首图及其他已选图片，维护 `visuals`；历史无图文章与作者明确例外按其适用范围处理。选中的位图候选先放在 `build/blog-image-work/<slug>/`，再只为实际选用的角色运行对应命令；分享封面不因此变为必选：
    ```powershell
    node scripts/prepare-blog-image.js --slug your-slug --role cover --input build/blog-image-work/your-slug/candidate.png

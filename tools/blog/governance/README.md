@@ -57,7 +57,9 @@ Series Brief 只保存系列母题、文章地图、跨篇边界和运行状态�
 
 - 接到 GitHub 更新、正式发布、修改规范等任务时，先通过当前会话的工具目录完整检索 GitHub 命名空间（例如在 `functions.exec` 中筛选 `ALL_TOOLS` 的 `mcp__GitHub__*`），尤其检查 `update_file`、`create_file`、`create_blob`、`create_tree`、`create_commit`、`update_ref`，不要只检查 `fetch` / `fetch_file` 或部分工具检索结果。
 - **单文件文字修改**：读取目标文件及其 blob SHA，调用 `update_file` 以相同路径替换；多文件原子变更或删除使用 Blob → Tree → Commit → `update_ref`，操作前获取最新分支 head，移动分支时带 `expected_sha` 并禁用强推。具体参数以工具当轮完整签名为准。
-- **验证边界**：创建 Blob / Tree / Commit 不等于分支已经更新；仅在 ref 更新成功，并重新读取文件或分支 commit 确认写入后，才能报告“GitHub 已更新”。“已提交”也不等于 Pages 已部署成功；按实际 Actions、部署和网页检查分开报告。
+- **分支与 PR 顺序**：Connector 多文件发布必须先用 `create_branch` 从刚读取的 `main` SHA 创建分支；`update_ref` 只能更新已存在的分支，并带当前分支 head 的 `expected_sha`。写入后回读分支和文件，再创建 PR，等待 `verify-pr` 检查通过后才合并；合并后重新读取 `main` 和对应 Pages workflow run。不要把一串 Blob 创建成功当成分支或 PR 已完成。
+- **执行边界**：GitHub Connector 负责仓库读写，不执行 Node CLI。`generate-post.js`、`sync-post-metadata.js` 和 `generate-search-assets.js` 必须由真实 Node 工作区或已批准的远程构建入口执行；不得在 Connector 里手工仿写生成 HTML、metadata、RSS 或 Sitemap 来替代生成器。当前会话没有代码执行工作区时，先停在生成前并说明需要的执行入口。
+- **验证边界**：创建 Blob / Tree / Commit 不等于分支已经更新；仅在 ref 更新成功，并重新读取文件或分支 commit 确认写入后，才能报告“GitHub 已更新”。“已提交”也不等于 Pages 已部署成功；按实际 PR 检查、合并、Actions、部署和网页检查分开报告。
 - **并发或失败**：分支 head 变化时重新读取并合并差异，不能覆盖其他会话提交；接口返回权限错误时记录真实错误和所需权限。只有在完整发现写入工具并实际尝试适用操作后仍受限，才可说明该轮写入不可用。不得把工具发现遗漏表述成“当前会话只有读取能力”，更不能未经检查就要求用户转交本机 Codex。
 - 新会话不保证工具状态与上一轮相同；因此这是一项**发现、执行和回读义务**，而不是对任意时刻写权限的无条件承诺。
 
