@@ -724,11 +724,14 @@ OG meta 保证链接分享预览（微信/飞书/Twitter 卡片展示标题+摘�
 ### 搜索发现维护
 
 - 最终 Markdown 是 `title`、`summary`、`share_quote` 等内容语义的权威来源；`tools/blog/data/posts-meta.json` 是发布后供首页、列表、分享与搜索资产读取的统一派生索引，其中 `url` 与 `visuals` 属于发布运行数据。`share-card-config.json` 由生成脚本从全站配置输出，不手工维护。
-- 新文章发布后运行 `node scripts/generate-search-assets.js --write`，同步入口页与文章 head，并更新 `robots.txt`、`sitemap.xml`、`feed.xml`。
-- 发布前运行 `node scripts/check-search-foundation.js`，确认 robots、sitemap、RSS、canonical、description 和 JSON-LD 一致。
+- **新文章必须通过 `node tools/blog/publish.js --slug <slug> --approved-ref <完整40位SHA> --prepare` 发布编排器准备**，不要手工串联 metadata、HTML、SEO 和订阅源脚本。编排器调用 `scripts/generate-search-assets.js --write`，并同步首页/文章 head、`robots.txt`、`sitemap.xml`、`feed.xml` 与根目录 `llms.txt`；`check-blog-release.js --release` 会执行搜索资产 freshness 和 `check-search-foundation.js` 检查。
+- **博客归档静态链接由 public-dist 构建器从 `posts-meta.json` 和 `featured-posts.json` 生成**：首屏包含精选与普通文章链接，其余文章进入 `<noscript>` 后备区。不得手工复制维护文章清单。发布验收仍须确认新文章能从目录首页/精选区找到，并在适用时出现在 RSS 最新 20 篇中。
+- 新文章默认自动进入 Sitemap 和 RSS（按既定最新 20 篇规则）；`llms.txt` 只列精选文章、明确登记的公开工具和公开项目，不是所有文章的逐篇目录。新文章是否进入精选列表，由编辑决策决定，不因发布而自动提升为精选。
+- 新增或调整公开工具页面时，必须先确认页面具备稳定、可公开的内容，再在 `scripts/site-config.js` 的 `toolPages` 中显式登记唯一标题、描述和路径。生成器会统一维护 canonical、Open Graph、Twitter Card、`WebPage` JSON-LD 和 Sitemap；不得递归扫描整个 `tools/` 目录。新增公开 GitHub 项目须经人工确认后显式登记到 `publicProjects`，禁止自动枚举账号仓库。
+- 每次发布前后都应运行/通过 `node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js` 和 public-dist build/Smoke Test；相关全仓 CI 通过后才可合并发布。模板或生成器变化须补充相应测试。
 - 现有元数据只有月份，不要伪造精确 `pubDate`、`datePublished` 或 `dateModified`；未来有可靠日期字段后再补。
 - 未来更换搜索资产和自动生成 head 使用的域名，只改 `scripts/site-config.js`，再重新运行生成和检查脚本；正文中的显式链接仍需按内容语义单独核对。
-- Google Search Console、Bing Webmaster、账号验证 token 与自定义域名属于后续人工步骤，不写入当前文章模板。
+- Google Search Console、Bing Webmaster、账号验证 token 与自定义域名属于后续人工步骤，不写入当前文章模板。SEO/AI 可见性效果监测需依赖 Search Console、GA4、Bing Webmaster 或经授权的 AI 可见性数据源；代码检查通过不等于已获得排名、流量或 AI 引用。
 - `robots.txt` 当前只声明 sitemap 和全站允许，不区分 GPTBot 等 crawler；如需改变 crawler 策略，单独设计并确认。
 
 ### 验证方式
