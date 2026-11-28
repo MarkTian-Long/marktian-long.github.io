@@ -31,13 +31,17 @@ const SOURCED_PHOTO_ALLOWLIST = Object.freeze({
 });
 // Published SVG diagrams are static and self-contained, including when opened directly.
 function validateStaticSvg(source, imagePath) {
-  if (!/^\s*<svg\b/i.test(source) || !/<\/svg>\s*$/i.test(source)
-    || /<!DOCTYPE|<!ENTITY|<\?(?:xml-stylesheet)/i.test(source)
-    || /<(?:script|foreignObject|iframe|image|use|a|animate\w*|set)\b/i.test(source)
-    || /\son[a-z]+\s*=/i.test(source) || /\b(?:href|src)\s*=/i.test(source)
-    || /@import|@font-face|javascript:|data:|expression\s*\(/i.test(source)
-    || /url\(\s*["']?(?!#)/i.test(source)) {
-    throw new Error(`SVG must be a static, self-contained diagram: ${imagePath}`);
+  const normalized = String(source).replace(
+    /^\uFEFF?\s*<\?xml\s+version=["']1\.[01]["'](?:\s+encoding=["'][^"']+["'])?(?:\s+standalone=["'](?:yes|no)["'])?\s*\?>\s*/i,
+    '',
+  );
+  if (!/^\s*<svg\b/i.test(normalized) || !/<\/svg>\s*$/.test(normalized)
+    || /<!DOCTYPE|<!ENTITY|<\?(?:xml|xml-stylesheet)/i.test(normalized)
+    || /<(?:script|foreignObject|iframe|image|use|a|animate\w*|set)\b/i.test(normalized)
+    || /\son[a-z]+\s*=/i.test(normalized) || /\b(?:href|src)\s*=/i.test(normalized)
+    || /@import|@font-face|javascript:|data:|expression\s*\(/i.test(normalized)
+    || /url\(\s*["']?(?!#)/i.test(normalized)) {
+    throw new Error('SVG must be a static, self-contained diagram: ' + imagePath);
   }
 }
 
@@ -287,17 +291,59 @@ async function validateBlogImageAsset({ rootDir, imagePath }) {
   };
 }
 
+/**
+ * Unpublished draft assets are private working files, not public images yet.
+ * Keep static-content and full-decode safety checks, but defer the final public
+ * dimension profile until the asset enters a preview or published metadata.
+ */
+async function validateDraftBlogImageAsset({ rootDir, imagePath }) {
+  const extension = path.extname(imagePath).toLowerCase();
+  const profile = PROFILE_BY_EXTENSION[extension];
+  if (!profile) throw new Error('Unexpected draft blog image extension: ' + imagePath);
+  const absolutePath = resolvePublicPath(rootDir, imagePath);
+  let current = path.resolve(rootDir);
+  for (const segment of imagePath.split('/')) {
+    current = path.join(current, segment);
+    const stat = fs.lstatSync(current);
+    if (stat.isSymbolicLink()) throw new Error('Draft blog image symlinks are not allowed: ' + imagePath);
+  }
+  if (!fs.statSync(absolutePath).isFile()) throw new Error('Draft blog image must be a regular file: ' + imagePath);
+  const bytes = fs.readFileSync(absolutePath);
+  if (bytes.length > 2 * 1024 * 1024) throw new Error('Draft blog image must be at most 2 MB: ' + imagePath);
+  if (extension === '.svg') validateStaticSvg(bytes.toString('utf8'), imagePath);
+  const image = await sharp(bytes).metadata();
+  if (image.format !== profile.format) {
+    throw new Error('Draft blog image format must be ' + profile.format + ': ' + imagePath);
+  }
+  if (!Number.isInteger(image.width) || !Number.isInteger(image.height)
+    || image.width < 1 || image.height < 1 || image.width > 4096 || image.height > 4096) {
+    throw new Error('Draft blog image dimensions must be readable and no larger than 4096 x 4096: ' + imagePath);
+  }
+  try {
+    await sharp(bytes, { failOn: 'warning' }).stats();
+  } catch (error) {
+    throw new Error('Draft blog image failed full decode: ' + imagePath + ' (' + error.message + ')');
+  }
+  return {
+    width: image.width,
+    height: image.height,
+    format: image.format,
+    bytes: bytes.length,
+    sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
+  };
+}
+
 async function validateBlogImages({ rootDir = path.resolve(__dirname, '..'), previewPaths } = {}) {
   const metadataPath = path.join(rootDir, 'tools', 'blog', 'data', 'posts-meta.json');
   if (!fs.existsSync(metadataPath)) throw new Error(`Missing blog metadata: ${metadataPath}`);
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   validateImageContract(metadata);
 
-  const declared = [...new Set([
-    ...collectPostImagePaths(metadata.posts),
-    ...collectDraftSourceImagePaths(rootDir),
-    ...collectDraftPreviewImagePaths(rootDir, previewPaths),
-  ])].sort();
+  const publishedImages = new Set(collectPostImagePaths(metadata.posts));
+  const previewImages = new Set(collectDraftPreviewImagePaths(rootDir, previewPaths));
+  const draftImages = collectDraftSourceImagePaths(rootDir);
+  const publicImages = new Set([...publishedImages, ...previewImages]);
+  const declared = [...new Set([...publicImages, ...draftImages])].sort();
   const actual = listAssetFiles(rootDir);
   const declaredSet = new Set(declared);
   const actualSet = new Set(actual);
@@ -310,7 +356,11 @@ async function validateBlogImages({ rootDir = path.resolve(__dirname, '..'), pre
 
   let checked = 0;
   for (const imagePath of declared) {
-    await validateBlogImageAsset({ rootDir, imagePath });
+    if (publicImages.has(imagePath)) {
+      await validateBlogImageAsset({ rootDir, imagePath });
+    } else {
+      await validateDraftBlogImageAsset({ rootDir, imagePath });
+    }
     checked += 1;
   }
   validateRenderedPostImages(rootDir, metadata);
@@ -330,4 +380,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftSourceImagePaths, collectDraftPreviewImagePaths, validateBlogImageAsset, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };
+module.exports = { PROFILE_BY_EXTENSION, listAssetFiles, collectDraftSourceImagePaths, collectDraftPreviewImagePaths, validateBlogImageAsset, validateDraftBlogImageAsset, validateBlogImages, validateRenderedPostImages, validateStaticSvg, main };

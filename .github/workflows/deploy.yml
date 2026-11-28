@@ -23,15 +23,14 @@ jobs:
 
       - name: Classify changed files
         id: classify
-        if: github.event_name == 'push'
-        run: node scripts/classify-public-changes.js --base "${{ github.event.before }}" --head "${{ github.sha }}"
-
-      - name: Force full verification and deployment for manual runs
-        if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "public_changed=true" >> "$GITHUB_OUTPUT"
-          echo "full_check=true" >> "$GITHUB_OUTPUT"
-          echo "blog_source_changed=true" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "public_changed=true" >> "$GITHUB_OUTPUT"
+            echo "full_check=true" >> "$GITHUB_OUTPUT"
+            echo "blog_source_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            node scripts/classify-public-changes.js --base "${{ github.event.before }}" --head "${{ github.sha }}"
+          fi
 
   verify:
     needs: classify

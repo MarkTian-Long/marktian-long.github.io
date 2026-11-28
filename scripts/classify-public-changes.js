@@ -28,7 +28,7 @@ function parseStaticPublicFiles(source) {
 function readBasePublicFiles(baseRef, rootDir) {
   const manifestSource = runGit(['show', baseRef + ':scripts/public-dist-manifest.js'], rootDir);
   const metadata = JSON.parse(runGit(['show', baseRef + ':tools/blog/data/posts-meta.json'], rootDir));
-  const postFiles = runGit(['ls-tree', '-r', '--name-only', baseRef, '--', 'tools/blog/posts'])
+  const postFiles = runGit(['ls-tree', '-r', '--name-only', baseRef, '--', 'tools/blog/posts'], rootDir)
     .split(/\r?\n/)
     .filter(Boolean);
   return new Set([

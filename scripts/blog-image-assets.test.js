@@ -306,8 +306,8 @@ test('draft-only image assets are validated but excluded from the public artifac
   const assetPath = path.join(rootDir, ...imagePath.split('/'));
   fs.mkdirSync(path.dirname(assetPath), { recursive: true });
   fs.writeFileSync(assetPath,
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">'
-    + '<rect width="1280" height="720" fill="#faf9f5"/></svg>');
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860">'
+    + '<rect width="1280" height="860" fill="#faf9f5"/></svg>');
 
   const alt = '草稿中的业务流程图';
   const caption = '仅用于内部草稿检查，不进入公开站点。';
@@ -318,6 +318,24 @@ test('draft-only image assets are validated but excluded from the public artifac
 
   assert.deepEqual(await validateBlogImages({ rootDir }), { declared: 1, checked: 1 });
   assert.equal(publicFiles(rootDir).includes(imagePath), false);
+});
+
+test('draft-only SVGs still reject executable or externally loaded content', async () => {
+  const rootDir = fixtureRoot();
+  await writeMetadata(rootDir, metadata('legacy-post', null, true));
+  writePostHtml(rootDir, 'legacy-post', { inline: [] }, { includeCover: false, includeInline: false });
+
+  const slug = 'unsafe-draft';
+  const imagePath = path.join(rootDir, 'assets', 'images', 'blog', slug, 'unsafe.svg');
+  fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+  fs.writeFileSync(imagePath,
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860">'
+    + '<script>alert(1)</script></svg>');
+  const draftPath = path.join(rootDir, 'drafts', 'blog', slug + '.md');
+  fs.mkdirSync(path.dirname(draftPath), { recursive: true });
+  fs.writeFileSync(draftPath, '![Unsafe](../../assets/images/blog/' + slug + '/unsafe.svg "Unsafe content")\n');
+
+  await assert.rejects(() => validateBlogImages({ rootDir }), /static, self-contained/i);
 });
 
 test('draft image references cannot cross into another article asset directory', async () => {

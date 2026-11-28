@@ -34,6 +34,7 @@ test('registered SVG diagrams retain the existing image metadata contract', () =
 
 test('static diagram validation rejects executable or external SVG content', () => {
   assert.doesNotThrow(() => validateStaticSvg('<svg><path marker-end="url(#arrow)"/></svg>', 'diagram.svg'));
+  assert.doesNotThrow(() => validateStaticSvg('<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg"></svg>', 'xml-declared.svg'));
   const fragments = [
     '<script>alert(1)</script>',
     '<foreignObject><div>external HTML</div></foreignObject>',
