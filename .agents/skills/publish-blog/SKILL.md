@@ -65,20 +65,7 @@ node --test scripts/blog-release-equivalence.test.js
 
 该检查逐字核对批准稿与正式稿，并核对图片字节，只允许规定的路径迁移和换行符规范化。缺少确认 commit 时按权限取得该明确版本，不能用最新 main 冒充；检查器未覆盖的路径或图片例外，按预览发布规范记录差异并人工核准，不修改允许范围来通过检查。历史文章原位维护不要求虚构 draft 批准基线；同源检查不替代下面的发布校验，也不会自动发布。
 
-每篇文章始终运行：
-
-```powershell
-node tools/blog/check-blog-taxonomy.js
-node scripts/check-blog-images.js
-node scripts/generate-search-assets.js --check
-node scripts/check-search-foundation.js
-node --test scripts/search-foundation.test.js scripts/blog-image-contract.test.js scripts/blog-image-assets.test.js scripts/blog-image-rendering.test.js scripts/public-dist.test.js
-node scripts/check-blog-body-integrity.js
-node scripts/check-repository-policy.js
-node scripts/build-public-dist.js --out build/public-dist-<slug>
-node scripts/check-public-dist.js --out build/public-dist-<slug>
-```
-
+**新文章通过 `tools/blog/publish.js` 准备时，上述确定性检查已经在同一批次执行，不要再次手工重复。** 编排器运行完整 `check-all`（包含 Node tests、taxonomy、image assets、search foundation、repository policy 等），再运行 body integrity、search asset freshness、public-dist build 和 Smoke Test。若脚本失败，只修复失败项并重跑受影响阶段；不要因为流程清单列出了命令，就无条件再跑第二遍。局部维护、脚本排查或编排器不可用时，按实际变更范围执行以下底层检查；taxonomy audit 仍只在本次实际修改 taxonomy 真源时触发。
 只有本次发布/维护实际修改了 `tools/blog/data/blog-taxonomy.json`，才运行：
 
 ```powershell
