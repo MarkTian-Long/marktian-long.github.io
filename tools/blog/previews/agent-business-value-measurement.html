@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<!--
+status:  unpublished-preview
+title:   Agent 上线后，怎样量出真实业务价值？
+tags:    [决策框架]
+slug:    agent-business-value-measurement
+summary: 企业引入 Agent，可能希望降低成本、增加产能、改善客户体验、促进增长或控制风险，但自动化率和任务成功率都不能单独证明这些结果。本文从价值目标、工作系统变化、结果归因和价值兑现四步，说明怎样判断 Agent 是否改善了业务，以及扩大任务范围是否仍值得。
+category: 商业
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent 上线后，怎样量出真实业务价值？ — Leo 的思考碎片</title>
+<!-- search-foundation:start -->
+<meta name="description" content="企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。" />
+<link rel="alternate" type="application/rss+xml" title="思考碎片 — Leo Liu" href="https://marktian-long.github.io/feed.xml" />
+<meta property="og:title" content="Agent 上线后，怎样量出真实业务价值？" />
+<meta property="og:description" content="企业引入 Agent，可能希望降低成本、增加产能、改善客户体验、促进增长或控制风险，但自动化率和任务成功率都不能单独证明这些结果。本文从价值目标、工作系统变化、结果归因和价值兑现四步，说明怎样判断 Agent 是否改善了业务，以及扩大任务范围是否仍值得。" />
+<meta property="og:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leo · AI Builder" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="从同义词表到业务语义层：企业 AI 如何减少对业务含义的猜测" />
+<meta name="twitter:description" content="企业 AI 即使找到了正确资料、查到了真实数据，也可能因为术语、对象关系、指标口径和业务规则没有被显式定义而理解错业务。本体的价值，不是让模型不再出错，而是把分散的业务含义沉淀成可被不同 AI 应用共同复用、校验和治理的语义资产。" />
+<meta name="twitter:image" content="https://marktian-long.github.io/assets/images/og-cover.png" />
+<meta name="twitter:image:alt" content="Leo · AI Builder" />
+<!-- search-foundation:end -->
+<meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%23f5f4ed'/&gt;&lt;text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='bold' fill='%23c96442'&gt;✍&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#080c18; --bg-card:rgba(255,255,255,.04); --bg-subtle:rgba(255,255,255,.07); --border:rgba(255,255,255,.08); --text-1:#f0f4ff; --text-2:#8a95b5; --text-3:#4a5270; --accent:#4f8fff; --clay:#d97757; --clay-soft:rgba(217,119,87,.12); --tag-bg:rgba(217,119,87,.12); --tag-text:#d97757; --code-bg:#0a0f1e; --font:'Source Sans 3',-apple-system,sans-serif; --font-serif:'Libre Baskerville',Georgia,serif; --radius:10px; --max-width:720px; }
+    [data-theme="light"] { --bg:#f5f4ed; --bg-card:#faf9f5; --bg-subtle:#f0eee6; --border:#e8e6dc; --text-1:#141413; --text-2:#5e5d59; --text-3:#87867f; --accent:#2563eb; --clay:#c96442; --clay-soft:rgba(201,100,66,.1); --tag-bg:rgba(201,100,66,.1); --tag-text:#c96442; --code-bg:#ece9e0; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text-1); font-family:var(--font); font-size:15px; line-height:1.75; transition:background .2s,color .2s; }
+    .page-outer { max-width:1008px; margin:0 auto; padding:40px 20px 80px; } .top-bar { margin-bottom:36px; } .back-link,.footer-nav a { color:var(--text-2); text-decoration:none; font-size:13px; } .back-link:hover,.footer-nav a:hover,a:hover { color:var(--clay); }
+    .two-col { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:48px; align-items:start; } .toc-wrap { position:sticky; top:72px; } .toc-card { padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-subtle); } .toc-card-label { display:block; margin-bottom:10px; color:var(--text-3); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; }
+    .toc-list,.toc-sublist { margin:0; padding:0; list-style:none; } .toc-list li { margin:0; } .toc-list a { display:block; padding:5px 8px; border-left:2px solid transparent; border-radius:4px; color:var(--text-2); font-size:.85rem; line-height:1.4; text-decoration:none; transition:color .15s,border-color .15s,background .15s; } .toc-list > li:not(.toc-group) > a { padding-left:38px; } .toc-list a:hover,.toc-list a.toc-active { border-left-color:var(--clay); background:var(--clay-soft); color:var(--clay); } .toc-group-row { display:flex; align-items:stretch; } .toc-group-row > a { flex:1; min-width:0; } .toc-toggle { display:grid; place-items:center; width:28px; margin-right:2px; border:0; border-radius:4px; background:transparent; color:var(--text-3); cursor:pointer; } .toc-toggle:hover,.toc-toggle:focus-visible { background:var(--clay-soft); color:var(--clay); outline:none; } .toc-toggle-icon { display:block; font-size:11px; transition:transform .15s; } .toc-toggle[aria-expanded="true"] .toc-toggle-icon { transform:rotate(90deg); } .toc-sublist { padding:1px 0 3px; } .toc-sublist a { padding-left:52px; color:var(--text-3); font-size:.76rem; } .toc-sublist a:hover,.toc-sublist a.toc-active { border-left-color:var(--clay); background:transparent; color:var(--clay); } .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .post-header { margin-bottom:36px; } .post-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; } .post-date { color:var(--text-3); font-size:13px; } #post-tags { display:inline-flex; flex-wrap:wrap; gap:6px; } .tag { padding:3px 9px; border-radius:20px; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:500; }
+    .post-title { margin:0 0 14px; color:var(--text-1); font-family:var(--font-serif); font-size:26px; line-height:1.35; } .post-summary { margin:0; padding-left:14px; border-left:3px solid var(--clay); color:var(--text-2); font-size:15px; line-height:1.65; } .divider { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .post-cover,.post-figure { margin:24px 0 32px; } .post-cover img,.post-figure img { display:block; width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-subtle); } .post-figure figcaption { margin-top:8px; color:var(--text-3); font-size:12px; line-height:1.6; }
+    .post-body h2 { margin:40px 0 14px; padding-left:10px; border-left:3px solid var(--accent); color:var(--text-1); font-size:20px; line-height:1.35; scroll-margin-top:60px; } .post-body h2:first-child { margin-top:0; } .post-body h3 { margin:28px 0 10px; color:var(--text-1); font-size:16px; scroll-margin-top:60px; } .post-body p { margin:0 0 16px; color:var(--text-1); } .post-body ul,.post-body ol { margin:0 0 16px; padding-left:20px; } .post-body li { margin-bottom:8px; } .post-body a { color:var(--accent); text-underline-offset:2px; } .post-body strong { color:var(--text-1); font-weight:600; } .post-body code { padding:1px 4px; border-radius:4px; background:var(--code-bg); font-size:.9em; } .post-body pre { margin:0 0 18px; padding:14px 16px; overflow:auto; border-radius:8px; background:var(--code-bg); color:var(--text-1); font-size:13px; line-height:1.7; } .post-body pre code { padding:0; background:transparent; font-size:inherit; } .section-break { margin:32px 0; border:0; border-top:1px solid var(--border); }
+    .blog-table { margin:24px 0 8px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); } .blog-table table { width:100%; border-collapse:collapse; font-size:13px; } .blog-table th,.blog-table td { padding:11px 12px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; } .blog-table th { background:var(--bg-subtle); color:var(--text-2); font-size:12px; font-weight:600; } .blog-table tr:last-child td { border-bottom:0; } .chart-note { margin-bottom:24px!important; color:var(--text-3)!important; font-size:12px; line-height:1.6; }
+    .callout { margin:24px 0; padding:16px 18px; border:1px solid rgba(201,100,66,.2); border-radius:var(--radius); background:var(--clay-soft); color:var(--text-2); font-size:14px; } .callout strong { color:var(--clay); }
+    .post-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); } .post-nav a { display:flex; flex-direction:column; gap:.25rem; max-width:45%; color:var(--text-1); text-decoration:none; } .post-nav-next { align-items:flex-end; margin-left:auto; } .nav-label { color:var(--text-2); font-size:.75rem; } .nav-title { font-size:.875rem; } .post-nav a:hover .nav-title { color:var(--clay); } .footer-nav { margin-top:56px; padding-top:24px; border-top:1px solid var(--border); }
+    @media (max-width:800px) { .page-outer { padding:28px 18px 64px; } .two-col { grid-template-columns:1fr; } .toc-wrap { display:none; } .post-title { font-size:23px; } }
+    .top-bar { position: sticky; top: 16px; z-index: 10; padding: 8px 0; background: var(--bg); }
+    @media (max-width: 800px) { .top-bar { top: 8px; } }
+  </style>
+<meta name="robots" content="noindex, nofollow" />
+</head>
+<body data-theme="light">
+<script src="../article-runtime.js"></script>
+  <div class="page-outer">
+    <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
+    <div class="two-col">
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、企业引入 Agent，究竟希望获得谁的什么价值？</a></li><li><a href="#section-2">二、Agent 实际改变了哪段业务工作？</a></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-3"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-3">三、怎样证明业务结果确实因 Agent 而改变？</a></div><ul class="toc-sublist" id="toc-section-3" hidden><li><a href="#section-4">先建立可比较的基线</a></li><li><a href="#section-5">技术评测能解释什么，不能证明什么？</a></li></ul></li><li class="toc-group"><div class="toc-group-row"><button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-section-6"><span class="toc-toggle-icon" aria-hidden="true">▸</span><span class="sr-only">展开子章节</span></button><a href="#section-6">四、价值是否兑现，下一步是否值得扩大？</a></div><ul class="toc-sublist" id="toc-section-6" hidden><li><a href="#section-7">不同价值需要不同的兑现证据</a></li><li><a href="#section-8">扩围要看新增任务的边际影响</a></li><li><a href="#section-9">同一套衡量问题，怎样迁移到五个研究方向？</a></li></ul></li><li><a href="#section-10">结语：不要只问 Agent 做了多少事</a></li><li><a href="#section-11">参考资料</a></li></ul></nav></aside>
+      <main>
+        <header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags"><span class="tag">决策框架</span><span class="tag">Agent</span></span></div><h1 class="post-title">Agent 上线后，怎样量出真实业务价值？</h1><p class="post-summary">企业引入 Agent，可能希望降低成本、增加产能、改善客户体验、促进增长或控制风险，但自动化率和任务成功率都不能单独证明这些结果。本文从价值目标、工作系统变化、结果归因和价值兑现四步，说明怎样判断 Agent 是否改善了业务，以及扩大任务范围是否仍值得。</p></header>
+        <hr class="divider" />
+        <div class="post-body"><figure class="post-figure"><img src="../../../assets/images/blog/agent-business-value-measurement/opening-work-system.webp" alt="纸质业务请求沿连续路径经过 Agent 工作台、业务工具和人工复核，最终形成已核验交付" width="1280" height="720" loading="lazy" decoding="async" /><figcaption>概念示意：Agent 的价值要放回完整工作系统，连同工具执行、人工判断和最终验收一起衡量。</figcaption></figure>
+<p>Agent 指标看起来不错，企业却未必因此得到更多价值。</p>
+<p>Intercom 在 2026 年 8 月调整其客服 Agent Fin 的表现指标时，给出过一个说明分母变化的例子：1,000 次会话中，Fin 解决了 250 次；旧口径把 750 次 Fin 参与会话（Fin Involved）作为解决率分母，得到约 33%；新口径只把 Fin 实际有机会回答的 500 次纳入分母，解决率变成 50%。解决数量仍是 250 次，自动化率也保持在 25%，变化的是解决率的分母。<a href="https://www.intercom.com/help/en/articles/15599377-update-to-fin-performance-metrics" target="_blank" rel="noopener noreferrer">Intercom 对 Fin 指标口径的说明</a>明确指出，Fin 没有机会回答的受限会话不再计入 Fin Involved。这个口径更适合诊断 Fin 在适格会话中的表现，但新旧解决率不能直接当作同一条业务结果曲线比较。</p>
+<p>人工参与也会改变指标的含义。Fin 的人工协同（Human in the Loop）功能允许它向同事请求信息、审批或判断，再由 Fin 发出最终回复；如果最终由 Fin 完成解决，这类会话仍计入 Fin 的解决率和自动化率。若同事直接接管，才会被报告为升级处理。<a href="https://www.intercom.com/help/en/articles/16198358-ask-a-teammate-for-help-with-fin-s-replies-human-in-the-loop" target="_blank" rel="noopener noreferrer">Intercom 的人工协助规则</a>说明，产品指标中的“自动完成”未必意味着全程没有人。</p>
+<p>计费口径又是另一层。Fin 的计费文档把解决（Resolution）、流程交接（Procedure handoff）等列为不同的可计费结果（outcome），每段会话最多计一次；计费结果、解决率和自动化率不是同一指标。<a href="https://www.intercom.com/help/en/articles/8205718-fin-ai-agent-outcomes" target="_blank" rel="noopener noreferrer">Fin 的 outcome 定义</a></p>
+<p>这些例子引出本文真正关心的问题：看板上的自动化率、解决率和成功率，究竟说明了什么？它们能否证明企业降低了成本、增加了产能、获得了新增收入，或者让客户得到更好的结果？</p>
+<p>本文关注企业采用方在 Agent 上线后的持续衡量，不重讲模型排行榜和概念验证（POC）的投入前验证。金融 B 端 AI POC 的业务基线、价值假设、验证门槛和阶段决策，已在<a href="https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html" target="_blank" rel="noopener noreferrer">《AI POC 到底在验证什么？》</a>中展开。这里所说的 Agent（智能体），是能在限定任务中读取业务状态、调用工具并推进工作、必要时请求人工介入的系统；只生成文本的聊天助手不在主讨论范围内。本文仍引用 AI 辅助人工和生成式 AI 工作流研究作为对照证据，但不会把它们直接当作自主 Agent 的效果。这里继续追问的是：当系统进入日常运营后，怎样证明它改变了真实业务，以及这些变化是否值得持续投入？</p>
+<p>为了把这些问题变成可执行的衡量顺序，本文归纳为四步；这是本文的工作框架，不是行业统一标准。</p>
+<figure class="post-figure"><img src="../../../assets/images/blog/agent-business-value-measurement/four-step-map.svg" alt="Agent 业务价值的四步衡量框架：价值目标与主体、工作系统变化、结果证据与归因、价值兑现与投入决策" width="1280" height="1024" loading="lazy" decoding="async" /><figcaption>四个连续判断构成本文主线；技术指标用于诊断，授权、安全、质量与合规作为护栏。</figcaption></figure>
+<h2 id="section-1">一、企业引入 Agent，究竟希望获得谁的什么价值？</h2>
+<p>先不要问 Agent 能完成多少任务，而要问：<strong>谁希望得到什么结果，谁为它付钱，又由谁承担成本和风险？</strong></p>
+<p>同一个 Agent 项目，可能同时影响几类主体：</p>
+<div class="blog-table"><table><thead><tr><th>价值主体</th><th>可能获得的价值</th><th>也可能承担的代价</th></tr></thead><tbody><tr><td>客户</td><td>更快得到答复、少重复说明、问题被完整解决</td><td>错误建议、反复补充信息、失去人工服务入口</td></tr><tr><td>员工</td><td>少做重复劳动，把精力转向复杂判断</td><td>额外审核、异常处理、任务切换和责任压力</td></tr><tr><td>企业采用方</td><td>降低可变成本、增加合格产出、改善转化或控制风险</td><td>模型与工具费用、集成运维、质量和合规责任</td></tr><tr><td>Agent 供应商</td><td>获得订阅、调用或交易收入，积累产品使用反馈</td><td>推理和服务成本、客户流失、故障与服务责任</td></tr></tbody></table></div>
+<p>价值创造和价值捕获不能混为一谈。客户等待时间下降，说明客户体验可能改善；员工每小时完成的合格任务增加，说明运营产能可能提高；只有当这些变化进一步形成可验证的收入、已兑现的成本下降或风险损失减少时，企业才获得相应的经济回报。客户收益、企业回报与资本市场估值之间的区别，已在<a href="https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html" target="_blank" rel="noopener noreferrer">《技术最领先的人，为什么不一定拿走最大的价值？》</a>中讨论过；本文把问题落到 Agent 上线后的结果衡量与经营决策。</p>
+<p>有些价值暂时无法可靠折算成现金。企业可能愿意为更稳定的服务质量、降低重大错误风险，或者过去无法经济提供的新服务投入资源。这些结果可以单独报告，但不应为了得到一个 ROI 数字而强行折算。</p>
+<p><strong>先选业务目标，再选主指标。</strong></p>
+<p>不同的采用理由，对应不同的结果变量：</p>
+<div class="blog-table"><table><thead><tr><th>主要目标</th><th>更接近业务结果的观察项</th><th>需要同时防止的副作用</th></tr></thead><tbody><tr><td>效率与成本</td><td>每个合格交付的全成本、实际外包或加班支出</td><td>质量下降、返工和人工审核增加</td></tr><tr><td>产能与吞吐</td><td>单位时间的合格产出、积压量、端到端周期</td><td>低价值任务堆积、员工负荷转移</td></tr><tr><td>收入与增长</td><td>可归因的新增转化、收入、留存或复购</td><td>退款、投诉、渠道替代和获客成本</td></tr><tr><td>质量与客户结果</td><td>一次解决、重开、错误、客户满意度</td><td>只优化平均值而伤害复杂用户</td></tr><tr><td>风险与合规</td><td>预期损失、违规事件、严重错误和控制有效性</td><td>误报、漏报、审批成本和授权失控</td></tr><tr><td>新能力与服务范围</td><td>原本无法经济提供的任务、新服务采用率和贡献毛利</td><td>需求不足、交付质量与服务成本</td></tr></tbody></table></div>
+<p>表中的结果是候选项，不是要求每个项目全部设置一遍关键绩效指标（KPI）。销售 Agent 应优先衡量它试图改善的转化或收入，同时监控错误承诺、退款和投诉；风险审核 Agent 则可能优先关注损失事件和违规风险，同时控制误报及人工复核负担。每个项目先选一个与采用理由一致的主结果，再配少量不可忽略的质量、安全或成本护栏，避免在结果出来后才挑选最好看的数字。</p>
+<p>真实业务研究也说明，结果方向会随任务类型变化。一项在线聊天随机实验发现，AI 建议能改善客服效率和客户情绪，但在重复投诉等超出系统能力的场景中效果较弱。研究还发现，先经历聊天机器人理解失败的客户，随后转给 AI 辅助人工客服时，情绪评价可能更差；研究者将其解释为 AI 更快的回复让客户误以为仍在和机器人交流，先前的失败体验因此延续。<a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2022.03920" target="_blank" rel="noopener noreferrer">这项 Management Science 研究</a>研究的是 AI 辅助人工，不是自主 Agent，但它说明平均处理时间不能代替客户结果。</p>
+<p>收入增长也需要看具体业务场景。一个跨境零售平台在 2023—2024 年把生成式 AI（GenAI）增强能力接入客服、商品匹配、广告和卖家服务等七类业务应用，覆盖数百万用户和商品。随机现场实验发现，各应用的销售影响从 0 到 16.3% 不等；这项研究已于 2026 年 11 月 6 日在线发表于 <em>Management Science</em>。<a href="https://doi.org/10.1287/mnsc.2026.00623" target="_blank" rel="noopener noreferrer">零售平台 GenAI 现场实验</a>证明了 GenAI 在部分业务流程中可能带来销售增量，但它不是自主 Agent 的部署实验，也不能据此推断 Agent 普遍提高销售。</p>
+<h2 id="section-2">二、Agent 实际改变了哪段业务工作？</h2>
+<p>确定目标后，第二个问题不是“Agent 做了多少次调用”，而是：<strong>原来哪一项业务工作，现在由谁、通过什么路径完成？</strong></p>
+<p>衡量单位应当尽可能贴近业务对象，而不是模型调用或聊天轮次。客服场景可能是一件客户问题，交易场景可能是一笔订单，金融场景可能是一项审核申请，研发场景可能是一项最终合并的代码变更。同一业务对象可能经过多个会话、系统和人员；如果只统计 Agent 处理过的那一段，后续接管、返工或重开就容易漏掉。</p>
+<figure class="post-figure"><img src="../../../assets/images/blog/agent-business-value-measurement/workflow-before-after.svg" alt="Agent 进入前后的典型业务流程对照：人工分流与处理，转为 Agent 在授权范围内执行，按风险分流到工具执行或人工判断，最后核验交付" width="1280" height="1024" loading="lazy" decoding="async" /><figcaption>示意流程，不代表某家企业的实测流程；Agent 可能减少重复交接，也可能增加授权、审批与核验。</figcaption></figure>
+<p>引入 Agent 不等于流程节点必然减少。它可以替人收集上下文、查询系统、生成方案或执行低风险动作，也可能引入新的授权检查、状态核验和异常升级。节点数量只是表面变化，端到端交付是否更快、更好、更可靠才是判断依据。</p>
+<p><strong>把人机分工拆开记录。</strong></p>
+<p>人工参与至少有三种不同形态：</p>
+<ul><li><strong>提供信息或建议：</strong>人补充背景、纠正事实，Agent 继续处理。</li><li><strong>审批关键动作：</strong>Agent 准备结果，人确认后再执行或发送。</li><li><strong>完整接管：</strong>Agent 无法继续，业务转回人工完成。</li></ul>
+<p>三者的人工成本、风险和业务含义不同。一次必要审批可能是高质量交付的组成部分，不应自动计为失败；但如果团队把完整接管也算成“自动完成”，就会低估人工负担。</p>
+<p>因此，至少要区分业务需求总量、适格任务、分配给 Agent 的任务、实际启动、最终验收、人工协助、完整接管、失败和后续重开。分母规则应在观察前确定；任务一旦分配给 Agent，无论最终成功、失败、超时还是转人工，都要留在部署效果的统计范围内。对无法跨渠道关联的对象，后续重开和补救成本应记为未知，而不是当作零。</p>
+<p>淘宝客服的一项随机现场实验展示了这种全局影响。研究在 2024 年 8 月 15—31 日随机分配 647 名客服人员，其中 302 人进入实验组、345 人进入对照组，实验期间共观察 680,676 次会话；其中 39,432 次（5.8%）被预先标记为 AI 适格。论文把适格会话定义为可由 Agent 自主处理的标准化问题，非适格会话则是需要人工完整处理的非标准化问题。实验组员工监督 Agent 处理适格会话，同时继续处理非适格会话；每个适格会话仍由指定员工监督，必要时可以接管，因此这不是无人监督的全自动部署。</p>
+<p>实验期间，整体聊天时长下降约 3.2%，但总体客户评分和 7 天内同一问题再次联系的变化都不显著。分组后，适格会话时长下降 16.8%、客户评分下降 0.412 分；非适格会话时长下降 1.8%、客户评分上升 0.091 分。<a href="https://arxiv.org/abs/2605.14830" target="_blank" rel="noopener noreferrer">Wang 等人的淘宝客服现场实验预印本</a></p>
+<p>另一项同行评审研究 <em>Generative AI at Work</em> 分析了 5,172 名客服人员分批使用 AI 助手后的表现，观察到每小时解决问题数量平均增加约 15%。<a href="https://doi.org/10.1093/qje/qjae044" target="_blank" rel="noopener noreferrer">这项 Quarterly Journal of Economics 研究</a>说明，即使人仍在关键环节，AI 也可能改善真实产出；它研究的是人工使用 AI 助手，不是自主 Agent，不能把“有人参与”简单判成自动化失败，也不能把它当作全自动部署的效果证明。</p>
+<h2 id="section-3">三、怎样证明业务结果确实因 Agent 而改变？</h2>
+<p>流程图说明工作方式可能怎样变化，但它本身不能证明结果改善。第三步要回答：<strong>相对于原来的工作方式，业务结果是否变好？有多少变化能够归因于 Agent 介入？</strong></p>
+<p>为避免把不同层级的数字混在一起，本文把指标分为三类：</p>
+<figure class="post-figure"><img src="../../../assets/images/blog/agent-business-value-measurement/measurement-evidence-map.svg" alt="从技术表现到经营结果的衡量地图：业务结果、流程机制、Agent 诊断指标，以及横跨各层的基线与护栏" width="1280" height="1024" loading="lazy" decoding="async" /><figcaption>业务结果、流程机制与 Agent 诊断指标承担不同职责；图示是诊断层级，不表示单向因果。</figcaption></figure>
+<ul><li><strong>业务结果指标</strong>回答企业最终得到了什么，例如合格产出、收入、客户结果或风险变化。</li><li><strong>流程机制指标</strong>解释变化通过什么发生，例如等待时间、交接次数、人工接管、返工、积压和重开。</li><li><strong>Agent 诊断指标</strong>解释系统在限定任务中的表现，例如最终状态是否正确、完整验收率、重复可靠性、工具错误、延迟和调用成本。</li></ul>
+<p>这三类指标是诊断层级，不与前面的四步一一对应；每一步都可能同时使用业务结果、流程机制和 Agent 诊断指标。授权、安全、合规和关键质量要求是不可折抵的护栏，不能用平均收益抵消一次越权操作或严重质量事故。</p>
+<h3 id="section-4">先建立可比较的基线</h3>
+<p>一个可信的比较至少需要明确五件事：</p>
+<ol><li><strong>目标结果：</strong>最初希望改善的业务结果是什么，质量门槛是什么？</li><li><strong>业务对象与分母：</strong>哪些需求进入观察，哪些符合 Agent 的适用条件？</li><li><strong>完整策略：</strong>任务被分配后，无论成功、失败、超时还是人工接管，都记录最终结果。</li><li><strong>比较对象：</strong>没有采用 Agent 时，类似业务对象会怎样处理？</li><li><strong>观察窗口：</strong>是否覆盖后续重开、退款、投诉、复访或风险事件？</li></ol>
+<p>如果可以随机分配，随机化单位应匹配真实资源边界。客服人员共享队列和审核资源时，按单条会话分配可能产生组间影响；团队、班次或分阶段上线有时更适合，但仍要控制需求和人员结构差异。无法随机化时，可以使用匹配样本或前后对照，但应降低因果结论的强度。</p>
+<p>尤其要防止任务选择偏差：如果团队只把最容易处理的请求交给 Agent，再用这些成功任务与人工处理的复杂请求比较，结果很可能高估 Agent 的效果。应按事先定义的分配规则观察整体策略，而不是只分析最终成功的子样本。如果上线时同时更换了模型、知识库、审批规则和人员分工，初期最多只能把效果归因于这套组合改造；除非有额外的实验设计，否则不能把全部改善单独归给模型。</p>
+<h3 id="section-5">技术评测能解释什么，不能证明什么？</h3>
+<p>技术评测仍然重要，但它回答的是局部能力和交付约束，不直接等于经营结果。</p>
+<p>2026 年 11 月发布的 ShellBench 预印本给出一个直观例子：在一项晚餐餐厅推荐任务中，Agent 531 次尝试里有 522 次选对了餐厅，但只有 152 次满足全部九项要求；其中 331 次仅因为没有写明支持预算和时间判断的文件来源而失败。<a href="https://arxiv.org/html/2611.32946v1" target="_blank" rel="noopener noreferrer">ShellBench 预印本</a>把任务正确性和证据完整性分开评分，说明“选对答案”不等于“交付已经完成”。</p>
+<p>该基准的 90 项任务使用大模型评审，抽样的 278 条判据与人工共识有 89.9% 的一致率；这个数字只描述抽样判据的一致性，不是整项任务的准确率。全体 53,100 次运行中，15.7% 至少违反一条安全判据；其中 2,589 次虽然通过全部正确性判据，仍未通过安全要求。这里的安全失败是该基准规则下的判据违例，不等于真实业务伤害发生的概率。</p>
+<p>成本也不能只看 Token（词元）单价。Arize 与 Fireworks 的公开示例在 40 项 Terminal-Bench 终端操作任务、10 个模型、每项 6 次试验中计算成功任务成本。最便宜的配置每个成功任务约 0.054 美元，但按至少 4/6 次成功定义的稳定覆盖只有 8/40 项；更贵的配置每个成功任务约 0.636 美元，却能稳定完成 25/40 项。<a href="https://github.com/Arize-ai/fireworks-cost-benchmark" target="_blank" rel="noopener noreferrer">这份 cost-per-success benchmark</a></p>
+<p>这份由厂商维护的公开示例从更大的 Terminal-Bench 中筛选了任务子集，不是可直接横向比较的排行榜；价格按 2026 年 7 月的 API 价计算，不是当前报价。它只计算模型运行成本，没有包含人工审核、集成和运维。因此，成功任务成本必须和能力覆盖范围一起看。</p>
+<p><a href="https://arxiv.org/abs/2407.01502" target="_blank" rel="noopener noreferrer">《AI Agents That Matter》</a>指出，面向产品采购的 Agent 评测应把美元成本与准确率放在一起看；基准还需要与任务泛化层级相匹配的留出集，避免模型利用训练集捷径。</p>
+<p>对于需要稳定履责的场景，重复成功与偶尔成功不是同一回事。<a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">τ-bench</a>把两种统计方式区分开：pass@k 表示多次尝试中至少成功一次的概率；pass^k 则表示 k 次尝试全部成功的概率。前者可以衡量“多试几次能否找到一次可用答案”，后者更接近“能否稳定承担这项工作”。</p>
+<p>时间也应拆开记录：员工实际投入时间、业务端到端历时和 Agent 执行时长不能互相替代。METR 在 2026 年更新开发者生产率实验设计时指出，使用多个 Agent 并行会让部分参与者难以准确填报单项任务耗时；同时，30%—50% 的受访开发者表示，他们会跳过一些不愿在没有 AI 的情况下完成的任务。<a href="https://metr.org/blog/2026-02-24-uplift-update/" target="_blank" rel="noopener noreferrer">METR 的实验更新</a>提醒我们，任务选择和时间测量本身都会影响生产率估计。这不是企业 Agent 的效果数据，而是衡量方法上的警告。</p>
+<h2 id="section-6">四、价值是否兑现，下一步是否值得扩大？</h2>
+<p>结果得到改善之后，还要区分企业已经拿到了什么、哪些只是潜在能力，以及扩大范围是否仍然划算。</p>
+<h3 id="section-7">不同价值需要不同的兑现证据</h3>
+<div class="blog-table"><table><thead><tr><th>观察到的变化</th><th>可以报告什么</th><th>还不能直接声称什么</th></tr></thead><tbody><tr><td>人工少花时间</td><td>可释放的产能</td><td>工资支出已经下降</td></tr><tr><td>相同团队处理更多合格任务</td><td>吞吐和运营能力提高</td><td>每个新增任务都产生了收入</td></tr><tr><td>更多客户完成购买</td><td>交易或转化增加</td><td>全部订单都是净新增</td></tr><tr><td>客户体验改善</td><td>服务质量或满意度改善</td><td>企业利润必然增加</td></tr><tr><td>严重错误减少</td><td>风险暴露降低</td><td>所有风险都能可靠货币化</td></tr><tr><td>原本不可行的服务开始可提供</td><td>新业务能力或战略选择权</td><td>已形成可验证的短期投资回报率（ROI）</td></tr></tbody></table></div>
+<p>如果项目需要一个可审计的净经济贡献，可以按统一观察期采用一条简化核算式：</p>
+<p><strong>净经济贡献 = 可归因的增量贡献毛利 + 未计入上述毛利的已兑现可变支出节省 + 可合理估算的预期损失减少 − Agent 全生命周期增量成本。</strong></p>
+<p>这里的口径需要先统一：增量贡献毛利按扣除原有业务变动成本、但尚未扣除本项目 Agent 增量成本计算；第二项只计未在毛利中体现的已兑现节省，Agent 的模型、工具、人工协助、接管、集成与运维等增量成本统一在最后扣除。员工节省一小时，如果工资没有减少，也没有发生实际外包或加班支出下降，这一小时首先是可用产能，而不是现金节省；如果这段时间又被用于处理新增业务，可以计算新增产出的贡献毛利，但不能再把同一小时算作工资节省。风险降低只有在发生概率和损失金额可以合理估算时，才进入预期损失；客户体验、合规韧性和新服务能力等难以货币化的收益应单独报告。</p>
+<p>成本也必须按完整交付周期核算。除了模型推理和工具调用，还要考虑重试、失败、人工审核、异常接管、系统集成、监控运维、权限治理、培训和流程变更。</p>
+<h3 id="section-8">扩围要看新增任务的边际影响</h3>
+<p>扩大 Agent 的任务范围后，自主完成比例可能下降，但整体经济性仍可能改善；反过来，共享人工资源被挤占，也可能抵消扩围收益。</p>
+<p>下面是一个纯假设算例：一个观察窗口内有 100 个常规问题和 20 个复杂问题，全部按相同质量门槛交付。人工处理常规问题每件 10 元，复杂问题每件 50 元。Agent 方案的单件成本已经包含模型、工具、人工协助和接管支出；这里假定人工支出是可变的外包或加班成本，不把固定工资自动当作节省。</p>
+<div class="blog-table"><table><thead><tr><th>方案</th><th>常规任务成本</th><th>复杂任务成本</th><th>总变动成本</th><th>未发生完整接管比例</th></tr></thead><tbody><tr><td>全部人工</td><td>1,000 元</td><td>1,000 元</td><td>2,000 元</td><td>—</td></tr><tr><td>Agent 只处理常规任务</td><td>600 元</td><td>1,000 元</td><td>1,600 元</td><td>80%</td></tr><tr><td>Agent 扩大到复杂任务</td><td>600 元</td><td>700 元</td><td>1,300 元</td><td>76.7%</td></tr><tr><td>扩围并挤占原有复核资源</td><td>600 元 + 400 元</td><td>700 元</td><td>1,700 元</td><td>76.7%</td></tr></tbody></table></div>
+<p>在第二种 Agent 方案中，100 个常规任务的全部变动成本是每件 6 元，其中 80 件没有发生完整接管。扩大到复杂任务后，假设复杂任务每件成本 35 元，其中 12 件没有发生完整接管。未发生完整接管的任务比例变成 92/120，约为 76.7%，低于原来的 80%；但总成本从 1,600 元降到 1,300 元。</p>
+<p>新增复杂任务的单件成本仍低于原有人工处理成本，因此整体成本仍可能下降；自主完成比例下降只说明更多任务需要人工参与，不能单独决定扩围是否划算。但如果新增复杂任务挤占共享复核资源，使原有任务额外增加 400 元成本，总成本就会变成 1,700 元；相较于不扩围的 1,600 元，扩大范围反而多花 100 元。</p>
+<p>这个算例没有计入新增固定建设成本，也没有把满意度、风险和战略价值强行折算成钱。它说明扩围决策要看新增任务本身，以及它对原有工作系统的共同影响，而不是把原有任务的平均收益直接外推。</p>
+<h3 id="section-9">同一套衡量问题，怎样迁移到五个研究方向？</h3>
+<p>这五个方向的研究对象不同，但可以沿用相同的四个问题：</p>
+<div class="blog-table"><table><thead><tr><th>研究方向</th><th>更值得观察的业务结果</th><th>关键护栏</th></tr></thead><tbody><tr><td>技术评测与执行框架（Harness）</td><td>合格交付量、返工、交付周期</td><td>正确性、安全和可追溯性</td></tr><tr><td>多 Agent（多智能体）工作组织</td><td>净合格吞吐、端到端周期</td><td>协调成本、冲突和人工审查负担</td></tr><tr><td>个人 Agent（Personal Agent）</td><td>完整事务是否推进、用户少承担多少跟进</td><td>授权、遗漏和补救能力</td></tr><tr><td>企业治理与金融 Agent</td><td>安全可执行的业务范围、风险事件</td><td>权限、审计、撤权和责任</td></tr><tr><td>Agentic Commerce（Agent 参与的商业交易）</td><td>净新增交易、贡献利润和复购</td><td>用户授权、退款、履约和信任</td></tr></tbody></table></div>
+<p>多 Agent 系统不能只比较并行任务数，还要扣除协调、冲突和审查成本；Personal Agent 不能只看一次任务成功率，还要看完整事务是否持续推进，这与<a href="https://marktian-long.github.io/tools/blog/posts/personal-agent.html" target="_blank" rel="noopener noreferrer">《Personal Agent：当 AI 开始长期接手你的事》</a>讨论的持续委托价值相呼应；面向交易的 Agent 则必须区分来源订单和净新增交易，相关的渠道迁移、交易完成与贡献利润问题已在<a href="https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html" target="_blank" rel="noopener noreferrer">《当 AI 开始替用户付款，谁真正拥有交易？》</a>中展开。</p>
+<p>这些方向不需要使用同一个主指标。它们共享的是同一套衡量顺序：先确定价值主体和目标，再描述工作方式变化，证明结果及归因，最后判断价值是否兑现、扩围是否仍然划算。</p>
+<h2 id="section-10">结语：不要只问 Agent 做了多少事</h2>
+<p>Agent 的业务价值，不在于它完成了多少动作，而在于它是否让目标主体在完整工作系统中获得了可验证的业务结果。企业因此要同时观察任务如何进入系统、人与 Agent 如何分工、业务结果如何验收，以及新增成本和风险落在了哪里。</p>
+<p>技术能力决定某些工作是否可能交给 Agent；产品设计决定它如何进入真实流程；组织安排决定人和 Agent 如何协作；商业衡量则要证明这些变化是否带来了企业真正需要的结果。</p>
+<p><strong>Agent 上线不是价值证明的终点，而是持续衡量的起点。</strong></p>
+<h2 id="section-11">参考资料</h2>
+<h3 id="section-12">产品指标与官方规则</h3>
+<ul><li><a href="https://www.intercom.com/help/en/articles/15599377-update-to-fin-performance-metrics" target="_blank" rel="noopener noreferrer">Intercom：Update to Fin performance metrics</a></li><li><a href="https://www.intercom.com/help/en/articles/16198358-ask-a-teammate-for-help-with-fin-s-replies-human-in-the-loop" target="_blank" rel="noopener noreferrer">Intercom：Human in the Loop</a></li><li><a href="https://www.intercom.com/help/en/articles/8205718-fin-ai-agent-outcomes" target="_blank" rel="noopener noreferrer">Intercom：Fin AI Agent outcomes</a></li></ul>
+<h3 id="section-13">同行评审研究</h3>
+<ul><li><a href="https://doi.org/10.1093/qje/qjae044" target="_blank" rel="noopener noreferrer">Brynjolfsson, Li &amp; Raymond：Generative AI at Work</a></li><li><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2022.03920" target="_blank" rel="noopener noreferrer">Zhang &amp; Narayandas：Engaging Customers with AI in Online Chats</a></li><li><a href="https://doi.org/10.1287/mnsc.2026.00623" target="_blank" rel="noopener noreferrer">Generative Artificial Intelligence and Sales Productivity: Field Experiments in Online Retail</a></li></ul>
+<h3 id="section-14">预印本研究与现场实验</h3>
+<ul><li><a href="https://arxiv.org/abs/2605.14830" target="_blank" rel="noopener noreferrer">Wang et al.：Agentic AI and Human-in-the-Loop Interventions</a></li><li><a href="https://arxiv.org/html/2611.32946v1" target="_blank" rel="noopener noreferrer">ShellBench：What Matters More for AI Agents, Models, or Harness for Everyday Tasks</a></li><li><a href="https://arxiv.org/abs/2407.01502" target="_blank" rel="noopener noreferrer">AI Agents That Matter</a></li><li><a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">Yao et al.：τ-bench</a></li></ul>
+<h3 id="section-15">公开基准与实验设计</h3>
+<ul><li><a href="https://github.com/Arize-ai/fireworks-cost-benchmark" target="_blank" rel="noopener noreferrer">Arize × Fireworks：Cost per Successful Task benchmark</a>（厂商维护的公开基准）</li><li><a href="https://metr.org/blog/2026-02-24-uplift-update/" target="_blank" rel="noopener noreferrer">METR：We are Changing our Developer Productivity Experiment Design</a>（研究机构的实验设计说明）</li></ul>
+<h3 id="section-16">相关历史文章</h3>
+<ul><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-poc-financial-b2b-guide.html" target="_blank" rel="noopener noreferrer">AI POC 到底在验证什么？</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/ai-innovation-value-capture.html" target="_blank" rel="noopener noreferrer">技术最领先的人，为什么不一定拿走最大的价值？</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/personal-agent.html" target="_blank" rel="noopener noreferrer">Personal Agent：当 AI 开始长期接手你的事</a></li><li><a href="https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html" target="_blank" rel="noopener noreferrer">当 AI 开始替用户付款，谁真正拥有交易？</a></li></ul></div>
+        <section class="continue-reading" id="continueReading" hidden aria-labelledby="continueReadingHeading">
+  <h2 class="continue-reading-heading" id="continueReadingHeading">继续阅读</h2>
+  <div class="continue-reading-list" id="continueReadingList"></div>
+</section>
+        <nav class="post-nav" id="postNav"><a class="post-nav-prev" id="navPrev" style="display:none" href="#"><span class="nav-label">← 上一篇</span><span class="nav-title" id="navPrevTitle"></span></a><a class="post-nav-next" id="navNext" style="display:none" href="#"><span class="nav-label">下一篇 →</span><span class="nav-title" id="navNextTitle"></span></a></nav>
+        <nav class="footer-nav"><a href="../index.html">← 返回列表</a></nav>
+      </main>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var sections = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+      var links = document.querySelectorAll('.toc-list a');
+      function setGroupExpanded(group, expanded) {
+        var toggle = group && group.querySelector('.toc-toggle');
+        var sublist = group && group.querySelector('.toc-sublist');
+        if (!toggle || !sublist) return;
+        toggle.setAttribute('aria-expanded', String(expanded));
+        sublist.hidden = !expanded;
+      }
+      document.querySelectorAll('.toc-toggle').forEach(function(toggle){
+        toggle.addEventListener('click', function(){
+          setGroupExpanded(toggle.closest('.toc-group'), toggle.getAttribute('aria-expanded') !== 'true');
+        });
+      });
+      if (!sections.length || !links.length) return;
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          var active = Array.prototype.find.call(links, function(link){ return link.getAttribute('href') === '#' + id; });
+          links.forEach(function(link){ link.classList.toggle('toc-active', link === active); });
+          if (active) setGroupExpanded(active.closest('.toc-group'), true);
+        });
+      }, { rootMargin:'-20% 0px -70% 0px' });
+      sections.forEach(function(section){ observer.observe(section); });
+    })();</script>
+<script src="/assets/js/analytics.js" defer></script>
+</body>
+</html>
