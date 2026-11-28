@@ -13,7 +13,7 @@ const workflowPaths = [
 
 function finalValidationSection() {
   const skill = fs.readFileSync(canonicalSkillPath, 'utf8');
-  return skill.slice(skill.indexOf('## 3. 验证与提交'), skill.indexOf('## 4. 推送 HITL'));
+  return skill.slice(skill.indexOf('## 3. 验证与提交'), skill.indexOf('## 4. 分支写入与推送 HITL'));
 }
 
 test('ordinary blog publishing always runs taxonomy validation without requiring a taxonomy base ref', () => {
@@ -41,7 +41,8 @@ test('publish workflow documentation consistently describes conditional taxonomy
 // These checks apply to every main-branch build, not only to manual publication.
 test('CI runs blog taxonomy/source sync, release equivalence and Continue Reading shell checks', () => {
   const source = fs.readFileSync(path.join(__dirname, 'check-all.js'), 'utf8');
-  assert.match(source, /\['Blog taxonomy and source sync', node, \['tools\/blog\/check-blog-taxonomy\.js'\], repoRoot\]/);\n  assert.match(source, /\['Blog release source equivalence', node, \['scripts\/check-blog-release-equivalence\.js'\], repoRoot\]/);
+  assert.match(source, /\['Blog taxonomy and source sync', node, \['tools\/blog\/check-blog-taxonomy\.js'\], repoRoot\]/);
+  assert.match(source, /\['Blog release source equivalence', node, \['scripts\/check-blog-release-equivalence\.js'\], repoRoot\]/);
   assert.match(source, /\['Blog Continue Reading shells', node, \['scripts\/migrate-blog-continue-reading\.js', '--check'\], repoRoot\]/);
 });
 
