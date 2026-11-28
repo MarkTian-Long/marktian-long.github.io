@@ -86,7 +86,7 @@ Ben Shneiderman 在 1983 年讨论[直接操纵（Direct Manipulation）](https:
 
 Norman 在[《Cognitive Engineering》](https://www.researchgate.net/publication/235616560_Cognitive_Engineering)中把结果评估细化为感知、解释和对照目标。监控任务还可能反过来启动行动：用户先看到指标越界或收到提醒，才决定调查什么。持续可见的状态视图因此既帮助用户核验已有操作，也可能成为形成下一步意图的入口。
 
-[Graphics Interface 2026 的一项监控研究](https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf)让 24 名没有鱼场数据经验的学生分别使用聊天和看板完成分析任务。在 180 秒限制内，看板的任务完成率为 87.7%，聊天界面为 70.5%；在完整完成的任务中，看板总体耗时显著更短；正确率和系统可用性评分未见显著差异。逐任务进行多重比较校正后，只有 10 项中的 3 项时间差异仍显著。参与者反馈看板便于快速定位精确值，聊天适合灵活探索。这些结果只适用于该实验的任务和参与者，不能证明看板普遍优于聊天。
+[Graphics Interface 2026 的一项监控研究](https://doi.org/10.1145/3831423.3831460)（[会议官方论文列表](https://conferences.graphicsinterface.org/2026/papers/)，[作者公开 PDF](https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf)）让 24 名没有鱼场数据经验的学生分别使用聊天和看板完成分析任务。在 180 秒限制内，看板的任务完成率为 87.7%，聊天界面为 70.5%；在完整完成的任务中，看板总体耗时显著更短；正确率和系统可用性评分未见显著差异。逐任务进行多重比较校正后，只有 10 项中的 3 项时间差异仍显著。参与者反馈看板便于快速定位精确值，聊天适合灵活探索。这些结果只适用于该实验的任务和参与者，不能证明看板普遍优于聊天。
 
 **状态是否最新，和状态如何呈现，是两项不同的设计决策。** 用户需要知道数据来源、更新时间，以及看到的是正式业务记录还是模型解释。异常提醒也应以事件重要性和用户是否需要介入为条件，不必把每次状态变化都变成一次打断。
 
@@ -107,7 +107,7 @@ Norman 在[《Cognitive Engineering》](https://www.researchgate.net/publication
 
 评估方案时，应比较整条任务链：表达与澄清花了多久，用户能否找到信息、理解状态和发现错误，出错后如何恢复，切换界面时是否还要重复解释，而不是只看点击次数或对话轮数。
 
-即使未来许多界面都能按需生成，界面怎样产生与用户日后怎样使用它，仍是两个不同的问题。2026 年 11 月 24 日，Anthropic 推出 [Claude Artifacts 的 Install as app 功能](https://claude.com/resources/articles/install-as-app)（Beta）：用户可以先通过聊天创建并试用交互工具，再把它安装为 Mac 或 Windows 上有独立图标和窗口的应用。以厂商介绍的待发货订单跟踪工具为例，日常使用可以从应用窗口开始，而不必每次回到原对话。底层 Artifact 的修改会同步到应用；但打开应用仍需联网并登录 Claude，访问本地系统能力须获相应授权。
+即使未来许多界面都能按需生成，界面怎样产生与用户日后怎样使用它，仍是两个不同的问题。2026 年 11 月 24 日，Anthropic 为 Claude Artifacts（可交互的 AI 生成产物）推出 [Install as app 功能](https://claude.com/resources/articles/install-as-app)（Beta）：用户可以先通过聊天创建并试用交互工具，再把它安装为 Mac 或 Windows 上有独立图标和窗口的应用。以厂商介绍的待发货订单跟踪工具为例，日常使用可以从应用窗口开始，而不必每次回到原对话。底层 Artifact 的修改会同步到应用；但打开应用仍需联网并登录 Claude，访问本地系统能力须获相应授权。
 
 这提供了一种不同于固定页面和临时生成卡片的组合：聊天负责按需创建或修改工具，工具本身作为可再次进入的工作界面。生成速度不等于长期使用效果，能单独打开也不等于数据自动更新或版本已受控。设计仍需根据使用频率、状态来源、版本与权限决定哪些界面应持久保留。
 
@@ -125,9 +125,9 @@ Norman 在[《Cognitive Engineering》](https://www.researchgate.net/publication
 
 - [Priyan Vaithilingam et al., “DynaVis: Dynamically Synthesized UI Widgets for Visualization Editing,” CHI 2024](https://doi.org/10.1145/3613904.3642639)
 
-### 会议论文公开稿
+### 会议论文
 
-- [Melika Besharati Amirkandeh and Derek Reilly, “A Comparative Evaluation of Natural Language and Dashboard Visualization Interfaces for Data Monitoring Tasks,” Graphics Interface 2026](https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf)（公开作者稿首页的 DOI 仍为占位符，本文引用其研究方法与结果）
+- [Melika Besharati Amirkandeh and Derek Reilly, “A Comparative Evaluation of Natural Language and Dashboard Visualization Interfaces for Data Monitoring Tasks,” Proceedings of the 52nd Graphics Interface Conference 2026](https://doi.org/10.1145/3831423.3831460)（[GI 2026 官方论文列表](https://conferences.graphicsinterface.org/2026/papers/)，[作者公开 PDF](https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf)）
 
 ### 厂商产品资料
 
