@@ -12,9 +12,9 @@ jobs:
   classify:
     runs-on: ubuntu-latest
     outputs:
-      public_changed: \${{ steps.classify.outputs.public_changed }}
-      full_check: \${{ steps.classify.outputs.full_check }}
-      blog_release_changed: \${{ steps.classify.outputs.blog_release_changed }}
+      public_changed: ${{ steps.classify.outputs.public_changed }}
+      full_check: ${{ steps.classify.outputs.full_check }}
+      blog_release_changed: ${{ steps.classify.outputs.blog_release_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,12 +24,12 @@ jobs:
       - name: Classify changed files
         id: classify
         run: |
-          if [ "\${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "public_changed=true" >> "$GITHUB_OUTPUT"
             echo "full_check=true" >> "$GITHUB_OUTPUT"
             echo "blog_release_changed=true" >> "$GITHUB_OUTPUT"
           else
-            node scripts/classify-public-changes.js --base "\${{ github.event.before }}" --head "\${{ github.sha }}"
+            node scripts/classify-public-changes.js --base "${{ github.event.before }}" --head "${{ github.sha }}"
           fi
 
   verify:
@@ -56,7 +56,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: \${{ runner.os }}-playwright-\${{ hashFiles('scripts/package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('scripts/package-lock.json') }}
 
       - name: Install Chromium for browser checks
         if: needs.classify.outputs.full_check == 'true'
@@ -71,9 +71,9 @@ jobs:
       - name: Run focused blog source or release checks
         if: needs.classify.outputs.blog_release_changed == 'true' && needs.classify.outputs.full_check != 'true'
         env:
-          BLOG_BASE_REF: \${{ github.event.before }}
+          BLOG_BASE_REF: ${{ github.event.before }}
         run: |
-          if [ "\${{ needs.classify.outputs.public_changed }}" = "true" ]; then
+          if [ "${{ needs.classify.outputs.public_changed }}" = "true" ]; then
             node scripts/check-blog-release.js --release --base-ref "$BLOG_BASE_REF"
           else
             node scripts/check-blog-release.js --source
@@ -108,7 +108,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
