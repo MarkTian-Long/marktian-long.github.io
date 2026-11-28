@@ -9,10 +9,10 @@
 <path d="M498 164 L510 178 L522 164" fill="none" stroke="#4f82b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 <g>
   <rect x="64" y="230" width="230" height="260" rx="28" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
-  <rect x="108" y="260" width="142" height="90" rx="14" fill="#f1eee8"/>
-  <path d="M132 284 H226 M132 309 H218 M132 334 H204" stroke="#8e9aa6" stroke-width="11" stroke-linecap="round"/>
-  <circle cx="179" cy="376" r="23" fill="#d9e2e8"/>
-  <path d="M130 432 C136 402 153 398 179 398 C205 398 222 405 228 432" fill="#4f82b8"/>
+  <rect x="108" y="250" width="142" height="80" rx="14" fill="#f1eee8"/>
+  <path d="M132 274 H226 M132 298 H218 M132 322 H204" stroke="#8e9aa6" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="179" cy="358" r="22" fill="#d9e2e8"/>
+  <path d="M130 410 C136 385 153 382 179 382 C205 382 222 388 228 410" fill="#4f82b8"/>
   <text x="179" y="468" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">业务请求</text>
 </g>
 <g>
@@ -34,8 +34,8 @@
 </g>
 <g>
   <rect x="986" y="230" width="230" height="260" rx="28" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
-  <circle cx="1101" cy="344" r="76" fill="#e3eee5"/>
-  <path d="M1060 344 L1088 373 L1145 309" stroke="#5f9470" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1101" cy="330" r="60" fill="#e3eee5"/>
+  <path d="M1068 332 L1090 354 L1134 307" stroke="#5f9470" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="1101" y="468" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">结果验收</text>
 </g>
 <g>
