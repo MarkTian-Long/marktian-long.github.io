@@ -13,7 +13,7 @@
 `AGENTS.md` 是 Codex 入口适配层；跨 Agent 的长期规范、skill 规则、memory 沉淀必须写回 `docs/agent-context/` 或 `CONVENTIONS.md`，不能只留在 Codex 私有记忆里。
 
 ## 项目概览
-Leo Liu（刘洋）的个人品牌站，定位为 AI · Product · Builder 的长期思想输出站。线上运行是无应用后端的静态前端；开发与发布通过 Node.js 脚本、浏览器测试与 GitHub Actions 构建经白名单筛选的 `dist/`。
+Leo Liu（刘洋）的个人品牌站，定位为 AI Builder 的长期思想输出与实践站。品牌身份统一用 AI Builder；具体产品工作和历史经历中的产品术语保留，详见 `docs/HOMEPAGE.md`。线上运行是无应用后端的静态前端；开发与发布通过 Node.js 脚本、浏览器测试与 GitHub Actions 构建经白名单筛选的 `dist/`。
 
 **入口文件**：`index.html`（唯一入口，锚点导航）
 **工具目录**：`tools/<tool-name>/index.html`（独立直链页面）

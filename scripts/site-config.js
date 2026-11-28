@@ -1,6 +1,6 @@
 module.exports = Object.freeze({
   siteUrl: 'https://marktian-long.github.io',
-  siteName: 'Leo Liu · AI / Product / Builder',
+  siteName: 'Leo Liu · AI Builder',
   siteDescription: 'Leo Liu — AI 产品与工程实践，写关于 AI 落地的独立观察。',
   author: {
     name: 'Leo Liu'
@@ -11,7 +11,7 @@ module.exports = Object.freeze({
     path: '/tools/blog/',
     feedPath: '/feed.xml',
     imagePath: '/assets/images/og-cover.png',
-    imageAlt: 'Leo · AI · Product · Builder',
+    imageAlt: 'Leo · AI Builder',
     imageWidth: 1200,
     imageHeight: 630,
     feedLimit: 20

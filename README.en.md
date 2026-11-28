@@ -2,7 +2,7 @@
 
 [中文](README.md) | [English](README.en.md)
 
-> A personal website centered on “Thought Fragments”: articles develop ideas, tools record experiments, and sanitized case studies preserve project methods.
+> An AI Builder’s personal website centered on “Thought Fragments”: articles develop ideas, tools record experiments, and sanitized case studies preserve project methods.
 
 This is the English repository overview. Linked articles, detailed guides, and tool interfaces may still be in Chinese.
 
@@ -22,7 +22,7 @@ The blog records observations on AI, products, technology, business, and industr
 
 The homepage organizes content in this order:
 
-1. **Home and introduction**: personal focus, interests, and contact information.
+1. **Home and introduction**: AI Builder identity, interests, and contact information.
 2. **Thought Fragments**: ongoing articles on AI, products, technology, business, industry, and practice, with a full blog archive.
 3. **Tools and workflows**: selected GitHub projects illustrating product work and collaboration methods, each with its purpose, conditions, and one starting point.
 4. **Prototypes and research**: interactive prototypes and information tools that open independently.
