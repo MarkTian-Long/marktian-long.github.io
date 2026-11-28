@@ -28,7 +28,8 @@ function isFullCheckPath(filePath) {
     || filePath.startsWith('.agents/') || filePath.startsWith('.claude/') || filePath.startsWith('site/')
     || filePath === 'AGENTS.md' || filePath === 'CLAUDE.md' || filePath === 'CONVENTIONS.md'
     || filePath === '.gitignore' || filePath === 'skills-lock.json' || filePath === 'eleventy.candidate.cjs'
-    || filePath === 'tools/blog/data/blog-taxonomy.json' || /^tools\/blog\/[^/]+\.(?:js|html|css)$/.test(filePath);
+    || filePath === 'tools/blog/data/blog-taxonomy.json'
+    || (/^tools\/blog\/[^/]+\.(?:js|html|css)$/.test(filePath) && filePath !== 'tools/blog/index.html');
 }
 function isBlogReleaseCorePath(filePath) {
   return filePath.startsWith('drafts/blog/') || filePath.startsWith('docs/blog/')
