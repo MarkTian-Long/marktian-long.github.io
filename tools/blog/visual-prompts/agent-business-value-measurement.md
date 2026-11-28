@@ -49,8 +49,9 @@ A polished, text-free 3D clay-style scene presents a warm, studio-lit workflow o
 生成一张独立的横向四阶段框架图，严格从左到右呈现四个等权步骤，标签逐字为“价值目标与主体”“工作系统变化”“结果证据与归因”“价值兑现与投入决策”，每步配一个简洁且语义贴切的符号，并用清晰箭头连接。采用暖米白背景、深海军蓝文字、克制陶土橙与支撑蓝的轻 3D 纸雕信息图风格，标签大而清楚、留白充足；不要副标题、长解释、额外模块、数据或网页边框。
 
 - Attempt log:
-  - Attempt 1（2026-11-28）：图像入口从当前长会话自动推断任务，生成多章节总览海报；Reject。
-  - Attempt 2（2026-11-28）：同一长会话再次生成多模块文章预览图；Reject。两张失败候选均未入稿、未加入 public-dist，也不作为参考图。
+  - Attempt 1（2026-11-28）：实际交接的 Prompt 错误要求“hero + 四步框架 + 前后流程 + 三层指标 + 五方向”组合成四面板总览；这是提示词本身越界，Reject。
+  - Attempt 2（2026-11-28）：再次把开篇场景、四步框架、前后流程和三层指标写入同一张三栏图；Reject。
+  - Attempt 3（2026-11-28）：再次要求标题 Banner + 三栏图，仍把多个独立阅读任务合并；Reject。三张失败图均未入稿、未加入 public-dist，也不作为参考图。
 - Final decision: Rejected in this conversation; no further attempts here
 
 ---
