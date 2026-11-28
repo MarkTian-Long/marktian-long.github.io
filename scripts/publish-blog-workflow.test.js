@@ -18,7 +18,8 @@ function finalValidationSection() {
 
 test('ordinary blog publishing always runs taxonomy validation without requiring a taxonomy base ref', () => {
   const section = finalValidationSection();
-  assert.match(section, /每篇文章始终运行[\s\S]*node tools\/blog\/check-blog-taxonomy\.js/);
+  assert.match(section, /tools\/blog\/publish\.js/);
+  assert.match(section, /完整仓库检查/);
   assert.match(section, /普通文章发布不得要求 taxonomy base ref/);
   assert.doesNotMatch(section, /<taxonomy-change-base-ref>/);
 });
@@ -31,7 +32,12 @@ test('taxonomy changes require a real pre-change git ref before impact audit run
 test('publish workflow documentation consistently describes conditional taxonomy impact audit', () => {
   for (const workflowPath of workflowPaths) {
     const content = fs.readFileSync(workflowPath, 'utf8');
-    assert.match(content, /node tools\/blog\/check-blog-taxonomy\.js/);
+    if (workflowPath === canonicalSkillPath) {
+      assert.match(content, /tools\/blog\/publish\.js/);
+      assert.match(content, /完整仓库检查/);
+    } else {
+      assert.match(content, /node tools\/blog\/check-blog-taxonomy\.js/);
+    }
     assert.match(content, /tools\/blog\/data\/blog-taxonomy\.json/);
     assert.match(content, /audit-taxonomy-impact\.js --base-ref <真实的 taxonomy 变更前 git ref>/);
     assert.doesNotMatch(content, /<taxonomy-change-base-ref>/);

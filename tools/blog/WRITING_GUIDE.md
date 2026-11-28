@@ -424,35 +424,25 @@ Markdown 中的本地图片路径、alt 和 caption 必须与 `visuals.inline` �
 
 ## 新增文章操作流程
 
-新文章固定路径为：**网页版写作 → 最终 Markdown frontmatter → Codex 读取当前 taxonomy 并校验 → sync posts-meta → generate HTML → search/RSS/sitemap → QA → 发布**。`publish_handoff` 和 `body_link_only` 不属于这条路径，只保留给历史文件兼容。
+新文章固定路径为：**网页版写作 → 最终 Markdown 与图源 → 作者确认终稿及正式发布授权 → 一键发布准备 → 人工页面/可发现性验收 → commit/push**。`publish_handoff` 和 `body_link_only` 不属于这条路径，只保留给历史文件兼容。
 
 材料检查或活人感审校真正执行时，读取 `.agents/skills/blog-human-writing/SKILL.md` 和当前阶段对应的 `references/`；这是唯一长期规则真源。已安装 Skill 或 `.claude/skills/` 目录只是运行入口/兼容副本，冲突时以 `.agents` 为准。每篇正式文章完成后的统一规范沉淀复盘，评估是否出现应写回该权威源的跨文章稳定规则。
 
-1. 写作阶段交付带严格 frontmatter 的最终 Markdown；Codex 读取最新 `data/blog-taxonomy.json` 后仅校验，不选择或生成 `category`、`tags`、`topics`、`concepts`、`share_quote` 或 relations。运行同步命令；它从文件名派生 slug、从 H1/blockquote 派生 title/summary，并为新文章写入实际发布月份（已有文章保留原 date）：
-   ```powershell
-   node tools/blog/sync-post-metadata.js --write docs/blog/your-slug.md
-   ```
-   不手工创建或补写语义 metadata；需要明确回填新文章月份时使用 `--date YYYY.MM`。同步不会删除或覆盖已有 `visuals` 等发布资产字段。
-2. 按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 完成必选开篇首图及其他已选图片，维护 `visuals`；历史无图文章与作者明确例外按其适用范围处理。选中的位图候选先放在 `build/blog-image-work/<slug>/`，再只为实际选用的角色运行对应命令；分享封面不因此变为必选：
-   ```powershell
+1. 写作阶段交付带严格 frontmatter 的最终 Markdown；Codex 读取最新 `data/blog-taxonomy.json` 后仅校验，不选择或生成 `category`、`tags`、`topics`、`concepts`、`share_quote` 或 relations。
+2. 按 [VISUAL_GUIDE.md](VISUAL_GUIDE.md) 完成必选开篇首图及其他已选图片，维护图源与 Markdown 图片语法。选中的位图候选先放在 `build/blog-image-work/<slug>/`，再只为实际选用的角色运行对应命令；分享封面不因此变为必选：
+   ~~~powershell
    node scripts/prepare-blog-image.js --slug your-slug --role cover --input build/blog-image-work/your-slug/candidate.png
    node scripts/prepare-blog-image.js --slug your-slug --role inline --name context-feedback-loop --input build/blog-image-work/your-slug/inline-candidate.png
-   node scripts/check-blog-images.js
-   ```
-   只运行实际需要的命令；正文图写入 `visuals.inline` 和 Markdown，只有封面时使用 `inline: []`。图片可包含服务文章表达的文字或标识，但不得使用误导性水印或未经授权的第三方素材。
-3. 用生成脚本输出文章 HTML；生成器验证运行索引与最终 Markdown 一致，因此顺序不能颠倒：
-   ```powershell
-   node tools/blog/generate-post.js --write docs/blog/your-slug.md tools/blog/posts/your-slug.html
-   ```
-4. 重新生成搜索发现资产，并运行静态检查：
-   ```powershell
-   node scripts/generate-search-assets.js --write
-   node scripts/check-search-foundation.js
-   ```
-5. 主页、列表页、canonical、description、JSON-LD、OG/Twitter 元数据、RSS 和 sitemap 都从 JSON/脚本生成，**不要在生成的 head 或搜索资产中手工复制域名，也不要维护重复文章数组**。主页与 Blog 列表不渲染封面或缩略图。
-6. 在 `scripts/` 目录运行 `npm run build:public` 和 `npm run check:public-dist`；如使用图片，确认只有 `visuals` 声明的图片进入 Pages 产物，并按 `CONVENTIONS.md` 完成图片加载失败状态的视觉检查。
-7. `git add docs/blog/xxx.md tools/blog/posts/xxx.html tools/blog/data/posts-meta.json assets/images/blog/xxx/ robots.txt sitemap.xml feed.xml`
-   （新文件必须显式 add，否则 GitHub Pages 404）
+   ~~~
+   新文章的 `visuals.inline` 由发布同步命令从 Markdown 图片、实际图源尺寸和文件内容确定性派生，不手工维护重复 JSON。新文章必须至少有一张符合公开图片契约的本地正文图；已有文章同步时保留 cover，并验证 Markdown 图片与 metadata inline 登记一致。
+3. 作者确认终稿并明确授权正式发布后，在仓库根目录运行：
+   ~~~powershell
+   node tools/blog/publish.js --slug your-slug --approved-ref <已确认稿的完整40位commit SHA> --prepare
+   ~~~
+   需要先检查计划时追加 `--dry-run`；需要明确回填发布日期时追加 `--date YYYY.MM`。编排器要求干净工作树，核对批准 commit 是当前 HEAD 的祖先，并验证当前 draft 与批准版本一致；随后依次执行 opening-image 门禁、metadata/visuals 同步、正式 HTML、SEO/RSS/sitemap、旧预览 noindex 跳转、唯一 Markdown 从 `drafts/blog/` 迁移到 `docs/blog/` 并删除旧 draft、批准稿/图源等价检查、完整 `check-all`、body integrity、search freshness、public-dist 构建与 Smoke Test。
+4. 编排器只准备工作树，不执行 git commit 或 git push。成功后检查 `git status` 与完整 diff，确认只有本文章和必要派生资产变化；若失败，先检查失败阶段与工作树，不盲目重复覆盖。底层 `sync-post-metadata.js`、`generate-post.js`、`generate-search-assets.js` 仍保留给已发布文章局部维护或专项排查，不再作为新文章发布时需要手动串联的步骤。
+5. 发布准备通过后，仍需通过本地 HTTP 服务打开真实文章，核验正文、目录、参考资料、图片和链接；按 `VISUAL_GUIDE.md` 完成受影响视口的桌面/移动、浅色/深色及图片失败状态检查。核对新文章能从博客目录首页或精选区找到，检查分类、月份、标题、链接，以及 RSS 最新 20 篇范围内的订阅入口。确定性脚本和 CI 不替代这些读者体验验收。
+6. 最终只暂存本文章 Markdown、正式 HTML、metadata、图源、搜索资产、预览跳转及真实必要的生成器修复；不暂存候选图、临时 public-dist 或无关文件。按 `.agents/skills/publish-blog/SKILL.md` 核对目标分支与已有授权后 commit/push。
 
 ### 未发布图文预览：走正式模板的候选构建，不接入公开入口
 
