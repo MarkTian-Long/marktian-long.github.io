@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1024" viewBox="0 0 1280 1024" role="img" aria-labelledby="title desc">
-<title id="title">Agent 业务价值衡量框架的五个应用方向</title>
-<desc id="desc">技术评测、多 Agent、Personal Agent、企业治理和 Agentic Commerce 共享四步衡量问题，但各自拥有不同的业务结果和风险护栏。</desc>
+<title id="title">Agent 业务价值衡量框架的五个后续研究方向</title>
+<desc id="desc">技术评测、多 Agent、Personal Agent、企业治理和 Agentic Commerce 五个后续研究方向共享四步衡量问题，但各自拥有不同的业务结果和风险护栏。</desc>
 <rect width="1280" height="1024" fill="#f7f4ee"/>
-<text x="64" y="82" fill="#14243a" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量逻辑，五个 Agent 方向</text>
+<text x="64" y="82" fill="#14243a" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量逻辑，五个研究方向</text>
 <text x="64" y="130" fill="#536273" font-size="32" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同的问题相同，业务结果变量和不可折抵护栏各不相同</text>
 <rect x="64" y="160" width="1152" height="92" rx="20" fill="#e9eef3"/>
 <text x="96" y="197" fill="#294663" font-size="34" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同四步</text>

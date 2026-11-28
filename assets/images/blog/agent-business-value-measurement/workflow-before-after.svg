@@ -49,7 +49,7 @@
   <text x="1054" y="560" fill="#536273" font-size="28">工具执行</text>
   <rect x="1030" y="656" width="186" height="118" rx="20" fill="#f4e8e3" stroke="#d6b4a7" stroke-width="2"/>
   <text x="1054" y="702" fill="#8e4e38" font-size="34" font-weight="700">例外任务</text>
-  <text x="1054" y="744" fill="#6e5b55" font-size="27">人工判断 / 审批</text>
+  <text x="1054" y="744" fill="#6e5b55" font-size="27">人工判断 / 暂停</text>
 
   <path d="M961 550 C986 535 1002 531 1018 531" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
   <text x="986" y="500" fill="#536273" font-size="24">是</text>
@@ -59,9 +59,9 @@
   <rect x="644" y="830" width="572" height="90" rx="20" fill="#e9eef3" stroke="#c8d3dd" stroke-width="2"/>
   <text x="680" y="870" fill="#294663" font-size="36" font-weight="700">状态核验与交付</text>
   <text x="680" y="905" fill="#536273" font-size="27">异常、返工与重开回到后续队列</text>
-  <path d="M1122 594 C1122 760 1080 798 1080 818" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M1216 531 H1240 V875 H1218" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
   <path d="M1122 778 C1122 798 1120 805 1120 818" stroke="#8b95a2" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
 </g>
 <rect x="64" y="944" width="1152" height="58" rx="16" fill="#f0e7e1"/>
-<text x="96" y="983" fill="#8e4e38" font-size="30" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 可能减少重复搬运，也可能增加授权、核验和异常处理；节点数量不是最终价值。</text>
+<text x="96" y="983" fill="#8e4e38" font-size="26" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent 可能减少重复搬运，也可能增加授权、核验和异常处理；节点数量不是最终价值。</text>
 </svg>
