@@ -45,6 +45,49 @@
   },
   "posts": [
     {
+      "slug": "ai-chat-vs-other-interfaces",
+      "date": "2026.11",
+      "title": "AI 时代，什么时候该用聊天，什么时候该保留其他界面？",
+      "summary": "AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。",
+      "category": "产品",
+      "tags": [
+        "决策框架"
+      ],
+      "topics": [
+        "产品设计",
+        "人机协作"
+      ],
+      "concepts": [
+        "自然语言交互",
+        "直接操纵",
+        "用户行动循环",
+        "持续状态观察",
+        "动态生成界面",
+        "结果核验"
+      ],
+      "share_quote": "先决定用户在任务中需要表达、看见、修改和核验什么，再决定采用什么界面。",
+      "relations": [],
+      "url": "posts/ai-chat-vs-other-interfaces.html",
+      "visuals": {
+        "inline": [
+          {
+            "src": "assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg",
+            "alt": "聊天与持续工作界面围绕同一个任务协作：左侧澄清意图，右侧保持状态和操作可见",
+            "caption": "聊天降低表达与探索成本，持续工作界面让对象、状态与操作保持可见。",
+            "width": 1280,
+            "height": 720
+          },
+          {
+            "src": "assets/images/blog/ai-chat-vs-other-interfaces/title-style-action-cycle.svg",
+            "alt": "以标题改色说明意图、选择、执行与评估，标出需要修正时的反馈及状态变化触发的观察入口",
+            "caption": "以同一任务拆解四种活动；需要修正时可能再次行动，状态变化也可先触发观察。依据 Norman 模型绘制，例子为本文示意。",
+            "width": 1280,
+            "height": 720
+          }
+        ]
+      }
+    },
+    {
       "slug": "agentic-commerce-transaction-control",
       "date": "2026.11",
       "title": "当 AI 开始替用户付款，谁真正拥有交易？",

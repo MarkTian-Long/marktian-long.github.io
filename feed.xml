@@ -5,6 +5,12 @@
     <link>https://marktian-long.github.io/tools/blog/</link>
     <description>Leo Liu 关于 AI 技术、产品、商业、行业与实践的长期思考。</description>
     <item>
+      <title>AI 时代，什么时候该用聊天，什么时候该保留其他界面？</title>
+      <link>https://marktian-long.github.io/tools/blog/posts/ai-chat-vs-other-interfaces.html</link>
+      <guid>https://marktian-long.github.io/tools/blog/posts/ai-chat-vs-other-interfaces.html</guid>
+      <description>AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</description>
+    </item>
+    <item>
       <title>当 AI 开始替用户付款，谁真正拥有交易？</title>
       <link>https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/agentic-commerce-transaction-control.html</guid>
@@ -117,12 +123,6 @@
       <link>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</link>
       <guid>https://marktian-long.github.io/tools/blog/posts/enterprise-agent-governance.html</guid>
       <description>企业谈 Agent 纳管，不只是因为 Agent 数量增加，而是身份、权限、审批、撤权等公司级规则不应散落在每个应用里重复维护。本文从真实工作触发和企业实践出发，讨论哪些规则该统一，以及这层能力为何尚未收敛为独立的 Agent Control Plane。</description>
-    </item>
-    <item>
-      <title>半年之后，AI 办公从产品赛马走向体系竞争</title>
-      <link>https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html</link>
-      <guid>https://marktian-long.github.io/tools/blog/posts/ai-work-system-competition.html</guid>
-      <description>Claude 先在编程这一高价值、可验证的窄任务中验证了 Agent 的商业化路径；约半年后，阿里、腾讯、字节陆续收拢 AI 办公产品与组织资源。竞争正从单点功能转向模型、工作入口、云、企业数据、治理与交付能力的体系较量。</description>
     </item>
   </channel>
 </rss>
