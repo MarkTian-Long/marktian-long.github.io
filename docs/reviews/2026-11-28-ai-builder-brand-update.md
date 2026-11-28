@@ -3,7 +3,7 @@
 日期：2026-11-28  
 分支：`chore/ai-builder-brand-update`  
 PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)  
-状态：品牌更新已合并并完成 Pages 部署；部署产物检查发现的少量残留表达正在通过独立 follow-up PR 收尾。
+状态：品牌更新与残留清理均已合并；代码检查、公开构建和产物冒烟检查通过。首次品牌部署成功，follow-up 部署遇到 Pages artifact 元数据短暂不可见，新的主线运行将再次尝试部署。
 
 ## 决策
 
@@ -20,6 +20,7 @@ PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)
 - 更新 1200 × 630 OG 分享封面。
 - 更新 README 中英文版、首页维护手册、AGENTS / CLAUDE、共享项目记忆、Impeccable 设计上下文、博客写作指令、SOP 与 Checklist。
 - 更新设计索引参考页、SEO/图片契约测试断言，以及候选站点冻结首页和博客入口快照与对应哈希。
+- 通过 follow-up PR #3 修正 Agent Hub、AI Insights 两个工具页页脚，以及一处未发布博客预览标题中的旧身份标签；已发布文章正文未改写。
 - 在 2026-04 的品牌讨论文档中追加本次决策说明，不覆盖历史讨论。
 - 首次部署后的公开产物复核发现两个独立工具页页脚仍使用旧身份标签；另有一处未发布博客预览标题仍使用旧角色称呼，本 follow-up 同步修正这三处，不触及已发布博客正文。
 
@@ -32,11 +33,13 @@ PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)
 - 当前写作规则使用 AI Builder；历史版本日志中出现的 AI Product Builder 作为历史记录保留。
 - PR #1 已合并至 main（`10fc52dd3849728897a6be61999f9062e036a47e`），GitHub Pages 部署运行 `46090213979` 成功；实际 Pages artifact `15240678300` 已下载并核验首页 Title、导航、Hero、Footer、博客 JSON-LD 及 1200 × 630 OG 图片。直接访问公网的外部网络检查受当前执行环境 DNS 限制，未将其误报为浏览器端验收。
 
-## 尚未完成的发布门槛
+## 发布与验收结果
 
 - 已在品牌 PR 的独立验证工作流中通过 `npm run check`、`node scripts/build-public-dist.js` 和 `node scripts/check-public-dist.js`；两个并行 job 均成功。
 - 已先通过 PR #2 将 `.github/workflows/verify-pr.yml` 合入 main。该工作流对 main 的 PR 并行执行仓库测试与 public artifact 构建/冒烟检查，只授予 `contents: read`，不上传 Pages artifact、不申请 Pages 权限、不部署。
-- 品牌 PR 的验证已通过，尚未合并 main。合并后由现有 `deploy.yml` 触发品牌版本正式部署，再进行线上验收。
+- PR #1（品牌主调整）已合并，Pages 部署运行 `46090213979` 成功；PR #3（残留清理）已合并，验证运行 `46090729892` 成功。
+- PR #3 合并后的部署运行 `46090847297` 中，仓库检查、公开构建、产物冒烟和 artifact 上传均成功；`deploy-pages` 随后查询到 0 个 artifact，尽管运行内 artifact `15240779618` 已存在。该失败发生在 Pages artifact 元数据读取，不是站点构建或测试失败。
+- 本次文档整理 PR 会触发新的主线 Pages 运行，以新 run id 重新上传并部署；不修改现有部署权限或工作流。实际部署状态以该运行结果为准。
 
 
 ## 保留的历史内容
