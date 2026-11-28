@@ -47,6 +47,7 @@ function main() {
     ['Project skill compatibility', node, ['check-project-skill-compatibility.js'], scriptsDir],
     ['Repository policy', node, ['check-repository-policy.js'], scriptsDir],
     ['Blog taxonomy and source sync', node, ['tools/blog/check-blog-taxonomy.js'], repoRoot],
+    ['Blog release source equivalence', node, ['scripts/check-blog-release-equivalence.js'], repoRoot],
     ['Blog Continue Reading shells', node, ['scripts/migrate-blog-continue-reading.js', '--check'], repoRoot],
     ['Search foundation', node, ['check-search-foundation.js'], scriptsDir],
     ['Blog image assets', node, ['check-blog-images.js'], scriptsDir],

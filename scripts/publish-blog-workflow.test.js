@@ -39,9 +39,9 @@ test('publish workflow documentation consistently describes conditional taxonomy
 });
 
 // These checks apply to every main-branch build, not only to manual publication.
-test('CI runs blog taxonomy/source sync and Continue Reading shell checks', () => {
+test('CI runs blog taxonomy/source sync, release equivalence and Continue Reading shell checks', () => {
   const source = fs.readFileSync(path.join(__dirname, 'check-all.js'), 'utf8');
-  assert.match(source, /\['Blog taxonomy and source sync', node, \['tools\/blog\/check-blog-taxonomy\.js'\], repoRoot\]/);
+  assert.match(source, /\['Blog taxonomy and source sync', node, \['tools\/blog\/check-blog-taxonomy\.js'\], repoRoot\]/);\n  assert.match(source, /\['Blog release source equivalence', node, \['scripts\/check-blog-release-equivalence\.js'\], repoRoot\]/);
   assert.match(source, /\['Blog Continue Reading shells', node, \['scripts\/migrate-blog-continue-reading\.js', '--check'\], repoRoot\]/);
 });
 
@@ -52,4 +52,17 @@ test('legacy migration no longer offers template or writing-guide overwrite comm
     assert.notEqual(result.status, 0, `${flag} should be rejected`);
     assert.match(result.stderr, /Usage:.*--write\|--check/);
   }
+});
+
+test('publish Skill defines GitHub Connector branch, PR and Pages recovery semantics', () => {
+  const skill = fs.readFileSync(canonicalSkillPath, 'utf8');
+  assert.match(skill, /GitHub Connector/);
+  assert.match(skill, /create_branch/);
+  assert.match(skill, /create_tree/);
+  assert.match(skill, /expected_sha/);
+  assert.match(skill, /create_pull_request/);
+  assert.match(skill, /verify-pr/i);
+  assert.match(skill, /fresh workflow run/i);
+  assert.match(skill, /Do not rerun the same Pages workflow run after artifact upload/i);
+  assert.match(skill, /cannot execute Node/i);
 });

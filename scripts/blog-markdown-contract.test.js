@@ -25,6 +25,8 @@ const validSource = [
   '',
   '---',
   '',
+  '![开篇对象与问题关系](../../assets/images/blog/new-post/opening-context.svg "图片与正文来自同一份确认稿。")',
+  '',
   '这是一句最终正文中真实存在的完整原句。',
 ].join('\n');
 
@@ -103,23 +105,35 @@ function makeSyncFixture(posts = [basePost('related')]) {
 
 function writeSource(rootDir, slug, source = validSource) {
   const sourcePath = path.join(rootDir, 'docs/blog', `${slug}.md`);
-  fs.writeFileSync(sourcePath, source, 'utf8');
+  const normalizedSource = source.replaceAll('../../assets/images/blog/new-post/', '../../assets/images/blog/' + slug + '/');
+  fs.writeFileSync(sourcePath, normalizedSource, 'utf8');
+  const imageLine = normalizedSource.split('\\n').find((line) => line.startsWith('!['));
+  if (imageLine) {
+    const match = /^!\\[[^\\]]+\\]\\(([^ )]+)/.exec(imageLine);
+    const repoPath = match && path.posix.normalize(path.posix.join('docs/blog', match[1]));
+    if (repoPath && repoPath.startsWith('assets/images/blog/' + slug + '/')) {
+      const imagePath = path.join(rootDir, repoPath);
+      fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+      fs.writeFileSync(imagePath, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\"><rect width=\"1280\" height=\"720\" fill=\"#f4f3ed\"/><rect x=\"80\" y=\"80\" width=\"1120\" height=\"560\" rx=\"24\" fill=\"#c96442\"/></svg>", 'utf8');
+    }
+  }
   return sourcePath;
 }
 
-test('new frontmatter relations must target an existing post and empty relations are valid', () => {
+test('new frontmatter relations must target an existing post and empty relations are valid', async () => {
   const rootDir = makeSyncFixture();
   const badPath = writeSource(rootDir, 'new-post', replaceFrontmatter('relations', '[{"slug":"missing","type":"builds_on"}]'));
-  assert.throws(() => syncPostMetadata({ rootDir, sourcePath: badPath, date: '2026.09' }), /target must exist: missing/);
+  await assert.rejects(syncPostMetadata({ rootDir, sourcePath: badPath, date: '2026.09' }), /target must exist: missing/);
   const goodPath = writeSource(rootDir, 'new-post', validSource);
-  const synced = syncPostMetadata({ rootDir, sourcePath: goodPath, date: '2026.09' });
+  const synced = await syncPostMetadata({ rootDir, sourcePath: goodPath, date: '2026.09' });
   assert.equal(synced.post.slug, 'new-post');
   assert.equal(synced.post.url, 'posts/new-post.html');
   assert.equal(synced.post.date, '2026.09');
   assert.deepEqual(synced.post.relations, []);
+  assert.deepEqual(synced.post.visuals.inline, [{ src: 'assets/images/blog/new-post/opening-context.svg', alt: '开篇对象与问题关系', caption: '图片与正文来自同一份确认稿。', width: 1280, height: 720 }]);
 });
 
-test('new articles appear first in archive and RSS order; existing order stays stable', () => {
+test('new articles appear first in archive and RSS order; existing order stays stable', async () => {
   const rootDir = makeSyncFixture([
     basePost('same-current-month', { date: '2026.10' }),
     basePost('older-post', { date: '2026.08' }),
@@ -127,13 +141,13 @@ test('new articles appear first in archive and RSS order; existing order stays s
     basePost('same-month-b', { date: '2026.09' }),
   ]);
   const sourcePath = writeSource(rootDir, 'new-post');
-  syncPostMetadata({ rootDir, sourcePath, date: '2026.10' });
+  await syncPostMetadata({ rootDir, sourcePath, date: '2026.10' });
   const slugs = () => JSON.parse(fs.readFileSync(
     path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'
   )).posts.map((post) => post.slug);
   const expected = ['new-post', 'same-current-month', 'same-month-a', 'same-month-b', 'older-post'];
   assert.deepEqual(slugs(), expected);
-  syncPostMetadata({ rootDir, sourcePath, date: '2026.11' });
+  await syncPostMetadata({ rootDir, sourcePath, date: '2026.11' });
   assert.deepEqual(slugs(), expected);
 });
 
@@ -153,20 +167,26 @@ test('publication validation rejects a newer post hidden after an older post', (
   assert.doesNotThrow(() => validateBlogMetadata(metadata));
 });
 
-test('legacy Markdown is retained only for an existing metadata record', () => {
+test('legacy Markdown is retained only for an existing metadata record', async () => {
   const rootDir = makeSyncFixture([basePost('legacy-post')]);
   const legacy = '# Existing title\n\n> Existing summary\n\n---\n\nExisting body。\n';
-  assert.equal(syncPostMetadata({ rootDir, sourcePath: writeSource(rootDir, 'legacy-post', legacy) }).legacy, true);
-  assert.throws(() => syncPostMetadata({ rootDir, sourcePath: writeSource(rootDir, 'new-post', legacy) }), /New Markdown sources require strict frontmatter/);
+  assert.equal((await syncPostMetadata({ rootDir, sourcePath: writeSource(rootDir, 'legacy-post', legacy) })).legacy, true);
+  await assert.rejects(syncPostMetadata({ rootDir, sourcePath: writeSource(rootDir, 'new-post', legacy) }), /New Markdown sources require strict frontmatter/);
 });
 
-test('metadata sync preserves date and visuals and is idempotent', () => {
+test('new article metadata sync requires a registered opening image', async () => {
+  const rootDir = makeSyncFixture();
+  const sourceWithoutImage = validSource.replace("![开篇对象与问题关系](../../assets/images/blog/new-post/opening-context.svg \"图片与正文来自同一份确认稿。\")", '');
+  const sourcePath = writeSource(rootDir, 'new-post', sourceWithoutImage);
+  await assert.rejects(syncPostMetadata({ rootDir, sourcePath, date: '2026.09' }), /Opening image is required/);
+});
+test('metadata sync preserves date and visuals and is idempotent', async () => {
   const visuals = { cover: { src: 'assets/images/blog/existing-post/cover.jpg', alt: 'existing-post 的主题概念插画', width: 1200, height: 630 }, inline: [] };
   const rootDir = makeSyncFixture([basePost('related'), basePost('existing-post', { date: '2025.01', visuals })]);
   const sourcePath = writeSource(rootDir, 'existing-post');
-  const first = syncPostMetadata({ rootDir, sourcePath, date: '2026.09' });
+  const first = await syncPostMetadata({ rootDir, sourcePath, date: '2026.09' });
   const firstContents = fs.readFileSync(path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8');
-  const second = syncPostMetadata({ rootDir, sourcePath, date: '2026.10' });
+  const second = await syncPostMetadata({ rootDir, sourcePath, date: '2026.10' });
   const secondContents = fs.readFileSync(path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8');
   assert.equal(first.post.date, '2025.01');
   assert.deepEqual(first.post.visuals, visuals);
@@ -187,12 +207,12 @@ test('posts-meta validation reads taxonomy rather than local category or concept
   assert.throws(() => validateBlogMetadata(metadata), /generic terms/);
 });
 
-test('temporary new-article fixture flows from frontmatter through sync to generated HTML', () => {
+test('temporary new-article fixture flows from frontmatter through sync to generated HTML', async () => {
   const rootDir = makeSyncFixture();
   const sourcePath = writeSource(rootDir, 'new-post');
   fs.mkdirSync(path.join(rootDir, 'tools/blog'), { recursive: true });
   fs.copyFileSync(path.join(__dirname, '../tools/blog/article-template.html'), path.join(rootDir, 'tools/blog/article-template.html'));
-  syncPostMetadata({ rootDir, sourcePath, date: '2026.09' });
+  await syncPostMetadata({ rootDir, sourcePath, date: '2026.09' });
   const outputPath = path.join(rootDir, 'tools/blog/posts/new-post.html');
   const previousCwd = process.cwd();
   try {

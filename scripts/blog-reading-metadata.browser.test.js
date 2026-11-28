@@ -59,6 +59,31 @@ test('reading metadata renders from final HTML on recent and legacy articles', {
   }
 });
 
+test('personal homepage exposes the newest non-featured article in recent updates', { timeout: 30000 }, async () => {
+  const metadata = require('../tools/blog/data/posts-meta.json');
+  const featured = require('../tools/blog/data/featured-posts.json').featured || [];
+  const homeFeatured = metadata.posts.find((post) => post.slug === featured[0]);
+  const expected = metadata.posts.find((post) => !homeFeatured || post.slug !== homeFeatured.slug);
+  assert.ok(expected, 'homepage needs at least one recent non-featured article');
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } : {}),
+    });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    await page.goto(url + '/index.html', { waitUntil: 'domcontentloaded' });
+    const firstRecent = page.locator('#writingRecent .writing-post-row').first();
+    await firstRecent.waitFor({ state: 'visible' });
+    assert.equal(await firstRecent.getAttribute('href'), 'tools/blog/' + expected.url);
+    assert.equal(await firstRecent.locator('.writing-post-title').textContent(), expected.title);
+    await page.close();
+  } finally {
+    if (browser) await browser.close();
+    await stopServer(server);
+  }
+});
 test('archive preserves newest month when input is reversed and canonical same-month editorial order', { timeout: 30000 }, async () => {
   const metadata = require('../tools/blog/data/posts-meta.json');
   const featured = new Set(require('../tools/blog/data/featured-posts.json').featured);
