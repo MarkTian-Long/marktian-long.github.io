@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { publicFiles, toPosix } = require('./public-dist-manifest');
+const { renderBlogArchivePage } = require('./blog-archive');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -66,6 +67,21 @@ function referencedPaths(relativePath, text, resolutionFrom = relativePath) {
   return paths;
 }
 
+function checkBlogArchiveDist(rootDir, outputDir, errors) {
+  try {
+    const postsMetadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'));
+    const featuredMetadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/featured-posts.json'), 'utf8'));
+    const sourceHtml = fs.readFileSync(path.join(rootDir, 'tools/blog/index.html'), 'utf8');
+    const expected = renderBlogArchivePage(sourceHtml, postsMetadata.posts, featuredMetadata.featured);
+    const actual = fs.readFileSync(path.join(outputDir, 'tools/blog/index.html'), 'utf8');
+    if (actual.replace(/\r\n/g, '\n') !== expected.replace(/\r\n/g, '\n')) {
+      errors.push('tools/blog/index.html static archive does not match current metadata');
+    }
+  } catch (error) {
+    errors.push('Blog archive dist validation failed: ' + error.message);
+  }
+}
+
 function checkPublicDist({ rootDir = repoRoot, outputDir = path.join(repoRoot, 'dist') } = {}) {
   const errors = [];
   if (!fs.existsSync(outputDir)) {
@@ -77,6 +93,7 @@ function checkPublicDist({ rootDir = repoRoot, outputDir = path.join(repoRoot, '
   const unexpected = actual.filter(file => !expected.includes(file));
   missing.forEach(file => errors.push(`Missing public artifact: ${file}`));
   unexpected.forEach(file => errors.push(`Unexpected public artifact: ${file}`));
+  if (actual.includes('tools/blog/index.html')) checkBlogArchiveDist(rootDir, outputDir, errors);
 
   const scriptDocuments = new Map();
   for (const htmlPath of actual.filter(file => file.endsWith('.html'))) {

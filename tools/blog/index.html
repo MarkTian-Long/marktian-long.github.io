@@ -649,8 +649,8 @@
         </div>
 
         <div id="filterStatus" class="filter-status" role="status" aria-live="polite" hidden></div>
-        <div id="featuredRoot"></div>
-        <div id="archiveRoot"><div class="loading">加载中…</div></div>
+        <div id="featuredRoot"><!-- blog-archive:featured:start --><!-- blog-archive:featured:end --></div>
+        <div id="archiveRoot"><!-- blog-archive:archive:start --><div class="loading">加载中…</div><!-- blog-archive:archive:end --></div>
     </main>
 
 </div>
@@ -696,8 +696,12 @@
             updateCounts();
             render();
         } catch (e) {
-            document.getElementById('archiveRoot').innerHTML =
-                '<p class="empty">加载失败，请用 HTTP server 打开（file:// 协议不支持 fetch）。</p>';
+            const archiveRoot = document.getElementById('archiveRoot');
+            if (!archiveRoot.querySelector('.post-row')) archiveRoot.innerHTML = '';
+            const notice = document.createElement('p');
+            notice.className = 'empty';
+            notice.textContent = '文章目录加载失败，请用 HTTP server 打开（file:// 协议不支持 fetch）。';
+            archiveRoot.appendChild(notice);
         }
     }
 
@@ -941,20 +945,31 @@
         });
     }
 
+
+    function escapeHtml(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function renderPostRows(postList, isFeatured, featuredSlugSet) {
         return postList.map(function (p) {
+            var category = escapeHtml(p.category);
             var tags = (p.tags || []).concat(p.topics || []);
             return '<article class="post-row">' +
                 '<div class="post-content">' +
                 '<div class="post-meta">' +
-                (isFeatured ? '<span class="post-date">' + p.date + '</span>' : '') +
-                '<button class="post-category" type="button" data-cat="' + p.category + '" aria-label="筛选' + p.category + '分类">' + p.category + '</button>' +
+                (isFeatured ? '<span class="post-date">' + escapeHtml(p.date) + '</span>' : '') +
+                '<button class="post-category" type="button" data-cat="' + category + '" aria-label="筛选' + category + '分类">' + category + '</button>' +
                 (!isFeatured && featuredSlugSet.has(p.slug) ? '<span class="post-featured">精选</span>' : '') +
                 '</div>' +
-                '<h2 class="post-heading"><a class="post-title" href="' + p.url + '" target="_blank" rel="noopener">' + p.title + '</a></h2>' +
-                '<div class="post-summary">' + p.summary + '</div>' +
+                '<h2 class="post-heading"><a class="post-title" href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(p.title) + '</a></h2>' +
+                '<div class="post-summary">' + escapeHtml(p.summary) + '</div>' +
                 (tags.length ? '<div class="post-tags">' + tags.map(function (tag) {
-                    return '<span class="post-tag">' + tag + '</span>';
+                    return '<span class="post-tag">' + escapeHtml(tag) + '</span>';
                 }).join('') + '</div>' : '') +
                 '</div>' +
                 '</article>';
