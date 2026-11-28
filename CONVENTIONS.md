@@ -339,6 +339,11 @@ git status --short
 - 未来更换搜索资产与自动生成页面 head 使用的域名，只修改 `scripts/site-config.js`，再运行 `node scripts/generate-search-assets.js --write`；该命令会同步入口页、文章 head、`robots.txt`、`sitemap.xml` 与 `feed.xml`。正文中的显式链接不在生成范围内，仍需按内容语义单独核对。
 - 现有元数据只有月份，不伪造精确 `pubDate`、`datePublished` 或 `dateModified`。
 - Search Console、Bing Webmaster、自定义域名和账号验证 token 属于后续人工步骤；`robots.txt` 当前不区分 GPTBot 等 crawler。
+- 8 个公开工具页（Agent Hub、AI Insights、ASCI、ESOP Extractor、Radar、Service Agent、Stock、Trends）的标题、description 和收录范围集中维护在 `scripts/site-config.js` 的 `toolPages`；生成器负责 canonical、Open Graph、Twitter Card 与 `WebPage` JSON-LD。新增工具必须先审核是否公开，再显式加入配置，禁止递归扫描整个 `tools/`。
+- Sitemap 仅包含首页、博客归档、metadata 中的正式文章及上述显式工具白名单；旅行页、开发页、候选预览和其他未筛选资源不得因目录存在而自动进入。
+- `llms.txt` 从站点配置、`posts-meta.json`、`featured-posts.json` 和显式 `publicProjects` 生成；公开 GitHub 项目必须逐项确认后加入，禁止自动枚举账号仓库。其用途是内容导航，不代表搜索排名或模型引用保证。
+- 博客归档的源 HTML 保留 JavaScript 增强；仅 public-dist 构建将 metadata 渲染为 5 篇精选、首屏 10 篇普通文章和完整 `<noscript>` 后备链接。标题、摘要、分类和标签须转义；不维护第二份手工文章清单。
+- 相关检查：`node scripts/generate-search-assets.js --check`、`node scripts/check-search-foundation.js`、`node --test scripts/blog-archive.test.js scripts/search-foundation.test.js scripts/llms-index.test.js scripts/public-dist.test.js`、`node scripts/build-public-dist.js --out dist/smoke`、`node scripts/check-public-dist.js --out dist/smoke`。
 
 ### 分类原则
 

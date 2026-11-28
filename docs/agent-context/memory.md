@@ -322,6 +322,13 @@ initial migration.
 
 - Historical decision, superseded for new/unpreviewed articles on 2026-11-22: the earlier all-images-optional policy is no longer the current rule. Opening-image applicability, author exceptions, asset requirements and visual acceptance now belong to Blog SOP and `tools/blog/VISUAL_GUIDE.md`; published historical articles are not automatically retrofitted. Cover/OG assets and the required body opening image are separate. Do not use this dated entry to override the current owning files.
 
+
+## Discoverability phase two (2026-11-28, Codex)
+
+- Public discovery assets now have one explicit source of truth: 8 tool-page SEO entries and 8 curated public GitHub projects in `scripts/site-config.js`; `llms.txt` is generated from that config plus blog metadata.
+- Public dist renders the blog archive from `posts-meta.json` and `featured-posts.json` into static first-page links plus a full `<noscript>` fallback; source HTML remains JavaScript-enhanced.
+- Keep Sitemap and public-project scope allowlisted; never recursively expose all `tools/` or GitHub repositories. Recheck `CONVENTIONS.md` search-discovery rules when these interfaces change.
+
 ## Update protocol
 
 ### Candidate architecture (2026-08-24, Codex)
