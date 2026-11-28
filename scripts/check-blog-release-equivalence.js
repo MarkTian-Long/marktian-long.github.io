@@ -67,48 +67,84 @@ function sha256(bytes) { return crypto.createHash('sha256').update(bytes).digest
 function verifyPromotion(approvedSource, publishedSource, options = {}) {
   const { slug, readApprovedImage, readPublishedImage } = options;
   validateSlug(slug);
+function collectStandaloneImages(source) {
+  const images = [];
+  let fence = null;
+  const pattern = /^!\[([^\]\r\n]+)\]\(([^\s()]+)\s+"([^"\r\n]+)"\)\s*$/;
+  for (const line of normalizeNewlines(source).split('\n')) {
+    const marker = /^\s*(\x60{3,}|~{3,})/.exec(line);
+    if (marker) {
+      if (!fence) fence = marker[1][0];
+      else if (fence === marker[1][0]) fence = null;
+      continue;
+    }
+    if (fence || !line.startsWith('![')) continue;
+    const match = pattern.exec(line);
+    if (!match) throw new Error('Markdown image must use the registered standalone image form');
+    images.push({ src: match[2] });
+  }
+  return images;
+}
+
+function resolveArticleImageRepoPath(sourcePath, imagePath, slug) {
+  if (typeof imagePath !== 'string' || /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(imagePath)
+    || imagePath.includes('\\') || path.posix.isAbsolute(imagePath)) {
+    throw new Error('Unexpected image path: ' + imagePath);
+  }
+  const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(sourcePath), imagePath));
+  if (resolved === '..' || resolved.startsWith('../')) throw new Error('Image path escapes repository: ' + imagePath);
+  if (!resolved.startsWith('assets/images/blog/' + slug + '/')) {
+    throw new Error('Image path must resolve inside assets/images/blog/' + slug + '/: ' + imagePath);
+  }
+  return resolved;
+}
+
+function verifyPromotion(approvedSource, publishedSource, options = {}) {
+  const slug = options.slug;
+  const approvedSourcePath = options.approvedSourcePath || ('drafts/blog/' + slug + '.md');
+  const publishedSourcePath = options.publishedSourcePath || ('docs/blog/' + slug + '.md');
+  const readApprovedImage = options.readApprovedImage;
+  const readPublishedImage = options.readPublishedImage;
+  validateSlug(slug);
   const approved = normalizeNewlines(approvedSource);
   const published = normalizeNewlines(publishedSource);
-  const images = [];
-  const imagePattern = /^!\[([^\]\r\n]+)\]\(([^\s()]+)\s+"([^"\r\n]+)"\)\s*$/gm;
-  const promoted = approved.replace(imagePattern, (line, alt, src, caption) => {
-    const prefix = `assets/${slug}/`;
-    const filename = src.startsWith(prefix) ? src.slice(prefix.length) : '';
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:svg|webp|jpg)$/.test(filename)) {
-      throw new Error(`Unexpected approved image path: ${src}`);
-    }
-    const target = `../../assets/images/blog/${slug}/${filename}`;
-    images.push({ approved: src, published: target, path: `assets/images/blog/${slug}/${filename}` });
-    // Replace only the path: even whitespace and caption spelling remain protected.
-    return line.replace(`](${src}`, `](${target}`);
-  });
-  if ((approved.match(/^!\[/gm) || []).length !== images.length) throw new Error('Unexpected approved image path or syntax');
-  if (promoted !== published) throw new Error('Approved content changed beyond image paths or line endings');
-  const assets = images.map(image => {
+  if (approved !== published) throw new Error('Approved content changed beyond line-ending normalization');
+
+  const approvedImages = collectStandaloneImages(approved);
+  const publishedImages = collectStandaloneImages(published);
+  if (approvedImages.length !== publishedImages.length) throw new Error('Approved image count changed');
+
+  const assets = approvedImages.map((image, index) => {
     if (typeof readApprovedImage !== 'function' || typeof readPublishedImage !== 'function') {
       throw new Error('Both image readers are required to verify image bytes');
     }
-    const before = Buffer.from(readApprovedImage(image.approved));
-    const after = Buffer.from(readPublishedImage(image.published));
-    if (!before.equals(after)) throw new Error(`Image bytes changed: ${image.path}`);
-    return { path: image.path, sha256: sha256(after) };
+    const approvedPath = resolveArticleImageRepoPath(approvedSourcePath, image.src, slug);
+    const publishedPath = resolveArticleImageRepoPath(publishedSourcePath, publishedImages[index].src, slug);
+    if (approvedPath !== publishedPath) throw new Error('Image repository path changed: ' + approvedPath + ' -> ' + publishedPath);
+    const before = Buffer.from(readApprovedImage(approvedPath));
+    const after = Buffer.from(readPublishedImage(publishedPath));
+    if (!before.equals(after)) throw new Error('Image bytes changed: ' + approvedPath);
+    return { path: approvedPath, sha256: sha256(after) };
   });
-  return { images: images.length, source_sha256: sha256(published), assets };
+
+  return { images: approvedImages.length, source_sha256: sha256(published), assets };
 }
 
 function verifyPromotionAtRef({ rootDir = ROOT_DIR, approvedRef, slug }) {
   validateSlug(slug);
   if (typeof approvedRef !== 'string' || !/^[a-f0-9]{40}$/.test(approvedRef)) throw new Error('approved-ref must be a full 40-character commit SHA');
   const git = args => execFileSync('git', args, { cwd: rootDir, maxBuffer: 32 * 1024 * 1024 });
-  git(['cat-file', '-e', `${approvedRef}^{commit}`]);
-  const approvedPath = `drafts/blog/${slug}.md`;
-  const publishedPath = `docs/blog/${slug}.md`;
-  const approved = git(['show', `${approvedRef}:${approvedPath}`]).toString('utf8');
+  git(['cat-file', '-e', approvedRef + '^{commit}']);
+  const approvedPath = 'drafts/blog/' + slug + '.md';
+  const publishedPath = 'docs/blog/' + slug + '.md';
+  const approved = git(['show', approvedRef + ':' + approvedPath]).toString('utf8');
   const published = fs.readFileSync(path.join(rootDir, publishedPath), 'utf8');
   return verifyPromotion(approved, published, {
     slug,
-    readApprovedImage: src => git(['show', `${approvedRef}:drafts/blog/${src}`]),
-    readPublishedImage: src => fs.readFileSync(path.resolve(rootDir, DOCS_DIR, src)),
+    approvedSourcePath: approvedPath,
+    publishedSourcePath: publishedPath,
+    readApprovedImage: repoPath => git(['show', approvedRef + ':' + repoPath]),
+    readPublishedImage: repoPath => fs.readFileSync(path.join(rootDir, repoPath)),
   });
 }
 

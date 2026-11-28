@@ -92,7 +92,7 @@ async function inspectDraftImages({
   rootDir = process.cwd(), sourcePath, openingImageException, openingImageEvidence,
 } = {}) {
   const sourceMatch = typeof sourcePath === 'string' && SOURCE_PATTERN.exec(sourcePath);
-  if (!sourceMatch) throw new Error('Source must be drafts/blog/<lowercase-kebab-slug>.md');
+  if (!sourceMatch) throw new Error('Source must be drafts/blog/<slug>.md or docs/blog/<slug>.md');
   const slug = sourceMatch[1];
   const absoluteSource = safeRepositoryPath(rootDir, sourcePath);
   const bytes = fs.readFileSync(absoluteSource);
@@ -159,7 +159,7 @@ function parseArgs(argv, { allowWrite = false } = {}) {
     }
     options[names[flag]] = argv[++i];
   }
-  if (!options.sourcePath) throw new Error('--source drafts/blog/<slug>.md is required');
+  if (!options.sourcePath) throw new Error('--source drafts/blog/<slug>.md or docs/blog/<slug>.md is required');
   if (allowWrite && (options.mode === 'write') !== Boolean(options.outputDir)) {
     throw new Error('Use --write and --out build/candidate-site/<name> together; default mode only checks');
   }
