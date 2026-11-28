@@ -1,11 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-
-const {
-  buildLlmsIndex,
-  escapeMarkdownText,
-  validatePublicProjects
-} = require('./llms-index');
+const { buildLlmsIndex, escapeMarkdownText, validatePublicProjects } = require('./llms-index');
 
 const config = {
   siteUrl: 'https://marktian-long.github.io',
@@ -21,31 +16,13 @@ const config = {
     { name: 'Other Project', url: 'https://github.com/MarkTian-Long/other-project', description: 'Other description.', featured: false }
   ]
 };
-
 const posts = [
-  {
-    slug: 'first-post',
-    date: '2026.11',
-    title: 'A [featured] article',
-    summary: 'Summary with <markup> & evidence.',
-    url: 'posts/first-post.html',
-    category: '技术',
-    topics: ['Agent']
-  },
-  {
-    slug: 'second-post',
-    date: '2026.10',
-    title: 'Second article',
-    summary: 'Another summary.',
-    url: 'posts/second-post.html',
-    category: '产品',
-    topics: ['产品设计']
-  }
+  { slug: 'first-post', date: '2026.11', title: 'A [featured] article', summary: 'Summary with <markup> & evidence.', url: 'posts/first-post.html', category: '技术', topics: ['Agent'] },
+  { slug: 'second-post', date: '2026.10', title: 'Second article', summary: 'Another summary.', url: 'posts/second-post.html', category: '产品', topics: ['产品设计'] }
 ];
 
 test('buildLlmsIndex includes canonical site, featured writing, tools, and curated public projects', () => {
   const output = buildLlmsIndex(config, posts, ['first-post']);
-
   assert.match(output, /# Leo Liu — AI Builder/);
   assert.match(output, /Homepage: https:\/\/marktian-long\.github\.io\//);
   assert.match(output, /Blog archive: https:\/\/marktian-long\.github\.io\/tools\/blog\//);
@@ -62,21 +39,12 @@ test('buildLlmsIndex includes canonical site, featured writing, tools, and curat
 });
 
 test('Markdown text escaping neutralizes links, raw HTML, and line breaks', () => {
-  assert.equal(
-    escapeMarkdownText('A [label](url) <script> & line\nbreak'),
-    'A \\[label\\](url) &lt;script&gt; & line break'
-  );
+  assert.equal(escapeMarkdownText('A [label](url) <script> & line\nbreak'), 'A \\[label\\](url) &lt;script&gt; & line break');
 });
 
 test('public project validation rejects non-owned, non-HTTPS, and duplicate repositories', () => {
-  assert.throws(
-    () => validatePublicProjects([{ name: 'Private', url: 'https://github.com/other/private', description: 'x', featured: false }]),
-    /Only explicitly curated MarkTian-Long public repository URLs/
-  );
-  assert.throws(
-    () => validatePublicProjects([{ name: 'Insecure', url: 'http://github.com/MarkTian-Long/demo', description: 'x', featured: false }]),
-    /Only explicitly curated MarkTian-Long public repository URLs/
-  );
+  assert.throws(() => validatePublicProjects([{ name: 'Private', url: 'https://github.com/other/private', description: 'x', featured: false }]), /Only explicitly curated MarkTian-Long public repository URLs/);
+  assert.throws(() => validatePublicProjects([{ name: 'Insecure', url: 'http://github.com/MarkTian-Long/demo', description: 'x', featured: false }]), /Only explicitly curated MarkTian-Long public repository URLs/);
   const duplicate = [
     { name: 'One', url: 'https://github.com/MarkTian-Long/demo', description: 'x', featured: true },
     { name: 'Two', url: 'https://github.com/MarkTian-Long/demo', description: 'y', featured: false }
