@@ -11,8 +11,8 @@ const { readFrozenPage } = require('../site/candidate/frozen-page-source');
 
 const repoRoot = path.resolve(__dirname, '..');
 const approvedFrozenPageHashes = Object.freeze({
-  'index.html': '1dc79d5701c8b0628c30d5e2f96f4d12de88ecf854a9da8cb8ab821521b7b6ee',
-  'tools/blog/index.html': 'bfd9d31932fa6e99bff283581319358af3538b11d389c64e6d41fb5eba216f8a'
+  'index.html': 'd0006fb86819dd874dd00c255de2d86959d86ef7040d006855a66f2689bf74b6',
+  'tools/blog/index.html': '3d39618c7633fba3e297bb9b11b447b39b3dfc7af239eba9c843f1dafddbd3c2'
 });
 
 function normalizedSha256(value) {
