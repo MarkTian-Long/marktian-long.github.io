@@ -17,6 +17,8 @@
 4. **LLM 导航**：新增根目录 `llms.txt`，索引站点定位、精选文章、8 个公开工具和经过筛选的公开 GitHub 项目。文章标题和摘要继续读取现有 metadata，不另造第二份文章目录。
 5. **验证与维护**：生成过程可重复、可检查；public dist 白名单明确包含 `llms.txt`；构建与 Smoke Check 能验证静态归档和本地链接。
 
+LLM 索引的公开 GitHub 项目范围固定为 8 项：当前首页精选的 AI Workflow Kit、多平台资料库、LocalFolderBridge、Harness Starter；以及 AI Daily Radar、Codex Work Watch、AI Usage Dashboard、FolderLens。只引用这些明确登记的公开项目，不自动枚举账号仓库。
+
 ## 非目标
 
 - 不改网站视觉设计、CSS、现有 URL、导航顺序或文章正文。
@@ -47,7 +49,7 @@
 
 ## 实施架构
 
-- `scripts/site-config.js`：站点公共配置、8 个工具页的标题/描述/收录状态、公开 GitHub 项目索引。
+- `scripts/site-config.js`：站点公共配置、8 个工具页的标题/描述/收录状态、8 个公开 GitHub 项目索引。
 - `scripts/search-foundation.js`：新增工具页 SEO block 生成、幂等 head 更新和 Sitemap 页面 URL 生成。
 - `scripts/generate-search-assets.js`：继续承担 robots、Sitemap、RSS、入口页和文章 SEO；扩展工具页 head 与 `llms.txt` 生成。
 - `scripts/llms-index.js`：从 site config、`posts-meta.json` 和 `featured-posts.json` 生成机器可读索引。

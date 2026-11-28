@@ -98,6 +98,7 @@
 **Files:**
 - Create: `scripts/llms-index.js`
 - Create: `scripts/llms-index.test.js`
+- Modify: `scripts/site-config.js` (add 8 explicitly curated public projects)
 - Modify: `scripts/generate-search-assets.js`
 - Modify: `scripts/search-foundation.test.js`
 - Modify: `scripts/public-dist-manifest.js`
@@ -111,11 +112,12 @@
 - [ ] **Step 1: Write failing tests** for site identity, blog/RSS/Sitemap links, featured article resolution, tool page list, public project list, escaped Markdown link labels, and exclusion of unconfigured/private repositories.
 - [ ] **Step 2: Run** `node --test scripts/llms-index.test.js`.
   **Expected:** FAIL because the LLM index generator does not exist.
-- [ ] **Step 3: Implement** `buildLlmsIndex()` using `site-config.js`, `posts-meta.json`, and `featured-posts.json`. Include 5 featured articles, 8 public tools, and only the explicitly curated public GitHub projects. Do not enumerate repositories from the account automatically.
-- [ ] **Step 4: Integrate** `llms.txt` into `targetContents()` and the existing generator's dry-run / `--write` / `--check` modes. Add `llms.txt` to the public-dist allowlist and its manifest test.
-- [ ] **Step 5: Run** `node --test scripts/llms-index.test.js scripts/search-foundation.test.js scripts/public-dist.test.js`, `node scripts/generate-search-assets.js --write`, and `node scripts/check-search-foundation.js`.
+- [ ] **Step 3: Add** `siteConfig.publicProjects` with exactly 8 public entries: AI Workflow Kit, Multi-platform Content Library, LocalFolderBridge, Harness Starter, AI Daily Radar, Codex Work Watch, AI Usage Dashboard, and FolderLens. The first four are the current homepage selections; the remaining four are additional public projects.
+- [ ] **Step 4: Implement** `buildLlmsIndex()` using `site-config.js`, `posts-meta.json`, and `featured-posts.json`. Include 5 featured articles, 8 public tools, and only these explicitly curated public GitHub projects. Do not enumerate repositories from the account automatically.
+- [ ] **Step 5: Integrate** `llms.txt` into `targetContents()` and the existing generator's dry-run / `--write` / `--check` modes. Add `llms.txt` to the public-dist allowlist and its manifest test.
+- [ ] **Step 6: Run** `node --test scripts/llms-index.test.js scripts/search-foundation.test.js scripts/public-dist.test.js`, `node scripts/generate-search-assets.js --write`, and `node scripts/check-search-foundation.js`.
   **Expected:** `llms.txt` is current, contains only explicit public entries, and tool/Sitemap checks remain green.
-- [ ] **Step 6: Commit** as `feat: add public llms content index`.
+- [ ] **Step 7: Commit** as `feat: add public llms content index`.
 
 ### Task 4: Documentation and integrated verification
 
