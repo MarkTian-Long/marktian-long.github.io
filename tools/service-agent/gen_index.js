@@ -1834,8 +1834,8 @@ const publicDataJson = JSON.stringify(publicData).replace(/</g, '\\u003c');
 
 const FAVICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%234f8fff'/><stop offset='1' stop-color='%239b6dff'/></linearGradient></defs><rect width='32' height='32' rx='6' fill='%230d1224'/><text x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='url(%23g)'>客</text></svg>";
 
-const { ensureToolPageSeo } = require('../../scripts/search-foundation');
-const siteConfig = require('../../scripts/site-config');
+const { ensureToolPageSeo } = require(path.join(process.cwd(), 'scripts/search-foundation'));
+const siteConfig = require(path.join(process.cwd(), 'scripts/site-config'));
 const serviceAgentTool = siteConfig.toolPages.find((tool) => tool.path === '/tools/service-agent/');
 if (!serviceAgentTool) throw new Error('Missing Service Agent SEO config');
 const html = ensureToolPageSeo(`<!DOCTYPE html>
