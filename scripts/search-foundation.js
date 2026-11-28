@@ -347,6 +347,112 @@ function ensureEntryPageSeo(sourceHtml, pageType, config) {
   return nextHtml;
 }
 
+
+function validateToolPages(toolPages) {
+  if (!Array.isArray(toolPages)) {
+    throw new Error('toolPages must be an array');
+  }
+  const seen = new Set();
+  for (const tool of toolPages) {
+    if (!tool || typeof tool !== 'object' || Array.isArray(tool)) {
+      throw new Error('Each tool page must be an object');
+    }
+    for (const field of ['path', 'title', 'description']) {
+      if (typeof tool[field] !== 'string' || !tool[field].trim()) {
+        throw new Error('Tool page ' + field + ' must be a non-empty string');
+      }
+    }
+    if (tool.path !== tool.path.trim() || !/^\/tools\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/.test(tool.path)) {
+      throw new Error('Invalid public tool path: ' + tool.path);
+    }
+    if (tool.title !== tool.title.trim() || tool.description !== tool.description.trim()) {
+      throw new Error('Tool page text fields must be trimmed: ' + tool.path);
+    }
+    if (seen.has(tool.path)) {
+      throw new Error('Duplicate public tool path: ' + tool.path);
+    }
+    seen.add(tool.path);
+  }
+  return toolPages;
+}
+
+function buildToolPageJsonLd(config, tool, url = absoluteUrl(config.siteUrl, tool.path)) {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: tool.title,
+    description: tool.description,
+    url,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: config.siteName,
+      url: absoluteUrl(config.siteUrl, '/')
+    },
+    author: {
+      '@type': 'Person',
+      name: config.author.name,
+      url: authorUrl(config)
+    }
+  }).replace(/</g, '\\u003c');
+}
+
+function buildToolPageSeoBlock(config, tool) {
+  const url = absoluteUrl(config.siteUrl, tool.path);
+  const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
+  const imageAlt = config.blog.imageAlt || config.siteName;
+  const jsonLd = buildToolPageJsonLd(config, tool, url);
+  return [
+    '<!-- search-foundation-tool:start -->',
+    '<meta name="description" content="' + htmlAttributeEscape(tool.description) + '" />',
+    '<link rel="canonical" href="' + htmlAttributeEscape(url) + '" />',
+    '<meta property="og:type" content="website" />',
+    '<meta property="og:title" content="' + htmlAttributeEscape(tool.title) + '" />',
+    '<meta property="og:description" content="' + htmlAttributeEscape(tool.description) + '" />',
+    '<meta property="og:url" content="' + htmlAttributeEscape(url) + '" />',
+    '<meta property="og:image" content="' + htmlAttributeEscape(imageUrl) + '" />',
+    '<meta property="og:image:width" content="' + htmlAttributeEscape(config.blog.imageWidth) + '" />',
+    '<meta property="og:image:height" content="' + htmlAttributeEscape(config.blog.imageHeight) + '" />',
+    '<meta property="og:image:alt" content="' + htmlAttributeEscape(imageAlt) + '" />',
+    '<meta name="twitter:card" content="summary_large_image" />',
+    '<meta name="twitter:title" content="' + htmlAttributeEscape(tool.title) + '" />',
+    '<meta name="twitter:description" content="' + htmlAttributeEscape(tool.description) + '" />',
+    '<meta name="twitter:image" content="' + htmlAttributeEscape(imageUrl) + '" />',
+    '<meta name="twitter:image:alt" content="' + htmlAttributeEscape(imageAlt) + '" />',
+    '<script type="application/ld+json">' + jsonLd + '</script>',
+    '<!-- search-foundation-tool:end -->'
+  ].join('\n');
+}
+
+function stripToolPageSeo(sourceHtml) {
+  const withoutTags = removeLinesMatching(sourceHtml, [
+    /[ \t]*<!-- search-foundation-tool:start -->[\s\S]*?<!-- search-foundation-tool:end -->[ \t]*\r?\n?/gi,
+    /[ \t]*<meta\b(?=[^>]*\bname=["']description["'])[^>]*\/?>[ \t]*\r?\n?/gi,
+    /[ \t]*<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\/?>[ \t]*\r?\n?/gi,
+    /[ \t]*<meta\b(?=[^>]*\bproperty=["']og:(?:type|title|description|url|image(?::(?:width|height|alt))?)["'])[^>]*\/?>[ \t]*\r?\n?/gi,
+    /[ \t]*<meta\b(?=[^>]*\bname=["']twitter:(?:card|title|description|image(?::alt)?)["'])[^>]*\/?>[ \t]*\r?\n?/gi
+  ]);
+  return removeJsonLdScriptsByType(withoutTags, ['WebPage']);
+}
+
+function ensureToolPageSeo(sourceHtml, tool, config) {
+  validateToolPages([tool]);
+  const head = extractHead(sourceHtml);
+  const titleMatch = head.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
+  if (!titleMatch) {
+    throw new Error('Tool page is missing <title>: ' + tool.path);
+  }
+  if (titleMatch[1].trim() !== tool.title) {
+    throw new Error('Tool page title mismatch for ' + tool.path + ': ' + titleMatch[1].trim() + ' !== ' + tool.title);
+  }
+  const beforeBody = extractBody(sourceHtml);
+  const stripped = stripToolPageSeo(sourceHtml);
+  const nextHtml = insertAfterTitle(stripped, buildToolPageSeoBlock(config, tool));
+  if (extractBody(nextHtml) !== beforeBody) {
+    throw new Error('Tool page SEO update changed <body>: ' + tool.path);
+  }
+  return nextHtml;
+}
+
 module.exports = {
   absoluteUrl,
   resolveArticleImage,
@@ -359,6 +465,9 @@ module.exports = {
   buildRss,
   buildArticleJsonLd,
   buildEntryJsonLd,
+  buildToolPageJsonLd,
+  validateToolPages,
+  ensureToolPageSeo,
   ensureArticleSeo,
   ensureEntryPageSeo,
   articleUrl

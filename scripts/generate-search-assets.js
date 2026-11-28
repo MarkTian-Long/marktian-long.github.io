@@ -10,7 +10,9 @@ const {
   buildSitemap,
   buildRss,
   ensureArticleSeo,
-  ensureEntryPageSeo
+  ensureEntryPageSeo,
+  ensureToolPageSeo,
+  validateToolPages
 } = require('./search-foundation');
 
 const BLOG_SCHEMA_VERSION = 4;
@@ -105,10 +107,12 @@ function pathFromAbsoluteUrl(url) {
 
 function buildSearchAssets(siteConfig, posts) {
   validatePosts(posts);
+  const toolPages = validateToolPages(siteConfig.toolPages || []);
   const pages = [
     '/',
     siteConfig.blog.path,
-    ...posts.map(post => pathFromAbsoluteUrl(articleUrl(siteConfig, post)))
+    ...posts.map(post => pathFromAbsoluteUrl(articleUrl(siteConfig, post))),
+    ...toolPages.map(tool => tool.path)
   ];
 
   return {
@@ -146,6 +150,11 @@ function targetContents(siteConfig, posts, rootDir = path.resolve(__dirname, '..
     const relPath = path.posix.join('tools/blog', post.url);
     const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
     contents[relPath] = ensureArticleSeo(source, post, siteConfig);
+  }
+  for (const tool of validateToolPages(siteConfig.toolPages || [])) {
+    const relPath = path.posix.join(tool.path.slice(1), 'index.html');
+    const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
+    contents[relPath] = ensureToolPageSeo(source, tool, siteConfig);
   }
   return contents;
 }

@@ -12,6 +12,9 @@ const {
   buildRss,
   ensureArticleSeo,
   ensureEntryPageSeo,
+  ensureToolPageSeo,
+  buildToolPageJsonLd,
+  validateToolPages,
   extractBody
 } = require('./search-foundation');
 const {
@@ -258,6 +261,67 @@ test('ensureEntryPageSeo centralizes entry metadata without changing body', () =
   assert.doesNotMatch(once, /old\.example/);
   assert.match(once, /search-foundation-entry:start/);
   assert.match(once, /"@graph"/);
+});
+
+
+test('ensureToolPageSeo is idempotent, escapes metadata, and preserves the page body', () => {
+  const tool = {
+    path: '/tools/example/',
+    title: 'Example Tool',
+    description: 'Summary with "quotes" & <angles>'
+  };
+  const sourceHtml = '<html><head><title>Example Tool</title>'
+    + '<meta name="description" content="Old description" />'
+    + '<link rel="canonical" href="https://old.example/" />'
+    + '<meta property="og:title" content="Old title" />'
+    + '<script type="application/ld+json">{"@type":"BreadcrumbList"}</script>'
+    + '</head><body><main><h1>Visible tool body</h1></main></body></html>';
+  const once = ensureToolPageSeo(sourceHtml, tool, config);
+  const twice = ensureToolPageSeo(once, tool, config);
+  const jsonLd = JSON.parse(buildToolPageJsonLd(config, tool));
+
+  assert.equal(twice, once);
+  assert.equal(extractBody(once), extractBody(sourceHtml));
+  assert.match(once, /search-foundation-tool:start/);
+  assert.match(once, /content="Summary with &quot;quotes&quot; &amp; &lt;angles&gt;"/);
+  assert.match(once, /"@type":"WebPage"/);
+  assert.match(once, /"@type":"BreadcrumbList"/);
+  assert.doesNotMatch(once, /old\.example|Old description|Old title/);
+  assert.equal(jsonLd.name, tool.title);
+  assert.equal(jsonLd.description, tool.description);
+  assert.equal(jsonLd.url, 'https://marktian-long.github.io/tools/example/');
+});
+
+test('ensureToolPageSeo rejects title mismatches and unsafe paths', () => {
+  const tool = {
+    path: '/tools/example/',
+    title: 'Expected Title',
+    description: 'A short description.'
+  };
+  const sourceHtml = '<html><head><title>Different Title</title></head><body>Body</body></html>';
+  assert.throws(() => ensureToolPageSeo(sourceHtml, tool, config), /title mismatch/);
+  assert.throws(() => validateToolPages([{ ...tool, path: '/tools/../private/' }]), /Invalid public tool path/);
+  assert.throws(() => validateToolPages([tool, tool]), /Duplicate public tool path/);
+});
+
+test('buildSearchAssets includes explicitly configured tool pages in the sitemap', () => {
+  const toolConfig = {
+    ...config,
+    toolPages: [{
+      path: '/tools/example/',
+      title: 'Example Tool',
+      description: 'A short description.'
+    }]
+  };
+  const posts = [{
+    slug: 'example',
+    title: 'Example article',
+    summary: 'Example summary',
+    url: 'posts/example.html'
+  }];
+  const assets = buildSearchAssets(toolConfig, posts);
+  assert.match(assets.sitemap, /https:\/\/marktian-long\.github\.io\/tools\/example\//);
+  assert.equal((assets.sitemap.match(/<url>/g) || []).length, 4);
 });
 
 test('buildSearchAssets emits entry pages, unique article URLs, and a limited feed', () => {
