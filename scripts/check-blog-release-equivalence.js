@@ -63,10 +63,8 @@ function validateSlug(slug) {
 function normalizeNewlines(text) { return String(text).replace(/\r\n?/g, '\n'); }
 function sha256(bytes) { return crypto.createHash('sha256').update(bytes).digest('hex'); }
 
-// Compare approved content, allowing ONLY line endings and contracted image-path migration.
-function verifyPromotion(approvedSource, publishedSource, options = {}) {
-  const { slug, readApprovedImage, readPublishedImage } = options;
-  validateSlug(slug);
+// drafts/blog and docs/blog have the same depth, so image paths stay unchanged.
+// Resolve them relative to each source directory and compare the same repo asset bytes.
 function collectStandaloneImages(source) {
   const images = [];
   let fence = null;

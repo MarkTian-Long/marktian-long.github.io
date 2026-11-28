@@ -10,7 +10,7 @@ const { renderStandaloneImage } = require('../tools/blog/generate-post');
 const { validateImageContract } = require('./blog-image-contract');
 const { validateBlogImageAsset } = require('./check-blog-images');
 
-const SOURCE_PATTERN = /^drafts\/blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
+const SOURCE_PATTERN = /^(?:drafts|docs)\/blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
 
 function sha256(bytes) {
   return crypto.createHash('sha256').update(bytes).digest('hex');
