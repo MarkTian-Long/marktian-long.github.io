@@ -3,26 +3,30 @@
 <title id="title">Agent 业务价值衡量框架的五个后续研究方向</title>
 <desc id="desc">技术评测、多 Agent、Personal Agent、企业治理和 Agentic Commerce 五个后续研究方向共享四步衡量问题，但各自拥有不同的业务结果和风险护栏。</desc>
 <rect width="1280" height="1024" fill="#f7f4ee"/>
-<text x="64" y="82" fill="#14243a" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量逻辑，五个研究方向</text>
-<text x="64" y="130" fill="#536273" font-size="32" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同的问题相同，业务结果变量和不可折抵护栏各不相同</text>
-<rect x="64" y="160" width="1152" height="92" rx="20" fill="#e9eef3"/>
-<text x="96" y="197" fill="#294663" font-size="34" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同四步</text>
-<text x="96" y="233" fill="#14243a" font-size="31" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">价值目标 → 工作系统 → 结果归因 → 价值兑现</text>
+<text x="64" y="82" fill="#14243a" font-size="60" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">一套衡量逻辑，五个研究方向</text>
+<text x="64" y="140" fill="#536273" font-size="48" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">相同的提问顺序，不同的结果变量与风险护栏</text>
+<rect x="64" y="170" width="1152" height="104" rx="20" fill="#e9eef3"/>
+<text x="96" y="214" fill="#294663" font-size="52" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">共同四步</text>
+<text x="96" y="260" fill="#14243a" font-size="48" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">价值目标 → 工作系统 → 结果归因 → 价值兑现</text>
 <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="64" y="280" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="96" y="326" fill="#294663" font-size="44" font-weight="700">技术评测与 Harness</text>
-  <text x="96" y="370" fill="#536273" font-size="36">结果：合格交付、返工与周期　｜　护栏：正确性与安全</text>
-  <rect x="64" y="426" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="96" y="472" fill="#695a95" font-size="44" font-weight="700">多 Agent 工作组织</text>
-  <text x="96" y="516" fill="#536273" font-size="36">结果：净合格吞吐与周期　｜　护栏：协调和人工审查</text>
-  <rect x="64" y="572" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="96" y="618" fill="#3e7857" font-size="44" font-weight="700">Personal Agent</text>
-  <text x="96" y="662" fill="#536273" font-size="36">结果：完整事务与用户负担　｜　护栏：授权、遗漏与补救</text>
-  <rect x="64" y="718" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="96" y="764" fill="#9b6c27" font-size="44" font-weight="700">企业治理与金融 Agent</text>
-  <text x="96" y="808" fill="#536273" font-size="36">结果：安全执行范围与风险　｜　护栏：权限、审计和责任</text>
-  <rect x="64" y="864" width="1152" height="132" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
-  <text x="96" y="910" fill="#9a4f37" font-size="44" font-weight="700">Agentic Commerce</text>
-  <text x="96" y="954" fill="#536273" font-size="36">结果：净新增交易与利润　｜　护栏：授权、退款和信任</text>
+  <rect x="64" y="292" width="1152" height="128" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="346" fill="#294663" font-size="56" font-weight="700">技术评测与执行框架</text>
+  <text x="96" y="400" fill="#536273" font-size="50">合格交付 · 返工 · 周期　｜　正确性 · 安全</text>
+
+  <rect x="64" y="432" width="1152" height="128" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="486" fill="#695a95" font-size="56" font-weight="700">多 Agent 工作组织</text>
+  <text x="96" y="540" fill="#536273" font-size="50">净合格吞吐 · 周期　｜　协调 · 冲突 · 审查</text>
+
+  <rect x="64" y="572" width="1152" height="128" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="626" fill="#3e7857" font-size="56" font-weight="700">个人 Agent</text>
+  <text x="96" y="680" fill="#536273" font-size="50">完整事务 · 跟进负担　｜　授权 · 遗漏 · 补救</text>
+
+  <rect x="64" y="712" width="1152" height="128" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="766" fill="#9b6c27" font-size="56" font-weight="700">企业治理与金融 Agent</text>
+  <text x="96" y="820" fill="#536273" font-size="50">安全执行范围 · 风险　｜　权限 · 审计 · 责任</text>
+
+  <rect x="64" y="852" width="1152" height="128" rx="20" fill="#fffdf9" stroke="#cfd5dc" stroke-width="2"/>
+  <text x="96" y="906" fill="#9a4f37" font-size="56" font-weight="700">Agentic Commerce</text>
+  <text x="96" y="960" fill="#536273" font-size="50">净新增交易 · 利润　｜　授权 · 退款 · 信任</text>
 </g>
 </svg>
