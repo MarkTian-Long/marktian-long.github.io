@@ -10,7 +10,7 @@
 
 ## Image 01 — opening-work-system
 
-- Status: Ready
+- Status: Generated / awaiting asset and page QA
 - Asset path: assets/images/blog/agent-business-value-measurement/opening-work-system.webp
 - Insertion position: 摘要框之后、导语之前
 - Reading task: 让读者看到 Agent 的价值发生在完整工作系统中，而不是 Agent 单独完成一段动作。
@@ -23,18 +23,17 @@
 - Reference images and their roles: 仅参考同篇已选图片的材质、配色与光线；不复制其他图片的主体和构图。
 - Final Prompt:
 
-生成一张独立的 16:9 博客编辑插画：一项业务请求从左侧进入中央 Agent 工作台，Agent 协调少量业务工具推进任务，遇到例外时由右侧员工判断复核，最后形成清晰的已核验交付；重点表现人、Agent 与工具共同完成工作，而不是机器人单独执行。采用暖米白背景、深海军蓝与克制陶土橙/支撑蓝的哑光 3D 纸雕质感，构图简洁、焦点锐利、主体细节清楚；不要文字、数字、UI 面板、Logo、网页边框或无关装饰。
+A polished, text-free 3D clay-style scene presents a warm, studio-lit workflow on a cream background: documents in an orange inbox flow through a friendly robot working at a laptop, surrounded by database, automation, and analytics icons, then move into two-way review with a thoughtful human collaborator before reaching a checked delivery package. Soft blue and terracotta arrows—including a sweeping feedback loop beneath—connect the stages, while rounded matte forms, subtle shadows, balanced spacing, and gentle highlights create a clean professional look.
 
 - Attempt log:
-  - Attempt 1（2026-11-28）：调用时未提供当前图块的显式 Prompt，模型从会话上下文生成了多章节总览海报；违反一图一命题，直接 Reject，不入稿、不作为参考图。
-  - Attempt 2：待执行；将只交接本图 Final Prompt。
-- Final decision: Pending
+  - Attempt 1（2026-11-28）：生成独立场景图；输出 1664×1024 PNG，主体/协作关系/留白初看通过，待单图 Checklist、规范化和页面显示验收。
+- Final decision: Generated / QA pending
 
 ---
 
 ## Image 02 — four-step-map
 
-- Status: Ready
+- Status: Rejected in current conversation; keep Final Prompt for a fresh session
 - Asset path: assets/images/blog/agent-business-value-measurement/four-step-map.webp
 - Insertion position: 开篇导语之后、第一章之前
 - Reading task: 让读者先理解本文的四步衡量顺序。
@@ -49,8 +48,10 @@
 
 生成一张独立的横向四阶段框架图，严格从左到右呈现四个等权步骤，标签逐字为“价值目标与主体”“工作系统变化”“结果证据与归因”“价值兑现与投入决策”，每步配一个简洁且语义贴切的符号，并用清晰箭头连接。采用暖米白背景、深海军蓝文字、克制陶土橙与支撑蓝的轻 3D 纸雕信息图风格，标签大而清楚、留白充足；不要副标题、长解释、额外模块、数据或网页边框。
 
-- Attempt log: 尚未在本轮调用。
-- Final decision: Pending
+- Attempt log:
+  - Attempt 1（2026-11-28）：图像入口从当前长会话自动推断任务，生成多章节总览海报；Reject。
+  - Attempt 2（2026-11-28）：同一长会话再次生成多模块文章预览图；Reject。两张失败候选均未入稿、未加入 public-dist，也不作为参考图。
+- Final decision: Rejected in this conversation; no further attempts here
 
 ---
 
