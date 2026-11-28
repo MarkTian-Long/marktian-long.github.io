@@ -29,7 +29,7 @@ test('buildLlmsIndex includes canonical site, featured writing, tools, and curat
   assert.match(output, /RSS feed: https:\/\/marktian-long\.github\.io\/feed\.xml/);
   assert.match(output, /Sitemap: https:\/\/marktian-long\.github\.io\/sitemap\.xml/);
   assert.ok(output.includes('A \\[featured\\] article'));
-  assert.match(output, /2026\.11 · Summary with &lt;markup&gt; &amp; evidence\./);
+  assert.match(output, /2026\.11 · Summary with &lt;markup&gt; & evidence\./);
   assert.match(output, /前沿雷达/);
   assert.match(output, /智能客服沙盘/);
   assert.match(output, /Public Project/);
