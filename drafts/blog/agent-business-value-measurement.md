@@ -13,7 +13,7 @@ relations: []
 
 ---
 
-![纸质业务请求沿连续路径经过 Agent 工作台、业务工具和人工复核，最终形成已核验交付](../../assets/images/blog/agent-business-value-measurement/opening-work-system.webp "概念示意：Agent 的价值要放回完整工作系统，连同工具执行、人工判断和最终验收一起衡量。")
+![纸质业务请求沿连续路径经过 Agent 工作台、业务工具和人工复核，最终形成已核验交付](../../assets/images/blog/agent-business-value-measurement/opening-work-system.svg "概念示意：Agent 的价值要放回完整工作系统，连同工具执行、人工判断和最终验收一起衡量。")
 
 Agent 指标看起来不错，企业却未必因此得到更多价值。
 
