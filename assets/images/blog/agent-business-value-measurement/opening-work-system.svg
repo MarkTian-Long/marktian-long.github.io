@@ -9,11 +9,11 @@
 <path d="M498 164 L510 178 L522 164" fill="none" stroke="#4f82b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 <g>
   <rect x="64" y="230" width="230" height="260" rx="28" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
-  <rect x="108" y="268" width="142" height="110" rx="14" fill="#f1eee8"/>
-  <path d="M132 300 H226 M132 326 H218 M132 352 H204" stroke="#8e9aa6" stroke-width="11" stroke-linecap="round"/>
-  <circle cx="179" cy="414" r="28" fill="#d9e2e8"/>
-  <path d="M126 468 C132 432 151 424 179 424 C207 424 226 434 232 468" fill="#4f82b8"/>
-  <text x="179" y="548" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">业务请求</text>
+  <rect x="108" y="260" width="142" height="90" rx="14" fill="#f1eee8"/>
+  <path d="M132 284 H226 M132 309 H218 M132 334 H204" stroke="#8e9aa6" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="179" cy="376" r="23" fill="#d9e2e8"/>
+  <path d="M130 432 C136 402 153 398 179 398 C205 398 222 405 228 432" fill="#4f82b8"/>
+  <text x="179" y="468" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">业务请求</text>
 </g>
 <g>
   <rect x="360" y="180" width="300" height="310" rx="34" fill="#fffdf9" stroke="#b8c9d8" stroke-width="3"/>
@@ -22,7 +22,7 @@
   <path d="M510 245 L561 274 L561 332 L510 361 L459 332 L459 274Z" fill="#f7c7a9"/>
   <circle cx="510" cy="303" r="24" fill="#fffaf4"/>
   <path d="M510 277 V329 M484 303 H536" stroke="#b85e43" stroke-width="9" stroke-linecap="round"/>
-  <text x="510" y="450" text-anchor="middle" fill="#34485d" font-size="64" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent</text>
+  <text x="510" y="468" text-anchor="middle" fill="#34485d" font-size="64" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">Agent</text>
 </g>
 <g>
   <rect x="720" y="230" width="230" height="260" rx="28" fill="#fffdf9" stroke="#c2d1c5" stroke-width="3"/>
@@ -30,13 +30,13 @@
   <path d="M770 298 H804 M770 322 H804 M770 346 H804" stroke="#f7fbf7" stroke-width="7" stroke-linecap="round"/>
   <rect x="838" y="278" width="78" height="88" rx="10" fill="#dce8df"/>
   <path d="M852 298 H902 M852 322 H902 M852 346 H902" stroke="#6f9d7c" stroke-width="7" stroke-linecap="round"/>
-  <text x="835" y="548" text-anchor="middle" fill="#3d6449" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">工具系统</text>
+  <text x="835" y="468" text-anchor="middle" fill="#3d6449" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">工具系统</text>
 </g>
 <g>
   <rect x="986" y="230" width="230" height="260" rx="28" fill="#fffdf9" stroke="#d5cec2" stroke-width="3"/>
   <circle cx="1101" cy="344" r="76" fill="#e3eee5"/>
   <path d="M1060 344 L1088 373 L1145 309" stroke="#5f9470" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="1101" y="548" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">结果验收</text>
+  <text x="1101" y="468" text-anchor="middle" fill="#34485d" font-size="56" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">结果验收</text>
 </g>
 <g>
   <rect x="400" y="54" width="220" height="102" rx="20" fill="#e9eef3" stroke="#c8d3dd" stroke-width="2"/>
