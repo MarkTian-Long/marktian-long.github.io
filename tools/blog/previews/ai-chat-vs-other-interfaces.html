@@ -38,7 +38,7 @@
   <div class="page-outer">
     <div class="top-bar"><a href="../index.html" class="back-link">← 返回列表</a></div>
     <div class="two-col">
-      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、聊天成为入口，不等于聊天适合承担整个产品</a></li><li><a href="#section-2">二、先分析用户在做什么，再决定用什么界面</a></li><li><a href="#section-3">三、澄清目标、探索路径时，聊天什么时候更合适？</a></li><li><a href="#section-4">四、精确修改、反复调整时，为什么还需要直接操作界面？</a></li><li><a href="#section-5">五、持续观察与核验结果时，怎样让当前状态可见？</a></li><li><a href="#section-6">六、AI Product Builder 如何选择交互方式？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
+      <aside class="toc-wrap"><nav class="toc-card" aria-label="本文目录"><span class="toc-card-label">本文目录</span><ul class="toc-list"><li><a href="#section-1">一、聊天成为入口，不等于聊天适合承担整个产品</a></li><li><a href="#section-2">二、先分析用户在做什么，再决定用什么界面</a></li><li><a href="#section-3">三、澄清目标、探索路径时，聊天什么时候更合适？</a></li><li><a href="#section-4">四、精确修改、反复调整时，为什么还需要直接操作界面？</a></li><li><a href="#section-5">五、持续观察与核验结果时，怎样让当前状态可见？</a></li><li><a href="#section-6">六、AI Builder 如何选择交互方式？</a></li><li><a href="#section-7">参考资料</a></li></ul></nav></aside>
       <main>
         <div class="preview-flag" role="note"><strong>审阅预览 · 未发布</strong><span>图文内容仍可修改，尚未进入正式文章索引。</span></div><header class="post-header"><div class="post-meta"><span class="post-date">未发布预览</span><span id="post-tags" aria-label="文章标签"><span class="tag">决策框架</span><span class="tag">产品设计</span><span class="tag">人机协作</span></span></div><h1 class="post-title">AI 时代，什么时候该用聊天，什么时候该保留其他界面？</h1><p class="post-summary">AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</p></header>
         <hr class="divider" />
@@ -85,7 +85,7 @@
 <p>Norman 在<a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》</a>中把结果评估细化为感知、解释和对照目标。监控任务还可能反过来启动行动：用户先看到指标越界或收到提醒，才决定调查什么。持续可见的状态视图因此既帮助用户核验已有操作，也可能成为形成下一步意图的入口。</p>
 <p><a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">Graphics Interface 2026 的一项监控研究</a>让 24 名没有鱼场数据经验的学生分别使用聊天和看板完成分析任务。在 180 秒限制内，看板的任务完成率为 87.7%，聊天界面为 70.5%；在完整完成的任务中，看板总体耗时显著更短；正确率和系统可用性评分未见显著差异。逐任务进行多重比较校正后，只有 10 项中的 3 项时间差异仍显著。参与者反馈看板便于快速定位精确值，聊天适合灵活探索。这些结果只适用于该实验的任务和参与者，不能证明看板普遍优于聊天。</p>
 <p><strong>状态是否最新，和状态如何呈现，是两项不同的设计决策。</strong> 用户需要知道数据来源、更新时间，以及看到的是正式业务记录还是模型解释。异常提醒也应以事件重要性和用户是否需要介入为条件，不必把每次状态变化都变成一次打断。</p>
-<h2 id="section-6">六、AI Product Builder 如何选择交互方式？</h2>
+<h2 id="section-6">六、AI Builder 如何选择交互方式？</h2>
 <p>回到产品设计，可以先看用户此刻被什么卡住，再决定采用哪种交互。下表根据第三至五章的例子整理常见交互困难及对应的设计选择。这些困难可能同时出现。</p>
 <div class="blog-table"><table><thead><tr><th>用户当前遇到的困难</th><th>可以优先尝试的交互</th><th>重点检查的能力</th></tr></thead><tbody><tr><td>目标模糊，不知道从哪里开始</td><td>聊天澄清、搜索、候选卡片</td><td>约束明确、选项可见</td></tr><tr><td>多个对象需要横向比较</td><td>并列列表、卡片或表格，AI 辅助解释</td><td>同一比较口径、来源可核对</td></tr><tr><td>需要反复、精确地修改对象</td><td>直接操作或可编辑控件，AI 辅助起草</td><td>即时反馈、可修正</td></tr><tr><td>返回长期进行中的任务</td><td>任务视图或看板，AI 辅助解释</td><td>状态来源、更新时间、接续入口</td></tr></tbody></table></div>
 <p>例如，质检规则可以先通过聊天形成草案，再在结构化界面中调整条件，最后核验生效状态和引用该规则的任务。同一工作对象在不同环节可以使用不同交互。</p>

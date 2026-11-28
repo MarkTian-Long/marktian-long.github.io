@@ -3,7 +3,7 @@
 日期：2026-11-28  
 分支：`chore/ai-builder-brand-update`  
 PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)  
-状态：分支自动化测试、公开构建与产物 smoke 已通过；合并与品牌版本正式部署待完成。
+状态：品牌更新已合并并完成 Pages 部署；部署产物检查发现的少量残留表达正在通过独立 follow-up PR 收尾。
 
 ## 决策
 
@@ -21,6 +21,7 @@ PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)
 - 更新 README 中英文版、首页维护手册、AGENTS / CLAUDE、共享项目记忆、Impeccable 设计上下文、博客写作指令、SOP 与 Checklist。
 - 更新设计索引参考页、SEO/图片契约测试断言，以及候选站点冻结首页和博客入口快照与对应哈希。
 - 在 2026-04 的品牌讨论文档中追加本次决策说明，不覆盖历史讨论。
+- 首次部署后的公开产物复核发现两个独立工具页页脚仍使用旧身份标签；另有一处未发布博客预览标题仍使用旧角色称呼，本 follow-up 同步修正这三处，不触及已发布博客正文。
 
 ## 已完成核对
 
@@ -29,6 +30,7 @@ PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)
 - 分享封面已读回检查，尺寸为 1200 × 630；Git blob SHA 与验证过的图片文件一致。
 - 候选站点冻结快照已同步首页与博客入口；对 gzip 快照做了格式、CRC、长度和内容回环核验，并更新候选页 SHA-256 断言。
 - 当前写作规则使用 AI Builder；历史版本日志中出现的 AI Product Builder 作为历史记录保留。
+- PR #1 已合并至 main（`10fc52dd3849728897a6be61999f9062e036a47e`），GitHub Pages 部署运行 `46090213979` 成功；实际 Pages artifact `15240678300` 已下载并核验首页 Title、导航、Hero、Footer、博客 JSON-LD 及 1200 × 630 OG 图片。直接访问公网的外部网络检查受当前执行环境 DNS 限制，未将其误报为浏览器端验收。
 
 ## 尚未完成的发布门槛
 
