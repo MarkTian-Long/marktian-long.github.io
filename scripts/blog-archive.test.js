@@ -77,13 +77,13 @@ test('renderBlogArchivePage replaces only marked regions and is idempotent', () 
     + '<div id="featuredRoot"><!-- blog-archive:featured:start --><!-- blog-archive:featured:end --></div>'
     + '<div id="archiveRoot"><!-- blog-archive:archive:start --><div class="loading">加载中…</div><!-- blog-archive:archive:end --></div>'
     + '</body></html>';
-  const posts = makePosts(12);
+  const posts = makePosts(14);
   const once = renderBlogArchivePage(source, posts, ['post-0', 'post-1']);
   const twice = renderBlogArchivePage(once, posts, ['post-0', 'post-1']);
 
   assert.equal(twice, once);
   assert.match(once, /featured-section/);
   assert.match(once, /<noscript>/);
-  assert.match(once, /posts\/post-11\.html/);
+  assert.match(once, /posts\\/post-13\\.html/);
   assert.doesNotMatch(once, /class="loading"/);
 });
