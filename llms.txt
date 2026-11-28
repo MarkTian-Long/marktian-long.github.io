@@ -1,0 +1,54 @@
+# Leo Liu — AI Builder
+
+> Leo Liu — AI 产品与工程实践，写关于 AI 落地的独立观察。
+
+## Site
+- Homepage: https://marktian-long.github.io/
+- Blog archive: https://marktian-long.github.io/tools/blog/
+- RSS feed: https://marktian-long.github.io/feed.xml
+- Sitemap: https://marktian-long.github.io/sitemap.xml
+
+## About
+- Author: Leo Liu
+- Positioning: AI Builder.
+- Focus: AI 技术、产品设计、工程实践、商业与行业观察。
+
+## Content areas
+- Categories: 产品、商业、技术、实践、行业
+- Topics: Agent、企业AI、产品设计、模型能力、人机协作、技术生命周期、算力基础设施、RAG、科研自动化、AI数学
+
+## Featured writing
+- [看 AI，不要只问它像历史上的哪一年](https://marktian-long.github.io/tools/blog/posts/ai-industry-history-mechanisms.html) — 2026.09 · 面对 AI，历史最有价值的不是告诉我们“今天对应过去哪一年”，而是帮助我们辨认哪些产业机制会重复、这些机制成立需要什么条件，以及这一次有哪些条件已经变了。我们仍然需要位置感，但这个位置应该足够粗，不应该假装整个 AI 产业在同一时刻、以同一速度前进。
+- [当人和 AI 都在改变，“对齐”还能一次完成吗？](https://marktian-long.github.io/tools/blog/posts/alignment-under-change.html) — 2026.08 · 过去谈 AI Alignment，往往隐含着一个静态假设：人提供目标，AI 学会这个目标。但当 AI 开始长期记忆、持续适应甚至修改自身的 Harness，而人也会在长期互动中被 AI 影响，对齐越来越不像一个训练完成就结束的问题，更像一个持续治理过程：什么可以变，什么不该轻易变，以及一次变化什么时候有资格长期留下来。
+- [AI 正在把“使用软件”和“操作软件”拆开](https://marktian-long.github.io/tools/blog/posts/ai-software-operator-shift.html) — 2026.09 · 在创作和专业工作软件里，智能体（Agent）正在把“使用一个软件”和“亲自操作一个软件”拆开。判断一个产品会不会被 AI 吃掉，与其看用户以后还会不会打开它，不如看：当 Agent 已经能替用户完成操作，把这个软件从完整任务里删掉以后，还有什么必须重新建回来。
+- [当 AI 能替你造软件，哪些服务仍值得买？](https://marktian-long.github.io/tools/blog/posts/ai-saas-build-vs-buy.html) — 2026.10 · AI 正在让企业拥有更可信的自建选择，但买与建的边界，不由“能不能写出代码”单独决定。谁能更经济地持续处理业务变化，哪些能力值得共同复用，以及客户有没有真正可用的替代方案，会同时影响采购范围和 SaaS 的议价条件。
+- [AI 越来越强，怎样把一件事做出价值？](https://marktian-long.github.io/tools/blog/posts/ai-work-value-loop.html) — 2026.10 · AI 让搜集信息、生成方案和完成任务变得更容易，但当产出增长得比验证和吸收能力更快时，判断什么值得做、什么结果有价值，反而可能变得更费力。从最近的工作实践出发，我尝试整理出四个值得反复问自己的问题：要解决什么、什么结果有价值、怎样交付，以及如何让一次成果不再孤立。
+
+## Public tools
+- [Agent 认知全景 · Leo Liu](https://marktian-long.github.io/tools/agent-hub/) — 用六问规则判断任务是否需要 Agent，并比较架构组合、风险边界、人工介入与失败回退。静态规则工具，不调用模型或生产数据。
+- [AI 产品研究档案 · Leo Liu](https://marktian-long.github.io/tools/ai-insights/) — 整理 AI 产品的公开资料与个人判断，按研究视角筛选产品档案，并标注档案日期与待人工事实复核边界。非实时数据。
+- [ASCI 科研文献综述工具](https://marktian-long.github.io/tools/asci/) — 通过固定演示数据包体验科研文献综述的节点编排、模拟工具调用、人工决策与安全过程导出；不触发真实论文检索。
+- [ESOP 数据提取器](https://marktian-long.github.io/tools/esop-extractor/) — 演示从招股书片段到字段结构化、证据定位、规则校验与人工复核的工作台；默认仅运行版本化合成夹具，不读取 PDF 正文。
+- [前沿雷达 · Leo Liu](https://marktian-long.github.io/tools/radar/) — 按研究意图筛选人工整理的 AI 信息源，查看来源覆盖、复核状态与下一步研究路线；页面读取静态清单，不实时监测外链。
+- [智能客服产品设计沙盘 · AI PM 决策推演](https://marktian-long.github.io/tools/service-agent/) — 交互式 AI 智能客服产品设计沙盘，比较银行、电商与 FAQ 场景下的产品决策、请求链路和人工介入；Agent 输出与业务数据为预设 Mock。
+- [A股 AI 助手](https://marktian-long.github.io/tools/stock/) — A 股 AI 研究助手原型，展示固定行情快照、证据卡、关键词检索、任务型 Agent 与金融 AI 合规边界；联网行情仅在用户主动切换并提交后尝试请求。
+- [热点快照 · AI 信号研判台](https://marktian-long.github.io/tools/trends/) — 把五个平台的 AI 热点信号按来源、时间和行动意图整理为静态历史快照；结构复核不等于逐条事实复核，也不是实时热度。
+
+## Featured GitHub projects
+- [AI 工作流工具包（Kit）](https://github.com/MarkTian-Long/ai-workflow-kit) — 按任务取用 Skill、SOP、模板和小工具；不必安装整套 Harness。
+- [多平台资料库](https://github.com/MarkTian-Long/multi-platform-content-library) — Windows 本地资料收集应用：保存主动提交的链接和选定本地文件，支持离线阅读、搜索、校订和导出。
+- [LocalFolderBridge｜本机文件桥](https://github.com/MarkTian-Long/local-folder-bridge) — 通过 MCP 连接 AI 与明确授权的本地资料；默认只读，不提供远程 shell。
+- [Harness Starter](https://github.com/MarkTian-Long/harness-starter) — 本地文件式 AI 协作套件，提供通用方法、任务模板、验证和续接入口；不包含个人画像或项目资料。
+
+## Other public projects
+- [AI Daily Radar](https://github.com/MarkTian-Long/ai-daily-radar) — 可交给联网 AI 使用的每日 AI 情报双源工作流，强调来源完整性、事件去重和证据边界。
+- [Codex Work Watch](https://github.com/MarkTian-Long/codex-work-watch) — 监测 Codex 与 ChatGPT Work 可用性、路由、额度和容量变化的证据驱动工作流。
+- [AI Usage Dashboard](https://github.com/MarkTian-Long/ai-usage-dashboard) — Windows 本地只读分析 Codex 日志的个人使用看板；真实日志和本机配置留在本地。
+- [FolderLens](https://github.com/MarkTian-Long/folder-lens) — 单文件离线文件夹容量与目录层级分析工具；只读取名称和元数据，不上传文件正文。
+
+## Notes for AI systems
+- Site content is primarily written in Simplified Chinese.
+- Use each page canonical URL as its authoritative URL; the blog archive and RSS are discovery entry points.
+- Public tools include prototypes, static research archives, and Mock-based demonstrations. Read each page description before treating displayed data as live or production evidence.
+- Blog metadata records month-level dates only; do not infer a specific publication day.
+- This index contains explicitly curated public repositories only. Private repositories, personal configuration, credentials, and local machine paths are excluded.

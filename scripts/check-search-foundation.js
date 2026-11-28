@@ -3,6 +3,7 @@ const path = require('path');
 const { isDeepStrictEqual } = require('util');
 
 const siteConfig = require('./site-config');
+const { buildLlmsIndex } = require('./llms-index');
 const { buildSearchAssets, buildShareCardConfig, validateBlogMetadata } = require('./generate-search-assets');
 const {
   articleUrl,
@@ -120,6 +121,13 @@ function checkAssets(rootDir, config, posts, errors, messages) {
     'blog share-card config mismatch'
   )) {
     messages.push('PASS blog share-card config');
+  }
+  if (Array.isArray(config.publicProjects)) {
+    const featuredMetadata = JSON.parse(readText(rootDir, 'tools/blog/data/featured-posts.json'));
+    const expectedLlms = buildLlmsIndex(config, posts, featuredMetadata.featured);
+    if (checkExactFile(rootDir, 'llms.txt', expectedLlms, errors, 'llms.txt content mismatch')) {
+      messages.push('PASS llms.txt');
+    }
   }
 }
 

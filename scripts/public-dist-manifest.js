@@ -7,6 +7,7 @@ const PUBLIC_FILES = [
   'robots.txt',
   'sitemap.xml',
   'feed.xml',
+  'llms.txt',
   'assets/css/style.css',
   'assets/css/style-light.css',
   'assets/images/og-cover.png',

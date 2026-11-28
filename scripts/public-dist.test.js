@@ -127,6 +127,7 @@ test('public dist contains a static blog archive with one link per article', () 
     buildPublicDist({ rootDir: repoRoot, outputDir });
     const metadata = JSON.parse(fs.readFileSync(path.join(repoRoot, 'tools/blog/data/posts-meta.json'), 'utf8'));
     const archive = fs.readFileSync(path.join(outputDir, 'tools/blog/index.html'), 'utf8');
+    assert.equal(fs.existsSync(path.join(outputDir, 'llms.txt')), true);
     const links = [...archive.matchAll(/href="(posts\/[^"]+\.html)"/g)].map(match => match[1]);
 
     assert.equal(links.length, metadata.posts.length);
