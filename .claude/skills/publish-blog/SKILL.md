@@ -147,8 +147,8 @@ git push origin <branch>
 1. 读取最新 `main` SHA 与本次涉及文件的 blob SHA；核对作者确认稿的完整 40 位 commit。
 2. 使用 `create_branch` 从该精确 `main` SHA 创建发布分支，并回读分支 head。分支不存在时必须先创建；`update_ref` 只更新已经存在的分支。
 3. 多文件变更使用 Blob → Tree（传入最新 `base_tree_sha`）→ Commit（`parent_sha` 为当前分支 head）→ `update_ref`（`expected_sha` 为刚读取的分支 head，`force:false`）。单文件文字更新可顺序使用 `update_file` 和最新 blob SHA。并发 head 变化时停止、重读并合并，不强推。
-4. 回读每个变更文件及分支 head，确认内容和 SHA 与预期一致；创建 PR，等待 `Verify pull request` 的必需检查全部完成且成功。
-5. 合并时传入 PR 最新 `head.sha` 作为 `expected_head_sha`；合并后回读 `main`，确认合并 commit 和正式文件都在 main。PR 创建、检查成功、合并成功是三个不同状态。
+4. 回读每个变更文件及分支 head，确认内容和 SHA 与预期一致；使用 `create_pull_request` 创建 PR，等待 `Verify pull request` 的必需检查全部完成且成功。
+5. 使用 `merge_pull_request` 合并时传入 PR 最新 `head.sha` 作为 `expected_head_sha`；合并后回读 `main`，确认合并 commit 和正式文件都在 main。PR 创建、检查成功、合并成功是三个不同状态。
 ## 5. 远端与线上验证
 
 1. 确认 `git status --short --branch` 不再显示 `ahead`。

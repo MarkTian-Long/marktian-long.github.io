@@ -65,5 +65,5 @@ test('publish Skill defines GitHub Connector branch, PR and Pages recovery seman
   assert.match(skill, /verify-pr/i);
   assert.match(skill, /fresh workflow run/i);
   assert.match(skill, /Do not rerun the same Pages workflow run after artifact upload/i);
-  assert.match(skill, /cannot execute Node/i);
+  assert.match(skill, /不能执行 Node/);
 });
