@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="title desc">
+<title id="title">从技术表现到经营结果的衡量地图</title>
+<desc id="desc">业务结果指标、流程机制指标和 Agent 诊断指标承担不同职责。基线、对照、分母和观察窗用于归因，授权、安全、质量和合规是横跨各层的护栏。</desc>
+<rect width="1280" height="860" fill="#f7f4ee"/>
+<text x="64" y="82" fill="#14243a" font-size="46" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">指标有不同职责，不能互相替代</text>
+<text x="64" y="130" fill="#536273" font-size="26" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">从企业结果往下追问机制，再用技术诊断解释局部表现</text>
+<g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="70" y="190" width="1140" height="145" rx="24" fill="#fffdf9" stroke="#d97757" stroke-width="3"/>
+  <rect x="70" y="190" width="20" height="145" rx="10" fill="#d97757"/>
+  <text x="120" y="244" fill="#9a4f37" font-size="31" font-weight="700">业务结果指标</text>
+  <text x="120" y="294" fill="#14243a" font-size="29">成本 · 合格吞吐 · 收入 · 客户结果 · 风险</text>
+  <text x="920" y="267" fill="#536273" font-size="25">企业最终获得什么？</text>
+  <rect x="70" y="382" width="1140" height="145" rx="24" fill="#fffdf9" stroke="#4f82b8" stroke-width="3"/>
+  <rect x="70" y="382" width="20" height="145" rx="10" fill="#4f82b8"/>
+  <text x="120" y="436" fill="#37658f" font-size="31" font-weight="700">流程机制指标</text>
+  <text x="120" y="486" fill="#14243a" font-size="28">覆盖 · 分流 · 周期 · 交接 · 接管 · 返工 · 重开</text>
+  <text x="920" y="458" fill="#536273" font-size="25">变化通过什么发生？</text>
+  <rect x="70" y="574" width="1140" height="145" rx="24" fill="#fffdf9" stroke="#7a6ca8" stroke-width="3"/>
+  <rect x="70" y="574" width="20" height="145" rx="10" fill="#7a6ca8"/>
+  <text x="120" y="628" fill="#695a95" font-size="31" font-weight="700">Agent 诊断指标</text>
+  <text x="120" y="678" fill="#14243a" font-size="27">最终状态 · 完整验收 · pass^k · 延迟 · 调用成本</text>
+  <text x="920" y="650" fill="#536273" font-size="25">系统在限定任务中表现如何？</text>
+  <path d="M640 340 V375 M628 362 L640 378 L652 362" stroke="#8b95a2" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M640 532 V567 M628 554 L640 570 L652 554" stroke="#8b95a2" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<rect x="70" y="760" width="545" height="64" rx="16" fill="#e9eef3"/>
+<text x="94" y="800" fill="#294663" font-size="23" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">归因条件：基线 · 对照 · 分母 · 观察窗</text>
+<rect x="635" y="760" width="575" height="64" rx="16" fill="#f3e8e2"/>
+<text x="659" y="800" fill="#9a4f37" font-size="23" font-weight="700" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif">硬护栏：授权 · 安全 · 质量 · 合规</text>
+</svg>
