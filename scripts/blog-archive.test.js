@@ -84,6 +84,6 @@ test('renderBlogArchivePage replaces only marked regions and is idempotent', () 
   assert.equal(twice, once);
   assert.match(once, /featured-section/);
   assert.match(once, /<noscript>/);
-  assert.match(once, /posts\\/post-13\\.html/);
+  assert.match(once, /posts\/post-13\.html/);
   assert.doesNotMatch(once, /class="loading"/);
 });
