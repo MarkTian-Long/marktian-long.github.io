@@ -5,6 +5,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { parseSourceMarkdown } = require('./markdown-source.js');
 const siteConfig = require('../../scripts/site-config.js');
+const { PUBLIC_FILES } = require('../../scripts/public-dist-manifest.js');
 
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const FULL_SHA = /^[a-f0-9]{40}$/i;
@@ -78,6 +79,10 @@ function parseArgs(argv) {
   return { slug, approvedRef: approvedRef.toLowerCase(), date, dryRun };
 }
 
+function normalizeLineEndings(value) {
+  return String(value).replace(/\r\n/g, '\n');
+}
+
 function runGit(args, rootDir) {
   const result = spawnSync('git', args, {
     cwd: rootDir,
@@ -131,7 +136,7 @@ function assertApprovedDraft({ rootDir, slug, approvedRef }) {
 
   const approvedSource = runGit(['show', approvedRef + ':' + draftRelative], rootDir);
   const currentSource = fs.readFileSync(draftPath, 'utf8');
-  if (approvedSource !== currentSource) {
+  if (normalizeLineEndings(approvedSource) !== normalizeLineEndings(currentSource)) {
     throw new Error('Current draft differs from the author-approved commit. Reconfirm the changed source before publishing.');
   }
   const parsed = parseSourceMarkdown(currentSource, draftRelative);
@@ -154,6 +159,9 @@ function assertApprovedDraft({ rootDir, slug, approvedRef }) {
     title: parsed.sourceTitle,
     hasPreview: fs.existsSync(previewPath),
   };
+  if (fs.existsSync(previewPath) && !PUBLIC_FILES.includes(previewRelative)) {
+    throw new Error('Existing preview URL is not registered in the public asset manifest: ' + previewRelative);
+  }
 }
 
 function ensureEmptyBuildOutput(rootDir, slug) {
@@ -186,6 +194,8 @@ function prepareRelease(options, rootDir = path.resolve(__dirname, '../..')) {
     }, null, 2));
     return { dryRun: true, plan };
   }
+
+  runNode(rootDir, ['scripts/check-blog-opening-image.js', '--source', plan.draftRelative], 'Verify required opening image');
 
   const syncArgs = ['tools/blog/sync-post-metadata.js', '--write', plan.draftRelative];
   if (options.date) syncArgs.push('--date', options.date);
@@ -243,6 +253,7 @@ module.exports = {
   assertApprovedDraft,
   buildPreviewRedirect,
   ensureEmptyBuildOutput,
+  normalizeLineEndings,
   parseArgs,
   prepareRelease,
 };

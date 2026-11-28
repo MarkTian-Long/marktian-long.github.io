@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { buildPreviewRedirect, parseArgs } = require('../tools/blog/publish');
+const { buildPreviewRedirect, normalizeLineEndings, parseArgs } = require('../tools/blog/publish');
 
 test('formal publication requires an explicit prepare flag and complete approved commit', () => {
   const approvedRef = 'a'.repeat(40);
@@ -37,6 +37,10 @@ test('publication preview redirect is noindex, canonical and preserves the URL f
   assert.match(html, /canonical" href="https:\/\/marktian-long\.github\.io\/tools\/blog\/posts\/example-article\.html"/);
   assert.match(html, /location\.replace\("\.\.\/posts\/example-article\.html"\+location\.hash\)/);
   assert.match(html, /AI 与产品 &lt;界面&gt;/);
+});
+
+test('approved source comparison ignores only platform newline normalization', () => {
+  assert.equal(normalizeLineEndings('first\r\nsecond\r\n'), 'first\nsecond\n');
 });
 
 test('publication parser accepts an explicit publication month and dry-run mode', () => {
