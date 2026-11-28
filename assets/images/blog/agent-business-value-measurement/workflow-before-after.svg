@@ -45,9 +45,9 @@
   <text x="1155" y="790" text-anchor="middle" fill="#6e5b55" font-size="52">或暂停</text>
 
   <path d="M1000 550 C1020 540 1030 530 1042 530" stroke="#8b95a2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
-  <text x="1014" y="500" fill="#536273" font-size="52">是</text>
+  <text x="1035" y="500" text-anchor="end" fill="#536273" font-size="52">是</text>
   <path d="M1000 700 C1020 720 1030 745 1042 745" stroke="#8b95a2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
-  <text x="1014" y="780" fill="#536273" font-size="52">否</text>
+  <text x="1035" y="780" text-anchor="end" fill="#536273" font-size="52">否</text>
 
   <rect x="650" y="860" width="610" height="90" rx="20" fill="#e9eef3" stroke="#c8d3dd" stroke-width="2"/>
   <text x="955" y="922" text-anchor="middle" fill="#294663" font-size="56" font-weight="700">状态核验与交付</text>
