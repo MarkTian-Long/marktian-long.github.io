@@ -3,6 +3,7 @@ const path = require('path');
 const { isDeepStrictEqual } = require('util');
 
 const siteConfig = require('./site-config');
+const { buildLlmsIndex } = require('./llms-index');
 const { buildSearchAssets, buildShareCardConfig, validateBlogMetadata } = require('./generate-search-assets');
 const {
   articleUrl,
@@ -11,7 +12,10 @@ const {
   buildEntryJsonLd,
   resolveArticleImage,
   ensureArticleSeo,
-  ensureEntryPageSeo
+  ensureEntryPageSeo,
+  buildToolPageJsonLd,
+  ensureToolPageSeo,
+  validateToolPages
 } = require('./search-foundation');
 
 function readText(rootDir, relPath) {
@@ -118,6 +122,13 @@ function checkAssets(rootDir, config, posts, errors, messages) {
   )) {
     messages.push('PASS blog share-card config');
   }
+  if (Array.isArray(config.publicProjects)) {
+    const featuredMetadata = JSON.parse(readText(rootDir, 'tools/blog/data/featured-posts.json'));
+    const expectedLlms = buildLlmsIndex(config, posts, featuredMetadata.featured);
+    if (checkExactFile(rootDir, 'llms.txt', expectedLlms, errors, 'llms.txt content mismatch')) {
+      messages.push('PASS llms.txt');
+    }
+  }
 }
 
 function findJsonLdByType(blocks, expectedType) {
@@ -170,8 +181,12 @@ function checkPageSeo({
   }
 
   const feeds = alternateFeeds(html);
-  if (feeds.length !== 1 || feeds[0] !== expectedFeed) {
-    errors.push(`${relPath} RSS alternate mismatch`);
+  if (expectedFeed) {
+    if (feeds.length !== 1 || feeds[0] !== expectedFeed) {
+      errors.push(`${relPath} RSS alternate mismatch`);
+    }
+  } else if (feeds.length) {
+    errors.push(`${relPath} unexpected RSS alternate`);
   }
 
   const parsedJsonLd = parseJsonLd(html, relPath, errors);
@@ -362,6 +377,52 @@ function checkEntryPages(rootDir, config, errors, messages) {
   }
 }
 
+
+function checkToolPages(rootDir, config, errors, messages) {
+  const tools = validateToolPages(config.toolPages || []);
+  if (!tools.length) return;
+  const before = errors.length;
+  const imageUrl = absoluteUrl(config.siteUrl, config.blog.imagePath);
+  const imageAlt = config.blog.imageAlt || config.siteName;
+  for (const tool of tools) {
+    const relPath = path.posix.join(tool.path.slice(1), 'index.html');
+    const html = readText(rootDir, relPath);
+    const expectedHtml = ensureToolPageSeo(html, tool, config);
+    if (normalizeNewlines(html) !== normalizeNewlines(expectedHtml)) {
+      errors.push(relPath + ' generated SEO block is stale');
+    }
+    const canonical = absoluteUrl(config.siteUrl, tool.path);
+    checkPageSeo({
+      html,
+      relPath,
+      expectedCanonical: canonical,
+      expectedDescription: tool.description,
+      expectedFeed: null,
+      expectedJsonLd: JSON.parse(buildToolPageJsonLd(config, tool, canonical)),
+      expectedJsonLdType: 'WebPage',
+      expectedShareUrls: [
+        ['property', 'og:type', 'website'],
+        ['property', 'og:title', tool.title],
+        ['property', 'og:description', tool.description],
+        ['property', 'og:url', canonical],
+        ['property', 'og:image', imageUrl],
+        ['property', 'og:image:width', String(config.blog.imageWidth)],
+        ['property', 'og:image:height', String(config.blog.imageHeight)],
+        ['property', 'og:image:alt', imageAlt],
+        ['name', 'twitter:card', 'summary_large_image'],
+        ['name', 'twitter:title', tool.title],
+        ['name', 'twitter:description', tool.description],
+        ['name', 'twitter:image', imageUrl],
+        ['name', 'twitter:image:alt', imageAlt]
+      ],
+      errors
+    });
+  }
+  if (errors.length === before) {
+    messages.push('PASS public tool SEO: ' + tools.length + '/' + tools.length);
+  }
+}
+
 function checkSearchFoundation({ rootDir = path.resolve(__dirname, '..'), siteConfig: config = siteConfig } = {}) {
   const messages = [];
   const errors = [];
@@ -372,6 +433,7 @@ function checkSearchFoundation({ rootDir = path.resolve(__dirname, '..'), siteCo
     checkSharedArticleStyles(rootDir, errors, messages);
     checkArticles(rootDir, config, posts, errors, messages);
     checkEntryPages(rootDir, config, errors, messages);
+    checkToolPages(rootDir, config, errors, messages);
   } catch (error) {
     errors.push(error.message);
   }

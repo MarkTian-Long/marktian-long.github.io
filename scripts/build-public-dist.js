@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { publicFiles, resolvePublicPath, validateManifest } = require('./public-dist-manifest');
+const { renderBlogArchivePage } = require('./blog-archive');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -47,6 +48,13 @@ function buildPublicDist({ rootDir = repoRoot, outputDir = path.join(repoRoot, '
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
     fs.copyFileSync(sourcePath, targetPath);
   }
+
+  const postsMetadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/posts-meta.json'), 'utf8'));
+  const featuredMetadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/featured-posts.json'), 'utf8'));
+  const archivePath = path.join(outputDir, 'tools/blog/index.html');
+  const archiveSource = fs.readFileSync(archivePath, 'utf8');
+  const archiveOutput = renderBlogArchivePage(archiveSource, postsMetadata.posts, featuredMetadata.featured);
+  fs.writeFileSync(archivePath, archiveOutput, 'utf8');
   return files;
 }
 

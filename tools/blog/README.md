@@ -37,6 +37,7 @@ tools/blog/
 - **浏览 GitHub 项目**：归档页的站点导航提供「工具与工作流」，指向首页 `#resources`；桌面侧栏和移动端页首均可访问，与文章分类分开。
 - **研究待办**：[research_backlog.md](research_backlog.md) 是研究问题与聚合候选的唯一当前记录。收录、召回、聚合、状态和立项由 `governance/blog-sop.md` 管；整理记录时另读 [待办维护规范](governance/blog-research-backlog-spec.md)，统一编号、创建/更新/核验日期、当前卡片、来源折叠与安全回写，不连续追加多份旧判断。
 - **新增文章**：研究/写作先从 `governance/README.md` 进入，按需读取 `governance/blog-sop.md`、`governance/blog-review-checklist.md`、`governance/blog-charts-spec.md` 与对应 `series/*.md`；网站发布契约仍以 `WRITING_GUIDE.md` 和 `VISUAL_GUIDE.md` 为准。未发布完整稿维护在 `../../drafts/blog/<slug>.md`，最终 Markdown 顶部的严格 frontmatter 固定 category、tags、topics、concepts、share_quote 和 relations；标题下唯一 blockquote 是正式 `summary`
+- **静态归档与爬虫入口**：源 `index.html` 仍由 JavaScript 负责搜索、分类、时间筛选与分页；`scripts/build-public-dist.js` 在发布构建时从 `data/posts-meta.json` 和 `data/featured-posts.json` 生成 5 篇精选、首屏 10 篇普通文章及完整 `<noscript>` 后备链接。不要手工复制文章目录；修改后运行 `node --test scripts/blog-archive.test.js scripts/public-dist.test.js`，再构建并 Smoke Test public-dist。
 - **文章清单**：`data/posts-meta.json` v4 是网站运行索引；文章内容语义以最终 Markdown 为源。单篇 `visuals` 仅在使用图片时声明封面和正文图，根级 `image_contract` 保留历史兼容记录。主页与 Blog 列表仍保持纯文字，不回填历史文章图片；上方为稳定架构树，不手工复制文章清单；完整文章数、标题、链接以运行索引与线上归档为准
 - **精选文章**：维护 `data/featured-posts.json` 的有序 slug 列表。当前固定 5 篇，分别覆盖 技术 / 产品 / 商业 / 行业 / 实践五个一级分类且每类恰好 1 篇；第一项仍承担首页唯一「推荐阅读」，Blog 默认页展示全部 5 篇精选。精选只改变发现入口，不写入文章 metadata，也不影响 relations / Continue Reading。
 - **正文源稿**：未发布完整稿在 `drafts/blog/<slug>.md` 原位维护；用户确认发布后迁移为 `docs/blog/<slug>.md`，同步 metadata、生成 `tools/blog/posts/<slug>.html` 后删除对应 draft。历史文章可能存在 HTML 与旧 Markdown 不一致，禁止批量覆盖

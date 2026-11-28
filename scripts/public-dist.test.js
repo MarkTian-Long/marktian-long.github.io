@@ -5,8 +5,8 @@ const path = require('node:path');
 const test = require('node:test');
 
 const { publicFiles, resolvePublicPath, validateManifest } = require('./public-dist-manifest');
-const { isLocalReference, referencedPaths, resolveReference } = require('./check-public-dist');
-const { outputDirFromArgs } = require('./build-public-dist');
+const { isLocalReference, referencedPaths, resolveReference, checkPublicDist } = require('./check-public-dist');
+const { outputDirFromArgs, buildPublicDist } = require('./build-public-dist');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -118,6 +118,26 @@ test('external scripts resolve fetch paths from the document that executes them'
     ),
     ['tools/blog/data/share-card-config.json', 'tools/blog/data/posts-meta.json'],
   );
+});
+
+
+test('public dist contains a static blog archive with one link per article', () => {
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-public-dist-'));
+  try {
+    buildPublicDist({ rootDir: repoRoot, outputDir });
+    const metadata = JSON.parse(fs.readFileSync(path.join(repoRoot, 'tools/blog/data/posts-meta.json'), 'utf8'));
+    const archive = fs.readFileSync(path.join(outputDir, 'tools/blog/index.html'), 'utf8');
+    assert.equal(fs.existsSync(path.join(outputDir, 'llms.txt')), true);
+    const links = [...archive.matchAll(/href="(posts\/[^"]+\.html)"/g)].map(match => match[1]);
+
+    assert.equal(links.length, metadata.posts.length);
+    assert.equal(new Set(links).size, metadata.posts.length);
+    assert.match(archive, /<noscript>[\s\S]*?posts\//);
+    assert.match(archive, /class="featured-section"/);
+    assert.deepEqual(checkPublicDist({ rootDir: repoRoot, outputDir }), []);
+  } finally {
+    fs.rmSync(outputDir, { recursive: true, force: true });
+  }
 });
 
 test('public dist output directory cannot escape the repository', () => {

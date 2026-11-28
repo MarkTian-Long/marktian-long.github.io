@@ -3,6 +3,7 @@ const path = require('path');
 
 const config = require('./site-config');
 const { validateImageContract } = require('./blog-image-contract');
+const { buildLlmsIndex } = require('./llms-index');
 const { validateSemanticMetadata } = require('../tools/blog/blog-taxonomy.js');
 const {
   articleUrl,
@@ -10,7 +11,9 @@ const {
   buildSitemap,
   buildRss,
   ensureArticleSeo,
-  ensureEntryPageSeo
+  ensureEntryPageSeo,
+  ensureToolPageSeo,
+  validateToolPages
 } = require('./search-foundation');
 
 const BLOG_SCHEMA_VERSION = 4;
@@ -105,10 +108,12 @@ function pathFromAbsoluteUrl(url) {
 
 function buildSearchAssets(siteConfig, posts) {
   validatePosts(posts);
+  const toolPages = validateToolPages(siteConfig.toolPages || []);
   const pages = [
     '/',
     siteConfig.blog.path,
-    ...posts.map(post => pathFromAbsoluteUrl(articleUrl(siteConfig, post)))
+    ...posts.map(post => pathFromAbsoluteUrl(articleUrl(siteConfig, post))),
+    ...toolPages.map(tool => tool.path)
   ];
 
   return {
@@ -147,6 +152,18 @@ function targetContents(siteConfig, posts, rootDir = path.resolve(__dirname, '..
     const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
     contents[relPath] = ensureArticleSeo(source, post, siteConfig);
   }
+  for (const tool of validateToolPages(siteConfig.toolPages || [])) {
+    const relPath = path.posix.join(tool.path.slice(1), 'index.html');
+    const source = fs.readFileSync(path.join(rootDir, relPath), 'utf8');
+    contents[relPath] = ensureToolPageSeo(source, tool, siteConfig);
+  }
+  if (Array.isArray(siteConfig.publicProjects)) {
+    const featuredMetadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'tools/blog/data/featured-posts.json'), 'utf8'));
+    if (!featuredMetadata || featuredMetadata.version !== 1 || !Array.isArray(featuredMetadata.featured)) {
+      throw new Error('featured-posts.json must contain version 1 and a featured array');
+    }
+    contents['llms.txt'] = buildLlmsIndex(siteConfig, posts, featuredMetadata.featured);
+  }
   return contents;
 }
 
@@ -178,6 +195,7 @@ function checkTargets(rootDir, contents) {
     console.log('PASS sitemap.xml');
     console.log('PASS feed.xml');
     console.log('PASS blog share-card config');
+    if (Object.prototype.hasOwnProperty.call(contents, 'llms.txt')) console.log('PASS llms.txt');
     console.log('PASS entry page SEO: 2/2');
     const articleCount = Object.keys(contents).filter(file => file.startsWith('tools/blog/posts/')).length;
     console.log(`PASS blog article SEO: ${articleCount}/${articleCount}`);
