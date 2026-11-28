@@ -1,8 +1,10 @@
 # Blog Image Prompt Recipes
 
-版本：1.0｜更新：2026-11-28
+版本：1.1｜更新：2026-11-28
 
 这些模板用于独立图片资产。每次只选一个模板，再按当前文章 brief 替换内容；不要把所有模板字段机械叠加。除非确实需要文字，否则优先要求无文字，由正文图注和确定性排版补足。
+
+**全局范围锁**：每次只输入当前图片所在的局部内容，不输入全文/完整大纲/所有章节。除非作者明确要求，不生成全文摘要图、完整指南海报或多章节拼贴。最终 Prompt 应明确 `one standalone image for one section-level reading task; not an article summary`。
 
 ## 1. Editorial hero / 开篇首图
 
@@ -80,18 +82,13 @@ Constraints: Do not invent metrics, values, or arrows; no text; no dashboard or 
 ## 6. Hub / multiple research directions / 多方向枢纽图
 
 ~~~text
-Deliverable: One standalone editorial illustration representing [number] distinct research directions around a shared core question.
-Purpose: Show both the common organizing principle and the differences between directions.
-Central idea: [Shared question or common framework].
-Distinct directions (each must remain recognizable):
-1. [Direction + concrete visual cue]
-2. [Direction + concrete visual cue]
-3. [Direction + concrete visual cue]
-4. [Direction + concrete visual cue]
-5. [Direction + concrete visual cue]
-Composition: One central anchor with clearly separated surrounding scenes/objects; avoid a generic five-card grid; preserve negative space for labels.
+Deliverable: One standalone conceptual image for a single section-level relationship, not a summary of the article.
+Purpose: Show how [one shared organizing principle] relates to [a small set of distinct objects] without turning them into a chapter list.
+Central idea: [One shared core object or process].
+Distinct objects: [Only the 3–5 objects required by this one relationship; each has one unmistakable visual cue].
+Composition: One continuous spatial scene with one central anchor and a few surrounding objects connected by a restrained physical path; no cards, grid, numbered modules, panel layout, title block, or summary banner. If the relationship is already clear in a table, skip the image.
 Style: [Approved article visual anchor].
-Constraints: Do not merge directions, invent new categories, or add text/numbers/logos; no webpage or slide layout.
+Constraints: No article title, chapter headings, prose, numbers, logos, unrelated examples, invented categories, webpage or slide layout. This image must not recap multiple sections.
 ~~~
 
 ## 7. Targeted edit / 定向修改
@@ -120,6 +117,9 @@ No text, logos, watermarks, or unrelated decorative elements.
 Before sending a prompt, check:
 
 - Is the requested output an independent image asset, not a web page or screenshot?
+- Does the prompt contain only the local section context, not the full article or outline?
+- Does the image answer one section-level question rather than summarize multiple chapters?
+- Have the final prompt text been checked for accidental pasted assistant prose or unrelated context?
 - Is there exactly one primary reading task?
 - Are the main subject, action, relationship, and visual hierarchy explicit?
 - Are materials, light, palette, and composition concrete rather than generic adjectives?

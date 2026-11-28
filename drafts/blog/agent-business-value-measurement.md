@@ -13,7 +13,7 @@ relations: []
 
 ---
 
-![客户请求由 Agent 在授权范围内处理，调用业务工具，必要时交由人工判断，最后核验并交付](../../assets/images/blog/agent-business-value-measurement/opening-work-system.svg "自制概念插图：最终交付来自业务请求、Agent、工具系统、人工判断与结果验收的协作。")
+![纸质业务请求沿连续路径经过 Agent 工作台、业务工具和人工复核，最终形成已核验交付](../../assets/images/blog/agent-business-value-measurement/opening-work-system.webp "概念示意：Agent 的价值要放回完整工作系统，连同工具执行、人工判断和最终验收一起衡量。")
 
 Agent 指标看起来不错，企业却未必因此得到更多价值。
 
@@ -187,7 +187,6 @@ Intercom 在 2026 年 8 月调整其客服 Agent Fin 的表现指标时，给出
 
 这五个方向的研究对象不同，但可以沿用相同的四个问题：
 
-![同一套 Agent 业务价值衡量方法应用于技术评测、多 Agent、Personal Agent、企业治理和 Agentic Commerce 五个后续研究方向](../../assets/images/blog/agent-business-value-measurement/hub-application-map.svg "共同的是衡量逻辑，不同的是每个领域的业务结果变量和不可折抵护栏。")
 
 | 研究方向 | 更值得观察的业务结果 | 关键护栏 |
 |---|---|---|
