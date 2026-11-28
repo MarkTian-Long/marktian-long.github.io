@@ -58,6 +58,12 @@ test('CI runs blog taxonomy/source sync and Continue Reading shell checks', () =
   assert.match(source, /\['Blog Continue Reading shells', node, \['scripts\/migrate-blog-continue-reading\.js', '--check'\], repoRoot\]/);
 });
 
+test('release verification fetches the pre-push commit for historical body comparison', () => {
+  const workflow = fs.readFileSync(path.join(__dirname, '../.github/workflows/deploy.yml'), 'utf8');
+  const verifyJob = workflow.slice(workflow.indexOf('  verify:'), workflow.indexOf('  deploy:'));
+  assert.match(verifyJob, /uses: actions\/checkout@v4\s+with:\s+fetch-depth: 0/);
+});
+
 test('legacy migration no longer offers template or writing-guide overwrite commands', () => {
   const script = path.join(__dirname, 'migrate-blog-continue-reading.js');
   for (const flag of ['--create-template', '--update-writing-guide']) {
