@@ -248,3 +248,7 @@ cp -r impeccable/ ~/.claude/skills/
 - Claude 品牌设计令牌（来自 `scripts/DESIGN.md`，通过 `brand-design-md` skill 生成）
 - Libre Baskerville：Google Fonts
 - Source Sans 3：Google Fonts / Adobe
+
+## 2026-11-28 品牌标签更新（后续记录）
+
+2026 年 4 月采用的「AI · Product · Builder」是当时用于拆分研究、产品决策与动手构建三个维度的阶段性表达。经过后续使用，本轮将当前公开身份统一为 **AI Builder**：Builder 已足以表达将想法转化为实际工具、原型和实践的能力，Product 不再作为身份限定词。Product / 产品仍用于具体产品工作、分析、设计、原型和历史案例，不做机械删除。此前讨论与决策保留为历史记录；当前执行规范见 [docs/HOMEPAGE.md](HOMEPAGE.md) 和 [2026-11-28 品牌调整记录](reviews/2026-11-28-ai-builder-brand-update.md)。
