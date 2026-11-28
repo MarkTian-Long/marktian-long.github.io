@@ -6,7 +6,7 @@ repository-readable place.
 
 ## Personal brand identity
 
-- 2026-11-27: Use `AI Builder` as the single current personal brand label, without a separator between AI and Builder. Keep homepage, SEO defaults, share cover, and project/agent documentation consistent. Retain product-specific terminology when it describes actual work, analysis, prototypes, or historical experience. Preserve historical positioning records rather than rewriting them. See `docs/HOMEPAGE.md` and `scripts/site-config.js`.
+- 2026-11-28: Use `AI Builder` as the single current personal brand label, without a separator between AI and Builder. Keep homepage, SEO defaults, share cover, and project/agent documentation consistent. Retain product-specific terminology when it describes actual work, analysis, prototypes, or historical experience. Preserve historical positioning records rather than rewriting them. See `docs/HOMEPAGE.md` and `scripts/site-config.js`.
 
 ## Migration baseline
 
