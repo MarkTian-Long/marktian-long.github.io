@@ -3,7 +3,7 @@
 日期：2026-11-28  
 分支：`chore/ai-builder-brand-update`  
 PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)  
-状态：分支修改与静态核对已完成；完整自动化测试、合并和部署待完成。
+状态：分支自动化测试、公开构建与产物 smoke 已通过；合并与品牌版本正式部署待完成。
 
 ## 决策
 
@@ -32,10 +32,10 @@ PR：[#1](https://github.com/MarkTian-Long/marktian-long.github.io/pull/1)
 
 ## 尚未完成的发布门槛
 
-- 尚未在完整仓库环境运行 `npm run check`、`npm run build:public` 和 `npm run check:public-dist`。
-- 现有 `.github/workflows/deploy.yml` 仅在 main push 或手动触发时运行，手动运行会执行 Pages 部署，不适合作为分支验证。当前 PR 没有可用的验证工作流。
-- 未合并 main，未触发生产部署。必须完成测试和 public-dist smoke 后才能合并。
-- 如需新增仅验证、不部署的 PR workflow，须先获得对 `.github/workflows/` 配置修改的明确授权。
+- 已在品牌 PR 的独立验证工作流中通过 `npm run check`、`node scripts/build-public-dist.js` 和 `node scripts/check-public-dist.js`；两个并行 job 均成功。
+- 已先通过 PR #2 将 `.github/workflows/verify-pr.yml` 合入 main。该工作流对 main 的 PR 并行执行仓库测试与 public artifact 构建/冒烟检查，只授予 `contents: read`，不上传 Pages artifact、不申请 Pages 权限、不部署。
+- 品牌 PR 的验证已通过，尚未合并 main。合并后由现有 `deploy.yml` 触发品牌版本正式部署，再进行线上验收。
+
 
 ## 保留的历史内容
 
