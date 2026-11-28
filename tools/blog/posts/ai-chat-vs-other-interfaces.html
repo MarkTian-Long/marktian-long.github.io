@@ -63,8 +63,7 @@ category: 产品
       <main>
         <header class="post-header"><div class="post-meta"><span class="post-date">2026.11</span><span id="post-tags"></span></div><h1 class="post-title">AI 时代，什么时候该用聊天，什么时候该保留其他界面？</h1><p class="post-summary">AI 让用户可以用自然语言表达目标，却没有让信息比较、状态观察、精确操作和结果核验自动消失。产品不必在聊天界面与图形界面之间二选一，而应从任务如何开始、推进和结束出发，组合不同交互方式。</p></header>
         <hr class="divider" />
-        <div class="post-body">
-<figure class="post-figure">
+        <div class="post-body"><figure class="post-figure">
   <img src="../../../assets/images/blog/ai-chat-vs-other-interfaces/interaction-surfaces.svg" alt="聊天与持续工作界面围绕同一个任务协作：左侧澄清意图，右侧保持状态和操作可见" width="1280" height="720" loading="lazy" decoding="async" />
   <figcaption>聊天降低表达与探索成本，持续工作界面让对象、状态与操作保持可见。</figcaption>
 </figure>
@@ -104,7 +103,7 @@ category: 产品
 <h2 id="section-5">五、持续观察与核验结果时，怎样让当前状态可见？</h2>
 <p>持续任务的用户重新打开产品时，最关心的是订单、质检进度或业务指标现在是什么状态，而不是 AI 上次回答了什么。聊天可以调用实时数据；看板也可能因数据管道延迟而过时。产品需要维护可信的业务状态，标明更新时间，并让用户回来时能直接看见变化。</p>
 <p>Norman 在<a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">《Cognitive Engineering》</a>中把结果评估细化为感知、解释和对照目标。监控任务还可能反过来启动行动：用户先看到指标越界或收到提醒，才决定调查什么。持续可见的状态视图因此既帮助用户核验已有操作，也可能成为形成下一步意图的入口。</p>
-<p><a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">Graphics Interface 2026 的一项监控研究</a>让 24 名没有鱼场数据经验的学生分别使用聊天和看板完成分析任务。在 180 秒限制内，看板的任务完成率为 87.7%，聊天界面为 70.5%；在完整完成的任务中，看板总体耗时显著更短；正确率和系统可用性评分未见显著差异。逐任务进行多重比较校正后，只有 10 项中的 3 项时间差异仍显著。参与者反馈看板便于快速定位精确值，聊天适合灵活探索。这些结果只适用于该实验的任务和参与者，不能证明看板普遍优于聊天。</p>
+<p><a href="https://doi.org/10.1145/3831423.3831460" target="_blank" rel="noopener noreferrer">Graphics Interface 2026 的一项监控研究</a>（<a href="https://conferences.graphicsinterface.org/2026/papers/" target="_blank" rel="noopener noreferrer">会议官方论文列表</a>，<a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">作者公开 PDF</a>）让 24 名没有鱼场数据经验的学生分别使用聊天和看板完成分析任务。在 180 秒限制内，看板的任务完成率为 87.7%，聊天界面为 70.5%；在完整完成的任务中，看板总体耗时显著更短；正确率和系统可用性评分未见显著差异。逐任务进行多重比较校正后，只有 10 项中的 3 项时间差异仍显著。参与者反馈看板便于快速定位精确值，聊天适合灵活探索。这些结果只适用于该实验的任务和参与者，不能证明看板普遍优于聊天。</p>
 <p><strong>状态是否最新，和状态如何呈现，是两项不同的设计决策。</strong> 用户需要知道数据来源、更新时间，以及看到的是正式业务记录还是模型解释。异常提醒也应以事件重要性和用户是否需要介入为条件，不必把每次状态变化都变成一次打断。</p>
 <h2 id="section-6">六、AI Builder 如何选择交互方式？</h2>
 <p>回到产品设计，可以先看用户此刻被什么卡住，再决定采用哪种交互。下表根据第三至五章的例子整理常见交互困难及对应的设计选择。这些困难可能同时出现。</p>
@@ -112,7 +111,7 @@ category: 产品
 <p>例如，质检规则可以先通过聊天形成草案，再在结构化界面中调整条件，最后核验生效状态和引用该规则的任务。同一工作对象在不同环节可以使用不同交互。</p>
 <p>选择界面还要考虑使用频率、用户熟练度、风险和可逆性。模型可以帮助理解和执行，但正式业务写回、精确校验及权限检查需要可信的系统负责；重要变更应根据影响范围安排确认、审计和恢复路径。</p>
 <p>评估方案时，应比较整条任务链：表达与澄清花了多久，用户能否找到信息、理解状态和发现错误，出错后如何恢复，切换界面时是否还要重复解释，而不是只看点击次数或对话轮数。</p>
-<p>即使未来许多界面都能按需生成，界面怎样产生与用户日后怎样使用它，仍是两个不同的问题。2026 年 11 月 24 日，Anthropic 推出 <a href="https://claude.com/resources/articles/install-as-app" target="_blank" rel="noopener noreferrer">Claude Artifacts 的 Install as app 功能</a>（Beta）：用户可以先通过聊天创建并试用交互工具，再把它安装为 Mac 或 Windows 上有独立图标和窗口的应用。以厂商介绍的待发货订单跟踪工具为例，日常使用可以从应用窗口开始，而不必每次回到原对话。底层 Artifact 的修改会同步到应用；但打开应用仍需联网并登录 Claude，访问本地系统能力须获相应授权。</p>
+<p>即使未来许多界面都能按需生成，界面怎样产生与用户日后怎样使用它，仍是两个不同的问题。2026 年 11 月 24 日，Anthropic 为 Claude Artifacts（可交互的 AI 生成产物）推出 <a href="https://claude.com/resources/articles/install-as-app" target="_blank" rel="noopener noreferrer">Install as app 功能</a>（Beta）：用户可以先通过聊天创建并试用交互工具，再把它安装为 Mac 或 Windows 上有独立图标和窗口的应用。以厂商介绍的待发货订单跟踪工具为例，日常使用可以从应用窗口开始，而不必每次回到原对话。底层 Artifact 的修改会同步到应用；但打开应用仍需联网并登录 Claude，访问本地系统能力须获相应授权。</p>
 <p>这提供了一种不同于固定页面和临时生成卡片的组合：聊天负责按需创建或修改工具，工具本身作为可再次进入的工作界面。生成速度不等于长期使用效果，能单独打开也不等于数据自动更新或版本已受控。设计仍需根据使用频率、状态来源、版本与权限决定哪些界面应持久保留。</p>
 <p><strong>先决定用户在任务中需要表达、看见、修改和核验什么，再决定采用什么界面。</strong> 聊天、直接操作和持续状态视图可以在同一个产品中相互衔接；即使界面可以随任务生成，用户也不必为每次使用重新描述整个工作对象。</p>
 <h2 id="section-7">参考资料</h2>
@@ -120,8 +119,8 @@ category: 产品
 <ul><li><a href="https://www.laurahuisinga-design.com/698Research/wp-content/uploads/2013/05/Norman_Stages_Levels_HCI.pdf" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Stages and Levels in Human–Machine Interaction” (1984)，全文 PDF</a></li><li><a href="https://www.researchgate.net/publication/235616560_Cognitive_Engineering" target="_blank" rel="noopener noreferrer">Donald A. Norman, “Cognitive Engineering” (1986)，作者公开稿</a></li><li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1983Direct.pdf" target="_blank" rel="noopener noreferrer">Ben Shneiderman, “Direct Manipulation: A Step Beyond Programming Languages” (1983)</a></li></ul>
 <h3 id="section-9">同行评审研究</h3>
 <ul><li><a href="https://doi.org/10.1145/3613904.3642639" target="_blank" rel="noopener noreferrer">Priyan Vaithilingam et al., “DynaVis: Dynamically Synthesized UI Widgets for Visualization Editing,” CHI 2024</a></li></ul>
-<h3 id="section-10">会议论文公开稿</h3>
-<ul><li><a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">Melika Besharati Amirkandeh and Derek Reilly, “A Comparative Evaluation of Natural Language and Dashboard Visualization Interfaces for Data Monitoring Tasks,” Graphics Interface 2026</a>（公开作者稿首页的 DOI 仍为占位符，本文引用其研究方法与结果）</li></ul>
+<h3 id="section-10">会议论文</h3>
+<ul><li><a href="https://doi.org/10.1145/3831423.3831460" target="_blank" rel="noopener noreferrer">Melika Besharati Amirkandeh and Derek Reilly, “A Comparative Evaluation of Natural Language and Dashboard Visualization Interfaces for Data Monitoring Tasks,” Proceedings of the 52nd Graphics Interface Conference 2026</a>（<a href="https://conferences.graphicsinterface.org/2026/papers/" target="_blank" rel="noopener noreferrer">GI 2026 官方论文列表</a>，<a href="https://cs.uwaterloo.ca/~dvogel/gi2026/papers/1054b.pdf" target="_blank" rel="noopener noreferrer">作者公开 PDF</a>）</li></ul>
 <h3 id="section-11">厂商产品资料</h3>
 <ul><li><a href="https://www.meituan.com/technology" target="_blank" rel="noopener noreferrer">美团：我们的科技</a></li><li><a href="https://www.aboutamazon.com/news/retail/alexa-for-shopping-ai-assistant" target="_blank" rel="noopener noreferrer">Amazon: Meet Alexa for Shopping</a></li><li><a href="https://claude.com/resources/articles/install-as-app" target="_blank" rel="noopener noreferrer">Anthropic: Turn artifacts into Mac and Windows apps（2026-11-24，Beta 功能公告）</a></li></ul>
 <h3 id="section-12">相关历史文章</h3>
