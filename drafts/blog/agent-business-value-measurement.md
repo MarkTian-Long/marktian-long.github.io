@@ -225,17 +225,17 @@ Agent 的业务价值，不在于它完成了多少动作，而在于它是否�
 - [Zhang & Narayandas：Engaging Customers with AI in Online Chats](https://pubsonline.informs.org/doi/10.1287/mnsc.2022.03920)
 - [Generative Artificial Intelligence and Sales Productivity: Field Experiments in Online Retail](https://doi.org/10.1287/mnsc.2026.00623)
 
-### 预印本与现场实验
+### 预印本研究与现场实验
 
 - [Wang et al.：Agentic AI and Human-in-the-Loop Interventions](https://arxiv.org/abs/2605.14830)
 - [ShellBench：What Matters More for AI Agents, Models, or Harness for Everyday Tasks](https://arxiv.org/html/2611.32946v1)
-
-### Agent 评测与衡量方法
-
-- [Arize × Fireworks：Cost per Successful Task benchmark](https://github.com/Arize-ai/fireworks-cost-benchmark)
 - [AI Agents That Matter](https://arxiv.org/abs/2407.01502)
 - [Yao et al.：τ-bench](https://arxiv.org/abs/2406.12045)
-- [METR：We are Changing our Developer Productivity Experiment Design](https://metr.org/blog/2026-02-24-uplift-update/)
+
+### 公开基准与实验设计
+
+- [Arize × Fireworks：Cost per Successful Task benchmark](https://github.com/Arize-ai/fireworks-cost-benchmark)（厂商维护的公开基准）
+- [METR：We are Changing our Developer Productivity Experiment Design](https://metr.org/blog/2026-02-24-uplift-update/)（研究机构的实验设计说明）
 
 ### 相关历史文章
 
